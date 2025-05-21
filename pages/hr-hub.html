@@ -20,6 +20,188 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .article-card {
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .article-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .article-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .article-card:hover .article-image img {
+            transform: scale(1.05);
+        }
+        
+        .article-content {
+            padding: 20px;
+            background-color: #fff;
+        }
+        
+        .article-date {
+            font-size: 0.85rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .article-title {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        
+        .article-summary {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .read-more {
+            color: var(--primary-color);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .read-more i {
+            margin-left: 5px;
+            transition: transform 0.3s ease;
+        }
+        
+        .read-more:hover {
+            color: var(--accent-color);
+        }
+        
+        .read-more:hover i {
+            transform: translateX(5px);
+        }
+        
+        .featured-article {
+            margin-bottom: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .featured-image {
+            height: 350px;
+            overflow: hidden;
+        }
+        
+        .featured-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .featured-content {
+            padding: 30px;
+            background-color: #fff;
+        }
+        
+        .featured-date {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .featured-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+        
+        .featured-summary {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        
+        .newsletter-stats {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .resources-section {
+            margin-top: 50px;
+            padding-top: 50px;
+            border-top: 1px solid #eee;
+        }
+        
+        .resource-card {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        }
+        
+        .resource-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .resource-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .resource-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 <body>
     <!-- Header e Navegação -->
@@ -63,7 +245,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1>HR Hub</h1>
+                    <h1>HR Innovation Hub</h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
@@ -80,107 +262,201 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2 class="section-title">Bem-vindo ao HR Hub</h2>
-                    <p class="section-subtitle">Recursos, artigos e insights para profissionais de Recursos Humanos</p>
+                    <h2 class="section-title">Bem-vindo ao HR Innovation Hub</h2>
+                    <p class="section-subtitle">Um espaço dedicado à inovação e ao futuro da gestão de pessoas, onde partilhamos conhecimento, tendências e ferramentas para profissionais de RH e líderes.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Categories Section -->
-    <section class="categories-section">
+    <!-- Featured Article Section -->
+    <section class="featured-article-section">
         <div class="container">
             <div class="row">
-                <div class="col-lg-12 text-center mb-5">
-                    <h2>Explorar por Categoria</h2>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="category-card">
-                        <div class="category-icon">
-                            <i class="fas fa-users gold-icon"></i>
+                <div class="col-lg-12">
+                    <div class="featured-article">
+                        <div class="featured-image">
+                            <img src="../images/hr_hub_may_2025.png" alt="HR Innovation Hub: Tendências em Gestão de Pessoas">
                         </div>
-                        <h3>Liderança</h3>
-                        <p>12 artigos</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="category-card">
-                        <div class="category-icon">
-                            <i class="fas fa-sync-alt gold-icon"></i>
+                        <div class="featured-content">
+                            <span class="featured-date">Edição de Maio 2025</span>
+                            <h2 class="featured-title">HR Innovation Hub: Tendências em Gestão de Pessoas</h2>
+                            <p class="featured-summary">Um espaço dedicado à inovação e ao futuro da gestão de pessoas, onde partilhamos conhecimento, tendências e ferramentas para profissionais de RH e líderes.</p>
+                            <a href="https://www.linkedin.com/newsletters/people-management-challenges-7164427399303450624/" class="btn btn-primary" target="_blank">Subscrever Newsletter no LinkedIn <i class="fas fa-external-link-alt ms-2"></i></a>
                         </div>
-                        <h3>Transformação</h3>
-                        <p>9 artigos</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="category-card">
-                        <div class="category-icon">
-                            <i class="fas fa-heart gold-icon"></i>
-                        </div>
-                        <h3>Bem-estar</h3>
-                        <p>7 artigos</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="category-card">
-                        <div class="category-icon">
-                            <i class="fas fa-graduation-cap gold-icon"></i>
-                        </div>
-                        <h3>Talento</h3>
-                        <p>8 artigos</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="category-card">
-                        <div class="category-icon">
-                            <i class="fas fa-lightbulb gold-icon"></i>
-                        </div>
-                        <h3>Inovação</h3>
-                        <p>6 artigos</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="category-card">
-                        <div class="category-icon">
-                            <i class="fas fa-comments gold-icon"></i>
-                        </div>
-                        <h3>Comunicação</h3>
-                        <p>5 artigos</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="category-card">
-                        <div class="category-icon">
-                            <i class="fas fa-handshake gold-icon"></i>
-                        </div>
-                        <h3>Diversidade</h3>
-                        <p>4 artigos</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="category-card">
-                        <div class="category-icon">
-                            <i class="fas fa-chart-line gold-icon"></i>
-                        </div>
-                        <h3>Tendências</h3>
-                        <p>10 artigos</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Newsletter Section -->
-    <section class="newsletter-section">
+    <!-- Newsletter Stats Section -->
+    <section class="stats-section">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 text-center">
-                    <h2>Subscreva a nossa newsletter</h2>
-                    <p>Receba os artigos mais recentes diretamente no seu email</p>
-                    <div class="newsletter-cta">
-                        <a href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7258968797414342657" target="_blank" class="btn btn-primary btn-lg">Subscribe on LinkedIn</a>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="newsletter-stats">
+                        <div class="row">
+                            <div class="col-md-3 col-6">
+                                <div class="stat-item">
+                                    <div class="stat-number">1.5K</div>
+                                    <div class="stat-label">Subscritores</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="stat-item">
+                                    <div class="stat-number">+25%</div>
+                                    <div class="stat-label">Novos Subscritores (Último Ano)</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="stat-item">
+                                    <div class="stat-number">2.6K</div>
+                                    <div class="stat-label">Visualizações de Artigos</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="stat-item">
+                                    <div class="stat-number">7.9K</div>
+                                    <div class="stat-label">Impressões Totais</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Articles Section -->
+    <section class="articles-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2 class="section-title">Artigos Recentes</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="article-card">
+                        <div class="article-image">
+                            <img src="../images/hr_hub_may_2025.png" alt="Reskilling: Uma Perspetiva Inspiradora">
+                        </div>
+                        <div class="article-content">
+                            <span class="article-date">15 de Maio de 2025</span>
+                            <h3 class="article-title">Reskilling: Uma Perspetiva Inspiradora</h3>
+                            <p class="article-summary">Neste novo capítulo da newsletter HR Innovation Hub, exploramos como o reskilling pode transformar carreiras e organizações num mercado de trabalho em constante evolução.</p>
+                            <a href="https://www.linkedin.com/pulse/reskilling-inspiring-perspective-from-both-individual-samuel-rolo-2sdyf" class="read-more" target="_blank">Ler artigo completo <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="article-card">
+                        <div class="article-image">
+                            <img src="../images/power.png" alt="Liderança: Equilíbrio entre Tecnologia e Toque Humano">
+                        </div>
+                        <div class="article-content">
+                            <span class="article-date">15 de Março de 2025</span>
+                            <h3 class="article-title">Liderança: Equilíbrio entre Tecnologia e Toque Humano</h3>
+                            <p class="article-summary">Como podem os líderes modernos equilibrar a adoção de novas tecnologias com a manutenção do elemento humano essencial na gestão de equipas? Esta edição explora este desafio crescente.</p>
+                            <a href="https://www.linkedin.com/pulse/leadership-blending-tech-human-touch-samuel-rolo-bfs9f" class="read-more" target="_blank">Ler artigo completo <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="article-card">
+                        <div class="article-image">
+                            <img src="../images/image.png" alt="Inclusão de Pessoas com Deficiência no Trabalho">
+                        </div>
+                        <div class="article-content">
+                            <span class="article-date">Abril de 2025</span>
+                            <h3 class="article-title">Inclusão de Pessoas com Deficiência no Trabalho</h3>
+                            <p class="article-summary">Neste artigo, reflito sobre a importância da inclusão de pessoas com deficiência no mercado de trabalho, destacando o impacto da nova legislação portuguesa em vigor desde janeiro de 2024.</p>
+                            <a href="https://www.linkedin.com/pulse/disability-inclusion-promoting-more-equitable-sustainable-samuel-rolo-ngr4f" class="read-more" target="_blank">Ler artigo completo <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="article-card">
+                        <div class="article-image">
+                            <img src="../images/desafios.png" alt="Transformando Desafios em Oportunidades">
+                        </div>
+                        <div class="article-content">
+                            <span class="article-date">Fevereiro de 2025</span>
+                            <h3 class="article-title">Transformando Desafios em Oportunidades</h3>
+                            <p class="article-summary">Como as organizações podem transformar os desafios atuais em oportunidades de crescimento e inovação através de uma abordagem centrada nas pessoas.</p>
+                            <a href="#" class="read-more" target="_blank">Ler artigo completo <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="article-card">
+                        <div class="article-image">
+                            <img src="../images/mudanca.png" alt="Gestão da Mudança Organizacional">
+                        </div>
+                        <div class="article-content">
+                            <span class="article-date">Janeiro de 2025</span>
+                            <h3 class="article-title">Gestão da Mudança Organizacional</h3>
+                            <p class="article-summary">Estratégias eficazes para implementar processos de mudança com menor resistência e maior adoção por parte das equipas.</p>
+                            <a href="#" class="read-more" target="_blank">Ler artigo completo <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="article-card">
+                        <div class="article-image">
+                            <img src="../images/image.png" alt="Dia Internacional dos Recursos Humanos">
+                        </div>
+                        <div class="article-content">
+                            <span class="article-date">20 de Maio de 2025</span>
+                            <h3 class="article-title">Dia Internacional dos Recursos Humanos: Celebrar a Evolução</h3>
+                            <p class="article-summary">Uma reflexão sobre a evolução do papel dos profissionais de RH e a sua importância crescente na estratégia organizacional.</p>
+                            <a href="https://www.linkedin.com/pulse/dia-internacional-dos-recursos-humanos-celebrar-evolu%C3%A7%C3%A3o-samuel-rolo-4kcof" class="read-more" target="_blank">Ler artigo completo <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section class="resources-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2 class="section-title">Recursos para Profissionais</h2>
+                    <p class="section-subtitle">Ferramentas e materiais para apoiar o seu desenvolvimento profissional</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="resource-card">
+                        <div class="resource-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h3 class="resource-title">Guia de Gestão da Mudança</h3>
+                        <p class="resource-description">Framework prático para implementar processos de mudança com menor resistência e maior adoção.</p>
+                        <a href="#" class="btn btn-outline-primary btn-sm">Download</a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="resource-card">
+                        <div class="resource-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h3 class="resource-title">Checklist de Cultura Organizacional</h3>
+                        <p class="resource-description">Ferramenta para diagnóstico rápido da saúde da cultura da sua organização.</p>
+                        <a href="#" class="btn btn-outline-primary btn-sm">Download</a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="resource-card">
+                        <div class="resource-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <h3 class="resource-title">Template de Plano de Desenvolvimento</h3>
+                        <p class="resource-description">Modelo estruturado para criar planos de desenvolvimento eficazes para colaboradores.</p>
+                        <a href="#" class="btn btn-outline-primary btn-sm">Download</a>
                     </div>
                 </div>
             </div>
@@ -193,7 +469,7 @@
             <div class="row">
                 <div class="col-lg-4 col-md-6">
                     <div class="footer-logo">
-                        <img src="../images/logo-white.png" alt="Share2Inspire Logo" class="footer-logo-img">
+                        <img src="../images/logo-white.png" alt="Share2Inspire Logo">
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-6">
@@ -201,7 +477,7 @@
                         <h4>Links Rápidos</h4>
                         <ul>
                             <li><a href="../index.html">Início</a></li>
-                            <li><a href="sobre.html">Sobre</a></li>
+                            <li><a href="sobre.html">Sobre o Fundador</a></li>
                             <li><a href="servicos.html">Serviços</a></li>
                             <li><a href="loja.html">Loja</a></li>
                             <li><a href="hr-hub.html">HR Hub</a></li>
@@ -220,54 +496,30 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="footer-newsletter">
-                        <h4>Newsletter</h4>
-                        <p>Subscreva para receber as últimas novidades</p>
-                        <form id="newsletterForm" class="brevo-form">
-                            <div class="input-group">
-                                <input type="email" class="form-control" placeholder="Seu email" name="email" required>
-                                <button class="btn btn-primary" type="submit">Subscrever</button>
-                            </div>
-                            <div id="newsletterMessage" class="mt-2"></div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-6">
                     <div class="footer-contact">
                         <h4>Contactos</h4>
                         <p><i class="fas fa-envelope"></i> <a href="mailto:srshare2inspire@gmail.com">srshare2inspire@gmail.com</a></p>
                         <p><i class="fas fa-phone"></i> <a href="tel:+351961925050">+351 961 925 050</a></p>
                         <p><i class="fas fa-map-marker-alt"></i> Rua Capitão Joaquim Varela Gusmão 5, 2640-791 Mafra, Portugal</p>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6">
-                    <div class="footer-social">
-                        <h4>Siga-nos</h4>
-                        <div class="social-links">
-                            <a href="https://www.facebook.com/share2inspire" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                            <a href="https://www.instagram.com/share2inspire" target="_blank"><i class="fab fa-instagram"></i></a>
-                            <a href="https://www.linkedin.com/in/samuelrolo" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-                            <a href="https://twitter.com/share2inspire" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <div class="footer-social">
+                            <div class="social-links">
+                                <a href="https://www.linkedin.com/company/share2inspirept" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="https://www.instagram.com/share2inspire_" target="_blank"><i class="fab fa-instagram"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="footer-bottom">
-                        <p>&copy; 2025 Share2Inspire. Todos os direitos reservados.</p>
-                    </div>
-                </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Share2Inspire. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>
 
     <!-- Feedback Button -->
     <div class="feedback-button">
-        <button type="button" class="btn btn-feedback" data-bs-toggle="modal" data-bs-target="#feedbackModal">
-            <i class="fas fa-comment-alt"></i> Feedback
+        <button type="button" class="btn-feedback" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+            <i class="fas fa-comment-dots"></i>
         </button>
     </div>
 
@@ -280,31 +532,36 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="feedbackForm" class="brevo-form">
+                    <form id="feedbackForm" class="newsletter-form">
                         <div class="mb-3">
-                            <label for="feedbackName" class="form-label">Nome</label>
+                            <label for="feedbackName" class="form-label">Nome *</label>
                             <input type="text" class="form-control" id="feedbackName" name="name" required>
                         </div>
                         <div class="mb-3">
-                            <label for="feedbackEmail" class="form-label">Email</label>
+                            <label for="feedbackEmail" class="form-label">Email *</label>
                             <input type="email" class="form-control" id="feedbackEmail" name="email" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Avaliação</label>
+                            <label class="form-label">Avaliação *</label>
                             <div class="rating">
-                                <input type="radio" id="star5" name="rating" value="5" required><label for="star5"></label>
-                                <input type="radio" id="star4" name="rating" value="4"><label for="star4"></label>
-                                <input type="radio" id="star3" name="rating" value="3"><label for="star3"></label>
-                                <input type="radio" id="star2" name="rating" value="2"><label for="star2"></label>
-                                <input type="radio" id="star1" name="rating" value="1"><label for="star1"></label>
+                                <input type="radio" id="star5" name="rating" value="5" required>
+                                <label for="star5"></label>
+                                <input type="radio" id="star4" name="rating" value="4">
+                                <label for="star4"></label>
+                                <input type="radio" id="star3" name="rating" value="3">
+                                <label for="star3"></label>
+                                <input type="radio" id="star2" name="rating" value="2">
+                                <label for="star2"></label>
+                                <input type="radio" id="star1" name="rating" value="1">
+                                <label for="star1"></label>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="feedbackMessage" class="form-label">Mensagem</label>
+                            <label for="feedbackMessage" class="form-label">Mensagem *</label>
                             <textarea class="form-control" id="feedbackMessage" name="message" rows="4" required></textarea>
                         </div>
-                        <div id="feedbackFormMessage" class="mb-3"></div>
-                        <button type="submit" class="btn btn-primary w-100">Enviar Feedback</button>
+                        <button type="submit" class="btn btn-primary">Enviar Feedback</button>
+                        <div id="feedbackFormMessage" class="mt-3"></div>
                     </form>
                 </div>
             </div>
@@ -314,12 +571,7 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
     <!-- Custom JS -->
-    <script src="../js/main.js"></script>
     <script src="../js/brevo-integration.js"></script>
-    <script src="../js/feedback.js"></script>
 </body>
 </html>
