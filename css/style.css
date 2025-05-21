@@ -2,9 +2,9 @@
 
 /* ===== Base Styles ===== */
 :root {
-    --primary-color: #d4af37; /* Dourado */
+    --primary-color: #BF9A33; /* Dourado claro */
     --secondary-color: #333333; /* Cinza escuro */
-    --accent-color: #8a6d3b; /* Dourado escuro */
+    --accent-color: #A5780A; /* Dourado escuro */
     --light-color: #f8f9fa;
     --dark-color: #212529;
     --text-color: #333333;
@@ -12,7 +12,7 @@
     --border-color: #dee2e6;
     --success-color: #28a745;
     --error-color: #dc3545;
-    --warning-color: #d4af37; /* Dourado (mesmo tom do logo) */
+    --warning-color: #BF9A33; /* Dourado claro (mesmo tom do logo) */
     --info-color: #17a2b8;
     --transition: all 0.3s ease;
     --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -210,22 +210,22 @@ a:hover {
 }
 
 .hero-content h1 {
-    font-size: 3.5rem;
+    font-size: 4rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    color: var(--primary-color);
+    color: #fff;
     letter-spacing: 3px;
 }
+
 .hero-subtitle {
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     margin-bottom: 2rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--primary-color);
+    font-weight: 600;
 }
 
 .hero-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
+    display: none; /* Esconder os botões conforme solicitado */
 }
 
 /* Scroll Down Animation */
@@ -505,7 +505,7 @@ a:hover {
 
 .contact-form .form-control:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25);
 }
 
 .contact-form textarea.form-control {
@@ -543,7 +543,7 @@ a:hover {
 .redes-sociais a {
     display: inline-block;
     margin-right: 15px;
-    font-size: 1.8rem;
+    font-size: 2.5rem; /* Aumentado o tamanho dos ícones */
     color: var(--primary-color);
     transition: var(--transition);
 }
@@ -561,7 +561,7 @@ a:hover {
 }
 
 .footer-logo img {
-    height: 80px;
+    height: 100px; /* Aumentado o tamanho do logo no footer */
     margin-bottom: 1.5rem;
 }
 
@@ -744,7 +744,7 @@ a:hover {
     height: 60px;
     border-radius: 50%;
     background-color: var(--primary-color);
-    color: var(--dark-color);
+    color: #000; /* Texto preto para melhor contraste */
     border: none;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     display: flex;
@@ -1026,7 +1026,11 @@ a:hover {
 /* ===== Responsive Styles ===== */
 @media (max-width: 1199.98px) {
     .hero-content h1 {
-        font-size: 3rem;
+        font-size: 3.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 2rem;
     }
     
     .section-title {
@@ -1042,11 +1046,11 @@ a:hover {
 
 @media (max-width: 991.98px) {
     .hero-content h1 {
-        font-size: 2.5rem;
+        font-size: 3rem;
     }
     
     .hero-subtitle {
-        font-size: 1.2rem;
+        font-size: 1.8rem;
     }
     
     .section-title {
@@ -1074,11 +1078,11 @@ a:hover {
 
 @media (max-width: 767.98px) {
     .hero-content h1 {
-        font-size: 2.2rem;
+        font-size: 2.5rem;
     }
     
     .hero-subtitle {
-        font-size: 1.1rem;
+        font-size: 1.5rem;
     }
     
     .section-title {
@@ -1119,11 +1123,11 @@ a:hover {
 
 @media (max-width: 575.98px) {
     .hero-content h1 {
-        font-size: 2rem;
+        font-size: 2.2rem;
     }
     
     .hero-subtitle {
-        font-size: 1rem;
+        font-size: 1.2rem;
     }
     
     .section-title {
