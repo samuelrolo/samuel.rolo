@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja - SHARE2INSPIRE - Samuel Rolo</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap">
+    <!-- CSS Consolidado -->
+    <link rel="stylesheet" href="css/main.css">
+    <!-- Hotmart -->
+    <link rel="stylesheet" type="text/css" href="https://static.hotmart.com/css/hotmart-fb.min.css">
+</head>
+<body>
+    <!-- Navegação -->
+    <nav>
+        <div class="navbar">
+            <div class="container nav-container">
+                <input class="checkbox" type="checkbox" name="nav-toggle" id="nav-toggle" />
+                <div class="hamburger-lines">
+                    <span class="line line1"></span>
+                    <span class="line line2"></span>
+                    <span class="line line3"></span>
+                </div>
+                <div class="logo">
+                    <img src="assets/img/logos/share2inspire_logo.png" alt="Share2Inspire Logo">
+                </div>
+                <div class="menu-items">
+                    <li><a href="index.html#hero">Início</a></li>
+                    <li><a href="index.html#servicos">Serviços</a></li>
+                    <li><a href="index.html#intro">Sobre</a></li>
+                    <li><a href="sobre.html">Sobre o Fundador</a></li>
+                    <li><a href="index.html#hr-innovation-hub">HR Hub</a></li>
+                    <li><a href="loja.html">Loja</a></li>
+                    <li><a href="index.html#agendar-servico">Agendar</a></li>
+                    <li><a href="contactos.html">Contactos</a></li>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <!-- Hero -->
+        <section class="page-section loja-hero-section">
+            <h1>LOJA</h1>
+            <p class="hero-subtitle">RECURSOS E PRODUTOS</p>
+        </section>
+        
+        <!-- Conteúdo Principal -->
+        <section class="page-section loja-content-section">
+            <h2>Nossos Produtos</h2>
+            <p class="loja-intro">Descubra recursos e produtos desenvolvidos para apoiar o seu desenvolvimento pessoal e profissional.</p>
+            
+            <div class="loja-filters">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="ebook">E-books</button>
+                <button class="filter-btn" data-filter="curso">Cursos Online</button>
+                <button class="filter-btn" data-filter="template">Templates</button>
+                <button class="filter-btn" data-filter="ferramenta">Ferramentas</button>
+            </div>
+            
+            <div class="loja-grid">
+                <div class="produto-card" data-category="ebook">
+                    <div class="produto-image">
+                        <img src="images/produtos/ebook-gestao-mudanca.jpg" alt="E-book Gestão da Mudança">
+                        <div class="produto-tag">E-book</div>
+                    </div>
+                    <div class="produto-content">
+                        <h3>Guia Prático de Gestão da Mudança</h3>
+                        <p class="produto-description">Um guia completo com metodologias, ferramentas e casos práticos para implementar processos de mudança com sucesso.</p>
+                        <div class="produto-details">
+                            <div class="produto-price">€19,90</div>
+                            <a href="loja/gestao-da-mudanca/index.html" class="btn btn-secondary">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="produto-card" data-category="curso">
+                    <div class="produto-image">
+                        <img src="images/produtos/curso-lideranca.jpg" alt="Curso Liderança Consciente">
+                        <div class="produto-tag">Curso</div>
+                    </div>
+                    <div class="produto-content">
+                        <h3>Liderança Consciente: Desenvolvendo Equipas de Alto Desempenho</h3>
+                        <p class="produto-description">Curso online com 8 módulos para desenvolver competências de liderança consciente e criar equipas de alto desempenho.</p>
+                        <div class="produto-details">
+                            <div class="produto-price">€149,00</div>
+                            <a href="#" class="btn btn-secondary" data-action="open-modal" data-modal="product-details">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="produto-card" data-category="template">
+                    <div class="produto-image">
+                        <img src="images/produtos/template-cv.jpg" alt="Template CV Profissional">
+                        <div class="produto-tag">Template</div>
+                    </div>
+                    <div class="produto-content">
+                        <h3>Template CV Profissional</h3>
+                        <p class="produto-description">Template de CV profissional em formato Word e PDF, com instruções detalhadas para personalização.</p>
+                        <div class="produto-details">
+                            <div class="produto-price">€9,90</div>
+                            <a href="#" class="btn btn-secondary" data-action="open-modal" data-modal="product-details">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="produto-card" data-category="ferramenta">
+                    <div class="produto-image">
+                        <img src="images/produtos/ferramenta-diagnostico.jpg" alt="Ferramenta de Diagnóstico Cultural">
+                        <div class="produto-tag">Ferramenta</div>
+                    </div>
+                    <div class="produto-content">
+                        <h3>Ferramenta de Diagnóstico Cultural</h3>
+                        <p class="produto-description">Ferramenta digital para diagnóstico da cultura organizacional, com relatório personalizado e recomendações.</p>
+                        <div class="produto-details">
+                            <div class="produto-price">€79,00</div>
+                            <a href="#" class="btn btn-secondary" data-action="open-modal" data-modal="product-details">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="produto-card" data-category="ebook">
+                    <div class="produto-image">
+                        <img src="images/produtos/ebook-futuro-trabalho.jpg" alt="E-book Futuro do Trabalho">
+                        <div class="produto-tag">E-book</div>
+                    </div>
+                    <div class="produto-content">
+                        <h3>O Futuro do Trabalho: Tendências e Estratégias</h3>
+                        <p class="produto-description">Uma análise das principais tendências que estão a moldar o futuro do trabalho e estratégias para se adaptar.</p>
+                        <div class="produto-details">
+                            <div class="produto-price">€14,90</div>
+                            <a href="#" class="btn btn-secondary" data-action="open-modal" data-modal="product-details">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="produto-card" data-category="template">
+                    <div class="produto-image">
+                        <img src="images/produtos/template-plano-desenvolvimento.jpg" alt="Template Plano de Desenvolvimento">
+                        <div class="produto-tag">Template</div>
+                    </div>
+                    <div class="produto-content">
+                        <h3>Template de Plano de Desenvolvimento Individual</h3>
+                        <p class="produto-description">Template completo para criar planos de desenvolvimento individual, com exemplos e instruções detalhadas.</p>
+                        <div class="produto-details">
+                            <div class="produto-price">€12,90</div>
+                            <a href="#" class="btn btn-secondary" data-action="open-modal" data-modal="product-details">Ver Detalhes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Recursos Gratuitos -->
+        <section class="page-section recursos-gratuitos-section">
+            <h2>Recursos Gratuitos</h2>
+            <p>Aceda a recursos gratuitos para apoiar o seu desenvolvimento:</p>
+            
+            <div class="recursos-gratuitos-grid">
+                <div class="recurso-gratuito-card">
+                    <div class="recurso-gratuito-icon"><i class="fas fa-file-pdf"></i></div>
+                    <h3>Checklist de Preparação para Entrevistas</h3>
+                    <p>Uma checklist completa para se preparar para entrevistas de emprego com confiança.</p>
+                    <a href="#" class="btn btn-secondary" data-action="open-modal" data-modal="free-resource">Descarregar</a>
+                </div>
+                
+                <div class="recurso-gratuito-card">
+                    <div class="recurso-gratuito-icon"><i class="fas fa-file-alt"></i></div>
+                    <h3>Guia de Feedback Construtivo</h3>
+                    <p>Um guia prático para dar e receber feedback de forma construtiva e eficaz.</p>
+                    <a href="#" class="btn btn-secondary" data-action="open-modal" data-modal="free-resource">Descarregar</a>
+                </div>
+                
+                <div class="recurso-gratuito-card">
+                    <div class="recurso-gratuito-icon"><i class="fas fa-video"></i></div>
+                    <h3>Webinar: Gestão do Tempo</h3>
+                    <p>Webinar gravado sobre técnicas eficazes de gestão do tempo e produtividade.</p>
+                    <a href="#" class="btn btn-secondary" data-action="open-modal" data-modal="free-resource">Assistir</a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Newsletter -->
+        <section class="page-section newsletter-section">
+            <div class="newsletter-container">
+                <div class="newsletter-content">
+                    <h2>Subscreva a Nossa Newsletter</h2>
+                    <p>Receba novidades, recursos gratuitos e conteúdos exclusivos diretamente no seu email.</p>
+                    
+                    <form id="newsletterForm" class="newsletter-form" data-brevo-form>
+                        <div class="form-group">
+                            <input type="text" id="nome_newsletter" name="nome_newsletter" placeholder="Nome" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email_newsletter" name="email_newsletter" placeholder="Email" required>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="politica_newsletter" name="politica_newsletter" required>
+                            <label for="politica_newsletter">Li e aceito a <a href="politica_privacidade.html" target="_blank">Política de Privacidade</a>*</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Subscrever</button>
+                    </form>
+                </div>
+                <div class="newsletter-image">
+                    <img src="images/newsletter-image.jpg" alt="Newsletter">
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">
+                <img src="assets/img/logos/share2inspire_logo.png" alt="Share2Inspire Logo">
+            </div>
+            <div class="footer-links">
+                <h3>Links Rápidos</h3>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="servicos.html">Serviços</a></li>
+                    <li><a href="sobre.html">Sobre</a></li>
+                    <li><a href="contactos.html">Contactos</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h3>Siga-nos</h3>
+                <div class="social-icons">
+                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://www.instagram.com/samuelrolo.share2inspire/" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-contact">
+                <h3>Contacto</h3>
+                <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
+                <p><i class="fas fa-phone"></i> +351 912 345 678</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 SHARE2INSPIRE. Todos os direitos reservados.</p>
+            <p><a href="politica_privacidade.html">Política de Privacidade</a></p>
+        </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/brevo-integration.js"></script>
+</body>
+</html>

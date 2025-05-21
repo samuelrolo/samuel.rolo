@@ -1,0 +1,62 @@
+<!-- Formulário de serviço completo com todos os campos necessários e upload -->
+<div id="service-form-modal" class="service-form-modal">
+    <div class="service-form-container">
+        <button class="service-form-close" aria-label="Fechar formulário">&times;</button>
+        <h3 class="service-form-title">Solicitar Serviço</h3>
+        <form id="service-form" class="service-form">
+            <input type="hidden" id="service-type" name="service-type" value="">
+            
+            <div class="form-group">
+                <label for="name">Nome *</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Telefone *</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="company">Empresa (se aplicável)</label>
+                <input type="text" id="company" name="company">
+            </div>
+            
+            <div class="form-group full-width">
+                <label for="service-details">Detalhes do pedido *</label>
+                <textarea id="service-details" name="service-details" required></textarea>
+            </div>
+            
+            <div class="form-group full-width">
+                <label for="referral-source">Como nos descobriu? *</label>
+                <select id="referral-source" name="referral-source" required>
+                    <option value="" disabled selected>Selecione uma opção</option>
+                    <option value="google">Pesquisa Google</option>
+                    <option value="linkedin">LinkedIn</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="referral">Recomendação</option>
+                    <option value="other">Outro</option>
+                </select>
+            </div>
+            
+            <div class="form-group full-width">
+                <div class="file-upload-container">
+                    <label for="document-upload" class="file-upload-label">
+                        <i class="fas fa-cloud-upload-alt"></i> Anexar documento (opcional)
+                    </label>
+                    <input type="file" id="document-upload" name="document-upload" class="file-upload-input" accept=".pdf,.doc,.docx,.ppt,.pptx">
+                    <div id="file-name-display" class="file-name-display">Nenhum ficheiro selecionado</div>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-button">Enviar Pedido</button>
+            
+            <div id="form-message" class="form-message" style="display: none;"></div>
+        </form>
+    </div>
+</div>

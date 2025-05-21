@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de Preços - Share2Inspire</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .price-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #3498db;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: white;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #e9f7fe;
+        }
+        .highlight {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 20px 0;
+        }
+        .promo {
+            background-color: #fef9e7;
+            padding: 15px;
+            border-left: 4px solid #f1c40f;
+            margin: 20px 0;
+        }
+        .policy {
+            background-color: #eaecee;
+            padding: 15px;
+            border-left: 4px solid #7f8c8d;
+            margin: 20px 0;
+        }
+        .remote {
+            color: #3498db;
+            font-weight: bold;
+        }
+        .presential {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .discount {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .booking-button {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        .booking-button:hover {
+            background-color: #2980b9;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.9em;
+            }
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            table {
+                font-size: 0.8em;
+            }
+            th, td {
+                padding: 6px 8px;
+            }
+        }
+    </style>
+    <!-- Google tag (gtag.js) --> <script async src="https://www.googletagmanager.com/gtag/js?id=G-LM1JZ9LBY9"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag("js", new Date()); gtag("config", "G-LM1JZ9LBY9"); </script>
+</head>
+<body>
+    <div class="price-container">
+        <h1>Tabela de Modalidades e Preços</h1>
+        <h2>Kickstart Pro | Express Coaching</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Duração</th>
+                    <th>Preço Base</th>
+                    <th>Desconto (2+ sessões)</th>
+                    <th>Preço com Desconto</th>
+                    <th>Preço Presencial</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>15 min</td>
+                    <td>10€</td>
+                    <td>N/A</td>
+                    <td>10€</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td>30 min</td>
+                    <td>20€</td>
+                    <td class="discount">-2,5€ por sessão</td>
+                    <td>17,5€ por sessão</td>
+                    <td>20€</td>
+                </tr>
+                <tr>
+                    <td>45 min</td>
+                    <td>30€</td>
+                    <td class="discount">-5€ por sessão</td>
+                    <td>25€ por sessão</td>
+                    <td>30€</td>
+                </tr>
+                <tr>
+                    <td>60 min</td>
+                    <td>40€</td>
+                    <td class="discount">-7,5€ por sessão</td>
+                    <td>32,5€ por sessão</td>
+                    <td>40€</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="promo">
+            <h3>Promoções Especiais</h3>
+            <ul>
+                <li><strong>Primeiras 10 vagas:</strong> 25% de desconto na primeira marcação</li>
+                <li><strong>Fidelidade:</strong> A cada 5 sessões realizadas, uma sessão adicional gratuita</li>
+            </ul>
+        </div>
+        
+        <h3>Modalidades</h3>
+        
+        <div class="highlight">
+            <h4 class="remote">Sessões Remotas (online)</h4>
+            <ul>
+                <li>Disponíveis em todas as durações (15, 30, 45 ou 60 minutos)</li>
+                <li>Marcação com pelo menos 48h de antecedência</li>
+                <li>Descontos aplicáveis para múltiplas sessões</li>
+            </ul>
+        </div>
+        
+        <div class="highlight">
+            <h4 class="presential">Sessões Presenciais (distrito de Lisboa)</h4>
+            <ul>
+                <li>Disponíveis apenas com duração mínima de 60 minutos</li>
+                <li>Marcação com pelo menos 5 dias úteis de antecedência</li>
+                <li>Bloqueiam o dia inteiro no calendário</li>
+                <li>Não se aplicam descontos de quantidade</li>
+                <li>Sem custos de deslocação</li>
+            </ul>
+        </div>
+        
+        <div class="policy">
+            <h3>Política de Pagamento</h3>
+            <ul>
+                <li>Pagamento no ato da marcação</li>
+                <li>Para valores acima de 10€, é exigido apenas 50% do valor total no momento da reserva (mínimo 10€)</li>
+                <li>Sem reembolso para desistências</li>
+                <li>Em marcações múltiplas, apenas os valores além da primeira sessão podem ser reembolsados (a primeira sessão nunca é reembolsável)</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="#agendar" class="booking-button">Agendar Sessão Agora</a>
+        </div>
+    </div>
+</body>
+</html>
