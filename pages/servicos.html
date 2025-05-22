@@ -222,10 +222,10 @@
                             <h4>Detalhes do Serviço</h4>
                             <p><strong>Duração:</strong> 
                                 <select id="kickstartDuration" class="form-select form-select-sm d-inline-block w-auto ms-2" onchange="updatePrice()">
-                                    <option value="15min">15 minutos (15€)</option>
-                                    <option value="30min" selected>30 minutos (30€)</option>
-                                    <option value="1h">1 hora (45€)</option>
-                                    <option value="test">Teste (1€)</option>
+                                    <option value="15min" data-price="15">15 minutos (15€)</option>
+                                    <option value="30min" data-price="30" selected>30 minutos (30€)</option>
+                                    <option value="1h" data-price="45">1 hora (45€)</option>
+                                    <option value="test" data-price="1">Teste (1€)</option>
                                 </select>
                             </p>
                             <p><strong>Formato:</strong> Online ou Presencial</p>
@@ -240,21 +240,17 @@
                             
                             <script>
                                 function updatePrice() {
-                                    const duration = document.getElementById('kickstartDuration').value;
+                                    const durationSelect = document.getElementById('kickstartDuration');
+                                    const selectedOption = durationSelect.options[durationSelect.selectedIndex];
+                                    const price = selectedOption.getAttribute('data-price');
                                     const priceElement = document.getElementById('kickstartPrice');
                                     
-                                    if (duration === '15min') {
-                                        priceElement.textContent = '15€';
-                                    } else if (duration === '30min') {
-                                        priceElement.textContent = '30€';
-                                    } else if (duration === '1h') {
-                                        priceElement.textContent = '45€';
-                                    } else if (duration === 'test') {
-                                        priceElement.textContent = '1€';
-                                    }
+                                    // Atualizar o texto do preço exibido
+                                    priceElement.textContent = price + '€';
                                     
-                                    // Update hidden field in form
-                                    document.getElementById('kickstartDurationHidden').value = duration;
+                                    // Atualizar campos ocultos no formulário
+                                    document.getElementById('kickstartDurationHidden').value = durationSelect.value;
+                                    document.getElementById('kickstartAmountHidden').value = price;
                                 }
                             </script>
                         </div>
@@ -263,6 +259,7 @@
                             <form id="kickstartForm" class="service-form">
                                 <input type="hidden" name="service" value="Kickstart Pro">
                                 <input type="hidden" id="kickstartDurationHidden" name="duration" value="30min">
+                                <input type="hidden" id="kickstartAmountHidden" name="amount" value="30">
                                 <!-- Campo oculto rating -->
                                 <input type="hidden" name="rating" value="5">
                                 
@@ -582,5 +579,13 @@
     <!-- Custom JS -->
     <script src="../js/main.js"></script>
     <script src="../js/brevo-integration.js"></script>
+    
+    <!-- Inicializar o valor do preço ao carregar a página -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar o valor do preço ao carregar a página
+            updatePrice();
+        });
+    </script>
 </body>
 </html>
