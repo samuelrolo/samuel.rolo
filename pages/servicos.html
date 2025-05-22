@@ -222,8 +222,10 @@
                             <h4>Detalhes do Serviço</h4>
                             <p><strong>Duração:</strong> 
                                 <select id="kickstartDuration" class="form-select form-select-sm d-inline-block w-auto ms-2" onchange="updatePrice()">
-                                    <option value="30min">30 minutos</option>
-                                    <option value="1h">1 hora</option>
+                                    <option value="15min">15 minutos (15€)</option>
+                                    <option value="30min" selected>30 minutos (30€)</option>
+                                    <option value="1h">1 hora (45€)</option>
+                                    <option value="test">Teste (1€)</option>
                                 </select>
                             </p>
                             <p><strong>Formato:</strong> Online ou Presencial</p>
@@ -241,10 +243,14 @@
                                     const duration = document.getElementById('kickstartDuration').value;
                                     const priceElement = document.getElementById('kickstartPrice');
                                     
-                                    if (duration === '30min') {
+                                    if (duration === '15min') {
+                                        priceElement.textContent = '15€';
+                                    } else if (duration === '30min') {
                                         priceElement.textContent = '30€';
-                                    } else {
+                                    } else if (duration === '1h') {
                                         priceElement.textContent = '45€';
+                                    } else if (duration === 'test') {
+                                        priceElement.textContent = '1€';
                                     }
                                     
                                     // Update hidden field in form
@@ -275,6 +281,10 @@
                                 <div class="mb-3">
                                     <label for="kickstartDate" class="form-label">Data Preferencial *</label>
                                     <input type="date" class="form-control" id="kickstartDate" name="date" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="kickstartTime" class="form-label">Hora Preferencial *</label>
+                                    <input type="time" class="form-control" id="kickstartTime" name="time" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="kickstartFormat" class="form-label">Formato *</label>
