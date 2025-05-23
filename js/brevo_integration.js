@@ -3,7 +3,28 @@
  * This file handles all integrations with Brevo email marketing platform
  * and payment processing with Ifthenpay
  */
+// Solução temporária para contornar problemas de CORS e erros 405
+// Adicionar ao início do ficheiro brevo-integration.js
 
+// Configuração global para todos os pedidos fetch
+window.originalFetch = window.fetch;
+window.fetch = function(url, options = {}) {
+    // Garantir que options existe
+    options = options || {};
+    
+    // Adicionar cabeçalhos CORS para todos os pedidos
+    options.headers = options.headers || {};
+    options.headers['X-Requested-With'] = 'XMLHttpRequest';
+    
+    // Adicionar mode: 'cors' para garantir que o navegador trata corretamente
+    options.mode = 'cors';
+    
+    // Adicionar credentials para enviar cookies se necessário
+    options.credentials = 'include';
+    
+    // Chamar o fetch original com as opções modificadas
+    return window.originalFetch(url, options);
+};
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all Brevo forms
