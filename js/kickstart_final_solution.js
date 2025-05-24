@@ -1,107 +1,77 @@
-// Solução final para o formulário Kickstart Pro
-// Adaptado especificamente para o HTML real do site Share2Inspire
+// Solução final para formulários Kickstart Pro
+// Este script substitui completamente o comportamento AJAX por submissão tradicional HTML
+// Deve ser adicionado ao final da página servicos.html
+
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Script de solução Kickstart Pro carregado');
+    // Configurar todos os formulários de serviço para submissão tradicional
+    const serviceForms = document.querySelectorAll('.service-form');
     
-    // Encontrar o botão que abre o modal Kickstart Pro
-    const kickstartButton = document.querySelector('button[data-bs-target="#kickstartModal"]');
-    if (kickstartButton) {
-        console.log('Botão Kickstart Pro encontrado');
-    }
-    
-    // Interceptar o formulário quando o modal for aberto
-    document.body.addEventListener('shown.bs.modal', function(event) {
-        if (event.target.id === 'kickstartModal') {
-            console.log('Modal Kickstart Pro aberto');
-            
-            // Encontrar o formulário dentro do modal
-            const kickstartForm = document.getElementById('kickstartForm');
-            if (kickstartForm) {
-                console.log('Formulário Kickstart Pro encontrado, aplicando solução');
+    serviceForms.forEach(form => {
+        // Definir atributos para submissão tradicional
+        form.setAttribute('method', 'POST');
+        form.setAttribute('action', 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate');
+        form.setAttribute('target', '_blank'); // Abre resposta em nova aba
+        
+        // Remover qualquer event listener existente
+        const newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
+        
+        // Adicionar campo oculto para orderId
+        const orderIdField = document.createElement('input');
+        orderIdField.type = 'hidden';
+        orderIdField.name = 'orderId';
+        orderIdField.value = 'order-' + Date.now();
+        newForm.appendChild(orderIdField);
+        
+        // Corrigir nomes dos campos para corresponder ao backend
+        const fieldMapping = {
+            'name': 'customerName',
+            'email': 'customerEmail',
+            'phone': 'customerPhone',
+            'date': 'serviceDate',
+            'time': 'serviceTime',
+            'format': 'serviceFormat'
+        };
+        
+        // Adicionar campos ocultos com nomes corretos
+        Array.from(newForm.elements).forEach(field => {
+            if (fieldMapping[field.name]) {
+                const hiddenField = document.createElement('input');
+                hiddenField.type = 'hidden';
+                hiddenField.name = fieldMapping[field.name];
                 
-                // Substituir o evento de submissão padrão
-                kickstartForm.addEventListener('submit', function(event) {
-                    // Impedir o comportamento padrão do formulário
-                    event.preventDefault();
-                    console.log('Interceptando submissão do formulário Kickstart Pro');
-                    
-                    // Recolher dados do formulário
-                    const nome = document.querySelector('input[name="nome"]').value;
-                    const email = document.querySelector('input[name="email"]').value;
-                    const telefone = document.querySelector('input[name="telefone"]').value;
-                    const data = document.querySelector('input[name="data"]').value;
-                    const hora = document.querySelector('input[name="hora"]').value;
-                    
-                    // Obter valores dos campos ocultos
-                    const duracao = document.getElementById('kickstartDurationHidden').value;
-                    const amount = document.getElementById('kickstartAmountHidden').value;
-                    
-                    // Criar iframe oculto para evitar redirecionamento
-                    const iframe = document.createElement('iframe');
-                    iframe.name = 'hidden_iframe';
-                    iframe.style.display = 'none';
-                    document.body.appendChild(iframe);
-                    
-                    // Criar formulário temporário para submissão tradicional
-                    const tempForm = document.createElement('form');
-                    tempForm.method = 'POST';
-                    tempForm.action = 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate';
-                    tempForm.target = 'hidden_iframe'; // Enviar para o iframe oculto
-                    
-                    // Adicionar campos ao formulário
-                    const addField = (name, value) => {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = name;
-                        input.value = value || '';
-                        tempForm.appendChild(input);
-                    };
-                    
-                    // Adicionar todos os campos necessários
-                    addField('customerName', nome);
-                    addField('customerEmail', email);
-                    addField('customerPhone', telefone);
-                    addField('serviceDate', data);
-                    addField('serviceTime', hora);
-                    addField('paymentMethod', 'mbway');  // Forçar mbway
-                    addField('amount', amount);  // Usar o valor do campo oculto
-                    addField('service', 'Kickstart Pro');
-                    addField('duration', duracao);
-                    addField('orderId', 'kickstart-' + Date.now());
-                    
-                    // Adicionar ao documento e submeter
-                    document.body.appendChild(tempForm);
-                    tempForm.submit();
-                    
-                    // Mostrar mensagem de confirmação
-                    alert('Formulário enviado com sucesso! Verifique seu email para detalhes do pagamento.');
-                    
-                    // Fechar o modal
-                    const modalElement = document.getElementById('kickstartModal');
-                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                    if (modalInstance) {
-                        modalInstance.hide();
-                    }
-                    
-                    // Limpar formulário original
-                    kickstartForm.reset();
-                    
-                    // Remover formulário temporário e iframe após submissão
-                    setTimeout(() => {
-                        document.body.removeChild(tempForm);
-                        document.body.removeChild(iframe);
-                    }, 1000);
+                // Copiar valor inicial
+                hiddenField.value = field.value;
+                
+                // Adicionar evento para manter sincronizado
+                field.addEventListener('input', function() {
+                    hiddenField.value = this.value;
                 });
                 
-                console.log('Solução tradicional aplicada ao formulário Kickstart Pro');
-            } else {
-                console.warn('Formulário Kickstart Pro não encontrado dentro do modal');
+                // Adicionar evento para select
+                if (field.tagName === 'SELECT') {
+                    field.addEventListener('change', function() {
+                        hiddenField.value = this.value;
+                    });
+                }
+                
+                newForm.appendChild(hiddenField);
             }
+        });
+        
+        // Garantir que o método de pagamento está correto
+        const paymentMethodSelect = newForm.querySelector('#paymentMethod');
+        if (paymentMethodSelect) {
+            // Remover a opção Payshop se existir
+            Array.from(paymentMethodSelect.options).forEach(option => {
+                if (option.value === 'payshop') {
+                    paymentMethodSelect.removeChild(option);
+                }
+            });
         }
+        
+        console.log('Formulário configurado para submissão tradicional:', newForm.id);
     });
     
-    // Inicializar o valor do preço ao carregar a página
-    if (typeof updatePrice === 'function') {
-        updatePrice();
-    }
+    console.log('Solução final para formulários Kickstart Pro instalada com sucesso');
 });
