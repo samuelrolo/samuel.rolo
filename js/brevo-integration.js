@@ -3,28 +3,7 @@
  * This file handles all integrations with Brevo email marketing platform
  * and payment processing with Ifthenpay
  */
-// Solução temporária para contornar problemas de CORS e erros 405
-// Adicionar ao início do ficheiro brevo-integration.js
 
-// Configuração global para todos os pedidos fetch
-window.originalFetch = window.fetch;
-window.fetch = function(url, options = {}) {
-    // Garantir que options existe
-    options = options || {};
-    
-    // Adicionar cabeçalhos CORS para todos os pedidos
-    options.headers = options.headers || {};
-    options.headers['X-Requested-With'] = 'XMLHttpRequest';
-    
-    // Adicionar mode: 'cors' para garantir que o navegador trata corretamente
-    options.mode = 'cors';
-    
-    // Adicionar credentials para enviar cookies se necessário
-    options.credentials = 'include';
-    
-    // Chamar o fetch original com as opções modificadas
-    return window.originalFetch(url, options);
-};
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all Brevo forms
@@ -52,72 +31,40 @@ function initBrevoForms() {
  * Setup newsletter subscription forms
  */
 function setupNewsletterForms() {
-    const newsletterForm = document.getElementById('newsletterForm');
+    const newsletterForms = document.querySelectorAll('.newsletter-form');
     
-    if (!newsletterForm) return;
-    
-    newsletterForm.addEventListener('submit', function(e) {
-        e.preventDefault();
+    newsletterForms.forEach(form => {
+        if (!form) return;
         
-        const submitButton = this.querySelector('button[type="submit"]');
-        const statusMessage = document.getElementById('newsletterStatus');
+        // Create message element if it doesn't exist
+        let messageElement = form.querySelector('.form-message');
+        if (!messageElement) {
+            messageElement = document.createElement('div');
+            messageElement.className = 'form-message mt-3';
+            form.appendChild(messageElement);
+        }
         
-        // Disable submit button and show loading state
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A processar...';
-        
-        // Get form data
-        const formData = new FormData(newsletterForm);
-        const data = {
-            email: formData.get('email'),
-            source: 'website_newsletter'
-        };
-        
-        // Send data to backend
-        fetch('https://share2inspire-beckend.lm.r.appspot.com/api/feedback/newsletter', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro na resposta do servidor: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Show success message
-            if (statusMessage) {
-                statusMessage.innerHTML = '<div class="alert alert-success">Subscrição realizada com sucesso!</div>';
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const emailInput = form.querySelector('input[type="email"]');
+            if (!emailInput) return;
+            
+            const email = emailInput.value;
+            if (!validateEmail(email)) {
+                showFormMessage(messageElement, 'Por favor, insira um email válido.', 'error');
+                return;
             }
             
-            // Reset form
-            newsletterForm.reset();
+            // Prepare data for API
+            const data = {
+                email: email,
+                source: 'website_newsletter'
+            };
             
-            // Re-enable submit button
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Subscrever';
-            
-            // Clear status message after 3 seconds
-            setTimeout(() => {
-                if (statusMessage) {
-                    statusMessage.innerHTML = '';
-                }
-            }, 3000);
-        })
-        .catch(error => {
-            console.error('Erro ao processar subscrição:', error);
-            
-            // Show error message
-            if (statusMessage) {
-                statusMessage.innerHTML = '<div class="alert alert-danger">Erro ao processar pedido. Por favor tente novamente.</div>';
-            }
-            
-            // Re-enable submit button
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Subscrever';
+            // Send to backend
+            sendToBrevo('/api/feedback/newsletter', data, messageElement, 'Subscrição realizada com sucesso! Obrigado por se juntar à nossa newsletter.', form);
         });
     });
 }
@@ -127,75 +74,43 @@ function setupNewsletterForms() {
  */
 function setupContactForm() {
     const contactForm = document.getElementById('contactForm');
-    
     if (!contactForm) return;
+    
+    // Create message element if it doesn't exist
+    let formMessage = document.getElementById('formMessage');
+    if (!formMessage) {
+        formMessage = document.createElement('div');
+        formMessage.id = 'formMessage';
+        formMessage.className = 'mt-3';
+        contactForm.appendChild(formMessage);
+    }
     
     contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const submitButton = this.querySelector('button[type="submit"]');
-        const statusMessage = document.getElementById('contactStatus');
-        
-        // Disable submit button and show loading state
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A enviar...';
-        
         // Get form data
-        const formData = new FormData(contactForm);
+        const name = contactForm.querySelector('input[name="name"]')?.value || '';
+        const email = contactForm.querySelector('input[name="email"]')?.value || '';
+        const subject = contactForm.querySelector('input[name="subject"]')?.value || 'Contacto do Website';
+        const message = contactForm.querySelector('textarea[name="message"]')?.value || '';
+        
+        // Validate email
+        if (!validateEmail(email)) {
+            showFormMessage(formMessage, 'Por favor, insira um email válido.', 'error');
+            return;
+        }
+        
+        // Prepare data for API
         const data = {
-            name: formData.get('name'),
-            email: formData.get('email'),
-            phone: formData.get('phone') || '',
-            message: formData.get('message'),
+            name: name,
+            email: email,
+            subject: subject,
+            message: message,
             source: 'website_contact'
         };
         
-        // Send data to backend
-        fetch('https://share2inspire-beckend.lm.r.appspot.com/api/feedback/contact', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro na resposta do servidor: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Show success message
-            if (statusMessage) {
-                statusMessage.innerHTML = '<div class="alert alert-success">Mensagem enviada com sucesso! Entraremos em contacto brevemente.</div>';
-            }
-            
-            // Reset form
-            contactForm.reset();
-            
-            // Re-enable submit button
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Enviar Mensagem';
-            
-            // Clear status message after 5 seconds
-            setTimeout(() => {
-                if (statusMessage) {
-                    statusMessage.innerHTML = '';
-                }
-            }, 5000);
-        })
-        .catch(error => {
-            console.error('Erro ao enviar mensagem:', error);
-            
-            // Show error message
-            if (statusMessage) {
-                statusMessage.innerHTML = '<div class="alert alert-danger">Erro ao processar pedido. Por favor tente novamente.</div>';
-            }
-            
-            // Re-enable submit button
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Enviar Mensagem';
-        });
+        // Send to backend
+        sendToBrevo('/api/feedback/submit', data, formMessage, 'Mensagem enviada com sucesso! Entraremos em contacto brevemente.', contactForm);
     });
 }
 
@@ -203,139 +118,170 @@ function setupContactForm() {
  * Setup service booking forms
  */
 function setupServiceForms() {
-    // Kickstart Pro form
-    setupServiceForm('kickstartForm', 'kickstartStatus');
+    const serviceForms = document.querySelectorAll('.service-form');
     
-    // Consultoria form
-    setupServiceForm('consultoriaForm', 'consultoriaStatus');
-    
-    // Coaching form
-    setupServiceForm('coachingForm', 'coachingStatus');
-    
-    // Workshops form
-    setupServiceForm('workshopsForm', 'workshopsStatus');
+    serviceForms.forEach(form => {
+        if (!form) return;
+        
+        // Create message element if it doesn't exist
+        let messageElement = form.querySelector('.form-message');
+        if (!messageElement) {
+            messageElement = document.createElement('div');
+            messageElement.className = 'form-message mt-3';
+            form.appendChild(messageElement);
+        }
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+            
+            // Add source information
+            data.source = 'website_service_' + (form.id || 'unknown');
+            
+            // If this is the kickstart form, process payment
+            if (form.id === 'kickstartForm') {
+                processKickstartPayment(data, messageElement);
+            } else {
+                // For other forms, send to backend
+                sendToBrevo('/api/feedback/submit', data, messageElement, 'Pedido recebido com sucesso! Entraremos em contacto brevemente.', form);
+            }
+        });
+    });
 }
 
 /**
- * Setup a specific service booking form
+ * Process Kickstart Pro payment with Ifthenpay
+ * @param {Object} data - Form data
+ * @param {HTMLElement} messageElement - Message element for feedback
  */
-function setupServiceForm(formId, statusId) {
-    const form = document.getElementById(formId);
+function processKickstartPayment(data, messageElement) {
+    // Show loading message
+    showFormMessage(messageElement, 'A processar o seu pedido. Por favor aguarde...', 'info');
     
-    if (!form) return;
+    // Get payment details from form
+    const duration = data.duration || '30min';
+    const price = duration === '30min' ? 30 : 45;
+    const name = data.name || '';
+    const email = data.email || '';
+    const phone = data.phone || '';
+    const date = data.date || '';
+    const format = data.format || 'Online';
     
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
+    // Generate unique order ID
+    const orderId = 'KP' + Date.now();
+    
+    // Prepare payment data for API
+    const paymentData = {
+        paymentMethod: 'mb', // Default to Multibanco
+        orderId: orderId,
+        amount: price,
+        customerName: name,
+        customerEmail: email,
+        customerPhone: phone,
+        description: `Kickstart Pro ${duration} - ${format} - ${date}`
+    };
+    
+    // URL completo do backend
+    const baseUrl = 'https://share2inspire-beckend.lm.r.appspot.com';
+    const fullUrl = baseUrl + '/api/payment/initiate';
+    
+    console.log('Enviando dados para:', fullUrl);
+    console.log('Dados:', paymentData);
+    
+    // Call backend API to initiate payment
+    fetch(fullUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(paymentData)
+    })
+    .then(response => {
+        console.log('Resposta recebida:', response.status, response.statusText);
         
-        const submitButton = this.querySelector('button[type="submit"]');
-        const statusMessage = document.getElementById(statusId);
-        
-        // Disable submit button and show loading state
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A processar...';
-        
-        // Get form data
-        const formData = new FormData(form);
-        const data = {
-            service: formData.get('service'),
-            name: formData.get('name'),
-            email: formData.get('email'),
-            phone: formData.get('phone'),
-            date: formData.get('date') || '',
-            time: formData.get('time') || '',
-            format: formData.get('format') || '',
-            message: formData.get('message') || '',
-            duration: formData.get('duration') || '',
-            amount: formData.get('amount') || '',
-            paymentMethod: formData.get('paymentMethod') || '',
-            source: 'website_service_booking'
-        };
-        
-        // Send data to backend
-        fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro na resposta do servidor: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                // Handle payment methods
-                if (data.paymentMethod === 'mbway') {
-                    // Show MBWAY payment info
-                    if (statusMessage) {
-                        statusMessage.innerHTML = `
-                            <div class="alert alert-success">
-                                <h5>Pagamento MB WAY</h5>
-                                <p>Foi enviado um pedido de pagamento para o número ${data.phone}.</p>
-                                <p>Por favor, aceite o pagamento na aplicação MB WAY.</p>
-                            </div>
-                        `;
-                    }
-                } else if (data.paymentMethod === 'multibanco') {
-                    // Show Multibanco payment info
-                    if (statusMessage) {
-                        statusMessage.innerHTML = `
-                            <div class="alert alert-success">
-                                <h5>Pagamento por Referência Multibanco</h5>
-                                <p>Entidade: ${data.entity}</p>
-                                <p>Referência: ${data.reference}</p>
-                                <p>Valor: ${data.amount}€</p>
-                                <p>A referência é válida por 48 horas.</p>
-                            </div>
-                        `;
-                    }
-                } else if (data.paymentMethod === 'payshop') {
-                    // Show Payshop payment info
-                    if (statusMessage) {
-                        statusMessage.innerHTML = `
-                            <div class="alert alert-success">
-                                <h5>Pagamento por Referência Payshop</h5>
-                                <p>Referência: ${data.reference}</p>
-                                <p>Valor: ${data.amount}€</p>
-                                <p>A referência é válida por 48 horas.</p>
-                            </div>
-                        `;
-                    }
-                } else {
-                    // Generic success message
-                    if (statusMessage) {
-                        statusMessage.innerHTML = '<div class="alert alert-success">Reserva processada com sucesso! Receberá um email com os detalhes.</div>';
-                    }
+        // Verificar se a resposta é JSON
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            return response.json().then(data => {
+                if (!response.ok) {
+                    throw new Error(data.error || `Erro ${response.status}: ${response.statusText}`);
                 }
+                return data;
+            });
+        } else {
+            // Se não for JSON, obter o texto e mostrar erro
+            return response.text().then(text => {
+                console.error('Resposta não-JSON recebida:', text);
+                throw new Error(`Resposta inesperada do servidor (${response.status})`);
+            });
+        }
+    })
+    .then(result => {
+        if (result.success) {
+            // Payment initiated successfully
+            showFormMessage(messageElement, 'Pagamento iniciado com sucesso! Redirecionando...', 'success');
+            
+            // Also send form data to Brevo for email notification
+            sendToBrevo('/api/feedback/submit', {
+                ...data,
+                paymentReference: result.reference || orderId,
+                paymentAmount: price,
+                paymentMethod: 'Multibanco',
+                source: 'website_kickstart_payment'
+            }, null, null, null, false);
+            
+            // Redirect to success page with payment details
+            setTimeout(() => {
+                const params = new URLSearchParams({
+                    duration: duration,
+                    amount: price,
+                    date: date,
+                    format: format,
+                    reference: result.reference || '',
+                    entity: result.entity || '',
+                    method: result.method || 'mb'
+                });
                 
-                // Reset form
-                form.reset();
-            } else {
-                // Show error message from server
-                if (statusMessage) {
-                    statusMessage.innerHTML = `<div class="alert alert-danger">${data.message || 'Erro ao processar pedido. Por favor tente novamente.'}</div>`;
-                }
-            }
+                window.location.href = `/pages/pagamento-sucesso.html?${params.toString()}`;
+            }, 1500);
+        } else {
+            // Payment failed
+            showFormMessage(messageElement, result.error || 'Erro ao processar pagamento. Por favor tente novamente.', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao processar pagamento:', error);
+        showFormMessage(messageElement, error.message || 'Erro ao processar pagamento. Por favor tente novamente.', 'error');
+        
+        // For development/testing only - remove in production
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            console.log('Ambiente de desenvolvimento detectado. Simulando pagamento bem-sucedido...');
             
-            // Re-enable submit button
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Submeter';
-        })
-        .catch(error => {
-            console.error('Erro ao processar reserva:', error);
-            
-            // Show error message
-            if (statusMessage) {
-                statusMessage.innerHTML = '<div class="alert alert-danger">Erro ao processar pedido. Por favor tente novamente.</div>';
-            }
-            
-            // Re-enable submit button
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Submeter';
-        });
+            setTimeout(() => {
+                showFormMessage(messageElement, 'Pagamento simulado com sucesso! Redirecionando...', 'success');
+                
+                setTimeout(() => {
+                    const params = new URLSearchParams({
+                        duration: duration,
+                        amount: price,
+                        date: date,
+                        format: format,
+                        reference: '123456789',
+                        entity: '11111',
+                        method: 'mb'
+                    });
+                    
+                    window.location.href = `/pages/pagamento-sucesso.html?${params.toString()}`;
+                }, 1500);
+            }, 1000);
+        }
     });
 }
 
@@ -344,92 +290,192 @@ function setupServiceForm(formId, statusId) {
  */
 function setupFeedbackForm() {
     const feedbackForm = document.getElementById('feedbackForm');
-    
     if (!feedbackForm) return;
+    
+    // Create message element if it doesn't exist
+    let feedbackFormMessage = document.getElementById('feedbackFormMessage');
+    if (!feedbackFormMessage) {
+        feedbackFormMessage = document.createElement('div');
+        feedbackFormMessage.id = 'feedbackFormMessage';
+        feedbackFormMessage.className = 'mt-3';
+        feedbackForm.appendChild(feedbackFormMessage);
+    }
     
     feedbackForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const submitButton = this.querySelector('button[type="submit"]');
-        const statusMessage = document.getElementById('feedbackStatus');
-        
-        // Disable submit button and show loading state
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A enviar...';
-        
         // Get form data
-        const formData = new FormData(feedbackForm);
+        const name = feedbackForm.querySelector('input[name="name"]')?.value || '';
+        const email = feedbackForm.querySelector('input[name="email"]')?.value || '';
+        const rating = feedbackForm.querySelector('select[name="rating"]')?.value || '5';
+        const message = feedbackForm.querySelector('textarea[name="message"]')?.value || '';
+        
+        // Validate email
+        if (email && !validateEmail(email)) {
+            showFormMessage(feedbackFormMessage, 'Por favor, insira um email válido.', 'error');
+            return;
+        }
+        
+        // Prepare data for API
         const data = {
-            name: formData.get('name'),
-            email: formData.get('email'),
-            message: formData.get('message'),
-            rating: formData.get('rating') || '5', // Default to 5 if not provided
+            name: name,
+            email: email,
+            rating: rating,
+            message: message,
             source: 'website_feedback'
         };
         
-        // Send data to backend
-        fetch('https://share2inspire-beckend.lm.r.appspot.com/api/feedback/submit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro na resposta do servidor: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Show success message
-            if (statusMessage) {
-                statusMessage.innerHTML = '<div class="alert alert-success">Feedback enviado com sucesso! Obrigado pelo seu contributo.</div>';
-            }
-            
-            // Reset form
-            feedbackForm.reset();
-            
-            // Reset star rating to 5
-            document.getElementById('rating').value = 5;
-            const stars = document.querySelectorAll('#rating-stars .star');
-            stars.forEach(star => {
-                const starRating = parseInt(star.getAttribute('data-rating'));
-                if (starRating <= 5) {
-                    star.classList.add('active');
-                } else {
-                    star.classList.remove('active');
-                }
-            });
-            
-            // Re-enable submit button
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Enviar Feedback';
-            
-            // Close modal after 2 seconds
+        // Send to backend
+        sendToBrevo('/api/feedback/submit', data, feedbackFormMessage, 'Obrigado pelo seu feedback! A sua opinião é muito importante para nós.', feedbackForm, true, function() {
+            // Close modal after 3 seconds
             setTimeout(() => {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('feedbackModal'));
-                if (modal) modal.hide();
-                
-                // Clear status message after modal is closed
-                if (statusMessage) {
-                    setTimeout(() => {
-                        statusMessage.innerHTML = '';
-                    }, 500);
+                const feedbackModal = document.getElementById('feedbackModal');
+                if (feedbackModal) {
+                    const modal = bootstrap.Modal.getInstance(feedbackModal);
+                    if (modal) modal.hide();
                 }
-            }, 2000);
-        })
-        .catch(error => {
-            console.error('Erro ao enviar feedback:', error);
-            
-            // Show error message
-            if (statusMessage) {
-                statusMessage.innerHTML = '<div class="alert alert-danger">Erro ao processar pedido. Por favor tente novamente.</div>';
-            }
-            
-            // Re-enable submit button
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Enviar Feedback';
+            }, 3000);
         });
     });
+}
+
+/**
+ * Send data to Brevo API via backend
+ * @param {string} endpoint - API endpoint
+ * @param {Object} data - Data to send
+ * @param {HTMLElement} messageElement - Message element for feedback
+ * @param {string} successMessage - Success message to show
+ * @param {HTMLFormElement} form - Form to reset on success
+ * @param {boolean} scrollToMessage - Whether to scroll to message
+ * @param {Function} callback - Callback function on success
+ */
+function sendToBrevo(endpoint, data, messageElement, successMessage, form, scrollToMessage = true, callback = null) {
+    // Mostrar URL completo para depuração
+    console.log('Enviando dados para:', endpoint);
+    console.log('Dados:', data);
+    
+    // Mostrar mensagem de carregamento
+    if (messageElement) {
+        showFormMessage(messageElement, 'A processar o seu pedido. Por favor aguarde...', 'info', scrollToMessage);
+    }
+    
+    // URL completo do backend
+    const baseUrl = 'https://share2inspire-beckend.lm.r.appspot.com';
+    const fullUrl = endpoint.startsWith('http') ? endpoint : baseUrl + endpoint;
+    
+    // Enviar dados para o backend
+    fetch(fullUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        console.log('Resposta recebida:', response.status, response.statusText);
+        
+        // Verificar se a resposta é JSON
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            return response.json().then(data => {
+                if (!response.ok) {
+                    throw new Error(data.error || `Erro ${response.status}: ${response.statusText}`);
+                }
+                return data;
+            });
+        } else {
+            // Se não for JSON, obter o texto e mostrar erro
+            return response.text().then(text => {
+                console.error('Resposta não-JSON recebida:', text);
+                throw new Error(`Resposta inesperada do servidor (${response.status})`);
+            });
+        }
+    })
+    .then(result => {
+        // Success
+        if (messageElement && successMessage) {
+            showFormMessage(messageElement, successMessage, 'success', scrollToMessage);
+        }
+        
+        // Reset form if provided
+        if (form) {
+            form.reset();
+        }
+        
+        // Call callback if provided
+        if (callback && typeof callback === 'function') {
+            callback(result);
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao enviar dados:', error);
+        
+        // Show error message if message element exists
+        if (messageElement) {
+            showFormMessage(messageElement, error.message || 'Erro ao processar pedido. Por favor tente novamente.', 'error', scrollToMessage);
+        }
+        
+        // For development/testing only - simulate success in local environment
+        if ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && messageElement && successMessage) {
+            console.log('Ambiente de desenvolvimento detectado. Simulando sucesso...');
+            
+            setTimeout(() => {
+                showFormMessage(messageElement, successMessage + ' (SIMULADO)', 'success', scrollToMessage);
+                
+                // Reset form if provided
+                if (form) {
+                    form.reset();
+                }
+                
+                // Call callback if provided
+                if (callback && typeof callback === 'function') {
+                    callback({status: 'success', simulated: true});
+                }
+            }, 1000);
+        }
+    });
+}
+
+/**
+ * Show form message
+ * @param {HTMLElement} element - Message element
+ * @param {string} message - Message to show
+ * @param {string} type - Message type (success, error, info)
+ * @param {boolean} scrollToMessage - Whether to scroll to message
+ */
+function showFormMessage(element, message, type, scrollToMessage = true) {
+    if (!element) return;
+    
+    // Clear previous content
+    element.innerHTML = '';
+    
+    // Create alert element
+    const alertElement = document.createElement('div');
+    
+    // Set appropriate class based on type
+    let alertClass = 'alert-info';
+    if (type === 'success') alertClass = 'alert-success';
+    else if (type === 'error') alertClass = 'alert-danger';
+    
+    alertElement.className = `alert ${alertClass}`;
+    alertElement.textContent = message;
+    
+    // Append to message element
+    element.appendChild(alertElement);
+    
+    // Scroll to message if requested
+    if (scrollToMessage) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+}
+
+/**
+ * Validate email format
+ * @param {string} email - Email to validate
+ * @returns {boolean} - Whether email is valid
+ */
+function validateEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
 }
