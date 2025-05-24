@@ -263,31 +263,30 @@
                         </div>
                         <div class="col-md-6">
                             <h4>Agendar Sessão</h4>
-                            <form id="kickstartForm" class="service-form" method="POST" action="https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate" target="_blank">
+                            <form id="kickstartForm" class="service-form">
                                 <input type="hidden" name="service" value="Kickstart Pro">
                                 <input type="hidden" id="kickstartDurationHidden" name="duration" value="30min">
                                 <input type="hidden" id="kickstartAmountHidden" name="amount" value="30">
-                                <input type="hidden" name="orderId" value="kickstart-<?php echo time(); ?>">
                                 
                                 <div class="mb-3">
                                     <label for="kickstartName" class="form-label">Nome Completo *</label>
-                                    <input type="text" class="form-control" id="kickstartName" name="customerName" required>
+                                    <input type="text" class="form-control" id="kickstartName" name="name" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="kickstartEmail" class="form-label">Email *</label>
-                                    <input type="email" class="form-control" id="kickstartEmail" name="customerEmail" required>
+                                    <input type="email" class="form-control" id="kickstartEmail" name="email" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="kickstartPhone" class="form-label">Telefone *</label>
-                                    <input type="tel" class="form-control" id="kickstartPhone" name="customerPhone" required>
+                                    <input type="tel" class="form-control" id="kickstartPhone" name="phone" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="kickstartDate" class="form-label">Data Preferencial *</label>
-                                    <input type="date" class="form-control" id="kickstartDate" name="serviceDate" required>
+                                    <input type="date" class="form-control" id="kickstartDate" name="date" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="kickstartTime" class="form-label">Hora Preferencial *</label>
-                                    <input type="time" class="form-control" id="kickstartTime" name="serviceTime" required>
+                                    <input type="time" class="form-control" id="kickstartTime" name="time" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="kickstartFormat" class="form-label">Formato *</label>
@@ -306,9 +305,9 @@
                                     </select>
                                 </div>
                                 <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary">SUBMETER E PROSSEGUIR PARA O PAGAMENTO</button>
+                                    <button type="submit" class="btn btn-primary">SUBMETER</button>
                                 </div>
-                                <div class="form-message mt-3"></div>
+                                <div id="kickstartStatus" class="form-message mt-3"></div>
                             </form>
                         </div>
                     </div>
@@ -372,7 +371,7 @@
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">SUBMETER</button>
                         </div>
-                        <div class="form-message mt-3"></div>
+                        <div id="consultoriaStatus" class="form-message mt-3"></div>
                     </form>
                 </div>
             </div>
@@ -443,7 +442,7 @@
                                 <div class="d-grid">
                                     <button type="submit" class="btn btn-primary">SUBMETER</button>
                                 </div>
-                                <div class="form-message mt-3"></div>
+                                <div id="coachingStatus" class="form-message mt-3"></div>
                             </form>
                         </div>
                     </div>
@@ -505,7 +504,7 @@
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">SUBMETER</button>
                         </div>
-                        <div class="form-message mt-3"></div>
+                        <div id="workshopsStatus" class="form-message mt-3"></div>
                     </form>
                 </div>
             </div>
@@ -566,13 +565,5 @@
     <!-- Custom JS -->
     <script src="../js/main.js"></script>
     <script src="../js/brevo-integration.js"></script>
-    
-    <!-- Inicializar o valor do preço ao carregar a página -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar o valor do preço ao carregar a página
-            updatePrice();
-        });
-    </script>
 </body>
 </html>
