@@ -296,6 +296,7 @@
                                         <option value="Presencial">Presencial</option>
                                     </select>
                                 </div>
+                                <!-- Seletor de método de pagamento -->
                                 <div class="mb-3">
                                     <label for="paymentMethod" class="form-label">Método de Pagamento *</label>
                                     <select class="form-control" id="paymentMethod" name="paymentMethod" required>
@@ -305,7 +306,7 @@
                                     </select>
                                 </div>
                                 <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary">SUBMETER</button>
+                                    <button type="submit" class="btn btn-primary">SUBMETER E PROSSEGUIR PARA O PAGAMENTO</button>
                                 </div>
                                 <div class="form-message mt-3"></div>
                             </form>
@@ -326,6 +327,8 @@
                 </div>
                 <div class="modal-body">
                     <form id="consultoriaForm" class="service-form">
+                        <input type="hidden" name="service" value="Consultoria Organizacional">
+                        
                         <div class="mb-3">
                             <label for="consultoriaName" class="form-label">Nome Completo *</label>
                             <input type="text" class="form-control" id="consultoriaName" name="name" required>
