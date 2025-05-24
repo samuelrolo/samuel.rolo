@@ -173,12 +173,15 @@ function processKickstartPayment(data, messageElement) {
     const date = data.date || '';
     const format = data.format || 'Online';
     
+    // Get payment method from form (NEW)
+    const paymentMethod = data.paymentMethod || 'mb';
+    
     // Generate unique order ID
     const orderId = 'KP' + Date.now();
     
     // Prepare payment data for API
     const paymentData = {
-        paymentMethod: 'mb', // Default to Multibanco
+        paymentMethod: paymentMethod, // Use selected method instead of hardcoded 'mb'
         orderId: orderId,
         amount: price,
         customerName: name,
@@ -233,7 +236,7 @@ function processKickstartPayment(data, messageElement) {
                 ...data,
                 paymentReference: result.reference || orderId,
                 paymentAmount: price,
-                paymentMethod: 'Multibanco',
+                paymentMethod: getPaymentMethodName(paymentMethod), // Use function to get friendly name
                 source: 'website_kickstart_payment'
             }, null, null, null, false);
             
@@ -246,7 +249,7 @@ function processKickstartPayment(data, messageElement) {
                     format: format,
                     reference: result.reference || '',
                     entity: result.entity || '',
-                    method: result.method || 'mb'
+                    method: result.method || paymentMethod // Use selected method
                 });
                 
                 window.location.href = `/pages/pagamento-sucesso.html?${params.toString()}`;
@@ -275,7 +278,7 @@ function processKickstartPayment(data, messageElement) {
                         format: format,
                         reference: '123456789',
                         entity: '11111',
-                        method: 'mb'
+                        method: paymentMethod // Use selected method
                     });
                     
                     window.location.href = `/pages/pagamento-sucesso.html?${params.toString()}`;
@@ -283,6 +286,24 @@ function processKickstartPayment(data, messageElement) {
             }, 1000);
         }
     });
+}
+
+/**
+ * Get friendly name for payment method
+ * @param {string} method - Payment method code
+ * @returns {string} - Friendly name
+ */
+function getPaymentMethodName(method) {
+    switch(method) {
+        case 'mb':
+            return 'Multibanco';
+        case 'mbway':
+            return 'MB WAY';
+        case 'payshop':
+            return 'Payshop';
+        default:
+            return 'Multibanco';
+    }
 }
 
 /**
