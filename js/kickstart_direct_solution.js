@@ -1,77 +1,77 @@
-// Solução direta para o formulário de pagamento Kickstart Pro
-// Este script deve ser adicionado diretamente na página servicos.html
+// Solução final para formulários Kickstart Pro
+// Este script substitui completamente o comportamento AJAX por submissão tradicional HTML
+// Deve ser adicionado ao final da página servicos.html
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Encontrar o formulário de pagamento Kickstart Pro
-    const kickstartForm = document.querySelector('form');
+    // Configurar todos os formulários de serviço para submissão tradicional
+    const serviceForms = document.querySelectorAll('.service-form');
     
-    if (kickstartForm) {
-        console.log('Formulário Kickstart Pro encontrado, aplicando solução direta');
+    serviceForms.forEach(form => {
+        // Definir atributos para submissão tradicional
+        form.setAttribute('method', 'POST');
+        form.setAttribute('action', 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate');
+        form.setAttribute('target', '_blank'); // Abre resposta em nova aba
         
-        // Substituir o evento de submissão padrão
-        kickstartForm.addEventListener('submit', function(event) {
-            // Impedir o comportamento padrão do formulário
-            event.preventDefault();
-            
-            console.log('Interceptando submissão do formulário Kickstart Pro');
-            
-            // Coletar dados do formulário
-            const nome = document.querySelector('input[name="nome"], input[name="name"], input#nome, input#name').value;
-            const email = document.querySelector('input[name="email"], input[type="email"], input#email').value;
-            const telefone = document.querySelector('input[name="telefone"], input[name="phone"], input#telefone, input#phone').value;
-            const data = document.querySelector('input[name="data"], input[type="date"], input#data').value;
-            const hora = document.querySelector('input[name="hora"], input[type="time"], input#hora').value;
-            const formato = document.querySelector('select[name="formato"], select#formato').value;
-            const metodo = document.querySelector('select[name*="pagamento"], select[name*="payment"], select#metodo').value;
-            
-            // Criar objeto de dados no formato exato que o backend espera
-            const paymentData = {
-                customerName: nome,
-                customerEmail: email,
-                customerPhone: telefone,
-                serviceDate: data,
-                serviceTime: hora,
-                serviceFormat: formato,
-                paymentMethod: metodo.toLowerCase().replace(/\s+/g, ''), // Normalizar método (remover espaços)
-                amount: 30, // Valor fixo para Kickstart Pro
-                orderId: 'kickstart-' + Date.now() // Gerar ID único
-            };
-            
-            console.log('Dados preparados para envio:', paymentData);
-            
-            // Enviar dados diretamente para o backend
-            fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Origin': 'https://share2inspire.pt'
-                },
-                body: JSON.stringify(paymentData)
-            })
-            .then(response => {
-                console.log('Resposta recebida:', response);
-                return response.json();
-            })
-            .then(data => {
-                console.log('Dados da resposta:', data);
-                if (data.success) {
-                    // Sucesso - mostrar mensagem e limpar formulário
-                    alert('Pagamento iniciado com sucesso! ' + data.message);
-                    kickstartForm.reset();
-                } else {
-                    // Erro - mostrar mensagem
-                    alert('Erro ao processar pagamento: ' + (data.error || 'Erro desconhecido'));
+        // Remover qualquer event listener existente
+        const newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
+        
+        // Adicionar campo oculto para orderId
+        const orderIdField = document.createElement('input');
+        orderIdField.type = 'hidden';
+        orderIdField.name = 'orderId';
+        orderIdField.value = 'order-' + Date.now();
+        newForm.appendChild(orderIdField);
+        
+        // Corrigir nomes dos campos para corresponder ao backend
+        const fieldMapping = {
+            'name': 'customerName',
+            'email': 'customerEmail',
+            'phone': 'customerPhone',
+            'date': 'serviceDate',
+            'time': 'serviceTime',
+            'format': 'serviceFormat'
+        };
+        
+        // Adicionar campos ocultos com nomes corretos
+        Array.from(newForm.elements).forEach(field => {
+            if (fieldMapping[field.name]) {
+                const hiddenField = document.createElement('input');
+                hiddenField.type = 'hidden';
+                hiddenField.name = fieldMapping[field.name];
+                
+                // Copiar valor inicial
+                hiddenField.value = field.value;
+                
+                // Adicionar evento para manter sincronizado
+                field.addEventListener('input', function() {
+                    hiddenField.value = this.value;
+                });
+                
+                // Adicionar evento para select
+                if (field.tagName === 'SELECT') {
+                    field.addEventListener('change', function() {
+                        hiddenField.value = this.value;
+                    });
                 }
-            })
-            .catch(error => {
-                console.error('Erro na requisição:', error);
-                alert('Erro ao comunicar com o servidor. Por favor, tente novamente mais tarde.');
-            });
+                
+                newForm.appendChild(hiddenField);
+            }
         });
         
-        console.log('Solução direta aplicada ao formulário Kickstart Pro');
-    } else {
-        console.warn('Formulário Kickstart Pro não encontrado');
-    }
+        // Garantir que o método de pagamento está correto
+        const paymentMethodSelect = newForm.querySelector('#paymentMethod');
+        if (paymentMethodSelect) {
+            // Remover a opção Payshop se existir
+            Array.from(paymentMethodSelect.options).forEach(option => {
+                if (option.value === 'payshop') {
+                    paymentMethodSelect.removeChild(option);
+                }
+            });
+        }
+        
+        console.log('Formulário configurado para submissão tradicional:', newForm.id);
+    });
+    
+    console.log('Solução final para formulários Kickstart Pro instalada com sucesso');
 });
