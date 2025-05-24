@@ -231,10 +231,8 @@
                             <h4>Detalhes do Serviço</h4>
                             <p><strong>Duração:</strong> 
                                 <select id="kickstartDuration" class="form-select form-select-sm d-inline-block w-auto ms-2" onchange="updatePrice()">
-                                    <option value="15min" data-price="15">15 minutos (15€)</option>
                                     <option value="30min" data-price="30" selected>30 minutos (30€)</option>
                                     <option value="1h" data-price="45">1 hora (45€)</option>
-                                    <option value="test" data-price="1">Teste (1€)</option>
                                 </select>
                             </p>
                             <p><strong>Formato:</strong> Online ou Presencial</p>
@@ -298,16 +296,15 @@
                                         <option value="Presencial">Presencial</option>
                                     </select>
                                 </div>
-                                <!-- Seletor de método de pagamento -->
                                 <div class="mb-3">
                                     <label for="paymentMethod" class="form-label">Método de Pagamento *</label>
                                     <select class="form-control" id="paymentMethod" name="paymentMethod" required>
                                         <option value="mb">Multibanco</option>
-                                        <option value="mbway">MB WAY</option>
+                                        <option value="mbway" selected>MB WAY</option>
                                     </select>
                                 </div>
                                 <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary">SUBMETER E PROSSEGUIR PARA O PAGAMENTO</button>
+                                    <button type="submit" class="btn btn-primary">SUBMETER</button>
                                 </div>
                                 <div class="form-message mt-3"></div>
                             </form>
@@ -328,45 +325,48 @@
                 </div>
                 <div class="modal-body">
                     <form id="consultoriaForm" class="service-form">
-                        <input type="hidden" name="service" value="Consultoria Organizacional">
-                        <!-- Campo oculto rating -->
-                        <input type="hidden" name="rating" value="5">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="consultoriaName" class="form-label">Nome Completo *</label>
-                                    <input type="text" class="form-control" id="consultoriaName" name="name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="consultoriaEmail" class="form-label">Email *</label>
-                                    <input type="email" class="form-control" id="consultoriaEmail" name="email" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="consultoriaPhone" class="form-label">Telefone *</label>
-                                    <input type="tel" class="form-control" id="consultoriaPhone" name="phone" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="consultoriaCompany" class="form-label">Empresa *</label>
-                                    <input type="text" class="form-control" id="consultoriaCompany" name="company" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="consultoriaPosition" class="form-label">Cargo *</label>
-                                    <input type="text" class="form-control" id="consultoriaPosition" name="position" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="consultoriaIndustry" class="form-label">Setor de Atividade *</label>
-                                    <input type="text" class="form-control" id="consultoriaIndustry" name="industry" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="consultoriaMessage" class="form-label">Desafio Principal *</label>
-                                    <textarea class="form-control" id="consultoriaMessage" name="message" rows="4" required></textarea>
-                                </div>
-                            </div>
+                        <div class="mb-3">
+                            <label for="consultoriaName" class="form-label">Nome Completo *</label>
+                            <input type="text" class="form-control" id="consultoriaName" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="consultoriaEmail" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="consultoriaEmail" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="consultoriaPhone" class="form-label">Telefone *</label>
+                            <input type="tel" class="form-control" id="consultoriaPhone" name="phone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="consultoriaCompany" class="form-label">Empresa *</label>
+                            <input type="text" class="form-control" id="consultoriaCompany" name="company" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="consultoriaRole" class="form-label">Cargo *</label>
+                            <input type="text" class="form-control" id="consultoriaRole" name="role" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="consultoriaSector" class="form-label">Setor de Atividade *</label>
+                            <input type="text" class="form-control" id="consultoriaSector" name="sector" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="consultoriaChallenge" class="form-label">Desafio Principal *</label>
+                            <select class="form-select" id="consultoriaChallenge" name="challenge" required>
+                                <option value="">Selecione...</option>
+                                <option value="Cultura">Cultura Organizacional</option>
+                                <option value="Processos">Processos e Políticas</option>
+                                <option value="Estratégia">Estratégia e Inovação</option>
+                                <option value="Comunicação">Comunicação Interna</option>
+                                <option value="Bem-estar">Bem-estar e Produtividade</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="consultoriaMessage" class="form-label">Mensagem *</label>
+                            <textarea class="form-control" id="consultoriaMessage" name="message" rows="4" required></textarea>
                         </div>
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">SUBMETER PEDIDO</button>
+                            <button type="submit" class="btn btn-primary">SUBMETER</button>
                         </div>
                         <div class="form-message mt-3"></div>
                     </form>
@@ -380,16 +380,27 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="coachingModalLabel">Agendar Sessão Inicial de Coaching</h5>
+                    <h5 class="modal-title" id="coachingModalLabel">Agendar Sessão de Coaching</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="coachingForm" class="service-form">
-                        <input type="hidden" name="service" value="Coaching Executivo">
-                        <!-- Campo oculto rating -->
-                        <input type="hidden" name="rating" value="5">
-                        <div class="row">
-                            <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Detalhes do Serviço</h4>
+                            <p><strong>Investimento:</strong> 120€</p>
+                            <p><strong>Inclui:</strong></p>
+                            <ul>
+                                <li>Sessão inicial de 90 minutos</li>
+                                <li>Avaliação de necessidades</li>
+                                <li>Proposta de programa personalizado</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Agendar Sessão Inicial</h4>
+                            <form id="coachingForm" class="service-form">
+                                <input type="hidden" name="service" value="Coaching Executivo">
+                                <input type="hidden" name="amount" value="120">
+                                
                                 <div class="mb-3">
                                     <label for="coachingName" class="form-label">Nome Completo *</label>
                                     <input type="text" class="form-control" id="coachingName" name="name" required>
@@ -403,30 +414,35 @@
                                     <input type="tel" class="form-control" id="coachingPhone" name="phone" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="coachingCompany" class="form-label">Empresa</label>
-                                    <input type="text" class="form-control" id="coachingCompany" name="company">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="coachingPosition" class="form-label">Cargo</label>
-                                    <input type="text" class="form-control" id="coachingPosition" name="position">
+                                    <label for="coachingCompany" class="form-label">Empresa *</label>
+                                    <input type="text" class="form-control" id="coachingCompany" name="company" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="coachingObjectives" class="form-label">Objetivos Principais *</label>
-                                    <textarea class="form-control" id="coachingObjectives" name="objectives" rows="3" required></textarea>
+                                    <label for="coachingRole" class="form-label">Cargo *</label>
+                                    <input type="text" class="form-control" id="coachingRole" name="role" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="coachingPreferences" class="form-label">Preferências de Horário</label>
-                                    <textarea class="form-control" id="coachingPreferences" name="preferences" rows="2"></textarea>
+                                    <label for="coachingDate" class="form-label">Data Preferencial *</label>
+                                    <input type="date" class="form-control" id="coachingDate" name="date" required>
                                 </div>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="coachingTime" class="form-label">Hora Preferencial *</label>
+                                    <input type="time" class="form-control" id="coachingTime" name="time" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="coachingFormat" class="form-label">Formato *</label>
+                                    <select class="form-select" id="coachingFormat" name="format" required>
+                                        <option value="Online">Online</option>
+                                        <option value="Presencial">Presencial</option>
+                                    </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">SUBMETER</button>
+                                </div>
+                                <div class="form-message mt-3"></div>
+                            </form>
                         </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">SUBMETER PEDIDO</button>
-                        </div>
-                        <div class="form-message mt-3"></div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -442,53 +458,48 @@
                 </div>
                 <div class="modal-body">
                     <form id="workshopsForm" class="service-form">
-                        <input type="hidden" name="service" value="Workshops e Formações">
-                        <!-- Campo oculto rating -->
-                        <input type="hidden" name="rating" value="5">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="workshopsName" class="form-label">Nome Completo *</label>
-                                    <input type="text" class="form-control" id="workshopsName" name="name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="workshopsEmail" class="form-label">Email *</label>
-                                    <input type="email" class="form-control" id="workshopsEmail" name="email" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="workshopsPhone" class="form-label">Telefone *</label>
-                                    <input type="tel" class="form-control" id="workshopsPhone" name="phone" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="workshopsCompany" class="form-label">Empresa *</label>
-                                    <input type="text" class="form-control" id="workshopsCompany" name="company" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="workshopsPosition" class="form-label">Cargo *</label>
-                                    <input type="text" class="form-control" id="workshopsPosition" name="position" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="workshopsTopics" class="form-label">Temas de Interesse *</label>
-                                    <select class="form-select" id="workshopsTopics" name="topics" required>
-                                        <option value="">Selecione um tema</option>
-                                        <option value="Liderança Consciente">Liderança Consciente e Adaptativa</option>
-                                        <option value="Gestão da Mudança">Gestão da Mudança e Resiliência</option>
-                                        <option value="Comunicação Estratégica">Comunicação Estratégica e Influência</option>
-                                        <option value="Inovação">Inovação e Pensamento Criativo</option>
-                                        <option value="Bem-estar">Bem-estar e Performance Sustentável</option>
-                                        <option value="Outro">Outro (especificar abaixo)</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="workshopsMessage" class="form-label">Mensagem Adicional</label>
-                                    <textarea class="form-control" id="workshopsMessage" name="message" rows="3"></textarea>
-                                </div>
-                            </div>
+                        <div class="mb-3">
+                            <label for="workshopsName" class="form-label">Nome Completo *</label>
+                            <input type="text" class="form-control" id="workshopsName" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="workshopsEmail" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="workshopsEmail" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="workshopsPhone" class="form-label">Telefone *</label>
+                            <input type="tel" class="form-control" id="workshopsPhone" name="phone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="workshopsCompany" class="form-label">Empresa *</label>
+                            <input type="text" class="form-control" id="workshopsCompany" name="company" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="workshopsRole" class="form-label">Cargo *</label>
+                            <input type="text" class="form-control" id="workshopsRole" name="role" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="workshopsTopic" class="form-label">Tema de Interesse *</label>
+                            <select class="form-select" id="workshopsTopic" name="topic" required>
+                                <option value="">Selecione...</option>
+                                <option value="Liderança">Liderança Consciente</option>
+                                <option value="Mudança">Gestão da Mudança</option>
+                                <option value="Comunicação">Comunicação Estratégica</option>
+                                <option value="Inovação">Inovação e Criatividade</option>
+                                <option value="Bem-estar">Bem-estar e Performance</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="workshopsParticipants" class="form-label">Número Estimado de Participantes *</label>
+                            <input type="number" class="form-control" id="workshopsParticipants" name="participants" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="workshopsMessage" class="form-label">Mensagem *</label>
+                            <textarea class="form-control" id="workshopsMessage" name="message" rows="4" required></textarea>
                         </div>
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">SUBMETER PEDIDO</button>
+                            <button type="submit" class="btn btn-primary">SUBMETER</button>
                         </div>
                         <div class="form-message mt-3"></div>
                     </form>
@@ -497,7 +508,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="row">
