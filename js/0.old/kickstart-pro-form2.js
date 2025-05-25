@@ -98,12 +98,6 @@ function setupKickstartProForm() {
         .then(data => {
             console.log('Dados recebidos do servidor:', data);
             
-            // Remover a mensagem genérica de sucesso que pode estar a sobrepor-se
-            const genericSuccessMessage = document.querySelector('.alert-success');
-            if (genericSuccessMessage) {
-                genericSuccessMessage.remove();
-            }
-            
             if (data.success) {
                 // Handle payment methods
                 if (data.paymentMethod === 'mbway') {
@@ -116,34 +110,23 @@ function setupKickstartProForm() {
                         </div>
                     `;
                 } else if (data.paymentMethod === 'mb') {
-                    // Show Multibanco payment info with detailed debugging
-                    console.log('Detalhes Multibanco:', {
-                        entity: data.entity || 'Não disponível',
-                        reference: data.reference || 'Não disponível',
-                        amount: data.amount || 'Não disponível'
-                    });
-                    
+                    // Show Multibanco payment info
                     formMessage.innerHTML = `
                         <div class="alert alert-success">
                             <h5>Pagamento por Referência Multibanco</h5>
-                            <p><strong>Entidade:</strong> ${data.entity || 'Aguardando...'}</p>
-                            <p><strong>Referência:</strong> ${data.reference || 'Aguardando...'}</p>
-                            <p><strong>Valor:</strong> ${data.amount || price}€</p>
+                            <p>Entidade: ${data.entity}</p>
+                            <p>Referência: ${data.reference}</p>
+                            <p>Valor: ${data.amount}€</p>
                             <p>A referência é válida por 48 horas.</p>
                         </div>
                     `;
                 } else if (data.paymentMethod === 'payshop') {
-                    // Show Payshop payment info with detailed debugging
-                    console.log('Detalhes Payshop:', {
-                        reference: data.reference || 'Não disponível',
-                        amount: data.amount || 'Não disponível'
-                    });
-                    
+                    // Show Payshop payment info
                     formMessage.innerHTML = `
                         <div class="alert alert-success">
                             <h5>Pagamento por Referência Payshop</h5>
-                            <p><strong>Referência:</strong> ${data.reference || 'Aguardando...'}</p>
-                            <p><strong>Valor:</strong> ${data.amount || price}€</p>
+                            <p>Referência: ${data.reference}</p>
+                            <p>Valor: ${data.amount}€</p>
                             <p>A referência é válida por 48 horas.</p>
                         </div>
                     `;
@@ -151,12 +134,6 @@ function setupKickstartProForm() {
                     // Generic success message
                     formMessage.innerHTML = '<div class="alert alert-success">Reserva processada com sucesso! Receberá um email com os detalhes.</div>';
                 }
-                
-                // Garantir que a mensagem é visível
-                formMessage.style.display = 'block';
-                
-                // Scroll para a mensagem
-                formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 
                 // Reset form
                 kickstartForm.reset();
