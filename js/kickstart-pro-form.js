@@ -23,12 +23,12 @@ function setupKickstartProForm() {
         e.preventDefault();
         
         const submitButton = this.querySelector('button[type="submit"]');
-        const statusMessage = document.getElementById('kickstartStatus') || document.createElement('div');
+        const formMessage = this.querySelector('.form-message') || document.createElement('div');
         
-        // Garantir que o elemento de status existe
-        if (!document.getElementById('kickstartStatus')) {
-            statusMessage.id = 'kickstartStatus';
-            kickstartForm.appendChild(statusMessage);
+        // Garantir que o elemento de mensagem existe
+        if (!this.querySelector('.form-message')) {
+            formMessage.className = 'form-message mt-3';
+            kickstartForm.appendChild(formMessage);
         }
         
         // Desabilitar botão e mostrar estado de carregamento
@@ -43,14 +43,17 @@ function setupKickstartProForm() {
             email: formData.get('email'),
             phone: formData.get('phone'),
             date: formData.get('date') || '',
-            time: formData.get('time') || '',
             format: formData.get('format') || '',
-            message: formData.get('message') || '',
             duration: formData.get('duration') || '',
-            amount: formData.get('amount') || '',
             paymentMethod: formData.get('paymentMethod') || '',
             source: 'website_service_booking'
         };
+        
+        // Adicionar o campo hora que estava em falta
+        const horaInput = document.getElementById('kickstartHora');
+        if (horaInput) {
+            data.time = horaInput.value || '';
+        }
         
         // Enviar dados para o backend - MANTENDO EXATAMENTE O ENDPOINT ORIGINAL
         fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate', {
@@ -71,71 +74,59 @@ function setupKickstartProForm() {
                 // Handle payment methods
                 if (data.paymentMethod === 'mbway') {
                     // Show MBWAY payment info
-                    if (statusMessage) {
-                        statusMessage.innerHTML = `
-                            <div class="alert alert-success">
-                                <h5>Pagamento MB WAY</h5>
-                                <p>Foi enviado um pedido de pagamento para o número ${data.phone}.</p>
-                                <p>Por favor, aceite o pagamento na aplicação MB WAY.</p>
-                            </div>
-                        `;
-                    }
-                } else if (data.paymentMethod === 'multibanco') {
+                    formMessage.innerHTML = `
+                        <div class="alert alert-success">
+                            <h5>Pagamento MB WAY</h5>
+                            <p>Foi enviado um pedido de pagamento para o número ${data.phone}.</p>
+                            <p>Por favor, aceite o pagamento na aplicação MB WAY.</p>
+                        </div>
+                    `;
+                } else if (data.paymentMethod === 'mb') {
                     // Show Multibanco payment info
-                    if (statusMessage) {
-                        statusMessage.innerHTML = `
-                            <div class="alert alert-success">
-                                <h5>Pagamento por Referência Multibanco</h5>
-                                <p>Entidade: ${data.entity}</p>
-                                <p>Referência: ${data.reference}</p>
-                                <p>Valor: ${data.amount}€</p>
-                                <p>A referência é válida por 48 horas.</p>
-                            </div>
-                        `;
-                    }
+                    formMessage.innerHTML = `
+                        <div class="alert alert-success">
+                            <h5>Pagamento por Referência Multibanco</h5>
+                            <p>Entidade: ${data.entity}</p>
+                            <p>Referência: ${data.reference}</p>
+                            <p>Valor: ${data.amount}€</p>
+                            <p>A referência é válida por 48 horas.</p>
+                        </div>
+                    `;
                 } else if (data.paymentMethod === 'payshop') {
                     // Show Payshop payment info
-                    if (statusMessage) {
-                        statusMessage.innerHTML = `
-                            <div class="alert alert-success">
-                                <h5>Pagamento por Referência Payshop</h5>
-                                <p>Referência: ${data.reference}</p>
-                                <p>Valor: ${data.amount}€</p>
-                                <p>A referência é válida por 48 horas.</p>
-                            </div>
-                        `;
-                    }
+                    formMessage.innerHTML = `
+                        <div class="alert alert-success">
+                            <h5>Pagamento por Referência Payshop</h5>
+                            <p>Referência: ${data.reference}</p>
+                            <p>Valor: ${data.amount}€</p>
+                            <p>A referência é válida por 48 horas.</p>
+                        </div>
+                    `;
                 } else {
                     // Generic success message
-                    if (statusMessage) {
-                        statusMessage.innerHTML = '<div class="alert alert-success">Reserva processada com sucesso! Receberá um email com os detalhes.</div>';
-                    }
+                    formMessage.innerHTML = '<div class="alert alert-success">Reserva processada com sucesso! Receberá um email com os detalhes.</div>';
                 }
                 
                 // Reset form
                 kickstartForm.reset();
             } else {
                 // Show error message from server
-                if (statusMessage) {
-                    statusMessage.innerHTML = `<div class="alert alert-danger">${data.message || 'Erro ao processar pedido. Por favor tente novamente.'}</div>`;
-                }
+                formMessage.innerHTML = `<div class="alert alert-danger">${data.message || 'Erro ao processar pedido. Por favor tente novamente.'}</div>`;
             }
             
             // Re-enable submit button
             submitButton.disabled = false;
-            submitButton.innerHTML = 'Submeter';
+            submitButton.innerHTML = 'SUBMETER E PROSSEGUIR PARA O PAGAMENTO';
         })
         .catch(error => {
             console.error('Erro ao processar reserva:', error);
             
             // Show error message
-            if (statusMessage) {
-                statusMessage.innerHTML = '<div class="alert alert-danger">Erro ao processar pedido. Por favor tente novamente.</div>';
-            }
+            formMessage.innerHTML = '<div class="alert alert-danger">Erro ao processar pedido. Por favor tente novamente.</div>';
             
             // Re-enable submit button
             submitButton.disabled = false;
-            submitButton.innerHTML = 'Submeter';
+            submitButton.innerHTML = 'SUBMETER E PROSSEGUIR PARA O PAGAMENTO';
         });
     });
 }
