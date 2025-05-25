@@ -37,67 +37,39 @@ function setupKickstartProForm() {
         
         // Obter dados do formulário
         const formData = new FormData(kickstartForm);
-        
-        // Obter valores específicos para garantir o formato correto
-        const name = formData.get('name') || '';
-        const email = formData.get('email') || '';
-        const phone = formData.get('phone') || '';
-        const date = formData.get('date') || '';
-        const format = formData.get('format') || 'Online';
-        const duration = formData.get('duration') || '30min';
-        const paymentMethod = formData.get('paymentMethod') || 'mb';
-        
-        // Calcular o preço com base na duração
-        const price = duration === '30min' ? 30 : 45;
-        
-        // Gerar ID de pedido único
-        const orderId = 'KP' + Date.now();
-        
-        // Preparar dados no formato exato esperado pelo backend
         const data = {
-            service: 'Kickstart Pro',
-            name: name,
-            email: email,
-            phone: phone,
-            date: date,
-            format: format,
-            duration: duration,
-            paymentMethod: paymentMethod,
-            amount: price,
-            orderId: orderId,
-            description: `Kickstart Pro ${duration} - ${format} - ${date}`,
-            customerName: name,
-            customerEmail: email,
-            customerPhone: phone,
+            service: formData.get('service'),
+            name: formData.get('name'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            date: formData.get('date') || '',
+            format: formData.get('format') || '',
+            duration: formData.get('duration') || '',
+            paymentMethod: formData.get('paymentMethod') || '',
             source: 'website_service_booking'
         };
         
-        console.log('Enviando dados para o backend:', data);
+        // Adicionar o campo hora que estava em falta
+        const horaInput = document.getElementById('kickstartHora');
+        if (horaInput) {
+            data.time = horaInput.value || '';
+        }
         
         // Enviar dados para o backend - MANTENDO EXATAMENTE O ENDPOINT ORIGINAL
         fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Origin': 'https://share2inspire.pt',
-                'Accept': 'application/json'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
         })
         .then(response => {
-            console.log('Resposta do servidor:', response.status, response.statusText);
-            
             if (!response.ok) {
-                return response.text().then(text => {
-                    console.error('Erro na resposta do servidor:', response.status, text);
-                    throw new Error('Erro na resposta do servidor: ' + response.status);
-                });
+                throw new Error('Erro na resposta do servidor: ' + response.status);
             }
             return response.json();
         })
         .then(data => {
-            console.log('Dados recebidos do servidor:', data);
-            
             if (data.success) {
                 // Handle payment methods
                 if (data.paymentMethod === 'mbway') {
