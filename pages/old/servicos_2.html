@@ -235,22 +235,6 @@
                                 <li>Plano de ação detalhado</li>
                                 <li>Follow-up de 30 minutos (após 2 semanas)</li>
                             </ul>
-                            
-                            <script>
-                                function updatePrice() {
-                                    const duration = document.getElementById('kickstartDuration').value;
-                                    const priceElement = document.getElementById('kickstartPrice');
-                                    
-                                    if (duration === '30min') {
-                                        priceElement.textContent = '30€';
-                                    } else {
-                                        priceElement.textContent = '45€';
-                                    }
-                                    
-                                    // Update hidden field in form
-                                    document.getElementById('kickstartDurationHidden').value = duration;
-                                }
-                            </script>
                         </div>
                         <div class="col-md-6">
                             <h4>Agendar Sessão</h4>
@@ -273,33 +257,32 @@
                                     <input type="tel" class="form-control" id="kickstartPhone" name="phone" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="kickstartDate" class="form-label">Data Preferencial *</label>
-                                    <input type="date" class="form-control" id="kickstartDate" name="date" required>
+                                    <label for="kickstartDate" class="form-label">Data Preferencial</label>
+                                    <input type="date" class="form-control" id="kickstartDate" name="date">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="kickstartHora" class="form-label">Hora Preferencial *</label>
-                                    <input type="time" class="form-control" id="kickstartHora" name="time" required>
+                                    <label for="kickstartTime" class="form-label">Hora Preferencial</label>
+                                    <input type="time" class="form-control" id="kickstartTime" name="time">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="kickstartFormat" class="form-label">Formato *</label>
-                                    <select class="form-select" id="kickstartFormat" name="format" required>
+                                    <label for="kickstartFormat" class="form-label">Formato</label>
+                                    <select class="form-select" id="kickstartFormat" name="format">
                                         <option value="Online">Online</option>
                                         <option value="Presencial">Presencial</option>
                                     </select>
                                 </div>
-                                <!-- Seletor de método de pagamento -->
                                 <div class="mb-3">
-                                    <label for="paymentMethod" class="form-label">Método de Pagamento *</label>
-                                    <select class="form-control" id="paymentMethod" name="paymentMethod" required>
-                                        <option value="mb">Multibanco</option>
+                                    <label for="kickstartPaymentMethod" class="form-label">Método de Pagamento</label>
+                                    <select class="form-select" id="kickstartPaymentMethod" name="paymentMethod">
                                         <option value="mbway">MB WAY</option>
-                                        <option value="payshop">Payshop</option>
+                                        <option value="multibanco">Referência Multibanco</option>
+                                        <option value="payshop">Referência Payshop</option>
                                     </select>
                                 </div>
                                 <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary">SUBMETER E PROSSEGUIR PARA O PAGAMENTO</button>
+                                    <button type="submit" class="btn btn-primary">Submeter</button>
                                 </div>
-                                <div class="form-message mt-3"></div>
+                                <div id="kickstartStatus" class="form-message mt-3"></div>
                             </form>
                         </div>
                     </div>
@@ -342,31 +325,33 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="consultoriaArea" class="form-label">Área de Intervenção Principal *</label>
-                                    <select class="form-select" id="consultoriaArea" name="area" required>
-                                        <option value="">Selecione uma opção</option>
-                                        <option value="Transformação Cultural">Transformação Cultural</option>
-                                        <option value="Desenvolvimento de Liderança">Desenvolvimento de Liderança</option>
-                                        <option value="Estratégia e Inovação">Estratégia e Inovação</option>
-                                        <option value="Comunicação Interna">Comunicação Interna</option>
-                                        <option value="Bem-estar Organizacional">Bem-estar Organizacional</option>
-                                        <option value="Outro">Outro</option>
+                                    <label for="consultoriaIndustry" class="form-label">Setor de Atividade</label>
+                                    <input type="text" class="form-control" id="consultoriaIndustry" name="industry">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="consultoriaEmployees" class="form-label">Número de Colaboradores</label>
+                                    <select class="form-select" id="consultoriaEmployees" name="employees">
+                                        <option value="1-10">1-10</option>
+                                        <option value="11-50">11-50</option>
+                                        <option value="51-200">51-200</option>
+                                        <option value="201-500">201-500</option>
+                                        <option value="501+">501+</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="consultoriaMessage" class="form-label">Descrição do Projeto/Necessidade *</label>
-                                    <textarea class="form-control" id="consultoriaMessage" name="message" rows="5" required></textarea>
+                                    <label for="consultoriaChallenges" class="form-label">Principais Desafios</label>
+                                    <textarea class="form-control" id="consultoriaChallenges" name="challenges" rows="3"></textarea>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="consultoriaFile" class="form-label">Anexar Ficheiro (opcional)</label>
-                                    <input class="form-control" type="file" id="consultoriaFile" name="file">
+                                    <label for="consultoriaMessage" class="form-label">Informações Adicionais</label>
+                                    <textarea class="form-control" id="consultoriaMessage" name="message" rows="2"></textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">Solicitar Proposta</button>
                         </div>
-                        <div class="form-message mt-3"></div>
+                        <div id="consultoriaStatus" class="form-message mt-3"></div>
                     </form>
                 </div>
             </div>
@@ -384,22 +369,25 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h4>Sobre o Programa</h4>
-                            <p>O programa de Coaching Executivo inicia-se com uma sessão de diagnóstico de 30 minutos, onde iremos:</p>
+                            <h4>Detalhes do Serviço</h4>
+                            <p><strong>Duração:</strong> 60 minutos</p>
+                            <p><strong>Formato:</strong> Online ou Presencial</p>
+                            <p><strong>Investimento:</strong> Gratuito (Sessão Inicial)</p>
+                            <p><strong>Inclui:</strong></p>
                             <ul>
-                                <li>Explorar os seus objetivos e desafios</li>
-                                <li>Avaliar se o coaching é a abordagem adequada</li>
-                                <li>Explicar a metodologia e processo</li>
-                                <li>Responder às suas questões</li>
+                                <li>Avaliação inicial de necessidades</li>
+                                <li>Definição de objetivos preliminares</li>
+                                <li>Apresentação da metodologia</li>
+                                <li>Proposta personalizada de programa</li>
                             </ul>
-                            <p>Após esta sessão inicial, caso decida avançar, será apresentada uma proposta personalizada.</p>
                         </div>
                         <div class="col-md-6">
-                            <h4>Agendar Sessão Inicial</h4>
+                            <h4>Agendar Sessão</h4>
                             <form id="coachingForm" class="service-form">
                                 <input type="hidden" name="service" value="Coaching Executivo">
                                 <!-- Campo oculto rating -->
                                 <input type="hidden" name="rating" value="5">
+                                
                                 <div class="mb-3">
                                     <label for="coachingName" class="form-label">Nome Completo *</label>
                                     <input type="text" class="form-control" id="coachingName" name="name" required>
@@ -423,7 +411,7 @@
                                 <div class="d-grid">
                                     <button type="submit" class="btn btn-primary">Agendar Sessão Inicial</button>
                                 </div>
-                                <div class="form-message mt-3"></div>
+                                <div id="coachingStatus" class="form-message mt-3"></div>
                             </form>
                         </div>
                     </div>
@@ -498,7 +486,7 @@
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">Solicitar Informações</button>
                         </div>
-                        <div class="form-message mt-3"></div>
+                        <div id="workshopsStatus" class="form-message mt-3"></div>
                     </form>
                 </div>
             </div>
@@ -575,7 +563,6 @@
     
     <!-- Custom JS -->
     <script src="../js/main.js"></script>
-    <script src="../js/feedback.js"></script>
     
     <!-- Formulários Separados -->
     <script src="../js/kickstart-pro-form.js"></script>
