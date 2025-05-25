@@ -37,39 +37,73 @@ function setupKickstartProForm() {
         
         // Obter dados do formulário
         const formData = new FormData(kickstartForm);
+        
+        // Obter valores específicos para garantir o formato correto
+        const name = formData.get('name') || '';
+        const email = formData.get('email') || '';
+        const phone = formData.get('phone') || '';
+        const date = formData.get('date') || '';
+        const format = formData.get('format') || 'Online';
+        const duration = formData.get('duration') || '30min';
+        const paymentMethod = formData.get('paymentMethod') || 'mb';
+        
+        // Calcular o preço com base na duração
+        const price = duration === '30min' ? 30 : 45;
+        
+        // Gerar ID de pedido único
+        const orderId = 'KP' + Date.now();
+        
+        // Preparar dados no formato exato esperado pelo backend
         const data = {
-            service: formData.get('service'),
-            name: formData.get('name'),
-            email: formData.get('email'),
-            phone: formData.get('phone'),
-            date: formData.get('date') || '',
-            format: formData.get('format') || '',
-            duration: formData.get('duration') || '',
-            paymentMethod: formData.get('paymentMethod') || '',
+            service: 'Kickstart Pro',
+            name: name,
+            email: email,
+            phone: phone,
+            date: date,
+            format: format,
+            duration: duration,
+            paymentMethod: paymentMethod,
+            amount: price,
+            orderId: orderId,
+            description: `Kickstart Pro ${duration} - ${format} - ${date}`,
+            customerName: name,
+            customerEmail: email,
+            customerPhone: phone,
             source: 'website_service_booking'
         };
         
-        // Adicionar o campo hora que estava em falta
-        const horaInput = document.getElementById('kickstartHora');
-        if (horaInput) {
-            data.time = horaInput.value || '';
-        }
+        console.log('Enviando dados para o backend:', data);
         
         // Enviar dados para o backend - MANTENDO EXATAMENTE O ENDPOINT ORIGINAL
         fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Origin': 'https://share2inspire.pt',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(data)
         })
         .then(response => {
+            console.log('Resposta do servidor:', response.status, response.statusText);
+            
             if (!response.ok) {
-                throw new Error('Erro na resposta do servidor: ' + response.status);
+                return response.text().then(text => {
+                    console.error('Erro na resposta do servidor:', response.status, text);
+                    throw new Error('Erro na resposta do servidor: ' + response.status);
+                });
             }
             return response.json();
         })
         .then(data => {
+            console.log('Dados recebidos do servidor:', data);
+            
+            // Remover a mensagem genérica de sucesso que pode estar a sobrepor-se
+            const genericSuccessMessage = document.querySelector('.alert-success');
+            if (genericSuccessMessage) {
+                genericSuccessMessage.remove();
+            }
+            
             if (data.success) {
                 // Handle payment methods
                 if (data.paymentMethod === 'mbway') {
@@ -82,23 +116,34 @@ function setupKickstartProForm() {
                         </div>
                     `;
                 } else if (data.paymentMethod === 'mb') {
-                    // Show Multibanco payment info
+                    // Show Multibanco payment info with detailed debugging
+                    console.log('Detalhes Multibanco:', {
+                        entity: data.entity || 'Não disponível',
+                        reference: data.reference || 'Não disponível',
+                        amount: data.amount || 'Não disponível'
+                    });
+                    
                     formMessage.innerHTML = `
                         <div class="alert alert-success">
                             <h5>Pagamento por Referência Multibanco</h5>
-                            <p>Entidade: ${data.entity}</p>
-                            <p>Referência: ${data.reference}</p>
-                            <p>Valor: ${data.amount}€</p>
+                            <p><strong>Entidade:</strong> ${data.entity || 'Aguardando...'}</p>
+                            <p><strong>Referência:</strong> ${data.reference || 'Aguardando...'}</p>
+                            <p><strong>Valor:</strong> ${data.amount || price}€</p>
                             <p>A referência é válida por 48 horas.</p>
                         </div>
                     `;
                 } else if (data.paymentMethod === 'payshop') {
-                    // Show Payshop payment info
+                    // Show Payshop payment info with detailed debugging
+                    console.log('Detalhes Payshop:', {
+                        reference: data.reference || 'Não disponível',
+                        amount: data.amount || 'Não disponível'
+                    });
+                    
                     formMessage.innerHTML = `
                         <div class="alert alert-success">
                             <h5>Pagamento por Referência Payshop</h5>
-                            <p>Referência: ${data.reference}</p>
-                            <p>Valor: ${data.amount}€</p>
+                            <p><strong>Referência:</strong> ${data.reference || 'Aguardando...'}</p>
+                            <p><strong>Valor:</strong> ${data.amount || price}€</p>
                             <p>A referência é válida por 48 horas.</p>
                         </div>
                     `;
@@ -106,6 +151,12 @@ function setupKickstartProForm() {
                     // Generic success message
                     formMessage.innerHTML = '<div class="alert alert-success">Reserva processada com sucesso! Receberá um email com os detalhes.</div>';
                 }
+                
+                // Garantir que a mensagem é visível
+                formMessage.style.display = 'block';
+                
+                // Scroll para a mensagem
+                formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 
                 // Reset form
                 kickstartForm.reset();
