@@ -1,5 +1,5 @@
 /**
- * Formulário de Consultoria Organizacional - Share2Inspire
+ * Formulário de Workshops e Formações - Share2Inspire
  * 
  * Versão corrigida para resolver o erro 405 (Method Not Allowed)
  * Principais correções:
@@ -9,19 +9,19 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar o formulário de Consultoria
-    setupConsultoriaForm();
+    // Inicializar o formulário de Workshops
+    setupWorkshopsForm();
 });
 
 /**
- * Configura o formulário de Consultoria
+ * Configura o formulário de Workshops
  */
-function setupConsultoriaForm() {
-    const consultoriaForm = document.getElementById('consultoriaForm');
+function setupWorkshopsForm() {
+    const workshopsForm = document.getElementById('workshopsForm');
     
-    if (!consultoriaForm) return;
+    if (!workshopsForm) return;
     
-    consultoriaForm.addEventListener('submit', function(e) {
+    workshopsForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
         const submitButton = this.querySelector('button[type="submit"]');
@@ -30,7 +30,7 @@ function setupConsultoriaForm() {
         // Garantir que o elemento de mensagem existe
         if (!this.querySelector('.form-message')) {
             formMessage.className = 'form-message mt-3';
-            consultoriaForm.appendChild(formMessage);
+            workshopsForm.appendChild(formMessage);
         }
         
         // Desabilitar botão e mostrar estado de carregamento
@@ -38,10 +38,10 @@ function setupConsultoriaForm() {
         submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A processar...';
         
         // Obter dados do formulário
-        const formData = new FormData(consultoriaForm);
+        const formData = new FormData(workshopsForm);
         
         // Garantir que todos os campos obrigatórios estão preenchidos
-        const requiredFields = ['name', 'email', 'phone', 'company', 'area', 'message'];
+        const requiredFields = ['name', 'email', 'phone', 'company', 'participants', 'workshop'];
         let missingFields = false;
         
         requiredFields.forEach(field => {
@@ -66,10 +66,11 @@ function setupConsultoriaForm() {
             email: formData.get('email'),
             phone: formData.get('phone'),
             company: formData.get('company'),
-            area: formData.get('area'),
-            message: formData.get('message'),
-            subject: 'Solicitação de Proposta de Consultoria',
-            source: 'website_consultoria'
+            participants: formData.get('participants'),
+            workshop: formData.get('workshop'),
+            message: formData.get('message') || '',
+            subject: 'Solicitação de Proposta para Workshop',
+            source: 'website_workshops'
         };
         
         console.log('Enviando dados para o backend:', data);
@@ -146,12 +147,12 @@ function setupConsultoriaForm() {
                     formMessage.innerHTML = `
                         <div class="alert alert-success">
                             <h5>Solicitação Enviada com Sucesso!</h5>
-                            <p>Obrigado pelo seu interesse. Entraremos em contacto brevemente para discutir a sua necessidade e apresentar uma proposta personalizada.</p>
+                            <p>Obrigado pelo seu interesse. Entraremos em contacto brevemente para discutir os detalhes do workshop e apresentar uma proposta personalizada.</p>
                         </div>
                     `;
                     
                     // Resetar formulário
-                    consultoriaForm.reset();
+                    workshopsForm.reset();
                 } else {
                     // Mostrar mensagem de erro do servidor
                     formMessage.innerHTML = `
