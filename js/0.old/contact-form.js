@@ -1,5 +1,5 @@
 /**
- * Formulário de Consultoria Organizacional - Share2Inspire
+ * Formulário de Contacto - Share2Inspire
  * 
  * Versão corrigida para resolver o erro 405 (Method Not Allowed)
  * Principais correções:
@@ -9,19 +9,19 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar o formulário de Consultoria
-    setupConsultoriaForm();
+    // Inicializar o formulário de Contacto
+    setupContactForm();
 });
 
 /**
- * Configura o formulário de Consultoria
+ * Configura o formulário de Contacto
  */
-function setupConsultoriaForm() {
-    const consultoriaForm = document.getElementById('consultoriaForm');
+function setupContactForm() {
+    const contactForm = document.getElementById('contactForm');
     
-    if (!consultoriaForm) return;
+    if (!contactForm) return;
     
-    consultoriaForm.addEventListener('submit', function(e) {
+    contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
         const submitButton = this.querySelector('button[type="submit"]');
@@ -30,18 +30,18 @@ function setupConsultoriaForm() {
         // Garantir que o elemento de mensagem existe
         if (!this.querySelector('.form-message')) {
             formMessage.className = 'form-message mt-3';
-            consultoriaForm.appendChild(formMessage);
+            contactForm.appendChild(formMessage);
         }
         
         // Desabilitar botão e mostrar estado de carregamento
         submitButton.disabled = true;
-        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A processar...';
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A enviar...';
         
         // Obter dados do formulário
-        const formData = new FormData(consultoriaForm);
+        const formData = new FormData(contactForm);
         
         // Garantir que todos os campos obrigatórios estão preenchidos
-        const requiredFields = ['name', 'email', 'phone', 'company', 'area', 'message'];
+        const requiredFields = ['name', 'email', 'message'];
         let missingFields = false;
         
         requiredFields.forEach(field => {
@@ -56,7 +56,7 @@ function setupConsultoriaForm() {
             
             // Reabilitar botão
             submitButton.disabled = false;
-            submitButton.innerHTML = 'Solicitar Proposta';
+            submitButton.innerHTML = 'Enviar Mensagem';
             return;
         }
         
@@ -64,12 +64,10 @@ function setupConsultoriaForm() {
         const data = {
             name: formData.get('name'),
             email: formData.get('email'),
-            phone: formData.get('phone'),
-            company: formData.get('company'),
-            area: formData.get('area'),
+            subject: formData.get('subject') || 'Contacto do Website',
             message: formData.get('message'),
-            subject: 'Solicitação de Proposta de Consultoria',
-            source: 'website_consultoria'
+            phone: formData.get('phone') || '',
+            source: 'website_contact'
         };
         
         console.log('Enviando dados para o backend:', data);
@@ -88,11 +86,11 @@ function setupConsultoriaForm() {
             if (index >= endpoints.length) {
                 // Todos os endpoints falharam
                 console.error('Todos os endpoints falharam');
-                formMessage.innerHTML = '<div class="alert alert-danger">Erro ao processar pedido. Por favor tente novamente mais tarde ou contacte-nos diretamente.</div>';
+                formMessage.innerHTML = '<div class="alert alert-danger">Erro ao enviar mensagem. Por favor tente novamente mais tarde ou contacte-nos diretamente por telefone.</div>';
                 
                 // Reabilitar botão
                 submitButton.disabled = false;
-                submitButton.innerHTML = 'Solicitar Proposta';
+                submitButton.innerHTML = 'Enviar Mensagem';
                 return;
             }
             
@@ -132,7 +130,7 @@ function setupConsultoriaForm() {
                     return response.json();
                 } catch (e) {
                     // Se não for JSON, retornar um objeto simples
-                    return { success: true, message: 'Solicitação enviada com sucesso!' };
+                    return { success: true, message: 'Mensagem enviada com sucesso!' };
                 }
             })
             .then(data => {
@@ -145,28 +143,28 @@ function setupConsultoriaForm() {
                     // Mostrar mensagem de sucesso
                     formMessage.innerHTML = `
                         <div class="alert alert-success">
-                            <h5>Solicitação Enviada com Sucesso!</h5>
-                            <p>Obrigado pelo seu interesse. Entraremos em contacto brevemente para discutir a sua necessidade e apresentar uma proposta personalizada.</p>
+                            <h5>Mensagem Enviada com Sucesso!</h5>
+                            <p>Obrigado pelo seu contacto. Responderemos à sua mensagem o mais brevemente possível.</p>
                         </div>
                     `;
                     
                     // Resetar formulário
-                    consultoriaForm.reset();
+                    contactForm.reset();
                 } else {
                     // Mostrar mensagem de erro do servidor
                     formMessage.innerHTML = `
                         <div class="alert alert-danger">
-                            ${data.message || data.error || 'Erro ao processar pedido. Por favor tente novamente.'}
+                            ${data.message || data.error || 'Erro ao enviar mensagem. Por favor tente novamente.'}
                         </div>
                     `;
                 }
                 
                 // Reabilitar botão
                 submitButton.disabled = false;
-                submitButton.innerHTML = 'Solicitar Proposta';
+                submitButton.innerHTML = 'Enviar Mensagem';
             })
             .catch(error => {
-                console.error(`Erro ao processar solicitação (${currentEndpoint}):`, error);
+                console.error(`Erro ao enviar mensagem (${currentEndpoint}):`, error);
                 
                 // Tentar próximo endpoint
                 tryEndpoints(endpoints, index + 1);
