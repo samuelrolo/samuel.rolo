@@ -21,11 +21,27 @@
     <link rel="stylesheet" type="text/css" href="https://static.hotmart.com/css/hotmart-fb.min.css">
     
     <style>
+        /* Reset para garantir que não há margens ou padding indesejados */
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
         /* Estilos específicos para garantir o layout correto */
         header {
-            background-color: #fff;
+            background-color: #1a1a1a;
             padding: 15px 0;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #333;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        main {
+            padding-top: 80px; /* Compensar o header fixo */
         }
         
         .container {
@@ -45,50 +61,62 @@
             width: auto;
         }
         
-        .nav-menu {
+        /* Estilos para o menu principal fixo */
+        .main-menu {
             display: flex;
+            justify-content: flex-start;
+            margin-top: 20px;
+        }
+        
+        .main-menu ul {
             list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-menu li {
+            margin-bottom: 10px;
+        }
+        
+        .main-menu a {
+            color: #BF9A33;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 1rem;
+        }
+        
+        .main-menu a:hover, .main-menu a.active {
+            color: #BF9A33;
+            opacity: 0.8;
+        }
+        
+        /* Estilos para o título centralizado - ocupando 100% da altura do ecrã */
+        .hero-title {
+            text-align: center;
+            height: 100vh; /* Ocupa 100% da altura do viewport */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #1a1a1a;
+            position: relative;
             margin: 0;
             padding: 0;
         }
         
-        .nav-menu li {
-            margin-left: 25px;
-        }
-        
-        .nav-menu a {
-            color: #333;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        
-        .nav-menu a:hover, .nav-menu a.active {
-            color: #c0a060;
-        }
-        
-        .nav-menu a.active {
-            border-bottom: 2px solid #c0a060;
-        }
-        
-        /* Estilos para o título centralizado */
-        .hero-title {
-            text-align: center;
-            padding: 100px 0;
-            background-color: #1a1a1a;
-            position: relative;
-        }
-        
         .hero-title h1 {
             font-size: 3.5rem;
-            color: #c0a060;
+            color: #BF9A33;
             margin: 0;
             letter-spacing: 2px;
         }
         
         .hero-title h2 {
             font-size: 2.5rem;
-            color: #c0a060;
+            color: #BF9A33;
             margin: 10px 0 0;
             letter-spacing: 2px;
         }
@@ -97,6 +125,7 @@
         .intro-section {
             display: flex;
             padding: 50px 0;
+            min-height: 100vh; /* Garante que a secção ocupa pelo menos 100% da altura do viewport */
         }
         
         .carousel-column {
@@ -155,6 +184,7 @@
             display: flex;
             justify-content: center;
             margin-top: 40px;
+            margin-bottom: 100px; /* Adiciona espaço entre os botões e o footer */
             gap: 20px;
         }
         
@@ -167,14 +197,14 @@
         }
         
         .btn-primary {
-            background-color: #c0a060;
+            background-color: #BF9A33;
             color: white;
         }
         
         .btn-secondary {
             background-color: transparent;
-            color: #c0a060;
-            border: 2px solid #c0a060;
+            color: #BF9A33;
+            border: 2px solid #BF9A33;
         }
         
         .btn:hover {
@@ -185,12 +215,13 @@
         /* Animação de setas para scroll down */
         .scroll-down {
             position: absolute;
-            bottom: 30px;
+            bottom: 50px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             flex-direction: column;
             align-items: center;
+            z-index: 10;
         }
         
         .arrow {
@@ -228,7 +259,7 @@
         /* Estilos para o footer simplificado */
         footer {
             background-color: #1a1a1a;
-            color: #c0a060;
+            color: #BF9A33;
             padding: 50px 0 20px;
         }
         
@@ -296,8 +327,8 @@
         }
         
         .footer-social a {
-            color: #c0a060;
-            font-size: 2rem;
+            color: #BF9A33;
+            font-size: 2.5rem; /* Aumentado o tamanho dos ícones */
             margin-right: 15px;
             transition: transform 0.3s;
         }
@@ -321,22 +352,26 @@
     </style>
 </head>
 <body>
-    <!-- Cabeçalho -->
-    <header>
-        <div class="container header-container">
+    <!-- Header com menu fixo sempre visível -->
+    <header class="header">
+        <div class="container">
             <div class="logo">
                 <a href="index.html">
                     <img src="images/logo.png" alt="Share2Inspire Logo">
                 </a>
             </div>
-            <nav>
-                <ul class="nav-menu">
+            <nav class="main-menu">
+                <ul>
                     <li><a href="index.html" class="active">Início</a></li>
-                    <li><a href="pages/sobre-o-fundador.html">Sobre o Fundador</a></li>
+                    <li><a href="pages/sobre.html">Sobre o Fundador</a></li>
                     <li><a href="pages/servicos.html">Serviços</a></li>
                     <li><a href="pages/loja.html">Loja</a></li>
                     <li><a href="pages/hr-hub.html">HR Hub</a></li>
-                    <li><a href="pages/contactos.html">Contactos</a></li>
+                    <li><a href="index.html#contactos">Contactos</a></li>
+                    <li><a href="#">Kickstart Pro</a></li>
+                    <li><a href="#">Consultoria Organizacional</a></li>
+                    <li><a href="#">Coaching Executivo</a></li>
+                    <li><a href="#">Workshops e Formações</a></li>
                 </ul>
             </nav>
         </div>
@@ -362,17 +397,17 @@
                 <!-- Carrossel -->
                 <div class="carousel">
                     <div class="carousel-inner">
-                        <div class="carousel-item" style="background-image: url('images/banner1.jpg');">
+                        <div class="carousel-item" style="background-image: url('https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/BANNER1.png');">
                             <div class="carousel-caption">
                                 <h2>BEM VINDO À NOSSA CASA!</h2>
                             </div>
                         </div>
-                        <div class="carousel-item" style="background-image: url('images/banner2.jpg');">
+                        <div class="carousel-item" style="background-image: url('https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/BANNER2.png');">
                             <div class="carousel-caption">
                                 <h2>O NOSSO PROPÓSITO É PARTILHAR PARA INSPIRAR A MUDANÇA COM AUTENTICIDADE, PROPÓSITO E IMPACTO</h2>
                             </div>
                         </div>
-                        <div class="carousel-item" style="background-image: url('images/banner3.jpg');">
+                        <div class="carousel-item" style="background-image: url('https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/BANNER3.png');">
                             <div class="carousel-caption">
                                 <h2>LIVRO JÁ DISPONÍVEL ONLINE VISITA A NOSSA LOJA</h2>
                                 <p>SEM AS PESSOAS, A MUDANÇA É APENAS RUÍDO</p>
