@@ -1,0 +1,163 @@
+<!-- Secção de Newsletter -->
+<section class="newsletter-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2 class="section-title">HR Innovation Hub Newsletter</h2>
+                <p class="section-subtitle">Insights, tendências e ferramentas para profissionais de RH</p>
+            </div>
+        </div>
+
+        <!-- Estatísticas da Newsletter -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="newsletter-stats">
+                    <div class="row">
+                        <div class="col-md-3 col-6">
+                            <div class="stat-item">
+                                <div class="stat-number" id="subscribers">1.5K</div>
+                                <div class="stat-label">Subscritores</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="stat-item">
+                                <div class="stat-number" id="newSubscribers">+250</div>
+                                <div class="stat-label" id="newSubscribersLabel">Novos Subscritores (Último Ano)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="stat-item">
+                                <div class="stat-number" id="articleViews">2.6K</div>
+                                <div class="stat-label">Visualizações de Artigos</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="stat-item">
+                                <div class="stat-number" id="totalImpressions">7.9K</div>
+                                <div class="stat-label">Impressões Totais</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Artigo em Destaque -->
+        <div class="row mt-5">
+            <div class="col-lg-12">
+                <h3 class="section-subtitle">Artigo em Destaque</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="featured-article">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="featured-image">
+                                <img id="featuredImage" src="../images/hr_hub_may_2025.png" alt="Artigo em Destaque">
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="featured-content">
+                                <h4 id="featuredTitle">Reskilling: An Inspiring Perspective</h4>
+                                <div class="article-date" id="featuredDate">Maio 2025</div>
+                                <div class="article-summary" id="featuredSummary">
+                                    Neste novo capítulo da newsletter HR Innovation Hub, exploramos como o reskilling pode transformar carreiras e organizações.
+                                </div>
+                                <a id="featuredLink" href="https://www.linkedin.com/pulse/reskilling-inspiring-perspective-from-both-individual-samuel-rolo-2sdyf" class="btn btn-primary" target="_blank">Ler Artigo Completo</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Artigos Recentes -->
+        <div class="row mt-5">
+            <div class="col-lg-12">
+                <h3 class="section-subtitle">Artigos Recentes</h3>
+            </div>
+        </div>
+        <div class="row" id="articlesContainer">
+            <!-- Os artigos serão inseridos aqui dinamicamente via JavaScript -->
+        </div>
+
+        <!-- Botão de Subscrição -->
+        <div class="row mt-5">
+            <div class="col-lg-12 text-center">
+                <div class="explore-button">
+                    <a href="https://www.linkedin.com/newsletters/hr-innovation-hub-7033348085286400000/" class="btn btn-primary" target="_blank">Subscrever Newsletter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Script para carregar dinamicamente o conteúdo da newsletter -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Função para carregar o conteúdo da newsletter
+        async function loadNewsletterContent() {
+            try {
+                const response = await fetch('../newsletter_content.json');
+                const data = await response.json();
+                
+                // Atualizar estatísticas
+                if (data.stats) {
+                    document.getElementById('subscribers').textContent = data.stats.subscribers;
+                    document.getElementById('newSubscribers').textContent = data.stats.newSubscribers;
+                    document.getElementById('articleViews').textContent = data.stats.articleViews;
+                    document.getElementById('totalImpressions').textContent = data.stats.totalImpressions;
+                }
+                
+                // Atualizar artigo em destaque
+                if (data.featuredArticle) {
+                    document.getElementById('featuredTitle').textContent = data.featuredArticle.title;
+                    document.getElementById('featuredDate').textContent = data.featuredArticle.date;
+                    document.getElementById('featuredSummary').textContent = data.featuredArticle.summary;
+                    document.getElementById('featuredLink').href = data.featuredArticle.link;
+                    document.getElementById('featuredImage').src = '../' + data.featuredArticle.image;
+                    document.getElementById('featuredImage').alt = data.featuredArticle.title;
+                }
+                
+                // Atualizar artigos recentes
+                if (data.articles && data.articles.length > 0) {
+                    const articlesContainer = document.getElementById('articlesContainer');
+                    articlesContainer.innerHTML = ''; // Limpar conteúdo existente
+                    
+                    data.articles.forEach(article => {
+                        const articleHTML = `
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="article-card">
+                                    <div class="article-image">
+                                        <img src="../${article.image}" alt="${article.title}">
+                                    </div>
+                                    <div class="article-content">
+                                        <h5>${article.title}</h5>
+                                        <div class="article-date">${article.date}</div>
+                                        <div class="article-summary">${article.summary.substring(0, 120)}...</div>
+                                        <a href="${article.link}" class="btn btn-sm btn-outline-primary mt-3" target="_blank">Ler Mais</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        articlesContainer.innerHTML += articleHTML;
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao carregar o conteúdo da newsletter:', error);
+                // Exibir mensagem de erro para o utilizador
+                document.getElementById('articlesContainer').innerHTML = `
+                    <div class="col-12 text-center">
+                        <div class="alert alert-warning">
+                            Não foi possível carregar o conteúdo da newsletter. Por favor, tente novamente mais tarde.
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Carregar o conteúdo da newsletter
+        loadNewsletterContent();
+    });
+</script>
