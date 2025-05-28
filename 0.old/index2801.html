@@ -39,14 +39,14 @@
         }
         
         main {
-            padding-top: 60px; /* Reduzido para melhor alinhamento em dispositivos móveis */
+            padding-top: 80px; /* Compensar o header fixo */
             position: relative;
             z-index: 1;
         }
         
         @media (max-width: 767px) {
             main {
-                padding-top: 50px;
+                padding-top: 60px;
             }
         }
         
@@ -70,12 +70,12 @@
         /* Estilos para o menu hamburger responsivo */
         .navbar {
             background-color: #1a1a1a;
-            padding: 10px 0;
+            padding: 15px 0;
             border-bottom: 1px solid #333;
         }
         
         .navbar-brand img {
-            height: 40px;
+            height: 50px;
             width: auto;
         }
         
@@ -131,7 +131,7 @@
         /* Estilos para o título centralizado - ocupando 100% da altura do ecrã */
         .hero-title {
             text-align: center;
-            height: calc(100vh - 80px); /* Ocupa 100% da altura do viewport menos a altura do header */
+            height: 100vh; /* Ocupa 100% da altura do viewport */
             display: flex;
             flex-direction: column;
             justify-content: center;
