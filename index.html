@@ -10,6 +10,9 @@
     <!-- Favicon -->
     <link rel="icon" href="images/logo.png" type="image/png">
     
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <!-- Fontes e ícones -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -31,17 +34,20 @@
         
         /* Estilos específicos para garantir o layout correto */
         header {
-            background-color: #1a1a1a;
-            padding: 15px 0;
-            border-bottom: 1px solid #333;
-            position: fixed;
             width: 100%;
-            top: 0;
             z-index: 1000;
         }
         
         main {
             padding-top: 80px; /* Compensar o header fixo */
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (max-width: 767px) {
+            main {
+                padding-top: 60px;
+            }
         }
         
         .container {
@@ -61,36 +67,65 @@
             width: auto;
         }
         
-        /* Estilos para o menu principal fixo */
-        .main-menu {
-            display: flex;
-            justify-content: flex-start;
-            margin-top: 20px;
+        /* Estilos para o menu hamburger responsivo */
+        .navbar {
+            background-color: #1a1a1a;
+            padding: 15px 0;
+            border-bottom: 1px solid #333;
         }
         
-        .main-menu ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
+        .navbar-brand img {
+            height: 50px;
+            width: auto;
         }
         
-        .main-menu li {
-            margin-bottom: 10px;
-        }
-        
-        .main-menu a {
+        .navbar-toggler {
+            border-color: #BF9A33;
             color: #BF9A33;
-            text-decoration: none;
+        }
+        
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28191, 154, 51, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+        
+        .navbar-nav {
+            margin-left: auto;
+        }
+        
+        .nav-item {
+            margin: 0 5px;
+        }
+        
+        .nav-link {
+            color: #BF9A33 !important;
             font-weight: 500;
-            transition: color 0.3s;
-            font-size: 1rem;
+            transition: opacity 0.3s;
+            padding: 8px 15px;
         }
         
-        .main-menu a:hover, .main-menu a.active {
-            color: #BF9A33;
+        .nav-link:hover, .nav-link.active {
             opacity: 0.8;
+        }
+        
+        .nav-link.active {
+            border-bottom: 2px solid #BF9A33;
+        }
+        
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                background-color: #1a1a1a;
+                padding: 15px;
+                border-radius: 0 0 5px 5px;
+            }
+            
+            .nav-item {
+                margin: 5px 0;
+            }
+            
+            .nav-link.active {
+                border-bottom: none;
+                background-color: rgba(191, 154, 51, 0.1);
+            }
         }
         
         /* Estilos para o título centralizado - ocupando 100% da altura do ecrã */
@@ -141,6 +176,23 @@
             justify-content: center;
         }
         
+        /* Responsividade para o layout de duas colunas */
+        @media (max-width: 767px) {
+            .intro-section {
+                flex-direction: column;
+                padding: 30px 0;
+            }
+            
+            .carousel-column {
+                padding-right: 0;
+                margin-bottom: 30px;
+            }
+            
+            .text-column {
+                padding-left: 0;
+            }
+        }
+        
         /* Estilos para o carrossel */
         .carousel {
             width: 100%;
@@ -186,6 +238,20 @@
             margin-top: 40px;
             margin-bottom: 100px; /* Adiciona espaço entre os botões e o footer */
             gap: 20px;
+        }
+        
+        /* Responsividade para os botões */
+        @media (max-width: 767px) {
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 80%;
+                text-align: center;
+                margin-bottom: 15px;
+            }
         }
         
         .btn {
@@ -270,6 +336,18 @@
             flex-wrap: wrap;
         }
         
+        /* Responsividade para o footer */
+        @media (max-width: 767px) {
+            .footer-container {
+                flex-direction: column;
+            }
+            
+            .footer-logo, .footer-menu, .footer-contact {
+                width: 100%;
+                margin-bottom: 30px;
+            }
+        }
+        
         .footer-logo {
             flex: 1;
             max-width: 200px;
@@ -352,29 +430,48 @@
     </style>
 </head>
 <body>
-    <!-- Header com menu fixo sempre visível -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-8GQ1KM9FQS');
+    </script>
+    <!-- Header e Navegação -->
     <header class="header">
-        <div class="container">
-            <div class="logo">
-                <a href="index.html">
-                    <img src="images/logo.png" alt="Share2Inspire Logo">
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <img src="images/logo.png" alt="Share2Inspire Logo" class="logo-img">
                 </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="index.html">Início</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="pages/sobre.html">Sobre o Fundador</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="pages/servicos.html">Serviços</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="pages/loja.html">Loja</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="pages/hr-hub.html">HR Hub</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html#contactos">Contactos</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <nav class="main-menu">
-                <ul>
-                    <li><a href="index.html" class="active">Início</a></li>
-                    <li><a href="pages/sobre.html">Sobre o Fundador</a></li>
-                    <li><a href="pages/servicos.html">Serviços</a></li>
-                    <li><a href="pages/loja.html">Loja</a></li>
-                    <li><a href="pages/hr-hub.html">HR Hub</a></li>
-                    <li><a href="index.html#contactos">Contactos</a></li>
-                    <li><a href="#">Kickstart Pro</a></li>
-                    <li><a href="#">Consultoria Organizacional</a></li>
-                    <li><a href="#">Coaching Executivo</a></li>
-                    <li><a href="#">Workshops e Formações</a></li>
-                </ul>
-            </nav>
-        </div>
+        </nav>
     </header>
 
     <main>
@@ -434,6 +531,9 @@
         
         <!-- Restante conteúdo do site -->
     </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Footer simplificado conforme a imagem partilhada -->
     <footer>
