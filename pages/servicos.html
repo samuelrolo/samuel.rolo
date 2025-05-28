@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Serviços | Share2Inspire | Samuel Rolo</title>
-    <meta name="description" content="Serviços de consultoria, coaching e transformação organizacional por Samuel Rolo. Kickstart Pro, consultoria organizacional e coaching executivo.">
+    <meta name="description" content="Serviços de consultoria, coaching e formação oferecidos por Samuel Rolo através da Share2Inspire.">
     
     <!-- Favicon -->
-    <link rel="icon" href="../images/favicon.png" type="image/png">
+    <link rel="icon" href="../images/logo.png" type="image/png">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,6 +22,15 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-8GQ1KM9FQS');
+    </script>
+    
     <!-- Header e Navegação -->
     <header class="header">
         <nav class="navbar navbar-expand-lg fixed-top">
@@ -50,7 +59,7 @@
                             <a class="nav-link" href="hr-hub.html">HR Hub</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="../index.html#contactos">Contatos</a>
+                            <a class="nav-link" href="../index.html#contactos">Contactos</a>
                         </li>
                     </ul>
                 </div>
@@ -75,30 +84,41 @@
         </div>
     </section>
 
+    <!-- Intro Section -->
+    <section class="services-intro">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-title">Transformação com Propósito</h2>
+                    <p class="section-subtitle">Soluções personalizadas para indivíduos e organizações que desejam abraçar a mudança com confiança</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Kickstart Pro Section -->
-    <section class="service-section" id="kickstart">
+    <section class="service-section" id="kickstart-pro">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <div class="service-content">
-                        <h2>Kickstart Pro | Express Coaching </h2>
-                        <p class="service-tagline">Impulsiona a tua carreira com uma sessão personalizada</p>
-                        <p>O Kickstart Pro é uma sessão de coaching personalizada às tuas necessidades, desenhada para impulsionar jovens em início de carreira.</p>
-                        <p>Durante esta sessão, vamos trabalhar contigo para identificar os principais desafios e oportunidades, desenvolver um plano de ação claro e fornecer ferramentas e técnicas específicas para ti.</p>
-                        <h3>Benefícios:</h3>
-                        <ul class="service-benefits">
-                            <li><i class="fas fa-check"></i> Clareza sobre os próximos passos estratégicos</li>
-                            <li><i class="fas fa-check"></i> Soluções práticas para desafios específicos</li>
-                            <li><i class="fas fa-check"></i> Plano de ação personalizado e implementável</li>
-                            <li><i class="fas fa-check"></i> Acesso a ferramentas e metodologias comprovadas</li>
-                            <li><i class="fas fa-check"></i> Acompanhamento pós-sessão para garantir resultados</li>
-                        </ul>
-                        <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#kickstartModal">Marcar Kickstart Pro</button>
+                    <div class="service-image">
+                        <img src="../images/kickstart-pro.jpg" alt="Kickstart Pro" class="img-fluid">
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="service-image">
-                        <img src="../images/kickstart-pro.jpg" alt="Kickstart Pro" class="img-fluid rounded">
+                    <div class="service-content">
+                        <h3>Kickstart Pro</h3>
+                        <p>Um programa intensivo de 12 semanas desenhado para profissionais que desejam impulsionar suas carreiras ou fazer uma transição profissional significativa.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Avaliação de competências e potencial</li>
+                            <li><i class="fas fa-check"></i> Desenvolvimento de plano de carreira personalizado</li>
+                            <li><i class="fas fa-check"></i> Sessões de coaching individual</li>
+                            <li><i class="fas fa-check"></i> Workshops de desenvolvimento de competências</li>
+                            <li><i class="fas fa-check"></i> Acesso a rede de profissionais e mentores</li>
+                        </ul>
+                        <div class="service-cta">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kickstartProModal">Saber Mais</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -106,29 +126,28 @@
     </section>
 
     <!-- Consultoria Organizacional Section -->
-    <section class="service-section bg-light" id="consultoria">
+    <section class="service-section" id="consultoria">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 order-lg-2">
-                    <div class="service-content">
-                        <h2>Consultoria Organizacional</h2>
-                        <p class="service-tagline">Transformação cultural e estratégica para organizações que procuram uma evolução sustentável</p>
-                        <p>A Consultoria Organizacional da Share2Inspire é um serviço abrangente que apoia organizações a implementar mudanças culturais e estratégicas de forma sustentável e centrada nas pessoas.</p>
-                        <p>Trabalhamos em estreita colaboração com os nossos clientes para diagnosticar desafios, desenvolver estratégias personalizadas e implementar processos de transformação.</p>
-                        <h3>Áreas de Intervenção:</h3>
-                        <ul class="service-benefits">
-                            <li><i class="fas fa-check"></i> Transformação cultural e gestão da mudança</li>
-                            <li><i class="fas fa-check"></i> Desenho e otimização de Políticas e Processos</li>
-                            <li><i class="fas fa-check"></i> Estratégia e inovação organizacional</li>
-                            <li><i class="fas fa-check"></i> Comunicação interna e engagement</li>
-                            <li><i class="fas fa-check"></i> Bem-estar e produtividade organizacional</li>
-                        </ul>
-                        <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#consultoriaModal">Solicitar Proposta</button>
+                    <div class="service-image">
+                        <img src="../images/consultoria.jpg" alt="Consultoria Organizacional" class="img-fluid">
                     </div>
                 </div>
                 <div class="col-lg-6 order-lg-1">
-                    <div class="service-image">
-                        <img src="../images/consultoria-organizacional.jpg" alt="Consultoria Organizacional" class="img-fluid rounded">
+                    <div class="service-content">
+                        <h3>Consultoria Organizacional</h3>
+                        <p>Soluções estratégicas para organizações que buscam transformar sua cultura, processos e estruturas para enfrentar os desafios do futuro do trabalho.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Diagnóstico organizacional</li>
+                            <li><i class="fas fa-check"></i> Desenvolvimento de estratégias de transformação</li>
+                            <li><i class="fas fa-check"></i> Implementação de programas de mudança</li>
+                            <li><i class="fas fa-check"></i> Gestão de talentos e desenvolvimento de liderança</li>
+                            <li><i class="fas fa-check"></i> Avaliação de resultados e ajustes estratégicos</li>
+                        </ul>
+                        <div class="service-cta">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#consultoriaModal">Saber Mais</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -140,25 +159,24 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <div class="service-content">
-                        <h2>Coaching Executivo</h2>
-                        <p class="service-tagline">Desenvolvimento de liderança consciente e habilidades estratégicas para executivos</p>
-                        <p>O programa de Coaching Executivo da Share2Inspire é desenhado para líderes que desejam desenvolver uma abordagem mais consciente e eficaz à liderança, potenciando o seu impacto pessoal e organizacional.</p>
-                        <p>Através de um processo estruturado e personalizado, Samuel Rolo apoia executivos a expandir a sua autoconsciência, desenvolver novas competências e implementar mudanças significativas na sua prática de liderança.</p>
-                        <h3>Componentes do Programa:</h3>
-                        <ul class="service-benefits">
-                            <li><i class="fas fa-check"></i> Avaliação inicial e definição de objetivos claros</li>
-                            <li><i class="fas fa-check"></i> Sessões regulares de coaching personalizado</li>
-                            <li><i class="fas fa-check"></i> Ferramentas e exercícios práticos entre sessões</li>
-                            <li><i class="fas fa-check"></i> Feedback contínuo e ajustes ao plano de desenvolvimento</li>
-                            <li><i class="fas fa-check"></i> Avaliação de progresso e consolidação de aprendizagens</li>
-                        </ul>
-                        <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#coachingModal">Agendar Sessão Inicial</button>
+                    <div class="service-image">
+                        <img src="../images/coaching.jpg" alt="Coaching Executivo" class="img-fluid">
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="service-image">
-                        <img src="../images/coaching-executivo.jpg" alt="Coaching Executivo" class="img-fluid rounded">
+                    <div class="service-content">
+                        <h3>Coaching Executivo</h3>
+                        <p>Processo personalizado para líderes que desejam potencializar suas competências, superar desafios e alcançar resultados extraordinários.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Avaliação de perfil de liderança</li>
+                            <li><i class="fas fa-check"></i> Desenvolvimento de competências específicas</li>
+                            <li><i class="fas fa-check"></i> Gestão de transições e mudanças</li>
+                            <li><i class="fas fa-check"></i> Equilíbrio entre vida pessoal e profissional</li>
+                            <li><i class="fas fa-check"></i> Plano de ação e acompanhamento de resultados</li>
+                        </ul>
+                        <div class="service-cta">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#coachingModal">Saber Mais</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -166,29 +184,89 @@
     </section>
 
     <!-- Workshops e Formações Section -->
-    <section class="service-section bg-light" id="workshops">
+    <section class="service-section" id="workshops">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 order-lg-2">
-                    <div class="service-content">
-                        <h2>Workshops e Formações</h2>
-                        <p class="service-tagline">Experiências de aprendizagem transformadoras</p>
-                        <p>Os Workshops e Formações da Share2Inspire são experiências de aprendizagem imersivas e práticas, desenhadas para desenvolver competências específicas e promover mudanças de mindset em equipas e organizações.</p>
-                        <p>Facilitamos sessões dinâmicas e interativas que combinam conhecimentos teóricos com aplicações práticas, garantindo que os participantes saem com ferramentas e insights que podem aplicar imediatamente.</p>
-                        <h3>Temas Principais:</h3>
-                        <ul class="service-benefits">
-                            <li><i class="fas fa-check"></i> Liderança Consciente e Adaptativa</li>
-                            <li><i class="fas fa-check"></i> Gestão da Mudança e Resiliência</li>
-                            <li><i class="fas fa-check"></i> Comunicação Estratégica e Influência</li>
-                            <li><i class="fas fa-check"></i> Inovação e Pensamento Criativo</li>
-                            <li><i class="fas fa-check"></i> Bem-estar e Performance Sustentável</li>
-                        </ul>
-                        <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#workshopsModal">Solicitar Informações</button>
+                    <div class="service-image">
+                        <img src="../images/workshops.jpg" alt="Workshops e Formações" class="img-fluid">
                     </div>
                 </div>
                 <div class="col-lg-6 order-lg-1">
-                    <div class="service-image">
-                        <img src="../images/workshops-formacoes.jpg" alt="Workshops e Formações" class="img-fluid rounded">
+                    <div class="service-content">
+                        <h3>Workshops e Formações</h3>
+                        <p>Experiências de aprendizagem imersivas e práticas para equipes e organizações que desejam desenvolver competências específicas.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Liderança consciente e empática</li>
+                            <li><i class="fas fa-check"></i> Gestão da mudança e transformação</li>
+                            <li><i class="fas fa-check"></i> Comunicação estratégica e influência</li>
+                            <li><i class="fas fa-check"></i> Inovação e criatividade</li>
+                            <li><i class="fas fa-check"></i> Bem-estar e resiliência</li>
+                        </ul>
+                        <div class="service-cta">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#workshopsModal">Saber Mais</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-title">O Que Dizem Sobre Nós</h2>
+                    <p class="section-subtitle">Depoimentos de clientes que transformaram suas carreiras e organizações</p>
+                </div>
+            </div>
+            <div class="row testimonials-slider">
+                <!-- Testimonial 1 -->
+                <div class="col-lg-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"O programa Kickstart Pro foi um divisor de águas na minha carreira. Consegui identificar meus pontos fortes e áreas de desenvolvimento, e hoje ocupo uma posição de liderança que sempre almejei."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="../images/testimonial-1.jpg" alt="Ana Silva" class="testimonial-avatar">
+                            <div class="author-info">
+                                <h4>Ana Silva</h4>
+                                <p>Diretora de RH, Empresa XYZ</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="col-lg-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"A consultoria da Share2Inspire nos ajudou a implementar uma transformação cultural profunda. Nossa equipe está mais engajada e os resultados financeiros melhoraram significativamente."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="../images/testimonial-2.jpg" alt="Carlos Mendes" class="testimonial-avatar">
+                            <div class="author-info">
+                                <h4>Carlos Mendes</h4>
+                                <p>CEO, Startup ABC</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="col-lg-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"As sessões de coaching com Samuel foram transformadoras. Aprendi a liderar com mais empatia e autenticidade, e isso refletiu positivamente na performance da minha equipe."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="../images/testimonial-3.jpg" alt="Mariana Costa" class="testimonial-avatar">
+                            <div class="author-info">
+                                <h4>Mariana Costa</h4>
+                                <p>Gerente de Projetos, Empresa DEF</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -200,125 +278,110 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2>Não encontraste o que procuravas?</h2>
-                    <p>Entra em contacto connosco para desenharmos soluções personalizadas para os teus desafios.</p>
-                    <a href="../index.html#contactos" class="btn btn-primary">Contacta-nos</a>
+                    <h2>Pronto para Transformar?</h2>
+                    <p>Entre em contato para uma consulta inicial gratuita e descubra como podemos ajudar você ou sua organização.</p>
+                    <a href="../index.html#contactos" class="btn btn-primary">Fale Conosco</a>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Modals -->
     <!-- Kickstart Pro Modal -->
-    <div class="modal fade" id="kickstartModal" tabindex="-1" aria-labelledby="kickstartModalLabel" aria-hidden="true">
+    <div class="modal fade" id="kickstartProModal" tabindex="-1" aria-labelledby="kickstartProModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="kickstartModalLabel">Marcar Kickstart Pro</h5>
+                    <h5 class="modal-title" id="kickstartProModalLabel">Kickstart Pro</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h4>Detalhes do Serviço</h4>
-                            <p><strong>Duração:</strong> 
-                                <select id="kickstartDuration" class="form-select form-select-sm d-inline-block w-auto ms-2" onchange="updatePrice()">
-                                    <option value="30min">30 minutos</option>
-                                    <option value="1h">1 hora</option>
-                                </select>
-                            </p>
-                            <p><strong>Formato:</strong> Online ou Presencial</p>
-                            <p><strong>Investimento:</strong> <span id="kickstartPrice">30€</span></p>
-                            <p><strong>Inclui:</strong></p>
-                            <ul>
-                                <li>Sessão personalizada</li>
-                                <li>Diagnóstico prévio</li>
-                                <li>Plano de ação detalhado</li>
-                                <li>Follow-up de 30 minutos (após 2 semanas)</li>
-                            </ul>
-                            
-                            <script>
-                                function updatePrice() {
-                                    const duration = document.getElementById('kickstartDuration').value;
-                                    const priceElement = document.getElementById('kickstartPrice');
-                                    
-                                    if (duration === '30min') {
-                                        priceElement.textContent = '30€';
-                                    } else {
-                                        priceElement.textContent = '45€';
-                                    }
-                                    
-                                    // Update hidden field in form
-                                    document.getElementById('kickstartDurationHidden').value = duration;
-                                }
-                            </script>
+                            <img src="../images/kickstart-pro-detail.jpg" alt="Kickstart Pro" class="img-fluid mb-3">
                         </div>
                         <div class="col-md-6">
-                            <h4>Agendar Sessão</h4>
-                            <form id="kickstartForm" class="service-form">
-                                <input type="hidden" name="service" value="Kickstart Pro">
-                                <input type="hidden" id="kickstartDurationHidden" name="duration" value="30min">
-                                <!-- Campo oculto rating -->
-                                <input type="hidden" name="rating" value="5">
-                                
-                                <div class="mb-3">
-                                    <label for="kickstartName" class="form-label">Nome Completo *</label>
-                                    <input type="text" class="form-control" id="kickstartName" name="name" required>
+                            <h4>Transforme sua Carreira em 12 Semanas</h4>
+                            <p>O Kickstart Pro é um programa intensivo desenvolvido para profissionais que desejam:</p>
+                            <ul>
+                                <li>Fazer uma transição de carreira</li>
+                                <li>Assumir novos desafios de liderança</li>
+                                <li>Desenvolver competências específicas</li>
+                                <li>Aumentar sua empregabilidade</li>
+                                <li>Preparar-se para o futuro do trabalho</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Como Funciona</h4>
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">1</div>
+                                    <div class="timeline-content">
+                                        <h5>Avaliação Inicial</h5>
+                                        <p>Identificação de competências, valores, interesses e objetivos de carreira.</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">2</div>
+                                    <div class="timeline-content">
+                                        <h5>Plano de Desenvolvimento</h5>
+                                        <p>Criação de um plano personalizado com metas claras e mensuráveis.</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">3</div>
+                                    <div class="timeline-content">
+                                        <h5>Sessões de Coaching</h5>
+                                        <p>8 sessões individuais para trabalhar aspectos específicos do plano.</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">4</div>
+                                    <div class="timeline-content">
+                                        <h5>Workshops de Desenvolvimento</h5>
+                                        <p>4 workshops temáticos para desenvolver competências essenciais.</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">5</div>
+                                    <div class="timeline-content">
+                                        <h5>Networking e Mentoria</h5>
+                                        <p>Acesso a rede de profissionais e mentores especializados.</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-marker">6</div>
+                                    <div class="timeline-content">
+                                        <h5>Avaliação de Resultados</h5>
+                                        <p>Análise dos avanços e definição dos próximos passos.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Investimento</h4>
+                            <p>O programa Kickstart Pro é um investimento em seu futuro profissional. Entre em contato para conhecer as opções de pagamento e pacotes disponíveis.</p>
+                            <form id="kickstartProForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <input type="text" class="form-control" id="kickstartName" placeholder="Nome" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <input type="email" class="form-control" id="kickstartEmail" placeholder="Email" required>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="kickstartEmail" class="form-label">Email *</label>
-                                    <input type="email" class="form-control" id="kickstartEmail" name="email" required>
+                                    <input type="tel" class="form-control" id="kickstartPhone" placeholder="Telefone">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="kickstartPhone" class="form-label">Telefone *</label>
-                                    <input type="tel" class="form-control" id="kickstartPhone" name="phone" required>
+                                    <textarea class="form-control" id="kickstartMessage" rows="3" placeholder="Mensagem" required></textarea>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="kickstartDate" class="form-label">Data Preferencial</label>
-                                    <input type="date" class="form-control" id="kickstartDate" name="date">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="kickstartFormat" class="form-label">Formato Preferencial</label>
-                                    <select class="form-select" id="kickstartFormat" name="format">
-                                        <option value="online">Online</option>
-                                        <option value="presencial">Presencial</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="kickstartPaymentMethod" class="form-label">Método de Pagamento</label>
-                                    <select class="form-select" id="kickstartPaymentMethod" name="paymentMethod">
-                                        <option value="mb">Multibanco</option>
-                                        <option value="mbway">MB WAY</option>
-                                        <option value="payshop">Payshop</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3 payment-method-fields" id="mbwayFields" style="display: none;">
-                                    <label for="kickstartMbwayPhone" class="form-label">Número MB WAY</label>
-                                    <input type="tel" class="form-control" id="kickstartMbwayPhone" name="mbwayPhone">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="kickstartObjectives" class="form-label">Principais Objetivos</label>
-                                    <textarea class="form-control" id="kickstartObjectives" name="objectives" rows="3"></textarea>
-                                </div>
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" id="kickstartTerms" required>
-                                    <label class="form-check-label" for="kickstartTerms">
-                                        Concordo com os <a href="../pages/tratamento-dados.html" target="_blank">termos de tratamento de dados</a>
-                                    </label>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Processar Pagamento</button>
-                                <div id="kickstartFormMessage" class="mt-3"></div>
+                                <button type="submit" class="btn btn-primary">Solicitar Informações</button>
                             </form>
-                            
-                            <script>
-                                document.getElementById('kickstartPaymentMethod').addEventListener('change', function() {
-                                    const mbwayFields = document.getElementById('mbwayFields');
-                                    if (this.value === 'mbway') {
-                                        mbwayFields.style.display = 'block';
-                                    } else {
-                                        mbwayFields.style.display = 'none';
-                                    }
-                                });
-                            </script>
                         </div>
                     </div>
                 </div>
@@ -331,54 +394,108 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="consultoriaModalLabel">Solicitar Proposta de Consultoria</h5>
+                    <h5 class="modal-title" id="consultoriaModalLabel">Consultoria Organizacional</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="consultoriaForm" class="service-form">
-                        <input type="hidden" name="service" value="Consultoria Organizacional">
-                        
-                        <div class="mb-3">
-                            <label for="consultoriaName" class="form-label">Nome Completo *</label>
-                            <input type="text" class="form-control" id="consultoriaName" name="name" required>
+                    <!-- Conteúdo detalhado sobre consultoria -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="../images/consultoria-detail.jpg" alt="Consultoria Organizacional" class="img-fluid mb-3">
                         </div>
-                        <div class="mb-3">
-                            <label for="consultoriaEmail" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="consultoriaEmail" name="email" required>
+                        <div class="col-md-6">
+                            <h4>Transformação Organizacional com Propósito</h4>
+                            <p>Nossa consultoria ajuda organizações a:</p>
+                            <ul>
+                                <li>Desenvolver culturas mais ágeis e adaptáveis</li>
+                                <li>Implementar processos de gestão da mudança</li>
+                                <li>Alinhar estratégias de pessoas com objetivos de negócio</li>
+                                <li>Desenvolver lideranças conscientes e empáticas</li>
+                                <li>Criar ambientes de trabalho mais humanos e produtivos</li>
+                            </ul>
                         </div>
-                        <div class="mb-3">
-                            <label for="consultoriaPhone" class="form-label">Telefone *</label>
-                            <input type="tel" class="form-control" id="consultoriaPhone" name="phone" required>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Metodologia</h4>
+                            <p>Nossa abordagem de consultoria é baseada em 5 pilares:</p>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="methodology-card">
+                                        <div class="methodology-icon">
+                                            <i class="fas fa-search"></i>
+                                        </div>
+                                        <h5>Diagnóstico</h5>
+                                        <p>Análise profunda da cultura, processos e desafios organizacionais.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="methodology-card">
+                                        <div class="methodology-icon">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </div>
+                                        <h5>Estratégia</h5>
+                                        <p>Desenvolvimento de planos de ação alinhados aos objetivos de negócio.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="methodology-card">
+                                        <div class="methodology-icon">
+                                            <i class="fas fa-cogs"></i>
+                                        </div>
+                                        <h5>Implementação</h5>
+                                        <p>Execução de iniciativas com acompanhamento contínuo.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="methodology-card">
+                                        <div class="methodology-icon">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <h5>Capacitação</h5>
+                                        <p>Desenvolvimento de competências nas equipes internas.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="methodology-card">
+                                        <div class="methodology-icon">
+                                            <i class="fas fa-chart-line"></i>
+                                        </div>
+                                        <h5>Avaliação</h5>
+                                        <p>Mensuração de resultados e ajustes contínuos.</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="consultoriaCompany" class="form-label">Empresa/Organização *</label>
-                            <input type="text" class="form-control" id="consultoriaCompany" name="company" required>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Solicite uma Proposta</h4>
+                            <p>Entre em contato para uma avaliação inicial gratuita e uma proposta personalizada para sua organização.</p>
+                            <form id="consultoriaForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <input type="text" class="form-control" id="consultoriaName" placeholder="Nome" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <input type="email" class="form-control" id="consultoriaEmail" placeholder="Email" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <input type="tel" class="form-control" id="consultoriaPhone" placeholder="Telefone">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <input type="text" class="form-control" id="consultoriaCompany" placeholder="Empresa" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="consultoriaMessage" rows="3" placeholder="Descreva brevemente o desafio da sua organização" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Solicitar Proposta</button>
+                            </form>
                         </div>
-                        <div class="mb-3">
-                            <label for="consultoriaArea" class="form-label">Área de Interesse *</label>
-                            <select class="form-select" id="consultoriaArea" name="area" required>
-                                <option value="">Selecione uma opção</option>
-                                <option value="Transformação Cultural">Transformação Cultural</option>
-                                <option value="Políticas e Processos">Políticas e Processos</option>
-                                <option value="Estratégia e Inovação">Estratégia e Inovação</option>
-                                <option value="Comunicação Interna">Comunicação Interna</option>
-                                <option value="Bem-estar Organizacional">Bem-estar Organizacional</option>
-                                <option value="Outro">Outro</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="consultoriaMessage" class="form-label">Detalhes do Projeto</label>
-                            <textarea class="form-control" id="consultoriaMessage" name="message" rows="4"></textarea>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="consultoriaTerms" required>
-                            <label class="form-check-label" for="consultoriaTerms">
-                                Concordo com os <a href="../pages/tratamento-dados.html" target="_blank">termos de tratamento de dados</a>
-                            </label>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Solicitar Proposta</button>
-                        <div id="consultoriaFormMessage" class="mt-3"></div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -389,55 +506,101 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="coachingModalLabel">Agendar Sessão Inicial de Coaching</h5>
+                    <h5 class="modal-title" id="coachingModalLabel">Coaching Executivo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Conteúdo detalhado sobre coaching -->
                     <div class="row">
                         <div class="col-md-6">
-                            <h4>Sobre o Programa</h4>
-                            <p>O programa de Coaching Executivo inicia-se com uma sessão de diagnóstico de 30 minutos, onde iremos:</p>
-                            <ul>
-                                <li>Explorar os seus objetivos e desafios</li>
-                                <li>Avaliar se o coaching é a abordagem adequada</li>
-                                <li>Explicar a metodologia e processo</li>
-                                <li>Responder às suas questões</li>
-                            </ul>
-                            <p>Após esta sessão inicial, caso decida avançar, será apresentada uma proposta personalizada.</p>
+                            <img src="../images/coaching-detail.jpg" alt="Coaching Executivo" class="img-fluid mb-3">
                         </div>
                         <div class="col-md-6">
-                            <h4>Agendar Sessão Inicial</h4>
-                            <form id="coachingForm" class="service-form">
-                                <input type="hidden" name="service" value="Coaching Executivo">
-                                
-                                <div class="mb-3">
-                                    <label for="coachingName" class="form-label">Nome Completo *</label>
-                                    <input type="text" class="form-control" id="coachingName" name="name" required>
+                            <h4>Desenvolva seu Potencial de Liderança</h4>
+                            <p>O coaching executivo é ideal para líderes que desejam:</p>
+                            <ul>
+                                <li>Potencializar suas competências de liderança</li>
+                                <li>Navegar por transições e desafios complexos</li>
+                                <li>Melhorar sua comunicação e influência</li>
+                                <li>Desenvolver maior autoconsciência e inteligência emocional</li>
+                                <li>Alcançar equilíbrio entre vida pessoal e profissional</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Processo de Coaching</h4>
+                            <div class="coaching-process">
+                                <div class="process-step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <h5>Avaliação Inicial</h5>
+                                        <p>Identificação de objetivos, desafios e oportunidades de desenvolvimento.</p>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <h5>Feedback 360°</h5>
+                                        <p>Coleta de percepções de colegas, liderados e superiores (opcional).</p>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-content">
+                                        <h5>Plano de Desenvolvimento</h5>
+                                        <p>Definição de metas claras e mensuráveis para o processo.</p>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">4</div>
+                                    <div class="step-content">
+                                        <h5>Sessões de Coaching</h5>
+                                        <p>Encontros regulares para reflexão, aprendizado e ação.</p>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">5</div>
+                                    <div class="step-content">
+                                        <h5>Implementação e Prática</h5>
+                                        <p>Aplicação de novos comportamentos e abordagens no dia a dia.</p>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">6</div>
+                                    <div class="step-content">
+                                        <h5>Avaliação de Resultados</h5>
+                                        <p>Mensuração dos avanços e definição dos próximos passos.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Agende uma Sessão Inicial</h4>
+                            <p>A primeira sessão é gratuita e sem compromisso. Agende agora e descubra como o coaching pode potencializar sua liderança.</p>
+                            <form id="coachingForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <input type="text" class="form-control" id="coachingName" placeholder="Nome" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <input type="email" class="form-control" id="coachingEmail" placeholder="Email" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <input type="tel" class="form-control" id="coachingPhone" placeholder="Telefone">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <input type="text" class="form-control" id="coachingPosition" placeholder="Cargo/Posição" required>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="coachingEmail" class="form-label">Email *</label>
-                                    <input type="email" class="form-control" id="coachingEmail" name="email" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="coachingPhone" class="form-label">Telefone *</label>
-                                    <input type="tel" class="form-control" id="coachingPhone" name="phone" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="coachingDate" class="form-label">Data Preferencial</label>
-                                    <input type="date" class="form-control" id="coachingDate" name="date">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="coachingObjectives" class="form-label">Principais Objetivos</label>
-                                    <textarea class="form-control" id="coachingObjectives" name="objectives" rows="3"></textarea>
-                                </div>
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" id="coachingTerms" required>
-                                    <label class="form-check-label" for="coachingTerms">
-                                        Concordo com os <a href="../pages/tratamento-dados.html" target="_blank">termos de tratamento de dados</a>
-                                    </label>
+                                    <textarea class="form-control" id="coachingMessage" rows="3" placeholder="O que você espera alcançar com o coaching?" required></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Agendar Sessão Inicial</button>
-                                <div id="coachingFormMessage" class="mt-3"></div>
                             </form>
                         </div>
                     </div>
@@ -451,189 +614,173 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="workshopsModalLabel">Solicitar Informações sobre Workshops</h5>
+                    <h5 class="modal-title" id="workshopsModalLabel">Workshops e Formações</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="workshopsForm" class="service-form">
-                        <input type="hidden" name="service" value="Workshops e Formações">
-                        
-                        <div class="mb-3">
-                            <label for="workshopsName" class="form-label">Nome Completo *</label>
-                            <input type="text" class="form-control" id="workshopsName" name="name" required>
+                    <!-- Conteúdo detalhado sobre workshops -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="../images/workshops-detail.jpg" alt="Workshops e Formações" class="img-fluid mb-3">
                         </div>
-                        <div class="mb-3">
-                            <label for="workshopsEmail" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="workshopsEmail" name="email" required>
+                        <div class="col-md-6">
+                            <h4>Experiências de Aprendizagem Transformadoras</h4>
+                            <p>Nossos workshops e formações são desenvolvidos para:</p>
+                            <ul>
+                                <li>Equipes que buscam desenvolver novas competências</li>
+                                <li>Organizações em processo de transformação</li>
+                                <li>Líderes que desejam inspirar e engajar suas equipes</li>
+                                <li>Profissionais que buscam desenvolvimento contínuo</li>
+                                <li>Eventos corporativos e conferências</li>
+                            </ul>
                         </div>
-                        <div class="mb-3">
-                            <label for="workshopsPhone" class="form-label">Telefone *</label>
-                            <input type="tel" class="form-control" id="workshopsPhone" name="phone" required>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Temas Disponíveis</h4>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="workshop-card">
+                                        <div class="workshop-icon">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <h5>Liderança Consciente</h5>
+                                        <p>Desenvolva uma liderança mais humana, empática e eficaz.</p>
+                                        <span class="duration">Duração: 8h</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="workshop-card">
+                                        <div class="workshop-icon">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </div>
+                                        <h5>Gestão da Mudança</h5>
+                                        <p>Ferramentas para implementar e sustentar transformações.</p>
+                                        <span class="duration">Duração: 16h</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="workshop-card">
+                                        <div class="workshop-icon">
+                                            <i class="fas fa-comments"></i>
+                                        </div>
+                                        <h5>Comunicação Estratégica</h5>
+                                        <p>Técnicas para comunicar com clareza, influência e impacto.</p>
+                                        <span class="duration">Duração: 8h</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="workshop-card">
+                                        <div class="workshop-icon">
+                                            <i class="fas fa-lightbulb"></i>
+                                        </div>
+                                        <h5>Inovação e Criatividade</h5>
+                                        <p>Métodos para estimular o pensamento inovador nas equipes.</p>
+                                        <span class="duration">Duração: 12h</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="workshop-card">
+                                        <div class="workshop-icon">
+                                            <i class="fas fa-heart"></i>
+                                        </div>
+                                        <h5>Bem-estar e Resiliência</h5>
+                                        <p>Práticas para promover saúde mental e equilíbrio no trabalho.</p>
+                                        <span class="duration">Duração: 8h</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="workshop-card">
+                                        <div class="workshop-icon">
+                                            <i class="fas fa-rocket"></i>
+                                        </div>
+                                        <h5>Futuro do Trabalho</h5>
+                                        <p>Preparação para as novas realidades do ambiente profissional.</p>
+                                        <span class="duration">Duração: 12h</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="workshopsCompany" class="form-label">Empresa/Organização *</label>
-                            <input type="text" class="form-control" id="workshopsCompany" name="company" required>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h4>Solicite uma Proposta</h4>
+                            <p>Todos os workshops podem ser personalizados para atender às necessidades específicas da sua organização.</p>
+                            <form id="workshopsForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <input type="text" class="form-control" id="workshopsName" placeholder="Nome" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <input type="email" class="form-control" id="workshopsEmail" placeholder="Email" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <input type="tel" class="form-control" id="workshopsPhone" placeholder="Telefone">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <input type="text" class="form-control" id="workshopsCompany" placeholder="Empresa" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <select class="form-select" id="workshopsTopic" required>
+                                        <option value="" selected disabled>Selecione o tema de interesse</option>
+                                        <option value="Liderança Consciente">Liderança Consciente</option>
+                                        <option value="Gestão da Mudança">Gestão da Mudança</option>
+                                        <option value="Comunicação Estratégica">Comunicação Estratégica</option>
+                                        <option value="Inovação e Criatividade">Inovação e Criatividade</option>
+                                        <option value="Bem-estar e Resiliência">Bem-estar e Resiliência</option>
+                                        <option value="Futuro do Trabalho">Futuro do Trabalho</option>
+                                        <option value="Outro">Outro (especifique na mensagem)</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="workshopsMessage" rows="3" placeholder="Informações adicionais (número de participantes, objetivos, etc.)" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Solicitar Proposta</button>
+                            </form>
                         </div>
-                        <div class="mb-3">
-                            <label for="workshopsTema" class="form-label">Tema de Interesse *</label>
-                            <select class="form-select" id="workshopsTema" name="workshop" required>
-                                <option value="">Selecione uma opção</option>
-                                <option value="Liderança Consciente">Liderança Consciente e Adaptativa</option>
-                                <option value="Gestão da Mudança">Gestão da Mudança e Resiliência</option>
-                                <option value="Comunicação Estratégica">Comunicação Estratégica e Influência</option>
-                                <option value="Inovação">Inovação e Pensamento Criativo</option>
-                                <option value="Bem-estar">Bem-estar e Performance Sustentável</option>
-                                <option value="Outro">Outro</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="workshopsParticipants" class="form-label">Número Estimado de Participantes</label>
-                            <input type="number" class="form-control" id="workshopsParticipants" name="participants" min="1">
-                        </div>
-                        <div class="mb-3">
-                            <label for="workshopsFormat" class="form-label">Formato Preferencial</label>
-                            <select class="form-select" id="workshopsFormat" name="format">
-                                <option value="Presencial">Presencial</option>
-                                <option value="Online">Online</option>
-                                <option value="Híbrido">Híbrido</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="workshopsMessage" class="form-label">Informações Adicionais</label>
-                            <textarea class="form-control" id="workshopsMessage" name="message" rows="3"></textarea>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="workshopsTerms" required>
-                            <label class="form-check-label" for="workshopsTerms">
-                                Concordo com os <a href="../pages/tratamento-dados.html" target="_blank">termos de tratamento de dados</a>
-                            </label>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Solicitar Proposta</button>
-                        <div id="workshopsFormMessage" class="mt-3"></div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer>
         <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-6">
-                    <div class="footer-logo">
-                        <img src="../images/logo-white.png" alt="Share2Inspire Logo" class="img-fluid">
-                    </div>
-                    <p class="footer-text">Partilhar para Inspirar a mudança com autenticidade, propósito e impacto.</p>
+            <div class="footer-container">
+                <!-- Logo à esquerda -->
+                <div class="footer-logo">
+                    <img src="../images/logo.png" alt="Share2Inspire Logo">
                 </div>
-                <div class="col-lg-2 col-md-6">
-                    <h4 class="footer-title">Links Rápidos</h4>
-                    <ul class="footer-links">
-                        <li><a href="../index.html">Início</a></li>
-                        <li><a href="sobre.html">Sobre o Fundador</a></li>
-                        <li><a href="servicos.html">Serviços</a></li>
-                        <li><a href="loja.html">Loja</a></li>
-                        <li><a href="hr-hub.html">HR Hub</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h4 class="footer-title">Serviços</h4>
-                    <ul class="footer-links">
-                        <li><a href="#kickstart">Kickstart Pro</a></li>
-                        <li><a href="#consultoria">Consultoria Organizacional</a></li>
-                        <li><a href="#coaching">Coaching Executivo</a></li>
-                        <li><a href="#workshops">Workshops e Formações</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h4 class="footer-title">Contactos</h4>
-                    <ul class="footer-contact">
-                        <li><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</li>
-                        <li><i class="fas fa-phone"></i> +351 961 925 050</li>
-                        <li><i class="fas fa-map-marker-alt"></i> Rua Capitão Joaquim Varela Gusmão 5, 2640-791 Mafra, Portugal</li>
-                    </ul>
+                
+                <!-- Contactos à direita -->
+                <div class="footer-contact">
+                    <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
+                    <p><i class="fas fa-phone"></i> +351 961 925 050</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Rua Capitão Joaquim Varela Gusmão 5, 2640-791 Mafra, Portugal</p>
+                    
+                    <!-- Ícones de redes sociais aumentados -->
                     <div class="footer-social">
-                        <a href="https://www.linkedin.com/company/share2inspirept" target="_blank"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire_" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
-            <div class="row mt-4">
-                <div class="col-lg-12">
-                    <div class="footer-bottom">
-                        <p class="copyright">© 2023 Share2Inspire. Todos os direitos reservados.</p>
-                        <ul class="footer-legal">
-                            <li><a href="politica-privacidade.html">Política de Privacidade</a></li>
-                            <li><a href="politica-cookies.html">Política de Cookies</a></li>
-                            <li><a href="tratamento-dados.html">Tratamento de Dados</a></li>
-                            <li><a href="informacao-legal.html">Informação Legal</a></li>
-                        </ul>
-                    </div>
-                </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 Share2Inspire. Todos os direitos reservados.</p>
+                <a href="politica-privacidade.html">Política de Privacidade</a>
+                <a href="politica-cookies.html">Política de Cookies</a>
+                <a href="tratamento-dados.html">Tratamento de Dados</a>
+                <a href="informacao-legal.html">Informação Legal</a>
             </div>
         </div>
     </footer>
 
-    <!-- Botão Feedback -->
-    <button id="feedbackBtn" class="feedback-btn">
-        <i class="fas fa-comment"></i> Feedback
-    </button>
-
-    <!-- Modal Feedback -->
-    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="feedbackModalLabel">Deixa o teu Feedback</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="feedbackForm">
-                        <div class="mb-3">
-                            <label for="feedbackName" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="feedbackName" name="name">
-                        </div>
-                        <div class="mb-3">
-                            <label for="feedbackEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="feedbackEmail" name="email">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Avaliação</label>
-                            <div class="rating">
-                                <span class="star" data-value="1">★</span>
-                                <span class="star" data-value="2">★</span>
-                                <span class="star" data-value="3">★</span>
-                                <span class="star" data-value="4">★</span>
-                                <span class="star" data-value="5">★</span>
-                            </div>
-                            <input type="hidden" id="rating" name="rating" value="0">
-                        </div>
-                        <div class="mb-3">
-                            <label for="feedbackMessage" class="form-label">Mensagem</label>
-                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Enviar Feedback</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Integrações API -->
-    <script src="../js/brevo-integration.js"></script>
-    <script src="../js/ifthepay-integration.js"></script>
-    
-    <!-- Scripts dos formulários -->
-    <script src="../js/kickstart-pro-form.js"></script>
-    <script src="../js/consultoria-form.js"></script>
-    <script src="../js/coaching-form.js"></script>
-    <script src="../js/workshops-form.js"></script>
-    <script src="../js/feedback.js"></script>
-    
-    <!-- Script principal -->
-    <script src="../js/main.js"></script>
 </body>
 </html>
