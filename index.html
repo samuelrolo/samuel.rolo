@@ -29,6 +29,7 @@
             padding: 0;
             overflow-x: hidden;
             scroll-behavior: smooth;
+            font-family: 'Poppins', sans-serif;
         }
         
         /* Estilos específicos para garantir o layout correto */
@@ -38,14 +39,14 @@
         }
         
         main {
-            padding-top: 60px; /* Reduzido para melhor alinhamento em dispositivos móveis */
+            padding-top: 80px; /* Ajustado para o novo header */
             position: relative;
             z-index: 1;
         }
         
         @media (max-width: 767px) {
             main {
-                padding-top: 50px;
+                padding-top: 70px;
             }
         }
         
@@ -66,11 +67,11 @@
             width: auto;
         }
         
-        /* Estilos para o menu hamburger responsivo */
+        /* Estilos para o menu hamburger responsivo - ATUALIZADO PARA FUNDO BRANCO */
         .navbar {
-            background-color: #1a1a1a;
+            background-color: #ffffff;
             padding: 10px 0;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid #f0f0f0;
         }
         
         .navbar-brand img {
@@ -96,25 +97,27 @@
         }
         
         .nav-link {
-            color: #BF9A33 !important;
+            color: #333 !important;
             font-weight: 500;
-            transition: opacity 0.3s;
+            transition: all 0.3s;
             padding: 8px 15px;
         }
         
-        .nav-link:hover, .nav-link.active {
-            opacity: 0.8;
+        .nav-link:hover {
+            color: #BF9A33 !important;
         }
         
         .nav-link.active {
+            color: #BF9A33 !important;
             border-bottom: 2px solid #BF9A33;
         }
         
         @media (max-width: 991px) {
             .navbar-collapse {
-                background-color: #1a1a1a;
+                background-color: #ffffff;
                 padding: 15px;
                 border-radius: 0 0 5px 5px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             }
             
             .nav-item {
@@ -142,24 +145,29 @@
         }
         
         .hero-title h1 {
-            font-size: 3.5rem;
+            font-size: 4.5rem; /* Aumentado o tamanho da fonte */
             color: #BF9A33;
             margin: 0;
-            letter-spacing: 2px;
+            letter-spacing: 8px; /* Aumentado o espaçamento entre letras */
+            line-height: 1.4; /* Aumentado o espaçamento entre linhas */
+            font-weight: 700;
         }
         
         .hero-title h2 {
-            font-size: 2.5rem;
+            font-size: 3.5rem; /* Aumentado o tamanho da fonte */
             color: #BF9A33;
-            margin: 10px 0 0;
-            letter-spacing: 2px;
+            margin: 20px 0 0; /* Aumentado o espaçamento superior */
+            letter-spacing: 6px; /* Aumentado o espaçamento entre letras */
+            line-height: 1.4; /* Aumentado o espaçamento entre linhas */
+            font-weight: 700;
         }
         
         /* Estilos para o layout de duas colunas (carrossel à esquerda, texto à direita) */
         .intro-section {
             display: flex;
             padding: 50px 0;
-            min-height: 100vh; /* Garante que a secção ocupa pelo menos 100% da altura do viewport */
+            min-height: auto; /* Removido o min-height: 100vh para melhor alinhamento */
+            align-items: flex-start; /* Alinhamento no topo */
         }
         
         .carousel-column {
@@ -172,7 +180,19 @@
             padding-left: 30px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start; /* Alinhamento no topo */
+            align-items: flex-start;
+        }
+        
+        .text-column h2 {
+            margin-top: 0; /* Remove margem superior para alinhar com o carrossel */
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .text-column p {
+            margin-bottom: 15px;
+            line-height: 1.6;
         }
         
         /* Responsividade para o layout de duas colunas */
@@ -185,10 +205,12 @@
             .carousel-column {
                 padding-right: 0;
                 margin-bottom: 30px;
+                width: 100%;
             }
             
             .text-column {
                 padding-left: 0;
+                width: 100%;
             }
         }
         
@@ -208,26 +230,15 @@
         
         .carousel-item {
             min-width: 100%;
-            height: 400px;
+            height: auto;
             background-size: cover;
             background-position: center;
             position: relative;
         }
         
-        .carousel-caption {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background-color: rgba(0,0,0,0.7);
-            padding: 15px;
-            color: white;
-            border-radius: 5px;
-        }
-        
-        .carousel-caption h2 {
-            margin: 0;
-            font-size: 1.5rem;
+        .carousel-item img {
+            width: 100%;
+            height: auto;
         }
         
         /* Estilos para os botões centralizados */
@@ -321,83 +332,193 @@
             }
         }
         
-        /* Estilos para o footer simplificado */
+        /* Estilos para o footer minimalista */
         footer {
             background-color: #1a1a1a;
             color: #BF9A33;
-            padding: 50px 0 20px;
+            padding: 15px 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
         }
         
         .footer-container {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             flex-wrap: wrap;
         }
         
-        /* Responsividade para o footer */
-        @media (max-width: 767px) {
-            .footer-container {
-                flex-direction: column;
-            }
-            
-            .footer-logo, .footer-contact {
-                width: 100%;
-                margin-bottom: 30px;
-            }
+        .footer-left {
+            display: flex;
+            align-items: center;
         }
         
-        .footer-logo {
-            flex: 1;
-            max-width: 200px;
+        .footer-left p {
+            margin: 0;
+            margin-right: 15px;
         }
         
-        .footer-logo img {
-            width: 100px;
-            height: auto;
+        .footer-right {
+            display: flex;
+            align-items: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            margin-right: 20px;
+        }
+        
+        .footer-links a {
+            color: #BF9A33;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: #ffffff;
+        }
+        
+        .footer-social {
+            display: flex;
+        }
+        
+        .footer-social a {
+            color: #BF9A33;
+            font-size: 1.2rem;
+            margin-left: 15px;
+            transition: transform 0.3s;
+        }
+        
+        .footer-social a:hover {
+            transform: translateY(-3px);
         }
         
         .footer-contact {
-            flex: 1;
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
         }
         
         .footer-contact p {
-            margin: 10px 0;
+            margin: 0;
+            margin-right: 20px;
             display: flex;
             align-items: center;
         }
         
         .footer-contact i {
-            margin-right: 10px;
-            font-size: 1.5rem;
+            margin-right: 8px;
+            font-size: 1rem;
         }
         
-        .footer-social {
-            margin-top: 20px;
+        /* Responsividade para o footer */
+        @media (max-width: 991px) {
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-left, .footer-right, .footer-links, .footer-contact {
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 10px;
+            }
+            
+            .footer-social {
+                justify-content: center;
+                margin-top: 10px;
+            }
+            
+            .footer-social a {
+                margin: 0 8px;
+            }
+            
+            .footer-contact p {
+                justify-content: center;
+                margin: 5px 10px;
+            }
         }
         
-        .footer-social a {
+        /* Estilos para o pop-up de cookies */
+        .cookie-consent {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(26, 26, 26, 0.95);
+            color: #fff;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 9999;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .cookie-consent.show {
+            transform: translateY(0);
+        }
+        
+        .cookie-text {
+            flex: 1;
+            padding-right: 20px;
+            font-size: 14px;
+        }
+        
+        .cookie-text a {
             color: #BF9A33;
-            font-size: 2.5rem; /* Aumentado o tamanho dos ícones */
-            margin-right: 15px;
-            transition: transform 0.3s;
+            text-decoration: underline;
         }
         
-        .footer-social a:hover {
-            transform: translateY(-5px);
+        .cookie-buttons {
+            display: flex;
+            gap: 10px;
         }
         
-        .footer-bottom {
-            margin-top: 30px;
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(192, 160, 96, 0.3);
+        .cookie-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s;
         }
         
-        .footer-bottom a {
-            color: #c0a060;
-            text-decoration: none;
-            margin: 0 10px;
+        .cookie-btn-accept {
+            background-color: #BF9A33;
+            color: #fff;
+        }
+        
+        .cookie-btn-settings {
+            background-color: transparent;
+            color: #BF9A33;
+            border: 1px solid #BF9A33;
+        }
+        
+        .cookie-btn:hover {
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 767px) {
+            .cookie-consent {
+                flex-direction: column;
+                padding: 15px;
+            }
+            
+            .cookie-text {
+                padding-right: 0;
+                margin-bottom: 15px;
+                text-align: center;
+            }
+            
+            .cookie-buttons {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -468,21 +589,12 @@
                     <div class="carousel-inner">
                         <div class="carousel-item active">
                             <img src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/BANNER1.png" class="d-block w-100" alt="Banner 1">
-                            <div class="carousel-caption d-none d-md-block">
-                                <h2>BEM VINDO À NOSSA CASA!</h2>
-                            </div>
                         </div>
                         <div class="carousel-item">
                             <img src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/BANNER2.png" class="d-block w-100" alt="Banner 2">
-                            <div class="carousel-caption d-none d-md-block">
-                                <h2>O NOSSO PROPÓSITO É PARTILHAR PARA INSPIRAR A MUDANÇA COM AUTENTICIDADE, PROPÓSITO E IMPACTO</h2>
-                            </div>
                         </div>
                         <div class="carousel-item">
                             <img src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/BANNER3.png" class="d-block w-100" alt="Banner 3">
-                            <div class="carousel-caption d-none d-md-block">
-                                <h2>LIVRO JÁ DISPONÍVEL ONLINE VISITA A NOSSA LOJA</h2>
-                            </div>
                         </div>
                     </div>
                     <button class="carousel-control-prev" type="button" data-bs-target="#introCarousel" data-bs-slide="prev">
@@ -495,59 +607,90 @@
                     </button>
                 </div>
             </div>
-            
             <div class="text-column">
-                <!-- Texto à direita -->
                 <h2>Bem-vind@ à SHARE2INSPIRE</h2>
-                <p>A SHARE2INSPIRE nasceu da ambição do Samuel Rolo em apoiar <strong>Pessoas</strong> e <strong>Organizações</strong> a abraçar a mudança com mais <strong>confiança e humanidade</strong>.</p>
-                <p>Na SHARE2INSPIRE, o metodologia em Transformação Organizacional e Desenvolvimento Pessoal é suportada pela <strong>experiência de mais de 13 anos</strong> e uma <strong>visão profundamente humana sobre o Futuro do Trabalho</strong>.</p>
-                <p><strong>O nosso propósito é Partilhar para Inspirar a mudança com autenticidade, propósito e impacto</strong>.</p>
+                <p>A SHARE2INSPIRE nasceu da ambição do Samuel Rolo em apoiar Pessoas e Organizações a abraçar a mudança com mais confiança e humanidade.</p>
+                <p>Na SHARE2INSPIRE, a metodologia em Transformação Organizacional e Desenvolvimento Pessoal é suportada pela experiência de mais de 13 anos e uma visão profundamente humana sobre o Futuro do Trabalho.</p>
+                <p>O nosso propósito é Partilhar para Inspirar a mudança com autenticidade, propósito e impacto.</p>
             </div>
         </section>
         
-        <!-- Botões centralizados -->
+        <!-- Botões de Call-to-Action -->
         <div class="cta-buttons">
             <a href="pages/servicos.html" class="btn btn-primary">Conhece os Nossos Serviços</a>
-            <a href="pages/contactos.html" class="btn btn-secondary">Entra em Contacto</a>
+            <a href="index.html#contactos" class="btn btn-secondary">Entra em Contacto</a>
         </div>
-        
-        <!-- Restante conteúdo do site -->
     </main>
 
-    <!-- Footer simplificado -->
-    <footer>
+    <!-- Footer Minimalista -->
+    <footer id="contactos">
         <div class="container">
             <div class="footer-container">
-                <!-- Logo à esquerda -->
-                <div class="footer-logo">
-                    <img src="images/logo.png" alt="Share2Inspire Logo">
+                <div class="footer-left">
+                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
                 </div>
-                
-                <!-- Contactos à direita -->
-                <div class="footer-contact">
-                    <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
-                    <p><i class="fas fa-phone"></i> +351 961 925 050</p>
-                    <p><i class="fas fa-map-marker-alt"></i> Rua Capitão Joaquim Varela Gusmão 5, 2640-791 Mafra, Portugal</p>
-                    
-                    <!-- Ícones de redes sociais aumentados -->
+                <div class="footer-right">
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
+                    </div>
+                    <div class="footer-links">
+                        <a href="pages/politica-privacidade.html">Política de Privacidade</a>
+                        <a href="pages/politica-cookies.html">Política de Cookies</a>
+                        <a href="pages/tratamento-dados.html">Tratamento de Dados</a>
+                        <a href="pages/informacao-legal.html">Informação Legal</a>
+                    </div>
                     <div class="footer-social">
                         <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
                         <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2023 Share2Inspire. Todos os direitos reservados.</p>
-                <a href="pages/politica-privacidade.html">Política de Privacidade</a>
-                <a href="pages/politica-cookies.html">Política de Cookies</a>
-                <a href="pages/tratamento-dados.html">Tratamento de Dados</a>
-                <a href="pages/informacao-legal.html">Informação Legal</a>
-            </div>
         </div>
     </footer>
 
-    <!-- Bootstrap JS Bundle with Popper -->
+    <!-- Pop-up de Aceitação de Cookies -->
+    <div class="cookie-consent" id="cookieConsent">
+        <div class="cookie-text">
+            <p>Utilizamos cookies para melhorar a sua experiência no nosso website. Ao continuar a navegar, está a concordar com a nossa <a href="pages/politica-cookies.html">Política de Cookies</a>.</p>
+        </div>
+        <div class="cookie-buttons">
+            <button class="cookie-btn cookie-btn-settings" id="cookieSettings">Definições</button>
+            <button class="cookie-btn cookie-btn-accept" id="cookieAccept">Aceitar</button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script para o pop-up de cookies -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar se o utilizador já aceitou os cookies
+            const cookieConsent = localStorage.getItem('cookie_consent');
+            const cookiePopup = document.getElementById('cookieConsent');
+            
+            if (!cookieConsent) {
+                // Mostrar o pop-up após 1 segundo
+                setTimeout(function() {
+                    cookiePopup.classList.add('show');
+                }, 1000);
+            }
+            
+            // Botão de aceitar cookies
+            document.getElementById('cookieAccept').addEventListener('click', function() {
+                localStorage.setItem('cookie_consent', 'accepted');
+                cookiePopup.classList.remove('show');
+                
+                // Ativar o Google Analytics
+                window['ga-disable-G-8GQ1KM9FQS'] = false;
+            });
+            
+            // Botão de definições de cookies
+            document.getElementById('cookieSettings').addEventListener('click', function() {
+                window.location.href = 'pages/politica-cookies.html';
+            });
+        });
+    </script>
 </body>
 </html>

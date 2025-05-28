@@ -2,9 +2,9 @@
 
 /* ===== Base Styles ===== */
 :root {
-    --primary-color: #BF9A33; /* Dourado principal */
+    --primary-color: #82612d; /* Dourado principal */
     --secondary-color: #333333; /* Cinza escuro */
-    --accent-color: #C9A458; /* Dourado suave */
+    --accent-color: #b9935a; /* Dourado suave */
     --light-color: #f8f9fa;
     --dark-color: #212529;
     --text-color: #333333;
@@ -12,7 +12,7 @@
     --border-color: #dee2e6;
     --success-color: #28a745;
     --error-color: #dc3545;
-    --warning-color: #BF9A33; /* Dourado claro (mesmo tom do logo) */
+    --warning-color: #a67817; /* Dourado claro (mesmo tom do logo) */
     --info-color: #17a2b8;
     --transition: all 0.3s ease;
     --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
