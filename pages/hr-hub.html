@@ -1,430 +1,163 @@
-<!DOCTYPE html>
-<html lang="pt-PT">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HR Hub | Share2Inspire | Samuel Rolo</title>
-    <meta name="description" content="HR Hub da Share2Inspire. Recursos, artigos e insights para profissionais de Recursos Humanos.">
-    
-    <!-- Favicon -->
-    <link rel="icon" href="../images/favicon.png" type="image/png">
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .hr-hub-main {
-            padding: 60px 0;
-        }
-        
-        .hr-hub-description {
-            margin-bottom: 50px;
-        }
-        
-        .hr-hub-image {
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 40px;
-        }
-        
-        .hr-hub-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        
-        .newsletter-stats {
-            background-color: #f8f9fa;
-            padding: 30px;
-            border-radius: 8px;
-            margin-bottom: 40px;
-        }
-        
-        .stat-item {
-            text-align: center;
-            padding: 15px;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .explore-button {
-            text-align: center;
-            margin-top: 40px;
-        }
-        
-        .explore-button .btn {
-            padding: 12px 30px;
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-        
-        /* Estilos para o conteúdo da newsletter */
-        .newsletter-content {
-            margin-top: 60px;
-            padding-top: 40px;
-            border-top: 1px solid #eee;
-        }
-        
-        .section-title {
-            color: var(--primary-color);
-            margin-bottom: 40px;
-            font-weight: 700;
-        }
-        
-        .section-subtitle {
-            color: var(--primary-color);
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-        
-        .featured-article {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            margin-bottom: 40px;
-        }
-        
-        .featured-image img {
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-        
-        .featured-content h4 {
-            color: var(--primary-color);
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-        
-        .article-date {
-            color: #777;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-        
-        .article-summary {
-            color: #444;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-        
-        .article-card {
-            background-color: #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-            height: 100%;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .article-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .article-image img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-        
-        .article-content {
-            padding: 20px;
-        }
-        
-        .article-content h5 {
-            color: var(--primary-color);
-            font-weight: 600;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-            min-height: 50px;
-        }
-    </style>
-</head>
-<body>
-   
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
+<!-- Secção de Newsletter -->
+<section class="newsletter-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2 class="section-title">HR Innovation Hub Newsletter</h2>
+                <p class="section-subtitle">Insights, tendências e ferramentas para profissionais de RH</p>
+            </div>
+        </div>
+
+        <!-- Estatísticas da Newsletter -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="newsletter-stats">
+                    <div class="row">
+                        <div class="col-md-3 col-6">
+                            <div class="stat-item">
+                                <div class="stat-number" id="subscribers">1.5K</div>
+                                <div class="stat-label">Subscritores</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="stat-item">
+                                <div class="stat-number" id="newSubscribers">+250</div>
+                                <div class="stat-label" id="newSubscribersLabel">Novos Subscritores (Último Ano)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="stat-item">
+                                <div class="stat-number" id="articleViews">2.6K</div>
+                                <div class="stat-label">Visualizações de Artigos</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="stat-item">
+                                <div class="stat-number" id="totalImpressions">7.9K</div>
+                                <div class="stat-label">Impressões Totais</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Artigo em Destaque -->
+        <div class="row mt-5">
+            <div class="col-lg-12">
+                <h3 class="section-subtitle">Artigo em Destaque</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="featured-article">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="featured-image">
+                                <img id="featuredImage" src="../images/hr_hub_may_2025.png" alt="Artigo em Destaque">
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="featured-content">
+                                <h4 id="featuredTitle">Reskilling: An Inspiring Perspective</h4>
+                                <div class="article-date" id="featuredDate">Maio 2025</div>
+                                <div class="article-summary" id="featuredSummary">
+                                    Neste novo capítulo da newsletter HR Innovation Hub, exploramos como o reskilling pode transformar carreiras e organizações.
+                                </div>
+                                <a id="featuredLink" href="https://www.linkedin.com/pulse/reskilling-inspiring-perspective-from-both-individual-samuel-rolo-2sdyf" class="btn btn-primary" target="_blank">Ler Artigo Completo</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Artigos Recentes -->
+        <div class="row mt-5">
+            <div class="col-lg-12">
+                <h3 class="section-subtitle">Artigos Recentes</h3>
+            </div>
+        </div>
+        <div class="row" id="articlesContainer">
+            <!-- Os artigos serão inseridos aqui dinamicamente via JavaScript -->
+        </div>
+
+        <!-- Botão de Subscrição -->
+        <div class="row mt-5">
+            <div class="col-lg-12 text-center">
+                <div class="explore-button">
+                    <a href="https://www.linkedin.com/newsletters/hr-innovation-hub-7033348085286400000/" class="btn btn-primary" target="_blank">Subscrever Newsletter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Script para carregar dinamicamente o conteúdo da newsletter -->
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-8GQ1KM9FQS');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Função para carregar o conteúdo da newsletter
+        async function loadNewsletterContent() {
+            try {
+                const response = await fetch('../newsletter_content.json');
+                const data = await response.json();
+                
+                // Atualizar estatísticas
+                if (data.stats) {
+                    document.getElementById('subscribers').textContent = data.stats.subscribers;
+                    document.getElementById('newSubscribers').textContent = data.stats.newSubscribers;
+                    document.getElementById('articleViews').textContent = data.stats.articleViews;
+                    document.getElementById('totalImpressions').textContent = data.stats.totalImpressions;
+                }
+                
+                // Atualizar artigo em destaque
+                if (data.featuredArticle) {
+                    document.getElementById('featuredTitle').textContent = data.featuredArticle.title;
+                    document.getElementById('featuredDate').textContent = data.featuredArticle.date;
+                    document.getElementById('featuredSummary').textContent = data.featuredArticle.summary;
+                    document.getElementById('featuredLink').href = data.featuredArticle.link;
+                    document.getElementById('featuredImage').src = '../' + data.featuredArticle.image;
+                    document.getElementById('featuredImage').alt = data.featuredArticle.title;
+                }
+                
+                // Atualizar artigos recentes
+                if (data.articles && data.articles.length > 0) {
+                    const articlesContainer = document.getElementById('articlesContainer');
+                    articlesContainer.innerHTML = ''; // Limpar conteúdo existente
+                    
+                    data.articles.forEach(article => {
+                        const articleHTML = `
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="article-card">
+                                    <div class="article-image">
+                                        <img src="../${article.image}" alt="${article.title}">
+                                    </div>
+                                    <div class="article-content">
+                                        <h5>${article.title}</h5>
+                                        <div class="article-date">${article.date}</div>
+                                        <div class="article-summary">${article.summary.substring(0, 120)}...</div>
+                                        <a href="${article.link}" class="btn btn-sm btn-outline-primary mt-3" target="_blank">Ler Mais</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        articlesContainer.innerHTML += articleHTML;
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao carregar o conteúdo da newsletter:', error);
+                // Exibir mensagem de erro para o utilizador
+                document.getElementById('articlesContainer').innerHTML = `
+                    <div class="col-12 text-center">
+                        <div class="alert alert-warning">
+                            Não foi possível carregar o conteúdo da newsletter. Por favor, tente novamente mais tarde.
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Carregar o conteúdo da newsletter
+        loadNewsletterContent();
+    });
 </script>
-
-    <!-- Header e Navegação -->
-    <header class="header">
-        <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="../index.html">
-                    <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="../index.html">Início</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="servicos.html">Serviços</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="loja.html">Loja</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="hr-hub.html">HR Hub</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../index.html#contactos">Contatos</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>HR Innovation Hub</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">HR Hub</li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- HR Hub Main Content -->
-    <section class="hr-hub-main">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="hr-hub-description text-center">
-                        <h2 class="section-title">Bem-vindo ao HR Innovation Hub</h2>
-                        <p class="section-subtitle">Um espaço dedicado à inovação e ao futuro da gestão de pessoas, onde partilhamos conhecimento, tendências e ferramentas para profissionais de RH e líderes.</p>
-                        <p>O HR Innovation Hub é uma comunidade de profissionais de Recursos Humanos comprometidos com a transformação do mundo do trabalho. Aqui, exploramos as mais recentes tendências, metodologias e práticas que estão a moldar o futuro da gestão de pessoas, com foco na inovação, inclusão e desenvolvimento sustentável.</p>
-                        <p>Através da nossa newsletter, artigos e recursos exclusivos, procuramos inspirar e capacitar profissionais de RH e líderes a implementarem mudanças significativas nas suas organizações, promovendo ambientes de trabalho mais humanos, inclusivos e produtivos.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-lg-10 offset-lg-1">
-                    <div class="hr-hub-image">
-                        <img src="../images/image.png" alt="Inclusão de Pessoas com Deficiência no Trabalho">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="newsletter-stats">
-                        <div class="row">
-                            <div class="col-md-3 col-6">
-                                <div class="stat-item">
-                                    <div class="stat-number">1.5K</div>
-                                    <div class="stat-label">Subscritores</div>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-6">
-                                <div class="stat-item">
-                                    <div class="stat-number">+25%</div>
-                                    <div class="stat-label">Novos Subscritores (Último Ano)</div>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-6">
-                                <div class="stat-item">
-                                    <div class="stat-number">2.6K</div>
-                                    <div class="stat-label">Visualizações de Artigos</div>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-6">
-                                <div class="stat-item">
-                                    <div class="stat-number">7.9K</div>
-                                    <div class="stat-label">Impressões Totais</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Conteúdo Dinâmico da Newsletter -->
-            <div id="newsletterContent">
-                <div class="text-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">A carregar...</span>
-                    </div>
-                    <p class="mt-3">A carregar o conteúdo da newsletter...</p>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="explore-button">
-                        <a href="https://www.linkedin.com/newsletters/people-management-challenges-7164427399303450624/" class="btn btn-primary" target="_blank">EXPLORAR HR HUB</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-6">
-                    <div class="footer-info">
-                        <img src="../images/logo-white.png" alt="Share2Inspire Logo">
-                        <p>Partilhar para Inspirar a Mudança</p>
-                    </div>
-                </div>
-                <div class="col-lg-2 col-md-6">
-                    <div class="footer-links">
-                        <h4>Links Rápidos</h4>
-                        <ul>
-                            <li><a href="../index.html">Início</a></li>
-                            <li><a href="sobre.html">Sobre</a></li>
-                            <li><a href="servicos.html">Serviços</a></li>
-                            <li><a href="loja.html">Loja</a></li>
-                            <li><a href="hr-hub.html">HR Hub</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer-links">
-                        <h4>Informações Legais</h4>
-                        <ul>
-                            <li><a href="politica-privacidade.html">Política de Privacidade</a></li>
-                            <li><a href="politica-cookies.html">Política de Cookies</a></li>
-                            <li><a href="tratamento-dados.html">Tratamento de Dados</a></li>
-                            <li><a href="informacao-legal.html">Informação Legal</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer-newsletter">
-                        <h4>Newsletter</h4>
-                        <p>Subscreve para receber novidades e conteúdos exclusivos.</p>
-                        <form id="newsletterForm" class="newsletter-form brevo-form">
-                            <div class="input-group">
-                                <input type="email" class="form-control" placeholder="Seu email" name="email" required>
-                                <button class="btn btn-primary" type="submit">Subscrever</button>
-                            </div>
-                            <div id="newsletterMessage" class="mt-2"></div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p>&copy; 2025 Share2Inspire. Todos os direitos reservados.</p>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="social-links">
-                            <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-                            <a href="https://www.instagram.com/samuelrolo.io/" target="_blank"><i class="fab fa-instagram"></i></a>
-                            <a href="https://www.youtube.com/@samuelrolo" target="_blank"><i class="fab fa-youtube"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Feedback Button -->
-    <div class="feedback-button">
-        <button type="button" class="btn btn-feedback" data-bs-toggle="modal" data-bs-target="#feedbackModal">
-            <i class="fas fa-comment-alt"></i> Feedback
-        </button>
-    </div>
-
-    <!-- Feedback Modal -->
-    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="feedbackModalLabel">Deixa o teu Feedback</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="feedbackForm" class="brevo-form">
-                        <div class="mb-3">
-                            <label for="feedbackName" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="feedbackName" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="feedbackEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="feedbackEmail" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="feedbackRating" class="form-label">Avaliação</label>
-                            <div class="star-rating">
-                                <input type="radio" id="star5" name="rating" value="5"><label for="star5"></label>
-                                <input type="radio" id="star4" name="rating" value="4"><label for="star4"></label>
-                                <input type="radio" id="star3" name="rating" value="3"><label for="star3"></label>
-                                <input type="radio" id="star2" name="rating" value="2"><label for="star2"></label>
-                                <input type="radio" id="star1" name="rating" value="1"><label for="star1"></label>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="feedbackMessage" class="form-label">Mensagem</label>
-                            <textarea class="form-control" id="feedbackMessage" name="message" rows="4" required></textarea>
-                        </div>
-                        <div id="feedbackFormMessage" class="mb-3"></div>
-                        <button type="submit" class="btn btn-primary w-100">Enviar Feedback</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Integrações API -->
-    <script src="../js/brevo-integration.js"></script>
-    
-    <!-- Scripts dos formulários -->
-    <script src="../js/hr-hub-newsletter.js"></script>
-    <script src="../js/newsletter-form.js"></script>
-    <script src="../js/feedback.js"></script>
-    
-    <!-- Script principal -->
-    <script src="../js/main.js"></script>
-</body>
-</html>
