@@ -17,7 +17,7 @@ function initBrevoSDK() {
     // Configuração do SDK
     const defaultClient = ApiClient.instance;
     const apiKey = defaultClient.authentications['api-key'];
-    apiKey.apiKey = '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'; // Idealmente, obtido de forma segura do backend
+    apiKey.apiKey = apiKey.apiKey = process.env.BREVO_API_KEY
     
     // Criar instância da API
     const apiInstance = new TransactionalEmailsApi();
