@@ -15,11 +15,12 @@ function initIfthenpaySDK() {
     console.log('Inicializando SDK oficial da Ifthenpay');
     
     // Configuração do SDK - idealmente, estas chaves devem ser obtidas do backend
-    const IFTHENPAY_API_KEY = '3532-9893-7426-5310';
-    const IFTHENPAY_MBWAY_KEY = 'UWP-547025';
-    const IFTHENPAY_MULTIBANCO_ENTITY = 'BXG';
-    const IFTHENPAY_MULTIBANCO_SUBENTITY = '350883';
-    const IFTHENPAY_PAYSHOP_KEY = 'QTU-066969';
+    const IFTHENPAY_API_KEY = process.env.IFTHENPAY_API_KEY;
+    const IFTHENPAY_MBWAY_KEY = process.env.IFTHENPAY_MBWAY_KEY;
+    const IFTHENPAY_MULTIBANCO_ENTITY = process.env.IFTHENPAY_MULTIBANCO_ENTITY;
+    const IFTHENPAY_MULTIBANCO_SUBENTITY = process.env.IFTHENPAY_MULTIBANCO_SUBENTITY;
+    const IFTHENPAY_PAYSHOP_KEY = process.env.IFTHENPAY_PAYSHOP_KEY;
+    const BREVO_API_KEY = process.env.BREVO_API_KEY;
     
     // Criar instância principal
     const ifthenpay = new Ifthenpay(IFTHENPAY_API_KEY);
