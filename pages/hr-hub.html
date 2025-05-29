@@ -7,7 +7,7 @@
     <meta name="description" content="HR Innovation Hub - Newsletter e recursos para profissionais de RH por Samuel Rolo.">
     
     <!-- Favicon -->
-    <link rel="icon" href="../images/favicon.png" type="image/png">
+    <link rel="icon" href="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/favicon.png" type="image/png">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -523,7 +523,7 @@
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="../index.html">
-                    <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img">
+                    <img src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/logo.png" alt="Share2Inspire Logo" class="logo-img">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -627,7 +627,7 @@
                         <div class="row g-0">
                             <div class="col-lg-5">
                                 <div class="featured-image">
-                                    <img id="featuredImage" src="../images/hr_hub_may_2025.png" alt="Artigo em Destaque">
+                                    <img id="featuredImage" src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/hr_hub_may_2025.png" alt="Artigo em Destaque">
                                 </div>
                             </div>
                             <div class="col-lg-7">
@@ -728,7 +728,7 @@
                 "featuredArticle": {
                     "title": "Reskilling: An Inspiring Perspective",
                     "date": "Maio 2025",
-                    "image": "../images/hr_hub_may_2025.png",
+                    "image": "https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/hr_hub_may_2025.png",
                     "summary": "Neste novo capítulo da newsletter HR Innovation Hub, exploramos como o reskilling pode transformar carreiras e organizações.",
                     "link": "https://www.linkedin.com/pulse/reskilling-inspiring-perspective-from-both-individual-samuel-rolo-2sdyf"
                 },
@@ -736,35 +736,35 @@
                     {
                         "title": "Dia Internacional dos Recursos Humanos: Celebrar a Evolução e o Impacto",
                         "date": "Maio de 2025",
-                        "image": "../images/diarh.png",
+                        "image": "https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/diarh.png",
                         "summary": "Neste artigo, Samuel Rolo reflete sobre a transformação do papel dos RH, de função administrativa a parceiro estratégico nas organizações. Destaca a importância da empatia, da humanização na era digital e da aprendizagem contínua.",
                         "link": "https://www.linkedin.com/pulse/dia-internacional-dos-recursos-humanos-celebrar-evolu%C3%A7%C3%A3o-samuel-rolo-4kcof"
                     },
                     {
                         "title": "Understanding the Invisible Work Within Organizations",
                         "date": "Abril de 2025",
-                        "image": "../images/hr_hub_may_2025.png",
+                        "image": "https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/hr_hub_may_2025.png",
                         "summary": "Nesta edição, exploramos o trabalho invisível que sustenta as organizações - aquelas tarefas e responsabilidades que raramente são reconhecidas mas são essenciais para o funcionamento eficaz das equipas e empresas.",
                         "link": "https://www.linkedin.com/pulse/understanding-invisible-work-within-organizations-samuel-rolo"
                     },
                     {
                         "title": "Leadership: Blending Tech and Human Touch",
                         "date": "Março de 2025",
-                        "image": "../images/power.png",
+                        "image": "https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/power.png",
                         "summary": "Como podem os líderes modernos equilibrar a adoção de novas tecnologias com a manutenção do elemento humano essencial na gestão de equipas? Esta edição explora este desafio crescente.",
                         "link": "https://www.linkedin.com/pulse/leadership-blending-tech-human-touch-samuel-rolo-bfs9f"
                     },
                     {
                         "title": "Start Strong in 2025: Estratégias para um Ano de Sucesso",
                         "date": "Fevereiro de 2025",
-                        "image": "../images/start_strong_2025.png",
+                        "image": "https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/start_strong_2025.png",
                         "summary": "Começar o ano com o pé direito é essencial para o sucesso a longo prazo. Nesta edição, partilhamos estratégias práticas para líderes e equipas definirem objetivos eficazes e manterem o momentum.",
                         "link": "https://www.linkedin.com/pulse/people-management-challenges4-start-strong-2025-samuel-rolo-6iihf"
                     },
                     {
                         "title": "Disability Inclusion, promoting a more equitable and sustainable society",
                         "date": "Abril de 2025",
-                        "image": "../images/disability_inclusion.png",
+                        "image": "https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/disability_inclusion.png",
                         "summary": "Neste artigo, Samuel Rolo reflete sobre a importância da inclusão de pessoas com deficiência no mercado de trabalho, destacando o impacto da nova legislação portuguesa em vigor desde janeiro de 2024.",
                         "link": "https://www.linkedin.com/pulse/disability-inclusion-promoting-more-equitable-sustainable-samuel-rolo-ngr4f"
                     }
@@ -787,6 +787,21 @@
                         const response = await fetch('newsletter_content.json');
                         if (response.ok) {
                             data = await response.json();
+                            
+                            // Garantir que os caminhos das imagens são URLs absolutos
+                            if (data.featuredArticle && !data.featuredArticle.image.startsWith('http')) {
+                                data.featuredArticle.image = 'https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/' + 
+                                    data.featuredArticle.image.replace('../images/', '');
+                            }
+                            
+                            if (data.articles) {
+                                data.articles.forEach(article => {
+                                    if (!article.image.startsWith('http')) {
+                                        article.image = 'https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/' + 
+                                            article.image.replace('../images/', '');
+                                    }
+                                });
+                            }
                         }
                     } catch (error) {
                         console.log('Usando dados estáticos como fallback:', error);
