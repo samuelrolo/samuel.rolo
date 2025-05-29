@@ -1,11 +1,70 @@
-// Versão final do script para o formulário de contacto
-document.addEventListener('DOMContentLoaded', function() {
+/**
+ * Script para o formulário de contacto - Versão corrigida
+ * Garante que o botão de envio funcione corretamente
+ */
+
+// Executar imediatamente para garantir que o script seja carregado
+(function() {
+    // Verificar se o DOM já está carregado
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initContactForm);
+    } else {
+        // DOM já está carregado
+        initContactForm();
+    }
+    
+    // Adicionar um fallback para garantir que o script seja inicializado
+    window.addEventListener('load', function() {
+        // Verificar se o modal já foi inicializado
+        if (!document.getElementById('contactModal')) {
+            initContactForm();
+        }
+        
+        // Verificar se o event listener do botão já foi adicionado
+        const submitButton = document.getElementById('submitContact');
+        if (submitButton && !submitButton._hasClickListener) {
+            addSubmitButtonListener();
+        }
+    });
+})();
+
+/**
+ * Inicializa o formulário de contacto
+ */
+function initContactForm() {
+    console.log('Inicializando formulário de contacto...');
+    
     // Inicializar o modal de contacto
     initContactModal();
     
     // Adicionar event listeners para os botões de contacto
     setupContactButtons();
-});
+    
+    // Garantir que o event listener do botão de submissão seja adicionado
+    setTimeout(addSubmitButtonListener, 500);
+}
+
+/**
+ * Adiciona o event listener ao botão de submissão
+ */
+function addSubmitButtonListener() {
+    const submitButton = document.getElementById('submitContact');
+    if (submitButton) {
+        console.log('Adicionando event listener ao botão de submissão...');
+        
+        // Remover event listeners existentes para evitar duplicação
+        submitButton.removeEventListener('click', handleContactFormSubmit);
+        
+        // Adicionar novo event listener
+        submitButton.addEventListener('click', handleContactFormSubmit);
+        
+        // Marcar que o event listener foi adicionado
+        submitButton._hasClickListener = true;
+    } else {
+        console.warn('Botão de submissão não encontrado. Tentando novamente em 500ms...');
+        setTimeout(addSubmitButtonListener, 500);
+    }
+}
 
 /**
  * Inicializa o modal de contacto
@@ -13,6 +72,8 @@ document.addEventListener('DOMContentLoaded', function() {
 function initContactModal() {
     // Verificar se o modal já existe no DOM
     if (!document.getElementById('contactModal')) {
+        console.log('Criando modal de contacto...');
+        
         // Criar o elemento do modal
         const modalHTML = `
         <!-- Modal de Contacto -->
@@ -110,10 +171,7 @@ function initContactModal() {
         }
         
         // Adicionar event listener para o botão de submissão
-        const submitButton = document.getElementById('submitContact');
-        if (submitButton) {
-            submitButton.addEventListener('click', handleContactFormSubmit);
-        }
+        setTimeout(addSubmitButtonListener, 100);
         
         // Adicionar validação de formulário
         const contactForm = document.getElementById('contactForm');
@@ -130,6 +188,8 @@ function initContactModal() {
  * Configura os botões que abrem o modal de contacto
  */
 function setupContactButtons() {
+    console.log('Configurando botões de contacto...');
+    
     // Selecionar todos os botões/links que devem abrir o modal de contacto
     const contactButtons = document.querySelectorAll('a[href*="#contactos"], .btn-secondary');
     
@@ -158,6 +218,8 @@ function setupContactButtons() {
  * Manipula a submissão do formulário de contacto
  */
 function handleContactFormSubmit() {
+    console.log('Processando submissão do formulário...');
+    
     // Verificar se o formulário é válido
     const form = document.getElementById('contactForm');
     if (!form.checkValidity()) {
@@ -195,6 +257,8 @@ function handleContactFormSubmit() {
         message: formData.get('message'),
         hasAttachment: formData.get('attachment') && formData.get('attachment').size > 0
     };
+    
+    console.log('Dados do formulário:', contactData);
     
     // Verificar se há anexo
     const attachment = formData.get('attachment');
@@ -238,10 +302,16 @@ function handleContactFormSubmit() {
  * @param {string} originalButtonText - Texto original do botão
  */
 function sendContactData(data, submitButton, originalButtonText) {
+    console.log('Enviando dados para o backend...');
+    
     // Utilizar a função do SDK da Brevo para enviar o email
     if (window.brevoSDK && typeof window.brevoSDK.sendContactConfirmation === 'function') {
+        console.log('Utilizando SDK da Brevo...');
+        
         window.brevoSDK.sendContactConfirmation(data)
             .then(response => {
+                console.log('Resposta do backend:', response);
+                
                 // Mostrar mensagem de sucesso
                 document.getElementById('contactSuccess').classList.remove('d-none');
                 
@@ -263,6 +333,8 @@ function sendContactData(data, submitButton, originalButtonText) {
                 }, 3000);
             })
             .catch(error => {
+                console.error('Erro ao enviar mensagem:', error);
+                
                 // Mostrar mensagem de erro
                 const errorElement = document.getElementById('contactError');
                 errorElement.textContent = 'Erro ao enviar mensagem: ' + (error.message || 'Tente novamente mais tarde.');
@@ -273,6 +345,8 @@ function sendContactData(data, submitButton, originalButtonText) {
                 submitButton.disabled = false;
             });
     } else {
+        console.log('SDK da Brevo não disponível, utilizando fetch API...');
+        
         // Fallback se o SDK não estiver disponível
         fetch('https://share2inspire-beckend.lm.r.appspot.com/api/email/contact-confirmation', {
             method: 'POST',
@@ -290,6 +364,8 @@ function sendContactData(data, submitButton, originalButtonText) {
             return response.json();
         })
         .then(data => {
+            console.log('Resposta do backend:', data);
+            
             // Mostrar mensagem de sucesso
             document.getElementById('contactSuccess').classList.remove('d-none');
             
@@ -311,6 +387,8 @@ function sendContactData(data, submitButton, originalButtonText) {
             }, 3000);
         })
         .catch(error => {
+            console.error('Erro ao enviar mensagem:', error);
+            
             // Mostrar mensagem de erro
             const errorElement = document.getElementById('contactError');
             errorElement.textContent = 'Erro ao enviar mensagem: ' + (error.message || 'Tente novamente mais tarde.');
