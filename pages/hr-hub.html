@@ -18,16 +18,363 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Swiper CSS para o slider -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+    
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/style.css">
     
     <style>
-        /* Estilos para o footer */
+        /* Estilos específicos para HR Hub */
+        :root {
+            --primary-color: #bf9a33; /* Dourado principal */
+            --secondary-color: #333333; /* Cinza escuro */
+            --accent-color: #a57b0a; /* Dourado suave */
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --text-color: #333333;
+            --text-light: #6c757d;
+            --border-color: #dee2e6;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff;
+            color: var(--text-color);
+        }
+        
+        .page-header {
+            background-color: #212529;
+            color: #fff;
+            padding: 6rem 0 3rem;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+        
+        .page-header h1 {
+            color: var(--primary-color);
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+        
+        .page-header .breadcrumb {
+            background-color: transparent;
+        }
+        
+        .page-header .breadcrumb-item a {
+            color: var(--primary-color);
+        }
+        
+        .page-header .breadcrumb-item.active {
+            color: #fff;
+        }
+        
+        .newsletter-content {
+            padding: 2rem 0 5rem;
+        }
+        
+        .section-title {
+            color: var(--dark-color);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            text-align: center;
+        }
+        
+        .section-subtitle {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        /* Estatísticas */
+        .newsletter-stats {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 4rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        /* Artigo em Destaque */
+        .featured-article {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 4rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .featured-article:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .featured-image {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .featured-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .featured-article:hover .featured-image img {
+            transform: scale(1.05);
+        }
+        
+        .featured-content {
+            padding: 2rem;
+        }
+        
+        .featured-content h4 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+        
+        .article-date {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .article-summary {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        /* Artigos Recentes - Slider */
+        .articles-slider-container {
+            position: relative;
+            padding: 0 1rem;
+            margin-bottom: 4rem;
+        }
+        
+        .swiper-container {
+            padding: 1rem 0.5rem 3rem;
+        }
+        
+        .article-card {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .article-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .article-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .article-card:hover .article-image img {
+            transform: scale(1.05);
+        }
+        
+        .article-content {
+            padding: 1.5rem;
+        }
+        
+        .article-content h5 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+            min-height: 3rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* Controles do Slider */
+        .swiper-button-next, .swiper-button-prev {
+            color: var(--primary-color);
+            background-color: rgba(255, 255, 255, 0.8);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .swiper-button-next:after, .swiper-button-prev:after {
+            font-size: 1.2rem;
+        }
+        
+        .swiper-pagination-bullet-active {
+            background-color: var(--primary-color);
+        }
+        
+        /* Formulário de Subscrição */
+        .subscription-section {
+            background-color: #212529;
+            padding: 4rem 0;
+            margin-top: 3rem;
+            color: #fff;
+            text-align: center;
+        }
+        
+        .subscription-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .subscription-section p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .btn-subscribe {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+            border: 2px solid var(--primary-color);
+        }
+        
+        .btn-subscribe:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #fff;
+            transform: translateY(-3px);
+        }
+        
+        /* Botão Ler Artigo Completo */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--dark-color);
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #fff;
+        }
+        
+        .btn-outline-primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
+        
+        /* Header e Navegação */
+        .header {
+            padding-top: 100px; /* Espaço para a navbar fixa */
+        }
+        
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand img {
+            height: 50px;
+        }
+        
+        .navbar-nav .nav-link {
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            position: relative;
+        }
+        
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--primary-color);
+        }
+        
+        .navbar-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 1rem;
+            right: 1rem;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+        
+        /* Footer */
         footer {
             background-color: #212529;
             color: #fff;
             padding: 20px 0;
-            margin-top: 50px;
         }
         
         .footer-container {
@@ -95,38 +442,39 @@
             text-decoration: underline;
         }
         
-        .navbar {
-            background-color: #fff;
-            padding: 1rem 0;
-        }
-        
-        .navbar-nav {
-            margin-left: auto;
-        }
-        
-        .navbar-nav .nav-link {
-            color: #333;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            margin: 0 0.25rem;
-        }
-        
-        .navbar-nav .nav-link.active {
-            color: #BF9A33;
-            position: relative;
-        }
-        
-        .navbar-nav .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 1rem;
-            right: 1rem;
-            height: 2px;
-            background-color: #BF9A33;
+        /* Responsividade */
+        @media (max-width: 991px) {
+            .featured-image {
+                height: 300px;
+                margin-bottom: 1rem;
+            }
+            
+            .featured-content {
+                padding: 1.5rem;
+            }
+            
+            .featured-content h4 {
+                font-size: 1.5rem;
+            }
         }
         
         @media (max-width: 768px) {
+            .page-header {
+                padding: 5rem 0 2rem;
+            }
+            
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
             .footer-container {
                 flex-direction: column;
                 text-align: center;
@@ -148,6 +496,16 @@
                 gap: 10px;
             }
         }
+        
+        @media (max-width: 576px) {
+            .featured-content h4 {
+                font-size: 1.3rem;
+            }
+            
+            .article-image {
+                height: 180px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -159,6 +517,7 @@
         gtag('js', new Date());
         gtag('config', 'G-8GQ1KM9FQS');
     </script>
+    
     <!-- Header e Navegação -->
     <header class="header">
         <nav class="navbar navbar-expand-lg fixed-top">
@@ -236,7 +595,7 @@
                             <div class="col-md-3 col-6">
                                 <div class="stat-item">
                                     <div class="stat-number" id="newSubscribers">+250</div>
-                                    <div class="stat-label" id="newSubscribersLabel">Novos Subscritores (Último Ano)</div>
+                                    <div class="stat-label">Novos Subscritores (Último Ano)</div>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
@@ -265,13 +624,13 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="featured-article">
-                        <div class="row">
-                            <div class="col-md-5">
+                        <div class="row g-0">
+                            <div class="col-lg-5">
                                 <div class="featured-image">
                                     <img id="featuredImage" src="../images/hr_hub_may_2025.png" alt="Artigo em Destaque">
                                 </div>
                             </div>
-                            <div class="col-md-7">
+                            <div class="col-lg-7">
                                 <div class="featured-content">
                                     <h4 id="featuredTitle">Reskilling: An Inspiring Perspective</h4>
                                     <div class="article-date" id="featuredDate">Maio 2025</div>
@@ -286,35 +645,152 @@
                 </div>
             </div>
 
-            <!-- Artigos Recentes -->
+            <!-- Artigos Recentes - Slider -->
             <div class="row mt-5">
                 <div class="col-lg-12">
                     <h3 class="section-subtitle">Artigos Recentes</h3>
                 </div>
             </div>
-            <div class="row" id="articlesContainer">
-                <!-- Os artigos serão inseridos aqui dinamicamente via JavaScript -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="articles-slider-container">
+                        <div class="swiper-container" id="articlesSlider">
+                            <div class="swiper-wrapper" id="articlesContainer">
+                                <!-- Os artigos serão inseridos aqui dinamicamente via JavaScript -->
+                            </div>
+                            <!-- Adicionar paginação -->
+                            <div class="swiper-pagination"></div>
+                            <!-- Adicionar botões de navegação -->
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Botão de Subscrição -->
-            <div class="row mt-5">
-                <div class="col-lg-12 text-center">
-                    <div class="explore-button">
-                        <a href="https://www.linkedin.com/newsletters/hr-innovation-hub-7033348085286400000/" class="btn btn-primary" target="_blank">Subscrever Newsletter</a>
+            <!-- Botão de Subscrição LinkedIn -->
+            <div class="subscription-section">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h3>Subscreva a Nossa Newsletter</h3>
+                            <p>Receba insights, tendências e ferramentas para profissionais de RH diretamente na sua caixa de entrada.</p>
+                            <a href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7258968797414342657" class="btn-subscribe" target="_blank">Subscribe on LinkedIn</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Footer Minimalista -->
+    <footer id="contactos">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-left">
+                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
+                </div>
+                <div class="footer-right">
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> info@share2inspire.pt</p>
+                        <p><i class="fas fa-phone"></i> +351 912 345 678</p>
+                    </div>
+                    <div class="footer-social">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/share2inspire.pt/" target="_blank"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="../index.html">Início</a>
+                <a href="sobre.html">Sobre o Fundador</a>
+                <a href="servicos.html">Serviços</a>
+                <a href="loja.html">Loja</a>
+                <a href="hr-hub.html">HR Hub</a>
+                <a href="../index.html#contactos">Contatos</a>
+                <a href="politica-privacidade.html">Política de Privacidade</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Swiper JS para o slider -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    
     <!-- Script para carregar dinamicamente o conteúdo da newsletter -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Dados estáticos para garantir que o conteúdo seja exibido mesmo sem acesso ao JSON
+            const staticData = {
+                "featuredArticle": {
+                    "title": "Reskilling: An Inspiring Perspective",
+                    "date": "Maio 2025",
+                    "image": "../images/hr_hub_may_2025.png",
+                    "summary": "Neste novo capítulo da newsletter HR Innovation Hub, exploramos como o reskilling pode transformar carreiras e organizações.",
+                    "link": "https://www.linkedin.com/pulse/reskilling-inspiring-perspective-from-both-individual-samuel-rolo-2sdyf"
+                },
+                "articles": [
+                    {
+                        "title": "Dia Internacional dos Recursos Humanos: Celebrar a Evolução e o Impacto",
+                        "date": "Maio de 2025",
+                        "image": "../images/diarh.png",
+                        "summary": "Neste artigo, Samuel Rolo reflete sobre a transformação do papel dos RH, de função administrativa a parceiro estratégico nas organizações. Destaca a importância da empatia, da humanização na era digital e da aprendizagem contínua.",
+                        "link": "https://www.linkedin.com/pulse/dia-internacional-dos-recursos-humanos-celebrar-evolu%C3%A7%C3%A3o-samuel-rolo-4kcof"
+                    },
+                    {
+                        "title": "Understanding the Invisible Work Within Organizations",
+                        "date": "Abril de 2025",
+                        "image": "../images/hr_hub_may_2025.png",
+                        "summary": "Nesta edição, exploramos o trabalho invisível que sustenta as organizações - aquelas tarefas e responsabilidades que raramente são reconhecidas mas são essenciais para o funcionamento eficaz das equipas e empresas.",
+                        "link": "https://www.linkedin.com/pulse/understanding-invisible-work-within-organizations-samuel-rolo"
+                    },
+                    {
+                        "title": "Leadership: Blending Tech and Human Touch",
+                        "date": "Março de 2025",
+                        "image": "../images/power.png",
+                        "summary": "Como podem os líderes modernos equilibrar a adoção de novas tecnologias com a manutenção do elemento humano essencial na gestão de equipas? Esta edição explora este desafio crescente.",
+                        "link": "https://www.linkedin.com/pulse/leadership-blending-tech-human-touch-samuel-rolo-bfs9f"
+                    },
+                    {
+                        "title": "Start Strong in 2025: Estratégias para um Ano de Sucesso",
+                        "date": "Fevereiro de 2025",
+                        "image": "../images/start_strong_2025.png",
+                        "summary": "Começar o ano com o pé direito é essencial para o sucesso a longo prazo. Nesta edição, partilhamos estratégias práticas para líderes e equipas definirem objetivos eficazes e manterem o momentum.",
+                        "link": "https://www.linkedin.com/pulse/people-management-challenges4-start-strong-2025-samuel-rolo-6iihf"
+                    },
+                    {
+                        "title": "Disability Inclusion, promoting a more equitable and sustainable society",
+                        "date": "Abril de 2025",
+                        "image": "../images/disability_inclusion.png",
+                        "summary": "Neste artigo, Samuel Rolo reflete sobre a importância da inclusão de pessoas com deficiência no mercado de trabalho, destacando o impacto da nova legislação portuguesa em vigor desde janeiro de 2024.",
+                        "link": "https://www.linkedin.com/pulse/disability-inclusion-promoting-more-equitable-sustainable-samuel-rolo-ngr4f"
+                    }
+                ],
+                "stats": {
+                    "subscribers": "1.5K",
+                    "newSubscribers": "+250",
+                    "articleViews": "2.6K",
+                    "totalImpressions": "7.9K"
+                }
+            };
+            
             // Função para carregar o conteúdo da newsletter
             async function loadNewsletterContent() {
                 try {
-                    const response = await fetch('../newsletter-content.json'); // URL do arquivo JSON com o conteúdo da newsletter
-                    const data = await response.json();
+                    // Tentar carregar o JSON, mas usar dados estáticos como fallback
+                    let data = staticData;
+                    
+                    try {
+                        const response = await fetch('newsletter_content.json');
+                        if (response.ok) {
+                            data = await response.json();
+                        }
+                    } catch (error) {
+                        console.log('Usando dados estáticos como fallback:', error);
+                    }
                     
                     // Atualizar estatísticas
                     if (data.stats) {
@@ -330,21 +806,21 @@
                         document.getElementById('featuredDate').textContent = data.featuredArticle.date;
                         document.getElementById('featuredSummary').textContent = data.featuredArticle.summary;
                         document.getElementById('featuredLink').href = data.featuredArticle.link;
-                        document.getElementById('featuredImage').src = '../' + data.featuredArticle.image;
+                        document.getElementById('featuredImage').src = data.featuredArticle.image;
                         document.getElementById('featuredImage').alt = data.featuredArticle.title;
                     }
                     
-                    // Atualizar artigos recentes
+                    // Atualizar artigos recentes no slider
                     if (data.articles && data.articles.length > 0) {
                         const articlesContainer = document.getElementById('articlesContainer');
                         articlesContainer.innerHTML = ''; // Limpar conteúdo existente
                         
                         data.articles.forEach(article => {
                             const articleHTML = `
-                                <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="swiper-slide">
                                     <div class="article-card">
                                         <div class="article-image">
-                                            <img src="../${article.image}" alt="${article.title}">
+                                            <img src="${article.image}" alt="${article.title}">
                                         </div>
                                         <div class="article-content">
                                             <h5>${article.title}</h5>
@@ -357,12 +833,15 @@
                             `;
                             articlesContainer.innerHTML += articleHTML;
                         });
+                        
+                        // Inicializar o Swiper após carregar os artigos
+                        initArticlesSlider();
                     }
                 } catch (error) {
                     console.error('Erro ao carregar o conteúdo da newsletter:', error);
                     // Exibir mensagem de erro para o utilizador
                     document.getElementById('articlesContainer').innerHTML = `
-                        <div class="col-12 text-center">
+                        <div class="swiper-slide">
                             <div class="alert alert-warning">
                                 Não foi possível carregar o conteúdo da newsletter. Por favor, tente novamente mais tarde.
                             </div>
@@ -371,124 +850,40 @@
                 }
             }
             
+            // Inicializar o slider de artigos
+            function initArticlesSlider() {
+                new Swiper('#articlesSlider', {
+                    slidesPerView: 1,
+                    spaceBetween: 20,
+                    loop: true,
+                    autoplay: {
+                        delay: 5000,
+                        disableOnInteraction: false,
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    breakpoints: {
+                        640: {
+                            slidesPerView: 2,
+                            spaceBetween: 20,
+                        },
+                        992: {
+                            slidesPerView: 3,
+                            spaceBetween: 30,
+                        }
+                    }
+                });
+            }
+            
             // Carregar o conteúdo da newsletter
             loadNewsletterContent();
         });
     </script>
-
-    <!-- Footer Minimalista -->
-    <footer id="contactos">
-        <div class="container">
-            <div class="footer-container">
-                <div class="footer-left">
-                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
-                </div>
-                <div class="footer-right">
-                    <div class="footer-contact">
-                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
-                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
-                    </div>
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-links">
-                <a href="politica-privacidade.html">Política de Privacidade</a>
-                <a href="politica-cookies.html">Política de Cookies</a>
-                <a href="tratamento-dados.html">Tratamento de Dados</a>
-                <a href="informacao-legal.html">Informação Legal</a>
-            </div>
-        </div>
-    </footer>
-    <!-- Modal de Contacto -->
-<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header" style="background-color: var(--primary-color); color: var(--dark-color);">
-        <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="contactForm" enctype="multipart/form-data">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="name" class="form-label">Nome *</label>
-              <input type="text" class="form-control" id="name" name="name" required>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="reason" class="form-label">Motivo *</label>
-              <select class="form-select" id="reason" name="reason" required>
-                <option value="" selected disabled>Selecione um motivo</option>
-                <option value="Informações">Informações</option>
-                <option value="Orçamento">Orçamento</option>
-                <option value="Parceria">Parceria</option>
-                <option value="Sugestão">Sugestão</option>
-                <option value="Reclamação">Reclamação</option>
-                <option value="Outro">Outro</option>
-              </select>
-            </div>
-          </div>
-          
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="email" class="form-label">Email *</label>
-              <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="phone" class="form-label">Número de Telefone</label>
-              <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{9}" placeholder="912345678">
-              <small class="text-muted">Formato: 9 dígitos sem espaços</small>
-            </div>
-          </div>
-          
-          <div class="mb-3">
-            <label for="subject" class="form-label">Assunto *</label>
-            <input type="text" class="form-control" id="subject" name="subject" required>
-          </div>
-          
-          <div class="mb-3">
-            <label for="message" class="form-label">Mensagem *</label>
-            <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
-          </div>
-          
-          <div class="mb-3">
-            <label for="attachment" class="form-label">Anexo (opcional)</label>
-            <input type="file" class="form-control" id="attachment" name="attachment">
-            <small class="text-muted">Formatos aceites: PDF, DOC, DOCX, JPG, PNG (máx. 5MB)</small>
-          </div>
-          
-          <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" id="privacyPolicy" required>
-            <label class="form-check-label" for="privacyPolicy">
-              Li e aceito a <a href="pages/politica-privacidade.html" target="_blank">Política de Privacidade</a> *
-            </label>
-          </div>
-          
-          <div class="alert alert-success d-none" id="contactSuccess">
-            <i class="fas fa-check-circle me-2"></i> A sua mensagem foi enviada com sucesso! Entraremos em contacto brevemente.
-          </div>
-          
-          <div class="alert alert-danger d-none" id="contactError">
-            <i class="fas fa-exclamation-circle me-2"></i> Ocorreu um erro ao enviar a mensagem. Por favor, tente novamente.
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary" id="submitContact">Enviar Mensagem</button>
-      </div>
-    </div>
-  </div>
-</div>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Brevo Integration -->
-    <script src="/js/brevo-integration.js"></script>
-    !-- Contact Form -->
-    <script src="/js/contact-form.js"></script>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
