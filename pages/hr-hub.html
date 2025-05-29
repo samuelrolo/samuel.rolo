@@ -313,7 +313,7 @@
             // Função para carregar o conteúdo da newsletter
             async function loadNewsletterContent() {
                 try {
-                    const response = await fetch('../newsletter_content.json');
+                    const response = await fetch('../newsletter-content.json'); // URL do arquivo JSON com o conteúdo da newsletter
                     const data = await response.json();
                     
                     // Atualizar estatísticas
