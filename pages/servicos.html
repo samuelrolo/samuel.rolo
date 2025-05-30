@@ -126,7 +126,171 @@
             background-color: #BF9A33;
         }
         
+        /* Estilos para a página de serviços */
+        .page-header {
+            background-color: #f8f9fa;
+            padding: 100px 0 50px;
+            margin-bottom: 50px;
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .breadcrumb-item a {
+            color: #BF9A33;
+            text-decoration: none;
+        }
+        
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+        
+        .service-section {
+            padding: 80px 0;
+        }
+        
+        .service-section.bg-light {
+            background-color: #f8f9fa;
+        }
+        
+        .service-content h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .service-tagline {
+            font-size: 1.2rem;
+            color: #BF9A33;
+            margin-bottom: 1.5rem;
+        }
+        
+        .service-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .service-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin: 1.5rem 0 1rem;
+        }
+        
+        .service-benefits {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem;
+        }
+        
+        .service-benefits li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .service-benefits li i {
+            color: #BF9A33;
+            margin-right: 10px;
+            margin-top: 5px;
+        }
+        
+        .service-image img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-header {
+            background-color: #BF9A33;
+            color: #fff;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+        }
+        
+        .modal-body label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-footer .btn-primary {
+            background-color: #BF9A33;
+            border-color: #BF9A33;
+        }
+        
+        .modal-footer .btn-primary:hover {
+            background-color: #a88629;
+            border-color: #a88629;
+        }
+        
+        /* Media queries para otimização mobile */
+        @media (max-width: 992px) {
+            .service-content h2 {
+                font-size: 2rem;
+            }
+            
+            .service-tagline {
+                font-size: 1.1rem;
+            }
+            
+            .service-content h3 {
+                font-size: 1.3rem;
+            }
+            
+            .service-section {
+                padding: 60px 0;
+            }
+        }
+        
         @media (max-width: 768px) {
+            .page-header {
+                padding: 80px 0 40px;
+                margin-bottom: 30px;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .service-section {
+                padding: 40px 0;
+            }
+            
+            .service-content {
+                margin-top: 30px;
+            }
+            
+            .service-content h2 {
+                font-size: 1.8rem;
+                text-align: center;
+            }
+            
+            .service-tagline {
+                font-size: 1rem;
+                text-align: center;
+            }
+            
+            .service-content h3 {
+                font-size: 1.2rem;
+            }
+            
+            .service-benefits li {
+                margin-bottom: 0.8rem;
+            }
+            
             .footer-container {
                 flex-direction: column;
                 text-align: center;
@@ -146,6 +310,57 @@
                 flex-direction: column;
                 align-items: center;
                 gap: 10px;
+            }
+            
+            /* Ajuste para ordem dos elementos em mobile */
+            .order-lg-1 {
+                order: 2;
+            }
+            
+            .order-lg-2 {
+                order: 1;
+                margin-bottom: 30px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .page-header {
+                padding: 70px 0 30px;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .service-section {
+                padding: 30px 0;
+            }
+            
+            .service-content h2 {
+                font-size: 1.6rem;
+            }
+            
+            .service-tagline {
+                font-size: 0.9rem;
+            }
+            
+            .service-content p {
+                font-size: 0.95rem;
+            }
+            
+            .service-content h3 {
+                font-size: 1.1rem;
+            }
+            
+            .service-benefits li {
+                font-size: 0.9rem;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -187,7 +402,7 @@
                             <a class="nav-link" href="hr-hub.html">HR Hub</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="../index.html#contactos">Contactos</a>
+                            <a class="nav-link" href="../index.html#contatos">Contatos</a>
                         </li>
                     </ul>
                 </div>
@@ -216,7 +431,7 @@
     <section class="service-section" id="kickstart">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-6">
+                <div class="col-lg-6 col-md-12">
                     <div class="service-content">
                         <h2>Kickstart Pro | Express Coaching </h2>
                         <p class="service-tagline">Impulsiona a tua carreira com uma sessão personalizada</p>
@@ -233,7 +448,7 @@
                         <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#kickstartModal">Marcar Kickstart Pro</button>
                     </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-6 col-md-12">
                     <div class="service-image">
                         <img src="../images/kickstart-pro.jpg" alt="Kickstart Pro" class="img-fluid rounded">
                     </div>
@@ -246,7 +461,7 @@
     <section class="service-section bg-light" id="consultoria">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-6 order-lg-2">
+                <div class="col-lg-6 col-md-12 order-lg-2">
                     <div class="service-content">
                         <h2>Consultoria Organizacional</h2>
                         <p class="service-tagline">Transformação cultural e estratégica para organizações que procuram uma evolução sustentável</p>
@@ -263,7 +478,7 @@
                         <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#consultoriaModal">Solicitar Proposta</button>
                     </div>
                 </div>
-                <div class="col-lg-6 order-lg-1">
+                <div class="col-lg-6 col-md-12 order-lg-1">
                     <div class="service-image">
                         <img src="../images/consultoria-organizacional.jpg" alt="Consultoria Organizacional" class="img-fluid rounded">
                     </div>
@@ -276,7 +491,7 @@
     <section class="service-section" id="coaching">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-6">
+                <div class="col-lg-6 col-md-12">
                     <div class="service-content">
                         <h2>Coaching Executivo</h2>
                         <p class="service-tagline">Desenvolvimento de liderança consciente e habilidades estratégicas para executivos</p>
@@ -293,7 +508,7 @@
                         <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#coachingModal">Agendar Sessão Inicial</button>
                     </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-6 col-md-12">
                     <div class="service-image">
                         <img src="../images/coaching-executivo.jpg" alt="Coaching Executivo" class="img-fluid rounded">
                     </div>
@@ -306,381 +521,203 @@
     <section class="service-section bg-light" id="workshops">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-6 order-lg-2">
+                <div class="col-lg-6 col-md-12 order-lg-2">
                     <div class="service-content">
                         <h2>Workshops e Formações</h2>
-                        <p class="service-tagline">Experiências de aprendizagem transformadoras</p>
-                        <p>Os Workshops e Formações da Share2Inspire são experiências de aprendizagem imersivas e práticas, desenhadas para desenvolver competências específicas e promover mudanças de mindset em equipas e organizações.</p>
-                        <p>Facilitamos sessões dinâmicas e interativas que combinam conhecimentos teóricos com aplicações práticas, garantindo que os participantes saem com ferramentas e insights que podem aplicar imediatamente.</p>
-                        <h3>Temas Principais:</h3>
+                        <p class="service-tagline">Experiências de aprendizagem imersivas e transformadoras para equipas e organizações</p>
+                        <p>Os workshops e formações da Share2Inspire são desenhados para proporcionar experiências de aprendizagem impactantes, combinando conhecimento teórico com aplicação prática em contextos reais.</p>
+                        <p>Cada programa é personalizado às necessidades específicas do cliente, garantindo relevância e aplicabilidade imediata dos conteúdos abordados.</p>
+                        <h3>Áreas Temáticas:</h3>
                         <ul class="service-benefits">
-                            <li><i class="fas fa-check"></i> Liderança Consciente e Adaptativa</li>
-                            <li><i class="fas fa-check"></i> Gestão da Mudança e Resiliência</li>
+                            <li><i class="fas fa-check"></i> Liderança Consciente e Desenvolvimento de Equipas</li>
+                            <li><i class="fas fa-check"></i> Gestão da Mudança e Transformação Organizacional</li>
                             <li><i class="fas fa-check"></i> Comunicação Estratégica e Influência</li>
-                            <li><i class="fas fa-check"></i> Inovação e Pensamento Criativo</li>
-                            <li><i class="fas fa-check"></i> Bem-estar e Performance Sustentável</li>
+                            <li><i class="fas fa-check"></i> Bem-estar e Produtividade no Trabalho</li>
+                            <li><i class="fas fa-check"></i> Inovação e Pensamento Estratégico</li>
                         </ul>
-                        <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#workshopsModal">Solicitar Informações</button>
+                        <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#workshopModal">Solicitar Informações</button>
                     </div>
                 </div>
-                <div class="col-lg-6 order-lg-1">
+                <div class="col-lg-6 col-md-12 order-lg-1">
                     <div class="service-image">
-                        <img src="../images/workshops-formacoes.jpg" alt="Workshops e Formações" class="img-fluid rounded">
+                        <img src="../images/workshop-formacoes.jpg" alt="Workshops e Formações" class="img-fluid rounded">
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2>Não encontraste o que procuravas?</h2>
-                    <p>Entra em contacto connosco para desenharmos soluções personalizadas para os teus desafios.</p>
-                    <a href="../index.html#contactos" class="btn btn-primary">Contacta-nos</a>
+    <!-- Modais de Contacto -->
+    <!-- Modal Kickstart Pro -->
+    <div class="modal fade" id="kickstartModal" tabindex="-1" aria-labelledby="kickstartModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="kickstartModalLabel">Marcar Kickstart Pro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Kickstart Pro Modal -->
-<div class="modal fade" id="kickstartModal" tabindex="-1" aria-labelledby="kickstartModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="kickstartModalLabel">Marcar Kickstart Pro</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="kickstartForm" class="service-form">
-                    <input type="hidden" name="service" value="Kickstart Pro">
-                    <!-- Campo oculto rating -->
-                    <input type="hidden" name="rating" value="5">
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="kickstartName" class="form-label">Nome Completo *</label>
-                                <input type="text" class="form-control" id="kickstartName" name="name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="kickstartEmail" class="form-label">Email *</label>
-                                <input type="email" class="form-control" id="kickstartEmail" name="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="kickstartPhone" class="form-label">Telefone *</label>
-                                <input type="tel" class="form-control" id="kickstartPhone" name="phone" required>
-                            </div>
+                <div class="modal-body">
+                    <form id="kickstartForm">
+                        <div class="mb-3">
+                            <label for="kickstartName" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="kickstartName" required>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="kickstartDate" class="form-label">Data Preferencial *</label>
-                                <input type="date" class="form-control" id="kickstartDate" name="date" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="kickstartFormat" class="form-label">Formato</label>
-                                <select class="form-select" id="kickstartFormat" name="format">
-                                    <option value="Online">Online</option>
-                                    <option value="Presencial">Presencial</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="kickstartDuration" class="form-label">Duração</label>
-                                <select class="form-select" id="kickstartDuration" name="duration" onchange="updatePrice()">
-                                    <option value="30min">30 minutos - 30€</option>
-                                    <option value="45min">45 minutos - 45€</option>
-                                </select>
-                                <input type="hidden" id="kickstartDurationHidden" name="durationHidden" value="30min">
-                            </div>
+                        <div class="mb-3">
+                            <label for="kickstartEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="kickstartEmail" required>
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="kickstartObjectives" class="form-label">Quais são os seus principais objetivos para esta sessão? *</label>
-                        <textarea class="form-control" id="kickstartObjectives" name="objectives" rows="4" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Método de Pagamento</label>
-                        <div class="payment-methods">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="paymentMethod" id="paymentMB" value="mb" checked>
-                                <label class="form-check-label" for="paymentMB">Multibanco</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="paymentMethod" id="paymentMBWay" value="mbway">
-                                <label class="form-check-label" for="paymentMBWay">MB WAY</label>
-                            </div>
+                        <div class="mb-3">
+                            <label for="kickstartPhone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="kickstartPhone">
                         </div>
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="kickstartTerms" required>
-                        <label class="form-check-label" for="kickstartTerms">Concordo com a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *</label>
-                    </div>
-                    <div class="text-center">
-                        <p class="mb-2">Valor: <span id="kickstartPrice">30€</span></p>
-                        <button type="submit" class="btn btn-primary">SUBMETER E PROSSEGUIR PARA O PAGAMENTO</button>
-                    </div>
-                    <div class="form-message mt-3"></div>
-                </form>
+                        <div class="mb-3">
+                            <label for="kickstartMessage" class="form-label">Mensagem (opcional)</label>
+                            <textarea class="form-control" id="kickstartMessage" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" form="kickstartForm" class="btn btn-primary">Enviar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-    <!-- Consultoria Modal -->
+    <!-- Modal Consultoria -->
     <div class="modal fade" id="consultoriaModal" tabindex="-1" aria-labelledby="consultoriaModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="consultoriaModalLabel">Solicitar Proposta de Consultoria</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="consultoriaForm" class="service-form">
-                        <input type="hidden" name="service" value="Consultoria Organizacional">
-                        <!-- Campo oculto rating -->
-                        <input type="hidden" name="rating" value="5">
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="consultoriaName" class="form-label">Nome Completo *</label>
-                                    <input type="text" class="form-control" id="consultoriaName" name="name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="consultoriaEmail" class="form-label">Email *</label>
-                                    <input type="email" class="form-control" id="consultoriaEmail" name="email" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="consultoriaPhone" class="form-label">Telefone</label>
-                                    <input type="tel" class="form-control" id="consultoriaPhone" name="phone">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="consultoriaCompany" class="form-label">Empresa *</label>
-                                    <input type="text" class="form-control" id="consultoriaCompany" name="company" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="consultoriaPosition" class="form-label">Cargo</label>
-                                    <input type="text" class="form-control" id="consultoriaPosition" name="position">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="consultoriaIndustry" class="form-label">Setor de Atividade</label>
-                                    <input type="text" class="form-control" id="consultoriaIndustry" name="industry">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="consultoriaEmployees" class="form-label">Número de Colaboradores</label>
-                                    <select class="form-select" id="consultoriaEmployees" name="employees">
-                                        <option value="">Selecione uma opção</option>
-                                        <option value="1-10">1-10</option>
-                                        <option value="11-50">11-50</option>
-                                        <option value="51-200">51-200</option>
-                                        <option value="201-500">201-500</option>
-                                        <option value="501+">501+</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="consultoriaUrgency" class="form-label">Urgência</label>
-                                    <select class="form-select" id="consultoriaUrgency" name="urgency">
-                                        <option value="Baixa">Baixa - Planeamento a longo prazo</option>
-                                        <option value="Média">Média - Nos próximos 3 meses</option>
-                                        <option value="Alta">Alta - Necessidade imediata</option>
-                                    </select>
-                                </div>
-                            </div>
+                    <form id="consultoriaForm">
+                        <div class="mb-3">
+                            <label for="consultoriaName" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="consultoriaName" required>
                         </div>
                         <div class="mb-3">
-                            <label for="consultoriaNeeds" class="form-label">Descreva brevemente as necessidades da sua organização *</label>
-                            <textarea class="form-control" id="consultoriaNeeds" name="needs" rows="4" required></textarea>
+                            <label for="consultoriaEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="consultoriaEmail" required>
                         </div>
                         <div class="mb-3">
-                            <label for="consultoriaExpectations" class="form-label">Quais são as suas expectativas para este projeto?</label>
-                            <textarea class="form-control" id="consultoriaExpectations" name="expectations" rows="3"></textarea>
+                            <label for="consultoriaCompany" class="form-label">Empresa</label>
+                            <input type="text" class="form-control" id="consultoriaCompany" required>
                         </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="consultoriaTerms" required>
-                            <label class="form-check-label" for="consultoriaTerms">Concordo com a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *</label>
+                        <div class="mb-3">
+                            <label for="consultoriaPhone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="consultoriaPhone">
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Solicitar Proposta</button>
-                        <div id="consultoriaFormMessage" class="mt-3"></div>
+                        <div class="mb-3">
+                            <label for="consultoriaMessage" class="form-label">Descrição do Projeto</label>
+                            <textarea class="form-control" id="consultoriaMessage" rows="3" required></textarea>
+                        </div>
                     </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" form="consultoriaForm" class="btn btn-primary">Enviar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Coaching Modal -->
+    <!-- Modal Coaching -->
     <div class="modal fade" id="coachingModal" tabindex="-1" aria-labelledby="coachingModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="coachingModalLabel">Agendar Sessão Inicial de Coaching</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="coachingForm" class="service-form">
-                        <input type="hidden" name="service" value="Coaching Executivo">
-                        <!-- Campo oculto rating -->
-                        <input type="hidden" name="rating" value="5">
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="coachingName" class="form-label">Nome Completo *</label>
-                                    <input type="text" class="form-control" id="coachingName" name="name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="coachingEmail" class="form-label">Email *</label>
-                                    <input type="email" class="form-control" id="coachingEmail" name="email" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="coachingPhone" class="form-label">Telefone</label>
-                                    <input type="tel" class="form-control" id="coachingPhone" name="phone">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="coachingCompany" class="form-label">Empresa</label>
-                                    <input type="text" class="form-control" id="coachingCompany" name="company">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="coachingPosition" class="form-label">Cargo</label>
-                                    <input type="text" class="form-control" id="coachingPosition" name="position">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="coachingDate" class="form-label">Data Preferencial *</label>
-                                    <input type="date" class="form-control" id="coachingDate" name="date" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="coachingTime" class="form-label">Hora Preferencial *</label>
-                                    <input type="time" class="form-control" id="coachingTime" name="time" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="coachingFormat" class="form-label">Formato Preferencial</label>
-                                    <select class="form-select" id="coachingFormat" name="format">
-                                        <option value="Online">Online</option>
-                                        <option value="Presencial">Presencial</option>
-                                        <option value="Híbrido">Híbrido</option>
-                                    </select>
-                                </div>
-                            </div>
+                    <form id="coachingForm">
+                        <div class="mb-3">
+                            <label for="coachingName" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="coachingName" required>
                         </div>
                         <div class="mb-3">
-                            <label for="coachingObjectives" class="form-label">Quais são os seus principais objetivos para o coaching? *</label>
-                            <textarea class="form-control" id="coachingObjectives" name="objectives" rows="4" required></textarea>
+                            <label for="coachingEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="coachingEmail" required>
                         </div>
                         <div class="mb-3">
-                            <label for="coachingExperience" class="form-label">Já teve experiência anterior com coaching?</label>
-                            <select class="form-select" id="coachingExperience" name="experience">
-                                <option value="Não">Não, esta será a minha primeira experiência</option>
-                                <option value="Sim, como coachee">Sim, já fui coachee</option>
-                                <option value="Sim, como coach">Sim, sou coach</option>
-                                <option value="Sim, ambos">Sim, tanto como coach quanto coachee</option>
-                            </select>
+                            <label for="coachingPosition" class="form-label">Cargo/Posição</label>
+                            <input type="text" class="form-control" id="coachingPosition" required>
                         </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="coachingTerms" required>
-                            <label class="form-check-label" for="coachingTerms">Concordo com a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *</label>
+                        <div class="mb-3">
+                            <label for="coachingPhone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="coachingPhone">
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Agendar Sessão Inicial</button>
-                        <div id="coachingFormMessage" class="mt-3"></div>
+                        <div class="mb-3">
+                            <label for="coachingMessage" class="form-label">Objetivos para o Coaching</label>
+                            <textarea class="form-control" id="coachingMessage" rows="3" required></textarea>
+                        </div>
                     </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" form="coachingForm" class="btn btn-primary">Enviar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Workshops Modal -->
-    <div class="modal fade" id="workshopsModal" tabindex="-1" aria-labelledby="workshopsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    <!-- Modal Workshop -->
+    <div class="modal fade" id="workshopModal" tabindex="-1" aria-labelledby="workshopModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="workshopsModalLabel">Solicitar Informações sobre Workshops</h5>
+                    <h5 class="modal-title" id="workshopModalLabel">Solicitar Informações sobre Workshops</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="workshopsForm" class="service-form">
-                        <input type="hidden" name="service" value="Workshops e Formações">
-                        <!-- Campo oculto rating -->
-                        <input type="hidden" name="rating" value="5">
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="workshopsName" class="form-label">Nome Completo *</label>
-                                    <input type="text" class="form-control" id="workshopsName" name="name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="workshopsEmail" class="form-label">Email *</label>
-                                    <input type="email" class="form-control" id="workshopsEmail" name="email" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="workshopsPhone" class="form-label">Telefone</label>
-                                    <input type="tel" class="form-control" id="workshopsPhone" name="phone">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="workshopsCompany" class="form-label">Empresa</label>
-                                    <input type="text" class="form-control" id="workshopsCompany" name="company">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="workshopsPosition" class="form-label">Cargo</label>
-                                    <input type="text" class="form-control" id="workshopsPosition" name="position">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="workshopsParticipants" class="form-label">Número Estimado de Participantes</label>
-                                    <select class="form-select" id="workshopsParticipants" name="participants">
-                                        <option value="">Selecione uma opção</option>
-                                        <option value="1-5">1-5</option>
-                                        <option value="6-10">6-10</option>
-                                        <option value="11-20">11-20</option>
-                                        <option value="21-50">21-50</option>
-                                        <option value="51+">51+</option>
-                                    </select>
-                                </div>
-                            </div>
+                    <form id="workshopForm">
+                        <div class="mb-3">
+                            <label for="workshopName" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="workshopName" required>
                         </div>
                         <div class="mb-3">
-                            <label for="workshopsTopic" class="form-label">Tema de Interesse *</label>
-                            <select class="form-select" id="workshopsTopic" name="topic" required>
-                                <option value="">Selecione uma opção</option>
-                                <option value="Liderança Consciente">Liderança Consciente e Adaptativa</option>
-                                <option value="Gestão da Mudança">Gestão da Mudança e Resiliência</option>
-                                <option value="Comunicação Estratégica">Comunicação Estratégica e Influência</option>
-                                <option value="Inovação">Inovação e Pensamento Criativo</option>
-                                <option value="Bem-estar">Bem-estar e Performance Sustentável</option>
-                                <option value="Outro">Outro (especifique abaixo)</option>
+                            <label for="workshopEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="workshopEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="workshopCompany" class="form-label">Empresa</label>
+                            <input type="text" class="form-control" id="workshopCompany" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="workshopPhone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="workshopPhone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="workshopTopic" class="form-label">Área Temática de Interesse</label>
+                            <select class="form-select" id="workshopTopic" required>
+                                <option value="" selected disabled>Selecione uma opção</option>
+                                <option value="Liderança">Liderança Consciente e Desenvolvimento de Equipas</option>
+                                <option value="Mudança">Gestão da Mudança e Transformação Organizacional</option>
+                                <option value="Comunicação">Comunicação Estratégica e Influência</option>
+                                <option value="Bem-estar">Bem-estar e Produtividade no Trabalho</option>
+                                <option value="Inovação">Inovação e Pensamento Estratégico</option>
+                                <option value="Outro">Outro (especificar na mensagem)</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="workshopsFormat" class="form-label">Formato Preferencial</label>
-                            <select class="form-select" id="workshopsFormat" name="format">
-                                <option value="Presencial">Presencial</option>
-                                <option value="Online">Online</option>
-                                <option value="Híbrido">Híbrido</option>
-                            </select>
+                            <label for="workshopMessage" class="form-label">Mensagem (opcional)</label>
+                            <textarea class="form-control" id="workshopMessage" rows="3"></textarea>
                         </div>
-                        <div class="mb-3">
-                            <label for="workshopsMessage" class="form-label">Detalhes Adicionais ou Requisitos Específicos</label>
-                            <textarea class="form-control" id="workshopsMessage" name="message" rows="4"></textarea>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="workshopsTerms" required>
-                            <label class="form-check-label" for="workshopsTerms">Concordo com a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *</label>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Solicitar Informações</button>
-                        <div id="workshopsFormMessage" class="mt-3"></div>
                     </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" form="workshopForm" class="btn btn-primary">Enviar</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Footer Minimalista -->
-    <footer id="contactos">
+    <footer id="contatos">
         <div class="container">
             <div class="footer-container">
                 <div class="footer-left">
@@ -705,92 +742,8 @@
             </div>
         </div>
     </footer>
-<!-- Modal de Contacto -->
-<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header" style="background-color: var(--primary-color); color: var(--dark-color);">
-        <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="contactForm" enctype="multipart/form-data">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="name" class="form-label">Nome *</label>
-              <input type="text" class="form-control" id="name" name="name" required>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="reason" class="form-label">Motivo *</label>
-              <select class="form-select" id="reason" name="reason" required>
-                <option value="" selected disabled>Selecione um motivo</option>
-                <option value="Informações">Informações</option>
-                <option value="Orçamento">Orçamento</option>
-                <option value="Parceria">Parceria</option>
-                <option value="Sugestão">Sugestão</option>
-                <option value="Reclamação">Reclamação</option>
-                <option value="Outro">Outro</option>
-              </select>
-            </div>
-          </div>
-          
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="email" class="form-label">Email *</label>
-              <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="phone" class="form-label">Número de Telefone</label>
-              <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{9}" placeholder="912345678">
-              <small class="text-muted">Formato: 9 dígitos sem espaços</small>
-            </div>
-          </div>
-          
-          <div class="mb-3">
-            <label for="subject" class="form-label">Assunto *</label>
-            <input type="text" class="form-control" id="subject" name="subject" required>
-          </div>
-          
-          <div class="mb-3">
-            <label for="message" class="form-label">Mensagem *</label>
-            <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
-          </div>
-          
-          <div class="mb-3">
-            <label for="attachment" class="form-label">Anexo (opcional)</label>
-            <input type="file" class="form-control" id="attachment" name="attachment">
-            <small class="text-muted">Formatos aceites: PDF, DOC, DOCX, JPG, PNG (máx. 5MB)</small>
-          </div>
-          
-          <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" id="privacyPolicy" required>
-            <label class="form-check-label" for="privacyPolicy">
-              Li e aceito a <a href="pages/politica-privacidade.html" target="_blank">Política de Privacidade</a> *
-            </label>
-          </div>
-          
-          <div class="alert alert-success d-none" id="contactSuccess">
-            <i class="fas fa-check-circle me-2"></i> A sua mensagem foi enviada com sucesso! Entraremos em contacto brevemente.
-          </div>
-          
-          <div class="alert alert-danger d-none" id="contactError">
-            <i class="fas fa-exclamation-circle me-2"></i> Ocorreu um erro ao enviar a mensagem. Por favor, tente novamente.
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary" id="submitContact">Enviar Mensagem</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Contact Form -->  <!-- Correto -->
-    <script src="js/contact-form.js"></script>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/brevo-integration.js?v=2"></script>
-    <script src="js/ifthepay-integration.js?v=2"></script>
-    <script src="js/kickstart-pro-form.js"></script>
 </body>
 </html>
