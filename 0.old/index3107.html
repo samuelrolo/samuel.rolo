@@ -61,30 +61,15 @@
             height: 40px;
         }
         
-        .navbar-nav {
-            margin-left: auto;
+        .nav-link {
+            color: var(--text-color);
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: var(--transition);
         }
         
-        .navbar-nav .nav-link {
-            color: #333;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            margin: 0 0.25rem;
-        }
-        
-        .navbar-nav .nav-link.active {
-            color: #BF9A33;
-            position: relative;
-        }
-        
-        .navbar-nav .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 1rem;
-            right: 1rem;
-            height: 2px;
-            background-color: #BF9A33;
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-color);
         }
         
         /* Hero Section */
@@ -170,21 +155,6 @@
         
         .carousel-column {
             margin-bottom: 2rem;
-            position: relative;
-        }
-        
-        .carousel-control-prev,
-        .carousel-control-next {
-            width: 5%;
-            opacity: 0.8;
-        }
-        
-        .carousel-control-prev {
-            left: -10px;
-        }
-        
-        .carousel-control-next {
-            right: -10px;
         }
         
         .text-column {
@@ -228,12 +198,11 @@
             color: var(--primary-color);
             padding: 1rem;
             border-radius: 5px;
-            min-width: 180px;
+            width: 180px;
             height: 60px;
             margin-right: 20px;
             display: flex;
             align-items: center;
-            justify-content: center;
         }
         
         .feature-icon {
@@ -242,14 +211,6 @@
             right: -15px;
             width: 40px;
             height: 40px;
-            color: var(--primary-color);
-            font-size: 24px;
-            background-color: var(--dark-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid var(--primary-color);
         }
         
         .feature-title {
@@ -284,7 +245,6 @@
         .video-player {
             width: 100%;
             height: auto;
-            display: block;
         }
         
         /* Estilos para a secção de valores */
@@ -398,77 +358,46 @@
             color: var(--primary-color);
         }
         
-        /* Estilos para o footer */
-        footer {
-            background-color: #212529;
+        /* Footer Minimalista */
+        .footer {
+            background-color: #111;
             color: #fff;
-            padding: 20px 0;
-            margin-top: 50px;
+            padding: 2rem 0;
+            font-size: 0.9rem;
         }
         
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
         }
         
-        .footer-left p {
-            margin: 0;
-            color: #BF9A33;
-        }
-        
-        .footer-right {
-            display: flex;
-            gap: 30px;
-        }
-        
-        .footer-contact p {
-            margin: 0;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-        
-        .footer-contact i {
-            color: #BF9A33;
-            margin-right: 8px;
-        }
-        
-        .footer-social {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .footer-social a {
-            color: #BF9A33;
-            font-size: 20px;
-            transition: color 0.3s;
-        }
-        
-        .footer-social a:hover {
-            color: #fff;
+        .footer a:hover {
+            text-decoration: underline;
         }
         
         .footer-links {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 15px;
+            margin-bottom: 1rem;
         }
         
         .footer-links a {
-            color: #BF9A33;
-            font-size: 14px;
-            text-decoration: none;
-            transition: color 0.3s;
+            margin: 0 1rem;
         }
         
-        .footer-links a:hover {
-            color: #fff;
-            text-decoration: underline;
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-social a {
+            margin: 0 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-copyright {
+            text-align: center;
         }
         
         /* Responsividade */
@@ -500,18 +429,6 @@
             .value-item {
                 flex: 0 0 calc(50% - 2rem);
             }
-            
-            .footer-container {
-                flex-direction: column;
-                text-align: center;
-                gap: 20px;
-            }
-            
-            .footer-right {
-                flex-direction: column;
-                gap: 15px;
-                align-items: center;
-            }
         }
         
         @media (max-width: 768px) {
@@ -531,12 +448,6 @@
             
             .value-item {
                 flex: 0 0 100%;
-            }
-            
-            .footer-links {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
             }
         }
     </style>
@@ -607,13 +518,7 @@
                     <div id="introCarousel" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/BANNER1.png" class="d-block w-100" alt="Banner 1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/BANNER2.png" class="d-block w-100" alt="Banner 2">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/BANNER3.png" class="d-block w-100" alt="Banner 3">
+                                <img src="https://via.placeholder.com/800x400/333333/FFFFFF/?text=O+nosso+prop%C3%B3sito+%C3%A9+partilhar+para+inspirar+a+mudan%C3%A7a+com+autenticidade,+prop%C3%B3sito+e+impacto." class="d-block w-100" alt="O nosso propósito é partilhar para inspirar a mudança com autenticidade, propósito e impacto.">
                             </div>
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#introCarousel" data-bs-slide="prev">
@@ -644,7 +549,7 @@
                 <div class="col-lg-6 mb-4">
                     <div class="feature-box">
                         <div class="feature-title-box">
-                            <i class="fas fa-star feature-icon"></i>
+                            <img src="https://via.placeholder.com/40x40/BF9A33/FFFFFF/?text=★" alt="Estrela Polar" class="feature-icon">
                             <h3 class="feature-title">A ESTRELA POLAR</h3>
                         </div>
                         <p class="feature-description">Na Share2Inspire, acreditamos que a verdadeira transformação acontece quando pessoas e organizações abraçam a mudança com mais confiança e humanidade. A nossa missão é caminhar ao vosso lado, desafiando o status quo, trazendo inovação e mantendo o foco no que realmente importa: as pessoas.</p>
@@ -653,7 +558,7 @@
                 <div class="col-lg-6 mb-4">
                     <div class="feature-box">
                         <div class="feature-title-box">
-                            <i class="fas fa-fire feature-icon"></i>
+                            <img src="https://via.placeholder.com/40x40/BF9A33/FFFFFF/?text=🔥" alt="Chama que Inspira" class="feature-icon">
                             <h3 class="feature-title">A CHAMA QUE INSPIRA</h3>
                         </div>
                         <p class="feature-description">Queremos ser a chama que inspira organizações a tornarem-se promotoras de crescimento, inclusão, autenticidade e sustentabilidade humana, onde cada pessoa se sinta acolhida e valorizada na sua pluralidade.</p>
@@ -665,7 +570,7 @@
                 <div class="col-lg-6">
                     <div class="video-wrapper">
                         <video controls class="video-player">
-                            <source src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/video/estrela%20polar.mp4" type="video/mp4">
+                            <source src="https://github.com/samuelrolo/samuel.rolo/blob/main/video/estrela%20polar.mp4" type="video/mp4">
                             Seu navegador não suporta vídeos HTML5.
                         </video>
                     </div>
@@ -719,7 +624,7 @@
                     <div class="consultoria-box">
                         <div class="video-wrapper">
                             <video controls class="video-player">
-                                <source src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/video/oferta%20comercial.mp4" type="video/mp4">
+                                <source src="https://github.com/samuelrolo/samuel.rolo/blob/main/video/oferta%20comercial.mp4" type="video/mp4">
                                 Seu navegador não suporta vídeos HTML5.
                             </video>
                         </div>
@@ -747,28 +652,24 @@
     </section>
 
     <!-- Footer -->
-    <footer id="contactos">
+    <footer class="footer" id="contactos">
         <div class="container">
-            <div class="footer-container">
-                <div class="footer-left">
-                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <p><i class="fas fa-envelope"></i> <a href="mailto:sinhare2inspire@gmail.com">sinhare2inspire@gmail.com</a></p>
+                    <p><i class="fas fa-phone"></i> <a href="tel:+351961925060">+351 961 925 060</a></p>
                 </div>
-                <div class="footer-right">
-                    <div class="footer-contact">
-                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
-                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
-                    </div>
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
+                <div class="col-md-6 text-center text-md-end">
+                    <div class="footer-links">
+                        <a href="#">Política de Privacidade</a>
+                        <a href="#">Política de Cookies</a>
+                        <a href="#">Termos de Uso</a>
+                        <a href="#">Informação Legal</a>
                     </div>
                 </div>
             </div>
-            <div class="footer-links">
-                <a href="politica-privacidade.html">Política de Privacidade</a>
-                <a href="politica-cookies.html">Política de Cookies</a>
-                <a href="tratamento-dados.html">Tratamento de Dados</a>
-                <a href="informacao-legal.html">Informação Legal</a>
+            <div class="footer-copyright text-center mt-3">
+                <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>
