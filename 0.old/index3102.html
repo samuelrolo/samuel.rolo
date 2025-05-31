@@ -299,78 +299,46 @@
             font-weight: 600;
         }
         
-        /* Video Section Styles - Nova versão minimalista */
+        /* Video Section Styles */
         .video-section {
             padding: 4rem 0;
-            background-color: #fff;
+            background-color: #f8f9fa;
         }
         
-        .video-section .row {
-            align-items: center;
-        }
-        
-        .video-column {
-            padding-right: 2rem;
-        }
-        
-        .video-wrapper {
-            position: relative;
-            overflow: hidden;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .video-player {
-            width: 100%;
-            display: block;
-            aspect-ratio: 16/9;
-            object-fit: cover;
-            background-color: #000;
-        }
-        
-        .btn-dark {
-            background-color: #212529;
-            border-color: #212529;
-            color: #fff;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .btn-dark:hover {
-            background-color: #343a40;
-            border-color: #343a40;
-        }
-        
-        /* Versão com fundo dourado */
-        .gold-section {
-            background-color: #BF9A33;
-            padding: 3rem 0;
-            margin-top: 3rem;
-            color: #fff;
-        }
-        
-        .gold-section h2 {
-            color: #fff;
-        }
-        
-        .gold-section p {
-            color: #fff;
+        .video-container {
             margin-bottom: 2rem;
         }
         
-        .gold-section .btn-dark {
-            background-color: #212529;
-            border-color: #212529;
-            color: #fff;
+        .video-container h2 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
         }
         
-        .gold-section .btn-dark:hover {
-            background-color: #343a40;
-            border-color: #343a40;
+        .video-container .ratio {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .video-section {
+                padding: 3rem 0;
+            }
+            
+            .video-container h2 {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .video-section {
+                padding: 2rem 0;
+            }
+            
+            .video-container h2 {
+                font-size: 1.5rem;
+            }
         }
         
         /* Media queries para otimização mobile */
@@ -387,11 +355,6 @@
             
             .text-column h2 {
                 font-size: 2.2rem;
-            }
-            
-            .video-column {
-                padding-right: 15px;
-                margin-bottom: 2rem;
             }
         }
         
@@ -440,19 +403,6 @@
                 align-items: center;
                 gap: 10px;
             }
-            
-            .video-section {
-                padding: 3rem 0;
-            }
-            
-            .text-column p {
-                text-align: center;
-            }
-            
-            .cta-section {
-                display: flex;
-                justify-content: center;
-            }
         }
         
         @media (max-width: 576px) {
@@ -485,19 +435,6 @@
                 left: 10px;
                 right: 10px;
                 max-width: none;
-            }
-            
-            .video-section {
-                padding: 2rem 0;
-            }
-            
-            .text-column h2 {
-                font-size: 1.8rem;
-            }
-            
-            .gold-section .cta-section {
-                flex-direction: column;
-                gap: 1rem;
             }
         }
     </style>
@@ -596,42 +533,31 @@
         </div>
     </section>
 
-    <!-- Video Section - Nova versão minimalista -->
-    <section class="video-section py-5">
+    <!-- Video Section -->
+    <section class="video-section">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-6 col-md-12 video-column">
-                    <div class="video-wrapper">
-                        <video autoplay muted loop controls class="video-player">
-                            <source src="video/oferta%20comercial.mp4" type="video/mp4">
-                            Seu navegador não suporta vídeos HTML5.
-                        </video>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-12 text-column">
-                    <h2>Nossa Abordagem</h2>
-                    <p>Bem-vindo à Share2Inspire, onde a transformação organizacional encontra o desenvolvimento humano. Nossa abordagem única combina conhecimentos técnicos com uma perspetiva profundamente humana sobre o Futuro do Trabalho.</p>
-                    <p>Acredito que as organizações que prosperam são aquelas que colocam as pessoas no centro da sua estratégia, criando ambientes onde o talento pode florescer e o propósito pode ser realizado.</p>
-                    <div class="cta-section">
-                        <a href="#saiba-mais" class="btn btn-dark">Saiba Mais</a>
+            <div class="row justify-content-center">
+                <div class="col-lg-10 col-md-12">
+                    <div class="video-container">
+                        <h2 class="text-center mb-4">Nossa Abordagem</h2>
+                        <div class="ratio ratio-16x9 shadow">
+                            <video controls poster="images/video-poster.jpg" class="rounded">
+                                <source src="video/oferta%20comercial.mp4" type="video/mp4">
+                                Seu navegador não suporta vídeos HTML5.
+                            </video>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Versão com fundo dourado -->
-    <section class="gold-section">
+    <!-- CTA Section -->
+    <section class="cta-section">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 col-md-10 text-center">
-                    <h2>Transformação com Propósito</h2>
-                    <p>Descubra como nossa abordagem pode ajudar sua organização a abraçar a mudança com mais confiança e humanidade.</p>
-                    <div class="cta-section">
-                        <a href="pages/servicos.html" class="btn btn-dark">Explorar Serviços</a>
-                        <a href="pages/sobre.html" class="btn btn-dark ms-3">Conhecer o Fundador</a>
-                    </div>
-                </div>
+            <div class="cta-buttons">
+                <a href="pages/servicos.html" class="btn btn-primary">Explorar Serviços</a>
+                <a href="pages/sobre.html" class="btn btn-secondary">Conhecer o Fundador</a>
             </div>
         </div>
     </section>

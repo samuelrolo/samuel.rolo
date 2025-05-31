@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informação Legal | Share2Inspire | Samuel Rolo</title>
+    <meta name="description" content="Informação legal da Share2Inspire. Termos e condições de utilização do site e serviços.">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="../images/favicon.png" type="image/png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        /* Estilos para o footer */
+        footer {
+            background-color: #212529;
+            color: #fff;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+        
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .footer-left p {
+            margin: 0;
+            color: #BF9A33;
+        }
+        
+        .footer-right {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .footer-contact p {
+            margin: 0;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        
+        .footer-contact i {
+            color: #BF9A33;
+            margin-right: 8px;
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .footer-social a {
+            color: #BF9A33;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+        
+        .footer-social a:hover {
+            color: #fff;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
+        
+        .footer-links a {
+            color: #BF9A33;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        
+        .navbar {
+            background-color: #fff;
+            padding: 1rem 0;
+        }
+        
+        .navbar-nav {
+            margin-left: auto;
+        }
+        
+        .navbar-nav .nav-link {
+            color: #333;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+        }
+        
+        .navbar-nav .nav-link.active {
+            color: #BF9A33;
+            position: relative;
+        }
+        
+        .navbar-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 1rem;
+            right: 1rem;
+            height: 2px;
+            background-color: #BF9A33;
+        }
+        
+        /* Estilos para a página de informação legal */
+        .page-header {
+            background-color: #212529;
+            color: #fff;
+            padding: 6rem 0 3rem;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+        
+        .page-header h1 {
+            color: #BF9A33;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .page-header .breadcrumb {
+            background-color: transparent;
+        }
+        
+        .page-header .breadcrumb-item a {
+            color: #BF9A33;
+        }
+        
+        .page-header .breadcrumb-item.active {
+            color: #fff;
+        }
+        
+        .policy-content {
+            padding: 2rem 0;
+        }
+        
+        .policy-text {
+            line-height: 1.8;
+        }
+        
+        .policy-text h2 {
+            color: #333;
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .policy-text h3 {
+            color: #333;
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            font-weight: 600;
+        }
+        
+        .policy-text p {
+            margin-bottom: 1.2rem;
+            color: #555;
+        }
+        
+        .policy-text ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+        
+        .policy-text ul li {
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+        
+        .policy-text strong {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        /* Responsividade - Melhorias */
+        @media (max-width: 991px) {
+            .page-header {
+                padding: 5.5rem 0 2.5rem;
+                margin-bottom: 3rem;
+            }
+            
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .policy-text h2 {
+                font-size: 2rem;
+                margin-bottom: 1.2rem;
+            }
+            
+            .policy-text h3 {
+                font-size: 1.4rem;
+                margin: 1.8rem 0 0.8rem;
+            }
+            
+            .policy-content {
+                padding: 1.5rem 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 5rem 0 2rem;
+                margin-bottom: 2.5rem;
+            }
+            
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .policy-text h2 {
+                font-size: 1.8rem;
+                margin-bottom: 1rem;
+            }
+            
+            .policy-text h3 {
+                font-size: 1.3rem;
+                margin: 1.5rem 0 0.7rem;
+            }
+            
+            .policy-text p {
+                margin-bottom: 1rem;
+                font-size: 0.95rem;
+            }
+            
+            .policy-text ul {
+                margin-bottom: 1.2rem;
+                padding-left: 1.2rem;
+            }
+            
+            .policy-text ul li {
+                margin-bottom: 0.4rem;
+                font-size: 0.95rem;
+            }
+            
+            .policy-content {
+                padding: 1.2rem 0;
+            }
+            
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .footer-right {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .footer-social {
+                justify-content: center;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            footer {
+                margin-top: 40px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .page-header {
+                padding: 4.5rem 0 1.5rem;
+                margin-bottom: 2rem;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .policy-text h2 {
+                font-size: 1.6rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            .policy-text h3 {
+                font-size: 1.2rem;
+                margin: 1.2rem 0 0.6rem;
+            }
+            
+            .policy-text p {
+                margin-bottom: 0.8rem;
+                font-size: 0.9rem;
+                line-height: 1.6;
+            }
+            
+            .policy-text ul {
+                margin-bottom: 1rem;
+                padding-left: 1rem;
+            }
+            
+            .policy-text ul li {
+                margin-bottom: 0.3rem;
+                font-size: 0.9rem;
+            }
+            
+            .policy-content {
+                padding: 1rem 0;
+            }
+            
+            footer {
+                margin-top: 30px;
+                padding: 15px 0;
+            }
+            
+            .footer-links a {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-8GQ1KM9FQS');
+    </script>
+    <!-- Header e Navegação -->
+    <header class="header">
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="../index.html">
+                    <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.html">Início</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="servicos.html">Serviços</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="loja.html">Loja</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="hr-hub.html">HR Hub</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.html#contatos">Contatos</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Informação Legal</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Informação Legal</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conteúdo da Informação Legal -->
+    <section class="policy-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="policy-text">
+                        <h2>Termos e Condições de Utilização</h2>
+                        
+                        <p>Bem-vindo ao website da Share2Inspire. Ao aceder e utilizar este website, concorda com os seguintes termos e condições de utilização. Se não concordar com algum destes termos, por favor, não utilize este website.</p>
+                        
+                        <h3>1. Informações Gerais</h3>
+                        <p>
+                            <strong>Nome:</strong> Share2Inspire<br>
+                            <strong>Morada:</strong> Rua Capitão Joaquim Varela Gusmão 5, 2640-791 Mafra, Portugal<br>
+                            <strong>Email:</strong> srshare2inspire@gmail.com<br>
+                            <strong>Telefone:</strong> +351 961 925 050<br>
+                            <strong>NIF:</strong> 123456789
+                        </p>
+                        
+                        <h3>2. Propriedade Intelectual</h3>
+                        <p>Todo o conteúdo deste website, incluindo textos, gráficos, logótipos, ícones, imagens, clips de áudio, downloads digitais e compilações de dados, é propriedade da Share2Inspire ou dos seus fornecedores de conteúdo e está protegido pelas leis de direitos de autor portuguesas e internacionais.</p>
+                        
+                        <p>Não é permitido reproduzir, distribuir, modificar, exibir, preparar trabalhos derivados ou utilizar qualquer conteúdo deste website para fins comerciais sem autorização prévia por escrito da Share2Inspire.</p>
+                        
+                        <h3>3. Utilização do Website</h3>
+                        <p>Concedemos-lhe uma licença limitada, não exclusiva e não transferível para aceder e utilizar este website para fins pessoais e não comerciais. Esta licença não inclui:</p>
+                        <ul>
+                            <li>Revenda ou uso comercial deste website ou do seu conteúdo;</li>
+                            <li>Recolha e utilização de listas de produtos, descrições ou preços;</li>
+                            <li>Qualquer uso derivado deste website ou do seu conteúdo;</li>
+                            <li>Download ou cópia de informações de conta para benefício de outro comerciante;</li>
+                            <li>Utilização de data mining, robots ou ferramentas similares de recolha e extração de dados.</li>
+                        </ul>
+                        
+                        <h3>4. Precisão, Integridade e Atualidade das Informações</h3>
+                        <p>Não garantimos que as informações neste website sejam completas, precisas ou atuais. O material neste website é fornecido apenas para informação geral e não deve ser utilizado como base única para tomar decisões sem consultar fontes de informação primárias, mais precisas, completas ou atuais.</p>
+                        
+                        <p>Reservamo-nos o direito de modificar o conteúdo deste website a qualquer momento, mas não temos obrigação de atualizar qualquer informação no nosso website.</p>
+                        
+                        <h3>5. Serviços e Preços</h3>
+                        <p>Os preços dos nossos serviços estão sujeitos a alterações sem aviso prévio. Reservamo-nos o direito de, a qualquer momento, modificar ou descontinuar qualquer serviço sem aviso prévio.</p>
+                        
+                        <p>Não seremos responsáveis perante si ou qualquer terceiro por qualquer modificação, alteração de preço, suspensão ou descontinuação de serviço.</p>
+                        
+                        <h3>6. Links para Websites de Terceiros</h3>
+                        <p>Este website pode conter links para websites de terceiros que não são controlados pela Share2Inspire. Não somos responsáveis pelo conteúdo de qualquer website vinculado, nem por quaisquer links contidos em websites vinculados, nem por quaisquer alterações ou atualizações em tais websites.</p>
+                        
+                        <p>A inclusão de qualquer link não implica endosso pela Share2Inspire do website. A utilização de qualquer website vinculado é por sua conta e risco.</p>
+                        
+                        <h3>7. Limitação de Responsabilidade</h3>
+                        <p>A Share2Inspire não será responsável por quaisquer danos decorrentes da utilização deste website, incluindo, mas não se limitando a, danos diretos, indiretos, incidentais, punitivos e consequenciais.</p>
+                        
+                        <h3>8. Lei Aplicável e Jurisdição</h3>
+                        <p>Estes termos e condições são regidos e interpretados de acordo com as leis portuguesas, e qualquer disputa relacionada com estes termos e condições estará sujeita à jurisdição exclusiva dos tribunais portugueses.</p>
+                        
+                        <h3>9. Alterações aos Termos e Condições</h3>
+                        <p>Reservamo-nos o direito de atualizar, alterar ou substituir qualquer parte destes Termos e Condições publicando atualizações e alterações no nosso website. É sua responsabilidade verificar periodicamente o nosso website para alterações.</p>
+                        
+                        <p>A sua utilização continuada do website após a publicação de quaisquer alterações a estes Termos e Condições constitui aceitação dessas alterações.</p>
+                        
+                        <h3>10. Contacto</h3>
+                        <p>Questões sobre os Termos e Condições devem ser enviadas para srshare2inspire@gmail.com.</p>
+                        
+                        <p>Última atualização: <strong>Maio de 2025</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Minimalista -->
+    <footer id="contatos">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-left">
+                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
+                </div>
+                <div class="footer-right">
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
+                    </div>
+                    <div class="footer-social">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="politica-privacidade.html">Política de Privacidade</a>
+                <a href="politica-cookies.html">Política de Cookies</a>
+                <a href="tratamento-dados.html">Tratamento de Dados</a>
+                <a href="informacao-legal.html">Informação Legal</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
