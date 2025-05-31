@@ -3,29 +3,11 @@
  * 
  * Este ficheiro contém o código corrigido para o formulário Kickstart Pro
  * Correção principal: Garantir a exibição dos detalhes de pagamento Multibanco
- * e integração com as APIs da BREVO e IfthenPay
  */
 
 document.addEventListener('DOMContentLoaded', function() {
     // Inicializar o formulário Kickstart Pro
     setupKickstartForm();
-    
-    // Mostrar/ocultar campos específicos de MB WAY
-    const paymentMethodSelect = document.getElementById('kickstartPaymentMethod');
-    const mbwayFields = document.getElementById('mbwayFields');
-    
-    if (paymentMethodSelect && mbwayFields) {
-        paymentMethodSelect.addEventListener('change', function() {
-            if (this.value === 'mbway') {
-                mbwayFields.style.display = 'block';
-            } else {
-                mbwayFields.style.display = 'none';
-            }
-        });
-    }
-    
-    // Inicializar o preço com base na duração selecionada
-    updatePrice();
 });
 
 /**
@@ -63,7 +45,6 @@ function setupKickstartForm() {
         const format = formData.get('format') || 'Online';
         const duration = formData.get('duration') || '30min';
         const paymentMethod = formData.get('paymentMethod') || 'mb';
-        const mbwayPhone = formData.get('mbwayPhone') || phone;
         
         // Calcular o preço com base na duração
         const price = duration === '30min' ? 30 : 45;
@@ -76,7 +57,7 @@ function setupKickstartForm() {
             service: 'Kickstart Pro',
             name: name,
             email: email,
-            phone: paymentMethod === 'mbway' ? mbwayPhone : phone,
+            phone: phone,
             date: date,
             format: format,
             duration: duration,
@@ -86,24 +67,13 @@ function setupKickstartForm() {
             description: `Kickstart Pro ${duration} - ${format} - ${date}`,
             customerName: name,
             customerEmail: email,
-            customerPhone: paymentMethod === 'mbway' ? mbwayPhone : phone,
+            customerPhone: phone,
             source: 'website_service_booking'
         };
         
         console.log('Enviando dados para o backend:', data);
         
-        // Primeiro, enviar dados para a API da BREVO
-        if (window.brevoSDK && typeof window.brevoSDK.sendBookingConfirmation === 'function') {
-            window.brevoSDK.sendBookingConfirmation(data)
-                .then(() => {
-                    console.log('Email de confirmação enviado com sucesso via Brevo');
-                })
-                .catch(error => {
-                    console.error('Erro ao enviar email de confirmação via Brevo:', error);
-                });
-        }
-        
-        // Enviar dados para o backend de pagamento
+        // Enviar dados para o backend - MANTENDO EXATAMENTE O ENDPOINT ORIGINAL
         fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate', {
             method: 'POST',
             headers: {

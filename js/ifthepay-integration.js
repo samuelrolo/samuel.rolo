@@ -1,256 +1,139 @@
 /**
- * Integração com Ifthenpay para processamento de pagamentos - Share2Inspire
- * Versão corrigida para compatibilidade com navegador
+ * Integração com a API da IfthenPay - Share2Inspire
+ * 
+ * Este ficheiro contém o código para integração com a API da IfthenPay
+ * para processamento de pagamentos via Multibanco, MB WAY e Payshop
  */
 
-// Remover importações ES6 que não funcionam diretamente no navegador
-// import { Ifthenpay, Multibanco, MBWay, Payshop } from 'ifthenpay-node';
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar o SDK da Ifthenpay
-    initIfthenpaySDK();
+// Namespace para a integração com a IfthenPay
+window.ifthenpaySDK = (function() {
+    // Configurações da API
+    const API_BASE_URL = 'https://share2inspire-beckend.lm.r.appspot.com/api/payment';
     
-    // Inicializar todos os modais Bootstrap
-    if (typeof bootstrap !== 'undefined') {
-        var modais = document.querySelectorAll('.modal');
-        modais.forEach(function(modal) {
-            new bootstrap.Modal(modal);
-        });
-    } else {
-        console.error('Bootstrap não está definido. Verifique se o script do Bootstrap foi carregado corretamente.');
-    }
-});
-
-/**
- * Inicializa o SDK da Ifthenpay
- */
-function initIfthenpaySDK() {
-    console.log('Inicializando integração com Ifthenpay');
+    // Chaves da IfthenPay
+    const MULTIBANCO_KEY = 'BXG-350883';
+    const MBWAY_KEY = 'UWP-547025';
+    const PAYSHOP_KEY = 'QTU-066969';
     
-    // Remover configuração direta do SDK que usa process.env
-    // const IFTHENPAY_API_KEY = process.env.IFTHENPAY_API_KEY;
-    // const IFTHENPAY_MBWAY_KEY = process.env.IFTHENPAY_MBWAY_KEY;
-    // const IFTHENPAY_MULTIBANCO_ENTITY = process.env.IFTHENPAY_MULTIBANCO_ENTITY;
-    // const IFTHENPAY_MULTIBANCO_SUBENTITY = process.env.IFTHENPAY_MULTIBANCO_SUBENTITY;
-    // const IFTHENPAY_PAYSHOP_KEY = process.env.IFTHENPAY_PAYSHOP_KEY;
-    // const BREVO_API_KEY = process.env.BREVO_API_KEY;
-    
-    // Em vez disso, expor funções que chamam o backend
-    window.ifthenpaySDK = {
-        processPayment: processPaymentViaBackend,
-        validatePaymentForm,
-        showPaymentDetails,
-        checkPaymentStatus: checkPaymentStatusViaBackend
-    };
-}
-
-/**
- * Processa pagamento via backend
- * @param {Object} data - Dados do pagamento
- * @returns {Promise} - Promise que resolve quando o pagamento é processado
- */
-function processPaymentViaBackend(data) {
-    const method = data.paymentMethod || 'mb';
-    const amount = parseFloat(data.amount) || 0;
-    const orderId = data.orderId || `ORD${Date.now()}`;
-    
-    console.log('Processando pagamento via backend:', { method, amount, orderId });
-    
-    // Chamar o backend para processar o pagamento
-    return fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Origin': 'https://share2inspire.pt',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            ...data,
-            paymentMethod: method,
-            amount: amount,
-            orderId: orderId
+    /**
+     * Inicia um pagamento
+     * @param {Object} data - Dados do pagamento
+     * @returns {Promise} - Promise com o resultado da operação
+     */
+    function initiatePayment(data) {
+        console.log('Iniciando pagamento via IfthenPay:', data);
+        
+        // Garantir que temos o método de pagamento
+        const paymentMethod = data.paymentMethod || 'mb';
+        
+        // Adicionar chaves específicas com base no método de pagamento
+        if (paymentMethod === 'mb' || paymentMethod === 'multibanco') {
+            data.mbKey = MULTIBANCO_KEY;
+        } else if (paymentMethod === 'mbway') {
+            data.mbwayKey = MBWAY_KEY;
+        } else if (paymentMethod === 'payshop') {
+            data.payshopKey = PAYSHOP_KEY;
+        }
+        
+        // Endpoint para iniciar pagamento
+        const endpoint = `${API_BASE_URL}/initiate`;
+        
+        // Enviar dados para o backend
+        return fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Origin': 'https://share2inspire.pt',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(data)
         })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Erro ao processar pagamento: ' + response.status);
-        }
-        return response.json();
-    })
-    .then(responseData => {
-        console.log('Resposta do backend:', responseData);
-        return responseData;
-    })
-    .catch(error => {
-        console.error('Erro ao processar pagamento:', error);
-        throw error;
-    });
-}
-
-/**
- * Verifica o status de um pagamento via backend
- * @param {string} orderId - ID do pedido
- * @returns {Promise} - Promise que resolve com o status do pagamento
- */
-function checkPaymentStatusViaBackend(orderId) {
-    if (!orderId) {
-        return Promise.reject(new Error('ID do pedido não fornecido'));
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    console.error('Erro na resposta do servidor (IfthenPay):', response.status, text);
+                    throw new Error('Erro na resposta do servidor (IfthenPay): ' + response.status);
+                });
+            }
+            return response.json();
+        })
+        .then(responseData => {
+            console.log('Pagamento iniciado com sucesso via IfthenPay:', responseData);
+            return responseData;
+        })
+        .catch(error => {
+            console.error('Erro ao iniciar pagamento via IfthenPay:', error);
+            throw error;
+        });
     }
     
-    return fetch(`https://share2inspire-beckend.lm.r.appspot.com/api/payment/status/${orderId}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Origin': 'https://share2inspire.pt',
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Erro ao verificar status do pagamento: ' + response.status);
-        }
-        return response.json();
-    })
-    .then(status => {
-        console.log('Status do pagamento:', status);
-        return status;
-    })
-    .catch(error => {
-        console.error('Erro ao verificar status do pagamento:', error);
-        throw error;
-    });
-}
-
-/**
- * Exibe os detalhes do pagamento
- * @param {Object} paymentData - Dados do pagamento
- * @param {HTMLElement} container - Elemento onde exibir os detalhes
- * @returns {void}
- */
-function showPaymentDetails(paymentData, container) {
-    if (!container) {
-        console.error('Container não fornecido para exibição dos detalhes de pagamento');
-        return;
-    }
-    
-    console.log('Exibindo detalhes do pagamento:', paymentData);
-    
-    // Verificar se a resposta indica sucesso
-    const isSuccess = paymentData.success || paymentData.status === 'success';
-    
-    if (!isSuccess) {
-        container.innerHTML = `
-            <div class="alert alert-danger">
-                ${paymentData.message || paymentData.error || 'Erro ao processar pagamento. Por favor tente novamente.'}
-            </div>
-        `;
-        return;
-    }
-    
-    // Determinar o método de pagamento
-    const paymentMethod = paymentData.paymentMethod || 'mb';
-    
-    // Exibir detalhes de acordo com o método de pagamento
-    if (paymentMethod === 'mbway') {
-        container.innerHTML = `
-            <div class="alert alert-success">
-                <h5>Pagamento MB WAY</h5>
-                <p><strong>Número:</strong> ${paymentData.phone || ''}</p>
-                <p><strong>Valor:</strong> ${paymentData.amount || '0.00'}€</p>
-                <p>Foi enviado um pedido de pagamento para o seu número MB WAY.</p>
-                <p>Por favor, aceite o pagamento na aplicação MB WAY.</p>
-            </div>
-        `;
-    } else if (paymentMethod === 'mb' || paymentMethod === 'multibanco') {
-        // Garantir que os campos entity, reference e amount existem, mesmo que vazios
-        const entity = paymentData.entity || paymentData.Entity || '';
-        const reference = paymentData.reference || paymentData.Reference || '';
-        const amount = paymentData.amount || paymentData.Amount || '0.00';
+    /**
+     * Verifica o estado de um pagamento
+     * @param {string} reference - Referência do pagamento
+     * @param {string} method - Método de pagamento (mb, mbway, payshop)
+     * @returns {Promise} - Promise com o resultado da operação
+     */
+    function checkPaymentStatus(reference, method = 'mb') {
+        console.log(`Verificando estado do pagamento ${reference} via ${method}`);
         
-        container.innerHTML = `
-            <div class="alert alert-success">
-                <h5>Pagamento por Referência Multibanco</h5>
-                <p><strong>Entidade:</strong> ${entity}</p>
-                <p><strong>Referência:</strong> ${reference}</p>
-                <p><strong>Valor:</strong> ${amount}€</p>
-                <p>A referência é válida por 48 horas.</p>
-            </div>
-        `;
-    } else if (paymentMethod === 'payshop') {
-        // Mostrar informações de pagamento Payshop
-        const reference = paymentData.reference || paymentData.Reference || '';
-        const amount = paymentData.amount || paymentData.Amount || '0.00';
+        // Endpoint para verificar estado do pagamento
+        const endpoint = `${API_BASE_URL}/status/${method}/${reference}`;
         
-        container.innerHTML = `
-            <div class="alert alert-success">
-                <h5>Pagamento por Referência Payshop</h5>
-                <p><strong>Referência:</strong> ${reference}</p>
-                <p><strong>Valor:</strong> ${amount}€</p>
-                <p>A referência é válida por 48 horas.</p>
-            </div>
-        `;
-    } else {
-        // Mensagem genérica de sucesso
-        container.innerHTML = `
-            <div class="alert alert-success">
-                <h5>Pagamento Processado com Sucesso!</h5>
-                <p>Obrigado pela sua compra. Receberá um email com os detalhes do pagamento.</p>
-                <p><strong>Valor:</strong> ${paymentData.amount || '0.00'}€</p>
-            </div>
-        `;
+        // Enviar dados para o backend
+        return fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Origin': 'https://share2inspire.pt',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    console.error('Erro na resposta do servidor (IfthenPay):', response.status, text);
+                    throw new Error('Erro na resposta do servidor (IfthenPay): ' + response.status);
+                });
+            }
+            return response.json();
+        })
+        .then(responseData => {
+            console.log('Estado do pagamento verificado com sucesso:', responseData);
+            return responseData;
+        })
+        .catch(error => {
+            console.error('Erro ao verificar estado do pagamento:', error);
+            throw error;
+        });
     }
-}
+    
+    // API pública
+    return {
+        initiatePayment,
+        checkPaymentStatus
+    };
+})();
 
-/**
- * Valida formulário de pagamento
- * @param {HTMLFormElement} form - Formulário a validar
- * @returns {boolean} - Se o formulário é válido
- */
-function validatePaymentForm(form) {
-    if (!form) return false;
+// Inicializar formulários com integração IfthenPay quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', function() {
+    // Configurar os formulários que precisam de pagamento
+    // Nota: O formulário Kickstart Pro já é tratado no seu próprio script
     
-    let isValid = true;
-    const requiredFields = form.querySelectorAll('[required]');
+    // Mostrar/ocultar campos específicos de MB WAY em todos os formulários
+    const paymentMethodSelects = document.querySelectorAll('select[name="paymentMethod"]');
     
-    // Limpar mensagens de erro anteriores
-    form.querySelectorAll('.error-message').forEach(el => el.remove());
-    
-    // Verificar campos obrigatórios
-    requiredFields.forEach(field => {
-        if (!field.value.trim()) {
-            isValid = false;
-            showFieldError(field, 'Este campo é obrigatório');
+    paymentMethodSelects.forEach(select => {
+        const form = select.closest('form');
+        const mbwayFields = form.querySelector('.payment-method-fields');
+        
+        if (select && mbwayFields) {
+            select.addEventListener('change', function() {
+                if (this.value === 'mbway') {
+                    mbwayFields.style.display = 'block';
+                } else {
+                    mbwayFields.style.display = 'none';
+                }
+            });
         }
     });
-    
-    // Verificar formato de email
-    const emailField = form.querySelector('input[type="email"]');
-    if (emailField && emailField.value.trim() && !validateEmail(emailField.value)) {
-        isValid = false;
-        showFieldError(emailField, 'Por favor, insira um email válido');
-    }
-    
-    return isValid;
-}
-
-/**
- * Mostra erro em campo de formulário
- * @param {HTMLElement} field - Campo com erro
- * @param {string} message - Mensagem de erro
- */
-function showFieldError(field, message) {
-    const errorElement = document.createElement('div');
-    errorElement.className = 'error-message text-danger small mt-1';
-    errorElement.textContent = message;
-    field.parentNode.appendChild(errorElement);
-}
-
-/**
- * Valida formato de email
- * @param {string} email - Email a validar
- * @returns {boolean} - Se o email é válido
- */
-function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
+});
