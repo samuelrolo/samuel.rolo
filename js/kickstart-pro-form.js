@@ -87,7 +87,13 @@ function setupKickstartForm() {
             customerName: name,
             customerEmail: email,
             customerPhone: paymentMethod === 'mbway' ? mbwayPhone : phone,
-            source: 'website_service_booking'
+            source: 'website_service_booking',
+            // Campos específicos para o backend
+            method: paymentMethod === 'mb' ? 'multibanco' : paymentMethod,
+            // Adicionar chaves específicas com base no método de pagamento
+            mbKey: paymentMethod === 'mb' || paymentMethod === 'multibanco' ? 'BXG-350883' : undefined,
+            mbwayKey: paymentMethod === 'mbway' ? 'UWP-547025' : undefined,
+            payshopKey: paymentMethod === 'payshop' ? 'QTU-066969' : undefined
         };
         
         console.log('Enviando dados para o backend:', data);
@@ -136,7 +142,7 @@ function setupKickstartForm() {
                 console.log('Detalhes completos da resposta:', JSON.stringify(data, null, 2));
                 
                 // Determinar o método de pagamento (com fallback para o método selecionado no formulário)
-                const paymentMethodResponse = data.paymentMethod || paymentMethod;
+                const paymentMethodResponse = data.method || data.paymentMethod || paymentMethod;
                 
                 // Tratar diferentes métodos de pagamento
                 if (paymentMethodResponse === 'mbway') {
@@ -144,7 +150,7 @@ function setupKickstartForm() {
                     formMessage.innerHTML = `
                         <div class="alert alert-success">
                             <h5>Pagamento MB WAY</h5>
-                            <p><strong>Número:</strong> ${data.phone || phone}</p>
+                            <p><strong>Número:</strong> ${data.phone || mbwayPhone}</p>
                             <p><strong>Valor:</strong> ${data.amount || price}€</p>
                             <p>Foi enviado um pedido de pagamento para o seu número MB WAY.</p>
                             <p>Por favor, aceite o pagamento na aplicação MB WAY.</p>
