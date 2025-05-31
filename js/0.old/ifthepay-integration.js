@@ -26,36 +26,17 @@ window.ifthenpaySDK = (function() {
         // Garantir que temos o método de pagamento
         const paymentMethod = data.paymentMethod || 'mb';
         
-        // Criar uma cópia dos dados para não modificar o objeto original
-        const paymentData = { ...data };
-        
-        // Normalizar os nomes dos campos para o formato esperado pelo backend
-        paymentData.method = paymentMethod;
-        paymentData.customerName = data.name || data.customerName || '';
-        paymentData.customerEmail = data.email || data.customerEmail || '';
-        paymentData.customerPhone = data.phone || data.customerPhone || '';
-        
         // Adicionar chaves específicas com base no método de pagamento
         if (paymentMethod === 'mb' || paymentMethod === 'multibanco') {
-            paymentData.mbKey = MULTIBANCO_KEY;
-            paymentData.method = 'multibanco';
+            data.mbKey = MULTIBANCO_KEY;
         } else if (paymentMethod === 'mbway') {
-            paymentData.mbwayKey = MBWAY_KEY;
-            paymentData.method = 'mbway';
-            
-            // Garantir que o telefone está no formato correto para MB WAY
-            if (paymentData.customerPhone && !paymentData.customerPhone.startsWith('351')) {
-                paymentData.customerPhone = '351' + paymentData.customerPhone.replace(/^0+/, '');
-            }
+            data.mbwayKey = MBWAY_KEY;
         } else if (paymentMethod === 'payshop') {
-            paymentData.payshopKey = PAYSHOP_KEY;
-            paymentData.method = 'payshop';
+            data.payshopKey = PAYSHOP_KEY;
         }
         
         // Endpoint para iniciar pagamento
         const endpoint = `${API_BASE_URL}/initiate`;
-        
-        console.log('Dados de pagamento enviados:', paymentData);
         
         // Enviar dados para o backend
         return fetch(endpoint, {
@@ -65,7 +46,7 @@ window.ifthenpaySDK = (function() {
                 'Origin': 'https://share2inspire.pt',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify(paymentData)
+            body: JSON.stringify(data)
         })
         .then(response => {
             if (!response.ok) {

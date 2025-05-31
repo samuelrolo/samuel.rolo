@@ -1,13 +1,31 @@
 /**
  * Formulário Kickstart Pro - Share2Inspire
  * 
- * Este ficheiro contém o código extraído exatamente como está no ficheiro original share2inspire-forms.js
- * Não foram feitas alterações na lógica ou estrutura, apenas isolamento do código específico para o Kickstart Pro
+ * Este ficheiro contém o código corrigido para o formulário Kickstart Pro
+ * Correção principal: Garantir a exibição dos detalhes de pagamento Multibanco
+ * e integração com as APIs da BREVO e IfthenPay
  */
 
 document.addEventListener('DOMContentLoaded', function() {
     // Inicializar o formulário Kickstart Pro
     setupKickstartForm();
+    
+    // Mostrar/ocultar campos específicos de MB WAY
+    const paymentMethodSelect = document.getElementById('kickstartPaymentMethod');
+    const mbwayFields = document.getElementById('mbwayFields');
+    
+    if (paymentMethodSelect && mbwayFields) {
+        paymentMethodSelect.addEventListener('change', function() {
+            if (this.value === 'mbway') {
+                mbwayFields.style.display = 'block';
+            } else {
+                mbwayFields.style.display = 'none';
+            }
+        });
+    }
+    
+    // Inicializar o preço com base na duração selecionada
+    updatePrice();
 });
 
 /**
@@ -45,6 +63,7 @@ function setupKickstartForm() {
         const format = formData.get('format') || 'Online';
         const duration = formData.get('duration') || '30min';
         const paymentMethod = formData.get('paymentMethod') || 'mb';
+        const mbwayPhone = formData.get('mbwayPhone') || phone;
         
         // Calcular o preço com base na duração
         const price = duration === '30min' ? 30 : 45;
@@ -57,7 +76,7 @@ function setupKickstartForm() {
             service: 'Kickstart Pro',
             name: name,
             email: email,
-            phone: phone,
+            phone: paymentMethod === 'mbway' ? mbwayPhone : phone,
             date: date,
             format: format,
             duration: duration,
@@ -67,13 +86,24 @@ function setupKickstartForm() {
             description: `Kickstart Pro ${duration} - ${format} - ${date}`,
             customerName: name,
             customerEmail: email,
-            customerPhone: phone,
+            customerPhone: paymentMethod === 'mbway' ? mbwayPhone : phone,
             source: 'website_service_booking'
         };
         
         console.log('Enviando dados para o backend:', data);
         
-        // Enviar dados para o backend - MANTENDO EXATAMENTE O ENDPOINT ORIGINAL
+        // Primeiro, enviar dados para a API da BREVO
+        if (window.brevoSDK && typeof window.brevoSDK.sendBookingConfirmation === 'function') {
+            window.brevoSDK.sendBookingConfirmation(data)
+                .then(() => {
+                    console.log('Email de confirmação enviado com sucesso via Brevo');
+                })
+                .catch(error => {
+                    console.error('Erro ao enviar email de confirmação via Brevo:', error);
+                });
+        }
+        
+        // Enviar dados para o backend de pagamento
         fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate', {
             method: 'POST',
             headers: {
@@ -97,61 +127,106 @@ function setupKickstartForm() {
         .then(data => {
             console.log('Dados recebidos do servidor:', data);
             
+            // Garantir que formMessage está visível
+            formMessage.style.display = 'block';
+            
+            // Verificar se a resposta foi bem-sucedida
             if (data.success) {
-                // Handle payment methods
-                if (data.paymentMethod === 'mbway') {
-                    // Show MBWAY payment info
+                // Registar todos os dados recebidos para diagnóstico
+                console.log('Detalhes completos da resposta:', JSON.stringify(data, null, 2));
+                
+                // Determinar o método de pagamento (com fallback para o método selecionado no formulário)
+                const paymentMethodResponse = data.paymentMethod || paymentMethod;
+                
+                // Tratar diferentes métodos de pagamento
+                if (paymentMethodResponse === 'mbway') {
+                    // Mostrar informações de pagamento MB WAY
                     formMessage.innerHTML = `
                         <div class="alert alert-success">
                             <h5>Pagamento MB WAY</h5>
-                            <p>Foi enviado um pedido de pagamento para o número ${data.phone}.</p>
+                            <p><strong>Número:</strong> ${data.phone || phone}</p>
+                            <p><strong>Valor:</strong> ${data.amount || price}€</p>
+                            <p>Foi enviado um pedido de pagamento para o seu número MB WAY.</p>
                             <p>Por favor, aceite o pagamento na aplicação MB WAY.</p>
                         </div>
                     `;
-                } else if (data.paymentMethod === 'mb') {
-                    // Show Multibanco payment info
+                } else if (paymentMethodResponse === 'mb' || paymentMethodResponse === 'multibanco') {
+                    // Mostrar informações de pagamento Multibanco
+                    // Garantir que os campos entity, reference e amount existem, mesmo que vazios
+                    const entity = data.entity || data.Entity || '';
+                    const reference = data.reference || data.Reference || '';
+                    const amount = data.amount || data.Amount || price;
+                    
                     formMessage.innerHTML = `
                         <div class="alert alert-success">
                             <h5>Pagamento por Referência Multibanco</h5>
-                            <p>Entidade: ${data.entity}</p>
-                            <p>Referência: ${data.reference}</p>
-                            <p>Valor: ${data.amount}€</p>
+                            <p><strong>Entidade:</strong> ${entity}</p>
+                            <p><strong>Referência:</strong> ${reference}</p>
+                            <p><strong>Valor:</strong> ${amount}€</p>
                             <p>A referência é válida por 48 horas.</p>
                         </div>
                     `;
-                } else if (data.paymentMethod === 'payshop') {
-                    // Show Payshop payment info
+                } else if (paymentMethodResponse === 'payshop') {
+                    // Mostrar informações de pagamento Payshop
+                    const reference = data.reference || data.Reference || '';
+                    const amount = data.amount || data.Amount || price;
+                    
                     formMessage.innerHTML = `
                         <div class="alert alert-success">
                             <h5>Pagamento por Referência Payshop</h5>
-                            <p>Referência: ${data.reference}</p>
-                            <p>Valor: ${data.amount}€</p>
+                            <p><strong>Referência:</strong> ${reference}</p>
+                            <p><strong>Valor:</strong> ${amount}€</p>
                             <p>A referência é válida por 48 horas.</p>
                         </div>
                     `;
                 } else {
-                    // Generic success message
-                    formMessage.innerHTML = '<div class="alert alert-success">Reserva processada com sucesso! Receberá um email com os detalhes.</div>';
+                    // Mensagem genérica de sucesso com detalhes do pedido
+                    formMessage.innerHTML = `
+                        <div class="alert alert-success">
+                            <h5>Reserva Processada com Sucesso!</h5>
+                            <p>Obrigado pela sua reserva de Kickstart Pro.</p>
+                            <p><strong>Data:</strong> ${date}</p>
+                            <p><strong>Formato:</strong> ${format}</p>
+                            <p><strong>Duração:</strong> ${duration}</p>
+                            <p><strong>Valor:</strong> ${price}€</p>
+                            <p>Receberá um email com os detalhes da sua reserva.</p>
+                        </div>
+                    `;
                 }
                 
-                // Reset form
+                // Garantir que a mensagem é visível
+                formMessage.style.display = 'block';
+                
+                // Scroll para a mensagem
+                formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Resetar formulário
                 kickstartForm.reset();
             } else {
-                // Show error message from server
-                formMessage.innerHTML = `<div class="alert alert-danger">${data.message || 'Erro ao processar pedido. Por favor tente novamente.'}</div>`;
+                // Mostrar mensagem de erro do servidor
+                formMessage.innerHTML = `
+                    <div class="alert alert-danger">
+                        ${data.message || 'Erro ao processar pedido. Por favor tente novamente.'}
+                    </div>
+                `;
             }
             
-            // Re-enable submit button
+            // Reabilitar botão
             submitButton.disabled = false;
             submitButton.innerHTML = 'SUBMETER E PROSSEGUIR PARA O PAGAMENTO';
         })
         .catch(error => {
             console.error('Erro ao processar reserva:', error);
             
-            // Show error message
-            formMessage.innerHTML = '<div class="alert alert-danger">Erro ao processar pedido. Por favor tente novamente.</div>';
+            // Mostrar mensagem de erro
+            formMessage.innerHTML = `
+                <div class="alert alert-danger">
+                    Erro ao processar pedido: ${error.message || 'Erro desconhecido'}. 
+                    Por favor tente novamente ou contacte-nos diretamente.
+                </div>
+            `;
             
-            // Re-enable submit button
+            // Reabilitar botão
             submitButton.disabled = false;
             submitButton.innerHTML = 'SUBMETER E PROSSEGUIR PARA O PAGAMENTO';
         });
