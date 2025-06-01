@@ -24,23 +24,20 @@ const PAYMENT_API_ENDPOINT = "https://share2inspire-beckend.lm.r.appspot.com/api
  */
 async function processPayment(formData, paymentMethod, amount) {
     try {
+        // Normalizar o método de pagamento para o formato esperado pelo backend
+        const normalizedMethod = getPaymentMethodFormat(paymentMethod);
+        
         // Preparar os dados para envio
         const paymentData = {
-            service: "Kickstart Pro",
+            service: formData.service || 'Serviço Share2Inspire',
             name: formData.name,
             email: formData.email,
-            phone: formData.phone,
-            date: formData.date,
+            phone: normalizedMethod === 'mbway' ? formatPhoneForMBWay(formData.phone) : formData.phone,
+            date: formData.date || '',
             amount: amount,
             // Usar o formato correto para o método de pagamento
-            payment_method: paymentMethod // Alterado para payment_method conforme esperado pelo backend
+            payment_method: normalizedMethod
         };
-
-        // Adicionar número de telefone para MB WAY se aplicável
-        if (paymentMethod === 'mbway') {
-            // Garantir que o número de telefone tem o formato correto (com prefixo 351)
-            paymentData.phone = formatPhoneForMBWay(formData.phone);
-        }
 
         console.log("Enviando dados para o backend:", paymentData);
 
@@ -48,26 +45,60 @@ async function processPayment(formData, paymentMethod, amount) {
         const response = await fetch(PAYMENT_API_ENDPOINT, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(paymentData)
         });
 
         // Processar a resposta
-        const responseData = await response.json();
+        let responseData;
+        try {
+            responseData = await response.json();
+        } catch (error) {
+            console.error("Erro ao processar resposta JSON:", error);
+            throw new Error(`Erro na resposta do servidor: ${response.status} ${response.statusText}`);
+        }
+        
         console.log("Resposta do servidor:", response.status);
         console.log("Detalhes completos da resposta:", responseData);
 
         // Verificar se a resposta foi bem-sucedida
-        if (!response.ok || !responseData.success) {
+        if (!response.ok) {
             throw new Error(`Erro na resposta do servidor: ${response.status} ${JSON.stringify(responseData)}`);
+        }
+
+        // Verificar se o backend reportou sucesso
+        if (!responseData.success) {
+            throw new Error(`Erro reportado pelo backend: ${responseData.error || 'Erro desconhecido'}`);
         }
 
         return responseData;
     } catch (error) {
-        console.error("Erro ao processar reserva:", error);
+        console.error("Erro ao processar pagamento:", error);
         throw error;
     }
+}
+
+/**
+ * Converte o método de pagamento para o formato esperado pelo backend
+ * @param {string} method - Método de pagamento original
+ * @returns {string} - Método de pagamento normalizado
+ */
+function getPaymentMethodFormat(method) {
+    if (!method) return 'multibanco';
+    
+    method = method.toLowerCase();
+    
+    // Mapeamento de valores para o formato esperado pelo backend
+    const methodMap = {
+        'mb': 'multibanco',
+        'multibanco': 'multibanco',
+        'mbway': 'mbway',
+        'payshop': 'payshop'
+    };
+    
+    return methodMap[method] || 'multibanco';
 }
 
 /**
@@ -106,12 +137,15 @@ function displayPaymentInfo(paymentData, paymentMethod, container) {
         return;
     }
     
+    // Normalizar o método de pagamento
+    const normalizedMethod = getPaymentMethodFormat(paymentMethod);
+    
     // Criar elemento para exibir as informações
     const paymentInfo = document.createElement('div');
     paymentInfo.className = 'alert alert-success';
     
     // Conteúdo específico para cada método de pagamento
-    if (paymentMethod === 'multibanco') {
+    if (normalizedMethod === 'multibanco') {
         paymentInfo.innerHTML = `
             <h4>Pagamento Multibanco</h4>
             <p><strong>Entidade:</strong> ${paymentData.entity || ''}</p>
@@ -119,7 +153,7 @@ function displayPaymentInfo(paymentData, paymentMethod, container) {
             <p><strong>Valor:</strong> ${paymentData.amount || ''}€</p>
             <p>Por favor, efetue o pagamento em qualquer caixa multibanco ou homebanking.</p>
         `;
-    } else if (paymentMethod === 'mbway') {
+    } else if (normalizedMethod === 'mbway') {
         paymentInfo.innerHTML = `
             <h4>Pagamento MB WAY</h4>
             <p><strong>Número:</strong> ${paymentData.phone || ''}</p>
@@ -127,7 +161,7 @@ function displayPaymentInfo(paymentData, paymentMethod, container) {
             <p>Foi enviado um pedido de pagamento para o seu número MB WAY.</p>
             <p>Por favor, aceite o pagamento na aplicação MB WAY.</p>
         `;
-    } else if (paymentMethod === 'payshop') {
+    } else if (normalizedMethod === 'payshop') {
         paymentInfo.innerHTML = `
             <h4>Pagamento Payshop</h4>
             <p><strong>Referência:</strong> ${paymentData.reference || ''}</p>
