@@ -1,170 +1,267 @@
 /**
- * Integração com a API da IfthenPay para pagamentos
+ * Integração com a API da Brevo para envio de emails
  * 
- * Este módulo fornece funções para integração com a API de pagamentos da IfthenPay,
- * permitindo processar pagamentos via Multibanco, MB WAY e Payshop.
+ * Este módulo fornece funções para integração com a API de emails da Brevo,
+ * permitindo enviar emails de confirmação de reserva e contacto.
  */
 
-// Chaves da IfthenPay para os diferentes métodos de pagamento
-const IFTHENPAY_KEYS = {
-    multibanco: "BXG-350883",
-    mbway: "UWP-547025",
-    payshop: "QTU-066969"
-};
-
-// Endpoint da API de pagamento
-const PAYMENT_API_ENDPOINT = "https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate";
+// Endpoint da API de email
+const EMAIL_API_ENDPOINT = "https://share2inspire-beckend.lm.r.appspot.com/api/email/contact-form";
 
 /**
- * Processa um pagamento através da API da IfthenPay
+ * Envia um email de confirmação de reserva através da API da Brevo
  * @param {Object} formData - Dados do formulário
- * @param {string} paymentMethod - Método de pagamento (multibanco, mbway, payshop)
- * @param {number} amount - Valor do pagamento
  * @returns {Promise} - Promise com o resultado da operação
  */
-async function processPayment(formData, paymentMethod, amount) {
+async function sendBookingConfirmation(formData) {
     try {
         // Preparar os dados para envio
-        const paymentData = {
-            service: "Kickstart Pro",
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            date: formData.date,
-            amount: amount,
-            // Usar o formato correto para o método de pagamento
-            payment_method: paymentMethod // Alterado para payment_method conforme esperado pelo backend
+        const emailData = {
+            name: formData.name || '',
+            email: formData.email || '',
+            phone: formData.phone || '',
+            subject: `Reserva: ${formData.service || 'Serviço'}`,
+            message: `Nova reserva de ${formData.service || 'serviço'} para ${formData.date || 'data não especificada'}`,
+            reason: formData.service || 'Reserva de serviço',
+            // Campos adicionais para o backend
+            service: formData.service || '',
+            date: formData.date || '',
+            time: formData.time || '',
+            format: formData.format || '',
+            duration: formData.duration || '',
+            amount: formData.amount || '',
+            source: 'website_booking'
         };
 
-        // Adicionar número de telefone para MB WAY se aplicável
-        if (paymentMethod === 'mbway') {
-            // Garantir que o número de telefone tem o formato correto (com prefixo 351)
-            paymentData.phone = formatPhoneForMBWay(formData.phone);
-        }
-
-        console.log("Enviando dados para o backend:", paymentData);
+        console.log("Enviando dados para a API da Brevo:", emailData);
 
         // Fazer a chamada à API
-        const response = await fetch(PAYMENT_API_ENDPOINT, {
+        const response = await fetch(EMAIL_API_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(paymentData)
+            body: JSON.stringify(emailData)
         });
 
         // Processar a resposta
         const responseData = await response.json();
-        console.log("Resposta do servidor:", response.status);
+        console.log("Resposta da API da Brevo:", response.status);
         console.log("Detalhes completos da resposta:", responseData);
 
         // Verificar se a resposta foi bem-sucedida
         if (!response.ok || !responseData.success) {
-            throw new Error(`Erro na resposta do servidor: ${response.status} ${JSON.stringify(responseData)}`);
+            throw new Error(`Erro na resposta da API da Brevo: ${response.status} ${JSON.stringify(responseData)}`);
         }
 
         return responseData;
     } catch (error) {
-        console.error("Erro ao processar reserva:", error);
+        console.error("Erro ao enviar email de confirmação:", error);
         throw error;
     }
 }
 
 /**
- * Formata o número de telefone para o formato esperado pelo MB WAY
- * @param {string} phone - Número de telefone
- * @returns {string} - Número formatado
+ * Envia um email de contacto através da API da Brevo
+ * @param {Object} formData - Dados do formulário
+ * @returns {Promise} - Promise com o resultado da operação
  */
-function formatPhoneForMBWay(phone) {
-    // Remover espaços, traços e outros caracteres não numéricos
-    let cleanPhone = phone.replace(/\D/g, '');
-    
-    // Verificar se já tem o prefixo 351
-    if (!cleanPhone.startsWith('351')) {
-        // Se o número começar com 9, adicionar o prefixo 351
-        if (cleanPhone.startsWith('9')) {
-            cleanPhone = '351' + cleanPhone;
+async function sendContactForm(formData) {
+    try {
+        // Preparar os dados para envio
+        const emailData = {
+            name: formData.name || '',
+            email: formData.email || '',
+            phone: formData.phone || '',
+            subject: formData.subject || 'Contacto do website',
+            message: formData.message || '',
+            reason: formData.reason || 'Contacto geral',
+            source: 'website_contact_form'
+        };
+
+        console.log("Enviando dados para a API da Brevo:", emailData);
+
+        // Fazer a chamada à API
+        const response = await fetch(EMAIL_API_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(emailData)
+        });
+
+        // Processar a resposta
+        const responseData = await response.json();
+        console.log("Resposta da API da Brevo:", response.status);
+        console.log("Detalhes completos da resposta:", responseData);
+
+        // Verificar se a resposta foi bem-sucedida
+        if (!response.ok || !responseData.success) {
+            throw new Error(`Erro na resposta da API da Brevo: ${response.status} ${JSON.stringify(responseData)}`);
         }
+
+        return responseData;
+    } catch (error) {
+        console.error("Erro ao enviar formulário de contacto:", error);
+        throw error;
     }
-    
-    return cleanPhone;
 }
 
 /**
- * Exibe as informações de pagamento após o processamento bem-sucedido
- * @param {Object} paymentData - Dados do pagamento retornados pela API
- * @param {string} paymentMethod - Método de pagamento utilizado
- * @param {Element} container - Elemento onde exibir as informações
+ * Envia um email de inscrição em workshop através da API da Brevo
+ * @param {Object} formData - Dados do formulário
+ * @returns {Promise} - Promise com o resultado da operação
  */
-function displayPaymentInfo(paymentData, paymentMethod, container) {
-    // Limpar conteúdo anterior
-    container.innerHTML = '';
-    
-    // Verificar se o pagamento foi realmente processado com sucesso
-    if (!paymentData || !paymentData.success) {
-        displayPaymentError(new Error("Pagamento não processado corretamente pelo backend"), container);
-        return;
+async function sendWorkshopRegistration(formData) {
+    try {
+        // Preparar os dados para envio
+        const emailData = {
+            name: formData.name || '',
+            email: formData.email || '',
+            phone: formData.phone || '',
+            subject: `Inscrição: ${formData.workshop || 'Workshop'}`,
+            message: `Nova inscrição para ${formData.workshop || 'workshop'} em ${formData.date || 'data não especificada'}`,
+            reason: 'Inscrição em workshop',
+            // Campos adicionais para o backend
+            workshop: formData.workshop || '',
+            date: formData.date || '',
+            participants: formData.participants || '',
+            company: formData.company || '',
+            source: 'website_workshop_registration'
+        };
+
+        console.log("Enviando dados para a API da Brevo:", emailData);
+
+        // Fazer a chamada à API
+        const response = await fetch(EMAIL_API_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(emailData)
+        });
+
+        // Processar a resposta
+        const responseData = await response.json();
+        console.log("Resposta da API da Brevo:", response.status);
+        console.log("Detalhes completos da resposta:", responseData);
+
+        // Verificar se a resposta foi bem-sucedida
+        if (!response.ok || !responseData.success) {
+            throw new Error(`Erro na resposta da API da Brevo: ${response.status} ${JSON.stringify(responseData)}`);
+        }
+
+        return responseData;
+    } catch (error) {
+        console.error("Erro ao enviar inscrição em workshop:", error);
+        throw error;
     }
-    
-    // Criar elemento para exibir as informações
-    const paymentInfo = document.createElement('div');
-    paymentInfo.className = 'alert alert-success';
-    
-    // Conteúdo específico para cada método de pagamento
-    if (paymentMethod === 'multibanco') {
-        paymentInfo.innerHTML = `
-            <h4>Pagamento Multibanco</h4>
-            <p><strong>Entidade:</strong> ${paymentData.entity || ''}</p>
-            <p><strong>Referência:</strong> ${paymentData.reference || ''}</p>
-            <p><strong>Valor:</strong> ${paymentData.amount || ''}€</p>
-            <p>Por favor, efetue o pagamento em qualquer caixa multibanco ou homebanking.</p>
-        `;
-    } else if (paymentMethod === 'mbway') {
-        paymentInfo.innerHTML = `
-            <h4>Pagamento MB WAY</h4>
-            <p><strong>Número:</strong> ${paymentData.phone || ''}</p>
-            <p><strong>Valor:</strong> ${paymentData.amount || ''}€</p>
-            <p>Foi enviado um pedido de pagamento para o seu número MB WAY.</p>
-            <p>Por favor, aceite o pagamento na aplicação MB WAY.</p>
-        `;
-    } else if (paymentMethod === 'payshop') {
-        paymentInfo.innerHTML = `
-            <h4>Pagamento Payshop</h4>
-            <p><strong>Referência:</strong> ${paymentData.reference || ''}</p>
-            <p><strong>Valor:</strong> ${paymentData.amount || ''}€</p>
-            <p>Por favor, efetue o pagamento em qualquer agente Payshop ou CTT.</p>
-        `;
-    }
-    
-    // Adicionar ao container
-    container.appendChild(paymentInfo);
 }
 
 /**
- * Exibe mensagem de erro em caso de falha no processamento do pagamento
- * @param {Error} error - Erro ocorrido
- * @param {Element} container - Elemento onde exibir a mensagem
+ * Envia um email de pedido de consultoria através da API da Brevo
+ * @param {Object} formData - Dados do formulário
+ * @returns {Promise} - Promise com o resultado da operação
  */
-function displayPaymentError(error, container) {
-    // Limpar conteúdo anterior
-    container.innerHTML = '';
-    
-    // Criar elemento para exibir o erro
-    const errorInfo = document.createElement('div');
-    errorInfo.className = 'alert alert-danger';
-    errorInfo.innerHTML = `
-        <p>Erro ao processar pedido: ${error.message}</p>
-        <p>Por favor tente novamente ou contacte-nos diretamente.</p>
-    `;
-    
-    // Adicionar ao container
-    container.appendChild(errorInfo);
+async function sendConsultingRequest(formData) {
+    try {
+        // Preparar os dados para envio
+        const emailData = {
+            name: formData.name || '',
+            email: formData.email || '',
+            phone: formData.phone || '',
+            subject: 'Pedido de Consultoria',
+            message: formData.message || 'Pedido de consultoria sem detalhes adicionais',
+            reason: 'Consultoria',
+            // Campos adicionais para o backend
+            company: formData.company || '',
+            industry: formData.industry || '',
+            employees: formData.employees || '',
+            source: 'website_consulting_request'
+        };
+
+        console.log("Enviando dados para a API da Brevo:", emailData);
+
+        // Fazer a chamada à API
+        const response = await fetch(EMAIL_API_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(emailData)
+        });
+
+        // Processar a resposta
+        const responseData = await response.json();
+        console.log("Resposta da API da Brevo:", response.status);
+        console.log("Detalhes completos da resposta:", responseData);
+
+        // Verificar se a resposta foi bem-sucedida
+        if (!response.ok || !responseData.success) {
+            throw new Error(`Erro na resposta da API da Brevo: ${response.status} ${JSON.stringify(responseData)}`);
+        }
+
+        return responseData;
+    } catch (error) {
+        console.error("Erro ao enviar pedido de consultoria:", error);
+        throw error;
+    }
+}
+
+/**
+ * Envia um email de pedido de coaching através da API da Brevo
+ * @param {Object} formData - Dados do formulário
+ * @returns {Promise} - Promise com o resultado da operação
+ */
+async function sendCoachingRequest(formData) {
+    try {
+        // Preparar os dados para envio
+        const emailData = {
+            name: formData.name || '',
+            email: formData.email || '',
+            phone: formData.phone || '',
+            subject: 'Pedido de Coaching',
+            message: formData.message || 'Pedido de coaching sem detalhes adicionais',
+            reason: 'Coaching',
+            // Campos adicionais para o backend
+            position: formData.position || '',
+            goals: formData.goals || '',
+            source: 'website_coaching_request'
+        };
+
+        console.log("Enviando dados para a API da Brevo:", emailData);
+
+        // Fazer a chamada à API
+        const response = await fetch(EMAIL_API_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(emailData)
+        });
+
+        // Processar a resposta
+        const responseData = await response.json();
+        console.log("Resposta da API da Brevo:", response.status);
+        console.log("Detalhes completos da resposta:", responseData);
+
+        // Verificar se a resposta foi bem-sucedida
+        if (!response.ok || !responseData.success) {
+            throw new Error(`Erro na resposta da API da Brevo: ${response.status} ${JSON.stringify(responseData)}`);
+        }
+
+        return responseData;
+    } catch (error) {
+        console.error("Erro ao enviar pedido de coaching:", error);
+        throw error;
+    }
 }
 
 // Exportar funções para uso em outros módulos
-window.IfthenPayIntegration = {
-    processPayment,
-    displayPaymentInfo,
-    displayPaymentError,
-    IFTHENPAY_KEYS
+window.brevoSDK = {
+    sendBookingConfirmation,
+    sendContactForm,
+    sendWorkshopRegistration,
+    sendConsultingRequest,
+    sendCoachingRequest
 };
