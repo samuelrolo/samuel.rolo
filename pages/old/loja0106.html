@@ -128,8 +128,7 @@
         
         /* Estilos para a página da loja */
         .page-header {
-            background-color: #212529;
-            color: #fff;
+            background-color: #f8f9fa;
             padding: 100px 0 50px;
             margin-bottom: 50px;
         }
@@ -137,7 +136,7 @@
         .page-header h1 {
             font-size: 2.5rem;
             font-weight: 700;
-            color: #BF9A33;
+            color: #333;
             margin-bottom: 1rem;
         }
         
@@ -153,7 +152,7 @@
         }
         
         .breadcrumb-item.active {
-            color: #fff;
+            color: #6c757d;
         }
         
         .shop-intro {
@@ -232,133 +231,46 @@
         .cta-section {
             padding: 80px 0;
             text-align: center;
-            background-color: #212529;
-            color: #fff;
         }
         
         .cta-section h2 {
             font-size: 2.2rem;
             font-weight: 700;
-            color: #fff;
+            color: #333;
             margin-bottom: 1rem;
         }
         
         .cta-section p {
             font-size: 1.1rem;
+            color: #6c757d;
             margin-bottom: 2rem;
             max-width: 700px;
             margin-left: auto;
             margin-right: auto;
         }
         
-        /* Estilos para o sistema de feedback */
-        .feedback-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            z-index: 1000;
-            max-width: 300px;
-            border: 1px solid #BF9A33;
-            display: none;
+        .modal-header {
+            background-color: #BF9A33;
+            color: #fff;
         }
         
-        .feedback-container.show {
-            display: block;
-        }
-        
-        .feedback-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .feedback-header h5 {
-            margin: 0;
-            font-size: 16px;
+        .modal-title {
             font-weight: 600;
         }
         
-        .feedback-close {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            color: #6c757d;
-        }
-        
-        .feedback-stars {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
-        
-        .feedback-stars i {
-            color: #e0e0e0;
-            font-size: 24px;
-            margin: 0 5px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        
-        .feedback-stars i.active, .feedback-stars i:hover {
-            color: #BF9A33;
-        }
-        
-        .feedback-comment {
-            margin-bottom: 15px;
-        }
-        
-        .feedback-comment textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-            resize: none;
-        }
-        
-        .feedback-submit {
-            text-align: right;
-        }
-        
-        .feedback-btn {
-            background-color: #BF9A33;
-            color: #fff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
+        .modal-body label {
             font-weight: 500;
+            margin-bottom: 0.5rem;
         }
         
-        .feedback-btn:hover {
-            background-color: #a88629;
-        }
-        
-        .feedback-trigger {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
+        .modal-footer .btn-primary {
             background-color: #BF9A33;
-            color: #fff;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            z-index: 999;
+            border-color: #BF9A33;
         }
         
-        .feedback-trigger i {
-            font-size: 20px;
+        .modal-footer .btn-primary:hover {
+            background-color: #a88629;
+            border-color: #a88629;
         }
         
         /* Media queries para otimização mobile */
@@ -464,12 +376,6 @@
                 align-items: center;
                 gap: 10px;
             }
-            
-            .feedback-container {
-                max-width: 90%;
-                left: 5%;
-                right: 5%;
-            }
         }
         
         @media (max-width: 576px) {
@@ -539,7 +445,6 @@
         gtag('js', new Date());
         gtag('config', 'G-8GQ1KM9FQS');
     </script>
-    
     <!-- Header e Navegação -->
     <header class="header">
         <nav class="navbar navbar-expand-lg fixed-top">
@@ -568,7 +473,7 @@
                             <a class="nav-link" href="hr-hub.html">HR Hub</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="../index.html#contactos">Contactos</a>
+                            <a class="nav-link" href="../index.html#contatos">Contactos</a>
                         </li>
                     </ul>
                 </div>
@@ -598,8 +503,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2 class="section-title">Recursos para o teu Desenvolvimento</h2>
-                    <p class="section-subtitle">Ferramentas práticas para potenciar a tua jornada de transformação pessoal e organizacional</p>
+                    <h2 class="section-title">Recursos para o seu Desenvolvimento</h2>
+                    <p class="section-subtitle">Ferramentas práticas para potenciar a sua jornada de transformação pessoal e organizacional</p>
                 </div>
             </div>
         </div>
@@ -621,10 +526,10 @@
                         <div class="product-description">
                             <p>Neste livro, o Samuel partilha a sua experiência em projetos de Gestão da Mudança, para inspirar mudanças com propósito, autenticidade e impacto.</p>
                             <p>Combina insights de quem liderou diversos projetos de gestão da mudança, com a visão crítica e humanizada do autor. Este é um guia para profissionais e líderes que procuram implementar transformações com propósito nas suas organizações.</p>
-                            <h3>O que vais encontrar:</h3>
+                            <h3>O que vai encontrar:</h3>
                             <ul class="product-features">
-                                <li><i class="fas fa-check"></i> Insights práticos de contextos reais</li>
-                                <li><i class="fas fa-check"></i> Dicas práticas para diagnosticar e planear as mudanças</li>
+                                <li><i class="fas fa-check"></i> Insigths práticos de contextos reais</li>
+                                <li><i class="fas fa-check"></i> Dicas práticas para diagnósticar e planear as mudanças</li>
                                 <li><i class="fas fa-check"></i> Estratégias para superar resistências e alinhar equipas</li>
                             </ul>
                             <p class="mt-4"><strong>Sem as pessoas, a mudança é apenas ruído...</strong></p>
@@ -647,39 +552,14 @@
                 <div class="col-lg-12 text-center">
                     <h2>Precisas de recursos personalizados?</h2>
                     <p style="color: white;">Entra em contacto para discutirmos soluções alinhadas às tuas necessidades.</p>
-                    <a href="../index.html#contactos" class="btn btn-primary">Fala connosco</a>
+                    <a href="../index.html#contatos" class="btn btn-primary">Fala connosco</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Sistema de Feedback -->
-    <button class="feedback-trigger" id="feedbackTrigger">
-        <i class="fas fa-comment"></i>
-    </button>
-    
-    <div class="feedback-container" id="feedbackContainer">
-        <div class="feedback-header">
-            <h5>A tua opinião é importante para nós!</h5>
-            <button class="feedback-close" id="feedbackClose">&times;</button>
-        </div>
-        <div class="feedback-stars">
-            <i class="far fa-star" data-rating="1"></i>
-            <i class="far fa-star" data-rating="2"></i>
-            <i class="far fa-star" data-rating="3"></i>
-            <i class="far fa-star" data-rating="4"></i>
-            <i class="far fa-star" data-rating="5"></i>
-        </div>
-        <div class="feedback-comment">
-            <textarea id="feedbackComment" rows="3" placeholder="Partilha a tua experiência connosco..."></textarea>
-        </div>
-        <div class="feedback-submit">
-            <button class="feedback-btn" id="feedbackSubmit">Enviar</button>
-        </div>
-    </div>
-
     <!-- Footer Minimalista -->
-    <footer id="contactos">
+    <footer id="contatos">
         <div class="container">
             <div class="footer-container">
                 <div class="footer-left">
@@ -705,106 +585,43 @@
         </div>
     </footer>
 
+    <!-- Modal de Contacto -->
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="contactModalLabel">Contacte-nos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="contactForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Assunto</label>
+                            <input type="text" class="form-control" id="subject" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Mensagem</label>
+                            <textarea class="form-control" id="message" rows="5" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" form="contactForm" class="btn btn-primary">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Script principal -->
-    <script src="../js/main.js"></script>
-    
-    <script>
-        // Sistema de Feedback
-        document.addEventListener('DOMContentLoaded', function() {
-            const feedbackTrigger = document.getElementById('feedbackTrigger');
-            const feedbackContainer = document.getElementById('feedbackContainer');
-            const feedbackClose = document.getElementById('feedbackClose');
-            const feedbackStars = document.querySelectorAll('.feedback-stars i');
-            const feedbackSubmit = document.getElementById('feedbackSubmit');
-            
-            let selectedRating = 0;
-            
-            // Abrir o formulário de feedback
-            feedbackTrigger.addEventListener('click', function() {
-                feedbackContainer.classList.add('show');
-            });
-            
-            // Fechar o formulário de feedback
-            feedbackClose.addEventListener('click', function() {
-                feedbackContainer.classList.remove('show');
-            });
-            
-            // Selecionar classificação
-            feedbackStars.forEach(star => {
-                star.addEventListener('click', function() {
-                    selectedRating = parseInt(this.getAttribute('data-rating'));
-                    
-                    // Atualizar visuais das estrelas
-                    feedbackStars.forEach(s => {
-                        const rating = parseInt(s.getAttribute('data-rating'));
-                        if (rating <= selectedRating) {
-                            s.classList.remove('far');
-                            s.classList.add('fas');
-                            s.classList.add('active');
-                        } else {
-                            s.classList.remove('fas');
-                            s.classList.add('far');
-                            s.classList.remove('active');
-                        }
-                    });
-                });
-                
-                // Efeito hover
-                star.addEventListener('mouseover', function() {
-                    const hoverRating = parseInt(this.getAttribute('data-rating'));
-                    
-                    feedbackStars.forEach(s => {
-                        const rating = parseInt(s.getAttribute('data-rating'));
-                        if (rating <= hoverRating) {
-                            s.classList.remove('far');
-                            s.classList.add('fas');
-                        }
-                    });
-                });
-                
-                star.addEventListener('mouseout', function() {
-                    feedbackStars.forEach(s => {
-                        const rating = parseInt(s.getAttribute('data-rating'));
-                        if (rating > selectedRating) {
-                            s.classList.remove('fas');
-                            s.classList.add('far');
-                        }
-                    });
-                });
-            });
-            
-            // Enviar feedback
-            feedbackSubmit.addEventListener('click', function() {
-                const comment = document.getElementById('feedbackComment').value;
-                
-                if (selectedRating > 0) {
-                    // Aqui seria a integração com a API da Brevo
-                    console.log('Enviando feedback:', {
-                        rating: selectedRating,
-                        comment: comment,
-                        page: 'loja',
-                        timestamp: new Date().toISOString()
-                    });
-                    
-                    // Simular envio bem-sucedido
-                    alert('Obrigado pelo teu feedback!');
-                    
-                    // Resetar e fechar
-                    selectedRating = 0;
-                    document.getElementById('feedbackComment').value = '';
-                    feedbackStars.forEach(s => {
-                        s.classList.remove('fas', 'active');
-                        s.classList.add('far');
-                    });
-                    feedbackContainer.classList.remove('show');
-                } else {
-                    alert('Por favor, seleciona uma classificação.');
-                }
-            });
-        });
-    </script>
 </body>
 </html>
