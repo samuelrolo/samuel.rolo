@@ -405,96 +405,6 @@
             }
         }
         
-        /* Footer Styles */
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-        
-        .footer-left {
-            flex: 1;
-        }
-        
-        .footer-right {
-            display: flex;
-            gap: 3rem;
-            align-items: flex-start;
-        }
-        
-        .footer-contact p {
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-        }
-        
-        .footer-contact p i {
-            margin-right: 0.75rem;
-            color: var(--primary-color);
-            width: 20px;
-            text-align: center;
-        }
-        
-        .footer-social {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .footer-social a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            font-size: 1.2rem;
-            transition: var(--transition);
-        }
-        
-        .footer-social a:hover {
-            background-color: var(--primary-color);
-            color: var(--dark-color);
-            transform: translateY(-5px);
-        }
-        
-        .footer-links {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.7);
-            margin: 0 1rem;
-            transition: var(--transition);
-        }
-        
-        .footer-links a:hover {
-            color: var(--primary-color);
-        }
-        
-        @media (max-width: 768px) {
-            .footer-container {
-                flex-direction: column;
-                gap: 2rem;
-            }
-            
-            .footer-right {
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-            
-            .footer-links a {
-                display: block;
-                margin: 0.5rem 0;
-            }
-        }
-        
         @media (max-width: 576px) {
             .page-header {
                 padding: 4.5rem 0 1.5rem;
@@ -633,6 +543,7 @@
                             <div class="col-md-8">
                                 <h3 id="featuredTitle">2025 Mid-Year Check-In: Are We Rising to Meet HR's Priorities?</h3>
                                 <div class="article-meta">
+                                    <i class="fas fa-calendar-alt me-2"></i>
                                     <span id="featuredDate">Junho 2025</span>
                                 </div>
                                 <p class="article-summary" id="featuredSummary">No início de 2025, a Gartner estabeleceu cinco prioridades para as áreas de RH. Chegados a meio do ano, torna-se essencial avaliarmos se essas prioridades continuam pertinentes, perceber se o progresso alcançado corresponde às metas traçadas, ou se estivemos apenas ocupados sem impacto real, e ajustá-las sempre que necessário para garantir resultados consistentes até ao final de 2025.</p>
@@ -641,11 +552,11 @@
                                    target="_blank" 
                                    rel="noopener noreferrer"
                                    id="featuredLink">
-                                    Ler Artigo Completo
+                                    <i class="fas fa-external-link-alt me-2"></i>Ler Artigo Completo
                                 </a>
                             </div>
                             <div class="col-md-4 text-center">
-                                <img src="https://share2inspire.pt/images/placeholder-article.jpg" 
+                                <img src="../images/midyear.jpg" 
                                      alt="2025 Mid-Year Check-In" 
                                      class="img-fluid rounded"
                                      id="featuredImage"
@@ -660,10 +571,10 @@
             <section class="hr-report-cta">
                 <div class="container">
                     <div class="hr-report-content">
-                        <h3>Relatório Exclusivo: HR Trends 2025</h3>
+                        <h3>📊 Relatório Exclusivo: HR Trends 2025</h3>
                         <p>Acede ao nosso relatório exclusivo com as principais tendências, insights e ferramentas para profissionais de RH. Dados atualizados, análises práticas e estratégias comprovadas para transformar a sua organização.</p>
                         <a href="../hr-report/" class="btn-hr-report" aria-label="Aceder ao relatório HR Trends 2025">
-                            Aceder Gratuitamente
+                            <i class="fas fa-download me-2"></i>Aceder Gratuitamente
                         </a>
                     </div>
                 </div>
@@ -672,7 +583,7 @@
             <!-- Artigos Recentes -->
             <div class="row">
                 <div class="col-lg-12">
-                    <h3 class="section-title">Artigo em Destaque</h3>
+                    <h3 class="section-title">📰 Artigo em Destaque</h3>
                     <div class="articles-slider">
                         <div class="swiper" id="articlesSlider">
                             <div class="swiper-wrapper" id="articlesContainer">
@@ -693,14 +604,14 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <h3>Subscreve a Newsletter HR Innovation Hub</h3>
+                    <h3>📧 Subscreve a Newsletter HR Innovation Hub</h3>
                     <p>Recebe mensalmente insights exclusivos, tendências de RH e ferramentas práticas para acelerar a transformação da sua organização. Junta-te a mais de 1.500 profissionais de RH que já fazem parte da nossa comunidade.</p>
                     <a href="https://www.linkedin.com/newsletters/hr-innovation-hub-7118893186856263680/" 
                        class="btn-subscribe" 
                        target="_blank" 
                        rel="noopener noreferrer"
                        aria-label="Subscrever newsletter HR Innovation Hub">
-                        Subscrever Gratuitamente
+                        <i class="fab fa-linkedin me-2"></i>Subscrever Gratuitamente
                     </a>
                 </div>
             </div>
@@ -708,7 +619,7 @@
     </section>
 
     <!-- Footer -->
-    <footer id="contactos" class="footer">
+    <footer id="contactos">
         <div class="container">
             <div class="footer-container">
                 <div class="footer-left">
@@ -716,12 +627,12 @@
                 </div>
                 <div class="footer-right">
                     <div class="footer-contact">
-                        <p>srshare2inspire@gmail.com</p>
-                        <p>+351 961 925 050</p>
+                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
                     </div>
                     <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank">LinkedIn</a>
-                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank">Instagram</a>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
@@ -746,7 +657,7 @@
                 "featuredArticle": {
                     "title": "2025 Mid-Year Check-In: Are We Rising to Meet HR's Priorities?",
                     "date": "Junho 2025",
-                    "image": "https://share2inspire.pt/images/placeholder-article.jpg",
+                    "image": "https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/midyear.jpg",
                     "summary": "No início de 2025, a Gartner estabeleceu cinco prioridades para as áreas de RH. Chegados a meio do ano, torna-se essencial avaliarmos se essas prioridades continuam pertinentes, perceber se o progresso alcançado corresponde às metas traçadas, ou se estivemos apenas ocupados sem impacto real, e ajustá-las sempre que necessário para garantir resultados consistentes até ao final de 2025.",
                     "link": "https://www.linkedin.com/pulse/mid-year-check-in-we-meeting-hrs-2025-priorities-samuel-rolo-ulrcf"
                 },
@@ -754,21 +665,21 @@
                     {
                         "title": "Dia Internacional dos Recursos Humanos: Celebrar a Evolução e o Impacto",
                         "date": "Maio de 2025",
-                        "image": "https://share2inspire.pt/images/placeholder-article.jpg",
+                        "image": "https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/diarh.png",
                         "summary": "Neste artigo, Samuel Rolo reflete sobre a transformação do papel dos RH, de função administrativa a parceiro estratégico nas organizações. Destaca a importância da empatia, da humanização na era digital e da aprendizagem contínua.",
                         "link": "https://www.linkedin.com/pulse/dia-internacional-dos-recursos-humanos-celebrar-evolu%C3%A7%C3%A3o-samuel-rolo-4kcof"
                     },
                     {
                         "title": "Understanding the Invisible Work Within Organizations",
                         "date": "Abril de 2025",
-                        "image": "https://share2inspire.pt/images/placeholder-article.jpg",
+                        "image": "https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/hr_hub_may_2025.png",
                         "summary": "Nesta edição, exploramos o trabalho invisível que sustenta as organizações - aquelas tarefas e responsabilidades que raramente são reconhecidas mas são essenciais para o funcionamento eficaz das equipas e empresas.",
                         "link": "https://www.linkedin.com/pulse/understanding-invisible-work-within-organizations-samuel-rolo"
                     },
                     {
                         "title": "Leadership: Blending Tech and Human Touch",
                         "date": "Março de 2025",
-                        "image": "https://share2inspire.pt/images/placeholder-article.jpg",
+                        "image": "https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/power.png",
                         "summary": "Como podem os líderes modernos equilibrar a adoção de novas tecnologias com a manutenção do elemento humano essencial na gestão de equipas? Esta edição explora este desafio crescente.",
                         "link": "https://www.linkedin.com/pulse/leadership-blending-tech-human-touch-samuel-rolo-bfs9f"
                     }
