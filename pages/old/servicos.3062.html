@@ -586,8 +586,8 @@
                                     <input type="email" class="form-control" id="kickstartEmail" name="email" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="kickstartPhone" class="form-label">Telefone *</label>
-                                    <input type="tel" class="form-control" id="kickstartPhone" name="phone" required>
+                                    <label for="kickstartPhone" class="form-label">Telefone</label>
+                                    <input type="tel" class="form-control" id="kickstartPhone" name="phone">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -596,19 +596,15 @@
                                     <input type="date" class="form-control" id="kickstartDate" name="date" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="kickstartFormat" class="form-label">Formato</label>
+                                    <label for="kickstartTime" class="form-label">Hora Preferencial *</label>
+                                    <input type="time" class="form-control" id="kickstartTime" name="time" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="kickstartFormat" class="form-label">Formato Preferencial</label>
                                     <select class="form-select" id="kickstartFormat" name="format">
                                         <option value="Online">Online</option>
                                         <option value="Presencial">Presencial</option>
                                     </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="kickstartDuration" class="form-label">Duração</label>
-                                    <select class="form-select" id="kickstartDuration" name="duration" onchange="updatePrice()">
-                                        <option value="30min">30 minutos - 30€</option>
-                                        <option value="45min">45 minutos - 45€</option>
-                                    </select>
-                                    <input type="hidden" id="kickstartDurationHidden" name="durationHidden" value="30min">
                                 </div>
                             </div>
                         </div>
@@ -626,27 +622,11 @@
                                 <option value="10+ anos">10+ anos</option>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Método de Pagamento</label>
-                            <div class="payment-methods">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="paymentMB" value="mb" checked>
-                                    <label class="form-check-label" for="paymentMB">Multibanco</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="paymentMBWay" value="mbway">
-                                    <label class="form-check-label" for="paymentMBWay">MB WAY</label>
-                                </div>
-                            </div>
-                        </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="kickstartTerms" required>
                             <label class="form-check-label" for="kickstartTerms">Concordo com a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *</label>
                         </div>
-                        <div class="text-center">
-                            <p class="mb-2">Valor: <span id="kickstartPrice">30€</span></p>
-                            <button type="submit" class="btn btn-primary">SUBMETER E PROSSEGUIR PARA O PAGAMENTO</button>
-                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Marcar Kickstart Pro</button>
                         <div id="kickstartFormMessage" class="mt-3"></div>
                     </form>
                 </div>
