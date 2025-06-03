@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Hub | Share2Inspire | Samuel Rolo</title>
+    <meta name="description" content="HR Innovation Hub - Newsletter e recursos para profissionais de RH por Samuel Rolo. Insights, tendências e ferramentas para transformação organizacional.">
+    <meta name="keywords" content="HR, Recursos Humanos, Newsletter, Samuel Rolo, Share2Inspire, Transformação Digital, Liderança">
+    <meta name="author" content="Samuel Rolo">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://share2inspire.pt/pages/hr-hub.html">
+    <meta property="og:title" content="HR Innovation Hub | Share2Inspire">
+    <meta property="og:description" content="Insights, tendências e ferramentas para profissionais de RH">
+    <meta property="og:image" content="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/midyear.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://share2inspire.pt/pages/hr-hub.html">
+    <meta property="twitter:title" content="HR Innovation Hub | Share2Inspire">
+    <meta property="twitter:description" content="Insights, tendências e ferramentas para profissionais de RH">
+    <meta property="twitter:image" content="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/midyear.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/favicon.png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Swiper CSS para o slider -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        /* CSS exato do header do index.html */
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand img {
+            height: 40px;
+        }
+        
+        .navbar-nav {
+            margin-left: auto;
+        }
+        
+        .navbar-nav .nav-link {
+            color: #333;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+        }
+        
+        .navbar-nav .nav-link.active {
+            color: #BF9A33;
+            position: relative;
+        }
+        
+        .navbar-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 1rem;
+            right: 1rem;
+            height: 2px;
+            background-color: #BF9A33;
+        }
+        
+        /* CSS específico para HR Hub */
+        :root {
+            --primary-color: #bf9a33;
+            --secondary-color: #333333;
+            --accent-color: #a57b0a;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --text-color: #333333;
+            --text-light: #6c757d;
+            --border-color: #dee2e6;
+        }
+        
+        .page-header {
+            background-color: #212529;
+            color: #fff;
+            padding: 6rem 0 3rem;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+        
+        .page-header h1 {
+            color: var(--primary-color);
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+        
+        .page-header .breadcrumb {
+            background-color: transparent;
+        }
+        
+        .page-header .breadcrumb-item a {
+            color: var(--primary-color);
+        }
+        
+        .page-header .breadcrumb-item.active {
+            color: #fff;
+        }
+        
+        .newsletter-content {
+            padding: 2rem 0 5rem;
+        }
+        
+        .section-title {
+            color: var(--dark-color);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            text-align: center;
+        }
+        
+        .section-subtitle {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .newsletter-stats {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 4rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .featured-article {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(191, 154, 51, 0.2);
+        }
+        
+        .featured-article h3 {
+            color: var(--dark-color);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .featured-article .article-meta {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .featured-article .article-summary {
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .featured-article .btn-read-more {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .featured-article .btn-read-more:hover {
+            background-color: var(--accent-color);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        
+        .articles-slider {
+            margin-bottom: 4rem;
+        }
+        
+        .article-card {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .article-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .article-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .article-card:hover .article-image img {
+            transform: scale(1.05);
+        }
+        
+        .article-content {
+            padding: 1.5rem;
+        }
+        
+        .article-content h5 {
+            color: var(--dark-color);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+        
+        .article-date {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        
+        .article-summary {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        
+        .hr-report-cta {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            padding: 3rem 0;
+            margin: 4rem 0;
+            border-radius: 15px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hr-report-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+        }
+        
+        .hr-report-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hr-report-cta h3 {
+            color: var(--dark-color);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .hr-report-cta p {
+            color: var(--dark-color);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .btn-hr-report {
+            background-color: var(--dark-color);
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-hr-report:hover {
+            background-color: #000;
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subscription-section {
+            background-color: #f8f9fa;
+            padding: 3rem 0;
+            text-align: center;
+            border-radius: 15px;
+            margin: 3rem 0;
+        }
+        
+        .subscription-section h3 {
+            color: var(--dark-color);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .subscription-section p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .btn-subscribe {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-subscribe:hover {
+            background-color: var(--accent-color);
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(191, 154, 51, 0.3);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 4.5rem 0 1.5rem;
+                margin-bottom: 2rem;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .newsletter-stats {
+                padding: 1.5rem;
+            }
+            
+            .featured-article {
+                padding: 1.5rem;
+            }
+            
+            .hr-report-cta {
+                padding: 2rem 0;
+                margin: 2rem 0;
+            }
+            
+            .hr-report-cta h3 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .page-header {
+                padding: 4.5rem 0 1.5rem;
+                margin-bottom: 2rem;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .newsletter-stats .row {
+                gap: 1rem;
+            }
+            
+            .stat-item {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-8GQ1KM9FQS');
+    </script>
+    
+    <!-- Header e Navegação -->
+    <header class="header">
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="../index.html">
+                    <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.html">Início</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="servicos.html">Serviços</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="loja.html">Loja</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="hr-hub.html">HR Hub</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.html#contactos">Contactos</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>HR Innovation HUB</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">HR HUB</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Secção de Newsletter -->
+    <section class="newsletter-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-title">HR Innovation HUB Newsletter</h2>
+                    <p class="section-subtitle">Insights, tendências e ferramentas para profissionais de RH</p>
+                </div>
+            </div>
+
+            <!-- Estatísticas da Newsletter -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="newsletter-stats">
+                        <div class="row">
+                            <div class="col-md-3 col-6">
+                                <div class="stat-item">
+                                    <div class="stat-number" id="subscribers">1.5K</div>
+                                    <div class="stat-label">Subscritores</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="stat-item">
+                                    <div class="stat-number" id="newSubscribers">+250</div>
+                                    <div class="stat-label">Novos Subscritores (Último Ano)</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="stat-item">
+                                    <div class="stat-number" id="articleViews">2.6K</div>
+                                    <div class="stat-label">Visualizações de Artigos</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="stat-item">
+                                    <div class="stat-number" id="totalImpressions">7.9K</div>
+                                    <div class="stat-label">Impressões Totais</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Artigo em Destaque -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="featured-article">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h3 id="featuredTitle">2025 Mid-Year Check-In: Are We Rising to Meet HR's Priorities?</h3>
+                                <div class="article-meta">
+                                    <i class="fas fa-calendar-alt me-2"></i>
+                                    <span id="featuredDate">Junho 2025</span>
+                                </div>
+                                <p class="article-summary" id="featuredSummary">No início de 2025, a Gartner estabeleceu cinco prioridades para as áreas de RH. Chegados a meio do ano, torna-se essencial avaliarmos se essas prioridades continuam pertinentes, perceber se o progresso alcançado corresponde às metas traçadas, ou se estivemos apenas ocupados sem impacto real, e ajustá-las sempre que necessário para garantir resultados consistentes até ao final de 2025.</p>
+                                <a href="https://www.linkedin.com/pulse/mid-year-check-in-we-meeting-hrs-2025-priorities-samuel-rolo-ulrcf" 
+                                   class="btn-read-more" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer"
+                                   id="featuredLink">
+                                    <i class="fas fa-external-link-alt me-2"></i>Ler Artigo Completo
+                                </a>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <img src="../images/midyear.jpg" 
+                                     alt="2025 Mid-Year Check-In" 
+                                     class="img-fluid rounded"
+                                     id="featuredImage"
+                                     style="max-height: 250px; object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HR Report CTA Section -->
+            <section class="hr-report-cta">
+                <div class="container">
+                    <div class="hr-report-content">
+                        <h3>📊 Relatório Exclusivo: HR Trends 2025</h3>
+                        <p>Acede ao nosso relatório exclusivo com as principais tendências, insights e ferramentas para profissionais de RH. Dados atualizados, análises práticas e estratégias comprovadas para transformar a sua organização.</p>
+                        <a href="../hr-report/" class="btn-hr-report" aria-label="Aceder ao relatório HR Trends 2025">
+                            <i class="fas fa-download me-2"></i>Aceder Gratuitamente
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Artigos Recentes -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3 class="section-title">📰 Artigo em Destaque</h3>
+                    <div class="articles-slider">
+                        <div class="swiper" id="articlesSlider">
+                            <div class="swiper-wrapper" id="articlesContainer">
+                                <!-- Artigos serão carregados dinamicamente -->
+                            </div>
+                            <div class="swiper-pagination"></div>
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Secção de Subscrição -->
+    <section class="subscription-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>📧 Subscreve a Newsletter HR Innovation Hub</h3>
+                    <p>Recebe mensalmente insights exclusivos, tendências de RH e ferramentas práticas para acelerar a transformação da sua organização. Junta-te a mais de 1.500 profissionais de RH que já fazem parte da nossa comunidade.</p>
+                    <a href="https://www.linkedin.com/newsletters/hr-innovation-hub-7118893186856263680/" 
+                       class="btn-subscribe" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       aria-label="Subscrever newsletter HR Innovation Hub">
+                        <i class="fab fa-linkedin me-2"></i>Subscrever Gratuitamente
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contactos">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-left">
+                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
+                </div>
+                <div class="footer-right">
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
+                    </div>
+                    <div class="footer-social">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="politica-privacidade.html">Política de Privacidade</a>
+                <a href="politica-cookies.html">Política de Cookies</a>
+                <a href="tratamento-dados.html">Tratamento de Dados</a>
+                <a href="informacao-legal.html">Informação Legal</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    
+    <!-- Script para carregar dinamicamente o conteúdo da newsletter -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dados estáticos para garantir que o conteúdo seja exibido mesmo sem acesso ao JSON
+            const staticData = {
+                "featuredArticle": {
+                    "title": "2025 Mid-Year Check-In: Are We Rising to Meet HR's Priorities?",
+                    "date": "Junho 2025",
+                    "image": "https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/midyear.jpg",
+                    "summary": "No início de 2025, a Gartner estabeleceu cinco prioridades para as áreas de RH. Chegados a meio do ano, torna-se essencial avaliarmos se essas prioridades continuam pertinentes, perceber se o progresso alcançado corresponde às metas traçadas, ou se estivemos apenas ocupados sem impacto real, e ajustá-las sempre que necessário para garantir resultados consistentes até ao final de 2025.",
+                    "link": "https://www.linkedin.com/pulse/mid-year-check-in-we-meeting-hrs-2025-priorities-samuel-rolo-ulrcf"
+                },
+                "articles": [
+                    {
+                        "title": "Dia Internacional dos Recursos Humanos: Celebrar a Evolução e o Impacto",
+                        "date": "Maio de 2025",
+                        "image": "https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/diarh.png",
+                        "summary": "Neste artigo, Samuel Rolo reflete sobre a transformação do papel dos RH, de função administrativa a parceiro estratégico nas organizações. Destaca a importância da empatia, da humanização na era digital e da aprendizagem contínua.",
+                        "link": "https://www.linkedin.com/pulse/dia-internacional-dos-recursos-humanos-celebrar-evolu%C3%A7%C3%A3o-samuel-rolo-4kcof"
+                    },
+                    {
+                        "title": "Understanding the Invisible Work Within Organizations",
+                        "date": "Abril de 2025",
+                        "image": "https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/hr_hub_may_2025.png",
+                        "summary": "Nesta edição, exploramos o trabalho invisível que sustenta as organizações - aquelas tarefas e responsabilidades que raramente são reconhecidas mas são essenciais para o funcionamento eficaz das equipas e empresas.",
+                        "link": "https://www.linkedin.com/pulse/understanding-invisible-work-within-organizations-samuel-rolo"
+                    },
+                    {
+                        "title": "Leadership: Blending Tech and Human Touch",
+                        "date": "Março de 2025",
+                        "image": "https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/power.png",
+                        "summary": "Como podem os líderes modernos equilibrar a adoção de novas tecnologias com a manutenção do elemento humano essencial na gestão de equipas? Esta edição explora este desafio crescente.",
+                        "link": "https://www.linkedin.com/pulse/leadership-blending-tech-human-touch-samuel-rolo-bfs9f"
+                    }
+                ],
+                "stats": {
+                    "subscribers": "1.5K",
+                    "newSubscribers": "+250",
+                    "articleViews": "2.6K",
+                    "totalImpressions": "7.9K"
+                }
+            };
+            
+            // Função para carregar o conteúdo da newsletter
+            async function loadNewsletterContent() {
+                try {
+                    // Tentar carregar o JSON, mas usar dados estáticos como fallback
+                    let data = staticData;
+                    
+                    try {
+                        const response = await fetch('newsletter_content.json');
+                        if (response.ok) {
+                            data = await response.json();
+                            
+                            // Garantir que os caminhos das imagens são URLs absolutos
+                            if (data.featuredArticle && !data.featuredArticle.image.startsWith('http')) {
+                                data.featuredArticle.image = `../images/${data.featuredArticle.image}`;
+                            }
+                            
+                            data.articles.forEach(article => {
+                                if (article.image && !article.image.startsWith('http')) {
+                                    article.image = `../images/${article.image}`;
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.log('Usando dados estáticos como fallback:', error);
+                    }
+                    
+                    // Atualizar artigo em destaque
+                    document.getElementById('featuredTitle').textContent = data.featuredArticle.title;
+                    document.getElementById('featuredDate').textContent = data.featuredArticle.date;
+                    document.getElementById('featuredSummary').textContent = data.featuredArticle.summary;
+                    document.getElementById('featuredImage').src = data.featuredArticle.image;
+                    document.getElementById('featuredLink').href = data.featuredArticle.link;
+                    
+                    // Atualizar estatísticas
+                    document.getElementById('subscribers').textContent = data.stats.subscribers;
+                    document.getElementById('newSubscribers').textContent = data.stats.newSubscribers;
+                    document.getElementById('articleViews').textContent = data.stats.articleViews;
+                    document.getElementById('totalImpressions').textContent = data.stats.totalImpressions;
+                    
+                    // Adicionar artigos recentes ao slider
+                    const articlesContainer = document.getElementById('articlesContainer');
+                    articlesContainer.innerHTML = '';
+                    
+                    data.articles.forEach(article => {
+                        const articleSlide = document.createElement('div');
+                        articleSlide.className = 'swiper-slide';
+                        
+                        articleSlide.innerHTML = `
+                            <div class="article-card">
+                                <div class="article-image">
+                                    <img src="${article.image}" alt="${article.title}">
+                                </div>
+                                <div class="article-content">
+                                    <h5>${article.title}</h5>
+                                    <div class="article-date">${article.date}</div>
+                                    <p class="article-summary">${article.summary.substring(0, 100)}...</p>
+                                    <a href="${article.link}" class="btn btn-outline-primary" target="_blank">Ler Mais</a>
+                                </div>
+                            </div>
+                        `;
+                        
+                        articlesContainer.appendChild(articleSlide);
+                    });
+                    
+                    // Inicializar o slider
+                    new Swiper('#articlesSlider', {
+                        slidesPerView: 1,
+                        spaceBetween: 20,
+                        pagination: {
+                            el: '.swiper-pagination',
+                            clickable: true,
+                        },
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev',
+                        },
+                        breakpoints: {
+                            640: {
+                                slidesPerView: 2,
+                                spaceBetween: 20,
+                            },
+                            992: {
+                                slidesPerView: 3,
+                                spaceBetween: 30,
+                            }
+                        }
+                    });
+                    
+                } catch (error) {
+                    console.error('Erro ao carregar conteúdo da newsletter:', error);
+                }
+            }
+            
+            // Carregar o conteúdo da newsletter
+            loadNewsletterContent();
+        });
+    </script>
+</body>
+</html>
+
