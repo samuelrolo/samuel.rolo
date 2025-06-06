@@ -18,6 +18,32 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+      /* Pequeno ajuste para as animações que o script.js aplica */
+      .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.6s forwards;
+      }
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .slide-up {
+        opacity: 0;
+        transform: translateY(40px);
+        animation: slideUp 0.6s forwards;
+      }
+      @keyframes slideUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -42,7 +68,7 @@
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <!-- Report Info Section -->
-                    <div class="report-info-section">
+                    <div class="report-info-section fade-in">
                         <div class="report-header">
                             <h1 class="report-title">HR em 2025</h1>
                             <h2 class="report-subtitle">Relatório de Progresso Semestral</h2>
@@ -66,22 +92,22 @@
                     </div>
 
                     <!-- Form Section -->
-                    <div class="form-section">
-                        <div class="form-container">
+                    <div class="form-section fade-in">
+                        <div class="form-container slide-up">
                             <h3 class="form-title">Aceda ao Relatório Completo</h3>
                             <p class="form-subtitle">Preencha os dados abaixo para receber o seu exemplar gratuito</p>
                             
-                            <form id="hrReportForm" class="hr-form" novalidate>
+                            <form id="hrReportForm" class="hr-form needs-validation" novalidate>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="form-group">
+                                        <div class="form-group mb-3">
                                             <label for="firstName" class="form-label">Nome *</label>
                                             <input type="text" class="form-control" id="firstName" name="firstName" required>
                                             <div class="invalid-feedback">Por favor, introduza o seu nome.</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-group">
+                                        <div class="form-group mb-3">
                                             <label for="lastName" class="form-label">Apelido *</label>
                                             <input type="text" class="form-control" id="lastName" name="lastName" required>
                                             <div class="invalid-feedback">Por favor, introduza o seu apelido.</div>
@@ -89,13 +115,13 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group mb-3">
                                     <label for="companyName" class="form-label">Nome da Empresa *</label>
                                     <input type="text" class="form-control" id="companyName" name="companyName" required>
                                     <div class="invalid-feedback">Por favor, introduza o nome da sua empresa.</div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group mb-3">
                                     <label for="workEmail" class="form-label">Email Profissional *</label>
                                     <input type="email" class="form-control" id="workEmail" name="workEmail" required>
                                     <div class="invalid-feedback">Por favor, introduza um email válido.</div>
@@ -103,7 +129,7 @@
 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="form-group">
+                                        <div class="form-group mb-3">
                                             <label for="jobCategory" class="form-label">Categoria Profissional *</label>
                                             <select class="form-select" id="jobCategory" name="jobCategory" required>
                                                 <option value="">Selecione uma categoria</option>
@@ -115,7 +141,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-group">
+                                        <div class="form-group mb-3">
                                             <label for="workArea" class="form-label">Área de Atuação *</label>
                                             <select class="form-select" id="workArea" name="workArea" required>
                                                 <option value="">Selecione uma área</option>
@@ -142,7 +168,7 @@
 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="form-group">
+                                        <div class="form-group mb-3">
                                             <label for="country" class="form-label">País *</label>
                                             <select class="form-select" id="country" name="country" required>
                                                 <option value="">Selecione um país</option>
@@ -157,7 +183,7 @@
                                                 <option value="TL">Timor-Leste</option>
                                                 <option value="GQ">Guiné Equatorial</option>
                                                 <option value="MO">Macau</option>
-                                                <!-- Outros Países Principais -->
+                                                <!-- Outros Principais -->
                                                 <option value="ES">Espanha</option>
                                                 <option value="FR">França</option>
                                                 <option value="UK">Reino Unido</option>
@@ -173,7 +199,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group mb-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="consent" name="consent" required>
                                         <label class="form-check-label" for="consent">
@@ -200,21 +226,6 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p>&copy; 2025 Share2Inspire | Samuel Rolo. Todos os direitos reservados.</p>
-                    <div class="social-links">
-                        <a href="https://linkedin.com/in/samuelrolo" target="_blank"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://instagram.com/share2inspire_" target="_blank"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
     <!-- Loading Modal -->
     <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -234,12 +245,17 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-check-circle text-success me-2"></i>Sucesso!</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">
+                        <i class="fas fa-check-circle text-success me-2"></i>Sucesso!
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
                     <p>O seu pedido foi processado com sucesso. O download do relatório irá começar automaticamente.</p>
-                    <p class="text-muted">Se o download não começar, <a href="#" id="manualDownload">clique aqui</a>.</p>
+                    <p class="text-muted">
+                        Se o download não iniciar, 
+                        <a id="manualDownload" href="#">clique aqui</a>.
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
@@ -253,8 +269,10 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle text-danger me-2"></i>Erro</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle text-danger me-2"></i>Erro
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
                     <p id="errorMessage">Ocorreu um erro ao processar o seu pedido. Por favor, tente novamente.</p>
@@ -266,11 +284,21 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
+    <!-- Footer -->
+    <footer class="footer-section mt-5">
+        <div class="container text-center">
+            <p>&copy; 2025 Share2Inspire | Samuel Rolo. Todos os direitos reservados.</p>
+            <div class="social-links">
+                <a href="https://linkedin.com/in/samuelrolo" target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="https://instagram.com/share2inspire_" target="_blank"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS (inclui Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Custom JS -->
     <script src="js/script.js"></script>
 </body>
 </html>
-
