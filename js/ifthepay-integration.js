@@ -1,79 +1,52 @@
 /**
  * Integração com a API da IfthenPay para pagamentos
- * 
- * Este módulo fornece funções para integração com a API de pagamentos da IfthenPay,
- * permitindo processar pagamentos via Multibanco, MB WAY e Payshop.
+ * VERSÃO CORRIGIDA - Endpoints oficiais da documentação IfthenPay
  */
 
 // Chaves da IfthenPay para os diferentes métodos de pagamento
 const IFTHENPAY_KEYS = {
     multibanco: "BXG-350883",
-    mbway: "UWP-547025",
+    mbway: "UWP-547025", 
     payshop: "QTU-066969"
 };
 
-// Endpoint da API de pagamento
+// CORREÇÃO: Endpoints oficiais da documentação IfthenPay
+const IFTHENPAY_ENDPOINTS = {
+    multibanco: "https://api.ifthenpay.com/multibanco/reference",
+    mbway: "https://api.ifthenpay.com/spg/payment/mbway",
+    payshop: "https://api.ifthenpay.com/payshop/reference"
+};
+
+// Fallback para backend próprio se APIs diretas falharem
 const PAYMENT_API_ENDPOINT = "https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate";
 
 /**
+ * CORREÇÃO: Função CORS que estava em falta
+ */
+function handleCorsRequest() {
+    return {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept'
+    };
+}
+
+/**
  * Processa um pagamento através da API da IfthenPay
- * @param {Object} formData - Dados do formulário
- * @param {string} paymentMethod - Método de pagamento (multibanco, mbway, payshop)
- * @param {number} amount - Valor do pagamento
- * @returns {Promise} - Promise com o resultado da operação
+ * CORRIGIDO: Usar endpoints oficiais primeiro, fallback depois
  */
 async function processPayment(formData, paymentMethod, amount) {
     try {
-        // Normalizar o método de pagamento para o formato esperado pelo backend
         const normalizedMethod = getPaymentMethodFormat(paymentMethod);
         
-        // Preparar os dados para envio
-        const paymentData = {
-            service: formData.service || 'Serviço Share2Inspire',
-            name: formData.name,
-            email: formData.email,
-            phone: normalizedMethod === 'mbway' ? formatPhoneForMBWay(formData.phone) : formData.phone,
-            date: formData.date || '',
-            amount: amount,
-            // Usar o formato correto para o método de pagamento
-            payment_method: normalizedMethod
-        };
-
-        console.log("Enviando dados para o backend:", paymentData);
-
-        // Fazer a chamada à API
-        const response = await fetch(PAYMENT_API_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(paymentData)
-        });
-
-        // Processar a resposta
-        let responseData;
+        // CORREÇÃO: Tentar API oficial primeiro
         try {
-            responseData = await response.json();
-        } catch (error) {
-            console.error("Erro ao processar resposta JSON:", error);
-            throw new Error(`Erro na resposta do servidor: ${response.status} ${response.statusText}`);
+            return await processPaymentDirect(formData, normalizedMethod, amount);
+        } catch (directError) {
+            console.warn('API direta falhou, usando fallback:', directError.message);
+            return await processPaymentFallback(formData, normalizedMethod, amount);
         }
         
-        console.log("Resposta do servidor:", response.status);
-        console.log("Detalhes completos da resposta:", responseData);
-
-        // Verificar se a resposta foi bem-sucedida
-        if (!response.ok) {
-            throw new Error(`Erro na resposta do servidor: ${response.status} ${JSON.stringify(responseData)}`);
-        }
-
-        // Verificar se o backend reportou sucesso
-        if (!responseData.success) {
-            throw new Error(`Erro reportado pelo backend: ${responseData.error || 'Erro desconhecido'}`);
-        }
-
-        return responseData;
     } catch (error) {
         console.error("Erro ao processar pagamento:", error);
         throw error;
@@ -81,19 +54,122 @@ async function processPayment(formData, paymentMethod, amount) {
 }
 
 /**
- * Converte o método de pagamento para o formato esperado pelo backend
- * @param {string} method - Método de pagamento original
- * @returns {string} - Método de pagamento normalizado
+ * NOVO: Processar pagamento via APIs oficiais IfthenPay
+ */
+async function processPaymentDirect(formData, paymentMethod, amount) {
+    const endpoint = IFTHENPAY_ENDPOINTS[paymentMethod];
+    const key = IFTHENPAY_KEYS[paymentMethod];
+    
+    if (!endpoint || !key) {
+        throw new Error(`Método de pagamento não suportado: ${paymentMethod}`);
+    }
+    
+    let payload;
+    
+    if (paymentMethod === 'mbway') {
+        // CORREÇÃO: Formato correto para MB WAY conforme documentação
+        payload = {
+            mbwayKey: key,
+            orderId: `ORDER-${Date.now()}`,
+            amount: amount.toFixed(2),
+            mobileNumber: formatPhoneForMBWay(formData.phone),
+            email: formData.email || '',
+            description: `${formData.service || 'Serviço Share2Inspire'} - ${formData.name}`
+        };
+    } else if (paymentMethod === 'multibanco') {
+        // CORREÇÃO: Formato correto para Multibanco conforme documentação
+        payload = {
+            mbKey: key,
+            orderId: `ORDER-${Date.now()}`,
+            amount: amount.toFixed(2)
+        };
+    } else if (paymentMethod === 'payshop') {
+        // CORREÇÃO: Formato correto para Payshop
+        payload = {
+            payshopKey: key,
+            orderId: `ORDER-${Date.now()}`,
+            amount: amount.toFixed(2)
+        };
+    }
+    
+    console.log(`Chamando API oficial ${paymentMethod}:`, endpoint);
+    
+    const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            ...handleCorsRequest()
+        },
+        body: JSON.stringify(payload)
+    });
+    
+    if (!response.ok) {
+        throw new Error(`API oficial falhou: ${response.status}`);
+    }
+    
+    const responseData = await response.json();
+    console.log('Resposta API oficial:', responseData);
+    
+    return {
+        success: true,
+        ...responseData,
+        method: paymentMethod
+    };
+}
+
+/**
+ * CORRIGIDO: Fallback para backend próprio
+ */
+async function processPaymentFallback(formData, paymentMethod, amount) {
+    const paymentData = {
+        service: formData.service || 'Serviço Share2Inspire',
+        name: formData.name,
+        email: formData.email,
+        phone: paymentMethod === 'mbway' ? formatPhoneForMBWay(formData.phone) : formData.phone,
+        date: formData.date || '',
+        amount: amount,
+        payment_method: paymentMethod,
+        order_id: `ORDER-${Date.now()}`
+    };
+
+    console.log("Usando fallback backend:", paymentData);
+
+    const response = await fetch(PAYMENT_API_ENDPOINT, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            ...handleCorsRequest()
+        },
+        body: JSON.stringify(paymentData)
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Backend falhou: ${response.status} - ${errorText}`);
+    }
+
+    const responseData = await response.json();
+    
+    if (!responseData.success) {
+        throw new Error(responseData.error || 'Erro desconhecido no backend');
+    }
+
+    return responseData;
+}
+
+/**
+ * Converte o método de pagamento para o formato esperado
  */
 function getPaymentMethodFormat(method) {
     if (!method) return 'multibanco';
     
     method = method.toLowerCase();
     
-    // Mapeamento de valores para o formato esperado pelo backend
     const methodMap = {
         'mb': 'multibanco',
-        'multibanco': 'multibanco',
+        'multibanco': 'multibanco', 
         'mbway': 'mbway',
         'payshop': 'payshop'
     };
@@ -102,18 +178,17 @@ function getPaymentMethodFormat(method) {
 }
 
 /**
- * Formata o número de telefone para o formato esperado pelo MB WAY
- * @param {string} phone - Número de telefone
- * @returns {string} - Número formatado
+ * CORRIGIDO: Formata telefone conforme documentação MB WAY
  */
 function formatPhoneForMBWay(phone) {
-    // Remover espaços, traços e outros caracteres não numéricos
+    if (!phone) return '';
+    
+    // Remover todos os caracteres não numéricos
     let cleanPhone = phone.replace(/\D/g, '');
     
-    // Verificar se já tem o prefixo 351
+    // CORREÇÃO: Formato conforme documentação - 351#912345678
     if (!cleanPhone.startsWith('351')) {
-        // Se o número começar com 9, adicionar o prefixo 351
-        if (cleanPhone.startsWith('9')) {
+        if (cleanPhone.startsWith('9') && cleanPhone.length === 9) {
             cleanPhone = '351' + cleanPhone;
         }
     }
@@ -122,29 +197,20 @@ function formatPhoneForMBWay(phone) {
 }
 
 /**
- * Exibe as informações de pagamento após o processamento bem-sucedido
- * @param {Object} paymentData - Dados do pagamento retornados pela API
- * @param {string} paymentMethod - Método de pagamento utilizado
- * @param {Element} container - Elemento onde exibir as informações
+ * Exibe as informações de pagamento (mantido igual)
  */
 function displayPaymentInfo(paymentData, paymentMethod, container) {
-    // Limpar conteúdo anterior
     container.innerHTML = '';
     
-    // Verificar se o pagamento foi realmente processado com sucesso
     if (!paymentData || !paymentData.success) {
-        displayPaymentError(new Error("Pagamento não processado corretamente pelo backend"), container);
+        displayPaymentError(new Error("Pagamento não processado corretamente"), container);
         return;
     }
     
-    // Normalizar o método de pagamento
     const normalizedMethod = getPaymentMethodFormat(paymentMethod);
-    
-    // Criar elemento para exibir as informações
     const paymentInfo = document.createElement('div');
     paymentInfo.className = 'alert alert-success';
     
-    // Conteúdo específico para cada método de pagamento
     if (normalizedMethod === 'multibanco') {
         paymentInfo.innerHTML = `
             <h4>Pagamento Multibanco</h4>
@@ -156,7 +222,7 @@ function displayPaymentInfo(paymentData, paymentMethod, container) {
     } else if (normalizedMethod === 'mbway') {
         paymentInfo.innerHTML = `
             <h4>Pagamento MB WAY</h4>
-            <p><strong>Número:</strong> ${paymentData.phone || ''}</p>
+            <p><strong>Número:</strong> ${paymentData.phone || paymentData.mobileNumber || ''}</p>
             <p><strong>Valor:</strong> ${paymentData.amount || ''}€</p>
             <p>Foi enviado um pedido de pagamento para o seu número MB WAY.</p>
             <p>Por favor, aceite o pagamento na aplicação MB WAY.</p>
@@ -170,20 +236,15 @@ function displayPaymentInfo(paymentData, paymentMethod, container) {
         `;
     }
     
-    // Adicionar ao container
     container.appendChild(paymentInfo);
 }
 
 /**
- * Exibe mensagem de erro em caso de falha no processamento do pagamento
- * @param {Error} error - Erro ocorrido
- * @param {Element} container - Elemento onde exibir a mensagem
+ * Exibe mensagem de erro (mantido igual)
  */
 function displayPaymentError(error, container) {
-    // Limpar conteúdo anterior
     container.innerHTML = '';
     
-    // Criar elemento para exibir o erro
     const errorInfo = document.createElement('div');
     errorInfo.className = 'alert alert-danger';
     errorInfo.innerHTML = `
@@ -191,14 +252,18 @@ function displayPaymentError(error, container) {
         <p>Por favor tente novamente ou contacte-nos diretamente.</p>
     `;
     
-    // Adicionar ao container
     container.appendChild(errorInfo);
 }
 
-// Exportar funções para uso em outros módulos
+// CORREÇÃO: Exportar também as novas funções
 window.IfthenPayIntegration = {
     processPayment,
+    processPaymentDirect,
+    processPaymentFallback,
     displayPaymentInfo,
     displayPaymentError,
-    IFTHENPAY_KEYS
+    handleCorsRequest,
+    IFTHENPAY_KEYS,
+    IFTHENPAY_ENDPOINTS
 };
+
