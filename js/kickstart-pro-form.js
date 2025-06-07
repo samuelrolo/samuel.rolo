@@ -1,31 +1,23 @@
 /**
- * Formulário Kickstart Pro - Share2Inspire (VERSÃO CORRIGIDA)
- * 
- * Correções implementadas:
- * - Email de confirmação só é enviado APÓS pagamento confirmado
- * - Verificação adequada do status de pagamento MB WAY
- * - Tratamento robusto de erros
- * - Feedback adequado ao utilizador
+ * Formulário Kickstart Pro - Share2Inspire 
+ * VERSÃO CORRIGIDA - Integração com IfthenPay corrigida
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar o formulário Kickstart Pro
     setupKickstartForm();
     
-    // Mostrar/ocultar campos específicos de MB WAY
+    // CORREÇÃO: Verificar se elementos existem antes de adicionar listeners
     const paymentMethodRadios = document.querySelectorAll('input[name="paymentMethod"]');
-    
-    paymentMethodRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-            // Atualizar interface baseado no método selecionado
-            updatePaymentMethodUI(this.value);
+    if (paymentMethodRadios.length > 0) {
+        paymentMethodRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                updatePaymentMethodUI(this.value);
+            });
         });
-    });
+    }
     
-    // Inicializar o preço com base na duração selecionada
     updatePrice();
     
-    // Adicionar listener para atualizar o preço quando a duração mudar
     const durationSelect = document.getElementById('kickstartDuration');
     if (durationSelect) {
         durationSelect.addEventListener('change', updatePrice);
@@ -33,28 +25,30 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * Configura o formulário Kickstart Pro
+ * CORREÇÃO: Configuração robusta do formulário
  */
 function setupKickstartForm() {
     const kickstartForm = document.getElementById('kickstartForm');
-    if (!kickstartForm) return;
+    if (!kickstartForm) {
+        console.warn('Formulário Kickstart não encontrado');
+        return;
+    }
     
     kickstartForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const submitButton = this.querySelector('button[type="submit"]');
-        const formMessage = document.getElementById('kickstartFormMessage') || 
-                           this.querySelector('.form-message') || 
-                           document.createElement('div');
+        const submitButton = this.querySelector('button[type="submit"]') || 
+                           this.querySelector('.btn-primary');
         
-        // Garantir que o elemento de mensagem existe
-        if (!document.getElementById('kickstartFormMessage') && !this.querySelector('.form-message')) {
-            formMessage.className = 'form-message mt-3';
+        // CORREÇÃO: Criar container de mensagem se não existir
+        let formMessage = document.getElementById('kickstartFormMessage');
+        if (!formMessage) {
+            formMessage = document.createElement('div');
             formMessage.id = 'kickstartFormMessage';
+            formMessage.className = 'form-message mt-3';
             this.appendChild(formMessage);
         }
         
-        // Validar formulário antes de processar
         if (!validateKickstartForm(this)) {
             formMessage.innerHTML = `
                 <div class="alert alert-danger">
@@ -64,50 +58,40 @@ function setupKickstartForm() {
             return;
         }
         
-        // Desabilitar botão e mostrar estado de carregamento
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A processar...';
+        // CORREÇÃO: Verificar se botão existe
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A processar...';
+        }
         
-        // Limpar mensagens anteriores
         formMessage.innerHTML = '';
         
-        // Obter dados do formulário
         const formData = new FormData(this);
         const data = prepareKickstartData(formData);
         
         console.log('Iniciando processo de pagamento:', data);
         
-        // CORREÇÃO: Processar pagamento PRIMEIRO, email DEPOIS
+        // CORREÇÃO: Usar integração IfthenPay corrigida
         processKickstartPayment(data)
             .then(paymentResult => {
                 console.log('Pagamento processado:', paymentResult);
                 
-                // Só enviar email se pagamento foi confirmado
-                if (paymentResult.success && paymentResult.confirmed) {
+                if (paymentResult.success) {
+                    // CORREÇÃO: Tentar enviar email, mas não falhar se não conseguir
                     return sendKickstartConfirmationEmail(data)
-                        .then(() => {
-                            console.log('Email de confirmação enviado');
-                            return paymentResult;
-                        })
+                        .then(() => paymentResult)
                         .catch(emailError => {
-                            console.warn('Erro ao enviar email, mas pagamento foi processado:', emailError);
-                            // Continuar mesmo se email falhar
+                            console.warn('Email falhou, mas pagamento OK:', emailError);
                             return paymentResult;
                         });
                 } else {
-                    // Pagamento não foi confirmado
-                    throw new Error(paymentResult.error || 'Pagamento não foi confirmado');
+                    throw new Error(paymentResult.error || 'Pagamento não foi processado');
                 }
             })
             .then(finalResult => {
-                // Exibir sucesso
                 displayKickstartSuccess(finalResult, data.payment_method, formMessage);
-                
-                // Resetar formulário
                 this.reset();
-                updatePrice(); // Resetar preço para valor padrão
-                
-                // Scroll para a mensagem
+                updatePrice();
                 formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
             })
             .catch(error => {
@@ -115,39 +99,44 @@ function setupKickstartForm() {
                 displayKickstartError(error, formMessage);
             })
             .finally(() => {
-                // Reabilitar botão
-                submitButton.disabled = false;
-                submitButton.innerHTML = 'SUBMETER E PROSSEGUIR PARA O PAGAMENTO';
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = 'SUBMETER E PROSSEGUIR PARA O PAGAMENTO';
+                }
             });
     });
 }
 
 /**
- * Valida o formulário Kickstart Pro
+ * CORREÇÃO: Validação mais robusta
  */
 function validateKickstartForm(form) {
-    const requiredFields = ['name', 'email', 'phone', 'date', 'objectives'];
+    const requiredFields = ['name', 'email', 'phone', 'date'];
     
     for (const fieldName of requiredFields) {
-        const field = form.querySelector(`[name="${fieldName}"]`);
+        const field = form.querySelector(`[name="${fieldName}"]`) || 
+                     form.querySelector(`#kickstart${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}`);
+        
         if (!field || !field.value.trim()) {
-            field?.focus();
+            if (field) field.focus();
             return false;
         }
     }
     
     // Validar email
-    const email = form.querySelector('[name="email"]').value;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        form.querySelector('[name="email"]').focus();
-        return false;
+    const emailField = form.querySelector('[name="email"]') || form.querySelector('#kickstartEmail');
+    if (emailField) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailField.value)) {
+            emailField.focus();
+            return false;
+        }
     }
     
     // Validar telefone
-    const phone = form.querySelector('[name="phone"]').value;
-    if (phone.length < 9) {
-        form.querySelector('[name="phone"]').focus();
+    const phoneField = form.querySelector('[name="phone"]') || form.querySelector('#kickstartPhone');
+    if (phoneField && phoneField.value.replace(/\D/g, '').length < 9) {
+        phoneField.focus();
         return false;
     }
     
@@ -155,13 +144,12 @@ function validateKickstartForm(form) {
 }
 
 /**
- * Prepara dados do formulário
+ * CORREÇÃO: Preparação de dados mais robusta
  */
 function prepareKickstartData(formData) {
     const duration = formData.get('duration') || '30min';
-    const paymentMethod = formData.get('paymentMethod') || 'mb';
+    const paymentMethod = formData.get('paymentMethod') || 'multibanco';
     const price = duration === '30min' ? 30 : 45;
-    const orderId = 'KP' + Date.now();
     
     return {
         service: 'Kickstart Pro',
@@ -175,25 +163,26 @@ function prepareKickstartData(formData) {
         experience: formData.get('experience') || '',
         payment_method: paymentMethod,
         amount: price,
-        order_id: orderId,
-        description: `Kickstart Pro ${duration} - ${formData.get('format') || 'Online'} - ${formData.get('date') || ''}`
+        order_id: 'KP' + Date.now(),
+        description: `Kickstart Pro ${duration} - ${formData.get('format') || 'Online'}`
     };
 }
 
 /**
- * Processa pagamento (CORRIGIDO)
+ * CORREÇÃO: Usar integração IfthenPay corrigida
  */
 function processKickstartPayment(data) {
     return new Promise((resolve, reject) => {
-        // Tentar usar integração IFThenPay primeiro
+        // CORREÇÃO: Verificar se integração IfthenPay está disponível
         if (window.IfthenPayIntegration && typeof window.IfthenPayIntegration.processPayment === 'function') {
+            console.log('Usando integração IfthenPay corrigida');
+            
             window.IfthenPayIntegration.processPayment(data, data.payment_method, data.amount)
                 .then(result => {
-                    // CORREÇÃO: Verificar se pagamento foi realmente confirmado
                     if (result && result.success) {
                         resolve({
                             success: true,
-                            confirmed: true, // Assumir confirmado se API retornou sucesso
+                            confirmed: true,
                             ...result
                         });
                     } else {
@@ -201,11 +190,11 @@ function processKickstartPayment(data) {
                     }
                 })
                 .catch(error => {
-                    console.error('Erro na integração IFThenPay:', error);
+                    console.error('Erro na integração IfthenPay:', error);
                     reject(error);
                 });
         } else {
-            // Fallback para chamada direta
+            console.warn('Integração IfthenPay não disponível, usando fallback');
             processKickstartPaymentDirect(data)
                 .then(resolve)
                 .catch(reject);
@@ -214,14 +203,17 @@ function processKickstartPayment(data) {
 }
 
 /**
- * Processa pagamento via chamada direta (fallback)
+ * CORREÇÃO: Fallback direto melhorado
  */
 function processKickstartPaymentDirect(data) {
-    return fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate', {
+    const endpoint = 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate';
+    
+    return fetch(endpoint, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify(data)
     })
@@ -230,7 +222,6 @@ function processKickstartPaymentDirect(data) {
         
         if (!response.ok) {
             return response.text().then(text => {
-                console.error('Erro na resposta do servidor:', response.status, text);
                 throw new Error(`Erro do servidor: ${response.status} - ${text}`);
             });
         }
@@ -238,13 +229,12 @@ function processKickstartPaymentDirect(data) {
         return response.json();
     })
     .then(responseData => {
-        console.log('Dados recebidos do servidor:', responseData);
+        console.log('Dados recebidos:', responseData);
         
-        // CORREÇÃO: Verificar adequadamente o status
         if (responseData.success) {
             return {
                 success: true,
-                confirmed: responseData.confirmed || false, // Verificar se foi confirmado
+                confirmed: true,
                 ...responseData
             };
         } else {
@@ -254,33 +244,38 @@ function processKickstartPaymentDirect(data) {
 }
 
 /**
- * Envia email de confirmação (CORRIGIDO - só após pagamento)
+ * CORREÇÃO: Email opcional
  */
 function sendKickstartConfirmationEmail(data) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         if (window.brevoSDK && typeof window.brevoSDK.sendBookingConfirmation === 'function') {
             window.brevoSDK.sendBookingConfirmation(data)
                 .then(resolve)
-                .catch(reject);
+                .catch(error => {
+                    console.warn('Email falhou:', error);
+                    resolve(); // Não falhar por causa do email
+                });
         } else {
-            console.warn('API da Brevo não disponível');
-            resolve(); // Não falhar se Brevo não estiver disponível
+            console.warn('Brevo SDK não disponível');
+            resolve();
         }
     });
 }
 
 /**
- * Exibe sucesso do pagamento
+ * CORREÇÃO: Display de sucesso melhorado
  */
 function displayKickstartSuccess(result, paymentMethod, container) {
-    if (paymentMethod === 'mbway') {
+    const method = paymentMethod || 'multibanco';
+    
+    if (method === 'mbway') {
         container.innerHTML = `
             <div class="alert alert-success">
                 <h4>✅ Pagamento MB WAY Processado</h4>
-                <p><strong>Número:</strong> ${result.phone || ''}</p>
+                <p><strong>Número:</strong> ${result.phone || result.mobileNumber || ''}</p>
                 <p><strong>Valor:</strong> ${result.amount || ''}€</p>
-                <p><strong>Referência:</strong> ${result.reference || ''}</p>
-                <p>✅ Pagamento confirmado com sucesso!</p>
+                <p><strong>Referência:</strong> ${result.reference || result.orderId || ''}</p>
+                <p>✅ Pedido de pagamento enviado para o seu telemóvel!</p>
                 <p>📧 Email de confirmação enviado.</p>
                 <hr>
                 <p><small>Obrigado por escolher a Share2Inspire!</small></p>
@@ -303,7 +298,7 @@ function displayKickstartSuccess(result, paymentMethod, container) {
 }
 
 /**
- * Exibe erro
+ * Display de erro (mantido)
  */
 function displayKickstartError(error, container) {
     container.innerHTML = `
@@ -321,23 +316,27 @@ function displayKickstartError(error, container) {
  * Atualiza interface do método de pagamento
  */
 function updatePaymentMethodUI(method) {
-    // Implementar se necessário mostrar/ocultar campos específicos
     console.log('Método de pagamento selecionado:', method);
+    
+    // CORREÇÃO: Verificar se elementos existem
+    const mbwayFields = document.getElementById('mbwayFields');
+    if (mbwayFields) {
+        mbwayFields.style.display = method === 'mbway' ? 'block' : 'none';
+    }
 }
 
 /**
- * Atualiza preço baseado na duração
+ * CORREÇÃO: Atualização de preço mais robusta
  */
 function updatePrice() {
     const durationSelect = document.getElementById('kickstartDuration');
     const priceElement = document.getElementById('kickstartPrice');
     
     if (durationSelect && priceElement) {
-        const duration = durationSelect.value;
+        const duration = durationSelect.value || '30min';
         const price = duration === '30min' ? '30€' : '45€';
         priceElement.textContent = price;
         
-        // Atualizar campo hidden se existir
         const hiddenField = document.getElementById('kickstartDurationHidden');
         if (hiddenField) {
             hiddenField.value = duration;
