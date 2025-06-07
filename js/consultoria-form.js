@@ -1,43 +1,37 @@
 /**
- * Formulário de Consultoria Organizacional - Share2Inspire (VERSÃO CORRIGIDA)
- * 
- * Correções implementadas:
- * - Resolver erro 405 (Method Not Allowed)
- * - Prevenir desaparecimento do modal
- * - Implementar fallback para endpoint alternativo
- * - Ajustar headers para compatibilidade CORS
- * - Tratamento robusto de erros
- * - Feedback adequado ao utilizador
+ * Formulário de Consultoria Organizacional - Share2Inspire
+ * VERSÃO CORRIGIDA - Endpoints e CORS corrigidos
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar o formulário de Consultoria
     setupConsultoriaForm();
 });
 
 /**
- * Configura o formulário de Consultoria
+ * CORREÇÃO: Configuração robusta do formulário
  */
 function setupConsultoriaForm() {
     const consultoriaForm = document.getElementById('consultoriaForm');
-    if (!consultoriaForm) return;
+    if (!consultoriaForm) {
+        console.warn('Formulário de consultoria não encontrado');
+        return;
+    }
     
     consultoriaForm.addEventListener('submit', function(e) {
-        e.preventDefault(); // CRÍTICO: Prevenir comportamento padrão
+        e.preventDefault();
         
-        const submitButton = this.querySelector('button[type="submit"]');
-        const formMessage = document.getElementById('consultoriaFormMessage') || 
-                           this.querySelector('.form-message') || 
-                           document.createElement('div');
+        const submitButton = this.querySelector('button[type="submit"]') || 
+                           this.querySelector('.btn-primary');
         
-        // Garantir que o elemento de mensagem existe
-        if (!document.getElementById('consultoriaFormMessage') && !this.querySelector('.form-message')) {
-            formMessage.className = 'form-message mt-3';
+        // CORREÇÃO: Criar container de mensagem se não existir
+        let formMessage = document.getElementById('consultoriaFormMessage');
+        if (!formMessage) {
+            formMessage = document.createElement('div');
             formMessage.id = 'consultoriaFormMessage';
+            formMessage.className = 'form-message mt-3';
             this.appendChild(formMessage);
         }
         
-        // Validar formulário antes de processar
         if (!validateConsultoriaForm(this)) {
             formMessage.innerHTML = `
                 <div class="alert alert-danger">
@@ -47,30 +41,27 @@ function setupConsultoriaForm() {
             return;
         }
         
-        // Desabilitar botão e mostrar estado de carregamento
-        submitButton.disabled = true;
-        const originalText = submitButton.innerHTML;
-        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A enviar...';
+        if (submitButton) {
+            submitButton.disabled = true;
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A enviar...';
+            
+            // Restaurar texto original no finally
+            submitButton.originalText = originalText;
+        }
         
-        // Limpar mensagens anteriores
         formMessage.innerHTML = '';
         
-        // Obter dados do formulário
         const formData = new FormData(this);
         const data = prepareConsultoriaData(formData);
         
         console.log('Enviando dados de consultoria:', data);
         
-        // Processar envio com múltiplas tentativas
         processConsultoriaSubmission(data)
             .then(result => {
                 console.log('Consultoria enviada com sucesso:', result);
                 displayConsultoriaSuccess(result, formMessage);
-                
-                // Resetar formulário
                 this.reset();
-                
-                // Scroll para a mensagem
                 formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
             })
             .catch(error => {
@@ -78,40 +69,45 @@ function setupConsultoriaForm() {
                 displayConsultoriaError(error, formMessage);
             })
             .finally(() => {
-                // Reabilitar botão
-                submitButton.disabled = false;
-                submitButton.innerHTML = originalText;
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = submitButton.originalText || 'Solicitar Proposta';
+                }
             });
     });
 }
 
 /**
- * Valida o formulário de Consultoria
+ * CORREÇÃO: Validação mais robusta
  */
 function validateConsultoriaForm(form) {
-    const requiredFields = ['name', 'email', 'company', 'objectives'];
+    const requiredFields = ['name', 'email', 'company'];
     
     for (const fieldName of requiredFields) {
-        const field = form.querySelector(`[name="${fieldName}"]`);
+        const field = form.querySelector(`[name="${fieldName}"]`) || 
+                     form.querySelector(`#consultoria${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}`);
+        
         if (!field || !field.value.trim()) {
-            field?.focus();
+            if (field) field.focus();
             return false;
         }
     }
     
     // Validar email
-    const email = form.querySelector('[name="email"]').value;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        form.querySelector('[name="email"]').focus();
-        return false;
+    const emailField = form.querySelector('[name="email"]') || form.querySelector('#consultoriaEmail');
+    if (emailField) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailField.value)) {
+            emailField.focus();
+            return false;
+        }
     }
     
     return true;
 }
 
 /**
- * Prepara dados do formulário
+ * Preparação de dados (mantido)
  */
 function prepareConsultoriaData(formData) {
     return {
@@ -131,13 +127,40 @@ function prepareConsultoriaData(formData) {
 }
 
 /**
- * Processa envio com múltiplas tentativas (CORRIGIDO)
+ * CORREÇÃO: Usar integração Brevo se disponível
  */
 function processConsultoriaSubmission(data) {
-    // Lista de endpoints para tentar (fallback)
+    return new Promise((resolve, reject) => {
+        // CORREÇÃO: Tentar Brevo primeiro se disponível
+        if (window.brevoSDK && typeof window.brevoSDK.sendContactForm === 'function') {
+            console.log('Usando integração Brevo');
+            
+            window.brevoSDK.sendContactForm(data)
+                .then(result => {
+                    resolve({
+                        success: true,
+                        method: 'brevo',
+                        ...result
+                    });
+                })
+                .catch(brevoError => {
+                    console.warn('Brevo falhou, usando fallback:', brevoError);
+                    processConsultoriaFallback(data).then(resolve).catch(reject);
+                });
+        } else {
+            console.log('Brevo não disponível, usando fallback');
+            processConsultoriaFallback(data).then(resolve).catch(reject);
+        }
+    });
+}
+
+/**
+ * CORREÇÃO: Fallback com endpoints corretos
+ */
+function processConsultoriaFallback(data) {
     const endpoints = [
-        'https://share2inspire-beckend.lm.r.appspot.com/api/consultoria/submit',
         'https://share2inspire-beckend.lm.r.appspot.com/api/contact/submit',
+        'https://share2inspire-beckend.lm.r.appspot.com/api/consultoria/submit',
         'https://share2inspire-beckend.lm.r.appspot.com/api/email/send'
     ];
     
@@ -145,19 +168,33 @@ function processConsultoriaSubmission(data) {
 }
 
 /**
- * Tenta múltiplos endpoints até encontrar um que funcione
+ * CORREÇÃO: Tentativa de múltiplos endpoints melhorada
  */
 function tryMultipleEndpoints(data, endpoints, index = 0) {
     if (index >= endpoints.length) {
-        return Promise.reject(new Error('Todos os endpoints falharam'));
+        return Promise.reject(new Error('Todos os endpoints falharam. Contacte-nos diretamente.'));
     }
     
     const endpoint = endpoints[index];
     console.log(`Tentando endpoint ${index + 1}/${endpoints.length}: ${endpoint}`);
     
     return submitToEndpoint(data, endpoint)
+        .then(result => {
+            console.log(`Sucesso no endpoint: ${endpoint}`);
+            return {
+                success: true,
+                endpoint: endpoint,
+                method: 'fallback',
+                ...result
+            };
+        })
         .catch(error => {
-            console.warn(`Endpoint ${endpoint} falhou:`, error);
+            console.warn(`Endpoint ${endpoint} falhou:`, error.message);
+            
+            if (index === endpoints.length - 1) {
+                // Último endpoint - falhar com mensagem útil
+                throw new Error(`Falha na comunicação com o servidor. Contacte-nos diretamente.`);
+            }
             
             // Tentar próximo endpoint
             return tryMultipleEndpoints(data, endpoints, index + 1);
@@ -165,65 +202,54 @@ function tryMultipleEndpoints(data, endpoints, index = 0) {
 }
 
 /**
- * Submete para um endpoint específico
+ * CORREÇÃO: Submissão com headers CORS corretos
  */
 function submitToEndpoint(data, endpoint) {
-    // Configurações diferentes para diferentes endpoints
-    const configs = {
-        'POST': {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify(data)
+    const config = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'X-Requested-With': 'XMLHttpRequest'
         },
-        'PUT': {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(data)
-        }
+        body: JSON.stringify(data)
     };
     
-    // Tentar primeiro com POST, depois com PUT se falhar
-    return fetch(endpoint, configs.POST)
+    return fetch(endpoint, config)
         .then(response => {
             console.log(`Resposta de ${endpoint}:`, response.status, response.statusText);
             
             if (response.status === 405) {
-                // Method Not Allowed - tentar com PUT
-                console.log('POST não permitido, tentando PUT...');
-                return fetch(endpoint, configs.PUT);
+                // CORREÇÃO: Tentar com PUT se POST não for permitido
+                return fetch(endpoint, {
+                    ...config,
+                    method: 'PUT'
+                });
             }
             
             if (!response.ok) {
                 return response.text().then(text => {
-                    throw new Error(`Erro ${response.status}: ${text}`);
+                    throw new Error(`Erro ${response.status}: ${text || response.statusText}`);
                 });
             }
             
             return response;
         })
         .then(response => {
-            // Tentar parsear como JSON, fallback para texto
             const contentType = response.headers.get('content-type');
             if (contentType && contentType.includes('application/json')) {
                 return response.json();
             } else {
-                return response.text().then(text => ({ success: true, message: text }));
+                return response.text().then(text => ({ 
+                    success: true, 
+                    message: text || 'Enviado com sucesso' 
+                }));
             }
         })
         .then(result => {
             if (result.success !== false) {
-                return {
-                    success: true,
-                    endpoint: endpoint,
-                    ...result
-                };
+                return result;
             } else {
                 throw new Error(result.error || result.message || 'Erro desconhecido');
             }
@@ -231,7 +257,7 @@ function submitToEndpoint(data, endpoint) {
 }
 
 /**
- * Exibe sucesso
+ * Display de sucesso (mantido)
  */
 function displayConsultoriaSuccess(result, container) {
     container.innerHTML = `
@@ -247,7 +273,7 @@ function displayConsultoriaSuccess(result, container) {
 }
 
 /**
- * Exibe erro
+ * Display de erro (mantido)
  */
 function displayConsultoriaError(error, container) {
     container.innerHTML = `
@@ -265,7 +291,7 @@ function displayConsultoriaError(error, container) {
 }
 
 /**
- * Função auxiliar para debug
+ * Debug para testes
  */
 function debugConsultoriaForm() {
     console.log('=== DEBUG CONSULTORIA FORM ===');
@@ -275,6 +301,5 @@ function debugConsultoriaForm() {
     console.log('==============================');
 }
 
-// Expor função de debug globalmente para testes
 window.debugConsultoriaForm = debugConsultoriaForm;
 
