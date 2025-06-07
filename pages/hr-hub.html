@@ -659,9 +659,21 @@
                 <div class="col-lg-12 text-center">
                     <h2>Relatório Exclusivo: HR Trends 2025</h2>
                     <p>Acede ao nosso relatório exclusivo com as principais tendências, insights e ferramentas para profissionais de RH. Dados atualizados, análises práticas e estratégias comprovadas para transformar a sua organização.</p>
-                    <a href="../index.html" class="btn-cta">
-                        <i class="fas fa-download"></i> Aceder Gratuitamente
-                    </a>
+                    
+                    <!-- CORREÇÃO: Formulário direto para download do PDF -->
+                    <form id="hrReportForm" class="d-inline-block">
+                        <div class="row g-2 align-items-center justify-content-center">
+                            <div class="col-auto">
+                                <input type="email" class="form-control" id="hrEmail" name="email" placeholder="O seu email" required style="min-width: 250px;">
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn-cta">
+                                    <i class="fas fa-download"></i> Aceder Gratuitamente
+                                </button>
+                            </div>
+                        </div>
+                        <div id="hrFormMessage" class="mt-3"></div>
+                    </form>
                 </div>
             </div>
         </div>
