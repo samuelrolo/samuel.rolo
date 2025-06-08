@@ -660,20 +660,63 @@
                     <h2>Relatório Exclusivo: HR Trends 2025</h2>
                     <p>Acede ao nosso relatório exclusivo com as principais tendências, insights e ferramentas para profissionais de RH. Dados atualizados, análises práticas e estratégias comprovadas para transformar a sua organização.</p>
                     
-                    <!-- CORREÇÃO: Formulário direto para download do PDF -->
-                    <form id="hrReportForm" class="d-inline-block">
+                    <!-- CORREÇÃO FINAL: Download direto sem reload da página -->
+                    <div class="d-inline-block">
                         <div class="row g-2 align-items-center justify-content-center">
                             <div class="col-auto">
-                                <input type="email" class="form-control" id="hrEmail" name="email" placeholder="O seu email" required style="min-width: 250px;">
+                                <input type="email" class="form-control" id="hrEmailSimple" name="email" placeholder="O seu email" autocomplete="email" required style="min-width: 250px;">
                             </div>
                             <div class="col-auto">
-                                <button type="submit" class="btn-cta">
+                                <button type="button" class="btn-cta" onclick="downloadReport(event)">
                                     <i class="fas fa-download"></i> Aceder Gratuitamente
                                 </button>
                             </div>
                         </div>
-                        <div id="hrFormMessage" class="mt-3"></div>
-                    </form>
+                        <div id="hrSimpleMessage" class="mt-3"></div>
+                    </div>
+                    
+                    <script>
+                    function downloadReport(event) {
+                        event.preventDefault(); // Impede qualquer comportamento padrão
+                        event.stopPropagation(); // Para a propagação do evento
+                        
+                        const email = document.getElementById('hrEmailSimple').value;
+                        const messageDiv = document.getElementById('hrSimpleMessage');
+                        
+                        if (!email || !email.includes('@')) {
+                            messageDiv.innerHTML = '<div class="alert alert-warning">Por favor, insira um email válido antes de fazer o download.</div>';
+                            setTimeout(() => messageDiv.innerHTML = '', 3000);
+                            return false;
+                        }
+                        
+                        // Mostrar mensagem de sucesso
+                        messageDiv.innerHTML = '<div class="alert alert-success">📧 Email registado! 📊 Download a iniciar...</div>';
+                        
+                        // Capturar email para analytics (opcional)
+                        if (typeof gtag !== 'undefined') {
+                            gtag('event', 'hr_report_download', {
+                                'email': email,
+                                'report': 'HR_Trends_2025'
+                            });
+                        }
+                        
+                        // Criar link de download e clicar automaticamente
+                        setTimeout(() => {
+                            const link = document.createElement('a');
+                            link.href = '/hr-report/Share2Inspire_HR_25_MidYear_Report.pdf';
+                            link.download = 'Share2Inspire_HR_25_MidYear_Report.pdf';
+                            link.style.display = 'none';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            
+                            // Limpar mensagem após 5 segundos
+                            setTimeout(() => messageDiv.innerHTML = '', 5000);
+                        }, 500);
+                        
+                        return false;
+                    }
+                    </script>
                 </div>
             </div>
         </div>
