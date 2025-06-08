@@ -102,26 +102,43 @@ function setupHRReportForm() {
  */
 function processHRReportDownload(data) {
     return new Promise((resolve, reject) => {
-        // CORREÇÃO: Usar integração Brevo se disponível
-        if (window.brevoSDK && typeof window.brevoSDK.sendNewsletterSignup === 'function') {
-            console.log('Usando integração Brevo para relatório HR');
+        // CORREÇÃO: Enviar dados para backend para tracking
+        fetch('/api/hr-downloads', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: data.email,
+                timestamp: data.timestamp
+            })
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log('Download registado no backend:', result);
             
-            window.brevoSDK.sendNewsletterSignup(data)
-                .then(result => {
-                    resolve({
-                        success: true,
-                        method: 'brevo',
-                        ...result
-                    });
-                })
-                .catch(brevoError => {
-                    console.warn('Brevo falhou, mas download continua:', brevoError);
-                    resolve({ success: true, method: 'direct_download' });
-                });
-        } else {
-            console.log('Brevo não disponível, download direto');
-            resolve({ success: true, method: 'direct_download' });
-        }
+            // CORREÇÃO: Usar integração Brevo se disponível
+            if (window.brevoSDK && typeof window.brevoSDK.sendNewsletterSignup === 'function') {
+                console.log('Usando integração Brevo para relatório HR');
+                
+                return window.brevoSDK.sendNewsletterSignup(data);
+            } else {
+                console.log('Brevo não disponível, mas tracking feito');
+                return { success: true, method: 'backend_tracking' };
+            }
+        })
+        .then(brevoResult => {
+            resolve({
+                success: true,
+                method: 'backend_and_brevo',
+                backend: true,
+                brevo: brevoResult
+            });
+        })
+        .catch(error => {
+            console.warn('Erro no tracking, mas download continua:', error);
+            resolve({ success: true, method: 'direct_download_only' });
+        });
     });
 }
 
@@ -130,7 +147,7 @@ function processHRReportDownload(data) {
  */
 function downloadHRReport() {
     // CORREÇÃO: Caminho correto para o PDF do relatório
-    const pdfUrl = '../hr-report/Share2Inspire_HR_25_MidYear_Report.pdf';
+    const pdfUrl = '/hr-report/Share2Inspire_HR_25_MidYear_Report.pdf';
     
     // Criar link temporário para download
     const link = document.createElement('a');
