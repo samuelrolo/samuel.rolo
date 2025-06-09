@@ -1,13 +1,14 @@
 /**
- * Formulário Kickstart Pro - VERSÃO CORRIGIDA
- * Integração com APIs oficiais da Ifthenpay
+ * Formulário Kickstart Pro - VERSÃO FINAL CORRIGIDA
+ * Integração com versão final da API Ifthenpay
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Kickstart Pro Form - Versão Corrigida Carregada');
+    console.log('🚀 Kickstart Pro Form - Versão Final Carregada');
     setupKickstartForm();
     setupPaymentMethodHandlers();
     setupPriceUpdater();
+    setupPhoneFormatting();
 });
 
 /**
@@ -49,7 +50,12 @@ function setupKickstartForm() {
         showFormMessage(formMessage, 'info', 'A processar o seu pedido...');
         
         try {
-            // CORRIGIDO: Usar nova integração Ifthenpay
+            // Verificar se IfthenPayIntegration está disponível
+            if (!window.IfthenPayIntegration) {
+                throw new Error('Integração Ifthenpay não carregada. Verifique se o script está incluído.');
+            }
+            
+            // Usar nova integração Ifthenpay
             const paymentResult = await window.IfthenPayIntegration.processPayment(
                 data, 
                 data.paymentMethod, 
@@ -97,13 +103,71 @@ function setupPaymentMethodHandlers() {
             if (mbwayFields) {
                 if (this.value === 'mbway') {
                     mbwayFields.style.display = 'block';
-                    mbwayFields.querySelector('input[name="phone"]').required = true;
+                    const phoneField = mbwayFields.querySelector('input[name="phone"]');
+                    if (phoneField) {
+                        phoneField.required = true;
+                        phoneField.focus();
+                    }
                 } else {
                     mbwayFields.style.display = 'none';
-                    mbwayFields.querySelector('input[name="phone"]').required = false;
+                    const phoneField = mbwayFields.querySelector('input[name="phone"]');
+                    if (phoneField) {
+                        phoneField.required = false;
+                    }
                 }
             }
         });
+    });
+}
+
+/**
+ * NOVA FUNÇÃO: Configurar formatação automática do telefone
+ */
+function setupPhoneFormatting() {
+    const phoneField = document.querySelector('input[name="phone"]');
+    if (!phoneField) return;
+    
+    // Placeholder melhorado
+    phoneField.placeholder = '+351 9xxxxxxxx';
+    
+    // Formatação automática enquanto digita
+    phoneField.addEventListener('input', function() {
+        let value = this.value.replace(/\D/g, ''); // Remover não-numéricos
+        
+        // Se começar com 9 e não tiver 351, adicionar
+        if (value.startsWith('9') && !value.startsWith('351')) {
+            value = '351' + value;
+        }
+        
+        // Formatar para exibição: +351 961 925 050
+        if (value.startsWith('351') && value.length >= 3) {
+            const countryCode = value.substring(0, 3);
+            const number = value.substring(3);
+            
+            if (number.length <= 9) {
+                let formatted = `+${countryCode}`;
+                if (number.length > 0) {
+                    formatted += ` ${number.substring(0, 3)}`;
+                }
+                if (number.length > 3) {
+                    formatted += ` ${number.substring(3, 6)}`;
+                }
+                if (number.length > 6) {
+                    formatted += ` ${number.substring(6, 9)}`;
+                }
+                this.value = formatted;
+            }
+        }
+    });
+    
+    // Validação em tempo real
+    phoneField.addEventListener('blur', function() {
+        const cleanValue = this.value.replace(/\D/g, '');
+        if (cleanValue.length > 0 && (cleanValue.length < 12 || !cleanValue.startsWith('351'))) {
+            this.setCustomValidity('Por favor, insira um número português válido (ex: +351 961 925 050)');
+        } else {
+            this.setCustomValidity('');
+        }
     });
 }
 
@@ -151,6 +215,14 @@ function validateKickstartForm(form) {
         if (!field || !field.value.trim()) {
             console.error(`❌ Campo obrigatório vazio: ${fieldName}`);
             isValid = false;
+            
+            // Destacar campo com erro
+            if (field) {
+                field.style.borderColor = '#dc3545';
+                setTimeout(() => {
+                    field.style.borderColor = '';
+                }, 3000);
+            }
         }
     }
     
@@ -158,6 +230,10 @@ function validateKickstartForm(form) {
     const emailField = form.querySelector('[name="email"]');
     if (emailField && emailField.value && !isValidEmail(emailField.value)) {
         console.error('❌ Email inválido');
+        emailField.style.borderColor = '#dc3545';
+        setTimeout(() => {
+            emailField.style.borderColor = '';
+        }, 3000);
         isValid = false;
     }
     
@@ -167,7 +243,24 @@ function validateKickstartForm(form) {
         const phoneField = form.querySelector('[name="phone"]');
         if (!phoneField || !phoneField.value.trim()) {
             console.error('❌ Telefone obrigatório para MB WAY');
+            if (phoneField) {
+                phoneField.style.borderColor = '#dc3545';
+                setTimeout(() => {
+                    phoneField.style.borderColor = '';
+                }, 3000);
+            }
             isValid = false;
+        } else {
+            // Validar formato do telefone
+            const cleanPhone = phoneField.value.replace(/\D/g, '');
+            if (cleanPhone.length < 12 || !cleanPhone.startsWith('351')) {
+                console.error('❌ Formato de telefone inválido para MB WAY');
+                phoneField.style.borderColor = '#dc3545';
+                setTimeout(() => {
+                    phoneField.style.borderColor = '';
+                }, 3000);
+                isValid = false;
+            }
         }
     }
     
@@ -194,12 +287,11 @@ function prepareKickstartData(formData) {
         email: formData.get('email'),
         phone: formData.get('phone') || '',
         experience: formData.get('experience'),
-        objectives: formData.get('objectives') || '',
         duration: duration,
         paymentMethod: formData.get('paymentMethod'),
         amount: amount,
         date: new Date().toISOString().split('T')[0],
-        time: new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
+        time: '10:00'
     };
 }
 
@@ -207,27 +299,37 @@ function prepareKickstartData(formData) {
  * Exibir sucesso do pagamento
  */
 function displayKickstartSuccess(paymentResult, paymentMethod, container) {
-    // CORRIGIDO: Usar nova função de display
-    window.IfthenPayIntegration.displayPaymentInfo(paymentResult, paymentMethod, container);
-    
-    // Adicionar informações específicas do Kickstart
-    const additionalInfo = document.createElement('div');
-    additionalInfo.className = 'alert alert-info mt-3';
-    additionalInfo.innerHTML = `
-        <h5><i class="fas fa-calendar-check"></i> Próximos Passos</h5>
-        <p>Após a confirmação do pagamento, entraremos em contacto consigo para agendar a sua sessão Kickstart Pro.</p>
-        <p><strong>Duração:</strong> ${paymentResult.duration || '30 minutos'}</p>
-        <p><strong>Contacto:</strong> srshare2inspire@gmail.com | +351 961 925 050</p>
-    `;
-    
-    container.appendChild(additionalInfo);
+    // Usar a função da integração Ifthenpay
+    if (window.IfthenPayIntegration && window.IfthenPayIntegration.displayPaymentInfo) {
+        window.IfthenPayIntegration.displayPaymentInfo(paymentResult, paymentMethod, container);
+    } else {
+        // Fallback básico
+        container.innerHTML = `
+            <div class="alert alert-success">
+                <h4>✅ Pagamento Processado</h4>
+                <p>Método: ${paymentMethod}</p>
+                <p>Valor: ${paymentResult.amount}€</p>
+            </div>
+        `;
+    }
 }
 
 /**
- * Exibir erro
+ * Exibir erro do pagamento
  */
 function displayKickstartError(error, container) {
-    window.IfthenPayIntegration.displayPaymentError(error, container);
+    // Usar a função da integração Ifthenpay
+    if (window.IfthenPayIntegration && window.IfthenPayIntegration.displayPaymentError) {
+        window.IfthenPayIntegration.displayPaymentError(error, container);
+    } else {
+        // Fallback básico
+        container.innerHTML = `
+            <div class="alert alert-danger">
+                <h4>❌ Erro no Pagamento</h4>
+                <p>${error.message}</p>
+            </div>
+        `;
+    }
 }
 
 /**
@@ -238,7 +340,7 @@ function getOrCreateMessageContainer(id, parent) {
     if (!container) {
         container = document.createElement('div');
         container.id = id;
-        container.className = 'form-message mt-3';
+        container.className = 'form-message-container';
         parent.appendChild(container);
     }
     return container;
@@ -248,18 +350,20 @@ function showFormMessage(container, type, message) {
     const alertClass = type === 'error' ? 'alert-danger' : 
                      type === 'success' ? 'alert-success' : 'alert-info';
     
-    container.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+    container.innerHTML = `
+        <div class="alert ${alertClass}">
+            ${message}
+        </div>
+    `;
 }
 
 function setButtonLoading(button, loading) {
-    if (!button) return;
-    
     if (loading) {
         button.disabled = true;
         button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A processar...';
     } else {
         button.disabled = false;
-        button.innerHTML = 'Submeter e Prosseguir para o Pagamento';
+        button.innerHTML = 'SUBMETER E PROSSEGUIR PARA O PAGAMENTO';
     }
 }
 
@@ -268,4 +372,6 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-console.log('✅ Kickstart Pro Form - Versão Corrigida Carregada');
+console.log('✅ Kickstart Pro Form - Versão Final Carregada com sucesso');
+console.log('🔧 Funcionalidades: Validação melhorada, formatação telefone, integração Ifthenpay');
+
