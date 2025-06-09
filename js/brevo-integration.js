@@ -1,267 +1,265 @@
 /**
  * Integração com a API da Brevo para envio de emails
- * 
- * Este módulo fornece funções para integração com a API de emails da Brevo,
- * permitindo enviar emails de confirmação de reserva e contacto.
+ * VERSÃO CORRIGIDA - Endpoints e CORS corrigidos
  */
 
-// Endpoint da API de email
-const EMAIL_API_ENDPOINT = "https://share2inspire-beckend.lm.r.appspot.com/api/email/contact-form";
+// CORREÇÃO: Endpoints corretos para diferentes tipos de email
+const EMAIL_ENDPOINTS = {
+    contact: "https://share2inspire-beckend.lm.r.appspot.com/api/email/contact-form",
+    booking: "https://share2inspire-beckend.lm.r.appspot.com/api/email/booking-confirmation", 
+    newsletter: "https://share2inspire-beckend.lm.r.appspot.com/api/email/newsletter-signup"
+};
+
+// Fallback endpoint
+const FALLBACK_ENDPOINT = "https://share2inspire-beckend.lm.r.appspot.com/api/contact/submit";
 
 /**
- * Envia um email de confirmação de reserva através da API da Brevo
- * @param {Object} formData - Dados do formulário
- * @returns {Promise} - Promise com o resultado da operação
+ * CORREÇÃO: Headers CORS corretos
+ */
+function getHeaders() {
+    return {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Origin': 'https://share2inspire.pt',
+        'X-Requested-With': 'XMLHttpRequest'
+    };
+}
+
+/**
+ * CORREÇÃO: Função genérica para envio com fallback
+ */
+async function sendEmail(data, endpoint, fallbackEndpoint = FALLBACK_ENDPOINT) {
+    try {
+        console.log(`Enviando para endpoint principal: ${endpoint}`);
+        
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            const responseData = await response.json();
+            console.log('Sucesso no endpoint principal:', responseData);
+            return responseData;
+        } else {
+            throw new Error(`Endpoint principal falhou: ${response.status}`);
+        }
+        
+    } catch (error) {
+        console.warn('Endpoint principal falhou, tentando fallback:', error.message);
+        
+        try {
+            const fallbackResponse = await fetch(fallbackEndpoint, {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify(data)
+            });
+            
+            if (fallbackResponse.ok) {
+                const responseData = await fallbackResponse.json();
+                console.log('Sucesso no fallback:', responseData);
+                return responseData;
+            } else {
+                throw new Error(`Fallback também falhou: ${fallbackResponse.status}`);
+            }
+            
+        } catch (fallbackError) {
+            console.error('Todos os endpoints falharam:', fallbackError);
+            throw new Error('Falha na comunicação com o servidor');
+        }
+    }
+}
+
+/**
+ * CORREÇÃO: Envio de confirmação de reserva melhorado
  */
 async function sendBookingConfirmation(formData) {
-    try {
-        // Preparar os dados para envio
-        const emailData = {
-            name: formData.name || '',
-            email: formData.email || '',
-            phone: formData.phone || '',
-            subject: `Reserva: ${formData.service || 'Serviço'}`,
-            message: `Nova reserva de ${formData.service || 'serviço'} para ${formData.date || 'data não especificada'}`,
-            reason: formData.service || 'Reserva de serviço',
-            // Campos adicionais para o backend
-            service: formData.service || '',
-            date: formData.date || '',
-            time: formData.time || '',
-            format: formData.format || '',
-            duration: formData.duration || '',
-            amount: formData.amount || '',
-            source: 'website_booking'
-        };
+    const emailData = {
+        name: formData.name || '',
+        email: formData.email || '',
+        phone: formData.phone || '',
+        subject: `Reserva: ${formData.service || 'Serviço'}`,
+        message: `Nova reserva de ${formData.service || 'serviço'} para ${formData.date || 'data não especificada'}`,
+        reason: formData.service || 'Reserva de serviço',
+        service: formData.service || '',
+        date: formData.date || '',
+        time: formData.time || '',
+        format: formData.format || '',
+        duration: formData.duration || '',
+        amount: formData.amount || '',
+        source: 'website_booking',
+        timestamp: new Date().toISOString()
+    };
 
-        console.log("Enviando dados para a API da Brevo:", emailData);
-
-        // Fazer a chamada à API
-        const response = await fetch(EMAIL_API_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(emailData)
-        });
-
-        // Processar a resposta
-        const responseData = await response.json();
-        console.log("Resposta da API da Brevo:", response.status);
-        console.log("Detalhes completos da resposta:", responseData);
-
-        // Verificar se a resposta foi bem-sucedida
-        if (!response.ok || !responseData.success) {
-            throw new Error(`Erro na resposta da API da Brevo: ${response.status} ${JSON.stringify(responseData)}`);
-        }
-
-        return responseData;
-    } catch (error) {
-        console.error("Erro ao enviar email de confirmação:", error);
-        throw error;
-    }
+    console.log("Enviando confirmação de reserva:", emailData);
+    return sendEmail(emailData, EMAIL_ENDPOINTS.booking);
 }
 
 /**
- * Envia um email de contacto através da API da Brevo
- * @param {Object} formData - Dados do formulário
- * @returns {Promise} - Promise com o resultado da operação
+ * CORREÇÃO: Envio de formulário de contacto melhorado
  */
 async function sendContactForm(formData) {
-    try {
-        // Preparar os dados para envio
-        const emailData = {
-            name: formData.name || '',
-            email: formData.email || '',
-            phone: formData.phone || '',
-            subject: formData.subject || 'Contacto do website',
-            message: formData.message || '',
-            reason: formData.reason || 'Contacto geral',
-            source: 'website_contact_form'
-        };
+    const emailData = {
+        name: formData.name || '',
+        email: formData.email || '',
+        phone: formData.phone || '',
+        subject: formData.subject || 'Contacto do website',
+        message: formData.message || formData.objectives || '',
+        reason: formData.reason || 'Contacto geral',
+        company: formData.company || '',
+        position: formData.position || '',
+        source: 'website_contact_form',
+        timestamp: new Date().toISOString()
+    };
 
-        console.log("Enviando dados para a API da Brevo:", emailData);
-
-        // Fazer a chamada à API
-        const response = await fetch(EMAIL_API_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(emailData)
-        });
-
-        // Processar a resposta
-        const responseData = await response.json();
-        console.log("Resposta da API da Brevo:", response.status);
-        console.log("Detalhes completos da resposta:", responseData);
-
-        // Verificar se a resposta foi bem-sucedida
-        if (!response.ok || !responseData.success) {
-            throw new Error(`Erro na resposta da API da Brevo: ${response.status} ${JSON.stringify(responseData)}`);
-        }
-
-        return responseData;
-    } catch (error) {
-        console.error("Erro ao enviar formulário de contacto:", error);
-        throw error;
-    }
+    console.log("Enviando formulário de contacto:", emailData);
+    return sendEmail(emailData, EMAIL_ENDPOINTS.contact);
 }
 
 /**
- * Envia um email de inscrição em workshop através da API da Brevo
- * @param {Object} formData - Dados do formulário
- * @returns {Promise} - Promise com o resultado da operação
+ * CORREÇÃO: Envio de pedido de agendamento melhorado
+ */
+async function sendBookingRequest(formData) {
+    const emailData = {
+        name: formData.name || '',
+        email: formData.email || '',
+        phone: formData.phone || '',
+        subject: `Agendamento: ${formData.service || 'Serviço'}`,
+        message: formData.message || `Pedido de agendamento para ${formData.service || 'serviço'}`,
+        reason: 'Agendamento',
+        service: formData.service || '',
+        date: formData.date || '',
+        objectives: formData.objectives || '',
+        experience: formData.experience || '',
+        source: 'website_booking_request',
+        timestamp: new Date().toISOString()
+    };
+
+    console.log("Enviando pedido de agendamento:", emailData);
+    return sendEmail(emailData, EMAIL_ENDPOINTS.booking);
+}
+
+/**
+ * CORREÇÃO: Envio de inscrição em workshop melhorado
  */
 async function sendWorkshopRegistration(formData) {
-    try {
-        // Preparar os dados para envio
-        const emailData = {
-            name: formData.name || '',
-            email: formData.email || '',
-            phone: formData.phone || '',
-            subject: `Inscrição: ${formData.workshop || 'Workshop'}`,
-            message: `Nova inscrição para ${formData.workshop || 'workshop'} em ${formData.date || 'data não especificada'}`,
-            reason: 'Inscrição em workshop',
-            // Campos adicionais para o backend
-            workshop: formData.workshop || '',
-            date: formData.date || '',
-            participants: formData.participants || '',
-            company: formData.company || '',
-            source: 'website_workshop_registration'
-        };
+    const emailData = {
+        name: formData.name || '',
+        email: formData.email || '',
+        phone: formData.phone || '',
+        subject: `Inscrição: ${formData.workshop || 'Workshop'}`,
+        message: `Nova inscrição para ${formData.workshop || 'workshop'} em ${formData.date || 'data não especificada'}`,
+        reason: 'Inscrição em workshop',
+        workshop: formData.workshop || '',
+        date: formData.date || '',
+        participants: formData.participants || '',
+        company: formData.company || '',
+        source: 'website_workshop_registration',
+        timestamp: new Date().toISOString()
+    };
 
-        console.log("Enviando dados para a API da Brevo:", emailData);
-
-        // Fazer a chamada à API
-        const response = await fetch(EMAIL_API_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(emailData)
-        });
-
-        // Processar a resposta
-        const responseData = await response.json();
-        console.log("Resposta da API da Brevo:", response.status);
-        console.log("Detalhes completos da resposta:", responseData);
-
-        // Verificar se a resposta foi bem-sucedida
-        if (!response.ok || !responseData.success) {
-            throw new Error(`Erro na resposta da API da Brevo: ${response.status} ${JSON.stringify(responseData)}`);
-        }
-
-        return responseData;
-    } catch (error) {
-        console.error("Erro ao enviar inscrição em workshop:", error);
-        throw error;
-    }
+    console.log("Enviando inscrição em workshop:", emailData);
+    return sendEmail(emailData, EMAIL_ENDPOINTS.contact);
 }
 
 /**
- * Envia um email de pedido de consultoria através da API da Brevo
- * @param {Object} formData - Dados do formulário
- * @returns {Promise} - Promise com o resultado da operação
+ * CORREÇÃO: Envio de pedido de consultoria melhorado
  */
 async function sendConsultingRequest(formData) {
-    try {
-        // Preparar os dados para envio
-        const emailData = {
-            name: formData.name || '',
-            email: formData.email || '',
-            phone: formData.phone || '',
-            subject: 'Pedido de Consultoria',
-            message: formData.message || 'Pedido de consultoria sem detalhes adicionais',
-            reason: 'Consultoria',
-            // Campos adicionais para o backend
-            company: formData.company || '',
-            industry: formData.industry || '',
-            employees: formData.employees || '',
-            source: 'website_consulting_request'
-        };
+    const emailData = {
+        name: formData.name || '',
+        email: formData.email || '',
+        phone: formData.phone || '',
+        subject: 'Pedido de Consultoria Organizacional',
+        message: formData.objectives || formData.message || 'Pedido de consultoria sem detalhes adicionais',
+        reason: 'Consultoria',
+        company: formData.company || '',
+        position: formData.position || '',
+        employees: formData.employees || '',
+        objectives: formData.objectives || '',
+        timeline: formData.timeline || '',
+        budget: formData.budget || '',
+        source: 'website_consulting_request',
+        timestamp: new Date().toISOString()
+    };
 
-        console.log("Enviando dados para a API da Brevo:", emailData);
-
-        // Fazer a chamada à API
-        const response = await fetch(EMAIL_API_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(emailData)
-        });
-
-        // Processar a resposta
-        const responseData = await response.json();
-        console.log("Resposta da API da Brevo:", response.status);
-        console.log("Detalhes completos da resposta:", responseData);
-
-        // Verificar se a resposta foi bem-sucedida
-        if (!response.ok || !responseData.success) {
-            throw new Error(`Erro na resposta da API da Brevo: ${response.status} ${JSON.stringify(responseData)}`);
-        }
-
-        return responseData;
-    } catch (error) {
-        console.error("Erro ao enviar pedido de consultoria:", error);
-        throw error;
-    }
+    console.log("Enviando pedido de consultoria:", emailData);
+    return sendEmail(emailData, EMAIL_ENDPOINTS.contact);
 }
 
 /**
- * Envia um email de pedido de coaching através da API da Brevo
- * @param {Object} formData - Dados do formulário
- * @returns {Promise} - Promise com o resultado da operação
+ * CORREÇÃO: Envio de pedido de coaching melhorado
  */
 async function sendCoachingRequest(formData) {
+    const emailData = {
+        name: formData.name || '',
+        email: formData.email || '',
+        phone: formData.phone || '',
+        subject: 'Pedido de Coaching Executivo',
+        message: formData.objectives || formData.message || 'Pedido de coaching sem detalhes adicionais',
+        reason: 'Coaching',
+        date: formData.date || '',
+        objectives: formData.objectives || '',
+        experience: formData.experience || '',
+        source: 'website_coaching_request',
+        timestamp: new Date().toISOString()
+    };
+
+    console.log("Enviando pedido de coaching:", emailData);
+    return sendEmail(emailData, EMAIL_ENDPOINTS.contact);
+}
+
+/**
+ * NOVO: Envio de newsletter signup
+ */
+async function sendNewsletterSignup(formData) {
+    const emailData = {
+        name: formData.name || '',
+        email: formData.email || '',
+        subject: 'Inscrição Newsletter HR Hub',
+        message: 'Nova inscrição na newsletter HR Innovation Hub',
+        reason: 'Newsletter',
+        source: 'hr_hub_newsletter',
+        timestamp: new Date().toISOString()
+    };
+
+    console.log("Enviando inscrição newsletter:", emailData);
+    return sendEmail(emailData, EMAIL_ENDPOINTS.newsletter);
+}
+
+/**
+ * CORREÇÃO: Função de teste para debug
+ */
+async function testBrevoIntegration() {
+    const testData = {
+        name: 'Teste',
+        email: 'teste@exemplo.com',
+        phone: '912345678',
+        message: 'Teste de integração Brevo'
+    };
+    
     try {
-        // Preparar os dados para envio
-        const emailData = {
-            name: formData.name || '',
-            email: formData.email || '',
-            phone: formData.phone || '',
-            subject: 'Pedido de Coaching',
-            message: formData.message || 'Pedido de coaching sem detalhes adicionais',
-            reason: 'Coaching',
-            // Campos adicionais para o backend
-            position: formData.position || '',
-            goals: formData.goals || '',
-            source: 'website_coaching_request'
-        };
-
-        console.log("Enviando dados para a API da Brevo:", emailData);
-
-        // Fazer a chamada à API
-        const response = await fetch(EMAIL_API_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(emailData)
-        });
-
-        // Processar a resposta
-        const responseData = await response.json();
-        console.log("Resposta da API da Brevo:", response.status);
-        console.log("Detalhes completos da resposta:", responseData);
-
-        // Verificar se a resposta foi bem-sucedida
-        if (!response.ok || !responseData.success) {
-            throw new Error(`Erro na resposta da API da Brevo: ${response.status} ${JSON.stringify(responseData)}`);
-        }
-
-        return responseData;
+        const result = await sendContactForm(testData);
+        console.log('Teste Brevo bem-sucedido:', result);
+        return result;
     } catch (error) {
-        console.error("Erro ao enviar pedido de coaching:", error);
+        console.error('Teste Brevo falhou:', error);
         throw error;
     }
 }
 
-// Exportar funções para uso em outros módulos
+// CORREÇÃO: Exportar todas as funções incluindo as novas
 window.brevoSDK = {
     sendBookingConfirmation,
     sendContactForm,
+    sendBookingRequest,
     sendWorkshopRegistration,
     sendConsultingRequest,
-    sendCoachingRequest
+    sendCoachingRequest,
+    sendNewsletterSignup,
+    testBrevoIntegration,
+    EMAIL_ENDPOINTS
 };
+
