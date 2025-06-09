@@ -1,305 +1,294 @@
 /**
- * Formulário de Consultoria Organizacional - Share2Inspire
- * VERSÃO CORRIGIDA - Endpoints e CORS corrigidos
+ * Formulário de Consultoria - Share2Inspire 
+ * VERSÃO TOTALMENTE CORRIGIDA - Dezembro 2024
+ * Integração com backend corrigido e validação robusta
  */
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Consultoria Form - Versão Corrigida Carregada');
     setupConsultoriaForm();
 });
 
 /**
- * CORREÇÃO: Configuração robusta do formulário
+ * Configuração principal do formulário de consultoria
  */
 function setupConsultoriaForm() {
     const consultoriaForm = document.getElementById('consultoriaForm');
     if (!consultoriaForm) {
-        console.warn('Formulário de consultoria não encontrado');
+        console.warn('⚠️ Formulário Consultoria não encontrado');
         return;
     }
     
-    consultoriaForm.addEventListener('submit', function(e) {
+    console.log('✅ Formulário Consultoria encontrado, configurando...');
+    
+    consultoriaForm.addEventListener('submit', async function(e) {
         e.preventDefault();
+        console.log('📝 Formulário Consultoria submetido');
         
-        const submitButton = this.querySelector('button[type="submit"]') || 
-                           this.querySelector('.btn-primary');
+        const submitButton = this.querySelector('button[type="submit"]');
+        const formMessage = getOrCreateMessageContainer('consultoriaFormMessage', this);
         
-        // CORREÇÃO: Criar container de mensagem se não existir
-        let formMessage = document.getElementById('consultoriaFormMessage');
-        if (!formMessage) {
-            formMessage = document.createElement('div');
-            formMessage.id = 'consultoriaFormMessage';
-            formMessage.className = 'form-message mt-3';
-            this.appendChild(formMessage);
-        }
+        // Limpar mensagens anteriores
+        formMessage.innerHTML = '';
         
+        // Validar formulário
         if (!validateConsultoriaForm(this)) {
-            formMessage.innerHTML = `
-                <div class="alert alert-danger">
-                    Por favor, preencha todos os campos obrigatórios.
-                </div>
-            `;
+            showFormMessage(formMessage, 'error', 'Por favor, preencha todos os campos obrigatórios corretamente.');
             return;
         }
         
-        if (submitButton) {
-            submitButton.disabled = true;
-            const originalText = submitButton.innerHTML;
-            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A enviar...';
-            
-            // Restaurar texto original no finally
-            submitButton.originalText = originalText;
-        }
-        
-        formMessage.innerHTML = '';
-        
+        // Preparar dados
         const formData = new FormData(this);
         const data = prepareConsultoriaData(formData);
         
-        console.log('Enviando dados de consultoria:', data);
+        console.log('📊 Dados preparados:', data);
         
-        processConsultoriaSubmission(data)
-            .then(result => {
-                console.log('Consultoria enviada com sucesso:', result);
-                displayConsultoriaSuccess(result, formMessage);
-                this.reset();
+        // Mostrar loading
+        setButtonLoading(submitButton, true, 'A enviar proposta...');
+        showFormMessage(formMessage, 'info', 'A processar o seu pedido de consultoria...');
+        
+        try {
+            // Enviar dados para o backend
+            const result = await sendConsultoriaRequest(data);
+            console.log('✅ Consultoria enviada:', result);
+            
+            // Tentar enviar email de confirmação
+            try {
+                await sendConsultoriaConfirmationEmail(data);
+                console.log('📧 Email enviado com sucesso');
+            } catch (emailError) {
+                console.warn('⚠️ Email falhou:', emailError);
+            }
+            
+            // Mostrar sucesso
+            displayConsultoriaSuccess(formMessage);
+            this.reset();
+            
+            // Scroll para mensagem
+            setTimeout(() => {
                 formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            })
-            .catch(error => {
-                console.error('Erro ao enviar consultoria:', error);
-                displayConsultoriaError(error, formMessage);
-            })
-            .finally(() => {
-                if (submitButton) {
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = submitButton.originalText || 'Solicitar Proposta';
-                }
-            });
+            }, 100);
+            
+        } catch (error) {
+            console.error('❌ Erro no processo:', error);
+            displayConsultoriaError(error, formMessage);
+        } finally {
+            setButtonLoading(submitButton, false, 'SOLICITAR PROPOSTA');
+        }
     });
 }
 
 /**
- * CORREÇÃO: Validação mais robusta
+ * Validação do formulário de consultoria
  */
 function validateConsultoriaForm(form) {
-    const requiredFields = ['name', 'email', 'company'];
+    console.log('🔍 Validando formulário de consultoria...');
     
-    for (const fieldName of requiredFields) {
-        const field = form.querySelector(`[name="${fieldName}"]`) || 
-                     form.querySelector(`#consultoria${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}`);
+    const validations = [
+        { name: 'name', message: 'Nome é obrigatório' },
+        { name: 'email', message: 'Email é obrigatório', validator: validateEmail },
+        { name: 'company', message: 'Empresa é obrigatória' },
+        { name: 'challenge', message: 'Descrição do desafio é obrigatória' }
+    ];
+    
+    for (const validation of validations) {
+        const field = form.querySelector(`[name="${validation.name}"]`);
         
         if (!field || !field.value.trim()) {
+            console.warn(`❌ Campo ${validation.name} vazio`);
             if (field) field.focus();
             return false;
         }
-    }
-    
-    // Validar email
-    const emailField = form.querySelector('[name="email"]') || form.querySelector('#consultoriaEmail');
-    if (emailField) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(emailField.value)) {
-            emailField.focus();
+        
+        if (validation.validator && !validation.validator(field.value)) {
+            console.warn(`❌ Campo ${validation.name} inválido`);
+            field.focus();
             return false;
         }
     }
     
+    console.log('✅ Formulário de consultoria válido');
     return true;
 }
 
 /**
- * Preparação de dados (mantido)
+ * Preparação de dados para consultoria
  */
 function prepareConsultoriaData(formData) {
-    return {
-        service: 'Consultoria Organizacional',
-        name: formData.get('name') || '',
-        email: formData.get('email') || '',
+    const data = {
+        // Dados do cliente
+        name: formData.get('name'),
+        email: formData.get('email'),
         phone: formData.get('phone') || '',
-        company: formData.get('company') || '',
+        
+        // Dados da empresa
+        company: formData.get('company'),
         position: formData.get('position') || '',
-        employees: formData.get('employees') || '',
-        objectives: formData.get('objectives') || '',
+        size: formData.get('size') || '',
+        sector: formData.get('sector') || '',
+        
+        // Dados do projeto
+        service: 'Consultoria Organizacional',
+        challenge: formData.get('challenge'),
+        goals: formData.get('goals') || '',
         timeline: formData.get('timeline') || '',
         budget: formData.get('budget') || '',
+        
+        // Metadados
         timestamp: new Date().toISOString(),
         source: 'website_form'
     };
+    
+    console.log('📋 Dados de consultoria preparados:', data);
+    return data;
 }
 
 /**
- * CORREÇÃO: Usar integração Brevo se disponível
+ * Envio da solicitação de consultoria
  */
-function processConsultoriaSubmission(data) {
-    return new Promise((resolve, reject) => {
-        // CORREÇÃO: Tentar Brevo primeiro se disponível
-        if (window.brevoSDK && typeof window.brevoSDK.sendContactForm === 'function') {
-            console.log('Usando integração Brevo');
-            
-            window.brevoSDK.sendContactForm(data)
-                .then(result => {
-                    resolve({
-                        success: true,
-                        method: 'brevo',
-                        ...result
-                    });
-                })
-                .catch(brevoError => {
-                    console.warn('Brevo falhou, usando fallback:', brevoError);
-                    processConsultoriaFallback(data).then(resolve).catch(reject);
-                });
-        } else {
-            console.log('Brevo não disponível, usando fallback');
-            processConsultoriaFallback(data).then(resolve).catch(reject);
+async function sendConsultoriaRequest(data) {
+    console.log('📤 Enviando solicitação de consultoria...');
+    
+    try {
+        const response = await fetch('/api/consultoria/request', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        console.log('📡 Resposta do servidor:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
         }
-    });
-}
-
-/**
- * CORREÇÃO: Fallback com endpoints corretos
- */
-function processConsultoriaFallback(data) {
-    const endpoints = [
-        'https://share2inspire-beckend.lm.r.appspot.com/api/contact/submit',
-        'https://share2inspire-beckend.lm.r.appspot.com/api/consultoria/submit',
-        'https://share2inspire-beckend.lm.r.appspot.com/api/email/send'
-    ];
-    
-    return tryMultipleEndpoints(data, endpoints);
-}
-
-/**
- * CORREÇÃO: Tentativa de múltiplos endpoints melhorada
- */
-function tryMultipleEndpoints(data, endpoints, index = 0) {
-    if (index >= endpoints.length) {
-        return Promise.reject(new Error('Todos os endpoints falharam. Contacte-nos diretamente.'));
+        
+        const result = await response.json();
+        console.log('✅ Consultoria processada:', result);
+        
+        return result;
+        
+    } catch (error) {
+        console.error('❌ Erro na consultoria:', error);
+        throw error;
     }
-    
-    const endpoint = endpoints[index];
-    console.log(`Tentando endpoint ${index + 1}/${endpoints.length}: ${endpoint}`);
-    
-    return submitToEndpoint(data, endpoint)
-        .then(result => {
-            console.log(`Sucesso no endpoint: ${endpoint}`);
-            return {
-                success: true,
-                endpoint: endpoint,
-                method: 'fallback',
-                ...result
-            };
-        })
-        .catch(error => {
-            console.warn(`Endpoint ${endpoint} falhou:`, error.message);
-            
-            if (index === endpoints.length - 1) {
-                // Último endpoint - falhar com mensagem útil
-                throw new Error(`Falha na comunicação com o servidor. Contacte-nos diretamente.`);
-            }
-            
-            // Tentar próximo endpoint
-            return tryMultipleEndpoints(data, endpoints, index + 1);
-        });
 }
 
 /**
- * CORREÇÃO: Submissão com headers CORS corretos
+ * Envio de email de confirmação para consultoria
  */
-function submitToEndpoint(data, endpoint) {
-    const config = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify(data)
-    };
+async function sendConsultoriaConfirmationEmail(data) {
+    console.log('📧 Enviando email de confirmação de consultoria...');
     
-    return fetch(endpoint, config)
-        .then(response => {
-            console.log(`Resposta de ${endpoint}:`, response.status, response.statusText);
-            
-            if (response.status === 405) {
-                // CORREÇÃO: Tentar com PUT se POST não for permitido
-                return fetch(endpoint, {
-                    ...config,
-                    method: 'PUT'
-                });
-            }
-            
-            if (!response.ok) {
-                return response.text().then(text => {
-                    throw new Error(`Erro ${response.status}: ${text || response.statusText}`);
-                });
-            }
-            
-            return response;
-        })
-        .then(response => {
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                return response.json();
-            } else {
-                return response.text().then(text => ({ 
-                    success: true, 
-                    message: text || 'Enviado com sucesso' 
-                }));
-            }
-        })
-        .then(result => {
-            if (result.success !== false) {
-                return result;
-            } else {
-                throw new Error(result.error || result.message || 'Erro desconhecido');
-            }
+    try {
+        const response = await fetch('/api/send-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                type: 'consultoria_confirmation',
+                data: data
+            })
         });
+        
+        if (response.ok) {
+            console.log('✅ Email de consultoria enviado');
+        } else {
+            console.warn('⚠️ Email de consultoria falhou');
+        }
+        
+    } catch (error) {
+        console.warn('⚠️ Erro no email de consultoria:', error);
+        throw error;
+    }
 }
 
 /**
- * Display de sucesso (mantido)
+ * Exibição de sucesso para consultoria
  */
-function displayConsultoriaSuccess(result, container) {
-    container.innerHTML = `
+function displayConsultoriaSuccess(messageContainer) {
+    const content = `
         <div class="alert alert-success">
-            <h4>✅ Pedido de Consultoria Enviado</h4>
-            <p>O seu pedido de consultoria organizacional foi enviado com sucesso!</p>
-            <p>📧 Receberá uma resposta no prazo de 24 horas.</p>
-            <p>📞 Para questões urgentes: +351 961 925 050</p>
-            <hr>
-            <p><small>Obrigado por escolher a Share2Inspire!</small></p>
+            <h5><i class="fas fa-check-circle"></i> Solicitação Enviada com Sucesso!</h5>
+            <p>A sua solicitação de proposta de consultoria foi recebida.</p>
+            <div class="mt-3">
+                <h6>Próximos Passos:</h6>
+                <ul class="mb-0">
+                    <li>Receberá um email de confirmação em breve</li>
+                    <li>Analisaremos o seu pedido em 24-48 horas</li>
+                    <li>Entraremos em contacto para agendar uma reunião inicial</li>
+                    <li>Apresentaremos uma proposta personalizada</li>
+                </ul>
+            </div>
+            <p class="mt-3 mb-0"><strong>Obrigado pelo seu interesse nos nossos serviços!</strong></p>
         </div>
     `;
+    
+    messageContainer.innerHTML = content;
 }
 
 /**
- * Display de erro (mantido)
+ * Exibição de erro para consultoria
  */
-function displayConsultoriaError(error, container) {
-    container.innerHTML = `
+function displayConsultoriaError(error, messageContainer) {
+    const content = `
         <div class="alert alert-danger">
-            <h4>❌ Erro ao Enviar Pedido</h4>
-            <p>Ocorreu um erro ao enviar o seu pedido: ${error.message || 'Erro desconhecido'}</p>
+            <h5><i class="fas fa-exclamation-triangle"></i> Erro no Envio</h5>
+            <p>Ocorreu um erro ao enviar a sua solicitação:</p>
+            <p><strong>${error.message || 'Erro desconhecido'}</strong></p>
             <p>Por favor, tente novamente ou contacte-nos diretamente:</p>
-            <ul>
-                <li>📧 Email: samuel@share2inspire.pt</li>
-                <li>📞 Telefone: +351 961 925 050</li>
-                <li>💬 WhatsApp: +351 961 925 050</li>
-            </ul>
+            <p><strong>Email:</strong> srshare2inspire@gmail.com<br>
+               <strong>Telefone:</strong> +351 961 925 050</p>
+        </div>
+    `;
+    
+    messageContainer.innerHTML = content;
+}
+
+/**
+ * Utilitários (reutilizados)
+ */
+function validateEmail(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}
+
+function getOrCreateMessageContainer(id, parent) {
+    let container = document.getElementById(id);
+    if (!container) {
+        container = document.createElement('div');
+        container.id = id;
+        container.className = 'form-message mt-3';
+        parent.appendChild(container);
+    }
+    return container;
+}
+
+function showFormMessage(container, type, message) {
+    const alertClass = type === 'error' ? 'alert-danger' : 
+                     type === 'success' ? 'alert-success' : 'alert-info';
+    
+    container.innerHTML = `
+        <div class="alert ${alertClass}">
+            ${message}
         </div>
     `;
 }
 
-/**
- * Debug para testes
- */
-function debugConsultoriaForm() {
-    console.log('=== DEBUG CONSULTORIA FORM ===');
-    console.log('Form element:', document.getElementById('consultoriaForm'));
-    console.log('Submit button:', document.querySelector('#consultoriaForm button[type="submit"]'));
-    console.log('Form fields:', document.querySelectorAll('#consultoriaForm input, #consultoriaForm select, #consultoriaForm textarea'));
-    console.log('==============================');
+function setButtonLoading(button, loading, text = 'A processar...') {
+    if (!button) return;
+    
+    if (loading) {
+        button.disabled = true;
+        button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ${text}`;
+    } else {
+        button.disabled = false;
+        button.innerHTML = text;
+    }
 }
 
-window.debugConsultoriaForm = debugConsultoriaForm;
+console.log('✅ Consultoria Form - Totalmente Carregado e Configurado');
 
