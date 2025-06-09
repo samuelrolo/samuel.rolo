@@ -54,37 +54,7 @@ async function processPayment(formData, paymentMethod, amount) {
         throw error;
     }
 }
-AGNU nano 8.3                                                                                                           js/ifthepay-integration-fixed.js                                                                                                            Modified
-/**
- * Integração com a API da IfthenPay para pagamentos - VERSÃO CORRIGIDA
- * Endpoints e parâmetros corretos conforme documentação oficial
- */
 
-// Chaves da IfthenPay para os diferentes métodos de pagamento
-const IFTHENPAY_KEYS = {
-    multibanco: "BXG-350883",
-    mbway: "UWP-547025",
-    payshop: "QTU-066969"
-};
-
-// CORRIGIDO: Endpoints oficiais conforme documentação IfthenPay
-const IFTHENPAY_ENDPOINTS = {
-    multibanco: "https://api.ifthenpay.com/multibanco/init",
-    mbway: "https://api.ifthenpay.com/spg/payment/mbway",
-    payshop: "https://ifthenpay.com/api/payshop/get"
-};
-
-// Backend próprio como fallback
-const PAYMENT_API_ENDPOINT = "https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate";
-
-/**
- * Função CORS para headers adequados
- */
-function getCorsHeaders( ) {
-    return {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-	
 /**
  * CORRIGIDO: Processar pagamento via APIs oficiais IfthenPay
  */
