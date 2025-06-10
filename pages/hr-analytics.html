@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics HR Downloads - Share2Inspire</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .downloads-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .section-header {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .email {
+            font-weight: 500;
+            color: #667eea;
+        }
+        
+        .date {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .ip {
+            font-family: monospace;
+            background: #f1f3f4;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #c33;
+        }
+        
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+        }
+        
+        .refresh-btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .last-updated {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Analytics HR Downloads</h1>
+            <p>Relatório de downloads do estudo de Human Resources</p>
+        </div>
+        
+        <button class="refresh-btn" onclick="loadData()">🔄 Atualizar Dados</button>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalDownloads">-</div>
+                <div class="stat-label">Total Downloads</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayDownloads">-</div>
+                <div class="stat-label">Hoje</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="weekDownloads">-</div>
+                <div class="stat-label">Esta Semana</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="monthDownloads">-</div>
+                <div class="stat-label">Este Mês</div>
+            </div>
+        </div>
+        
+        <div class="downloads-section">
+            <div class="section-header">
+                👥 Quem fez Download
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Data & Hora</th>
+                            <th>IP Address</th>
+                            <th>User Agent</th>
+                        </tr>
+                    </thead>
+                    <tbody id="downloadsTable">
+                        <tr>
+                            <td colspan="4" class="loading">
+                                🔄 Carregando dados...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="last-updated" id="lastUpdated">
+            Última atualização: -
+        </div>
+    </div>
+
+    <script>
+        // Configuração da API
+        const API_BASE = 'https://share2inspire-backend.onrender.com';
+        
+        // Função para carregar dados
+        async function loadData() {
+            try {
+                console.log('🔄 Carregando dados dos downloads...');
+                
+                // Mostrar loading
+                document.getElementById('downloadsTable').innerHTML = `
+                    <tr>
+                        <td colspan="4" class="loading">
+                            🔄 Carregando dados...
+                        </td>
+                    </tr>
+                `;
+                
+                // Fazer request para a API
+                const response = await fetch(`${API_BASE}/hr-downloads`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ Dados recebidos:', data);
+                
+                // Atualizar estatísticas
+                document.getElementById('totalDownloads').textContent = data.total || 0;
+                document.getElementById('todayDownloads').textContent = data.today || 0;
+                document.getElementById('weekDownloads').textContent = data.thisWeek || 0;
+                document.getElementById('monthDownloads').textContent = data.thisMonth || 0;
+                
+                // Atualizar tabela
+                const tableBody = document.getElementById('downloadsTable');
+                
+                if (data.downloads && data.downloads.length > 0) {
+                    tableBody.innerHTML = data.downloads.map(download => `
+                        <tr>
+                            <td class="email">${download.email || 'N/A'}</td>
+                            <td class="date">${formatDate(download.timestamp || download.created_at)}</td>
+                            <td class="ip">${download.ip_address || 'N/A'}</td>
+                            <td>${truncateUserAgent(download.user_agent || 'N/A')}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="loading">
+                                📭 Nenhum download registado ainda
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+                // Atualizar timestamp
+                document.getElementById('lastUpdated').textContent = 
+                    `Última atualização: ${new Date().toLocaleString('pt-PT')}`;
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados:', error);
+                
+                // Mostrar erro
+                document.getElementById('downloadsTable').innerHTML = `
+                    <tr>
+                        <td colspan="4" class="error">
+                            ❌ Erro ao carregar dados: ${error.message}
+                            <br><small>Verifique se o backend está online e tente novamente.</small>
+                        </td>
+                    </tr>
+                `;
+                
+                // Reset stats em caso de erro
+                document.getElementById('totalDownloads').textContent = '?';
+                document.getElementById('todayDownloads').textContent = '?';
+                document.getElementById('weekDownloads').textContent = '?';
+                document.getElementById('monthDownloads').textContent = '?';
+            }
+        }
+        
+        // Função para formatar data
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            
+            try {
+                const date = new Date(timestamp);
+                return date.toLocaleString('pt-PT', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return timestamp;
+            }
+        }
+        
+        // Função para truncar User Agent
+        function truncateUserAgent(userAgent) {
+            if (!userAgent || userAgent === 'N/A') return 'N/A';
+            
+            // Extrair informação relevante do User Agent
+            if (userAgent.includes('Chrome')) {
+                return '🌐 Chrome';
+            } else if (userAgent.includes('Firefox')) {
+                return '🦊 Firefox';
+            } else if (userAgent.includes('Safari')) {
+                return '🧭 Safari';
+            } else if (userAgent.includes('Edge')) {
+                return '🔷 Edge';
+            } else {
+                return userAgent.length > 50 ? userAgent.substring(0, 50) + '...' : userAgent;
+            }
+        }
+        
+        // Carregar dados quando a página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📊 Página de analytics carregada');
+            loadData();
+        });
+        
+        // Auto-refresh a cada 5 minutos
+        setInterval(loadData, 5 * 60 * 1000);
+    </script>
+</body>
+</html>
+
