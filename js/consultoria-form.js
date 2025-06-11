@@ -1,13 +1,39 @@
 /**
  * Formulário de Consultoria - Share2Inspire 
- * VERSÃO TOTALMENTE CORRIGIDA - Dezembro 2024
- * Integração com backend corrigido e validação robusta
+ * VERSÃO CORRIGIDA COM SELEÇÃO DE PAGAMENTO - Junho 2025
+ * Integração com backend, Ifthenpay e Brevo
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Consultoria Form - Versão Corrigida Carregada');
+    console.log('🚀 Consultoria Form - Versão com Pagamento Carregada');
     setupConsultoriaForm();
+    setupConsultoriaPaymentHandlers();
 });
+
+/**
+ * Configuração dos handlers de pagamento para consultoria
+ */
+function setupConsultoriaPaymentHandlers() {
+    const paymentRadios = document.querySelectorAll('input[name="consultoria_payment_method"]');
+    const phoneGroup = document.getElementById('consultoriaPhoneGroup');
+    
+    if (paymentRadios.length === 0) {
+        console.log('ℹ️ Consultoria: Sem métodos de pagamento configurados');
+        return;
+    }
+    
+    paymentRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (phoneGroup) {
+                phoneGroup.style.display = this.value === 'mbway' ? 'block' : 'none';
+                const phoneInput = document.getElementById('consultoriaPhoneMbway');
+                if (phoneInput) {
+                    phoneInput.required = this.value === 'mbway';
+                }
+            }
+        });
+    });
+}
 
 /**
  * Configuração principal do formulário de consultoria
@@ -44,251 +70,207 @@ function setupConsultoriaForm() {
         console.log('📊 Dados preparados:', data);
         
         // Mostrar loading
-        setButtonLoading(submitButton, true, 'A enviar proposta...');
-        showFormMessage(formMessage, 'info', 'A processar o seu pedido de consultoria...');
+        setButtonLoading(submitButton, true, 'A processar...');
+        showFormMessage(formMessage, 'info', 'A processar a sua solicitação...');
         
         try {
-            // Enviar dados para o backend
-            const result = await sendConsultoriaRequest(data);
-            console.log('✅ Consultoria enviada:', result);
+            // Verificar se tem método de pagamento selecionado
+            const paymentMethod = formData.get('consultoria_payment_method');
             
-            // Tentar enviar email de confirmação
-            try {
-                await sendConsultoriaConfirmationEmail(data);
-                console.log('📧 Email enviado com sucesso');
-            } catch (emailError) {
-                console.warn('⚠️ Email falhou:', emailError);
+            if (paymentMethod) {
+                // Processar pagamento
+                const paymentResult = await processConsultoriaPayment(data, paymentMethod);
+                if (paymentResult.success) {
+                    // Enviar dados para backend
+                    await submitConsultoriaToBackend(data);
+                    
+                    // Enviar email via Brevo
+                    await sendConsultoriaEmail(data);
+                    
+                    showFormMessage(formMessage, 'success', 
+                        `Proposta solicitada com sucesso! ${paymentResult.message || ''}`);
+                    consultoriaForm.reset();
+                } else {
+                    throw new Error(paymentResult.message || 'Erro no processamento do pagamento');
+                }
+            } else {
+                // Sem pagamento - apenas enviar dados
+                await submitConsultoriaToBackend(data);
+                await sendConsultoriaEmail(data);
+                
+                showFormMessage(formMessage, 'success', 
+                    'Proposta solicitada com sucesso! Entraremos em contacto brevemente.');
+                consultoriaForm.reset();
             }
             
-            // Mostrar sucesso
-            displayConsultoriaSuccess(formMessage);
-            this.reset();
-            
-            // Scroll para mensagem
-            setTimeout(() => {
-                formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
-            
         } catch (error) {
-            console.error('❌ Erro no processo:', error);
-            displayConsultoriaError(error, formMessage);
+            console.error('❌ Erro no formulário Consultoria:', error);
+            showFormMessage(formMessage, 'error', 
+                `Erro no processamento: ${error.message}. Tente novamente ou contacte-nos em samuel@share2inspire.pt`);
         } finally {
-            setButtonLoading(submitButton, false, 'SOLICITAR PROPOSTA');
+            setButtonLoading(submitButton, false, 'Solicitar Proposta');
         }
     });
 }
 
 /**
- * Validação do formulário de consultoria
+ * Processar pagamento para consultoria
+ */
+async function processConsultoriaPayment(data, paymentMethod) {
+    console.log('💳 Processando pagamento Consultoria:', paymentMethod);
+    
+    const paymentData = {
+        orderId: `CONS-${Date.now()}`,
+        amount: data.amount || "150.00", // Valor padrão para consultoria
+        email: data.email,
+        description: `Consultoria Organizacional - ${data.name}`,
+        service: 'Consultoria Organizacional'
+    };
+    
+    if (paymentMethod === 'mbway') {
+        paymentData.mobileNumber = formatPhoneForMbway(data.phone_mbway);
+    }
+    
+    return await window.ifthenpayIntegration.processPayment(paymentMethod, paymentData);
+}
+
+/**
+ * Enviar dados para o backend
+ */
+async function submitConsultoriaToBackend(data) {
+    console.log('📤 Enviando dados Consultoria para backend...');
+    
+    const response = await fetch('https://share2inspire-backend.onrender.com/booking', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            ...data,
+            service: 'Consultoria Organizacional',
+            type: 'consultoria'
+        })
+    });
+    
+    if (!response.ok) {
+        throw new Error(`Erro no servidor: ${response.status}`);
+    }
+    
+    return await response.json();
+}
+
+/**
+ * Enviar email via Brevo
+ */
+async function sendConsultoriaEmail(data) {
+    console.log('📧 Enviando email Consultoria via Brevo...');
+    
+    if (typeof window.brevoIntegration !== 'undefined') {
+        await window.brevoIntegration.sendConsultoriaEmail(data);
+    } else {
+        console.warn('⚠️ Brevo integration não disponível');
+    }
+}
+
+/**
+ * Validar formulário de consultoria
  */
 function validateConsultoriaForm(form) {
-    console.log('🔍 Validando formulário de consultoria...');
+    const requiredFields = ['name', 'email', 'company', 'project'];
     
-    const validations = [
-        { name: 'name', message: 'Nome é obrigatório' },
-        { name: 'email', message: 'Email é obrigatório', validator: validateEmail },
-        { name: 'company', message: 'Empresa é obrigatória' },
-        { name: 'challenge', message: 'Descrição do desafio é obrigatória' }
-    ];
-    
-    for (const validation of validations) {
-        const field = form.querySelector(`[name="${validation.name}"]`);
-        
-        if (!field || !field.value.trim()) {
-            console.warn(`❌ Campo ${validation.name} vazio`);
-            if (field) field.focus();
-            return false;
-        }
-        
-        if (validation.validator && !validation.validator(field.value)) {
-            console.warn(`❌ Campo ${validation.name} inválido`);
-            field.focus();
+    for (const field of requiredFields) {
+        const input = form.querySelector(`[name="${field}"]`);
+        if (!input || !input.value.trim()) {
+            console.warn(`⚠️ Campo obrigatório vazio: ${field}`);
             return false;
         }
     }
     
-    console.log('✅ Formulário de consultoria válido');
+    // Validar email
+    const email = form.querySelector('[name="email"]').value;
+    if (!isValidEmail(email)) {
+        console.warn('⚠️ Email inválido');
+        return false;
+    }
+    
+    // Validar telefone MB WAY se selecionado
+    const paymentMethod = form.querySelector('input[name="consultoria_payment_method"]:checked');
+    if (paymentMethod && paymentMethod.value === 'mbway') {
+        const phone = form.querySelector('[name="phone_mbway"]');
+        if (!phone || !phone.value.trim()) {
+            console.warn('⚠️ Telefone MB WAY obrigatório');
+            return false;
+        }
+    }
+    
     return true;
 }
 
 /**
- * Preparação de dados para consultoria
+ * Preparar dados do formulário
  */
 function prepareConsultoriaData(formData) {
-    const data = {
-        // Dados do cliente
+    return {
         name: formData.get('name'),
         email: formData.get('email'),
-        phone: formData.get('phone') || '',
-        
-        // Dados da empresa
+        phone: formData.get('phone'),
         company: formData.get('company'),
-        position: formData.get('position') || '',
-        size: formData.get('size') || '',
-        sector: formData.get('sector') || '',
-        
-        // Dados do projeto
+        position: formData.get('position'),
+        size: formData.get('size'),
+        project: formData.get('project'),
+        objectives: formData.get('objectives'),
+        phone_mbway: formData.get('phone_mbway'),
+        payment_method: formData.get('consultoria_payment_method'),
         service: 'Consultoria Organizacional',
-        challenge: formData.get('challenge'),
-        goals: formData.get('goals') || '',
-        timeline: formData.get('timeline') || '',
-        budget: formData.get('budget') || '',
-        
-        // Metadados
-        timestamp: new Date().toISOString(),
-        source: 'website_form'
+        timestamp: new Date().toISOString()
     };
-    
-    console.log('📋 Dados de consultoria preparados:', data);
-    return data;
 }
 
-/**
- * Envio da solicitação de consultoria
- */
-async function sendConsultoriaRequest(data) {
-    console.log('📤 Enviando solicitação de consultoria...');
-    
-    try {
-        const response = await fetch('/api/consultoria/request', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-        
-        console.log('📡 Resposta do servidor:', response.status);
-        
-        if (!response.ok) {
-            throw new Error(`Erro HTTP: ${response.status}`);
+// Funções utilitárias (se não existirem)
+if (typeof getOrCreateMessageContainer === 'undefined') {
+    function getOrCreateMessageContainer(id, form) {
+        let container = document.getElementById(id);
+        if (!container) {
+            container = document.createElement('div');
+            container.id = id;
+            container.className = 'form-message mt-3';
+            form.appendChild(container);
         }
-        
-        const result = await response.json();
-        console.log('✅ Consultoria processada:', result);
-        
-        return result;
-        
-    } catch (error) {
-        console.error('❌ Erro na consultoria:', error);
-        throw error;
+        return container;
     }
 }
 
-/**
- * Envio de email de confirmação para consultoria
- */
-async function sendConsultoriaConfirmationEmail(data) {
-    console.log('📧 Enviando email de confirmação de consultoria...');
-    
-    try {
-        const response = await fetch('/api/send-email', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                type: 'consultoria_confirmation',
-                data: data
-            })
-        });
-        
-        if (response.ok) {
-            console.log('✅ Email de consultoria enviado');
+if (typeof showFormMessage === 'undefined') {
+    function showFormMessage(container, type, message) {
+        const alertClass = type === 'success' ? 'alert-success' : 
+                          type === 'error' ? 'alert-danger' : 'alert-info';
+        container.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+    }
+}
+
+if (typeof setButtonLoading === 'undefined') {
+    function setButtonLoading(button, loading, text) {
+        if (loading) {
+            button.disabled = true;
+            button.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>${text}`;
         } else {
-            console.warn('⚠️ Email de consultoria falhou');
+            button.disabled = false;
+            button.innerHTML = text;
         }
-        
-    } catch (error) {
-        console.warn('⚠️ Erro no email de consultoria:', error);
-        throw error;
     }
 }
 
-/**
- * Exibição de sucesso para consultoria
- */
-function displayConsultoriaSuccess(messageContainer) {
-    const content = `
-        <div class="alert alert-success">
-            <h5><i class="fas fa-check-circle"></i> Solicitação Enviada com Sucesso!</h5>
-            <p>A sua solicitação de proposta de consultoria foi recebida.</p>
-            <div class="mt-3">
-                <h6>Próximos Passos:</h6>
-                <ul class="mb-0">
-                    <li>Receberá um email de confirmação em breve</li>
-                    <li>Analisaremos o seu pedido em 24-48 horas</li>
-                    <li>Entraremos em contacto para agendar uma reunião inicial</li>
-                    <li>Apresentaremos uma proposta personalizada</li>
-                </ul>
-            </div>
-            <p class="mt-3 mb-0"><strong>Obrigado pelo seu interesse nos nossos serviços!</strong></p>
-        </div>
-    `;
-    
-    messageContainer.innerHTML = content;
-}
-
-/**
- * Exibição de erro para consultoria
- */
-function displayConsultoriaError(error, messageContainer) {
-    const content = `
-        <div class="alert alert-danger">
-            <h5><i class="fas fa-exclamation-triangle"></i> Erro no Envio</h5>
-            <p>Ocorreu um erro ao enviar a sua solicitação:</p>
-            <p><strong>${error.message || 'Erro desconhecido'}</strong></p>
-            <p>Por favor, tente novamente ou contacte-nos diretamente:</p>
-            <p><strong>Email:</strong> srshare2inspire@gmail.com<br>
-               <strong>Telefone:</strong> +351 961 925 050</p>
-        </div>
-    `;
-    
-    messageContainer.innerHTML = content;
-}
-
-/**
- * Utilitários (reutilizados)
- */
-function validateEmail(email) {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-}
-
-function getOrCreateMessageContainer(id, parent) {
-    let container = document.getElementById(id);
-    if (!container) {
-        container = document.createElement('div');
-        container.id = id;
-        container.className = 'form-message mt-3';
-        parent.appendChild(container);
-    }
-    return container;
-}
-
-function showFormMessage(container, type, message) {
-    const alertClass = type === 'error' ? 'alert-danger' : 
-                     type === 'success' ? 'alert-success' : 'alert-info';
-    
-    container.innerHTML = `
-        <div class="alert ${alertClass}">
-            ${message}
-        </div>
-    `;
-}
-
-function setButtonLoading(button, loading, text = 'A processar...') {
-    if (!button) return;
-    
-    if (loading) {
-        button.disabled = true;
-        button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ${text}`;
-    } else {
-        button.disabled = false;
-        button.innerHTML = text;
+if (typeof isValidEmail === 'undefined') {
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 }
 
-console.log('✅ Consultoria Form - Totalmente Carregado e Configurado');
+if (typeof formatPhoneForMbway === 'undefined') {
+    function formatPhoneForMbway(phone) {
+        if (!phone) return '';
+        const cleaned = phone.replace(/\D/g, '');
+        return cleaned.startsWith('351') ? cleaned : `351${cleaned}`;
+    }
+}
 
