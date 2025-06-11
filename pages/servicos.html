@@ -50,24 +50,14 @@
         
         .footer-contact p {
             margin: 0;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-        
-        .footer-contact i {
-            color: #BF9A33;
-            margin-right: 8px;
-        }
-        
-        .footer-social {
-            display: flex;
-            gap: 15px;
+            font-size: 0.9rem;
         }
         
         .footer-social a {
             color: #BF9A33;
-            font-size: 20px;
-            transition: color 0.3s;
+            font-size: 1.2rem;
+            margin-left: 15px;
+            transition: color 0.3s ease;
         }
         
         .footer-social a:hover {
@@ -75,247 +65,71 @@
         }
         
         .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
             padding-top: 15px;
+            border-top: 1px solid #444;
         }
         
         .footer-links a {
-            color: #BF9A33;
-            font-size: 14px;
+            color: #ccc;
             text-decoration: none;
-            transition: color 0.3s;
+            margin: 0 15px;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
         }
         
         .footer-links a:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
-        
-        .navbar {
-            background-color: #fff;
-            padding: 1rem 0;
-        }
-        
-        .navbar-nav {
-            margin-left: auto;
-        }
-        
-        .navbar-nav .nav-link {
-            color: #333;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            margin: 0 0.25rem;
-        }
-        
-        .navbar-nav .nav-link.active {
             color: #BF9A33;
-            position: relative;
         }
         
-        .navbar-nav .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 1rem;
-            right: 1rem;
-            height: 2px;
-            background-color: #BF9A33;
-        }
-        
-        /* Estilos para a página de serviços */
-        .page-header {
-            background-color: #f8f9fa;
-            padding: 100px 0 50px;
-            margin-bottom: 50px;
-        }
-        
-        .page-header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 1rem;
-        }
-        
-        .breadcrumb {
-            background-color: transparent;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .breadcrumb-item a {
-            color: #BF9A33;
-            text-decoration: none;
-        }
-        
-        .breadcrumb-item.active {
-            color: #6c757d;
-        }
-        
-        .service-section {
-            padding: 80px 0;
-        }
-        
-        .service-section.bg-light {
-            background-color: #f8f9fa;
-        }
-        
-        .service-content h2 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-        
-        .service-tagline {
-            font-size: 1.2rem;
-            color: #BF9A33;
-            margin-bottom: 1.5rem;
-        }
-        
-        .service-content p {
-            margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-        
-        .service-content h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #333;
-            margin: 1.5rem 0 1rem;
-        }
-        
-        .service-benefits {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 1.5rem;
-        }
-        
-        .service-benefits li {
-            margin-bottom: 0.5rem;
+        /* Estilos para métodos de pagamento */
+        .payment-methods {
             display: flex;
-            align-items: flex-start;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
         }
         
-        .service-benefits li i {
-            color: #BF9A33;
-            margin-right: 10px;
-            margin-top: 5px;
-        }
-        
-        .service-image img {
-            width: 100%;
+        .payment-methods .form-check {
+            padding: 12px;
+            border: 2px solid #e9ecef;
             border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
         
-        .modal-header {
-            background-color: #BF9A33;
-            color: #fff;
+        .payment-methods .form-check:hover {
+            border-color: #BF9A33;
+            background-color: #f8f9fa;
         }
         
-        .modal-title {
-            font-weight: 600;
-        }
-        
-        .modal-body label {
+        .payment-methods .form-check-input:checked + .form-check-label {
+            color: #BF9A33;
             font-weight: 500;
-            margin-bottom: 0.5rem;
         }
         
-        .modal-footer .btn-primary {
-            background-color: #BF9A33;
+        .payment-methods .form-check-input:checked ~ * {
             border-color: #BF9A33;
         }
         
-        .modal-footer .btn-primary:hover {
-            background-color: #a88629;
-            border-color: #a88629;
+        .payment-methods .form-check-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            margin-bottom: 0;
         }
         
-        /* Estilos específicos para pagamentos */
-        .payment-details {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-        .highlight {
-            font-weight: bold;
-            color: #BF9A33;
-        }
-        .status-pending {
-            color: #ffc107;
-            font-weight: bold;
-        }
-        .instructions {
-            margin-top: 15px;
-            font-style: italic;
-            color: #6c757d;
+        .payment-methods .form-check-label i {
+            font-size: 1.2rem;
+            width: 20px;
         }
         
-        /* Media queries para otimização mobile */
-        @media (max-width: 992px) {
-            .service-content h2 {
-                font-size: 2rem;
-            }
-            
-            .service-tagline {
-                font-size: 1.1rem;
-            }
-            
-            .service-content h3 {
-                font-size: 1.3rem;
-            }
-            
-            .service-section {
-                padding: 60px 0;
-            }
-        }
-        
+        /* Responsividade */
         @media (max-width: 768px) {
-            .page-header {
-                padding: 80px 0 40px;
-                margin-bottom: 30px;
-            }
-            
-            .page-header h1 {
-                font-size: 2rem;
-            }
-            
-            .service-section {
-                padding: 40px 0;
-            }
-            
-            .service-content {
-                margin-top: 30px;
-            }
-            
-            .service-content h2 {
-                font-size: 1.8rem;
-                text-align: center;
-            }
-            
-            .service-tagline {
-                font-size: 1rem;
-                text-align: center;
-            }
-            
-            .service-content h3 {
-                font-size: 1.2rem;
-            }
-            
-            .service-benefits li {
-                margin-bottom: 0.8rem;
-            }
-            
             .footer-container {
                 flex-direction: column;
                 text-align: center;
-                gap: 20px;
+                gap: 15px;
             }
             
             .footer-right {
@@ -323,30 +137,9 @@
                 gap: 15px;
             }
             
-            .footer-social {
-                justify-content: center;
-            }
-            
-            .footer-links {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-            
-            /* Ajuste para ordem dos elementos em mobile */
-            .order-lg-1 {
-                order: 2;
-            }
-            
-            .order-lg-2 {
-                order: 1;
-                margin-bottom: 30px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .page-header {
-                padding: 70px 0 30px;
+            .footer-links a {
+                display: block;
+                margin: 5px 0;
             }
             
             .page-header h1 {
@@ -421,7 +214,7 @@
                             <a class="nav-link" href="loja.html">Loja</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="people-hub.html">People Hub</a>
+                            <a class="nav-link" href="hr-hub.html">HR Hub</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="../index.html#contatos">Contactos</a>
@@ -450,22 +243,20 @@
     </section>
 
     <!-- Kickstart Pro Section -->
-    <section class="service-section" id="kickstart">
+    <section class="service-section">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 col-md-12">
                     <div class="service-content">
-                        <h2>Kickstart Pro | Express Coaching </h2>
-                        <p class="service-tagline">Impulsiona a tua carreira com uma sessão personalizada</p>
-                        <p>O Kickstart Pro é uma sessão de coaching personalizada às tuas necessidades, desenhada para impulsionar jovens em início de carreira.</p>
-                        <p>Durante esta sessão, vamos trabalhar contigo para identificar os principais desafios e oportunidades, desenvolver um plano de ação claro e fornecer ferramentas e técnicas específicas para ti.</p>
-                        <h3>Benefícios:</h3>
+                        <h2>Kickstart Pro</h2>
+                        <p class="service-tagline">Sessões de mentoria estratégica para líderes e empreendedores</p>
+                        <p>O Kickstart Pro é uma sessão de mentoria intensiva e personalizada, desenhada para líderes e empreendedores que procuram clareza estratégica e direção para os seus projetos e desafios profissionais.</p>
+                        <h3>O que inclui:</h3>
                         <ul class="service-benefits">
-                            <li><i class="fas fa-check"></i> Clareza sobre os próximos passos estratégicos</li>
-                            <li><i class="fas fa-check"></i> Soluções práticas para desafios específicos</li>
-                            <li><i class="fas fa-check"></i> Plano de ação personalizado e implementável</li>
-                            <li><i class="fas fa-check"></i> Acesso a ferramentas e metodologias comprovadas</li>
-                            <li><i class="fas fa-check"></i> Acompanhamento pós-sessão para garantir resultados</li>
+                            <li><i class="fas fa-check"></i> Análise profunda do seu desafio ou projeto</li>
+                            <li><i class="fas fa-check"></i> Estratégias práticas e acionáveis</li>
+                            <li><i class="fas fa-check"></i> Plano de ação estruturado</li>
+                            <li><i class="fas fa-check"></i> Follow-up por email com recursos adicionais</li>
                         </ul>
                         <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#kickstartModal">Marcar Kickstart Pro</button>
                     </div>
@@ -479,23 +270,22 @@
         </div>
     </section>
 
-    <!-- Consultoria Organizacional Section -->
-    <section class="service-section bg-light" id="consultoria">
+    <!-- Consultoria Section -->
+    <section class="service-section bg-light">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 col-md-12 order-lg-2">
                     <div class="service-content">
                         <h2>Consultoria Organizacional</h2>
-                        <p class="service-tagline">Transformação cultural e estratégica para organizações que procuram uma evolução sustentável</p>
-                        <p>A Consultoria Organizacional da Share2Inspire é um serviço abrangente que apoia organizações a implementar mudanças culturais e estratégicas de forma sustentável e centrada nas pessoas.</p>
-                        <p>Trabalhamos em estreita colaboração com os nossos clientes para diagnosticar desafios, desenvolver estratégias personalizadas e implementar processos de transformação.</p>
-                        <h3>Áreas de Intervenção:</h3>
+                        <p class="service-tagline">Transformação organizacional e desenvolvimento de equipas</p>
+                        <p>Apoiamos organizações na implementação de mudanças estruturais e culturais, desenvolvendo estratégias personalizadas para melhorar a performance, engagement e resultados.</p>
+                        <h3>Áreas de especialização:</h3>
                         <ul class="service-benefits">
-                            <li><i class="fas fa-check"></i> Transformação cultural e gestão da mudança</li>
-                            <li><i class="fas fa-check"></i> Desenho e otimização de Políticas e Processos</li>
-                            <li><i class="fas fa-check"></i> Estratégia e inovação organizacional</li>
-                            <li><i class="fas fa-check"></i> Comunicação interna e engagement</li>
-                            <li><i class="fas fa-check"></i> Bem-estar e produtividade organizacional</li>
+                            <li><i class="fas fa-check"></i> Diagnóstico organizacional e cultural</li>
+                            <li><i class="fas fa-check"></i> Gestão da mudança e transformação</li>
+                            <li><i class="fas fa-check"></i> Desenvolvimento de liderança</li>
+                            <li><i class="fas fa-check"></i> Otimização de processos e estruturas</li>
+                            <li><i class="fas fa-check"></i> Estratégias de engagement e retenção</li>
                         </ul>
                         <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#consultoriaModal">Solicitar Proposta</button>
                     </div>
@@ -509,25 +299,24 @@
         </div>
     </section>
 
-    <!-- Coaching Executivo Section -->
-    <section class="service-section" id="coaching">
+    <!-- Coaching Section -->
+    <section class="service-section">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 col-md-12">
                     <div class="service-content">
                         <h2>Coaching Executivo</h2>
-                        <p class="service-tagline">Desenvolvimento de liderança para executivos e gestores de topo</p>
-                        <p>O Coaching Executivo da Share2Inspire é um processo personalizado de desenvolvimento de liderança, desenhado para executivos e gestores que procuram maximizar o seu potencial e impacto organizacional.</p>
-                        <p>Através de sessões individuais estruturadas, apoiamos líderes a desenvolver competências críticas, superar desafios complexos e alcançar objetivos estratégicos.</p>
-                        <h3>Áreas de Foco:</h3>
+                        <p class="service-tagline">Desenvolvimento de liderança e performance executiva</p>
+                        <p>Programas de coaching personalizados para executivos e líderes que procuram maximizar o seu potencial, desenvolver competências de liderança e alcançar objetivos estratégicos.</p>
+                        <h3>Benefícios do programa:</h3>
                         <ul class="service-benefits">
                             <li><i class="fas fa-check"></i> Desenvolvimento de competências de liderança</li>
-                            <li><i class="fas fa-check"></i> Gestão de equipas de alto desempenho</li>
-                            <li><i class="fas fa-check"></i> Comunicação estratégica e influência</li>
-                            <li><i class="fas fa-check"></i> Tomada de decisão em contextos complexos</li>
-                            <li><i class="fas fa-check"></i> Gestão da mudança e transformação</li>
+                            <li><i class="fas fa-check"></i> Melhoria da comunicação e influência</li>
+                            <li><i class="fas fa-check"></i> Gestão eficaz de equipas e conflitos</li>
+                            <li><i class="fas fa-check"></i> Estratégias de tomada de decisão</li>
+                            <li><i class="fas fa-check"></i> Equilíbrio entre vida pessoal e profissional</li>
                         </ul>
-                        <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#coachingModal">Agendar Coaching</button>
+                        <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#coachingModal">Agendar Sessão</button>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-12">
@@ -540,14 +329,14 @@
     </section>
 
     <!-- Workshops Section -->
-    <section class="service-section bg-light" id="workshops">
+    <section class="service-section bg-light">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 col-md-12 order-lg-2">
                     <div class="service-content">
                         <h2>Workshops e Formações</h2>
-                        <p class="service-tagline">Programas de desenvolvimento em grupo para equipas e organizações</p>
-                        <p>Os nossos Workshops e Formações são programas interativos desenhados para desenvolver competências específicas em equipas e grupos organizacionais.</p>
+                        <p class="service-tagline">Programas de desenvolvimento para equipas e organizações</p>
+                        <p>Workshops interativos e formações especializadas desenhadas para desenvolver competências específicas, promover a colaboração e impulsionar a performance das equipas.</p>
                         <p>Combinamos metodologias práticas com conteúdos teóricos sólidos, criando experiências de aprendizagem envolventes e transformadoras.</p>
                         <h3>Temas Disponíveis:</h3>
                         <ul class="service-benefits">
@@ -582,7 +371,6 @@
         </div>
     </section>
 
-
     <!-- Modais dos Serviços -->
     <!-- Kickstart Pro Modal -->
     <div class="modal fade" id="kickstartModal" tabindex="-1" aria-labelledby="kickstartModalLabel" aria-hidden="true">
@@ -614,36 +402,64 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
+                                    <label for="kickstartCompany" class="form-label">Empresa</label>
+                                    <input type="text" class="form-control" id="kickstartCompany" name="company">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="kickstartPosition" class="form-label">Cargo</label>
+                                    <input type="text" class="form-control" id="kickstartPosition" name="position">
+                                </div>
+                                <div class="mb-3">
                                     <label for="kickstartDate" class="form-label">Data Preferencial *</label>
                                     <input type="date" class="form-control" id="kickstartDate" name="date" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="kickstartTime" class="form-label">Hora Preferencial *</label>
-                                    <input type="time" class="form-control" id="kickstartTime" name="time" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="kickstartFormat" class="form-label">Formato Preferencial</label>
-                                    <select class="form-select" id="kickstartFormat" name="format">
-                                        <option value="Online">Online</option>
-                                        <option value="Presencial">Presencial</option>
-                                    </select>
                                 </div>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="kickstartObjectives" class="form-label">Quais são os teus principais objetivos para esta sessão? *</label>
-                            <textarea class="form-control" id="kickstartObjectives" name="objectives" rows="4" required></textarea>
+                            <label for="kickstartChallenge" class="form-label">Descreva o seu desafio ou objetivo *</label>
+                            <textarea class="form-control" id="kickstartChallenge" name="challenge" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="kickstartExperience" class="form-label">Experiência Profissional</label>
-                            <select class="form-select" id="kickstartExperience" name="experience">
-                                <option value="Estudante">Estudante</option>
-                                <option value="0-2 anos">0-2 anos</option>
-                                <option value="3-5 anos">3-5 anos</option>
-                                <option value="6-10 anos">6-10 anos</option>
-                                <option value="10+ anos">10+ anos</option>
+                            <label for="kickstartDuration" class="form-label">Duração da Sessão *</label>
+                            <select class="form-select" id="kickstartDuration" name="duration" required>
+                                <option value="30 minutos - 30€">30 minutos - 30€</option>
+                                <option value="60 minutos - 50€">60 minutos - 50€</option>
+                                <option value="90 minutos - 70€">90 minutos - 70€</option>
                             </select>
                         </div>
+                        
+                        <!-- Método de Pagamento -->
+                        <div class="mb-3">
+                            <label class="form-label">Método de Pagamento *</label>
+                            <div class="payment-methods">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="kickstartMbway" value="mbway" required>
+                                    <label class="form-check-label" for="kickstartMbway">
+                                        <i class="fas fa-mobile-alt"></i> MB WAY
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="kickstartMultibanco" value="multibanco" required>
+                                    <label class="form-check-label" for="kickstartMultibanco">
+                                        <i class="fas fa-credit-card"></i> Multibanco
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="kickstartPayshop" value="payshop" required>
+                                    <label class="form-check-label" for="kickstartPayshop">
+                                        <i class="fas fa-store"></i> Payshop
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Campo de telefone para MB WAY (oculto por defeito) -->
+                        <div class="mb-3" id="kickstartPhoneGroup" style="display: none;">
+                            <label for="kickstartPhoneMbway" class="form-label">Telefone MB WAY *</label>
+                            <input type="tel" class="form-control" id="kickstartPhoneMbway" name="phone_mbway" placeholder="961 925 050">
+                            <small class="form-text text-muted">Número de telefone associado ao MB WAY</small>
+                        </div>
+                        
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="kickstartTerms" required>
                             <label class="form-check-label" for="kickstartTerms">Concordo com a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *</label>
@@ -713,6 +529,40 @@
                             <label for="consultoriaObjectives" class="form-label">Principais Objetivos</label>
                             <textarea class="form-control" id="consultoriaObjectives" name="objectives" rows="3"></textarea>
                         </div>
+                        
+                        <!-- Método de Pagamento (Opcional para Consultoria) -->
+                        <div class="mb-3">
+                            <label class="form-label">Método de Pagamento (Opcional)</label>
+                            <div class="payment-methods">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="consultoria_payment_method" id="consultoriaMbway" value="mbway">
+                                    <label class="form-check-label" for="consultoriaMbway">
+                                        <i class="fas fa-mobile-alt"></i> MB WAY
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="consultoria_payment_method" id="consultoriaMultibanco" value="multibanco">
+                                    <label class="form-check-label" for="consultoriaMultibanco">
+                                        <i class="fas fa-credit-card"></i> Multibanco
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="consultoria_payment_method" id="consultoriaPayshop" value="payshop">
+                                    <label class="form-check-label" for="consultoriaPayshop">
+                                        <i class="fas fa-store"></i> Payshop
+                                    </label>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Deixe em branco para receber proposta sem pagamento imediato</small>
+                        </div>
+                        
+                        <!-- Campo de telefone para MB WAY (oculto por defeito) -->
+                        <div class="mb-3" id="consultoriaPhoneGroup" style="display: none;">
+                            <label for="consultoriaPhoneMbway" class="form-label">Telefone MB WAY *</label>
+                            <input type="tel" class="form-control" id="consultoriaPhoneMbway" name="phone_mbway" placeholder="961 925 050">
+                            <small class="form-text text-muted">Número de telefone associado ao MB WAY</small>
+                        </div>
+                        
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="consultoriaTerms" required>
                             <label class="form-check-label" for="consultoriaTerms">Concordo com a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *</label>
@@ -772,32 +622,63 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="coachingDate" class="form-label">Data Preferencial</label>
-                                    <input type="date" class="form-control" id="coachingDate" name="date">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="coachingTime" class="form-label">Hora Preferencial</label>
-                                    <input type="time" class="form-control" id="coachingTime" name="time">
+                                    <label for="coachingAvailability" class="form-label">Disponibilidade Preferencial</label>
+                                    <select class="form-select" id="coachingAvailability" name="availability">
+                                        <option value="Manhã">Manhã (9h-12h)</option>
+                                        <option value="Tarde">Tarde (14h-17h)</option>
+                                        <option value="Final do dia">Final do dia (17h-19h)</option>
+                                        <option value="Flexível">Flexível</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="coachingObjectives" class="form-label">Principais Desafios/Objetivos de Desenvolvimento *</label>
-                            <textarea class="form-control" id="coachingObjectives" name="objectives" rows="4" required></textarea>
+                            <label for="coachingGoals" class="form-label">Principais Objetivos com o Coaching *</label>
+                            <textarea class="form-control" id="coachingGoals" name="goals" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="coachingFormat" class="form-label">Formato Preferencial</label>
-                            <select class="form-select" id="coachingFormat" name="format">
-                                <option value="Online">Online</option>
-                                <option value="Presencial">Presencial</option>
-                                <option value="Híbrido">Híbrido</option>
-                            </select>
+                            <label for="coachingChallenges" class="form-label">Principais Desafios de Liderança</label>
+                            <textarea class="form-control" id="coachingChallenges" name="challenges" rows="3"></textarea>
                         </div>
+                        
+                        <!-- Método de Pagamento (Opcional para Coaching) -->
+                        <div class="mb-3">
+                            <label class="form-label">Método de Pagamento (Opcional)</label>
+                            <div class="payment-methods">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="coaching_payment_method" id="coachingMbway" value="mbway">
+                                    <label class="form-check-label" for="coachingMbway">
+                                        <i class="fas fa-mobile-alt"></i> MB WAY
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="coaching_payment_method" id="coachingMultibanco" value="multibanco">
+                                    <label class="form-check-label" for="coachingMultibanco">
+                                        <i class="fas fa-credit-card"></i> Multibanco
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="coaching_payment_method" id="coachingPayshop" value="payshop">
+                                    <label class="form-check-label" for="coachingPayshop">
+                                        <i class="fas fa-store"></i> Payshop
+                                    </label>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Deixe em branco para agendar sessão inicial gratuita</small>
+                        </div>
+                        
+                        <!-- Campo de telefone para MB WAY (oculto por defeito) -->
+                        <div class="mb-3" id="coachingPhoneGroup" style="display: none;">
+                            <label for="coachingPhoneMbway" class="form-label">Telefone MB WAY *</label>
+                            <input type="tel" class="form-control" id="coachingPhoneMbway" name="phone_mbway" placeholder="961 925 050">
+                            <small class="form-text text-muted">Número de telefone associado ao MB WAY</small>
+                        </div>
+                        
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="coachingTerms" required>
                             <label class="form-check-label" for="coachingTerms">Concordo com a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *</label>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Agendar Sessão Inicial</button>
+                        <button type="submit" class="btn btn-primary w-100">Agendar Sessão</button>
                         <div id="coachingFormMessage" class="mt-3"></div>
                     </form>
                 </div>
@@ -810,7 +691,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="workshopsModalLabel">Solicitar Informações sobre Workshops</h5>
+                    <h5 class="modal-title" id="workshopsModalLabel">Solicitar Workshop Personalizado</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -833,22 +714,22 @@
                                     <input type="tel" class="form-control" id="workshopsPhone" name="phone">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="workshopsCompany" class="form-label">Empresa *</label>
-                                    <input type="text" class="form-control" id="workshopsCompany" name="company" required>
+                                    <label for="workshopsCompany" class="form-label">Empresa</label>
+                                    <input type="text" class="form-control" id="workshopsCompany" name="company">
                                 </div>
-                            </div>
-                            <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="workshopsPosition" class="form-label">Cargo</label>
                                     <input type="text" class="form-control" id="workshopsPosition" name="position">
                                 </div>
+                            </div>
+                            <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="workshopsParticipants" class="form-label">Número de Participantes</label>
                                     <select class="form-select" id="workshopsParticipants" name="participants">
                                         <option value="5-10">5-10 pessoas</option>
                                         <option value="11-20">11-20 pessoas</option>
                                         <option value="21-50">21-50 pessoas</option>
-                                        <option value="51+">51+ pessoas</option>
+                                        <option value="50+">50+ pessoas</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
@@ -895,6 +776,40 @@
                                 <option value="Flexível">Flexível</option>
                             </select>
                         </div>
+                        
+                        <!-- Método de Pagamento (Opcional para Workshops) -->
+                        <div class="mb-3">
+                            <label class="form-label">Método de Pagamento (Opcional)</label>
+                            <div class="payment-methods">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="workshops_payment_method" id="workshopsMbway" value="mbway">
+                                    <label class="form-check-label" for="workshopsMbway">
+                                        <i class="fas fa-mobile-alt"></i> MB WAY
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="workshops_payment_method" id="workshopsMultibanco" value="multibanco">
+                                    <label class="form-check-label" for="workshopsMultibanco">
+                                        <i class="fas fa-credit-card"></i> Multibanco
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="workshops_payment_method" id="workshopsPayshop" value="payshop">
+                                    <label class="form-check-label" for="workshopsPayshop">
+                                        <i class="fas fa-store"></i> Payshop
+                                    </label>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Deixe em branco para receber proposta sem pagamento imediato</small>
+                        </div>
+                        
+                        <!-- Campo de telefone para MB WAY (oculto por defeito) -->
+                        <div class="mb-3" id="workshopsPhoneGroup" style="display: none;">
+                            <label for="workshopsPhoneMbway" class="form-label">Telefone MB WAY *</label>
+                            <input type="tel" class="form-control" id="workshopsPhoneMbway" name="phone_mbway" placeholder="961 925 050">
+                            <small class="form-text text-muted">Número de telefone associado ao MB WAY</small>
+                        </div>
+                        
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="workshopsTerms" required>
                             <label class="form-check-label" for="workshopsTerms">Concordo com a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *</label>
@@ -942,6 +857,10 @@
     
     <!-- Custom JS -->
     <script src="../js/kickstart-pro-form.js"></script>
+    <script src="../js/consultoria-form.js"></script>
+    <script src="../js/coaching-form.js"></script>
+    <script src="../js/workshops-form.js"></script>
+    <script src="../js/brevo-integration.js"></script>
     <script src="../js/ifthenpay-integration.js"></script>
     
     <script>
@@ -952,44 +871,9 @@
                 console.error('Bootstrap não está carregado!');
                 return;
             }
-
-            // Formulário Consultoria
-            const consultoriaForm = document.getElementById('consultoriaForm');
-            if (consultoriaForm) {
-                consultoriaForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    document.getElementById('consultoriaFormMessage').innerHTML = 
-                        '<div class="alert alert-success">Pedido enviado com sucesso! Entraremos em contacto brevemente.</div>';
-                });
-            }
-
-            // Formulário Coaching
-            const coachingForm = document.getElementById('coachingForm');
-            if (coachingForm) {
-                coachingForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    document.getElementById('coachingFormMessage').innerHTML = 
-                        '<div class="alert alert-success">Pedido enviado com sucesso! Entraremos em contacto brevemente.</div>';
-                });
-            }
-
-            // Formulário Workshops
-            const workshopsForm = document.getElementById('workshopsForm');
-            if (workshopsForm) {
-                workshopsForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    document.getElementById('workshopsFormMessage').innerHTML = 
-                        '<div class="alert alert-success">Pedido enviado com sucesso! Entraremos em contacto brevemente.</div>';
-                });
-            }
-
-            // Debug: Verificar se modais existem
-            console.log('Modais encontrados:', {
-                kickstart: document.getElementById('kickstartModal') ? 'OK' : 'FALTA',
-                consultoria: document.getElementById('consultoriaModal') ? 'OK' : 'FALTA',
-                coaching: document.getElementById('coachingModal') ? 'OK' : 'FALTA',
-                workshops: document.getElementById('workshopsModal') ? 'OK' : 'FALTA'
-            });
+            
+            console.log('✅ Bootstrap carregado com sucesso');
+            console.log('🚀 Página de serviços inicializada');
         });
     </script>
 </body>
