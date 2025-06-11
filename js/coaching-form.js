@@ -1,39 +1,13 @@
 /**
- * Formulário de Coaching - Share2Inspire 
- * VERSÃO CORRIGIDA COM SELEÇÃO DE PAGAMENTO - Junho 2025
- * Integração com backend, Ifthenpay e Brevo
+ * Formulário de Coaching - Share2Inspire
+ * VERSÃO CORRIGIDA SEM PAGAMENTO - Junho 2025
+ * Apenas envio de email via Brevo
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Coaching Form - Versão com Pagamento Carregada');
+    console.log('🚀 Coaching Form - Versão Apenas Email Carregada');
     setupCoachingForm();
-    setupCoachingPaymentHandlers();
 });
-
-/**
- * Configuração dos handlers de pagamento para coaching
- */
-function setupCoachingPaymentHandlers() {
-    const paymentRadios = document.querySelectorAll('input[name="coaching_payment_method"]');
-    const phoneGroup = document.getElementById('coachingPhoneGroup');
-    
-    if (paymentRadios.length === 0) {
-        console.log('ℹ️ Coaching: Sem métodos de pagamento configurados');
-        return;
-    }
-    
-    paymentRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-            if (phoneGroup) {
-                phoneGroup.style.display = this.value === 'mbway' ? 'block' : 'none';
-                const phoneInput = document.getElementById('coachingPhoneMbway');
-                if (phoneInput) {
-                    phoneInput.required = this.value === 'mbway';
-                }
-            }
-        });
-    });
-}
 
 /**
  * Configuração principal do formulário de coaching
@@ -44,94 +18,51 @@ function setupCoachingForm() {
         console.warn('⚠️ Formulário Coaching não encontrado');
         return;
     }
-    
+
     console.log('✅ Formulário Coaching encontrado, configurando...');
-    
+
     coachingForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         console.log('📝 Formulário Coaching submetido');
-        
+
         const submitButton = this.querySelector('button[type="submit"]');
         const formMessage = getOrCreateMessageContainer('coachingFormMessage', this);
-        
+
         // Limpar mensagens anteriores
         formMessage.innerHTML = '';
-        
+
         // Validar formulário
         if (!validateCoachingForm(this)) {
             showFormMessage(formMessage, 'error', 'Por favor, preencha todos os campos obrigatórios corretamente.');
             return;
         }
-        
+
         // Preparar dados
         const formData = new FormData(this);
         const data = prepareCoachingData(formData);
-        
         console.log('📊 Dados preparados:', data);
-        
+
         // Mostrar loading
         setButtonLoading(submitButton, true, 'A processar...');
-        showFormMessage(formMessage, 'info', 'A processar o seu agendamento...');
-        
+        showFormMessage(formMessage, 'info', 'A processar a sua solicitação...');
+
         try {
-            // Verificar se tem método de pagamento selecionado
-            const paymentMethod = formData.get('coaching_payment_method');
+            // Enviar dados para backend
+            await submitCoachingToBackend(data);
             
-            if (paymentMethod) {
-                // Processar pagamento
-                const paymentResult = await processCoachingPayment(data, paymentMethod);
-                if (paymentResult.success) {
-                    // Enviar dados para backend
-                    await submitCoachingToBackend(data);
-                    
-                    // Enviar email via Brevo
-                    await sendCoachingEmail(data);
-                    
-                    showFormMessage(formMessage, 'success', 
-                        `Sessão agendada com sucesso! ${paymentResult.message || ''}`);
-                    coachingForm.reset();
-                } else {
-                    throw new Error(paymentResult.message || 'Erro no processamento do pagamento');
-                }
-            } else {
-                // Sem pagamento - apenas enviar dados
-                await submitCoachingToBackend(data);
-                await sendCoachingEmail(data);
-                
-                showFormMessage(formMessage, 'success', 
-                    'Pedido enviado com sucesso! Entraremos em contacto para agendar.');
-                coachingForm.reset();
-            }
+            // Enviar email via Brevo
+            await sendCoachingEmail(data);
             
+            showFormMessage(formMessage, 'success', 'Sessão de coaching solicitada com sucesso! Entraremos em contacto brevemente para agendar a sua sessão inicial gratuita.');
+            coachingForm.reset();
+
         } catch (error) {
             console.error('❌ Erro no formulário Coaching:', error);
-            showFormMessage(formMessage, 'error', 
-                `Erro no processamento: ${error.message}. Tente novamente ou contacte-nos em samuel@share2inspire.pt`);
+            showFormMessage(formMessage, 'error', `Erro no processamento: ${error.message}. Tente novamente ou contacte-nos em samuel@share2inspire.pt`);
         } finally {
             setButtonLoading(submitButton, false, 'Agendar Sessão');
         }
     });
-}
-
-/**
- * Processar pagamento para coaching
- */
-async function processCoachingPayment(data, paymentMethod) {
-    console.log('💳 Processando pagamento Coaching:', paymentMethod);
-    
-    const paymentData = {
-        orderId: `COACH-${Date.now()}`,
-        amount: data.amount || "80.00", // Valor padrão para coaching
-        email: data.email,
-        description: `Coaching Executivo - ${data.name}`,
-        service: 'Coaching Executivo'
-    };
-    
-    if (paymentMethod === 'mbway') {
-        paymentData.mobileNumber = formatPhoneForMbway(data.phone_mbway);
-    }
-    
-    return await window.ifthenpayIntegration.processPayment(paymentMethod, paymentData);
 }
 
 /**
@@ -151,11 +82,11 @@ async function submitCoachingToBackend(data) {
             type: 'coaching'
         })
     });
-    
+
     if (!response.ok) {
         throw new Error(`Erro no servidor: ${response.status}`);
     }
-    
+
     return await response.json();
 }
 
@@ -176,7 +107,7 @@ async function sendCoachingEmail(data) {
  * Validar formulário de coaching
  */
 function validateCoachingForm(form) {
-    const requiredFields = ['name', 'email'];
+    const requiredFields = ['name', 'email', 'goals'];
     
     for (const field of requiredFields) {
         const input = form.querySelector(`[name="${field}"]`);
@@ -185,24 +116,14 @@ function validateCoachingForm(form) {
             return false;
         }
     }
-    
+
     // Validar email
     const email = form.querySelector('[name="email"]').value;
     if (!isValidEmail(email)) {
         console.warn('⚠️ Email inválido');
         return false;
     }
-    
-    // Validar telefone MB WAY se selecionado
-    const paymentMethod = form.querySelector('input[name="coaching_payment_method"]:checked');
-    if (paymentMethod && paymentMethod.value === 'mbway') {
-        const phone = form.querySelector('[name="phone_mbway"]');
-        if (!phone || !phone.value.trim()) {
-            console.warn('⚠️ Telefone MB WAY obrigatório');
-            return false;
-        }
-    }
-    
+
     return true;
 }
 
@@ -220,8 +141,6 @@ function prepareCoachingData(formData) {
         goals: formData.get('goals'),
         challenges: formData.get('challenges'),
         availability: formData.get('availability'),
-        phone_mbway: formData.get('phone_mbway'),
-        payment_method: formData.get('coaching_payment_method'),
         service: 'Coaching Executivo',
         timestamp: new Date().toISOString()
     };
@@ -264,14 +183,6 @@ if (typeof setButtonLoading === 'undefined') {
 if (typeof isValidEmail === 'undefined') {
     function isValidEmail(email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-}
-
-if (typeof formatPhoneForMbway === 'undefined') {
-    function formatPhoneForMbway(phone) {
-        if (!phone) return '';
-        const cleaned = phone.replace(/\D/g, '');
-        return cleaned.startsWith('351') ? cleaned : `351${cleaned}`;
     }
 }
 
