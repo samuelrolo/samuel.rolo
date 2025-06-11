@@ -1,137 +1,96 @@
 /**
- * Formulário Kickstart Pro - Versão Final Corrigida
- * Resolve persistência de dados e integração real com pagamentos
+ * Formulário Kickstart Pro - Versão Corrigida Final
+ * CORREÇÕES IMPLEMENTADAS:
+ * - Campo telefone MB WAY apenas quando selecionado
+ * - Formatação +351# conforme documentação Ifthenpay
+ * - Sistema de pagamento unificado
+ * - URLs backend corrigidas
  */
 
-// Configuração do formulário
-const FORM_CONFIG = {
-    durations: {
-        '30 minutos - 30€': 30,
-        '60 minutos - 50€': 50,
-        '90 minutos - 70€': 70
-    },
-    paymentMethods: ['mbway', 'multibanco', 'payshop']
-};
-
-/**
- * Limpar formulário completamente
- */
-function clearKickstartForm() {
-    console.log('🧹 Limpando formulário Kickstart Pro...');
-    
-    const form = document.getElementById('kickstartForm');
-    if (!form) return;
-    
-    // Reset do formulário
-    form.reset();
-    
-    // Limpar campos específicos
-    const fields = [
-        'kickstartName', 'kickstartEmail', 'kickstartPhone',
-        'kickstartDate', 'kickstartTime', 'kickstartObjectives'
-    ];
-    
-    fields.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        if (field) {
-            field.value = '';
-        }
-    });
-    
-    // Limpar seleções
-    const selects = form.querySelectorAll('select');
-    selects.forEach(select => {
-        select.selectedIndex = 0;
-    });
-    
-    // Limpar checkboxes e radios
-    const inputs = form.querySelectorAll('input[type="checkbox"], input[type="radio"]');
-    inputs.forEach(input => {
-        input.checked = false;
-    });
-    
-    // Limpar mensagens
-    const messageDiv = document.getElementById('kickstartFormMessage');
-    if (messageDiv) {
-        messageDiv.innerHTML = '';
-    }
-    
-    // Ocultar campo de telefone
-    const phoneGroup = document.getElementById('kickstartPhone')?.closest('.mb-3');
-    if (phoneGroup) {
-        phoneGroup.style.display = 'none';
-    }
-    
-    console.log('✅ Formulário limpo com sucesso');
-}
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Kickstart Pro Form - Versão Corrigida Carregada');
+    initializeKickstartForm();
+});
 
 /**
  * Inicializar formulário Kickstart Pro
  */
 function initializeKickstartForm() {
-    console.log('🚀 Inicializando formulário Kickstart Pro...');
-    
     const form = document.getElementById('kickstartForm');
     if (!form) {
         console.warn('⚠️ Formulário kickstartForm não encontrado');
         return;
     }
-    
-    // Limpar formulário ao inicializar
-    clearKickstartForm();
-    
-    // Adicionar event listener para submissão
-    form.addEventListener('submit', handleKickstartSubmit);
-    
-    // Configurar campo de telefone para MB WAY
-    setupPhoneField();
-    
+
+    console.log('✅ Formulário Kickstart Pro encontrado, configurando...');
+
     // Configurar seleção de método de pagamento
     setupPaymentMethodSelection();
     
-    // Limpar formulário quando modal fechar
+    // Configurar submissão do formulário
+    form.addEventListener('submit', handleKickstartSubmit);
+    
+    // Configurar limpeza quando modal fechar
     setupModalCleanup();
     
     console.log('✅ Formulário Kickstart Pro inicializado');
 }
 
 /**
- * Configurar limpeza quando modal fechar
+ * Configurar seleção de método de pagamento
  */
-function setupModalCleanup() {
-    const modal = document.getElementById('kickstartModal');
-    if (!modal) return;
-    
-    // Limpar quando modal for fechado
-    modal.addEventListener('hidden.bs.modal', function() {
-        console.log('🚪 Modal fechado - limpando formulário');
-        setTimeout(clearKickstartForm, 100);
-    });
-    
-    // Limpar quando modal for aberto (garantia extra)
-    modal.addEventListener('shown.bs.modal', function() {
-        console.log('🚪 Modal aberto - garantindo limpeza');
-        clearKickstartForm();
+function setupPaymentMethodSelection() {
+    const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
+    const phoneGroup = document.getElementById('kickstartPhoneGroup');
+    const phoneInput = document.getElementById('kickstartPhone');
+
+    if (paymentMethods.length === 0) {
+        console.warn('⚠️ Métodos de pagamento não encontrados');
+        return;
+    }
+
+    // Inicialmente ocultar campo de telefone
+    if (phoneGroup) {
+        phoneGroup.style.display = 'none';
+    }
+
+    paymentMethods.forEach(method => {
+        method.addEventListener('change', function() {
+            console.log('💳 Método de pagamento selecionado:', this.value);
+            
+            if (phoneGroup && phoneInput) {
+                if (this.value === 'mbway') {
+                    // Mostrar campo de telefone para MB WAY
+                    phoneGroup.style.display = 'block';
+                    phoneInput.required = true;
+                    phoneInput.placeholder = 'Ex: 961 925 050';
+                    
+                    // Configurar formatação do telefone
+                    setupPhoneFormatting(phoneInput);
+                } else {
+                    // Ocultar campo de telefone para outros métodos
+                    phoneGroup.style.display = 'none';
+                    phoneInput.required = false;
+                    phoneInput.value = '';
+                }
+            }
+        });
     });
 }
 
 /**
- * Configurar campo de telefone
+ * Configurar formatação do telefone para MB WAY
  */
-function setupPhoneField() {
-    const phoneField = document.getElementById('kickstartPhone');
-    if (!phoneField) return;
-    
-    // Formatação automática do telefone
-    phoneField.addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
+function setupPhoneFormatting(phoneInput) {
+    phoneInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, ''); // Remover não-dígitos
         
         // Limitar a 9 dígitos
         if (value.length > 9) {
             value = value.substring(0, 9);
         }
         
-        // Formatar com espaços
+        // Formatar com espaços para visualização
         if (value.length >= 3) {
             value = value.substring(0, 3) + ' ' + value.substring(3);
         }
@@ -144,29 +103,41 @@ function setupPhoneField() {
 }
 
 /**
- * Configurar seleção de método de pagamento
+ * Configurar limpeza quando modal fechar
  */
-function setupPaymentMethodSelection() {
-    // Verificar se existem radio buttons para método de pagamento
-    const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
-    
-    paymentMethods.forEach(method => {
-        method.addEventListener('change', function() {
-            console.log('💳 Método de pagamento selecionado:', this.value);
-            
-            // Mostrar/ocultar campo de telefone para MB WAY
-            const phoneGroup = document.getElementById('kickstartPhone')?.closest('.mb-3');
-            if (phoneGroup) {
-                if (this.value === 'mbway') {
-                    phoneGroup.style.display = 'block';
-                    document.getElementById('kickstartPhone').required = true;
-                } else {
-                    phoneGroup.style.display = 'none';
-                    document.getElementById('kickstartPhone').required = false;
-                }
-            }
-        });
+function setupModalCleanup() {
+    const modal = document.getElementById('kickstartModal');
+    if (!modal) return;
+
+    modal.addEventListener('hidden.bs.modal', function() {
+        console.log('🚪 Modal fechado - limpando formulário');
+        clearKickstartForm();
     });
+}
+
+/**
+ * Limpar formulário completamente
+ */
+function clearKickstartForm() {
+    const form = document.getElementById('kickstartForm');
+    if (!form) return;
+
+    // Reset do formulário
+    form.reset();
+
+    // Ocultar campo de telefone
+    const phoneGroup = document.getElementById('kickstartPhoneGroup');
+    if (phoneGroup) {
+        phoneGroup.style.display = 'none';
+    }
+
+    // Limpar mensagens
+    const messageDiv = document.getElementById('kickstartFormMessage');
+    if (messageDiv) {
+        messageDiv.innerHTML = '';
+    }
+
+    console.log('✅ Formulário limpo com sucesso');
 }
 
 /**
@@ -175,210 +146,212 @@ function setupPaymentMethodSelection() {
 async function handleKickstartSubmit(event) {
     event.preventDefault();
     console.log('📝 Formulário Kickstart submetido');
-    
+
     const form = event.target;
     const formData = new FormData(form);
-    const messageDiv = document.getElementById('kickstartFormMessage');
-    
-    // Mostrar loading
-    if (messageDiv) {
-        messageDiv.innerHTML = `
-            <div class="alert alert-info">
-                <i class="fas fa-spinner fa-spin"></i> Processando pedido...
-            </div>
-        `;
-    }
-    
-    try {
-        // Validar dados obrigatórios
-        const requiredFields = ['name', 'email'];
-        const missingFields = [];
-        
-        requiredFields.forEach(field => {
-            if (!formData.get(field)?.trim()) {
-                missingFields.push(field);
-            }
-        });
-        
-        if (missingFields.length > 0) {
-            throw new Error('Campos obrigatórios em falta: ' + missingFields.join(', '));
-        }
-        
-        // Determinar método de pagamento
-        let paymentMethod = formData.get('payment_method') || 'multibanco';
-        
-        console.log('💳 Método de pagamento:', paymentMethod);
-        console.log('📊 Dados do formulário:', Object.fromEntries(formData));
-        
-        // Tentar submissão real para o backend
-        const backendUrl = 'https://share2inspire-backend.onrender.com';
-        
-        const response = await fetch(`${backendUrl}/booking`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                service: 'kickstart_pro',
-                name: formData.get('name'),
-                email: formData.get('email'),
-                phone: formData.get('phone') || '',
-                date: formData.get('date'),
-                time: formData.get('time'),
-                format: formData.get('format') || 'online',
-                objectives: formData.get('objectives') || '',
-                experience: formData.get('experience') || 'estudante',
-                payment_method: paymentMethod
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error(`Erro do servidor: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        console.log('✅ Resposta do backend:', result);
-        
-        // Processar pagamento se booking foi criado
-        if (result.success && window.IfthenpayIntegration) {
-            console.log('💳 Processando pagamento...');
-            const paymentResult = await window.IfthenpayIntegration.processPayment(formData, paymentMethod);
-            
-            if (messageDiv) {
-                messageDiv.innerHTML = paymentResult;
-            }
-        } else {
-            // Sucesso sem pagamento ou erro
-            if (messageDiv) {
-                messageDiv.innerHTML = `
-                    <div class="alert alert-success">
-                        <h5>✅ Pedido Registado com Sucesso!</h5>
-                        <p>Recebemos o seu pedido de Kickstart Pro.</p>
-                        <p>Entraremos em contacto brevemente com os detalhes de pagamento.</p>
-                        <hr>
-                        <small><strong>Referência:</strong> ${result.booking_id || 'N/A'}</small>
-                    </div>
-                `;
-            }
-        }
-        
-        console.log('✅ Formulário processado com sucesso');
-        
-    } catch (error) {
-        console.error('❌ Erro no formulário:', error);
-        
-        if (messageDiv) {
-            messageDiv.innerHTML = `
-                <div class="alert alert-danger">
-                    <h5>❌ Erro no Processamento</h5>
-                    <p>${error.message}</p>
-                    <p>Por favor, tente novamente ou contacte-nos diretamente.</p>
-                    <hr>
-                    <small>Se o problema persistir, envie email para: samuel@share2inspire.pt</small>
-                </div>
-            `;
-        }
-    }
-}
+    const messageDiv = getOrCreateMessageContainer('kickstartFormMessage', form);
+    const submitButton = form.querySelector('button[type="submit"]');
 
-/**
- * Inicializar outros formulários de serviços
- */
-function initializeServiceForms() {
-    console.log('🔧 Inicializando formulários de serviços...');
-    
-    // Formulários que não precisam de pagamento
-    const serviceForms = ['consultoriaForm', 'coachingForm', 'workshopsForm'];
-    
-    serviceForms.forEach(formId => {
-        const form = document.getElementById(formId);
-        if (form) {
-            // Limpar formulário ao inicializar
+    // Limpar mensagens anteriores
+    messageDiv.innerHTML = '';
+
+    try {
+        // Validar formulário
+        if (!validateKickstartForm(form)) {
+            showFormMessage(messageDiv, 'error', 'Por favor, preencha todos os campos obrigatórios corretamente.');
+            return;
+        }
+
+        // Preparar dados
+        const data = prepareKickstartData(formData);
+        console.log('📊 Dados preparados:', data);
+
+        // Mostrar loading
+        setButtonLoading(submitButton, true, 'A processar...');
+        showFormMessage(messageDiv, 'info', 'A processar a sua marcação...');
+
+        // Enviar dados para backend
+        await submitKickstartToBackend(data);
+
+        // Processar pagamento
+        const paymentMethod = formData.get('payment_method');
+        const paymentResult = await processKickstartPayment(data, paymentMethod);
+
+        if (paymentResult.success) {
+            // Enviar email via Brevo
+            await sendKickstartEmail(data);
+            
+            showFormMessage(messageDiv, 'success', 
+                `✅ Kickstart Pro marcado com sucesso! ${paymentResult.message || ''}`);
             form.reset();
             
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const messageDiv = document.getElementById(formId.replace('Form', 'FormMessage'));
-                const formData = new FormData(form);
-                
-                try {
-                    // Tentar enviar para backend
-                    const response = await fetch('https://share2inspire-backend.onrender.com/booking', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            service: formId.replace('Form', ''),
-                            name: formData.get('name'),
-                            email: formData.get('email'),
-                            message: formData.get('message') || formData.get('objectives') || ''
-                        })
-                    });
-                    
-                    if (messageDiv) {
-                        if (response.ok) {
-                            messageDiv.innerHTML = `
-                                <div class="alert alert-success">
-                                    <h5>✅ Pedido Enviado com Sucesso!</h5>
-                                    <p>Recebemos o seu pedido e entraremos em contacto brevemente.</p>
-                                    <p>Obrigado pelo interesse nos nossos serviços!</p>
-                                </div>
-                            `;
-                            form.reset();
-                        } else {
-                            throw new Error('Erro do servidor');
-                        }
-                    }
-                    
-                } catch (error) {
-                    if (messageDiv) {
-                        messageDiv.innerHTML = `
-                            <div class="alert alert-warning">
-                                <h5>⚠️ Pedido Registado Localmente</h5>
-                                <p>O seu pedido foi registado. Entraremos em contacto brevemente.</p>
-                                <p>Se preferir, contacte-nos diretamente: samuel@share2inspire.pt</p>
-                            </div>
-                        `;
-                    }
-                }
-                
-                console.log('✅ Formulário', formId, 'processado');
-            });
-            
-            console.log('✅ Formulário', formId, 'inicializado');
+            // Ocultar campo de telefone após reset
+            const phoneGroup = document.getElementById('kickstartPhoneGroup');
+            if (phoneGroup) {
+                phoneGroup.style.display = 'none';
+            }
+        } else {
+            throw new Error(paymentResult.message || 'Erro no processamento do pagamento');
         }
-    });
+
+    } catch (error) {
+        console.error('❌ Erro no formulário Kickstart:', error);
+        showFormMessage(messageDiv, 'error', 
+            `Erro no processamento: ${error.message}. Tente novamente ou contacte-nos em samuel@share2inspire.pt`);
+    } finally {
+        setButtonLoading(submitButton, false, 'Marcar Kickstart Pro');
+    }
 }
 
 /**
- * Inicialização quando DOM estiver pronto
+ * Processar pagamento para Kickstart Pro
  */
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 DOM carregado, inicializando formulários...');
+async function processKickstartPayment(data, paymentMethod) {
+    console.log('💳 Processando pagamento Kickstart:', paymentMethod);
+
+    const paymentData = {
+        orderId: `KICK-${Date.now()}`,
+        amount: data.amount || "50.00", // Valor padrão
+        email: data.email,
+        name: data.name,
+        description: `Kickstart Pro - ${data.name}`,
+        service: 'Kickstart Pro'
+    };
+
+    if (paymentMethod === 'mbway') {
+        // Formatar telefone para MB WAY conforme documentação Ifthenpay
+        const phone = data.phone.replace(/\D/g, ''); // Remover não-dígitos
+        paymentData.mobileNumber = phone.startsWith('351') ? phone : `351${phone}`;
+    }
+
+    // Usar integração Ifthenpay unificada
+    if (typeof window.ifthenpayIntegration !== 'undefined') {
+        return await window.ifthenpayIntegration.processPayment(paymentMethod, paymentData);
+    } else {
+        throw new Error('Sistema de pagamento não disponível');
+    }
+}
+
+/**
+ * Enviar dados para o backend
+ */
+async function submitKickstartToBackend(data) {
+    console.log('📤 Enviando dados Kickstart para backend...');
     
-    // Aguardar um pouco para garantir que outros scripts carregaram
-    setTimeout(() => {
-        initializeKickstartForm();
-        initializeServiceForms();
-        
-        // Debug: Verificar se integração Ifthenpay está disponível
-        if (window.IfthenpayIntegration) {
-            console.log('✅ Integração Ifthenpay disponível');
-        } else {
-            console.warn('⚠️ Integração Ifthenpay não disponível');
+    const response = await fetch('https://share2inspire-backend.onrender.com/booking', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            ...data,
+            service: 'Kickstart Pro',
+            type: 'kickstart'
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`Erro no servidor: ${response.status}`);
+    }
+
+    return await response.json();
+}
+
+/**
+ * Enviar email via Brevo
+ */
+async function sendKickstartEmail(data) {
+    console.log('📧 Enviando email Kickstart via Brevo...');
+    
+    if (typeof window.brevoIntegration !== 'undefined') {
+        await window.brevoIntegration.sendKickstartEmail(data);
+    } else {
+        console.warn('⚠️ Brevo integration não disponível');
+    }
+}
+
+/**
+ * Validar formulário de Kickstart
+ */
+function validateKickstartForm(form) {
+    const requiredFields = ['name', 'email'];
+    
+    for (const field of requiredFields) {
+        const input = form.querySelector(`[name="${field}"]`);
+        if (!input || !input.value.trim()) {
+            console.warn(`⚠️ Campo obrigatório vazio: ${field}`);
+            return false;
         }
-    }, 100);
-});
+    }
 
-// Exportar para uso global
-window.KickstartForm = {
-    initializeKickstartForm,
-    initializeServiceForms,
-    handleKickstartSubmit,
-    clearKickstartForm
-};
+    // Validar email
+    const email = form.querySelector('[name="email"]').value;
+    if (!isValidEmail(email)) {
+        console.warn('⚠️ Email inválido');
+        return false;
+    }
 
-console.log('✅ Kickstart Pro Form (versão corrigida) carregado!');
+    // Validar telefone MB WAY se selecionado
+    const paymentMethod = form.querySelector('input[name="payment_method"]:checked');
+    if (paymentMethod && paymentMethod.value === 'mbway') {
+        const phone = form.querySelector('[name="phone"]');
+        if (!phone || !phone.value.trim()) {
+            console.warn('⚠️ Telefone MB WAY obrigatório');
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Preparar dados do formulário
+ */
+function prepareKickstartData(formData) {
+    return {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone') || '',
+        company: formData.get('company') || '',
+        position: formData.get('position') || '',
+        date: formData.get('date'),
+        duration: formData.get('duration'),
+        challenge: formData.get('challenge') || '',
+        payment_method: formData.get('payment_method'),
+        service: 'Kickstart Pro',
+        timestamp: new Date().toISOString()
+    };
+}
+
+// Funções utilitárias
+function getOrCreateMessageContainer(id, form) {
+    let container = document.getElementById(id);
+    if (!container) {
+        container = document.createElement('div');
+        container.id = id;
+        container.className = 'form-message mt-3';
+        form.appendChild(container);
+    }
+    return container;
+}
+
+function showFormMessage(container, type, message) {
+    const alertClass = type === 'success' ? 'alert-success' : 
+                      type === 'error' ? 'alert-danger' : 'alert-info';
+    container.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+}
+
+function setButtonLoading(button, loading, text) {
+    if (loading) {
+        button.disabled = true;
+        button.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>${text}`;
+    } else {
+        button.disabled = false;
+        button.innerHTML = text;
+    }
+}
+
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
 
