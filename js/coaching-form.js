@@ -1,13 +1,12 @@
 /**
- * Formulário de Coaching - Share2Inspire 
- * VERSÃO TOTALMENTE CORRIGIDA - Dezembro 2024
- * Integração com backend corrigido e validação robusta
+ * Formulário de Coaching - Share2Inspire
+ * VERSÃO CORRIGIDA SEM PAGAMENTO - Junho 2025
+ * Apenas envio de email via Brevo
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Coaching Form - Versão Corrigida Carregada');
+    console.log('🚀 Coaching Form - Versão Apenas Email Carregada');
     setupCoachingForm();
-    setupCoachingPaymentHandlers();
 });
 
 /**
@@ -19,375 +18,171 @@ function setupCoachingForm() {
         console.warn('⚠️ Formulário Coaching não encontrado');
         return;
     }
-    
+
     console.log('✅ Formulário Coaching encontrado, configurando...');
-    
+
     coachingForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         console.log('📝 Formulário Coaching submetido');
-        
+
         const submitButton = this.querySelector('button[type="submit"]');
         const formMessage = getOrCreateMessageContainer('coachingFormMessage', this);
-        
+
         // Limpar mensagens anteriores
         formMessage.innerHTML = '';
-        
+
         // Validar formulário
         if (!validateCoachingForm(this)) {
             showFormMessage(formMessage, 'error', 'Por favor, preencha todos os campos obrigatórios corretamente.');
             return;
         }
-        
+
         // Preparar dados
         const formData = new FormData(this);
         const data = prepareCoachingData(formData);
-        
         console.log('📊 Dados preparados:', data);
-        
+
         // Mostrar loading
         setButtonLoading(submitButton, true, 'A processar...');
-        showFormMessage(formMessage, 'info', 'A processar o seu agendamento...');
-        
+        showFormMessage(formMessage, 'info', 'A processar a sua solicitação...');
+
         try {
-            // Processar pagamento se necessário
-            const paymentResult = await processCoachingPayment(data);
-            console.log('💳 Resultado do pagamento:', paymentResult);
+            // Enviar dados para backend
+            await submitCoachingToBackend(data);
             
-            if (paymentResult.success) {
-                // Tentar enviar email de confirmação
-                try {
-                    await sendCoachingConfirmationEmail(data);
-                    console.log('📧 Email enviado com sucesso');
-                } catch (emailError) {
-                    console.warn('⚠️ Email falhou, mas agendamento OK:', emailError);
-                }
-                
-                // Mostrar sucesso
-                displayCoachingSuccess(paymentResult, data.paymentMethod, formMessage);
-                this.reset();
-                
-                // Scroll para mensagem
-                setTimeout(() => {
-                    formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 100);
-                
-            } else {
-                throw new Error(paymentResult.error || 'Erro no processamento do agendamento');
-            }
+            // Enviar email via Brevo
+            await sendCoachingEmail(data);
             
+            showFormMessage(formMessage, 'success', 'Sessão de coaching solicitada com sucesso! Entraremos em contacto brevemente para agendar a sua sessão inicial gratuita.');
+            coachingForm.reset();
+
         } catch (error) {
-            console.error('❌ Erro no processo:', error);
-            displayCoachingError(error, formMessage);
+            console.error('❌ Erro no formulário Coaching:', error);
+            showFormMessage(formMessage, 'error', `Erro no processamento: ${error.message}. Tente novamente ou contacte-nos em samuel@share2inspire.pt`);
         } finally {
-            setButtonLoading(submitButton, false, 'AGENDAR E PAGAR');
+            setButtonLoading(submitButton, false, 'Agendar Sessão');
         }
     });
 }
 
 /**
- * Configuração dos handlers de pagamento para coaching
+ * Enviar dados para o backend
  */
-function setupCoachingPaymentHandlers() {
-    const paymentMethodRadios = document.querySelectorAll('#coachingModal input[name="paymentMethod"]');
+async function submitCoachingToBackend(data) {
+    console.log('📤 Enviando dados Coaching para backend...');
     
-    paymentMethodRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-            console.log('💳 Método de pagamento coaching alterado:', this.value);
-            updateCoachingPaymentMethodUI(this.value);
-        });
+    const response = await fetch('https://share2inspire-backend.onrender.com/booking', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            ...data,
+            service: 'Coaching Executivo',
+            type: 'coaching'
+        })
     });
+
+    if (!response.ok) {
+        throw new Error(`Erro no servidor: ${response.status}`);
+    }
+
+    return await response.json();
 }
 
 /**
- * Validação do formulário de coaching
+ * Enviar email via Brevo
+ */
+async function sendCoachingEmail(data) {
+    console.log('📧 Enviando email Coaching via Brevo...');
+    
+    if (typeof window.brevoIntegration !== 'undefined') {
+        await window.brevoIntegration.sendCoachingEmail(data);
+    } else {
+        console.warn('⚠️ Brevo integration não disponível');
+    }
+}
+
+/**
+ * Validar formulário de coaching
  */
 function validateCoachingForm(form) {
-    console.log('🔍 Validando formulário de coaching...');
+    const requiredFields = ['name', 'email', 'goals'];
     
-    const validations = [
-        { name: 'name', message: 'Nome é obrigatório' },
-        { name: 'email', message: 'Email é obrigatório', validator: validateEmail },
-        { name: 'phone', message: 'Telefone é obrigatório', validator: validatePhone },
-        { name: 'date', message: 'Data é obrigatória', validator: validateDate },
-        { name: 'time', message: 'Hora é obrigatória' },
-        { name: 'goals', message: 'Objetivos são obrigatórios' }
-    ];
-    
-    for (const validation of validations) {
-        const field = form.querySelector(`[name="${validation.name}"]`);
-        
-        if (!field || !field.value.trim()) {
-            console.warn(`❌ Campo ${validation.name} vazio`);
-            if (field) field.focus();
-            return false;
-        }
-        
-        if (validation.validator && !validation.validator(field.value)) {
-            console.warn(`❌ Campo ${validation.name} inválido`);
-            field.focus();
+    for (const field of requiredFields) {
+        const input = form.querySelector(`[name="${field}"]`);
+        if (!input || !input.value.trim()) {
+            console.warn(`⚠️ Campo obrigatório vazio: ${field}`);
             return false;
         }
     }
-    
-    // Validar termos
-    const termsCheckbox = form.querySelector('#coachingTerms');
-    if (termsCheckbox && !termsCheckbox.checked) {
-        console.warn('❌ Termos não aceites');
-        termsCheckbox.focus();
+
+    // Validar email
+    const email = form.querySelector('[name="email"]').value;
+    if (!isValidEmail(email)) {
+        console.warn('⚠️ Email inválido');
         return false;
     }
-    
-    console.log('✅ Formulário de coaching válido');
+
     return true;
 }
 
 /**
- * Preparação de dados para coaching
+ * Preparar dados do formulário
  */
 function prepareCoachingData(formData) {
-    const sessionType = formData.get('sessionType') || 'individual';
-    const duration = formData.get('duration') || '60min';
-    
-    // Calcular preço baseado no tipo e duração
-    let amount = '60.00'; // Preço padrão
-    if (sessionType === 'individual') {
-        amount = duration === '90min' ? '90.00' : '60.00';
-    } else if (sessionType === 'group') {
-        amount = duration === '90min' ? '45.00' : '30.00';
-    }
-    
-    const data = {
-        // Dados do cliente
+    return {
         name: formData.get('name'),
         email: formData.get('email'),
         phone: formData.get('phone'),
-        
-        // Dados da sessão
-        service: 'Coaching Executivo',
-        sessionType: sessionType,
-        date: formData.get('date'),
-        time: formData.get('time'),
-        duration: duration,
-        format: formData.get('format') || 'Online',
+        company: formData.get('company'),
+        position: formData.get('position'),
+        experience: formData.get('experience'),
         goals: formData.get('goals'),
-        experience: formData.get('experience') || '',
-        challenges: formData.get('challenges') || '',
-        
-        // Dados do pagamento
-        paymentMethod: formData.get('paymentMethod') || 'mb',
-        amount: amount,
-        orderId: `COACHING-${Date.now()}`,
-        description: `Coaching ${sessionType} - ${duration} - ${formData.get('name')}`
+        challenges: formData.get('challenges'),
+        availability: formData.get('availability'),
+        service: 'Coaching Executivo',
+        timestamp: new Date().toISOString()
     };
-    
-    console.log('📋 Dados de coaching preparados:', data);
-    return data;
 }
 
-/**
- * Processamento do pagamento para coaching
- */
-async function processCoachingPayment(data) {
-    console.log('💳 Iniciando processamento de pagamento coaching...');
-    
-    try {
-        const response = await fetch('/api/payment/initiate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-        
-        console.log('📡 Resposta do servidor:', response.status);
-        
-        if (!response.ok) {
-            throw new Error(`Erro HTTP: ${response.status}`);
+// Funções utilitárias (se não existirem)
+if (typeof getOrCreateMessageContainer === 'undefined') {
+    function getOrCreateMessageContainer(id, form) {
+        let container = document.getElementById(id);
+        if (!container) {
+            container = document.createElement('div');
+            container.id = id;
+            container.className = 'form-message mt-3';
+            form.appendChild(container);
         }
-        
-        const result = await response.json();
-        console.log('✅ Pagamento coaching processado:', result);
-        
-        return result;
-        
-    } catch (error) {
-        console.error('❌ Erro no pagamento coaching:', error);
-        throw error;
+        return container;
     }
 }
 
-/**
- * Envio de email de confirmação para coaching
- */
-async function sendCoachingConfirmationEmail(data) {
-    console.log('📧 Enviando email de confirmação de coaching...');
-    
-    try {
-        const response = await fetch('/api/send-email', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                type: 'coaching_confirmation',
-                data: data
-            })
-        });
-        
-        if (response.ok) {
-            console.log('✅ Email de coaching enviado');
+if (typeof showFormMessage === 'undefined') {
+    function showFormMessage(container, type, message) {
+        const alertClass = type === 'success' ? 'alert-success' : 
+                          type === 'error' ? 'alert-danger' : 'alert-info';
+        container.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+    }
+}
+
+if (typeof setButtonLoading === 'undefined') {
+    function setButtonLoading(button, loading, text) {
+        if (loading) {
+            button.disabled = true;
+            button.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>${text}`;
         } else {
-            console.warn('⚠️ Email de coaching falhou');
-        }
-        
-    } catch (error) {
-        console.warn('⚠️ Erro no email de coaching:', error);
-        throw error;
-    }
-}
-
-/**
- * Exibição de sucesso para coaching
- */
-function displayCoachingSuccess(paymentResult, paymentMethod, messageContainer) {
-    let content = `
-        <div class="alert alert-success">
-            <h5><i class="fas fa-check-circle"></i> Sessão Agendada com Sucesso!</h5>
-            <p>A sua sessão de coaching foi agendada e o pagamento processado.</p>
-    `;
-    
-    if (paymentMethod === 'mb' || paymentMethod === 'multibanco') {
-        content += `
-            <div class="payment-details mt-3">
-                <h6>Dados para Pagamento Multibanco:</h6>
-                <div class="row">
-                    <div class="col-md-4"><strong>Entidade:</strong> ${paymentResult.entity || 'N/A'}</div>
-                    <div class="col-md-4"><strong>Referência:</strong> ${paymentResult.reference || 'N/A'}</div>
-                    <div class="col-md-4"><strong>Valor:</strong> €${paymentResult.amount || 'N/A'}</div>
-                </div>
-                <p class="mt-2"><small>Validade: ${paymentResult.expiryDate || '3 dias'}</small></p>
-            </div>
-        `;
-    } else if (paymentMethod === 'mbway') {
-        content += `
-            <div class="payment-details mt-3">
-                <h6>Pagamento MB WAY:</h6>
-                <p>Verifique a sua aplicação MB WAY para confirmar o pagamento de €${paymentResult.amount || 'N/A'}.</p>
-                <p><strong>Estado:</strong> ${paymentResult.message || 'Pendente'}</p>
-            </div>
-        `;
-    }
-    
-    content += `
-            <div class="mt-3">
-                <h6>Próximos Passos:</h6>
-                <ul class="mb-0">
-                    <li>Receberá um email de confirmação com os detalhes da sessão</li>
-                    <li>Entraremos em contacto 24h antes para confirmar</li>
-                    <li>Link da sessão online será enviado por email</li>
-                </ul>
-            </div>
-        </div>
-    `;
-    
-    messageContainer.innerHTML = content;
-}
-
-/**
- * Exibição de erro para coaching
- */
-function displayCoachingError(error, messageContainer) {
-    const content = `
-        <div class="alert alert-danger">
-            <h5><i class="fas fa-exclamation-triangle"></i> Erro no Agendamento</h5>
-            <p>Ocorreu um erro ao agendar a sua sessão:</p>
-            <p><strong>${error.message || 'Erro desconhecido'}</strong></p>
-            <p>Por favor, tente novamente ou contacte-nos diretamente:</p>
-            <p><strong>Email:</strong> srshare2inspire@gmail.com<br>
-               <strong>Telefone:</strong> +351 961 925 050</p>
-        </div>
-    `;
-    
-    messageContainer.innerHTML = content;
-}
-
-/**
- * Atualização da interface do método de pagamento para coaching
- */
-function updateCoachingPaymentMethodUI(method) {
-    console.log('🎨 Atualizando UI coaching para método:', method);
-    
-    // Esconder todos os campos específicos
-    const mbwayFields = document.getElementById('coachingMbwayFields');
-    if (mbwayFields) {
-        mbwayFields.style.display = method === 'mbway' ? 'block' : 'none';
-    }
-    
-    // Atualizar instruções de pagamento
-    const paymentInstructions = document.getElementById('coachingPaymentInstructions');
-    if (paymentInstructions) {
-        if (method === 'mbway') {
-            paymentInstructions.innerHTML = '<small class="text-muted">Receberá uma notificação na sua app MB WAY para confirmar o pagamento.</small>';
-        } else {
-            paymentInstructions.innerHTML = '<small class="text-muted">Receberá os dados de pagamento Multibanco por email.</small>';
+            button.disabled = false;
+            button.innerHTML = text;
         }
     }
 }
 
-/**
- * Utilitários (reutilizados)
- */
-function validateEmail(email) {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-}
-
-function validatePhone(phone) {
-    const cleanPhone = phone.replace(/\D/g, '');
-    return cleanPhone.length >= 9;
-}
-
-function validateDate(date) {
-    const selectedDate = new Date(date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return selectedDate >= today;
-}
-
-function getOrCreateMessageContainer(id, parent) {
-    let container = document.getElementById(id);
-    if (!container) {
-        container = document.createElement('div');
-        container.id = id;
-        container.className = 'form-message mt-3';
-        parent.appendChild(container);
-    }
-    return container;
-}
-
-function showFormMessage(container, type, message) {
-    const alertClass = type === 'error' ? 'alert-danger' : 
-                     type === 'success' ? 'alert-success' : 'alert-info';
-    
-    container.innerHTML = `
-        <div class="alert ${alertClass}">
-            ${message}
-        </div>
-    `;
-}
-
-function setButtonLoading(button, loading, text = 'A processar...') {
-    if (!button) return;
-    
-    if (loading) {
-        button.disabled = true;
-        button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ${text}`;
-    } else {
-        button.disabled = false;
-        button.innerHTML = text;
+if (typeof isValidEmail === 'undefined') {
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 }
-
-console.log('✅ Coaching Form - Totalmente Carregado e Configurado');
 
