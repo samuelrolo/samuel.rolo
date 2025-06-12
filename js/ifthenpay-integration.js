@@ -1,28 +1,23 @@
 /**
  * Integração Ifthenpay - Share2Inspire
- * VERSÃO UNIFICADA E CORRIGIDA - Junho 2025
+ * VERSÃO CORRIGIDA PARA NOVOS BLUEPRINTS - Junho 2025
  * Implementação completa: MB WAY, Multibanco, Payshop
- * URLs corrigidas e sistema unificado
+ * URLs corrigidas para usar backend como proxy
  */
 
 // Configuração global da integração Ifthenpay
 window.ifthenpayIntegration = {
-    // URLs das APIs (conforme documentação oficial)
+    // URLs corrigidas para usar o backend como proxy
     endpoints: {
-        mbway: 'https://api.ifthenpay.com/spg/payment/mbway',
-        multibanco: 'https://api.ifthenpay.com/multibanco/reference',
-        payshop: 'https://ifthenpay.com/api/payshop/reference'
+        mbway: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/mbway',
+        multibanco: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/multibanco',
+        payshop: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/payshop',
+        callback: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/callback',
+        health: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/health'
     },
 
-    // Chaves de API (devem ser configuradas pelo backend)
-    keys: {
-        mbway: 'MBWAY_KEY_PLACEHOLDER',
-        multibanco: 'MB_KEY_PLACEHOLDER',
-        payshop: 'PAYSHOP_KEY_PLACEHOLDER'
-    },
-
-    // Backend proxy para evitar CORS (URL CORRIGIDA)
-    backendUrl: 'https://share2inspire-backend.onrender.com',
+    // Backend URL corrigida
+    backendUrl: 'https://share2inspire-beckend.lm.r.appspot.com',
 
     /**
      * Processar pagamento conforme método selecionado
@@ -31,6 +26,9 @@ window.ifthenpayIntegration = {
         console.log(`💳 Processando pagamento ${method.toUpperCase()}:`, paymentData);
         
         try {
+            // Validar dados básicos
+            this.validatePaymentData(paymentData, method);
+            
             switch (method) {
                 case 'mbway':
                     return await this.processMbWayPayment(paymentData);
@@ -55,49 +53,44 @@ window.ifthenpayIntegration = {
      */
     async processMbWayPayment(data) {
         console.log('📱 Processando MB WAY...');
-
-        // Validar dados obrigatórios
-        if (!data.mobileNumber || !data.amount || !data.email) {
-            throw new Error('Dados obrigatórios em falta para MB WAY');
-        }
-
-        // Preparar payload conforme documentação
+        
+        // Preparar payload para o backend
         const payload = {
-            mbWayKey: this.keys.mbway,
-            orderId: data.orderId || `ORDER-${Date.now()}`,
+            orderId: data.orderId || `MBWAY-${Date.now()}`,
             amount: this.formatAmount(data.amount),
-            mobileNumber: this.formatMobileNumberForIfthenpay(data.mobileNumber),
-            email: data.email,
+            mobileNumber: this.formatMobileNumber(data.mobileNumber),
+            customerName: data.customerName || data.name,
+            customerEmail: data.customerEmail || data.email,
             description: data.description || 'Pagamento Share2Inspire'
         };
 
         console.log('📤 Payload MB WAY:', payload);
 
         try {
-            // Tentar via backend primeiro (recomendado)
-            const response = await this.callBackendProxy('mbway', payload);
+            const response = await this.callBackendEndpoint('mbway', payload);
+            
             if (response.success) {
                 return {
                     success: true,
-                    message: 'Pedido MB WAY enviado! Confirme no seu telemóvel.',
-                    data: response.data
+                    message: response.message || 'Pedido MB WAY enviado! Confirme no seu telemóvel.',
+                    data: {
+                        orderId: payload.orderId,
+                        amount: payload.amount,
+                        mobileNumber: payload.mobileNumber,
+                        status: 'pending',
+                        method: 'mbway',
+                        ...response.data
+                    }
                 };
             } else {
-                throw new Error(response.message || 'Erro no backend');
+                throw new Error(response.error || 'Erro no processamento MB WAY');
             }
-        } catch (backendError) {
-            console.warn('⚠️ Backend indisponível, usando fallback:', backendError.message);
-            
-            // Fallback: dados simulados para demonstração
+
+        } catch (error) {
+            console.error('❌ Erro MB WAY:', error);
             return {
-                success: true,
-                message: `MB WAY simulado: Confirme o pagamento no telemóvel ${this.formatMobileNumberDisplay(data.mobileNumber)}`,
-                data: {
-                    orderId: payload.orderId,
-                    amount: payload.amount,
-                    status: 'pending',
-                    method: 'mbway'
-                }
+                success: false,
+                message: `Erro MB WAY: ${error.message}`
             };
         }
     },
@@ -107,55 +100,44 @@ window.ifthenpayIntegration = {
      */
     async processMultibancoPayment(data) {
         console.log('🏧 Processando Multibanco...');
-
-        // Validar dados obrigatórios
-        if (!data.amount) {
-            throw new Error('Valor obrigatório para Multibanco');
-        }
-
-        // Preparar payload conforme documentação
+        
+        // Preparar payload para o backend
         const payload = {
-            mbKey: this.keys.multibanco,
             orderId: data.orderId || `MB-${Date.now()}`,
             amount: this.formatAmount(data.amount),
-            description: data.description || 'Pagamento Share2Inspire',
-            clientEmail: data.email,
-            clientName: data.name || 'Cliente',
-            expiryDays: 7 // 7 dias para expiração
+            customerName: data.customerName || data.name,
+            customerEmail: data.customerEmail || data.email,
+            description: data.description || 'Pagamento Share2Inspire'
         };
 
         console.log('📤 Payload Multibanco:', payload);
 
         try {
-            // Tentar via backend primeiro
-            const response = await this.callBackendProxy('multibanco', payload);
+            const response = await this.callBackendEndpoint('multibanco', payload);
+            
             if (response.success) {
                 return {
                     success: true,
-                    message: `Referência Multibanco gerada: Entidade ${response.data.entity}, Referência ${response.data.reference}`,
-                    data: response.data
+                    message: response.message || 'Referência Multibanco gerada com sucesso',
+                    data: {
+                        orderId: payload.orderId,
+                        amount: payload.amount,
+                        entity: response.data.entity,
+                        reference: response.data.reference,
+                        status: 'pending',
+                        method: 'multibanco',
+                        ...response.data
+                    }
                 };
             } else {
-                throw new Error(response.message || 'Erro no backend');
+                throw new Error(response.error || 'Erro no processamento Multibanco');
             }
-        } catch (backendError) {
-            console.warn('⚠️ Backend indisponível, usando fallback:', backendError.message);
-            
-            // Fallback: dados simulados
-            const simulatedEntity = '11249';
-            const simulatedReference = this.generateSimulatedReference();
-            
+
+        } catch (error) {
+            console.error('❌ Erro Multibanco:', error);
             return {
-                success: true,
-                message: `Multibanco simulado: Entidade ${simulatedEntity}, Referência ${simulatedReference}`,
-                data: {
-                    orderId: payload.orderId,
-                    entity: simulatedEntity,
-                    reference: simulatedReference,
-                    amount: payload.amount,
-                    status: 'pending',
-                    method: 'multibanco'
-                }
+                success: false,
+                message: `Erro Multibanco: ${error.message}`
             };
         }
     },
@@ -165,72 +147,123 @@ window.ifthenpayIntegration = {
      */
     async processPayshopPayment(data) {
         console.log('🏪 Processando Payshop...');
-
-        // Validar dados obrigatórios
-        if (!data.amount) {
-            throw new Error('Valor obrigatório para Payshop');
-        }
-
-        // Preparar payload conforme documentação
+        
+        // Preparar payload para o backend
         const payload = {
-            payshopkey: this.keys.payshop,
-            id: data.orderId || `PS-${Date.now()}`,
-            valor: this.formatAmount(data.amount),
-            validade: this.formatPayshopDate(7) // 7 dias de validade
+            orderId: data.orderId || `PS-${Date.now()}`,
+            amount: this.formatAmount(data.amount),
+            customerName: data.customerName || data.name,
+            customerEmail: data.customerEmail || data.email,
+            description: data.description || 'Pagamento Share2Inspire'
         };
 
         console.log('📤 Payload Payshop:', payload);
 
         try {
-            // Tentar via backend primeiro
-            const response = await this.callBackendProxy('payshop', payload);
+            const response = await this.callBackendEndpoint('payshop', payload);
+            
             if (response.success) {
                 return {
                     success: true,
-                    message: `Referência Payshop gerada: ${response.data.reference}`,
-                    data: response.data
+                    message: response.message || 'Referência Payshop gerada com sucesso',
+                    data: {
+                        orderId: payload.orderId,
+                        amount: payload.amount,
+                        reference: response.data.reference,
+                        validade: response.data.validade,
+                        status: 'pending',
+                        method: 'payshop',
+                        ...response.data
+                    }
                 };
             } else {
-                throw new Error(response.message || 'Erro no backend');
+                throw new Error(response.error || 'Erro no processamento Payshop');
             }
-        } catch (backendError) {
-            console.warn('⚠️ Backend indisponível, usando fallback:', backendError.message);
-            
-            // Fallback: dados simulados
-            const simulatedReference = this.generateSimulatedPayshopReference();
-            
+
+        } catch (error) {
+            console.error('❌ Erro Payshop:', error);
             return {
-                success: true,
-                message: `Payshop simulado: Referência ${simulatedReference}`,
-                data: {
-                    orderId: payload.id,
-                    reference: simulatedReference,
-                    amount: payload.valor,
-                    status: 'pending',
-                    method: 'payshop'
-                }
+                success: false,
+                message: `Erro Payshop: ${error.message}`
             };
         }
     },
 
     /**
-     * Chamar backend como proxy para evitar CORS
+     * Chamar endpoint do backend
      */
-    async callBackendProxy(method, payload) {
-        const response = await fetch(`${this.backendUrl}/ifthenpay/${method}`, {
+    async callBackendEndpoint(method, payload) {
+        const url = this.endpoints[method];
+        
+        console.log(`🔗 Chamando: ${url}`);
+        
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
-            body: JSON.stringify(payload),
-            timeout: 10000 // 10 segundos timeout
+            body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
-            throw new Error(`Backend error: ${response.status} ${response.statusText}`);
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         return await response.json();
+    },
+
+    /**
+     * Verificar status de saúde do serviço
+     */
+    async checkHealth() {
+        try {
+            const response = await fetch(this.endpoints.health);
+            const result = await response.json();
+            
+            console.log('🏥 Status Ifthenpay:', result);
+            return result;
+            
+        } catch (error) {
+            console.error('❌ Erro no health check:', error);
+            return {
+                service: 'ifthenpay',
+                status: 'unhealthy',
+                error: error.message
+            };
+        }
+    },
+
+    /**
+     * Validar dados de pagamento
+     */
+    validatePaymentData(data, method) {
+        // Validações comuns
+        if (!data.amount || parseFloat(data.amount) <= 0) {
+            throw new Error('Valor inválido ou em falta');
+        }
+
+        if (!data.customerName && !data.name) {
+            throw new Error('Nome do cliente obrigatório');
+        }
+
+        if (!data.customerEmail && !data.email) {
+            throw new Error('Email do cliente obrigatório');
+        }
+
+        // Validações específicas por método
+        if (method === 'mbway') {
+            if (!data.mobileNumber) {
+                throw new Error('Número de telemóvel obrigatório para MB WAY');
+            }
+            
+            const cleanPhone = data.mobileNumber.replace(/\D/g, '');
+            if (cleanPhone.length < 9) {
+                throw new Error('Número de telemóvel inválido');
+            }
+        }
+
+        return true;
     },
 
     /**
@@ -252,21 +285,21 @@ window.ifthenpayIntegration = {
     },
 
     /**
-     * Formatar número de telemóvel para MB WAY (conforme documentação Ifthenpay)
+     * Formatar número de telemóvel
      */
-    formatMobileNumberForIfthenpay(phone) {
+    formatMobileNumber(phone) {
         if (!phone) return '';
         
         // Remover todos os caracteres não numéricos
         const cleaned = phone.replace(/\D/g, '');
         
-        // Adicionar código do país se não existir e formatar conforme documentação
+        // Adicionar código do país se necessário
         if (cleaned.startsWith('351')) {
-            return cleaned.replace(/^351/, '351#');
-        } else if (cleaned.startsWith('9')) {
-            return `351#${cleaned}`;
+            return cleaned;
+        } else if (cleaned.startsWith('9') && cleaned.length === 9) {
+            return `351${cleaned}`;
         } else {
-            return `351#${cleaned}`;
+            return `351${cleaned}`;
         }
     },
 
@@ -277,44 +310,61 @@ window.ifthenpayIntegration = {
         if (!phone) return '';
         
         const cleaned = phone.replace(/\D/g, '');
+        
         if (cleaned.startsWith('351')) {
-            return `+351 ${cleaned.substring(3)}`;
+            const number = cleaned.substring(3);
+            return `+351 ${number.substring(0, 3)} ${number.substring(3, 6)} ${number.substring(6)}`;
         } else {
-            return `+351 ${cleaned}`;
+            return `+351 ${cleaned.substring(0, 3)} ${cleaned.substring(3, 6)} ${cleaned.substring(6)}`;
         }
     },
 
     /**
-     * Formatar data para Payshop (YYYYMMDD)
+     * Gerar ID único para transação
      */
-    formatPayshopDate(daysFromNow) {
-        const date = new Date();
-        date.setDate(date.getDate() + daysFromNow);
-        
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        
-        return `${year}${month}${day}`;
+    generateOrderId(method, customerName) {
+        const timestamp = Date.now();
+        const customerInitials = customerName ? customerName.split(' ').map(n => n[0]).join('').toUpperCase() : 'XX';
+        return `${method.toUpperCase()}-${customerInitials}-${timestamp}`;
     },
 
     /**
-     * Gerar referência simulada para Multibanco
+     * Processar callback de pagamento (para uso futuro)
      */
-    generateSimulatedReference() {
-        const ref = Math.floor(Math.random() * 999999999);
-        return ref.toString().padStart(9, '0').replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
-    },
-
-    /**
-     * Gerar referência simulada para Payshop
-     */
-    generateSimulatedPayshopReference() {
-        return Math.floor(Math.random() * 99999999999).toString().padStart(11, '0');
+    handlePaymentCallback(callbackData) {
+        console.log('📞 Callback recebido:', callbackData);
+        
+        // Aqui pode implementar lógica para processar callbacks
+        // Por exemplo, atualizar UI, enviar confirmações, etc.
+        
+        if (callbackData.status === 'paid') {
+            console.log('✅ Pagamento confirmado!');
+            // Disparar evento personalizado
+            window.dispatchEvent(new CustomEvent('paymentConfirmed', {
+                detail: callbackData
+            }));
+        }
     }
 };
 
-// Log de inicialização
-console.log('✅ Ifthenpay Integration - Versão Unificada Carregada');
-console.log('🔧 Backend URL:', window.ifthenpayIntegration.backendUrl);
+// Event listeners para callbacks de pagamento
+window.addEventListener('paymentConfirmed', function(event) {
+    console.log('🎉 Pagamento confirmado via callback:', event.detail);
+    // Aqui pode adicionar lógica para mostrar mensagem de sucesso, redirecionar, etc.
+});
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Ifthenpay Integration - Versão Corrigida Carregada');
+    console.log('💳 Métodos suportados: MB WAY, Multibanco, Payshop');
+    console.log('🔗 Backend URL:', window.ifthenpayIntegration.backendUrl);
+    
+    // Verificar status de saúde do serviço
+    window.ifthenpayIntegration.checkHealth();
+});
+
+// Exportar para uso global
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = window.ifthenpayIntegration;
+}
 
