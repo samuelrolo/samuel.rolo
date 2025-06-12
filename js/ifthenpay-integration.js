@@ -1,318 +1,370 @@
 /**
- * Integração com a API da Ifthenpay - Versão Final Sem Fallback
- * Conecta diretamente ao backend real para pagamentos em produção
+ * Integração Ifthenpay - Share2Inspire
+ * VERSÃO CORRIGIDA PARA NOVOS BLUEPRINTS - Junho 2025
+ * Implementação completa: MB WAY, Multibanco, Payshop
+ * URLs corrigidas para usar backend como proxy
  */
 
-// Configuração da API
-const API_CONFIG = {
-    baseURL: 'https://share2inspire-backend.onrender.com',
-    
-    // Endpoints do backend
+// Configuração global da integração Ifthenpay
+window.ifthenpayIntegration = {
+    // URLs corrigidas para usar o backend como proxy
     endpoints: {
-        mbway: '/payment/mbway',
-        multibanco: '/payment/multibanco', 
-        payshop: '/payment/payshop'
+        mbway: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/mbway',
+        multibanco: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/multibanco',
+        payshop: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/payshop',
+        callback: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/callback',
+        health: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/health'
     },
-    
-    // Timeout para requests
-    timeout: 30000
-};
 
-/**
- * Formatar número de telefone para +351
- */
-function formatPhoneNumber(phone) {
-    if (!phone) return '';
-    
-    // Remover espaços e caracteres especiais
-    let cleaned = phone.replace(/\D/g, '');
-    
-    // Se começar com 351, remover
-    if (cleaned.startsWith('351')) {
-        cleaned = cleaned.substring(3);
-    }
-    
-    // Se começar com 0, remover
-    if (cleaned.startsWith('0')) {
-        cleaned = cleaned.substring(1);
-    }
-    
-    // Adicionar +351 se for número português (9 dígitos)
-    if (cleaned.length === 9) {
-        return '+351' + cleaned;
-    }
-    
-    return phone; // Retornar original se não conseguir formatar
-}
+    // Backend URL corrigida
+    backendUrl: 'https://share2inspire-beckend.lm.r.appspot.com',
 
-/**
- * Fazer request com timeout
- */
-async function makeRequest(url, options = {}) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
-    
-    try {
+    /**
+     * Processar pagamento conforme método selecionado
+     */
+    async processPayment(method, paymentData) {
+        console.log(`💳 Processando pagamento ${method.toUpperCase()}:`, paymentData);
+        
+        try {
+            // Validar dados básicos
+            this.validatePaymentData(paymentData, method);
+            
+            switch (method) {
+                case 'mbway':
+                    return await this.processMbWayPayment(paymentData);
+                case 'multibanco':
+                    return await this.processMultibancoPayment(paymentData);
+                case 'payshop':
+                    return await this.processPayshopPayment(paymentData);
+                default:
+                    throw new Error(`Método de pagamento não suportado: ${method}`);
+            }
+        } catch (error) {
+            console.error(`❌ Erro no pagamento ${method}:`, error);
+            return {
+                success: false,
+                message: `Erro no processamento ${method}: ${error.message}`
+            };
+        }
+    },
+
+    /**
+     * Processar pagamento MB WAY
+     */
+    async processMbWayPayment(data) {
+        console.log('📱 Processando MB WAY...');
+        
+        // Preparar payload para o backend
+        const payload = {
+            orderId: data.orderId || `MBWAY-${Date.now()}`,
+            amount: this.formatAmount(data.amount),
+            mobileNumber: this.formatMobileNumber(data.mobileNumber),
+            customerName: data.customerName || data.name,
+            customerEmail: data.customerEmail || data.email,
+            description: data.description || 'Pagamento Share2Inspire'
+        };
+
+        console.log('📤 Payload MB WAY:', payload);
+
+        try {
+            const response = await this.callBackendEndpoint('mbway', payload);
+            
+            if (response.success) {
+                return {
+                    success: true,
+                    message: response.message || 'Pedido MB WAY enviado! Confirme no seu telemóvel.',
+                    data: {
+                        orderId: payload.orderId,
+                        amount: payload.amount,
+                        mobileNumber: payload.mobileNumber,
+                        status: 'pending',
+                        method: 'mbway',
+                        ...response.data
+                    }
+                };
+            } else {
+                throw new Error(response.error || 'Erro no processamento MB WAY');
+            }
+
+        } catch (error) {
+            console.error('❌ Erro MB WAY:', error);
+            return {
+                success: false,
+                message: `Erro MB WAY: ${error.message}`
+            };
+        }
+    },
+
+    /**
+     * Processar pagamento Multibanco
+     */
+    async processMultibancoPayment(data) {
+        console.log('🏧 Processando Multibanco...');
+        
+        // Preparar payload para o backend
+        const payload = {
+            orderId: data.orderId || `MB-${Date.now()}`,
+            amount: this.formatAmount(data.amount),
+            customerName: data.customerName || data.name,
+            customerEmail: data.customerEmail || data.email,
+            description: data.description || 'Pagamento Share2Inspire'
+        };
+
+        console.log('📤 Payload Multibanco:', payload);
+
+        try {
+            const response = await this.callBackendEndpoint('multibanco', payload);
+            
+            if (response.success) {
+                return {
+                    success: true,
+                    message: response.message || 'Referência Multibanco gerada com sucesso',
+                    data: {
+                        orderId: payload.orderId,
+                        amount: payload.amount,
+                        entity: response.data.entity,
+                        reference: response.data.reference,
+                        status: 'pending',
+                        method: 'multibanco',
+                        ...response.data
+                    }
+                };
+            } else {
+                throw new Error(response.error || 'Erro no processamento Multibanco');
+            }
+
+        } catch (error) {
+            console.error('❌ Erro Multibanco:', error);
+            return {
+                success: false,
+                message: `Erro Multibanco: ${error.message}`
+            };
+        }
+    },
+
+    /**
+     * Processar pagamento Payshop
+     */
+    async processPayshopPayment(data) {
+        console.log('🏪 Processando Payshop...');
+        
+        // Preparar payload para o backend
+        const payload = {
+            orderId: data.orderId || `PS-${Date.now()}`,
+            amount: this.formatAmount(data.amount),
+            customerName: data.customerName || data.name,
+            customerEmail: data.customerEmail || data.email,
+            description: data.description || 'Pagamento Share2Inspire'
+        };
+
+        console.log('📤 Payload Payshop:', payload);
+
+        try {
+            const response = await this.callBackendEndpoint('payshop', payload);
+            
+            if (response.success) {
+                return {
+                    success: true,
+                    message: response.message || 'Referência Payshop gerada com sucesso',
+                    data: {
+                        orderId: payload.orderId,
+                        amount: payload.amount,
+                        reference: response.data.reference,
+                        validade: response.data.validade,
+                        status: 'pending',
+                        method: 'payshop',
+                        ...response.data
+                    }
+                };
+            } else {
+                throw new Error(response.error || 'Erro no processamento Payshop');
+            }
+
+        } catch (error) {
+            console.error('❌ Erro Payshop:', error);
+            return {
+                success: false,
+                message: `Erro Payshop: ${error.message}`
+            };
+        }
+    },
+
+    /**
+     * Chamar endpoint do backend
+     */
+    async callBackendEndpoint(method, payload) {
+        const url = this.endpoints[method];
+        
+        console.log(`🔗 Chamando: ${url}`);
+        
         const response = await fetch(url, {
-            ...options,
-            signal: controller.signal,
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                ...options.headers
-            }
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload)
         });
-        
-        clearTimeout(timeoutId);
-        return response;
-    } catch (error) {
-        clearTimeout(timeoutId);
-        throw error;
-    }
-}
 
-/**
- * Processar pagamento MB WAY
- */
-async function processMBWayPayment(formData) {
-    console.log('🔄 Processando pagamento MB WAY...');
-    
-    try {
-        // Formatar telefone
-        const phone = formatPhoneNumber(formData.get('phone'));
-        console.log('📱 Telefone formatado:', phone);
-        
-        if (!phone || phone.length < 10) {
-            throw new Error('Número de telefone inválido para MB WAY');
-        }
-        
-        const paymentData = {
-            phone: phone,
-            amount: 30,
-            service: formData.get('service') || 'Kickstart Pro',
-            customerName: formData.get('name'),
-            customerEmail: formData.get('email')
-        };
-        
-        console.log('📊 Dados de pagamento MB WAY:', paymentData);
-        
-        const response = await makeRequest(
-            API_CONFIG.baseURL + API_CONFIG.endpoints.mbway,
-            {
-                method: 'POST',
-                body: JSON.stringify(paymentData)
-            }
-        );
-        
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || `Erro HTTP ${response.status}`);
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
-        const result = await response.json();
-        console.log('✅ Resposta MB WAY:', result);
-        
-        return `
-            <div class="alert alert-success">
-                <h5>✅ Pagamento MB WAY Iniciado</h5>
-                <p><strong>Telefone:</strong> ${result.phone || phone}</p>
-                <p><strong>Valor:</strong> ${result.amount || 30}€</p>
-                <p><strong>Status:</strong> Aguardando confirmação</p>
-                <hr>
-                <p class="mb-0">
-                    <i class="fas fa-mobile-alt"></i> 
-                    Abra a app MB WAY e confirme o pagamento de ${result.amount || 30}€
-                </p>
-            </div>
-        `;
-        
-    } catch (error) {
-        console.error('❌ Erro MB WAY:', error);
-        throw new Error(`Erro no pagamento MB WAY: ${error.message}`);
-    }
-}
 
-/**
- * Processar pagamento Multibanco
- */
-async function processMultibancoPayment(formData) {
-    console.log('🔄 Processando pagamento Multibanco...');
-    
-    try {
-        const paymentData = {
-            amount: 30,
-            service: formData.get('service') || 'Kickstart Pro',
-            customerName: formData.get('name'),
-            customerEmail: formData.get('email')
-        };
-        
-        console.log('📊 Dados de pagamento Multibanco:', paymentData);
-        
-        const response = await makeRequest(
-            API_CONFIG.baseURL + API_CONFIG.endpoints.multibanco,
-            {
-                method: 'POST',
-                body: JSON.stringify(paymentData)
+        return await response.json();
+    },
+
+    /**
+     * Verificar status de saúde do serviço
+     */
+    async checkHealth() {
+        try {
+            const response = await fetch(this.endpoints.health);
+            const result = await response.json();
+            
+            console.log('🏥 Status Ifthenpay:', result);
+            return result;
+            
+        } catch (error) {
+            console.error('❌ Erro no health check:', error);
+            return {
+                service: 'ifthenpay',
+                status: 'unhealthy',
+                error: error.message
+            };
+        }
+    },
+
+    /**
+     * Validar dados de pagamento
+     */
+    validatePaymentData(data, method) {
+        // Validações comuns
+        if (!data.amount || parseFloat(data.amount) <= 0) {
+            throw new Error('Valor inválido ou em falta');
+        }
+
+        if (!data.customerName && !data.name) {
+            throw new Error('Nome do cliente obrigatório');
+        }
+
+        if (!data.customerEmail && !data.email) {
+            throw new Error('Email do cliente obrigatório');
+        }
+
+        // Validações específicas por método
+        if (method === 'mbway') {
+            if (!data.mobileNumber) {
+                throw new Error('Número de telemóvel obrigatório para MB WAY');
             }
-        );
-        
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || `Erro HTTP ${response.status}`);
-        }
-        
-        const result = await response.json();
-        console.log('✅ Resposta Multibanco:', result);
-        
-        return `
-            <div class="alert alert-success">
-                <h5>✅ Referência Multibanco Gerada</h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Entidade:</strong> ${result.entity || '11249'}</p>
-                        <p><strong>Referência:</strong> ${result.reference || '123 456 789'}</p>
-                        <p><strong>Valor:</strong> ${result.amount || 30}€</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Validade:</strong> ${result.validity || '3 dias'}</p>
-                        <p><strong>Status:</strong> Aguardando pagamento</p>
-                    </div>
-                </div>
-                <hr>
-                <p class="mb-0">
-                    <i class="fas fa-credit-card"></i> 
-                    Use os dados acima em qualquer caixa Multibanco
-                </p>
-            </div>
-        `;
-        
-    } catch (error) {
-        console.error('❌ Erro Multibanco:', error);
-        throw new Error(`Erro no pagamento Multibanco: ${error.message}`);
-    }
-}
-
-/**
- * Processar pagamento Payshop
- */
-async function processPayshopPayment(formData) {
-    console.log('🔄 Processando pagamento Payshop...');
-    
-    try {
-        const paymentData = {
-            amount: 30,
-            service: formData.get('service') || 'Kickstart Pro',
-            customerName: formData.get('name'),
-            customerEmail: formData.get('email')
-        };
-        
-        console.log('📊 Dados de pagamento Payshop:', paymentData);
-        
-        const response = await makeRequest(
-            API_CONFIG.baseURL + API_CONFIG.endpoints.payshop,
-            {
-                method: 'POST',
-                body: JSON.stringify(paymentData)
+            
+            const cleanPhone = data.mobileNumber.replace(/\D/g, '');
+            if (cleanPhone.length < 9) {
+                throw new Error('Número de telemóvel inválido');
             }
-        );
-        
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || `Erro HTTP ${response.status}`);
+        }
+
+        return true;
+    },
+
+    /**
+     * Formatar valor para APIs Ifthenpay
+     */
+    formatAmount(amount) {
+        if (typeof amount === 'string') {
+            // Remover caracteres não numéricos exceto ponto
+            amount = amount.replace(/[^\d.]/g, '');
         }
         
-        const result = await response.json();
-        console.log('✅ Resposta Payshop:', result);
-        
-        return `
-            <div class="alert alert-success">
-                <h5>✅ Referência Payshop Gerada</h5>
-                <p><strong>Referência:</strong> ${result.reference || 'PS123456789'}</p>
-                <p><strong>Valor:</strong> ${result.amount || 30}€</p>
-                <p><strong>Validade:</strong> ${result.validity || '3 dias'}</p>
-                <p><strong>Status:</strong> Aguardando pagamento</p>
-                <hr>
-                <p class="mb-0">
-                    <i class="fas fa-store"></i> 
-                    Apresente a referência em qualquer loja Payshop
-                </p>
-            </div>
-        `;
-        
-    } catch (error) {
-        console.error('❌ Erro Payshop:', error);
-        throw new Error(`Erro no pagamento Payshop: ${error.message}`);
-    }
-}
-
-/**
- * Processar pagamento principal
- */
-async function processPayment(formData, paymentMethod = 'multibanco') {
-    console.log('💳 Iniciando processamento de pagamento:', paymentMethod);
-    
-    try {
-        let result;
-        
-        switch (paymentMethod.toLowerCase()) {
-            case 'mbway':
-                result = await processMBWayPayment(formData);
-                break;
-            case 'multibanco':
-                result = await processMultibancoPayment(formData);
-                break;
-            case 'payshop':
-                result = await processPayshopPayment(formData);
-                break;
-            default:
-                throw new Error('Método de pagamento não suportado: ' + paymentMethod);
+        const numAmount = parseFloat(amount);
+        if (isNaN(numAmount)) {
+            throw new Error('Valor inválido');
         }
         
-        console.log('✅ Pagamento processado com sucesso');
-        return result;
-        
-    } catch (error) {
-        console.error('❌ Erro no processamento de pagamento:', error);
-        
-        // Retornar erro detalhado
-        return `
-            <div class="alert alert-danger">
-                <h5>❌ Erro no Pagamento</h5>
-                <p><strong>Método:</strong> ${paymentMethod}</p>
-                <p><strong>Erro:</strong> ${error.message}</p>
-                <hr>
-                <p class="mb-0">
-                    <strong>Soluções:</strong><br>
-                    • Verifique a sua ligação à internet<br>
-                    • Tente novamente em alguns minutos<br>
-                    • Contacte-nos: samuel@share2inspire.pt
-                </p>
-            </div>
-        `;
-    }
-}
+        // Garantir 2 casas decimais
+        return numAmount.toFixed(2);
+    },
 
-/**
- * Verificar status do backend
- */
-async function checkBackendStatus() {
-    try {
-        const response = await makeRequest(API_CONFIG.baseURL + '/health');
-        return response.ok;
-    } catch (error) {
-        console.warn('⚠️ Backend não disponível:', error.message);
-        return false;
-    }
-}
+    /**
+     * Formatar número de telemóvel
+     */
+    formatMobileNumber(phone) {
+        if (!phone) return '';
+        
+        // Remover todos os caracteres não numéricos
+        const cleaned = phone.replace(/\D/g, '');
+        
+        // Adicionar código do país se necessário
+        if (cleaned.startsWith('351')) {
+            return cleaned;
+        } else if (cleaned.startsWith('9') && cleaned.length === 9) {
+            return `351${cleaned}`;
+        } else {
+            return `351${cleaned}`;
+        }
+    },
 
-// Exportar para uso global
-window.IfthenpayIntegration = {
-    processPayment,
-    processMBWayPayment,
-    processMultibancoPayment,
-    processPayshopPayment,
-    formatPhoneNumber,
-    checkBackendStatus
+    /**
+     * Formatar número de telemóvel para exibição
+     */
+    formatMobileNumberDisplay(phone) {
+        if (!phone) return '';
+        
+        const cleaned = phone.replace(/\D/g, '');
+        
+        if (cleaned.startsWith('351')) {
+            const number = cleaned.substring(3);
+            return `+351 ${number.substring(0, 3)} ${number.substring(3, 6)} ${number.substring(6)}`;
+        } else {
+            return `+351 ${cleaned.substring(0, 3)} ${cleaned.substring(3, 6)} ${cleaned.substring(6)}`;
+        }
+    },
+
+    /**
+     * Gerar ID único para transação
+     */
+    generateOrderId(method, customerName) {
+        const timestamp = Date.now();
+        const customerInitials = customerName ? customerName.split(' ').map(n => n[0]).join('').toUpperCase() : 'XX';
+        return `${method.toUpperCase()}-${customerInitials}-${timestamp}`;
+    },
+
+    /**
+     * Processar callback de pagamento (para uso futuro)
+     */
+    handlePaymentCallback(callbackData) {
+        console.log('📞 Callback recebido:', callbackData);
+        
+        // Aqui pode implementar lógica para processar callbacks
+        // Por exemplo, atualizar UI, enviar confirmações, etc.
+        
+        if (callbackData.status === 'paid') {
+            console.log('✅ Pagamento confirmado!');
+            // Disparar evento personalizado
+            window.dispatchEvent(new CustomEvent('paymentConfirmed', {
+                detail: callbackData
+            }));
+        }
+    }
 };
 
-console.log('✅ Integração Ifthenpay (versão produção) carregada!');
+// Event listeners para callbacks de pagamento
+window.addEventListener('paymentConfirmed', function(event) {
+    console.log('🎉 Pagamento confirmado via callback:', event.detail);
+    // Aqui pode adicionar lógica para mostrar mensagem de sucesso, redirecionar, etc.
+});
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Ifthenpay Integration - Versão Corrigida Carregada');
+    console.log('💳 Métodos suportados: MB WAY, Multibanco, Payshop');
+    console.log('🔗 Backend URL:', window.ifthenpayIntegration.backendUrl);
+    
+    // Verificar status de saúde do serviço
+    window.ifthenpayIntegration.checkHealth();
+});
+
+// Exportar para uso global
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = window.ifthenpayIntegration;
+}
 
