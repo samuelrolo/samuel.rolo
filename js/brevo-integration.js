@@ -2,18 +2,19 @@
  * Integração Brevo - Share2Inspire
  * VERSÃO CORRIGIDA COM MÚLTIPLOS SERVIÇOS - Junho 2025
  * Suporte para: Kickstart Pro, Consultoria, Coaching, Workshops
+ * URLs CORRIGIDAS para funcionar com os novos blueprints
  */
 
 window.brevoIntegration = {
     // URLs corrigidas do backend
     endpoints: {
-        kickstart: 'https://share2inspire-backend.onrender.com/email/kickstart',
-        consultoria: 'https://share2inspire-backend.onrender.com/email/consultoria',
-        coaching: 'https://share2inspire-backend.onrender.com/email/coaching',
-        workshops: 'https://share2inspire-backend.onrender.com/email/workshops',
-        contact: 'https://share2inspire-backend.onrender.com/email/contact'
+        kickstart: 'https://share2inspire-beckend.lm.r.appspot.com/email/kickstart',
+        consultoria: 'https://share2inspire-beckend.lm.r.appspot.com/email/consultoria',
+        coaching: 'https://share2inspire-beckend.lm.r.appspot.com/email/coaching',
+        workshops: 'https://share2inspire-beckend.lm.r.appspot.com/email/workshops',
+        contact: 'https://share2inspire-beckend.lm.r.appspot.com/email/contact'
     },
-    
+
     /**
      * Enviar email para Kickstart Pro
      */
@@ -41,10 +42,10 @@ window.brevoIntegration = {
                 timestamp: new Date().toLocaleString('pt-PT')
             }
         };
-        
+
         return await this.sendEmailViaBackend('kickstart', emailData);
     },
-    
+
     /**
      * Enviar email para Consultoria
      */
@@ -72,10 +73,10 @@ window.brevoIntegration = {
                 timestamp: new Date().toLocaleString('pt-PT')
             }
         };
-        
+
         return await this.sendEmailViaBackend('consultoria', emailData);
     },
-    
+
     /**
      * Enviar email para Coaching
      */
@@ -87,27 +88,25 @@ window.brevoIntegration = {
                 { email: data.email, name: data.name },
                 { email: 'samuel@share2inspire.pt', name: 'Samuel Rolo' }
             ],
-            subject: `Coaching Executivo - Agendamento de ${data.name}`,
+            subject: `Coaching Individual - Sessão para ${data.name}`,
             templateId: 3, // Template ID do Brevo para Coaching
             params: {
                 name: data.name,
                 email: data.email,
                 phone: data.phone || 'Não fornecido',
-                company: data.company || 'Não fornecido',
-                position: data.position || 'Não fornecido',
                 experience: data.experience || 'Não especificado',
                 goals: data.goals,
                 challenges: data.challenges || 'Não especificado',
-                availability: data.availability || 'Flexível',
-                payment_method: data.payment_method || 'Sessão inicial gratuita',
-                service: 'Coaching Executivo',
+                availability: data.availability || 'A definir',
+                payment_method: data.payment_method,
+                service: 'Coaching Individual',
                 timestamp: new Date().toLocaleString('pt-PT')
             }
         };
-        
+
         return await this.sendEmailViaBackend('coaching', emailData);
     },
-    
+
     /**
      * Enviar email para Workshops
      */
@@ -119,185 +118,167 @@ window.brevoIntegration = {
                 { email: data.email, name: data.name },
                 { email: 'samuel@share2inspire.pt', name: 'Samuel Rolo' }
             ],
-            subject: `Workshop - Solicitação de ${data.theme}`,
+            subject: `Workshop - Inscrição de ${data.name}`,
             templateId: 4, // Template ID do Brevo para Workshops
             params: {
                 name: data.name,
                 email: data.email,
                 phone: data.phone || 'Não fornecido',
-                company: data.company || 'Não fornecido',
-                position: data.position || 'Não fornecido',
-                participants: data.participants || 'Não especificado',
-                format: data.format || 'Não especificado',
-                duration: data.duration || 'Não especificado',
-                theme: data.theme,
-                objectives: data.objectives,
-                timeline: data.timeline || 'Flexível',
-                payment_method: data.payment_method || 'Proposta sem pagamento',
-                service: 'Workshops e Formações',
+                company: data.company || 'Individual',
+                workshop_type: data.workshop_type,
+                participants: data.participants || '1',
+                date_preference: data.date_preference || 'A definir',
+                payment_method: data.payment_method,
+                service: 'Workshop Especializado',
                 timestamp: new Date().toLocaleString('pt-PT')
             }
         };
-        
+
         return await this.sendEmailViaBackend('workshops', emailData);
     },
-    
+
     /**
-     * Enviar email genérico de contacto
+     * Enviar email de contacto geral
      */
     async sendContactEmail(data) {
         console.log('📧 Enviando email de contacto via Brevo...');
         
         const emailData = {
             to: [
+                { email: data.email, name: data.name },
                 { email: 'samuel@share2inspire.pt', name: 'Samuel Rolo' }
             ],
-            replyTo: { email: data.email, name: data.name },
-            subject: `Contacto do site - ${data.subject || 'Sem assunto'}`,
-            templateId: 5, // Template ID do Brevo para contacto
+            subject: `Contacto - ${data.subject || 'Pedido de Informações'}`,
+            templateId: 5, // Template ID do Brevo para Contacto
             params: {
                 name: data.name,
                 email: data.email,
                 phone: data.phone || 'Não fornecido',
-                subject: data.subject || 'Contacto geral',
-                message: data.message,
+                subject: data.subject || 'Contacto Geral',
+                message: data.message || 'Sem mensagem específica',
+                service: 'Contacto Geral',
                 timestamp: new Date().toLocaleString('pt-PT')
             }
         };
-        
+
         return await this.sendEmailViaBackend('contact', emailData);
     },
-    
+
     /**
-     * Enviar email via backend (proxy para Brevo)
+     * Função principal para enviar emails via backend
      */
-    async sendEmailViaBackend(type, emailData) {
+    async sendEmailViaBackend(serviceType, emailData) {
         try {
-            const endpoint = this.endpoints[type];
-            if (!endpoint) {
-                throw new Error(`Tipo de email não suportado: ${type}`);
-            }
+            console.log(`📤 Enviando para ${this.endpoints[serviceType]}...`);
             
-            console.log(`📤 Enviando para ${endpoint}:`, emailData);
-            
-            const response = await fetch(endpoint, {
+            const response = await fetch(this.endpoints[serviceType], {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
-                body: JSON.stringify(emailData),
-                timeout: 10000 // 10 segundos timeout
+                body: JSON.stringify({
+                    customerName: emailData.to[0].name,
+                    customerEmail: emailData.to[0].email,
+                    customerPhone: emailData.params.phone,
+                    appointmentDate: emailData.params.date || new Date().toISOString().split('T')[0],
+                    appointmentTime: emailData.params.time || '10:00',
+                    orderId: `${serviceType}_${Date.now()}`,
+                    amount: emailData.params.amount || 0,
+                    description: emailData.subject,
+                    ...emailData.params
+                })
             });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const result = await response.json();
             
-            if (response.ok) {
-                const result = await response.json();
-                console.log('✅ Email enviado com sucesso:', result);
+            if (result.success) {
+                console.log('✅ Email enviado com sucesso via backend!');
                 return {
                     success: true,
-                    message: 'Email enviado com sucesso',
-                    data: result
+                    message: result.message || 'Email enviado com sucesso!',
+                    orderId: result.orderId
                 };
             } else {
-                throw new Error(`Erro HTTP: ${response.status} ${response.statusText}`);
+                throw new Error(result.error || 'Erro desconhecido do backend');
             }
-            
+
         } catch (error) {
-            console.error(`❌ Erro ao enviar email ${type}:`, error);
+            console.error('❌ Erro ao enviar email:', error);
             
-            // Fallback: tentar endpoint genérico
-            try {
-                console.log('🔄 Tentando fallback...');
-                return await this.sendFallbackEmail(emailData);
-            } catch (fallbackError) {
-                console.error('❌ Fallback também falhou:', fallbackError);
-                return {
-                    success: false,
-                    message: `Erro no envio de email: ${error.message}`
-                };
-            }
-        }
-    },
-    
-    /**
-     * Fallback para envio de email
-     */
-    async sendFallbackEmail(emailData) {
-        const fallbackEndpoint = 'https://share2inspire-backend.onrender.com/contact';
-        
-        // Converter dados para formato simples
-        const fallbackData = {
-            name: emailData.params?.name || 'Cliente',
-            email: emailData.to?.[0]?.email || 'cliente@exemplo.com',
-            subject: emailData.subject || 'Contacto do site',
-            message: this.formatEmailParams(emailData.params),
-            service: emailData.params?.service || 'Contacto geral'
-        };
-        
-        const response = await fetch(fallbackEndpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(fallbackData)
-        });
-        
-        if (response.ok) {
+            // Fallback: mostrar mensagem de erro amigável
             return {
-                success: true,
-                message: 'Email enviado via fallback',
-                data: await response.json()
+                success: false,
+                message: `Erro ao enviar email: ${error.message}. Tente novamente ou contacte-nos diretamente.`,
+                error: error.message
             };
-        } else {
-            throw new Error(`Fallback falhou: ${response.status}`);
         }
     },
-    
+
     /**
-     * Formatar parâmetros do email para fallback
+     * Função auxiliar para formatar dados de email
      */
-    formatEmailParams(params) {
-        if (!params) return 'Dados não disponíveis';
-        
-        let message = '';
-        for (const [key, value] of Object.entries(params)) {
-            if (value && value !== 'Não fornecido' && value !== 'Não especificado') {
-                const label = this.getFieldLabel(key);
-                message += `${label}: ${value}\n`;
-            }
-        }
-        
-        return message || 'Contacto sem detalhes específicos';
-    },
-    
-    /**
-     * Obter label amigável para campos
-     */
-    getFieldLabel(key) {
-        const labels = {
-            name: 'Nome',
-            email: 'Email',
-            phone: 'Telefone',
-            company: 'Empresa',
-            position: 'Cargo',
-            date: 'Data',
-            duration: 'Duração',
-            challenge: 'Desafio',
-            project: 'Projeto',
-            objectives: 'Objetivos',
-            goals: 'Objetivos',
-            challenges: 'Desafios',
-            theme: 'Tema',
-            participants: 'Participantes',
-            format: 'Formato',
-            timeline: 'Timeline',
-            payment_method: 'Método de Pagamento',
-            service: 'Serviço',
-            timestamp: 'Data/Hora'
+    formatEmailData(rawData, serviceType) {
+        const baseData = {
+            name: rawData.name || rawData.customerName,
+            email: rawData.email || rawData.customerEmail,
+            phone: rawData.phone || rawData.customerPhone,
+            timestamp: new Date().toLocaleString('pt-PT')
         };
-        
-        return labels[key] || key.charAt(0).toUpperCase() + key.slice(1);
+
+        // Adicionar campos específicos por serviço
+        switch (serviceType) {
+            case 'kickstart':
+                return {
+                    ...baseData,
+                    company: rawData.company,
+                    position: rawData.position,
+                    date: rawData.date,
+                    duration: rawData.duration,
+                    challenge: rawData.challenge,
+                    payment_method: rawData.payment_method
+                };
+            
+            case 'consultoria':
+                return {
+                    ...baseData,
+                    company: rawData.company,
+                    position: rawData.position,
+                    size: rawData.size,
+                    project: rawData.project,
+                    objectives: rawData.objectives,
+                    payment_method: rawData.payment_method
+                };
+            
+            case 'coaching':
+                return {
+                    ...baseData,
+                    experience: rawData.experience,
+                    goals: rawData.goals,
+                    challenges: rawData.challenges,
+                    availability: rawData.availability,
+                    payment_method: rawData.payment_method
+                };
+            
+            case 'workshops':
+                return {
+                    ...baseData,
+                    company: rawData.company,
+                    workshop_type: rawData.workshop_type,
+                    participants: rawData.participants,
+                    date_preference: rawData.date_preference,
+                    payment_method: rawData.payment_method
+                };
+            
+            default:
+                return baseData;
+        }
     },
-    
+
     /**
      * Validar dados de email
      */
@@ -305,14 +286,14 @@ window.brevoIntegration = {
         if (!data.email || !this.isValidEmail(data.email)) {
             throw new Error('Email inválido ou em falta');
         }
-        
+
         if (!data.name || data.name.trim().length < 2) {
             throw new Error('Nome inválido ou em falta');
         }
-        
+
         return true;
     },
-    
+
     /**
      * Validar formato de email
      */
@@ -325,7 +306,7 @@ window.brevoIntegration = {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Brevo Integration - Versão Multi-Serviços Carregada');
     console.log('📧 Serviços suportados: Kickstart, Consultoria, Coaching, Workshops');
-    console.log('🔗 Backend URL:', 'https://share2inspire-backend.onrender.com');
+    console.log('🔗 Backend URL:', 'https://share2inspire-beckend.lm.r.appspot.com');
 });
 
 // Exportar para uso global
