@@ -1,11 +1,13 @@
 /**
  * Formulário de Consultoria - Share2Inspire
- * VERSÃO CORRIGIDA SEM PAGAMENTO - Junho 2025
- * Apenas envio de email via Brevo
+ * VERSÃO ATUALIZADA - Junho 2025
+ * - Utiliza utilitário centralizado form-utils.js
+ * - Apenas envio de email via Brevo
+ * - URLs consistentes com o resto do sistema
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Consultoria Form - Versão Apenas Email Carregada');
+    console.log('🚀 Consultoria Form - Versão Atualizada Carregada');
     setupConsultoriaForm();
 });
 
@@ -21,19 +23,22 @@ function setupConsultoriaForm() {
 
     console.log('✅ Formulário Consultoria encontrado, configurando...');
 
+    // Configurar limpeza quando modal fechar
+    window.formUtils.setupModalCleanup('consultoriaModal', 'consultoriaForm');
+
     consultoriaForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         console.log('📝 Formulário Consultoria submetido');
 
         const submitButton = this.querySelector('button[type="submit"]');
-        const formMessage = getOrCreateMessageContainer('consultoriaFormMessage', this);
+        const formMessage = window.formUtils.getOrCreateMessageContainer('consultoriaFormMessage', this);
 
         // Limpar mensagens anteriores
         formMessage.innerHTML = '';
 
         // Validar formulário
         if (!validateConsultoriaForm(this)) {
-            showFormMessage(formMessage, 'error', 'Por favor, preencha todos os campos obrigatórios corretamente.');
+            window.formUtils.showFormMessage(formMessage, 'error', 'Por favor, preencha todos os campos obrigatórios corretamente.');
             return;
         }
 
@@ -43,8 +48,8 @@ function setupConsultoriaForm() {
         console.log('📊 Dados preparados:', data);
 
         // Mostrar loading
-        setButtonLoading(submitButton, true, 'A processar...');
-        showFormMessage(formMessage, 'info', 'A processar a sua solicitação...');
+        window.formUtils.setButtonLoading(submitButton, true, 'A processar...');
+        window.formUtils.showFormMessage(formMessage, 'info', 'A processar a sua solicitação...');
 
         try {
             // Enviar dados para backend
@@ -53,14 +58,14 @@ function setupConsultoriaForm() {
             // Enviar email via Brevo
             await sendConsultoriaEmail(data);
             
-            showFormMessage(formMessage, 'success', 'Proposta solicitada com sucesso! Entraremos em contacto brevemente para apresentar uma proposta personalizada.');
+            window.formUtils.showFormMessage(formMessage, 'success', 'Proposta solicitada com sucesso! Entraremos em contacto brevemente para apresentar uma proposta personalizada.');
             consultoriaForm.reset();
 
         } catch (error) {
             console.error('❌ Erro no formulário Consultoria:', error);
-            showFormMessage(formMessage, 'error', `Erro no processamento: ${error.message}. Tente novamente ou contacte-nos em samuel@share2inspire.pt`);
+            window.formUtils.showFormMessage(formMessage, 'error', `Erro no processamento: ${error.message}. Tente novamente ou contacte-nos em samuel@share2inspire.pt`);
         } finally {
-            setButtonLoading(submitButton, false, 'Solicitar Proposta');
+            window.formUtils.setButtonLoading(submitButton, false, 'Solicitar Proposta');
         }
     });
 }
@@ -71,7 +76,7 @@ function setupConsultoriaForm() {
 async function submitConsultoriaToBackend(data) {
     console.log('📤 Enviando dados Consultoria para backend...');
     
-    const response = await fetch('https://share2inspire-backend.onrender.com/booking', {
+    const response = await fetch(window.formUtils.backendUrls.booking, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -109,18 +114,13 @@ async function sendConsultoriaEmail(data) {
 function validateConsultoriaForm(form) {
     const requiredFields = ['name', 'email', 'company', 'project'];
     
-    for (const field of requiredFields) {
-        const input = form.querySelector(`[name="${field}"]`);
-        if (!input || !input.value.trim()) {
-            console.warn(`⚠️ Campo obrigatório vazio: ${field}`);
-            return false;
-        }
+    // Usar utilitário para validar campos obrigatórios
+    if (!window.formUtils.validateRequiredFields(form, requiredFields)) {
+        return false;
     }
 
     // Validar email
-    const email = form.querySelector('[name="email"]').value;
-    if (!isValidEmail(email)) {
-        console.warn('⚠️ Email inválido');
+    if (!window.formUtils.validateEmail(form)) {
         return false;
     }
 
@@ -144,44 +144,3 @@ function prepareConsultoriaData(formData) {
         timestamp: new Date().toISOString()
     };
 }
-
-// Funções utilitárias (se não existirem)
-if (typeof getOrCreateMessageContainer === 'undefined') {
-    function getOrCreateMessageContainer(id, form) {
-        let container = document.getElementById(id);
-        if (!container) {
-            container = document.createElement('div');
-            container.id = id;
-            container.className = 'form-message mt-3';
-            form.appendChild(container);
-        }
-        return container;
-    }
-}
-
-if (typeof showFormMessage === 'undefined') {
-    function showFormMessage(container, type, message) {
-        const alertClass = type === 'success' ? 'alert-success' : 
-                          type === 'error' ? 'alert-danger' : 'alert-info';
-        container.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
-    }
-}
-
-if (typeof setButtonLoading === 'undefined') {
-    function setButtonLoading(button, loading, text) {
-        if (loading) {
-            button.disabled = true;
-            button.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>${text}`;
-        } else {
-            button.disabled = false;
-            button.innerHTML = text;
-        }
-    }
-}
-
-if (typeof isValidEmail === 'undefined') {
-    function isValidEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-}
-
