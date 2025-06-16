@@ -1,16 +1,11 @@
 /**
  * Formulário de Feedback - Share2Inspire
- * 
- * Versão corrigida para resolver o erro 405 (Method Not Allowed)
- * Principais correções:
- * - Implementação de fallback para endpoint alternativo
- * - Ajuste de headers para compatibilidade CORS
- * - Tratamento robusto de erros
+ * Versão corrigida utilizando os utilitários centralizados
  */
 
-// Wait for the DOM to be fully loaded
+// Executar quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize feedback system
+    console.log('🔄 Inicializando sistema de feedback...');
     initFeedbackSystem();
 });
 
@@ -22,7 +17,12 @@ function initFeedbackSystem() {
     const feedbackBtn = document.getElementById('feedbackBtn');
     const feedbackModal = document.getElementById('feedbackModal');
     
-    if (!feedbackBtn || !feedbackModal) return;
+    if (!feedbackBtn || !feedbackModal) {
+        console.warn('⚠️ Elementos de feedback não encontrados. O sistema de feedback não será inicializado.');
+        return;
+    }
+    
+    console.log('✅ Elementos de feedback encontrados, inicializando...');
     
     // Initialize feedback modal
     const modal = new bootstrap.Modal(feedbackModal);
@@ -36,7 +36,10 @@ function initFeedbackSystem() {
     const stars = document.querySelectorAll('.rating .star');
     const ratingInput = document.getElementById('rating');
     
-    if (!stars.length || !ratingInput) return;
+    if (!stars.length || !ratingInput) {
+        console.warn('⚠️ Elementos de avaliação não encontrados.');
+        return;
+    }
     
     stars.forEach(function(star) {
         star.addEventListener('mouseenter', function() {
@@ -81,7 +84,7 @@ function initFeedbackSystem() {
     // Reset form when modal is hidden
     feedbackModal.addEventListener('hidden.bs.modal', function() {
         const feedbackForm = document.getElementById('feedbackForm');
-        const feedbackMessage = document.getElementById('feedbackMessage');
+        const feedbackMessage = document.getElementById('feedbackFormMessage');
         
         if (feedbackForm) {
             feedbackForm.reset();
@@ -108,7 +111,10 @@ function initFeedbackSystem() {
  */
 function setupFeedbackFormSubmission() {
     const feedbackForm = document.getElementById('feedbackForm');
-    if (!feedbackForm) return;
+    if (!feedbackForm) {
+        console.warn('⚠️ Formulário de feedback não encontrado.');
+        return;
+    }
     
     // Create message element if it doesn't exist
     let feedbackFormMessage = document.getElementById('feedbackFormMessage');
@@ -132,21 +138,31 @@ function setupFeedbackFormSubmission() {
         // Add source information
         data.source = 'website_feedback';
         
+        // Validar dados
+        if (!window.formUtils.validateRequiredFields(feedbackForm, ['name', 'email', 'message'])) {
+            window.formUtils.showFormMessage(feedbackFormMessage, 'error', 'Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
+        
+        if (!window.formUtils.validateEmail(feedbackForm)) {
+            window.formUtils.showFormMessage(feedbackFormMessage, 'error', 'Por favor, insira um email válido.');
+            return;
+        }
+        
         // Show loading message
-        showFormMessage(feedbackFormMessage, 'A processar o seu pedido. Por favor aguarde...', 'info');
+        window.formUtils.showFormMessage(feedbackFormMessage, 'info', 'A processar o seu pedido. Por favor aguarde...');
         
         // Disable submit button
         const submitButton = feedbackForm.querySelector('button[type="submit"]');
         if (submitButton) {
-            submitButton.disabled = true;
-            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A enviar...';
+            window.formUtils.setButtonLoading(submitButton, true, 'A enviar...');
         }
         
-        console.log('Enviando feedback para o backend:', data);
+        console.log('📤 Enviando feedback para o backend:', data);
         
         // Lista de endpoints a tentar, em ordem de prioridade
         const endpoints = [
-            'https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate', // Endpoint que funciona com POST
+            window.formUtils.backendUrls.brevo.contact, // Endpoint principal
             'https://share2inspire-beckend.lm.r.appspot.com/api/feedback/submit', // Endpoint original
             'https://share2inspire-beckend.lm.r.appspot.com/api/feedback/contact' // Endpoint alternativo
         ];
@@ -175,19 +191,18 @@ function setupFeedbackFormSubmission() {
 function tryEndpoints(endpoints, index, data, messageElement, form, submitButton, successCallback) {
     if (index >= endpoints.length) {
         // Todos os endpoints falharam
-        console.error('Todos os endpoints falharam');
-        showFormMessage(messageElement, 'Erro ao enviar feedback. Por favor tente novamente mais tarde.', 'error');
+        console.error('❌ Todos os endpoints falharam');
+        window.formUtils.showFormMessage(messageElement, 'error', 'Erro ao enviar feedback. Por favor tente novamente mais tarde.');
         
         // Reabilitar botão
         if (submitButton) {
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Enviar Feedback';
+            window.formUtils.setButtonLoading(submitButton, false, 'Enviar Feedback');
         }
         return;
     }
     
     const currentEndpoint = endpoints[index];
-    console.log(`Tentando endpoint ${index + 1}/${endpoints.length}: ${currentEndpoint}`);
+    console.log(`🔄 Tentando endpoint ${index + 1}/${endpoints.length}: ${currentEndpoint}`);
     
     // Send to backend
     fetch(currentEndpoint, {
@@ -199,7 +214,7 @@ function tryEndpoints(endpoints, index, data, messageElement, form, submitButton
         body: JSON.stringify(data)
     })
     .then(response => {
-        console.log('Resposta recebida:', response.status, response.statusText);
+        console.log('📥 Resposta recebida:', response.status, response.statusText);
         
         // Verificar se a resposta é JSON
         const contentType = response.headers.get('content-type');
@@ -213,14 +228,15 @@ function tryEndpoints(endpoints, index, data, messageElement, form, submitButton
         } else {
             // Se não for JSON, obter o texto e mostrar erro
             return response.text().then(text => {
-                console.error('Resposta não-JSON recebida:', text);
+                console.error('⚠️ Resposta não-JSON recebida:', text);
                 throw new Error(`Resposta inesperada do servidor (${response.status})`);
             });
         }
     })
     .then(result => {
         // Success
-        showFormMessage(messageElement, 'Obrigado pelo seu feedback! A sua opinião é muito importante para nós.', 'success');
+        console.log('✅ Feedback enviado com sucesso!');
+        window.formUtils.showFormMessage(messageElement, 'success', 'Obrigado pelo seu feedback! A sua opinião é muito importante para nós.');
         
         // Reset form
         form.reset();
@@ -238,8 +254,7 @@ function tryEndpoints(endpoints, index, data, messageElement, form, submitButton
         
         // Re-enable submit button
         if (submitButton) {
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Enviar Feedback';
+            window.formUtils.setButtonLoading(submitButton, false, 'Enviar Feedback');
         }
         
         // Call success callback if provided
@@ -248,45 +263,9 @@ function tryEndpoints(endpoints, index, data, messageElement, form, submitButton
         }
     })
     .catch(error => {
-        console.error('Erro ao enviar para endpoint:', currentEndpoint, error);
+        console.error('❌ Erro ao enviar para endpoint:', currentEndpoint, error);
         
         // Try next endpoint
         tryEndpoints(endpoints, index + 1, data, messageElement, form, submitButton, successCallback);
     });
-}
-
-/**
- * Show form message
- * @param {HTMLElement} element - Message element
- * @param {string} message - Message text
- * @param {string} type - Message type (success, error, info)
- */
-function showFormMessage(element, message, type) {
-    if (!element) return;
-    
-    let alertClass = 'alert-info';
-    if (type === 'success') alertClass = 'alert-success';
-    if (type === 'error') alertClass = 'alert-danger';
-    
-    element.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
-    
-    // Scroll to message if not visible
-    if (!isElementInViewport(element)) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-}
-
-/**
- * Check if element is in viewport
- * @param {HTMLElement} element - Element to check
- * @returns {boolean} - Whether element is in viewport
- */
-function isElementInViewport(element) {
-    const rect = element.getBoundingClientRect();
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-    );
 }

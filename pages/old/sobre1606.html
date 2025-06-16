@@ -594,12 +594,7 @@
         
         .navbar {
             background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             padding: 1rem 0;
-        }
-        
-        .navbar-brand img {
-            height: 40px;
         }
         
         .navbar-nav {
@@ -701,120 +696,205 @@
             text-decoration: underline;
         }
         
-        /* Estilos para os widgets de experiência */
-        .experience-widget {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            height: 100%;
-            transition: transform 0.3s ease;
+        @media (max-width: 768px) {
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .footer-right {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .footer-social {
+                justify-content: center;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
         }
         
-        .experience-widget:hover {
+        /* Widgets de Experiência e Formação */
+        .experience-widget,
+        .education-widget {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(191, 154, 51, 0.1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .experience-widget:hover,
+        .education-widget:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: #BF9A33;
         }
         
         .widget-year {
-            background-color: var(--primary-color);
+            background-color: #BF9A33;
             color: #fff;
-            font-weight: 600;
-            padding: 5px 10px;
+            padding: 0.5rem 1rem;
             border-radius: 20px;
-            display: inline-block;
-            margin-bottom: 10px;
             font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: inline-block;
         }
         
         .widget-title {
             font-size: 1.1rem;
-            margin-bottom: 5px;
-            color: var(--dark-color);
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
         }
         
         .widget-subtitle {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin: 0;
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 0;
+            line-height: 1.4;
         }
         
-        /* Estilos para os widgets de educação */
-        .education-widget {
-            background-color: #fff;
+        .education-section {
+            padding: 80px 0;
+        }
+        
+        /* Widgets de Certificação */
+        .certification-widget {
+            background: #fff;
+            padding: 1.5rem;
             border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             text-align: center;
-            height: 100%;
             transition: transform 0.3s ease;
-        }
-        
-        .education-widget:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Estilos para o mosaico de certificações */
-        .certification-mosaic {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            height: 180px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
+            border: 1px solid rgba(191, 154, 51, 0.1);
+            height: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .certification-widget:hover {
+            transform: translateY(-5px);
+            border-color: #BF9A33;
+        }
+        
+        .certificate-link {
+            display: inline-flex;
             align-items: center;
+            gap: 0.5rem;
+            color: #999;
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            background-color: rgba(191, 154, 51, 0.05);
+        }
+        
+        .certificate-link:hover {
+            color: #BF9A33;
+            background-color: rgba(191, 154, 51, 0.1);
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+        
+        .certificate-link i {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+        
+        .certificate-link:hover i {
+            opacity: 1;
+        }
+        
+        .certifications-section {
+            padding: 80px 0;
+        }
+        
+        /* Mosaicos de Certificação */
+        .certification-mosaic {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(191, 154, 51, 0.1);
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
         }
         
         .certification-mosaic:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(191, 154, 51, 0.15);
+            border-color: #BF9A33;
         }
         
         .mosaic-icon {
             font-size: 2rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
+            color: #BF9A33;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
         }
         
         .mosaic-title {
             font-size: 0.9rem;
             font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 5px;
-            height: 2.8rem;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            color: #333;
+            margin-bottom: 0.3rem;
+            line-height: 1.3;
+            height: 2.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .mosaic-subtitle {
-            color: var(--primary-color);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            color: #666;
+            margin-bottom: 0.5rem;
             font-weight: 500;
-            margin-bottom: 5px;
         }
         
         .mosaic-year {
-            color: var(--text-light);
-            font-size: 0.75rem;
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(191, 154, 51, 0.1);
+            color: #BF9A33;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
         }
         
         .mosaic-link {
             position: absolute;
-            bottom: 10px;
-            right: 10px;
-            color: var(--text-light);
+            bottom: 0.5rem;
+            right: 0.5rem;
+            color: #999;
             font-size: 0.8rem;
             transition: all 0.3s ease;
+            opacity: 0.7;
         }
         
         .mosaic-link:hover {
@@ -837,41 +917,6 @@
             .mosaic-icon {
                 font-size: 1.5rem;
             }
-        }
-        
-        /* Estilos para o botão e modal de feedback */
-        .feedback-btn {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            background-color: #bf9a33;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 10px 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        
-        .feedback-btn:hover {
-            background-color: #a57b0a;
-            transform: scale(1.05);
-        }
-        
-        .rating {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .star {
-            color: #ccc;
-            cursor: pointer;
-            font-size: 24px;
-        }
-        
-        .star.hover, .star.active {
-            color: #bf9a33;
         }
     </style>
 </head>
@@ -1164,7 +1209,7 @@
                             <h5 class="mosaic-title">Professional Scrum Master™ I</h5>
                             <p class="mosaic-subtitle">Scrum.org</p>
                             <span class="mosaic-year">2022</span>
-                            <a href="#" class="mosaic-link" target="_blank">
+                            <a href="https://www.credly.com/badges/8099b2cf-909c-42f0-bf47-fb58e6d145e1?source=linked_in_profile" class="mosaic-link" target="_blank">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
                         </div>
@@ -1173,12 +1218,12 @@
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
                         <div class="certification-mosaic">
                             <div class="mosaic-icon">
-                                <i class="fas fa-project-diagram"></i>
+                                <i class="fab fa-aws"></i>
                             </div>
-                            <h5 class="mosaic-title">Project Management Professional (PMP)</h5>
-                            <p class="mosaic-subtitle">PMI</p>
-                            <span class="mosaic-year">2020</span>
-                            <a href="#" class="mosaic-link" target="_blank">
+                            <h5 class="mosaic-title">AWS Certified Cloud Practitioner</h5>
+                            <p class="mosaic-subtitle">Amazon Web Services</p>
+                            <span class="mosaic-year">2022</span>
+                            <a href="https://www.credly.com/badges/93de728a-0b70-465c-9c6f-38f9838e9b32?source=linked_in_profile" class="mosaic-link" target="_blank">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
                         </div>
@@ -1187,12 +1232,12 @@
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
                         <div class="certification-mosaic">
                             <div class="mosaic-icon">
-                                <i class="fas fa-comments"></i>
+                                <i class="fas fa-handshake"></i>
                             </div>
-                            <h5 class="mosaic-title">Certified Professional Coach</h5>
-                            <p class="mosaic-subtitle">ICF</p>
-                            <span class="mosaic-year">2019</span>
-                            <a href="#" class="mosaic-link" target="_blank">
+                            <h5 class="mosaic-title">Negociação Avançada</h5>
+                            <p class="mosaic-subtitle">Nova SBE</p>
+                            <span class="mosaic-year">2023</span>
+                            <a href="https://certificates.exed.novasbe.pt/b86a27c5-a423-44e6-9d1a-a330fc4d7e75" class="mosaic-link" target="_blank">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
                         </div>
@@ -1201,12 +1246,12 @@
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
                         <div class="certification-mosaic">
                             <div class="mosaic-icon">
-                                <i class="fas fa-chart-line"></i>
+                                <i class="fas fa-brain"></i>
                             </div>
-                            <h5 class="mosaic-title">Prosci® Change Management</h5>
-                            <p class="mosaic-subtitle">Prosci</p>
-                            <span class="mosaic-year">2018</span>
-                            <a href="#" class="mosaic-link" target="_blank">
+                            <h5 class="mosaic-title">AI & Business Strategy</h5>
+                            <p class="mosaic-subtitle">Project Management Institute</p>
+                            <span class="mosaic-year">2023</span>
+                            <a href="https://www.linkedin.com/learning/certificates/dea6539d8783c1a0d1ffb9dd57b6ce018dc92ef8fc365927c6e981a6364904f8" class="mosaic-link" target="_blank">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
                         </div>
@@ -1215,12 +1260,12 @@
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
                         <div class="certification-mosaic">
                             <div class="mosaic-icon">
-                                <i class="fas fa-sitemap"></i>
+                                <i class="fas fa-user-tie"></i>
                             </div>
-                            <h5 class="mosaic-title">Organizational Development Certified Professional</h5>
-                            <p class="mosaic-subtitle">ISODC</p>
-                            <span class="mosaic-year">2017</span>
-                            <a href="#" class="mosaic-link" target="_blank">
+                            <h5 class="mosaic-title">Coaching Employees</h5>
+                            <p class="mosaic-subtitle">National Association of State Boards</p>
+                            <span class="mosaic-year">2023</span>
+                            <a href="https://www.linkedin.com/learning/certificates/24a81146103361192be8ca4d22b37894bed7306fefd7f7cde553a2a497856091" class="mosaic-link" target="_blank">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
                         </div>
@@ -1229,26 +1274,12 @@
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
                         <div class="certification-mosaic">
                             <div class="mosaic-icon">
-                                <i class="fas fa-user-check"></i>
+                                <i class="fas fa-language"></i>
                             </div>
-                            <h5 class="mosaic-title">MBTI® Certified Practitioner</h5>
-                            <p class="mosaic-subtitle">Myers-Briggs</p>
-                            <span class="mosaic-year">2016</span>
-                            <a href="#" class="mosaic-link" target="_blank">
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                        <div class="certification-mosaic">
-                            <div class="mosaic-icon">
-                                <i class="fas fa-tasks"></i>
-                            </div>
-                            <h5 class="mosaic-title">PRINCE2® Foundation</h5>
-                            <p class="mosaic-subtitle">AXELOS</p>
-                            <span class="mosaic-year">2015</span>
-                            <a href="#" class="mosaic-link" target="_blank">
+                            <h5 class="mosaic-title">Go Fluente</h5>
+                            <p class="mosaic-subtitle">goFLUENT</p>
+                            <span class="mosaic-year">2025</span>
+                            <a href="https://www.linkedin.com/in/samuelrolo/details/certifications/Confira%20isso%20no%20LinkedIn%20Learning:%20https:/www.linkedin.com/learning/certificates/97b218babaf16e838b926adae37c416131ce18f29c6aa596627a17fd96c30a7e" class="mosaic-link" target="_blank">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
                         </div>
@@ -1256,22 +1287,188 @@
                 </div>
             </div>
         </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2 class="section-title">Recomendações</h2>
+                    <p class="section-subtitle">O que dizem sobre o trabalho do Samuel</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <div class="testimonial-item">
+                                    <div class="testimonial-content">
+                                        <p>"I had the pleasure of working with Samuel while he was Senior Consultant and Manager at Deloitte, and I can say that he is an exceptional professional. Samuel has a combination of technical and interpersonal skills that makes him a natural leader. During the time I supervised Samuel's work, he demonstrated an impressive ability to deal with complex projects, always keeping a clear focus on the results. His ability to meet customer needs and his commitment to excellence was a key to the projects success. Samuel also promotes a work environment that promotes his team professional growth. I recommend Samuel without hesitation, I know he will bring value to any team or project in which he is involved."</p>
+                                        <div class="testimonial-author">
+                                            <img src="../images/recommendations/Jose.png" alt="José Subtil" class="testimonial-avatar">
+                                            <div>
+                                                <h4>José Subtil</h4>
+                                                <p>Banking and Insurance Leader at Timestamp</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div class="testimonial-item">
+                                    <div class="testimonial-content">
+                                        <p>"I had the plesure to work with Samuel during my last project at Deloitte. He is a dedicated professional that always goes above and beyond to make an impact that matters. Samuel does a remarkable job leading his teams while being commited and always available to help others. Moreover, he is extremely hard-working, determined and always challanges us to do our best. It was an honour learning from him!"</p>
+                                        <div class="testimonial-author">
+                                            <img src="../images/recommendations/Marta.png" alt="Marta Oliveira Dias" class="testimonial-avatar">
+                                            <div>
+                                                <h4>Marta Oliveira Dias</h4>
+                                                <p>Service Improvement Specialist @VodafoneZiggo</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div class="testimonial-item">
+                                    <div class="testimonial-content">
+                                        <p>"I had the pleasure of working with Samuel in his first unofficial project as a senior consultant and was instantly impressed. Samuel effortlessly and expertly managed to juggle multiple issues in the toughest situation, his leadership and team building skills were exceptional, and I was very impressed by his consulting capabilities and willingness to coach new members. As a Senior Consultant, Samuel has my highest recommendation and I can safely say that I have learned a lot by working with him."</p>
+                                        <div class="testimonial-author">
+                                            <img src="../images/recommendations/Ricardo.png" alt="Ricardo Ramos da Silva" class="testimonial-avatar">
+                                            <div>
+                                                <h4>Ricardo Ramos da Silva</h4>
+                                                <p>Senior Manager | HRIT Senior Solution Architect | Senior Project Manager | Successfactors SME</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div class="testimonial-item">
+                                    <div class="testimonial-content">
+                                        <p>"O Samuel é além de um profissional extremamente disponível e conhecedor da sua área de actuação, um ser humano ímpar. Procura congregar as ideias do grupo pra encontrar soluções que sejam sempre focadas em resultados. Foi um prazer imensurável trabalhar com o Samuel pois mais uma vez tive a certeza que vale mais trabalhar com boas pessoas do que com pessoas boas...."</p>
+                                        <div class="testimonial-author">
+                                            <img src="../images/recommendations/Ivo.png" alt="Ivo Guimarães" class="testimonial-avatar">
+                                            <div>
+                                                <h4>Ivo Guimarães</h4>
+                                                <p>Gestão de Talento | RH Analítico | Transformação Digital | SAP Success Factors | LMS</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- João Miguel Lince -->
+                            <div class="carousel-item">
+                                <div class="testimonial-item">
+                                    <div class="testimonial-content">
+                                        <p>"O Samuel é sem dúvida um excelente profissional. Tive o privilégio de estudar com ele e desde cedo foi possível perceber a sua capacidade de liderança, a sua inteligência emocional e a sua capacidade de trabalho. Mais tarde, tive a oportunidade de trabalhar com ele e pude comprovar todas estas qualidades. O Samuel é um profissional extremamente dedicado, com uma capacidade de trabalho fora do comum e com uma visão estratégica que lhe permite antecipar problemas e encontrar soluções. É sem dúvida uma pessoa com quem gosto de trabalhar e que recomendo vivamente."</p>
+                                        <div class="testimonial-author">
+                                            <img src="../images/recommendations/joao_lince.png" alt="João Miguel Lince" class="testimonial-avatar">
+                                            <div>
+                                                <h4>João Miguel Lince</h4>
+                                                <p>Consultor de Recursos Humanos | Especialista em Gestão da Mudança | Formador</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Joana Russinho -->
+                            <div class="carousel-item">
+                                <div class="testimonial-item">
+                                    <div class="testimonial-content">
+                                        <p>"I had the pleasure of working with Samuel to re-launch the human capital practice of Deloitte Portugal. Samuel has a very complete profile, combining soft skilss with technical ones. Demanding, he gives 100% of himself in everything he does, with enthusiasm and energy. Samuel is consistently and reliable, he is not afraid of tough situations, conflict solving and challenges."</p>
+                                        <div class="testimonial-author">
+                                            <img src="../images/recommendations/joana_russinho.png" alt="Joana Russinho" class="testimonial-avatar">
+                                            <div>
+                                                <h4>Joana Russinho</h4>
+                                                <p>Human Resources Leadership | Opinion Writer | Mentor, Nova SBE VOICE Leadership Initiative</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Margarida Melícias -->
+                            <div class="carousel-item">
+                                <div class="testimonial-item">
+                                    <div class="testimonial-content">
+                                        <p>"O Samuel é um excelente Consultor. Muito organizado e focado nos resultados, esforça-se imenso para entregar o melhor trabalho possível ao cliente. Por outro lado, tenta sempre explorar novas opções e novos conhecimentos, partilhando-os com quem trabalha com ele no seu dia-a-dia. Aprendi muito com o Samuel, e a sua ajuda permitiu-me abordar os desafios de um projecto de forma mais metódica e inovadora."</p>
+                                        <div class="testimonial-author">
+                                            <img src="../images/recommendations/margarida_melicias.png" alt="Margarida Melícias" class="testimonial-avatar">
+                                            <div>
+                                                <h4>Margarida Melícias</h4>
+                                                <p>People Sustainability Senior Manager at Jerónimo Martins</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Joana Costa Pereira -->
+                            <div class="carousel-item">
+                                <div class="testimonial-item">
+                                    <div class="testimonial-content">
+                                        <p>"Samuel has a strategic-oriented approach to his work, providing in depth analysis, innovative approaches and technically supported fundaments. I enjoyed working with Samuel and i would return to him for advisory and technical support regarding Human Resources theory. Mostly Samuel is organized, analytical, hardworking and a great spirit contributor for a team."</p>
+                                        <div class="testimonial-author">
+                                            <img src="../images/recommendations/joana_costa_pereira.png" alt="Joana Costa Pereira" class="testimonial-avatar">
+                                            <div>
+                                                <h4>Joana Costa Pereira</h4>
+                                                <p>Global Leadership Consulting, Senior Manager @ Boyden</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
         
-        <!-- CTA Section -->
+        <!-- CTA -->
         <section class="cta-section">
             <div class="container">
                 <h2>Vamos trabalhar juntos?</h2>
-                <p>Se procura um parceiro para ajudar a sua organização a navegar processos de transformação, desenvolver líderes ou criar uma cultura mais humana e orientada para o propósito, estou disponível para uma conversa.</p>
-                <div>
-                    <a href="../index.html#contactos" class="btn btn-primary">Contactar</a>
-                    <a href="servicos.html" class="btn btn-outline-light">Ver Serviços</a>
-                </div>
+                <p>Se procuras apoio para transformar a tua organização ou desenvolver o teu potencial de liderança, entra em contacto para discutirmos como posso ajudar-te.</p>
+                <a href="../index.html#contactos" class="btn btn-primary">Fala comigo</a>
             </div>
         </section>
+        
+        <!-- Sistema de Feedback -->
+        <button class="feedback-trigger" id="feedbackTrigger">
+            <i class="fas fa-comment"></i>
+        </button>
+        
+        <div class="feedback-container" id="feedbackContainer">
+            <div class="feedback-header">
+                <h5>A tua opinião é importante para nós!</h5>
+                <button class="feedback-close" id="feedbackClose">&times;</button>
+            </div>
+            <div class="feedback-stars">
+                <i class="far fa-star" data-rating="1"></i>
+                <i class="far fa-star" data-rating="2"></i>
+                <i class="far fa-star" data-rating="3"></i>
+                <i class="far fa-star" data-rating="4"></i>
+                <i class="far fa-star" data-rating="5"></i>
+            </div>
+            <div class="feedback-comment">
+                <textarea id="feedbackComment" rows="3" placeholder="Partilha a tua experiência connosco..."></textarea>
+            </div>
+            <div class="feedback-submit">
+                <button class="feedback-btn" id="feedbackSubmit">Enviar</button>
+            </div>
+        </div>
     </main>
-    
+
     <!-- Footer -->
-    <footer>
+    <footer id="contactos">
         <div class="container">
             <div class="footer-container">
                 <div class="footer-left">
@@ -1296,65 +1493,107 @@
             </div>
         </div>
     </footer>
-
-    <!-- Botão de Feedback -->
-    <button id="feedbackBtn" class="feedback-btn">
-        <i class="fas fa-comment"></i> Feedback
-    </button>
-
-    <!-- Modal de Feedback -->
-    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="feedbackModalLabel">Deixe o seu Feedback</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="feedbackForm">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nome *</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="rating" class="form-label">Avaliação *</label>
-                            <input type="hidden" id="rating" name="rating" value="0">
-                            <div class="rating">
-                                <span class="star" data-value="1"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="2"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="3"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="4"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="5"><i class="far fa-star"></i></span>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="feedbackMessage" class="form-label">Mensagem *</label>
-                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3" required></textarea>
-                        </div>
-                        <div id="feedbackFormMessage"></div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" form="feedbackForm" class="btn btn-primary">Enviar Feedback</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Utilitários e Integrações -->
-    <script src="../js/form-utils.js"></script>
-    <script src="../js/brevo-integration.js"></script>
-
-    <!-- Formulários -->
-    <script src="../js/contact-form.js"></script>
-    <script src="../js/feedback-form.js"></script>
+    
+    <!-- Script principal -->
+    <script src="../js/main.js"></script>
+    
+    <script>
+        // Sistema de Feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            const feedbackTrigger = document.getElementById('feedbackTrigger');
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const feedbackClose = document.getElementById('feedbackClose');
+            const feedbackStars = document.querySelectorAll('.feedback-stars i');
+            const feedbackSubmit = document.getElementById('feedbackSubmit');
+            
+            let selectedRating = 0;
+            
+            // Abrir o formulário de feedback
+            feedbackTrigger.addEventListener('click', function() {
+                feedbackContainer.classList.add('show');
+            });
+            
+            // Fechar o formulário de feedback
+            feedbackClose.addEventListener('click', function() {
+                feedbackContainer.classList.remove('show');
+            });
+            
+            // Selecionar classificação
+            feedbackStars.forEach(star => {
+                star.addEventListener('click', function() {
+                    selectedRating = parseInt(this.getAttribute('data-rating'));
+                    
+                    // Atualizar visuais das estrelas
+                    feedbackStars.forEach(s => {
+                        const rating = parseInt(s.getAttribute('data-rating'));
+                        if (rating <= selectedRating) {
+                            s.classList.remove('far');
+                            s.classList.add('fas');
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('fas');
+                            s.classList.add('far');
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+                
+                // Efeito hover
+                star.addEventListener('mouseover', function() {
+                    const hoverRating = parseInt(this.getAttribute('data-rating'));
+                    
+                    feedbackStars.forEach(s => {
+                        const rating = parseInt(s.getAttribute('data-rating'));
+                        if (rating <= hoverRating) {
+                            s.classList.remove('far');
+                            s.classList.add('fas');
+                        }
+                    });
+                });
+                
+                star.addEventListener('mouseout', function() {
+                    feedbackStars.forEach(s => {
+                        const rating = parseInt(s.getAttribute('data-rating'));
+                        if (rating > selectedRating) {
+                            s.classList.remove('fas');
+                            s.classList.add('far');
+                        }
+                    });
+                });
+            });
+            
+            // Enviar feedback
+            feedbackSubmit.addEventListener('click', function() {
+                const comment = document.getElementById('feedbackComment').value;
+                
+                if (selectedRating > 0) {
+                    // Aqui seria a integração com a API da Brevo
+                    console.log('Enviando feedback:', {
+                        rating: selectedRating,
+                        comment: comment,
+                        page: 'sobre',
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    // Simular envio bem-sucedido
+                    alert('Obrigado pelo teu feedback!');
+                    
+                    // Resetar e fechar
+                    selectedRating = 0;
+                    document.getElementById('feedbackComment').value = '';
+                    feedbackStars.forEach(s => {
+                        s.classList.remove('fas', 'active');
+                        s.classList.add('far');
+                    });
+                    feedbackContainer.classList.remove('show');
+                } else {
+                    alert('Por favor, seleciona uma classificação.');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
