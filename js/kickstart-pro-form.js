@@ -1,14 +1,13 @@
 /**
- * Formulário Kickstart Pro - Versão Corrigida Final
- * CORREÇÕES IMPLEMENTADAS:
- * - Campo telefone MB WAY apenas quando selecionado
- * - Formatação +351# conforme documentação Ifthenpay
- * - Sistema de pagamento unificado
- * - URLs backend corrigidas
+ * Formulário Kickstart Pro - Versão Atualizada
+ * ATUALIZAÇÕES IMPLEMENTADAS:
+ * - Utilização do utilitário centralizado form-utils.js
+ * - Evocação correta das APIs (IfthenPay para pagamento e Brevo para email)
+ * - URLs consistentes com o resto do sistema
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Kickstart Pro Form - Versão Corrigida Carregada');
+    console.log('🚀 Kickstart Pro Form - Versão Atualizada Carregada');
     initializeKickstartForm();
 });
 
@@ -31,7 +30,7 @@ function initializeKickstartForm() {
     form.addEventListener('submit', handleKickstartSubmit);
     
     // Configurar limpeza quando modal fechar
-    setupModalCleanup();
+    window.formUtils.setupModalCleanup('kickstartModal', 'kickstartForm');
     
     console.log('✅ Formulário Kickstart Pro inicializado');
 }
@@ -103,44 +102,6 @@ function setupPhoneFormatting(phoneInput) {
 }
 
 /**
- * Configurar limpeza quando modal fechar
- */
-function setupModalCleanup() {
-    const modal = document.getElementById('kickstartModal');
-    if (!modal) return;
-
-    modal.addEventListener('hidden.bs.modal', function() {
-        console.log('🚪 Modal fechado - limpando formulário');
-        clearKickstartForm();
-    });
-}
-
-/**
- * Limpar formulário completamente
- */
-function clearKickstartForm() {
-    const form = document.getElementById('kickstartForm');
-    if (!form) return;
-
-    // Reset do formulário
-    form.reset();
-
-    // Ocultar campo de telefone
-    const phoneGroup = document.getElementById('kickstartPhoneGroup');
-    if (phoneGroup) {
-        phoneGroup.style.display = 'none';
-    }
-
-    // Limpar mensagens
-    const messageDiv = document.getElementById('kickstartFormMessage');
-    if (messageDiv) {
-        messageDiv.innerHTML = '';
-    }
-
-    console.log('✅ Formulário limpo com sucesso');
-}
-
-/**
  * Lidar com submissão do formulário
  */
 async function handleKickstartSubmit(event) {
@@ -149,7 +110,7 @@ async function handleKickstartSubmit(event) {
 
     const form = event.target;
     const formData = new FormData(form);
-    const messageDiv = getOrCreateMessageContainer('kickstartFormMessage', form);
+    const messageDiv = window.formUtils.getOrCreateMessageContainer('kickstartFormMessage', form);
     const submitButton = form.querySelector('button[type="submit"]');
 
     // Limpar mensagens anteriores
@@ -158,7 +119,7 @@ async function handleKickstartSubmit(event) {
     try {
         // Validar formulário
         if (!validateKickstartForm(form)) {
-            showFormMessage(messageDiv, 'error', 'Por favor, preencha todos os campos obrigatórios corretamente.');
+            window.formUtils.showFormMessage(messageDiv, 'error', 'Por favor, preencha todos os campos obrigatórios corretamente.');
             return;
         }
 
@@ -167,8 +128,8 @@ async function handleKickstartSubmit(event) {
         console.log('📊 Dados preparados:', data);
 
         // Mostrar loading
-        setButtonLoading(submitButton, true, 'A processar...');
-        showFormMessage(messageDiv, 'info', 'A processar a sua marcação...');
+        window.formUtils.setButtonLoading(submitButton, true, 'A processar...');
+        window.formUtils.showFormMessage(messageDiv, 'info', 'A processar a sua marcação...');
 
         // Enviar dados para backend
         await submitKickstartToBackend(data);
@@ -181,7 +142,7 @@ async function handleKickstartSubmit(event) {
             // Enviar email via Brevo
             await sendKickstartEmail(data);
             
-            showFormMessage(messageDiv, 'success', 
+            window.formUtils.showFormMessage(messageDiv, 'success', 
                 `✅ Kickstart Pro marcado com sucesso! ${paymentResult.message || ''}`);
             form.reset();
             
@@ -196,10 +157,10 @@ async function handleKickstartSubmit(event) {
 
     } catch (error) {
         console.error('❌ Erro no formulário Kickstart:', error);
-        showFormMessage(messageDiv, 'error', 
+        window.formUtils.showFormMessage(messageDiv, 'error', 
             `Erro no processamento: ${error.message}. Tente novamente ou contacte-nos em samuel@share2inspire.pt`);
     } finally {
-        setButtonLoading(submitButton, false, 'Marcar Kickstart Pro');
+        window.formUtils.setButtonLoading(submitButton, false, 'Marcar Kickstart Pro');
     }
 }
 
@@ -238,7 +199,7 @@ async function processKickstartPayment(data, paymentMethod) {
 async function submitKickstartToBackend(data) {
     console.log('📤 Enviando dados Kickstart para backend...');
     
-    const response = await fetch('https://share2inspire-backend.onrender.com/booking', {
+    const response = await fetch(window.formUtils.backendUrls.booking, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -276,18 +237,13 @@ async function sendKickstartEmail(data) {
 function validateKickstartForm(form) {
     const requiredFields = ['name', 'email'];
     
-    for (const field of requiredFields) {
-        const input = form.querySelector(`[name="${field}"]`);
-        if (!input || !input.value.trim()) {
-            console.warn(`⚠️ Campo obrigatório vazio: ${field}`);
-            return false;
-        }
+    // Usar utilitário para validar campos obrigatórios
+    if (!window.formUtils.validateRequiredFields(form, requiredFields)) {
+        return false;
     }
 
     // Validar email
-    const email = form.querySelector('[name="email"]').value;
-    if (!isValidEmail(email)) {
-        console.warn('⚠️ Email inválido');
+    if (!window.formUtils.validateEmail(form)) {
         return false;
     }
 
@@ -322,36 +278,3 @@ function prepareKickstartData(formData) {
         timestamp: new Date().toISOString()
     };
 }
-
-// Funções utilitárias
-function getOrCreateMessageContainer(id, form) {
-    let container = document.getElementById(id);
-    if (!container) {
-        container = document.createElement('div');
-        container.id = id;
-        container.className = 'form-message mt-3';
-        form.appendChild(container);
-    }
-    return container;
-}
-
-function showFormMessage(container, type, message) {
-    const alertClass = type === 'success' ? 'alert-success' : 
-                      type === 'error' ? 'alert-danger' : 'alert-info';
-    container.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
-}
-
-function setButtonLoading(button, loading, text) {
-    if (loading) {
-        button.disabled = true;
-        button.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>${text}`;
-    } else {
-        button.disabled = false;
-        button.innerHTML = text;
-    }
-}
-
-function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
