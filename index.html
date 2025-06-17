@@ -46,9 +46,13 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- CSS Externo -->
     <link rel="stylesheet" href="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/css/style.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="diagnostic-styles.css">
     
     <style>
         :root {
@@ -130,6 +134,11 @@
         
         .hero-content {
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
         }
         
         .hero-content h1 {
@@ -138,12 +147,14 @@
             color: var(--primary-color);
             letter-spacing: 8px;
             margin-bottom: 1rem;
+            margin: 0;
         }
         
         .hero-content h2 {
             font-size: 3.5rem;
             font-weight: 700;
             color: var(--primary-color);
+            margin: 0;
             letter-spacing: 6px;
         }
         
@@ -369,6 +380,59 @@
             color: #ffffff;
         }
         
+        /* Estilos globais para botões - Paleta Minimalista */
+        .btn-primary {
+            background-color: var(--dark-color);
+            border-color: var(--dark-color);
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--dark-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(191, 154, 51, 0.3);
+        }
+        
+        .btn-outline-primary {
+            background-color: transparent;
+            border: 2px solid var(--dark-color);
+            color: var(--dark-color);
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--dark-color);
+            border-color: var(--dark-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: #f5f5f5;
+            border-color: #f5f5f5;
+            color: var(--dark-color);
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+            border-color: #e0e0e0;
+            color: var(--dark-color);
+            transform: translateY(-2px);
+        }
+        
         /* Estilos para a secção "Proposta de Valor" */
         .value-proposition-section {
             padding: 4rem 0;
@@ -560,344 +624,69 @@
                 flex: 0 0 100%;
             }
             
+            .footer-social {
+                justify-content: center;
+            }
+            
             .footer-links {
                 flex-direction: column;
                 align-items: center;
                 gap: 10px;
             }
         }
-    </style>
-</head>
-<body>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-8GQ1KM9FQS');
-    </script>
-    
-    <!-- Header e Navegação -->
-    <header class="header">
-        <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="index.html">
-                    <img src="images/logo.png" alt="Share2Inspire Logo" class="logo-img">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="index.html">Início</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/sobre.html">Sobre o Fundador</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/servicos.html">Serviços</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/loja.html">Loja</a>
-                        <li class="nav-item">
-                        </li>
-                            <a class="nav-link" href="pages/people-hub.html">People Hub</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#contactos">Contactos</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1>SHARE2INSPIRE</h1>
-            <h2>SAMUEL ROLO</h2>
-        </div>
-        <a href="#intro" class="scroll-down">
-            <div class="arrow"></div>
-        </a>
-    </section>
-
-    <!-- Intro Section -->
-    <section id="intro" class="intro-section">
-        <div class="container">
-            <h2>TRANSFORMAR COM <span class="proposito-gold">PROPÓSITO</span></h2>
-            <div class="row">
-                <div class="col-lg-6 col-md-12 carousel-column">
-                    <div id="introCarousel" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/BANNER1.png" class="d-block w-100" alt="Banner 1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/BANNER2.png" class="d-block w-100" alt="Banner 2">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/BANNER3.png" class="d-block w-100" alt="Banner 3">
-                            </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#introCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#introCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-12 text-column">
-                    <p>Bem-vindos à <span class="share2inspire-highlight">SHARE2INSPIRE!</span></p>
-                    <p>Sou o Samuel Rolo, especialista em ajudar pessoas e organizações a abraçar a mudança com mais confiança e humanidade.</p>
-                    <p>Com mais de 13 anos de experiência em consultoria estratégica de Human Capital, desenvolvi uma abordagem única que alia conhecimento técnico a uma perspetiva profundamente humana sobre o Futuro do Trabalho.</p>
-                    <p>Acredito que as organizações que prosperam são aquelas que reconhecem que as pessoas são o centro da sua estratégia, criando espaço para que o talento floresça e o propósito se concretize.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- O Que Nos Move Section -->
-    <section class="what-moves-us-section">
-        <div class="container">
-        <h2><span style="color: white;">O QUE NOS</span><span class="move-gold">MOVE</span></h2>
-            <div class="row mt-4">
-                <div class="col-lg-6 mb-4">
-                    <div class="feature-box">
-                        <div class="feature-title-box">
-                            <i class="fas fa-star feature-icon"></i>
-                            <h3 class="feature-title">A ESTRELA POLAR</h3>
-                        </div>
-                        <p class="feature-description">Na Share2Inspire, acreditamos que a verdadeira transformação acontece quando pessoas e organizações abraçam a mudança com mais confiança e humanidade. A nossa missão é caminhar ao vosso lado, desafiando o status quo, trazendo inovação e mantendo o foco no que realmente importa: as pessoas.</p>
-                    </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                    <div class="feature-box">
-                        <div class="feature-title-box">
-                            <i class="fas fa-fire feature-icon"></i>
-                            <h3 class="feature-title">A CHAMA QUE INSPIRA</h3>
-                        </div>
-                        <p class="feature-description">Queremos ser a chama que inspira organizações a tornarem-se promotoras de crescimento, inclusão, autenticidade e sustentabilidade humana, onde cada pessoa se sinta acolhida e valorizada na sua pluralidade.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row mt-5">
-                <div class="col-lg-6">
-                    <div class="video-wrapper">
-                        <video controls class="video-player">
-                            <source src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/video/estrela%20polar.mp4" type="video/mp4">
-                            O Teu navegador não suporta vídeos HTML5.
-                        </video>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="values-container">
-                        <div class="value-item">
-                            <div class="value-icon">
-                                <i class="fas fa-heart"></i>
-                            </div>
-                            <h3 class="value-title">AUTENTICIDADE</h3>
-                            <h4 class="value-subtitle">com Propósito</h4>
-                            <p class="value-description">Valorizamos a partilha genuína de experiências, ideias e histórias que inspirem mudanças reais e tenham um impacto consciente nas pessoas e na sociedade.</p>
-                        </div>
-                        <div class="value-item">
-                            <div class="value-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <h3 class="value-title">HUMANIDADE</h3>
-                            <h4 class="value-subtitle">em Primeiro Lugar</h4>
-                            <p class="value-description">As pessoas são o centro dos nossos projetos. Promovemos a empatia e o respeito acima de tudo, para criar ambientes de trabalho onde todos se sintam valorizados e representados.</p>
-                        </div>
-                        <div class="value-item">
-                            <div class="value-icon">
-                                <i class="fas fa-lightbulb"></i>
-                            </div>
-                            <h3 class="value-title">INSPIRAÇÃO</h3>
-                            <h4 class="value-subtitle">que Move à Ação</h4>
-                            <p class="value-description">Acreditamos que inspirar não é apenas emocionar, é provocar a reflexão, gerar ação e transformar realidades. Partilhamos ideias que impulsionam mudanças com impacto.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- A Nossa Proposta de Valor Section -->
-    <section class="value-proposition-section">
-        <div class="container">
-            <h2>A NOSSA PROPOSTA DE <span class="valor-gold">VALOR</span></h2>
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="value-proposition-text">
-                        <p>Na Share2Inspire acreditamos que a verdadeira transformação acontece quando aliamos estratégia à empatia, dados à escuta ativa e resultados ao propósito.</p>
-                        <p>A nossa abordagem nasce da convicção de que não basta gerir a mudança, é preciso vivê-la com consciência e humanidade.</p>
-                        <p>Combinamos rigor técnico com uma visão humana das pessoas, ajudando as organizações a evoluírem de forma sustentável.</p>
-                        <p>Mais do que implementar soluções, criamos experiências que promovem o sentimento de pertença e potenciam a autenticidade.</p>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="consultoria-box">
-                        <div class="video-wrapper">
-                            <video controls class="video-player">
-                                <source src="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/video/oferta%20comercial.mp4" type="video/mp4">
-                                Seu navegador não suporta vídeos HTML5.
-                            </video>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Action Buttons Section -->
-    <section class="action-buttons-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-3 mb-md-0">
-                    <a href="pages/servicos.html" class="action-button">EXPLORA OS NOSSOS SERVIÇOS</a>
-                </div>
-                <div class="col-md-4 mb-3 mb-md-0">
-                    <a href="pages/sobre.html" class="action-button">CONHECE O FUNDADOR</a>
-                </div>
-                <div class="col-md-4">
-                    <a href="pages/people-hub.html" class="action-button">ACEDE AO HR INNOVATION HUB</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer id="contactos">
-        <div class="container">
-            <div class="footer-container">
-                <div class="footer-left">
-                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
-                </div>
-                <div class="footer-right">
-                    <div class="footer-contact">
-                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
-                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
-                    </div>
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-links">
-                <a href="pages/politica-privacidade.html">Política de Privacidade</a>
-                <a href="pages/politica-cookies.html">Política de Cookies</a>
-                <a href="pages/tratamento-dados.html">Tratamento de Dados</a>
-                <a href="pages/informacao-legal.html">Informação Legal</a>
-            </div>
-        </div>
-    </footer>
-    
-    <!-- Cookie Consent Banner -->
-    <div id="cookieConsentBanner" class="cookie-consent-banner">
-        <div class="cookie-consent-content">
-            <div class="cookie-consent-text">
-                <h4><i class="fas fa-cookie-bite"></i> Utilizamos Cookies</h4>
-                <p>Este website utiliza cookies e outras tecnologias de rastreamento para melhorar a sua experiência de navegação, analisar o tráfego do site e compreender de onde vêm os nossos visitantes. Ao continuar a navegar, concorda com a nossa utilização de cookies.</p>
-            </div>
-            <div class="cookie-consent-buttons">
-                <button class="cookie-btn cookie-btn-accept" onclick="acceptAllCookies()">
-                    <i class="fas fa-check"></i> Aceitar Todos
-                </button>
-                <button class="cookie-btn cookie-btn-decline" onclick="declineAllCookies()">
-                    <i class="fas fa-times"></i> Recusar
-                </button>
-                <button class="cookie-btn cookie-btn-settings" onclick="openCookieSettings()">
-                    <i class="fas fa-cog"></i> Personalizar
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Modal de Preferências de Cookies -->
-    <div id="cookiePreferencesModal" class="cookie-preferences-modal">
-        <div class="cookie-preferences-content">
-            <div class="cookie-preferences-header">
-                <h3><i class="fas fa-cookie-bite"></i> Preferências de Cookies</h3>
-                <button class="cookie-preferences-close" onclick="closeCookieSettings()">&times;</button>
-            </div>
-            <div class="cookie-preferences-body">
-                <p>Pode escolher quais categorias de cookies aceitar. Estas configurações aplicam-se apenas a este navegador e dispositivo.</p>
-                
-                <div class="cookie-category">
-                    <div class="cookie-category-header">
-                        <h4>Cookies Estritamente Necessários</h4>
-                        <label class="cookie-toggle disabled">
-                            <input type="checkbox" checked disabled>
-                            <span class="cookie-toggle-slider"></span>
-                        </label>
-                    </div>
-                    <p>Estes cookies são essenciais para o funcionamento do website e não podem ser desativados. Geralmente são definidos em resposta a ações suas como definir preferências de privacidade, iniciar sessão ou preencher formulários.</p>
-                </div>
-                
-                <div class="cookie-category">
-                    <div class="cookie-category-header">
-                        <h4>Cookies de Análise</h4>
-                        <label class="cookie-toggle">
-                            <input type="checkbox" id="analytics-cookies">
-                            <span class="cookie-toggle-slider"></span>
-                        </label>
-                    </div>
-                    <p>Estes cookies permitem-nos contar visitas e fontes de tráfego para podermos medir e melhorar o desempenho do nosso site. Ajudam-nos a saber quais páginas são mais e menos populares e a ver como os visitantes se movem pelo site.</p>
-                </div>
-                
-                <div class="cookie-category">
-                    <div class="cookie-category-header">
-                        <h4>Cookies de Marketing</h4>
-                        <label class="cookie-toggle">
-                            <input type="checkbox" id="marketing-cookies">
-                            <span class="cookie-toggle-slider"></span>
-                        </label>
-                    </div>
-                    <p>Estes cookies podem ser definidos através do nosso site pelos nossos parceiros de publicidade. Podem ser usados por essas empresas para construir um perfil dos seus interesses e mostrar-lhe anúncios relevantes noutros sites.</p>
-                </div>
-                
-                <div class="cookie-category">
-                    <div class="cookie-category-header">
-                        <h4>Cookies de Personalização</h4>
-                        <label class="cookie-toggle">
-                            <input type="checkbox" id="personalization-cookies">
-                            <span class="cookie-toggle-slider"></span>
-                        </label>
-                    </div>
-                    <p>Estes cookies permitem que o website forneça funcionalidades e personalização melhoradas. Podem ser definidos por nós ou por fornecedores terceiros cujos serviços adicionámos às nossas páginas.</p>
-                </div>
-            </div>
-            <div class="cookie-preferences-footer">
-                <button class="cookie-btn cookie-btn-decline" onclick="declineAllCookies()">Recusar Todos</button>
-                <button class="cookie-btn cookie-btn-accept" onclick="savePreferences()">Guardar Preferências</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Cookie Consent CSS -->
-    <style>
-        /* Estilos do Cookie Consent Banner */
+        
+        /* Banner de Consentimento de Cookies */
         .cookie-consent-banner {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background-color: rgba(33, 37, 41, 0.95);
             color: white;
-            padding: 20px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+            padding: 15px;
             z-index: 9999;
             transform: translateY(100%);
-            transition: transform 0.3s ease-in-out;
-            border-top: 3px solid #bf9a33;
+            transition: transform 0.5s ease-in-out;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Botão Diagnóstico Clean */
+        .btn-diagnostic-clean {
+            background: var(--dark-color);
+            color: white;
+            border: none;
+            padding: 1.25rem 3rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+        }
+        
+        .btn-diagnostic-clean::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-diagnostic-clean:hover {
+            background: var(--primary-color);
+            color: var(--dark-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(191, 154, 51, 0.3);
+        }
+        
+        .btn-diagnostic-clean:hover::before {
+            left: 100%;
         }
         
         .cookie-consent-banner.show {
@@ -914,23 +703,16 @@
             gap: 15px;
         }
         
-        .cookie-consent-text {
-            flex: 1;
-            min-width: 300px;
-        }
-        
         .cookie-consent-text h4 {
-            color: #bf9a33;
-            margin: 0 0 8px 0;
-            font-size: 1.1rem;
-            font-weight: 600;
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            color: #BF9A33;
         }
         
         .cookie-consent-text p {
             margin: 0;
-            font-size: 0.9rem;
+            font-size: 14px;
             line-height: 1.4;
-            opacity: 0.9;
         }
         
         .cookie-consent-buttons {
@@ -940,75 +722,71 @@
         }
         
         .cookie-btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
             font-weight: 600;
-            font-size: 0.9rem;
+            cursor: pointer;
             transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
         }
         
         .cookie-btn-accept {
-            background: #bf9a33;
-            color: white;
+            background-color: #BF9A33;
+            color: #212529;
         }
         
         .cookie-btn-accept:hover {
-            background: #a57b0a;
-            color: white;
+            background-color: #a57b0a;
         }
         
         .cookie-btn-decline {
-            background: transparent;
+            background-color: transparent;
             color: white;
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 1px solid #6c757d;
         }
         
         .cookie-btn-decline:hover {
-            background: rgba(255,255,255,0.1);
-            color: white;
+            background-color: #6c757d;
         }
         
         .cookie-btn-settings {
-            background: transparent;
-            color: #bf9a33;
-            border: 1px solid #bf9a33;
+            background-color: transparent;
+            color: #BF9A33;
+            border: 1px solid #BF9A33;
         }
         
         .cookie-btn-settings:hover {
-            background: #bf9a33;
-            color: white;
+            background-color: #BF9A33;
+            color: #212529;
         }
         
-        /* Modal de Preferências */
+        /* Modal de Preferências de Cookies */
         .cookie-preferences-modal {
             display: none;
             position: fixed;
-            top: 0;
+            z-index: 10000;
             left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 10000;
-            overflow-y: auto;
+            background-color: rgba(0, 0, 0, 0.5);
         }
         
         .cookie-preferences-content {
-            background: white;
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 8px;
+            width: 90%;
             max-width: 600px;
-            margin: 50px auto;
-            border-radius: 10px;
-            overflow: hidden;
+            max-height: 80vh;
+            overflow-y: auto;
         }
         
         .cookie-preferences-header {
-            background: #2c3e50;
-            color: white;
             padding: 20px;
+            border-bottom: 1px solid #dee2e6;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -1016,25 +794,25 @@
         
         .cookie-preferences-header h3 {
             margin: 0;
-            color: #bf9a33;
+            color: #212529;
         }
         
         .cookie-preferences-close {
             background: none;
             border: none;
-            color: white;
             font-size: 24px;
             cursor: pointer;
+            color: #6c757d;
         }
         
         .cookie-preferences-body {
-            padding: 30px;
+            padding: 20px;
         }
         
         .cookie-category {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #f0f0f0;
         }
         
         .cookie-category:last-child {
@@ -1050,8 +828,7 @@
         
         .cookie-category h4 {
             margin: 0;
-            color: #2c3e50;
-            font-size: 1.1rem;
+            color: #212529;
         }
         
         .cookie-toggle {
@@ -1092,31 +869,66 @@
         }
         
         .cookie-toggle input:checked + .cookie-toggle-slider {
-            background-color: #bf9a33;
+            background-color: #BF9A33;
         }
         
         .cookie-toggle input:checked + .cookie-toggle-slider:before {
             transform: translateX(26px);
         }
         
-        .cookie-toggle.disabled .cookie-toggle-slider {
-            background-color: #bf9a33;
-            cursor: not-allowed;
-        }
-        
-        .cookie-category p {
-            margin: 0;
-            color: #666;
-            font-size: 0.9rem;
-            line-height: 1.4;
+        .cookie-toggle.disabled {
+            opacity: 0.6;
+            pointer-events: none;
         }
         
         .cookie-preferences-footer {
-            padding: 20px 30px;
-            background: #f8f9fa;
+            padding: 20px;
+            border-top: 1px solid #dee2e6;
             display: flex;
-            gap: 10px;
             justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        /* Botão de Feedback */
+        .feedback-btn {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background-color: #BF9A33;
+            color: #212529;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .feedback-btn:hover {
+            background-color: #a57b0a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Estilos para o formulário de feedback */
+        .rating {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .star {
+            font-size: 24px;
+            cursor: pointer;
+            color: #ddd;
+            transition: color 0.2s;
+        }
+        
+        .star:hover,
+        .star.active {
+            color: #BF9A33;
         }
         
         @media (max-width: 768px) {
@@ -1130,202 +942,1080 @@
                 width: 100%;
             }
             
-            .cookie-btn {
-                flex: 1;
-                min-width: 120px;
+            .cookie-preferences-content {
+                width: 95%;
+                margin: 2% auto;
             }
             
-            .cookie-preferences-content {
-                margin: 20px;
-                max-width: none;
+            .feedback-btn {
+                right: 15px;
+                bottom: 15px;
+                padding: 10px 16px;
+                font-size: 14px;
             }
         }
     </style>
-    
-    <!-- Cookie Consent JavaScript -->
-    <script>
-        // Verificar se o consentimento já foi dado
-        function checkCookieConsent() {
-            const consent = localStorage.getItem('cookieConsent');
-            if (!consent) {
-                setTimeout(() => {
-                    document.getElementById('cookieConsentBanner').classList.add('show');
-                }, 1000);
-            } else {
-                // Aplicar consentimento salvo
-                const consentData = JSON.parse(consent);
-                updateGoogleConsent(consentData);
-            }
-        }
-        
-        // Atualizar Google Consent Mode
-        function updateGoogleConsent(consentData) {
-            if (typeof gtag !== 'undefined') {
-                gtag('consent', 'update', {
-                    'ad_storage': consentData.marketing ? 'granted' : 'denied',
-                    'ad_user_data': consentData.marketing ? 'granted' : 'denied',
-                    'ad_personalization': consentData.personalization ? 'granted' : 'denied',
-                    'analytics_storage': consentData.analytics ? 'granted' : 'denied',
-                    'functionality_storage': 'granted',
-                    'personalization_storage': consentData.personalization ? 'granted' : 'denied',
-                    'security_storage': 'granted'
-                });
-            }
-        }
-        
-        // Aceitar todos os cookies
-        function acceptAllCookies() {
-            const consentData = {
-                necessary: true,
-                analytics: true,
-                marketing: true,
-                personalization: true,
-                timestamp: new Date().toISOString()
-            };
-            
-            localStorage.setItem('cookieConsent', JSON.stringify(consentData));
-            updateGoogleConsent(consentData);
-            hideBanner();
-            
-            // Disparar evento personalizado
-            window.dispatchEvent(new CustomEvent('cookieConsentChanged', { detail: consentData }));
-        }
-        
-        // Recusar todos os cookies (exceto necessários)
-        function declineAllCookies() {
-            const consentData = {
-                necessary: true,
-                analytics: false,
-                marketing: false,
-                personalization: false,
-                timestamp: new Date().toISOString()
-            };
-            
-            localStorage.setItem('cookieConsent', JSON.stringify(consentData));
-            updateGoogleConsent(consentData);
-            hideBanner();
-            closeCookieSettings();
-            
-            // Disparar evento personalizado
-            window.dispatchEvent(new CustomEvent('cookieConsentChanged', { detail: consentData }));
-        }
-        
-        // Abrir configurações de cookies
-        function openCookieSettings() {
-            document.getElementById('cookiePreferencesModal').style.display = 'block';
-            
-            // Carregar preferências atuais
-            const consent = localStorage.getItem('cookieConsent');
-            if (consent) {
-                const consentData = JSON.parse(consent);
-                document.getElementById('analytics-cookies').checked = consentData.analytics;
-                document.getElementById('marketing-cookies').checked = consentData.marketing;
-                document.getElementById('personalization-cookies').checked = consentData.personalization;
-            }
-        }
-        
-        // Fechar configurações de cookies
-        function closeCookieSettings() {
-            document.getElementById('cookiePreferencesModal').style.display = 'none';
-        }
-        
-        // Guardar preferências personalizadas
-        function savePreferences() {
-            const consentData = {
-                necessary: true,
-                analytics: document.getElementById('analytics-cookies').checked,
-                marketing: document.getElementById('marketing-cookies').checked,
-                personalization: document.getElementById('personalization-cookies').checked,
-                timestamp: new Date().toISOString()
-            };
-            
-            localStorage.setItem('cookieConsent', JSON.stringify(consentData));
-            updateGoogleConsent(consentData);
-            hideBanner();
-            closeCookieSettings();
-            
-            // Disparar evento personalizado
-            window.dispatchEvent(new CustomEvent('cookieConsentChanged', { detail: consentData }));
-        }
-        
-        // Esconder banner
-        function hideBanner() {
-            document.getElementById('cookieConsentBanner').classList.remove('show');
-        }
-        
-        // Função para mostrar novamente o banner (para testes ou reconfiguração)
-        function showCookieBanner() {
-            localStorage.removeItem('cookieConsent');
-            document.getElementById('cookieConsentBanner').classList.add('show');
-        }
-        
-        // Fechar modal ao clicar fora
-        document.getElementById('cookiePreferencesModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeCookieSettings();
-            }
-        });
-        
-        // Inicializar quando a página carregar
-        document.addEventListener('DOMContentLoaded', function() {
-            checkCookieConsent();
-        });
-        
-        // Adicionar função global para reconfigurar cookies (útil para links de política)
-        window.reconfigureCookies = function() {
-            openCookieSettings();
-        };
-    </script>
+</head>
 
-    <style>
-    .feedback-btn {
-        position: fixed;
-        right: 20px;
-        bottom: 20px;
-        background-color: #bf9a33;
-        color: white;
-        border: none;
-        border-radius: 50px;
-        padding: 10px 20px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.2 );
-        z-index: 1000;
-        transition: all 0.3s ease;
-    }
-    
-    .feedback-btn:hover {
-        background-color: #a57b0a;
-        transform: scale(1.05);
-    }
-    
-    .rating {
-        display: flex;
-        gap: 5px;
-    }
-    
-    .star {
-        color: #ccc;
-        cursor: pointer;
-        font-size: 24px;
-    }
-    
-    .star.hover, .star.active {
-        color: #bf9a33;
-    }
-
-</style>    
+<body>
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Header e Navegação -->
+    <header class="header">
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <img src="images/logo.png" alt="Share2Inspire Logo" class="logo-img">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="index.html">Início</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#diagnostico-rh">Diagnóstico RH</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="pages/sobre.html">Sobre o Fundador</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="pages/servicos.html">Serviços</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="pages/loja.html">Loja</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="pages/people-hub.html">People Hub</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#contactos">Contactos</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
 
-<!-- Utilitários e Integrações -->
-<script src="js/form-utils.js"></script>
-<script src="js/brevo-integration.js"></script>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1>SHARE2INSPIRE</h1>
+                <h2>SAMUEL ROLO</h2>
+            </div>
+        </div>
+        <div class="scroll-down">
+            <div class="arrow"></div>
+        </div>
+    </section>
 
-<!-- Formulários -->
-<script src="js/contact-form.js"></script>
-<script src="js/feedback-form.js"></script>
+    <!-- Intro Section -->
+    <section class="intro-section" id="intro">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 carousel-column">
+                    <div id="introCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="images/intro-1.jpg" class="d-block w-100" alt="Samuel Rolo em palestra">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="images/intro-2.jpg" class="d-block w-100" alt="Workshop de liderança">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="images/intro-3.jpg" class="d-block w-100" alt="Sessão de coaching">
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#introCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#introCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Próximo</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-column">
+                    <h2>O nosso <span class="proposito-gold">propósito</span></h2>
+                    <p>A <span class="share2inspire-highlight">Share2Inspire</span> nasceu com o propósito de partilhar conhecimento e inspirar a transformação positiva nas organizações e nas pessoas.</p>
+                    <p>Acreditamos que as verdadeiras transformações acontecem quando as pessoas estão no centro. A nossa missão é ajudar líderes e equipas a abraçar a mudança com mais confiança e humanidade.</p>
+                    <p>Através de consultoria, formação e coaching, trabalhamos para criar culturas organizacionais mais humanas, resilientes e orientadas para o propósito.</p>
+                    <a href="pages/sobre.html" class="btn btn-outline-primary">Conhecer o Samuel</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- O Que Nos Move Section -->
+    <section class="what-moves-us-section" id="o-que-nos-move">
+        <div class="container">
+            <h2>O que nos <span class="move-gold">move</span></h2>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="feature-box">
+                        <div class="feature-title-box">
+                            <h3 class="feature-title">Transformação</h3>
+                            <div class="feature-icon">
+                                <i class="fas fa-sync-alt"></i>
+                            </div>
+                        </div>
+                        <p class="feature-description">Acreditamos no poder da transformação organizacional como catalisador para o crescimento sustentável. Ajudamos as empresas a navegar processos de mudança complexos, alinhando estratégia, cultura e pessoas.</p>
+                    </div>
+                    
+                    <div class="feature-box">
+                        <div class="feature-title-box">
+                            <h3 class="feature-title">Liderança</h3>
+                            <div class="feature-icon">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                        </div>
+                        <p class="feature-description">Desenvolvemos líderes conscientes, capazes de inspirar e guiar equipas em ambientes de constante mudança. A nossa abordagem foca-se no equilíbrio entre resultados e bem-estar das pessoas.</p>
+                    </div>
+                    
+                    <div class="feature-box">
+                        <div class="feature-title-box">
+                            <h3 class="feature-title">Inovação</h3>
+                            <div class="feature-icon">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                        </div>
+                        <p class="feature-description">Promovemos uma cultura de inovação contínua, onde as ideias são valorizadas e as pessoas são incentivadas a experimentar, aprender e crescer. Acreditamos que a inovação é um processo colaborativo e humano.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="video-section">
+                        <div class="video-wrapper">
+                            <video class="video-player" controls poster="images/video-thumbnail.jpg">
+                                <source src="videos/share2inspire-intro.mp4" type="video/mp4">
+                                O seu navegador não suporta vídeos HTML5.
+                            </video>
+                        </div>
+                        <p class="text-center text-white">Conheça a nossa visão sobre o futuro do trabalho e das organizações.</p>
+                    </div>
+                    
+                    <div class="values-section">
+                        <div class="values-container">
+                            <div class="value-item">
+                                <div class="value-icon">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <h4 class="value-title">Humanidade</h4>
+                                <p class="value-description">Colocamos as pessoas no centro de tudo o que fazemos.</p>
+                            </div>
+                            
+                            <div class="value-item">
+                                <div class="value-icon">
+                                    <i class="fas fa-handshake"></i>
+                                </div>
+                                <h4 class="value-title">Confiança</h4>
+                                <p class="value-description">Construímos relações baseadas na transparência e integridade.</p>
+                            </div>
+                            
+                            <div class="value-item">
+                                <div class="value-icon">
+                                    <i class="fas fa-rocket"></i>
+                                </div>
+                                <h4 class="value-title">Impacto</h4>
+                                <p class="value-description">Focamo-nos em gerar resultados tangíveis e duradouros.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proposta de Valor Section -->
+    <section class="value-proposition-section" id="proposta-valor">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <h2 class="text-center mb-5">A nossa proposta de <span class="valor-gold">valor</span></h2>
+                    
+                    <div class="video-container-clean">
+                        <video class="video-player-clean" controls poster="images/video-thumbnail.jpg">
+                            <source src="https://github.com/samuelrolo/samuel.rolo/raw/main/video/share2inspire_video_final_sincronizado%20.mp4" type="video/mp4">
+                            O seu navegador não suporta vídeos HTML5.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Secção de Diagnóstico de Maturidade de RH -->
+    <section class="diagnostic-section" id="diagnostico-rh">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="section-title mb-4">
+                        Diagnóstico de <span class="highlight-gold">Maturidade de RH</span>
+                    </h2>
+                    <p class="lead mb-5" style="color: var(--text-light); font-size: 1.2rem; line-height: 1.6;">
+                        Avalie o nível de desenvolvimento dos seus processos de Recursos Humanos através de um diagnóstico completo e receba insights personalizados para otimizar a sua estratégia de gestão de talentos.
+                    </p>
+                    <button class="btn-diagnostic-clean" data-bs-toggle="modal" data-bs-target="#diagnosticModalClean">
+                        Iniciar Avaliação
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Action Buttons Section -->
+    <section class="action-buttons-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <a href="pages/servicos.html" class="action-button">Explorar Serviços</a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="pages/loja.html" class="action-button">Visitar Loja</a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="pages/people-hub.html" class="action-button">People Hub</a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="#contactos" class="action-button">Contactar</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal do Diagnóstico Clean -->
+    <div class="modal fade modal-clean" id="diagnosticModalClean" tabindex="-1" aria-labelledby="diagnosticModalCleanLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="diagnosticModalCleanLabel">
+                        Diagnóstico de Maturidade de RH
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Progress Bar -->
+                    <div class="progress-clean" id="progressClean">
+                        <div class="progress-clean-bar" id="progressBarClean"></div>
+                    </div>
+                    
+                    <!-- Survey Content -->
+                    <div id="surveyContentClean">
+                        <!-- Survey dimensions will be loaded here -->
+                    </div>
+                    
+                    <!-- Navigation Buttons -->
+                    <div class="navigation-clean">
+                        <button type="button" class="btn-nav-clean btn-nav-secondary-clean" id="prevBtnClean" onclick="previousDimensionClean()" disabled>
+                            <i class="fas fa-arrow-left"></i>
+                            Anterior
+                        </button>
+                        <button type="button" class="btn-nav-clean btn-nav-primary-clean" id="nextBtnClean" onclick="nextDimensionClean()">
+                            Próxima
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Modal Clean -->
+    <div class="modal fade modal-clean" id="resultsModalClean" tabindex="-1" aria-labelledby="resultsModalCleanLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resultsModalCleanLabel">
+                        Resultados do Diagnóstico
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="resultsContentClean">
+                        <!-- Results will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contactos">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-left">
+                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
+                </div>
+                <div class="footer-right">
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
+                    </div>
+                    <div class="footer-social">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="pages/politica-privacidade.html">Política de Privacidade</a>
+                <a href="pages/politica-cookies.html">Política de Cookies</a>
+                <a href="pages/tratamento-dados.html">Tratamento de Dados</a>
+                <a href="pages/informacao-legal.html">Informação Legal</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookieConsentBanner" class="cookie-consent-banner">
+        <div class="cookie-consent-content">
+            <div class="cookie-consent-text">
+                <h4>Utilizamos cookies</h4>
+                <p>Este site utiliza cookies para melhorar a sua experiência. Ao continuar a navegar, concorda com a nossa utilização de cookies.</p>
+            </div>
+            <div class="cookie-consent-buttons">
+                <button class="cookie-btn cookie-btn-accept" onclick="acceptAllCookies()">Aceitar Todos</button>
+                <button class="cookie-btn cookie-btn-decline" onclick="declineAllCookies()">Recusar Não Essenciais</button>
+                <button class="cookie-btn cookie-btn-settings" onclick="openCookieSettings()">Preferências</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Preferences Modal -->
+    <div id="cookiePreferencesModal" class="cookie-preferences-modal">
+        <div class="cookie-preferences-content">
+            <div class="cookie-preferences-header">
+                <h3>Preferências de Cookies</h3>
+                <button class="cookie-preferences-close" onclick="closeCookieSettings()">&times;</button>
+            </div>
+            <div class="cookie-preferences-body">
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <h4>Cookies Necessários</h4>
+                        <label class="cookie-toggle disabled">
+                            <input type="checkbox" checked disabled>
+                            <span class="cookie-toggle-slider"></span>
+                        </label>
+                    </div>
+                    <p>Estes cookies são essenciais para o funcionamento do site e não podem ser desativados.</p>
+                </div>
+                
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <h4>Cookies Analíticos</h4>
+                        <label class="cookie-toggle">
+                            <input type="checkbox" id="analytics-cookies">
+                            <span class="cookie-toggle-slider"></span>
+                        </label>
+                    </div>
+                    <p>Ajudam-nos a entender como os visitantes interagem com o site, permitindo melhorar a experiência.</p>
+                </div>
+                
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <h4>Cookies de Marketing</h4>
+                        <label class="cookie-toggle">
+                            <input type="checkbox" id="marketing-cookies">
+                            <span class="cookie-toggle-slider"></span>
+                        </label>
+                    </div>
+                    <p>Utilizados para rastrear visitantes em websites. A intenção é exibir anúncios relevantes e envolventes.</p>
+                </div>
+                
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <h4>Cookies de Personalização</h4>
+                        <label class="cookie-toggle">
+                            <input type="checkbox" id="personalization-cookies">
+                            <span class="cookie-toggle-slider"></span>
+                        </label>
+                    </div>
+                    <p>Permitem oferecer funcionalidades e conteúdos personalizados com base nas suas preferências.</p>
+                </div>
+            </div>
+            <div class="cookie-preferences-footer">
+                <button class="btn btn-secondary" onclick="closeCookieSettings()">Cancelar</button>
+                <button class="btn btn-primary" onclick="savePreferences()">Guardar Preferências</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão de Feedback -->
+    <button id="feedbackBtn" class="feedback-btn">
+        <i class="fas fa-comment"></i> Feedback
+    </button>
+
+    <!-- Modal de Feedback -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feedbackModalLabel">Deixe o seu Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="feedbackForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nome *</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">Avaliação *</label>
+                            <input type="hidden" id="rating" name="rating" value="0">
+                            <div class="rating">
+                                <span class="star" data-value="1"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="2"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="3"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="4"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="5"><i class="far fa-star"></i></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="feedbackMessage" class="form-label">Mensagem *</label>
+                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3" required></textarea>
+                        </div>
+                        <div id="feedbackFormMessage"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="feedbackForm" class="btn btn-primary">Enviar Feedback</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Utilitários e Integrações -->
+    <script src="js/form-utils.js"></script>
+    <script src="js/brevo-integration.js"></script>
+
+    <!-- Formulários -->
+    <script src="js/contact-form.js"></script>
+    <script src="js/feedback-form.js"></script>
+
+    <!-- JavaScript do Diagnóstico de RH Clean -->
+    <script>
+        // Dados do Survey de Maturidade de RH
+        const surveyData = {
+            dimensions: [
+                {
+                    title: "Alinhamento Estratégico & Planeamento da Força de Trabalho",
+                    questions: [
+                        "As iniciativas de RH estão claramente alinhadas com os objectivos estratégicos da organização?",
+                        "É feita uma análise simples das lacunas de competências para planear necessidades futuras de pessoal?",
+                        "As prioridades de RH são revistas em ciclos regulares (anual ou semestral)?",
+                        "Os resultados dessas revisões originam acções concretas e acompanhamento?"
+                    ],
+                    levels: [
+                        "Práticas reactivas, sem ligação explícita à estratégia.",
+                        "Algum alinhamento e análises pontuais de lacunas; uso limitado de dados.",
+                        "Alinhamento consistente; planeamento baseado em dados básicos e cenários anuais.",
+                        "RH lidera o planeamento estratégico de pessoas, usando dados avançados e projecções a médio prazo.",
+                        "Planeamento de força de trabalho em tempo real, preditivo, reconhecido como benchmark no sector."
+                    ]
+                },
+                {
+                    title: "Tecnologia & Analytics",
+                    questions: [
+                        "A organização utiliza um HRIS (Sistema de Informação de RH) básico para gestão de dados?",
+                        "São produzidos relatórios regulares sobre métricas de RH (turnover, absentismo, etc.)?",
+                        "Existe capacidade de análise preditiva ou modelação de cenários em RH?",
+                        "Os dados de RH são integrados com outras áreas da organização para decisões estratégicas?"
+                    ],
+                    levels: [
+                        "Gestão manual ou sistemas muito básicos; poucos dados estruturados.",
+                        "HRIS básico implementado; relatórios simples e reactivos.",
+                        "Dashboards funcionais; algumas análises preditivas; dados começam a influenciar decisões.",
+                        "Analytics avançados; modelos preditivos robustos; integração com business intelligence.",
+                        "IA e machine learning aplicados; analytics em tempo real; RH data-driven como vantagem competitiva."
+                    ]
+                },
+                {
+                    title: "Aquisição de Talentos",
+                    questions: [
+                        "Existe um processo estruturado de recrutamento e selecção?",
+                        "A marca empregadora é trabalhada de forma consistente?",
+                        "São utilizadas múltiplas fontes e canais para atrair candidatos?",
+                        "O processo de onboarding é estruturado e eficaz?"
+                    ],
+                    levels: [
+                        "Recrutamento ad-hoc; processos inconsistentes; marca empregadora inexistente.",
+                        "Processos básicos definidos; alguma presença online; onboarding mínimo.",
+                        "Estratégia de talent acquisition definida; marca empregadora em desenvolvimento; onboarding estruturado.",
+                        "Marca empregadora forte; múltiplos canais optimizados; candidate experience excelente.",
+                        "Referência no mercado; talent acquisition proactiva; tecnologia avançada; onboarding personalizado."
+                    ]
+                },
+                {
+                    title: "Integração & Experiência do Colaborador",
+                    questions: [
+                        "Existe um programa formal de integração para novos colaboradores?",
+                        "A experiência do colaborador é medida e monitorizada regularmente?",
+                        "São implementadas acções com base no feedback dos colaboradores?",
+                        "Existe um foco na retenção de talentos críticos?"
+                    ],
+                    levels: [
+                        "Integração informal; pouco foco na experiência do colaborador.",
+                        "Programa básico de integração; algumas medições de satisfação.",
+                        "Integração estruturada; employee experience medida; acções de melhoria implementadas.",
+                        "Programa de integração personalizado; employee journey mapeado; retenção proactiva.",
+                        "Experiência do colaborador diferenciadora; integração digital; retenção de talentos como vantagem competitiva."
+                    ]
+                },
+                {
+                    title: "Gestão de Desempenho",
+                    questions: [
+                        "Existe um sistema formal de avaliação de desempenho?",
+                        "Os objectivos individuais estão alinhados com os objectivos organizacionais?",
+                        "É fornecido feedback regular e construtivo aos colaboradores?",
+                        "Existe um processo de identificação e desenvolvimento de high performers?"
+                    ],
+                    levels: [
+                        "Avaliações esporádicas ou inexistentes; feedback limitado.",
+                        "Sistema básico anual; algum alinhamento de objectivos.",
+                        "Avaliações regulares; feedback estruturado; identificação de talentos.",
+                        "Gestão contínua de performance; coaching integrado; desenvolvimento de high performers.",
+                        "Performance management ágil; feedback em tempo real; cultura de high performance estabelecida."
+                    ]
+                },
+                {
+                    title: "Liderança & Sucessão",
+                    questions: [
+                        "Existe identificação de potenciais sucessores para posições-chave?",
+                        "São desenvolvidos programas específicos para líderes?",
+                        "A liderança é avaliada em competências técnicas e comportamentais?",
+                        "Existe um pipeline robusto de liderança interna?"
+                    ],
+                    levels: [
+                        "Sem planeamento de sucessão; desenvolvimento de liderança ad-hoc.",
+                        "Identificação básica de sucessores; alguns programas de desenvolvimento.",
+                        "Planos de sucessão para posições críticas; programas de liderança estruturados.",
+                        "Pipeline de liderança robusto; desenvolvimento acelerado; mentoring e coaching.",
+                        "Liderança como vantagem competitiva; sucessão interna consistente; líderes reconhecidos no mercado."
+                    ]
+                },
+                {
+                    title: "Cultura & Bem-Estar",
+                    questions: [
+                        "A cultura organizacional está claramente definida e comunicada?",
+                        "Existem iniciativas estruturadas de bem-estar dos colaboradores?",
+                        "A diversidade e inclusão são promovidas activamente?",
+                        "O engagement dos colaboradores é medido e trabalhado?"
+                    ],
+                    levels: [
+                        "Cultura não definida; bem-estar não é prioridade; pouca diversidade.",
+                        "Cultura em desenvolvimento; algumas iniciativas de bem-estar; consciência sobre diversidade.",
+                        "Cultura definida e comunicada; programas de bem-estar; iniciativas de D&I implementadas.",
+                        "Cultura forte e vivida; bem-estar integrado na estratégia; D&I como valor organizacional.",
+                        "Cultura como diferenciador competitivo; bem-estar holístico; liderança em D&I no sector."
+                    ]
+                },
+                {
+                    title: "Remuneração & Benefícios",
+                    questions: [
+                        "Existe uma política de remuneração clara e transparente?",
+                        "A remuneração é competitiva face ao mercado?",
+                        "São oferecidos benefícios alinhados com as necessidades dos colaboradores?",
+                        "Existe flexibilidade e personalização na proposta de valor total?"
+                    ],
+                    levels: [
+                        "Remuneração inconsistente; benefícios básicos; pouca transparência.",
+                        "Política básica definida; benchmarking ocasional; benefícios standard.",
+                        "Política clara; remuneração competitiva; pacote de benefícios estruturado.",
+                        "Total rewards strategy; benefícios flexíveis; proposta de valor diferenciada.",
+                        "Remuneração como vantagem competitiva; benefícios inovadores; total rewards personalizado."
+                    ]
+                },
+                {
+                    title: "Agilidade & Resiliência",
+                    questions: [
+                        "A organização adapta-se rapidamente a mudanças no mercado?",
+                        "Existem processos para gestão de crises e continuidade de negócio?",
+                        "Os colaboradores são preparados para mudanças e transformações?",
+                        "A organização aprende e evolui com base em experiências passadas?"
+                    ],
+                    levels: [
+                        "Baixa capacidade de adaptação; processos rígidos; resistência à mudança.",
+                        "Alguma flexibilidade; planos básicos de contingência; mudança reactiva.",
+                        "Agilidade organizacional em desenvolvimento; gestão de mudança estruturada.",
+                        "Organização ágil; resiliência incorporada; change management avançado.",
+                        "Agilidade e resiliência como core competencies; organização antecipa e lidera mudanças."
+                    ]
+                },
+                {
+                    title: "Compliance & ESG",
+                    questions: [
+                        "A organização cumpre toda a legislação laboral aplicável?",
+                        "Existem políticas claras de ética e compliance?",
+                        "São implementadas práticas sustentáveis e de responsabilidade social?",
+                        "O reporting ESG inclui métricas de capital humano?"
+                    ],
+                    levels: [
+                        "Compliance básico; pouca consciência ESG; práticas mínimas.",
+                        "Compliance estruturado; algumas iniciativas ESG; políticas básicas.",
+                        "Compliance proactivo; ESG integrado na estratégia; reporting estruturado.",
+                        "Liderança em compliance; ESG como vantagem competitiva; reporting avançado.",
+                        "Benchmark em compliance e ESG; práticas inovadoras; reconhecimento externo."
+                    ]
+                }
+            ]
+        };
+
+        // Dados dos surveys dummy para comparação
+        const dummySurveys = {
+            surveys: [
+                {
+                    name: "Survey 1",
+                    scores: [3.4, 2.1, 4.7, 3.0, 2.5, 1.8, 3.6, 4.0, 3.2, 2.9],
+                    average: 3.12,
+                    strengths: "Recrutamento (4,7) e Remuneração (4,0) já no patamar de excelência. Cultura razoavelmente sólida (3,6).",
+                    improvements: "Liderança & Sucessão (1,8) é o principal calcanhar de Aquiles. Tecnologia (2,1) e Desempenho (2,5) requerem sistemas e métricas.",
+                    diagnosis: "Maturidade N3: consistente, mas precisa profissionalizar liderança e analytics para dar o salto."
+                },
+                {
+                    name: "Survey 2", 
+                    scores: [4.2, 3.2, 5.0, 3.5, 3.0, 2.4, 4.1, 4.5, 3.7, 3.3],
+                    average: 3.69,
+                    strengths: "Marca empregadora (5,0) é referência. Estratégia (4,2), Cultura (4,1) e Benefícios (4,5) já em nível avançado.",
+                    improvements: "Liderança & Sucessão mantém-se abaixo da fasquia (2,4).",
+                    diagnosis: "Maturidade N4: RH avançado; priorizar sucessão e coaching executivo para chegar ao N5."
+                },
+                {
+                    name: "Survey 3",
+                    scores: [2.8, 2.6, 3.9, 2.7, 2.0, 2.1, 3.0, 2.8, 2.9, 2.2],
+                    average: 2.70,
+                    strengths: "Aquisição de Talentos razoável (3,9) para o contexto. Cultura no limiar (3,0).",
+                    improvements: "Desempenho (2,0), Liderança (2,1) e Compliance (2,2) necessitam processos básicos. Tecnologia ainda embrionária (2,6).",
+                    diagnosis: "Maturidade N2: foco em construir fundações de processo, governance e feedback contínuo."
+                },
+                {
+                    name: "Survey 4",
+                    scores: [3.9, 3.7, 4.6, 3.4, 3.1, 2.9, 3.8, 4.2, 3.5, 4.1],
+                    average: 3.72,
+                    strengths: "Talentos (4,6), Benefícios (4,2) e ESG (4,1) em nível elevado. Tecnologia (3,7) e Agilidade (3,5) já em consolidação.",
+                    improvements: "Liderança (2,9) continua intermédia; falta pipeline robusto.",
+                    diagnosis: "Maturidade N4: estrutura sólida; sucessão e gestão de performance impediram ainda o salto final ao N5."
+                },
+                {
+                    name: "Survey 5",
+                    scores: [1.9, 1.8, 2.5, 2.2, 1.7, 1.5, 2.1, 2.6, 2.0, 1.8],
+                    average: 2.01,
+                    strengths: "Benefícios é o indicador 'menos baixo' (2,6).",
+                    improvements: "Quase todas as áreas ≤ 2,0 – sobretudo Estratégia, Tecnologia e Liderança. Precisa de roadmap transversal e quick-wins de engagement.",
+                    diagnosis: "Maturidade N2-/N1: iniciar por estrutura mínima de planeamento, HRIS básico e programa-piloto de liderança."
+                }
+            ]
+        };
+
+        // Variáveis globais
+        let currentDimensionClean = 0;
+        let userResponsesClean = {};
+        let userScoresClean = [];
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSurveyClean();
+        });
+
+        function initializeSurveyClean() {
+            loadDimensionClean(0);
+        }
+
+        function loadDimensionClean(dimensionIndex) {
+            const dimension = surveyData.dimensions[dimensionIndex];
+            const surveyContent = document.getElementById('surveyContentClean');
+            
+            let html = `
+                <div class="dimension-card fade-in-clean">
+                    <div class="dimension-title">
+                        ${dimensionIndex + 1}. ${dimension.title}
+                    </div>
+            `;
+            
+            dimension.questions.forEach((question, qIndex) => {
+                html += `
+                    <div class="question-item">
+                        <div class="question-text">${question}</div>
+                        <div class="rating-container">
+                `;
+                
+                for (let i = 1; i <= 5; i++) {
+                    const inputId = `qclean${dimensionIndex}_${qIndex}_${i}`;
+                    const isChecked = userResponsesClean[`${dimensionIndex}_${qIndex}`] === i ? 'checked' : '';
+                    html += `
+                        <div class="rating-option">
+                            <input type="radio" id="${inputId}" name="qclean${dimensionIndex}_${qIndex}" value="${i}" ${isChecked} 
+                                   onchange="updateResponseClean(${dimensionIndex}, ${qIndex}, ${i})">
+                            <label for="${inputId}">${i}</label>
+                        </div>
+                    `;
+                }
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    <div style="margin-top: 3rem; padding: 2rem; background: var(--gray-50); border-radius: 10px;">
+                        <h6 style="color: var(--dark-color); font-weight: 600; margin-bottom: 1.5rem;">Níveis de Maturidade:</h6>
+                        <div style="display: grid; gap: 1rem;">
+            `;
+            
+            dimension.levels.forEach((level, index) => {
+                html += `
+                    <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                        <span style="background: var(--primary-color); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; flex-shrink: 0;">${index + 1}</span>
+                        <span style="color: var(--text-light); font-size: 0.95rem; line-height: 1.5;">${level}</span>
+                    </div>
+                `;
+            });
+            
+            html += `
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            surveyContent.innerHTML = html;
+            updateProgressClean();
+            updateNavigationButtonsClean();
+        }
+
+        function updateResponseClean(dimensionIndex, questionIndex, value) {
+            userResponsesClean[`${dimensionIndex}_${questionIndex}`] = value;
+        }
+
+        function updateProgressClean() {
+            const progress = ((currentDimensionClean + 1) / surveyData.dimensions.length) * 100;
+            const progressBar = document.getElementById('progressBarClean');
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function updateNavigationButtonsClean() {
+            const prevBtn = document.getElementById('prevBtnClean');
+            const nextBtn = document.getElementById('nextBtnClean');
+            
+            prevBtn.disabled = currentDimensionClean === 0;
+            
+            if (currentDimensionClean === surveyData.dimensions.length - 1) {
+                nextBtn.innerHTML = '<i class="fas fa-chart-line"></i> Ver Resultados';
+                nextBtn.onclick = finishSurveyClean;
+            } else {
+                nextBtn.innerHTML = 'Próxima <i class="fas fa-arrow-right"></i>';
+                nextBtn.onclick = nextDimensionClean;
+            }
+        }
+
+        function previousDimensionClean() {
+            if (currentDimensionClean > 0) {
+                currentDimensionClean--;
+                loadDimensionClean(currentDimensionClean);
+            }
+        }
+
+        function nextDimensionClean() {
+            if (currentDimensionClean < surveyData.dimensions.length - 1) {
+                currentDimensionClean++;
+                loadDimensionClean(currentDimensionClean);
+            }
+        }
+
+        function finishSurveyClean() {
+            calculateScoresClean();
+            
+            const diagnosticModal = bootstrap.Modal.getInstance(document.getElementById('diagnosticModalClean'));
+            diagnosticModal.hide();
+            
+            setTimeout(() => {
+                showResultsClean();
+            }, 500);
+        }
+
+        function calculateScoresClean() {
+            userScoresClean = [];
+            
+            for (let d = 0; d < surveyData.dimensions.length; d++) {
+                let dimensionTotal = 0;
+                let questionCount = 0;
+                
+                for (let q = 0; q < surveyData.dimensions[d].questions.length; q++) {
+                    const response = userResponsesClean[`${d}_${q}`];
+                    if (response) {
+                        dimensionTotal += response;
+                        questionCount++;
+                    }
+                }
+                
+                const dimensionScore = questionCount > 0 ? (dimensionTotal / questionCount) : 0;
+                userScoresClean.push(dimensionScore);
+            }
+        }
+
+        function showResultsClean() {
+            const resultsContent = document.getElementById('resultsContentClean');
+            const userAverage = userScoresClean.reduce((a, b) => a + b, 0) / userScoresClean.length;
+            
+            let html = `
+                <div class="results-header">
+                    <div class="score-card">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 1rem; opacity: 0.9;">Pontuação Global</h3>
+                        <div class="score-value">${userAverage.toFixed(2)}</div>
+                        <div class="score-label">Nível de Maturidade: ${getMaturityLevel(userAverage)}</div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="chart-card">
+                            <h4 style="color: var(--dark-color); font-weight: 600; margin-bottom: 2rem;">Pontuação por Dimensão</h4>
+                            <canvas id="dimensionsChartClean" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="chart-card">
+                            <h4 style="color: var(--dark-color); font-weight: 600; margin-bottom: 1.5rem;">Interpretação</h4>
+                            <p style="color: var(--text-light); line-height: 1.6;">${getMaturityDescription(userAverage)}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="comparison-table">
+                    <div style="padding: 1.5rem 1.5rem 0;">
+                        <h4 style="color: var(--dark-color); font-weight: 600; margin-bottom: 0;">Comparação com Outros Surveys</h4>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="color: var(--dark-color); font-weight: 600;">Dimensão</th>
+                                    <th style="color: var(--dark-color); font-weight: 600; text-align: center;">Seu Score</th>
+                                    <th style="color: var(--dark-color); font-weight: 600; text-align: center;">Survey 1</th>
+                                    <th style="color: var(--dark-color); font-weight: 600; text-align: center;">Survey 2</th>
+                                    <th style="color: var(--dark-color); font-weight: 600; text-align: center;">Survey 3</th>
+                                    <th style="color: var(--dark-color); font-weight: 600; text-align: center;">Survey 4</th>
+                                    <th style="color: var(--dark-color); font-weight: 600; text-align: center;">Survey 5</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            surveyData.dimensions.forEach((dimension, index) => {
+                html += `
+                    <tr>
+                        <td style="font-weight: 500; color: var(--dark-color);">${dimension.title}</td>
+                        <td class="text-center ${getScoreClass(userScoresClean[index])}">${userScoresClean[index].toFixed(1)}</td>
+                `;
+                
+                dummySurveys.surveys.forEach(survey => {
+                    html += `<td class="text-center ${getScoreClass(survey.scores[index])}">${survey.scores[index].toFixed(1)}</td>`;
+                });
+                
+                html += '</tr>';
+            });
+            
+            html += `
+                                <tr style="background: var(--gray-50); font-weight: 600;">
+                                    <td style="color: var(--dark-color);">Média Global</td>
+                                    <td class="text-center" style="color: var(--dark-color);">${userAverage.toFixed(2)}</td>
+            `;
+            
+            dummySurveys.surveys.forEach(survey => {
+                html += `<td class="text-center" style="color: var(--dark-color);">${survey.average.toFixed(2)}</td>`;
+            });
+            
+            html += `
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="recommendations-card">
+                    <h4 style="color: var(--dark-color); font-weight: 600; margin-bottom: 2rem;">Recomendações Personalizadas</h4>
+                    ${generateRecommendations(userScoresClean)}
+                </div>
+                
+                <div class="cta-card">
+                    <h4 style="color: var(--dark-color); font-weight: 600; margin-bottom: 1.5rem;">Quer aprofundar estes resultados?</h4>
+                    <p style="color: var(--text-light); margin-bottom: 2rem;">Crie um plano de ação personalizado com a nossa consultoria especializada.</p>
+                    <a href="#" class="btn-consultation" onclick="redirectToConsultationClean()">
+                        <i class="fas fa-handshake"></i>
+                        Solicitar Consultoria
+                    </a>
+                </div>
+            `;
+            
+            resultsContent.innerHTML = html;
+            
+            const resultsModal = new bootstrap.Modal(document.getElementById('resultsModalClean'));
+            resultsModal.show();
+            
+            setTimeout(() => {
+                createDimensionsChartClean();
+            }, 300);
+        }
+
+        function createDimensionsChartClean() {
+            const ctx = document.getElementById('dimensionsChartClean').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: surveyData.dimensions.map(d => {
+                        const words = d.title.split(' ');
+                        return words.length > 2 ? words.slice(0, 2).join(' ') + '...' : d.title;
+                    }),
+                    datasets: [{
+                        label: 'Sua Organização',
+                        data: userScoresClean,
+                        borderColor: 'var(--primary-color)',
+                        backgroundColor: 'rgba(191, 154, 51, 0.1)',
+                        pointBackgroundColor: 'var(--primary-color)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 3,
+                        pointRadius: 6,
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'var(--primary-color)',
+                        pointHoverRadius: 8,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1,
+                                color: 'var(--text-light)',
+                                font: {
+                                    size: 11,
+                                    weight: '500'
+                                }
+                            },
+                            grid: {
+                                color: 'var(--gray-200)'
+                            },
+                            angleLines: {
+                                color: 'var(--gray-200)'
+                            },
+                            pointLabels: {
+                                color: 'var(--dark-color)',
+                                font: {
+                                    size: 10,
+                                    weight: '500'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    elements: {
+                        line: {
+                            tension: 0.2
+                        }
+                    }
+                }
+            });
+        }
+
+        function getMaturityLevel(score) {
+            if (score >= 4.5) return "N5 - Excelência";
+            if (score >= 3.5) return "N4 - Avançado";
+            if (score >= 2.5) return "N3 - Desenvolvido";
+            if (score >= 1.5) return "N2 - Básico";
+            return "N1 - Inicial";
+        }
+
+        function getMaturityDescription(score) {
+            if (score >= 4.5) return "Excelente! A sua organização demonstra práticas de RH de classe mundial, sendo referência no mercado.";
+            if (score >= 3.5) return "Muito bom! A sua organização tem processos de RH avançados, com algumas áreas para otimização.";
+            if (score >= 2.5) return "Bom! A sua organização tem uma base sólida, mas há oportunidades significativas de melhoria.";
+            if (score >= 1.5) return "Básico. A sua organização tem processos fundamentais, mas precisa de desenvolvimento estruturado.";
+            return "Inicial. A sua organização beneficiaria de um plano abrangente de desenvolvimento de RH.";
+        }
+
+        function getScoreClass(score) {
+            if (score >= 4.0) return "score-high";
+            if (score >= 3.0) return "score-medium";
+            return "score-low";
+        }
+
+        function generateRecommendations(scores) {
+            let recommendations = "<div>";
+            
+            // Identificar pontos fortes e fracos
+            const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+            const weakAreas = [];
+            const strongAreas = [];
+            
+            scores.forEach((score, index) => {
+                if (score < avgScore - 0.5) {
+                    weakAreas.push({index, score, name: surveyData.dimensions[index].title});
+                } else if (score > avgScore + 0.5) {
+                    strongAreas.push({index, score, name: surveyData.dimensions[index].title});
+                }
+            });
+            
+            // Recomendações baseadas em áreas fracas
+            if (weakAreas.length > 0) {
+                recommendations += "<div class='recommendation-item'><strong>Prioridades de Melhoria:</strong> Foque nas dimensões com menor pontuação: " + 
+                    weakAreas.map(area => area.name).join(", ") + ".</div>";
+            }
+            
+            // Recomendações baseadas em áreas fortes
+            if (strongAreas.length > 0) {
+                recommendations += "<div class='recommendation-item'><strong>Pontos Fortes:</strong> Capitalize nas suas áreas de excelência: " + 
+                    strongAreas.map(area => area.name).join(", ") + ".</div>";
+            }
+            
+            // Recomendações gerais baseadas no nível de maturidade
+            if (avgScore < 2.5) {
+                recommendations += "<div class='recommendation-item'><strong>Foco Estratégico:</strong> Estabeleça processos básicos e estruturas fundamentais de RH.</div>";
+                recommendations += "<div class='recommendation-item'><strong>Quick Wins:</strong> Implemente um HRIS básico e processos de recrutamento estruturados.</div>";
+            } else if (avgScore < 3.5) {
+                recommendations += "<div class='recommendation-item'><strong>Desenvolvimento:</strong> Invista em tecnologia e analytics para suportar decisões baseadas em dados.</div>";
+                recommendations += "<div class='recommendation-item'><strong>Capacitação:</strong> Desenvolva competências de liderança e gestão de performance.</div>";
+            } else {
+                recommendations += "<div class='recommendation-item'><strong>Otimização:</strong> Refine processos existentes e explore práticas inovadoras.</div>";
+                recommendations += "<div class='recommendation-item'><strong>Liderança:</strong> Posicione-se como referência no mercado e partilhe as suas melhores práticas.</div>";
+            }
+            
+            recommendations += "</div>";
+            return recommendations;
+        }
+
+        function redirectToConsultationClean() {
+            const resultsModal = bootstrap.Modal.getInstance(document.getElementById('resultsModalClean'));
+            resultsModal.hide();
+            
+            setTimeout(() => {
+                window.location.href = 'pages/servicos.html#consultoria';
+            }, 500);
+        }
+    </script>
 </body>
 </html>
+
