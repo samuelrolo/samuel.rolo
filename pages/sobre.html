@@ -1,898 +1,140 @@
-<!DOCTYPE html>
+with open("/mnt/data/Sobre.html", "w", encoding="utf-8") as f:
+    f.write("""<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sobre o Fundador | Share2Inspire | Samuel Rolo</title>
-    <meta name="description" content="Conhece Samuel Rolo, fundador da Share2Inspire - Consultoria em transformação organizacional e desenvolvimento humano.">
-    
-    <!-- Favicon -->
-    <link rel="icon" href="../images/favicon.png" type="image/png">
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../css/style.css">
-    
+    <title>Sobre</title>
+    <link rel="stylesheet" href="/styles.css">
     <style>
-        /* Estilos específicos para a página Sobre */
         :root {
-            --primary-color: #bf9a33; /* Dourado principal */
-            --secondary-color: #333333; /* Cinza escuro */
-            --accent-color: #a57b0a; /* Dourado suave */
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-            --text-color: #333333;
-            --text-light: #6c757d;
-            --border-color: #dee2e6;
+            --primary: #1A1A2E;
+            --secondary: #16213E;
+            --accent: #0F3460;
+            --text: #F5F6FA;
+            --subtle: #E9E9E9;
         }
-        
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #fff;
-            color: var(--text-color);
+            background: var(--primary);
+            color: var(--text);
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
         }
-        
-        .page-header {
-            background-color: #212529;
-            color: #fff;
-            padding: 6rem 0 3rem;
-            margin-bottom: 4rem;
-            position: relative;
+        main {
+            max-width: 700px;
+            margin: 50px auto 32px auto;
+            padding: 2rem 1rem;
+            background: var(--secondary);
+            border-radius: 2rem;
+            box-shadow: 0 2px 24px 0 rgba(15, 52, 96, 0.06);
         }
-        
-        .page-header h1 {
-            color: var(--primary-color);
-            font-size: 3rem;
+        h1, h2 {
             font-weight: 700;
-            margin-bottom: 1rem;
-            letter-spacing: 1px;
+            letter-spacing: -1px;
+            color: var(--text);
         }
-        
-        .page-header .breadcrumb {
-            background-color: transparent;
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.2em;
         }
-        
-        .page-header .breadcrumb-item a {
-            color: var(--primary-color);
+        h2 {
+            font-size: 1.3rem;
+            margin-top: 2.5rem;
+            margin-bottom: 0.5rem;
         }
-        
-        .page-header .breadcrumb-item.active {
-            color: #fff;
-        }
-        
-        /* Perfil */
-        .profile-section {
-            padding: 2rem 0 4rem;
-        }
-        
-        .profile-image {
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-        }
-        
-        .profile-image img {
-            width: 100%;
-            height: auto;
-            transition: transform 0.5s ease;
-        }
-        
-        .profile-image:hover img {
-            transform: scale(1.02);
-        }
-        
-        .profile-content h2 {
-            color: var(--dark-color);
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-        }
-        
-        .profile-content p {
-            margin-bottom: 1.5rem;
+        p, li {
             font-size: 1.1rem;
-            line-height: 1.8;
-            color: var(--text-color);
+            line-height: 1.65;
+            color: var(--text);
         }
-        
-        .profile-content .highlight {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-        
-        .profile-content .quote {
-            font-style: italic;
+        ul {
             padding-left: 1.5rem;
-            border-left: 4px solid var(--primary-color);
-            margin: 2rem 0;
         }
-        
-        .profile-content .signature {
-            font-family: 'Brush Script MT', cursive;
-            font-size: 2rem;
-            color: var(--primary-color);
-            margin-top: 2rem;
-            display: block;
+        .destaques {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.4rem;
+            margin: 2.3rem 0 1.7rem 0;
+            justify-content: flex-start;
         }
-        
-        /* Experiência */
-        .experience-section {
-            padding: 4rem 0;
-            background-color: #f8f9fa;
-        }
-        
-        .section-title {
-            color: var(--dark-color);
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            font-weight: 700;
-            text-align: center;
-        }
-        
-        .timeline {
-            position: relative;
-            padding: 2rem 0;
-        }
-        
-        .timeline::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 50%;
-            width: 2px;
-            background-color: var(--primary-color);
-            transform: translateX(-50%);
-        }
-        
-        .timeline-item {
-            position: relative;
-            margin-bottom: 3rem;
-        }
-        
-        .timeline-item:last-child {
-            margin-bottom: 0;
-        }
-        
-        .timeline-content {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            position: relative;
-            width: calc(50% - 30px);
-            transition: transform 0.3s ease;
-        }
-        
-        .timeline-content:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .timeline-item:nth-child(odd) .timeline-content {
-            margin-left: auto;
-        }
-        
-        .timeline-item:nth-child(even) .timeline-content {
-            margin-right: auto;
-        }
-        
-        .timeline-content::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            width: 20px;
-            height: 20px;
-            background-color: var(--primary-color);
-            border-radius: 50%;
-        }
-        
-        .timeline-item:nth-child(odd) .timeline-content::before {
-            left: -40px;
-        }
-        
-        .timeline-item:nth-child(even) .timeline-content::before {
-            right: -40px;
-        }
-        
-        .timeline-date {
-            color: var(--primary-color);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-        
-        .timeline-title {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            color: var(--dark-color);
-        }
-        
-        .timeline-description {
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-        
-        /* Áreas de Especialização */
-        .skills-section {
-            padding: 4rem 0;
-        }
-        
-        .expertise-card {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
-            transition: transform 0.3s ease;
-            height: 100%;
-            text-align: center;
-        }
-        
-        .expertise-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .expertise-icon {
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 1.5rem;
-        }
-        
-        .expertise-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--dark-color);
-        }
-        
-        .expertise-description {
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-        
-        /* Certificações */
-        .certifications-section {
-            padding: 4rem 0;
-            background-color: #f8f9fa;
-        }
-        
-        .certification-card {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
-            transition: transform 0.3s ease;
-            height: 100%;
-        }
-        
-        .certification-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .certification-logo {
-            height: 80px;
+        .badge {
+            background: var(--accent);
+            color: var(--text);
+            padding: 1.1rem 1.5rem 1.1rem 1.2rem;
+            border-radius: 1.4rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .certification-logo img {
-            max-height: 100%;
-            max-width: 100%;
-        }
-        
-        .certification-title {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-            color: var(--dark-color);
-        }
-        
-        .certification-issuer {
-            color: var(--primary-color);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        
-        .certification-date {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-        
-        .certification-description {
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-        
-        /* CTA */
-        .cta-section {
-            padding: 4rem 0;
-            background-color: var(--dark-color);
-            color: #fff;
-            text-align: center;
-        }
-        
-        .cta-section h2 {
-            color: var(--primary-color);
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-        }
-        
-        .cta-section p {
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            color: #fff;
-            font-weight: 600;
-            padding: 0.75rem 2rem;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-            transform: translateY(-3px);
-        }
-        
-        .btn-outline-light {
-            border-color: #fff;
-            color: #fff;
-            font-weight: 600;
-            padding: 0.75rem 2rem;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            margin-left: 1rem;
-        }
-        
-        .btn-outline-light:hover {
-            background-color: #fff;
-            color: var(--dark-color);
-            transform: translateY(-3px);
-        }
-        
-        /* Sistema de Feedback */
-        .feedback-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            z-index: 1000;
-            max-width: 300px;
-            border: 1px solid #BF9A33;
-            display: none;
-        }
-        
-        .feedback-container.show {
-            display: block;
-        }
-        
-        .feedback-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .feedback-header h5 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 600;
-        }
-        
-        .feedback-close {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            color: #6c757d;
-        }
-        
-        .feedback-stars {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
-        
-        .feedback-stars i {
-            color: #e0e0e0;
-            font-size: 24px;
-            margin: 0 5px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        
-        .feedback-stars i.active, .feedback-stars i:hover {
-            color: #BF9A33;
-        }
-        
-        .feedback-comment {
-            margin-bottom: 15px;
-        }
-        
-        .feedback-comment textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-            resize: none;
-        }
-        
-        .feedback-submit {
-            text-align: right;
-        }
-        
-        .feedback-btn {
-            background-color: #BF9A33;
-            color: #fff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
+            min-width: 230px;
+            box-shadow: 0 1px 8px 0 rgba(15, 52, 96, 0.09);
             font-weight: 500;
+            gap: 0.8rem;
         }
-        
-        .feedback-btn:hover {
-            background-color: #a88629;
-        }
-        
-        .feedback-trigger {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #BF9A33;
-            color: #fff;
-            border: none;
-            width: 50px;
-            height: 50px;
+        .badge-icon {
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
+            background: var(--subtle);
             display: flex;
-            justify-content: center;
             align-items: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            z-index: 999;
-        }
-        
-        .feedback-trigger i {
-            font-size: 20px;
-        }
-        
-        /* Responsividade */
-        @media (max-width: 991px) {
-            .page-header h1 {
-                font-size: 2.5rem;
-            }
-            
-            .profile-content h2 {
-                font-size: 2.2rem;
-            }
-            
-            .section-title {
-                font-size: 2.2rem;
-            }
-            
-            .timeline::before {
-                left: 30px;
-            }
-            
-            .timeline-content {
-                width: calc(100% - 60px);
-                margin-left: 60px !important;
-            }
-            
-            .timeline-item:nth-child(odd) .timeline-content::before,
-            .timeline-item:nth-child(even) .timeline-content::before {
-                left: -40px;
-                right: auto;
-            }
-            
-            .cta-section h2 {
-                font-size: 2.2rem;
-            }
-        }
-        
-        @media (max-width: 767px) {
-            .page-header {
-                padding: 5rem 0 2rem;
-                margin-bottom: 2rem;
-            }
-            
-            .page-header h1 {
-                font-size: 2rem;
-            }
-            
-            .profile-section,
-            .experience-section,
-            .skills-section,
-            .certifications-section,
-            .cta-section {
-                padding: 3rem 0;
-            }
-            
-            .profile-content h2 {
-                font-size: 1.8rem;
-                margin-bottom: 1rem;
-            }
-            
-            .profile-content p {
-                font-size: 1rem;
-                line-height: 1.6;
-            }
-            
-            .section-title {
-                font-size: 1.8rem;
-                margin-bottom: 2rem;
-            }
-            
-            .timeline-content {
-                padding: 1.5rem;
-            }
-            
-            .timeline-title {
-                font-size: 1.2rem;
-            }
-            
-            .cta-section h2 {
-                font-size: 1.8rem;
-            }
-            
-            .cta-section p {
-                font-size: 1rem;
-            }
-            
-            .btn-primary,
-            .btn-outline-light {
-                padding: 0.6rem 1.5rem;
-                font-size: 0.95rem;
-                display: block;
-                width: 100%;
-                margin: 0.5rem 0;
-            }
-            
-            .btn-outline-light {
-                margin-left: 0;
-            }
-            
-            .feedback-container {
-                max-width: 90%;
-                left: 5%;
-                right: 5%;
-            }
-        }
-        
-        /* Header e Navegação */
-        .header {
-            padding-top: 100px; /* Espaço para a navbar fixa */
-        }
-        
-        .navbar {
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            padding: 1rem 0;
-        }
-        
-        .navbar-brand img {
-            height: 40px;
-        }
-        
-        .navbar-nav {
-            margin-left: auto;
-        }
-        
-        .navbar-nav .nav-link {
-            color: #333;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            margin: 0 0.25rem;
-        }
-        
-        .navbar-nav .nav-link.active {
-            color: #BF9A33;
-            position: relative;
-        }
-        
-        .navbar-nav .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 1rem;
-            right: 1rem;
-            height: 2px;
-            background-color: #BF9A33;
-        }
-        
-        /* Footer */
-        footer {
-            background-color: #212529;
-            color: #fff;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-        
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-        
-        .footer-left p {
-            margin: 0;
-            color: #BF9A33;
-        }
-        
-        .footer-right {
-            display: flex;
-            gap: 30px;
-        }
-        
-        .footer-contact p {
-            margin: 0;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-        
-        .footer-contact i {
-            color: #BF9A33;
-            margin-right: 8px;
-        }
-        
-        .footer-social {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .footer-social a {
-            color: #BF9A33;
-            font-size: 20px;
-            transition: color 0.3s;
-        }
-        
-        .footer-social a:hover {
-            color: #fff;
-        }
-        
-        .footer-links {
-            display: flex;
             justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 15px;
+            font-size: 1.3rem;
+            color: var(--accent);
+            margin-right: 0.6rem;
         }
-        
-        .footer-links a {
-            color: #BF9A33;
-            font-size: 14px;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-links a:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
-        
-        /* Estilos para os widgets de experiência */
-        .experience-widget {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            height: 100%;
-            transition: transform 0.3s ease;
-        }
-        
-        .experience-widget:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .widget-year {
-            background-color: var(--primary-color);
-            color: #fff;
-            font-weight: 600;
-            padding: 5px 10px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-        
-        .widget-title {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-            color: var(--dark-color);
-        }
-        
-        .widget-subtitle {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin: 0;
-        }
-        
-        /* Estilos para os widgets de educação */
-        .education-widget {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            height: 100%;
-            transition: transform 0.3s ease;
-        }
-        
-        .education-widget:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Estilos para o mosaico de certificações */
-        .certification-mosaic {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            height: 180px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
+        .badge-text {
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
         }
-        
-        .certification-mosaic:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .mosaic-icon {
-            font-size: 2rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-        
-        .mosaic-title {
-            font-size: 0.9rem;
+        .badge-title {
+            font-size: 1.08rem;
             font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 5px;
-            height: 2.8rem;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            color: var(--text);
         }
-        
-        .mosaic-subtitle {
-            color: var(--primary-color);
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-bottom: 5px;
+        .badge-sub {
+            font-size: 0.98rem;
+            color: #cfd8e3;
+            margin-top: 0.2rem;
+            font-weight: 400;
         }
-        
-        .mosaic-year {
-            color: var(--text-light);
-            font-size: 0.75rem;
+        .top200 {
+            margin-top: 1.1rem;
+            font-size: 1rem;
+            color: #B0BED9;
+            background: rgba(15,52,96,0.10);
+            padding: 0.7rem 1.1rem;
+            border-radius: 0.8rem;
+            font-style: italic;
+            text-align: left;
+            max-width: 420px;
         }
-        
-        .mosaic-link {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            color: var(--text-light);
-            font-size: 0.8rem;
-            transition: all 0.3s ease;
-        }
-        
-        .mosaic-link:hover {
-            color: #BF9A33;
-            opacity: 1;
-            transform: scale(1.1);
-        }
-        
-        @media (max-width: 768px) {
-            .certification-mosaic {
-                height: 160px;
-                padding: 1rem;
+        @media (max-width: 600px) {
+            main {
+                padding: 1rem 0.2rem;
+                border-radius: 1.1rem;
             }
-            
-            .mosaic-title {
-                font-size: 0.8rem;
-                height: 2.4rem;
+            .destaques {
+                flex-direction: column;
+                gap: 1rem;
             }
-            
-            .mosaic-icon {
-                font-size: 1.5rem;
+            .badge {
+                min-width: 0;
+                width: 100%;
+                padding: 1rem 0.9rem 1rem 0.8rem;
             }
-        }
-        
-        /* Estilos para o botão e modal de feedback */
-        .feedback-btn {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            background-color: #bf9a33;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 10px 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        
-        .feedback-btn:hover {
-            background-color: #a57b0a;
-            transform: scale(1.05);
-        }
-        
-        .rating {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .star {
-            color: #ccc;
-            cursor: pointer;
-            font-size: 24px;
-        }
-        
-        .star.hover, .star.active {
-            color: #bf9a33;
         }
     </style>
 </head>
 <body>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-8GQ1KM9FQS');
-    </script>
-    
-    <!-- Header e Navegação -->
+    <header>
+            <!-- Header e Navegação -->
     <header class="header">
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="../index.html">
                     <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img">
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
@@ -901,16 +143,16 @@
                             <a class="nav-link" href="../index.html">Início</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="sobre.html">Sobre o Fundador</a>
+                            <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="servicos.html">Serviços</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="loja.html">Loja</a>
+                            <a class="nav-link active" href="loja.html">Loja</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="hr-hub.html">HR Hub</a>
+                            <a class="nav-link" href="people-hub.html">People Hub</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="../index.html#contactos">Contactos</a>
@@ -921,357 +163,66 @@
         </nav>
     </header>
 
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Sobre o Fundador</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Sobre o Fundandor</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+    </header>
     <main>
-        <!-- Header da Página -->
-        <section class="page-header">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12 text-center">
-                        <h1>Sobre o Fundador</h1>
-                        <p>Conhece o Samuel e o seu percurso</p>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb justify-content-center">
-                                <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Sobre o Fundador</li>
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <h1>Sobre</h1>
+        <p>Sou apaixonado por gestão de pessoas, liderança e inovação. Partilho experiências, aprendizagens e inspiração com a ambição de impactar positivamente quem me segue, sempre com foco na autenticidade e na evolução contínua.</p>
         
-        <!-- Perfil -->
-        <section class="profile-section">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-lg-5 mb-4 mb-lg-0">
-                        <div class="profile-image">
-                            <img src="../images/fundador.jpg" alt="Samuel Rolo" class="img-fluid">
-                        </div>
-                    </div>
-                    <div class="col-lg-7">
-                        <div class="profile-content">
-                            <h2>Samuel Rolo</h2>
-                            <p>Com mais de <span class="highlight">14 anos de experiência</span> em Recursos Humanos e Desenvolvimento Organizacional, o Samuel é um consultor especializado em transformação organizacional, gestão da mudança e desenvolvimento de liderança.</p>
-                            
-                            <p>Ao longo do seu percurso, o Samuel trabalhou com empresas de diversos setores e dimensões, desde startups a multinacionais, ajudando-as a navegar processos de transformação complexos e a desenvolver culturas organizacionais mais humanas, resilientes e orientadas para o propósito.</p>
-                            
-                            <p class="quote">O Samuel acredita que as verdadeiras transformações acontecem quando as pessoas estão no centro. A sua missão é ajudar líderes e equipas a abraçar a mudança com mais confiança e humanidade.</p>
-                            
-                            <p>Formado em Gestão de Recursos Humanos pelo ISCTE, com certificações em diversas áreas, o Samuel combina uma sólida base teórica com uma abordagem prática e orientada para resultados.</p>
-                            
-                            <p>Em 2025, fundou a <span class="highlight">Share2Inspire</span> com o propósito de partilhar conhecimento e inspirar a transformação positiva nas organizações, através de consultoria, formação e coaching.</p>
-                            
-                            <span class="signature">Samuel Rolo</span>
-                        </div>
-                    </div>
-                </div>
+        <section class="destaques" aria-label="Destaques Favikon">
+            <div class="badge">
+                <span class="badge-icon" title="LinkedIn">🔗</span>
+                <span class="badge-text">
+                    <span class="badge-title">4º lugar</span>
+                    <span class="badge-sub">no ranking nacional de criadores LinkedIn Portugal<br><small>(Favikon, 2025)</small></span>
+                </span>
+            </div>
+            <div class="badge">
+                <span class="badge-icon" title="Instagram">📸</span>
+                <span class="badge-text">
+                    <span class="badge-title">32º lugar</span>
+                    <span class="badge-sub">no ranking nacional de criadores Instagram em Portugal<br><small>(Favikon, 2025)</small></span>
+                </span>
+            </div>
+            <div class="badge">
+                <span class="badge-icon" title="Productivity & Personal Growth">✨</span>
+                <span class="badge-text">
+                    <span class="badge-title">38º lugar</span>
+                    <span class="badge-sub">na categoria “Productivity & Personal Growth - Portugal”<br><small>(Favikon, 2025)</small></span>
+                </span>
             </div>
         </section>
-        
-        <!-- Experiência Profissional -->
-        <section class="experience-section">
-            <div class="container">
-                <h2 class="section-title">Percurso Profissional</h2>
-                
-                <div class="row">
-                    <div class="col-lg-2 col-md-3 col-sm-6 mb-4">
-                        <div class="experience-widget">
-                            <div class="widget-year">2012-2013</div>
-                            <h4 class="widget-title">Analyst</h4>
-                            <p class="widget-subtitle">Deloitte</p>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-2 col-md-3 col-sm-6 mb-4">
-                        <div class="experience-widget">
-                            <div class="widget-year">2015</div>
-                            <h4 class="widget-title">Senior Consultant</h4>
-                            <p class="widget-subtitle">EY</p>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-2 col-md-3 col-sm-6 mb-4">
-                        <div class="experience-widget">
-                            <div class="widget-year">2016</div>
-                            <h4 class="widget-title">Manager</h4>
-                            <p class="widget-subtitle">Deloitte</p>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-2 col-md-3 col-sm-6 mb-4">
-                        <div class="experience-widget">
-                            <div class="widget-year">2021</div>
-                            <h4 class="widget-title">Senior Manager</h4>
-                            <p class="widget-subtitle">Deloitte</p>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-2 col-md-3 col-sm-6 mb-4">
-                        <div class="experience-widget">
-                            <div class="widget-year">2025</div>
-                            <h4 class="widget-title">HR Transformation Leader</h4>
-                            <p class="widget-subtitle">BNP Paribas CIB</p>
-                        </div>
-                    </div>
-                                    
-                    <div class="col-lg-2 col-md-3 col-sm-6 mb-4">
-                        <div class="experience-widget">
-                            <div class="widget-year">2025</div>
-                            <h4 class="widget-title">Project Manager</h4>
-                            <p class="widget-subtitle">APG - Setor Social</p>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-2 col-md-3 col-sm-6 mb-4">
-                        <div class="experience-widget">
-                            <div class="widget-year">2025</div>
-                            <h4 class="widget-title">Fundador & CEO</h4>
-                            <p class="widget-subtitle">Share2Inspire</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Formação Académica -->
-        <section class="education-section bg-light">
-            <div class="container">
-                <h2 class="section-title">Formação Académica</h2>
-                
-                <div class="row">
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="education-widget">
-                            <div class="widget-year">2008-2009</div>
-                            <h4 class="widget-title">Licenciatura de Gestão</h4>
-                            <p class="widget-subtitle">ISCAL - Lisbon Accounting</p>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="education-widget">
-                            <div class="widget-year">2009-2012</div>
-                            <h4 class="widget-title">Gestão de Recursos Humanos</h4>
-                            <p class="widget-subtitle">ISCTE - Instituto Universitário</p>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="education-widget">
-                            <div class="widget-year">2023</div>
-                            <h4 class="widget-title">Advanced Negotiation</h4>
-                            <p class="widget-subtitle">Nova School of Business</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Áreas de Especialização -->
-        <section class="skills-section">
-            <div class="container">
-                <h2 class="section-title">Áreas de Especialização</h2>
-                
-                <div class="row">
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="expertise-card">
-                            <div class="expertise-icon">
-                                <i class="fas fa-sync-alt"></i>
-                            </div>
-                            <h3 class="expertise-title">Transformação Organizacional</h3>
-                            <p class="expertise-description">Diagnóstico, planeamento e implementação de processos de transformação organizacional, com foco em resultados sustentáveis e alinhamento estratégico.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="expertise-card">
-                            <div class="expertise-icon">
-                                <i class="fas fa-users-cog"></i>
-                            </div>
-                            <h3 class="expertise-title">Gestão da Mudança</h3>
-                            <p class="expertise-description">Metodologias e ferramentas para facilitar processos de mudança, minimizar resistências e maximizar a adoção de novas formas de trabalhar.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="expertise-card">
-                            <div class="expertise-icon">
-                                <i class="fas fa-user-tie"></i>
-                            </div>
-                            <h3 class="expertise-title">Coaching Executivo</h3>
-                            <p class="expertise-description">Acompanhamento personalizado de líderes para potenciar o seu desenvolvimento, superar desafios e alcançar objetivos profissionais e pessoais.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="expertise-card">
-                            <div class="expertise-icon">
-                                <i class="fas fa-brain"></i>
-                            </div>
-                            <h3 class="expertise-title">Desenvolvimento de Liderança</h3>
-                            <p class="expertise-description">Programas e intervenções para desenvolver competências de liderança adaptadas aos desafios atuais e futuros das organizações.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="expertise-card">
-                            <div class="expertise-icon">
-                                <i class="fas fa-laptop-code"></i>
-                            </div>
-                            <h3 class="expertise-title">Transformação Digital</h3>
-                            <p class="expertise-description">Estratégias para integrar a tecnologia nos processos de negócio, com foco no fator humano e na adoção de novas ferramentas e mindsets.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="expertise-card">
-                            <div class="expertise-icon">
-                                <i class="fas fa-chalkboard-teacher"></i>
-                            </div>
-                            <h3 class="expertise-title">Formação e Facilitação</h3>
-                            <p class="expertise-description">Desenho e facilitação de workshops, formações e sessões de trabalho colaborativas para equipas e organizações.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Certificações -->
-        <section class="certifications-section bg-light">
-            <div class="container">
-                <h2 class="section-title">Certificações</h2>
-                
-                <div class="row">
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                        <div class="certification-mosaic">
-                            <div class="mosaic-icon">
-                                <i class="fas fa-robot"></i>
-                            </div>
-                            <h5 class="mosaic-title">Career Essentials in Generative AI</h5>
-                            <p class="mosaic-subtitle">Microsoft & LinkedIn</p>
-                            <span class="mosaic-year">2023</span>
-                            <a href="https://www.linkedin.com/learning/certificates/19d0c1c0ccf4cd5016a295ca8c1d37da897804b22dff5f0d69d631047756790a" class="mosaic-link" target="_blank">
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                        <div class="certification-mosaic">
-                            <div class="mosaic-icon">
-                                <i class="fas fa-users-cog"></i>
-                            </div>
-                            <h5 class="mosaic-title">Professional Scrum Master™ I</h5>
-                            <p class="mosaic-subtitle">Scrum.org</p>
-                            <span class="mosaic-year">2022</span>
-                            <a href="#" class="mosaic-link" target="_blank">
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                        <div class="certification-mosaic">
-                            <div class="mosaic-icon">
-                                <i class="fas fa-project-diagram"></i>
-                            </div>
-                            <h5 class="mosaic-title">Project Management Professional (PMP)</h5>
-                            <p class="mosaic-subtitle">PMI</p>
-                            <span class="mosaic-year">2020</span>
-                            <a href="#" class="mosaic-link" target="_blank">
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                        <div class="certification-mosaic">
-                            <div class="mosaic-icon">
-                                <i class="fas fa-comments"></i>
-                            </div>
-                            <h5 class="mosaic-title">Certified Professional Coach</h5>
-                            <p class="mosaic-subtitle">ICF</p>
-                            <span class="mosaic-year">2019</span>
-                            <a href="#" class="mosaic-link" target="_blank">
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                        <div class="certification-mosaic">
-                            <div class="mosaic-icon">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <h5 class="mosaic-title">Prosci® Change Management</h5>
-                            <p class="mosaic-subtitle">Prosci</p>
-                            <span class="mosaic-year">2018</span>
-                            <a href="#" class="mosaic-link" target="_blank">
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                        <div class="certification-mosaic">
-                            <div class="mosaic-icon">
-                                <i class="fas fa-sitemap"></i>
-                            </div>
-                            <h5 class="mosaic-title">Organizational Development Certified Professional</h5>
-                            <p class="mosaic-subtitle">ISODC</p>
-                            <span class="mosaic-year">2017</span>
-                            <a href="#" class="mosaic-link" target="_blank">
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                        <div class="certification-mosaic">
-                            <div class="mosaic-icon">
-                                <i class="fas fa-user-check"></i>
-                            </div>
-                            <h5 class="mosaic-title">MBTI® Certified Practitioner</h5>
-                            <p class="mosaic-subtitle">Myers-Briggs</p>
-                            <span class="mosaic-year">2016</span>
-                            <a href="#" class="mosaic-link" target="_blank">
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-                        <div class="certification-mosaic">
-                            <div class="mosaic-icon">
-                                <i class="fas fa-tasks"></i>
-                            </div>
-                            <h5 class="mosaic-title">PRINCE2® Foundation</h5>
-                            <p class="mosaic-subtitle">AXELOS</p>
-                            <span class="mosaic-year">2015</span>
-                            <a href="#" class="mosaic-link" target="_blank">
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- CTA Section -->
-        <section class="cta-section">
-            <div class="container">
-                <h2>Vamos trabalhar juntos?</h2>
-                <p>Se procura um parceiro para ajudar a sua organização a navegar processos de transformação, desenvolver líderes ou criar uma cultura mais humana e orientada para o propósito, estou disponível para uma conversa.</p>
-                <div>
-                    <a href="../index.html#contactos" class="btn btn-primary">Contactar</a>
-                    <a href="servicos.html" class="btn btn-outline-light">Ver Serviços</a>
-                </div>
-            </div>
-        </section>
+        <div class="top200">
+            Os cards mostram também a pontuação e evolução na categoria “Top 200 Creators”.
+        </div>
+        <h2>Missão</h2>
+        <p>Acredito que a humanização, a escuta ativa e a partilha de conhecimento são os maiores motores de transformação das pessoas e das organizações.</p>
+        <h2>O que partilho</h2>
+        <ul>
+            <li>Experiências e insights de liderança e gestão de pessoas</li>
+            <li>Dicas práticas para transformar equipas e culturas</li>
+            <li>Reflexões sobre crescimento pessoal, autenticidade e inovação</li>
+        </ul>
+        <h2>Reconhecimento</h2>
+        <p>Agradeço a todos os que fazem parte deste percurso e ajudam a amplificar a mensagem de que é possível inspirar, inovar e criar impacto positivo de forma autêntica e consistente.</p>
     </main>
-    
-    <!-- Footer -->
     <footer>
+        <footer id="contactos">
         <div class="container">
             <div class="footer-container">
                 <div class="footer-left">
@@ -1296,65 +247,6 @@
             </div>
         </div>
     </footer>
-
-    <!-- Botão de Feedback -->
-    <button id="feedbackBtn" class="feedback-btn">
-        <i class="fas fa-comment"></i> Feedback
-    </button>
-
-    <!-- Modal de Feedback -->
-    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="feedbackModalLabel">Deixe o seu Feedback</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="feedbackForm">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nome *</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="rating" class="form-label">Avaliação *</label>
-                            <input type="hidden" id="rating" name="rating" value="0">
-                            <div class="rating">
-                                <span class="star" data-value="1"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="2"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="3"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="4"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="5"><i class="far fa-star"></i></span>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="feedbackMessage" class="form-label">Mensagem *</label>
-                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3" required></textarea>
-                        </div>
-                        <div id="feedbackFormMessage"></div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" form="feedbackForm" class="btn btn-primary">Enviar Feedback</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Utilitários e Integrações -->
-    <script src="../js/form-utils.js"></script>
-    <script src="../js/brevo-integration.js"></script>
-
-    <!-- Formulários -->
-    <script src="../js/contact-form.js"></script>
-    <script src="../js/feedback-form.js"></script>
 </body>
 </html>
+""")
