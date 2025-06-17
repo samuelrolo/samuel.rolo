@@ -410,7 +410,61 @@
             }
         }
         
-        /* Estilos para o vídeo comercial */
+        /* Seção Oferta Comercial */
+        .commercial-offer-section {
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+            padding: 80px 0;
+            margin: 0;
+        }
+        
+        .commercial-offer-title {
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 50px;
+            letter-spacing: -1px;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .video-player {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .commercial-offer-section {
+                padding: 60px 0;
+            }
+            
+            .commercial-offer-title {
+                font-size: 1.8rem;
+                margin-bottom: 30px;
+            }
+            
+            .video-container {
+                margin: 0 20px;
+                border-radius: 15px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .commercial-offer-title {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Estilos para o vídeo comercial (manter para compatibilidade) */
         .video-section-commercial {
             margin: 3rem 0;
             text-align: center;
@@ -557,6 +611,19 @@
         </div>
     </section>
 
+    <!-- Seção Oferta Comercial -->
+    <section class="commercial-offer-section">
+        <div class="container">
+            <h2 class="commercial-offer-title">Oferta Comercial</h2>
+            <div class="video-container">
+                <video class="video-player" controls poster="../images/video-commercial-thumbnail.jpg">
+                    <source src="https://github.com/samuelrolo/samuel.rolo/raw/main/video/oferta%20comercial.mp4" type="video/mp4">
+                    O seu navegador não suporta vídeos HTML5.
+                </video>
+            </div>
+        </div>
+    </section>
+
     <!-- Kickstart Pro Section -->
     <section class="service-section" id="kickstart">
         <div class="container">
@@ -580,7 +647,7 @@
                 </div>
                 <div class="col-lg-6 col-md-12">
                     <div class="service-image">
-                        <img src="../images/kickstart-pro.jpg" alt="Kickstart Pro" class="img-fluid rounded">
+                        <img src="https://github.com/samuelrolo/samuel.rolo/raw/main/images/kickstart-pro.jpg" alt="Kickstart Pro" class="img-fluid rounded">
                     </div>
                 </div>
             </div>
@@ -624,7 +691,7 @@
                 </div>
                 <div class="col-lg-6 col-md-12 order-lg-1">
                     <div class="service-image">
-                        <img src="../images/consultoria.jpg" alt="Consultoria Organizacional" class="img-fluid rounded">
+                        <img src="https://github.com/samuelrolo/samuel.rolo/raw/main/images/consultoria-organizacional.jpg" alt="Consultoria Organizacional" class="img-fluid rounded">
                     </div>
                 </div>
             </div>
@@ -654,7 +721,7 @@
                 </div>
                 <div class="col-lg-6 col-md-12">
                     <div class="service-image">
-                        <img src="../images/coaching.jpg" alt="Coaching Executivo" class="img-fluid rounded">
+                        <img src="https://github.com/samuelrolo/samuel.rolo/raw/main/images/coaching-executivo.jpg" alt="Coaching Executivo" class="img-fluid rounded">
                     </div>
                 </div>
             </div>
@@ -684,7 +751,7 @@
                 </div>
                 <div class="col-lg-6 col-md-12 order-lg-1">
                     <div class="service-image">
-                        <img src="../images/workshops.jpg" alt="Workshops e Formação" class="img-fluid rounded">
+                        <img src="https://github.com/samuelrolo/samuel.rolo/raw/main/images/workshops-formacoes.jpg" alt="Workshops e Formação" class="img-fluid rounded">
                     </div>
                 </div>
             </div>
