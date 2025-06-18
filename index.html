@@ -402,8 +402,8 @@
         
         .btn-outline-primary {
             background-color: transparent;
-            border: 2px solid var(--dark-color);
-            color: var(--dark-color);
+            border: 2px solid #2c3e50;
+            color: #2c3e50;
             font-weight: 600;
             padding: 0.75rem 2rem;
             border-radius: 8px;
@@ -411,10 +411,11 @@
         }
         
         .btn-outline-primary:hover {
-            background-color: var(--dark-color);
-            border-color: var(--dark-color);
+            background-color: #2c3e50;
+            border-color: #2c3e50;
             color: white;
             transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(44, 62, 80, 0.3);
         }
         
         .btn-secondary {
@@ -847,6 +848,164 @@
         .btn-nav-clean:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+
+        /* Secção de Diagnóstico Moderna - Baseada no indextest.html */
+        .diagnostic-section-modern {
+            padding: 8rem 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            position: relative;
+        }
+
+        .section-header-modern {
+            text-align: center;
+            margin-bottom: 5rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .diagnostic-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--white);
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .section-title-modern {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 2rem;
+            line-height: 1.1;
+        }
+
+        .title-highlight {
+            color: var(--primary-color);
+        }
+
+        .section-subtitle-modern {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .features-grid-modern {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card-modern {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            transform: scaleX(0);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card-modern:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            border-color: var(--primary-color);
+        }
+
+        .feature-card-modern:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon-modern {
+            width: 80px;
+            height: 80px;
+            background: var(--light-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2rem;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card-modern:hover .feature-icon-modern {
+            background: var(--primary-color);
+            color: var(--white);
+            transform: scale(1.1);
+        }
+
+        .feature-title-modern {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-description-modern {
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .cta-container-modern {
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .hero-cta-modern {
+            background: #2c3e50;
+            color: var(--white);
+            padding: 1.25rem 3rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(44, 62, 80, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        .hero-cta-modern:hover {
+            background: var(--primary-color);
+            color: #2c3e50;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(44, 62, 80, 0.4);
+        }
+
+        .cta-note-modern {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
         .diagnostic-section {
             padding: 6rem 0;
@@ -1413,42 +1572,67 @@
     </section>
 
     <!-- Secção de Diagnóstico de Maturidade de RH -->
-    <section class="diagnostic-section" id="diagnostico-rh">
+<!-- Secção de Diagnóstico Moderna -->
+    <section class="diagnostic-section-modern" id="diagnostico">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="diagnostic-card">
-                        <div class="diagnostic-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <h2 class="diagnostic-title">
-                            Diagnóstico de <span class="highlight-gold">Maturidade de RH</span>
-                        </h2>
-                        <p class="diagnostic-description">
-                            Avalie o nível de desenvolvimento dos seus processos de Recursos Humanos através de um diagnóstico completo e receba insights personalizados para otimizar a sua estratégia de gestão de talentos.
-                        </p>
-                        <div class="diagnostic-features">
-                            <div class="feature-item">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Avaliação em 8 dimensões críticas</span>
-                            </div>
-                            <div class="feature-item">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Relatório personalizado instantâneo</span>
-                            </div>
-                            <div class="feature-item">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Recomendações práticas de melhoria</span>
-                            </div>
-                        </div>
-                        <button class="btn-diagnostic-modern" data-bs-toggle="modal" data-bs-target="#diagnosticModalClean">
-                            <i class="fas fa-play"></i>
-                            Iniciar Avaliação Gratuita
-                        </button>
+            <div class="section-header-modern">
+                <div class="diagnostic-badge">
+                    <i class="fas fa-chart-line"></i>
+                    Avaliação Profissional
+                </div>
+                <h2 class="section-title-modern">
+                    Diagnóstico de<br>
+                    <span class="title-highlight">Maturidade de RH</span>
+                </h2>
+                <p class="section-subtitle-modern">
+                    Avalie o nível de maturidade dos processos de Recursos Humanos da sua organização através de um questionário especializado baseado em 10 dimensões fundamentais.
+                </p>
+            </div>
+
+            <div class="features-grid-modern">
+                <div class="feature-card-modern">
+                    <div class="feature-icon-modern">
+                        <i class="fas fa-microscope"></i>
                     </div>
+                    <h3 class="feature-title-modern">Avaliação em 8 dimensões críticas</h3>
+                    <p class="feature-description-modern">
+                        Análise completa de processos fundamentais desde alinhamento estratégico até compliance e ESG.
+                    </p>
+                </div>
+
+                <div class="feature-card-modern">
+                    <div class="feature-icon-modern">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="feature-title-modern">Relatório personalizado instantâneo</h3>
+                    <p class="feature-description-modern">
+                        Compare os seus resultados com benchmarks do mercado e identifique oportunidades de melhoria.
+                    </p>
+                </div>
+
+                <div class="feature-card-modern">
+                    <div class="feature-icon-modern">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="feature-title-modern">Recomendações práticas de melhoria</h3>
+                    <p class="feature-description-modern">
+                        Receba insights personalizados e um plano de ação claro para evoluir a maturidade dos seus processos.
+                    </p>
                 </div>
             </div>
+
+            <div class="cta-container-modern">
+                <button class="hero-cta-modern" data-bs-toggle="modal" data-bs-target="#diagnosticModalClean">
+                    <i class="fas fa-chart-line"></i>
+                    Iniciar Avaliação Gratuita
+                </button>
+                <p class="cta-note-modern">
+                    <i class="fas fa-clock"></i>
+                    Demora apenas 5-10 minutos • Resultados imediatos
+                </p>
+            </div>
         </div>
+
     </section>
 
     <!-- Modal do Diagnóstico Clean -->
