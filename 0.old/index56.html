@@ -705,7 +705,7 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             width: 90%;
             max-width: 700px;
-            max-height: 90vh;
+            height: 600px;
             position: relative;
             overflow: hidden;
             display: flex;
@@ -725,15 +725,19 @@
         /* Corpo do Modal - SCROLL GARANTIDO */
         .modal-body {
             padding: 20px;
+            height: 480px;
             overflow-y: auto;
             background: white;
             flex: 1;
             min-height: 0;
-            max-height: calc(90vh - 140px);
         }
 
         /* Navegação do Modal - FIXA NA BASE */
         .modal-navigation {
+            position: relative;
+            bottom: 0;
+            left: 0;
+            right: 0;
             background: white;
             padding: 15px 20px;
             border-top: 1px solid #e9ecef;
@@ -850,7 +854,7 @@
             background: white;
         }
 
-        /* Cartão de Pergunta Moderno - FORÇAR ALTURA MÍNIMA */
+        /* Cartão de Pergunta Moderno */
         .question-card {
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
             border-radius: 16px;
@@ -858,7 +862,7 @@
             border-left: 4px solid #d4af37;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             margin-bottom: 2rem;
-            min-height: 200px;
+            min-height: auto;
             transition: all 0.3s ease;
         }
 
@@ -1136,30 +1140,11 @@
 
         .modal-body {
             padding: 20px;
+            height: 480px;
             overflow-y: auto;
             background: white;
             flex: 1;
             min-height: 0;
-            max-height: calc(90vh - 140px);
-        }
-
-        /* Estilos para melhorar a visibilidade do scroll */
-        .modal-body::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .modal-body::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb {
-            background: #bf9a33;
-            border-radius: 4px;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb:hover {
-            background: #a57b0a;
         }
 
         /* Progress Bar - Estilo Moderno */
