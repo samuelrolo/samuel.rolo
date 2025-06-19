@@ -870,82 +870,132 @@ a:hover {
 .service-benefits {
     list-style: none;
     padding: 0;
-    margin-bottom: 2rem;
+    margin: 1.5rem 0;
 }
 
 .service-benefits li {
-    padding: 0.5rem 0;
-    position: relative;
-    padding-left: 2rem;
-}
-
-.service-benefits li::before {
-    content: '\f00c';
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    color: var(--primary-color);
-    position: absolute;
-    left: 0;
-    top: 0.5rem;
-}
-
-.service-process {
-    background-color: var(--light-color);
-    padding: 3rem;
-    border-radius: var(--border-radius);
-    margin: 3rem 0;
-}
-
-.process-step {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 2rem;
-}
-
-.process-step:last-child {
-    margin-bottom: 0;
-}
-
-.step-number {
-    background-color: var(--primary-color);
-    color: var(--dark-color);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    margin-right: 1.5rem;
-    flex-shrink: 0;
 }
 
-.step-content h4 {
-    margin-bottom: 0.5rem;
+.service-benefits li i {
+    color: var(--success-color);
+    margin-right: 0.75rem;
 }
 
-.step-content p {
-    color: var(--text-light);
-    margin-bottom: 0;
+/* ===== Shop Page Styles ===== */
+.shop-intro {
+    padding: 3rem 0;
 }
 
-/* ===== Blog/Articles Section ===== */
-.blog-section {
+.product-section {
     padding: 5rem 0;
+}
+
+.product-image img {
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.product-content {
+    padding: 2rem;
+}
+
+.product-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.product-tagline {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.product-price {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.product-price .price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* ===== Expertise Cards ===== */
+.expertise-card {
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    transition: var(--transition);
+    height: 100%;
+    border: 1px solid rgba(191, 154, 51, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.expertise-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+}
+
+.expertise-card:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.expertise-card:hover:before {
+    transform: scaleX(1);
+}
+
+.expertise-icon {
+    font-size: 4.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.expertise-card:hover .expertise-icon {
+    transform: scale(1.1);
+}
+
+/* ===== HR Hub Styles ===== */
+.hr-hub-section {
+    padding: 5rem 0;
+    background-color: var(--light-color);
 }
 
 .article-card {
     background-color: #fff;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
-    overflow: hidden;
+    margin-bottom: 2rem;
     transition: var(--transition);
     height: 100%;
+    overflow: hidden;
 }
 
 .article-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
 .article-image {
@@ -1070,84 +1120,3 @@ a:hover {
         margin-bottom: 0.5rem;
     }
 }
-
-/* ===== MODAL DO ASSESSMENT - SCROLL FUNCIONAL ===== */
-
-/* Modal Container */
-.modal-content {
-    background: white !important;
-    border-radius: 16px !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
-    width: 90% !important;
-    max-width: 700px !important;
-    height: 80vh !important;
-    position: relative !important;
-    overflow: hidden !important;
-}
-
-/* Header do Modal */
-.modal-header {
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
-    color: white !important;
-    padding: 1.5rem 2rem !important;
-    text-align: center !important;
-    border-radius: 16px 16px 0 0 !important;
-    height: 100px !important;
-    box-sizing: border-box !important;
-}
-
-/* Corpo do Modal - SCROLL GARANTIDO */
-.modal-body {
-    padding: 20px !important;
-    height: calc(80vh - 160px) !important;
-    overflow-y: scroll !important;
-    background: white !important;
-    box-sizing: border-box !important;
-}
-
-/* Navegação do Modal - FIXA NA BASE */
-.modal-navigation {
-    background: white !important;
-    padding: 15px 20px !important;
-    border-top: 1px solid #e9ecef !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    border-radius: 0 0 16px 16px !important;
-    height: 60px !important;
-    box-sizing: border-box !important;
-    position: absolute !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-}
-
-/* Barra de scroll visível e estilizada */
-.modal-body::-webkit-scrollbar {
-    width: 12px !important;
-}
-
-.modal-body::-webkit-scrollbar-track {
-    background: #f1f1f1 !important;
-    border-radius: 6px !important;
-}
-
-.modal-body::-webkit-scrollbar-thumb {
-    background: var(--primary-color) !important;
-    border-radius: 6px !important;
-}
-
-.modal-body::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-color) !important;
-}
-
-/* Forçar altura mínima para garantir scroll */
-.question-card {
-    min-height: 250px !important;
-    margin-bottom: 20px !important;
-}
-
-.maturity-levels {
-    min-height: 400px !important;
-}
-
