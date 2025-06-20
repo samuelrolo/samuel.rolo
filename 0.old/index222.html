@@ -71,10 +71,6 @@
             --border-radius: 5px;
         }
         
-        html {
-            scroll-behavior: smooth;
-        }
-        
         body {
             font-family: 'Poppins', sans-serif;
             line-height: 1.6;
@@ -169,16 +165,6 @@
             flex-direction: column;
             align-items: center;
             z-index: 2;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        .scroll-down:hover {
-            transform: translateX(-50%) scale(1.1);
-            text-decoration: none;
-            color: inherit;
         }
         
         .scroll-down .arrow {
@@ -1949,9 +1935,9 @@
                 <h2>SAMUEL ROLO</h2>
             </div>
         </div>
-        <a href="#intro" class="scroll-down">
+        <div class="scroll-down">
             <div class="arrow"></div>
-        </a>
+        </div>
     </section>
 
     <!-- Intro Section -->
