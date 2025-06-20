@@ -50,9 +50,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <!-- CSS Externo -->
-    <link rel="stylesheet" href="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/css/style.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="diagnostic-styles.css">
     
     <style>
         :root {
@@ -699,49 +697,72 @@
             justify-content: center;
         }
 
+        /* SOLUÇÃO SIMPLES E DIRETA PARA O MODAL */
         .modal-content {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 700px;
-            max-height: 90vh;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            background: white !important;
+            border-radius: 16px !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+            width: 90% !important;
+            max-width: 700px !important;
+            height: 80vh !important;
+            position: relative !important;
+            overflow: hidden !important;
         }
 
         /* Header do Modal */
         .modal-header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            padding: 1.5rem 2rem;
-            text-align: center;
-            border-radius: 16px 16px 0 0;
-            flex-shrink: 0;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+            color: white !important;
+            padding: 1.5rem 2rem !important;
+            text-align: center !important;
+            border-radius: 16px 16px 0 0 !important;
+            height: 100px !important;
+            box-sizing: border-box !important;
         }
 
         /* Corpo do Modal - SCROLL GARANTIDO */
         .modal-body {
-            padding: 20px;
-            overflow-y: auto;
-            background: white;
-            flex: 1;
-            min-height: 0;
-            max-height: calc(90vh - 140px);
+            padding: 20px !important;
+            height: calc(80vh - 160px) !important;
+            overflow-y: scroll !important;
+            background: white !important;
+            box-sizing: border-box !important;
         }
 
         /* Navegação do Modal - FIXA NA BASE */
         .modal-navigation {
-            background: white;
-            padding: 15px 20px;
-            border-top: 1px solid #e9ecef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 0 0 16px 16px;
-            flex-shrink: 0;
+            background: white !important;
+            padding: 15px 20px !important;
+            border-top: 1px solid #e9ecef !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            border-radius: 0 0 16px 16px !important;
+            height: 60px !important;
+            box-sizing: border-box !important;
+            position: absolute !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+        }
+
+        /* Barra de scroll visível */
+        .modal-body::-webkit-scrollbar {
+            width: 12px !important;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: #f1f1f1 !important;
+            border-radius: 6px !important;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #bf9a33 !important;
+            border-radius: 6px !important;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #a57b0a !important;
         }
 
         @keyframes fadeIn {
@@ -852,14 +873,14 @@
 
         /* Cartão de Pergunta Moderno - FORÇAR ALTURA MÍNIMA */
         .question-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border-radius: 16px;
-            padding: 2rem;
-            border-left: 4px solid #d4af37;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            margin-bottom: 2rem;
-            min-height: 200px;
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+            border-radius: 16px !important;
+            padding: 2rem !important;
+            border-left: 4px solid #d4af37 !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+            margin-bottom: 2rem !important;
+            min-height: 250px !important;
+            transition: all 0.3s ease !important;
         }
 
         .question-card:hover {
@@ -946,13 +967,14 @@
             box-shadow: 0 4px 15px rgba(191, 154, 51, 0.3);
         }
 
-        /* Seção de Níveis de Maturidade */
+        /* Seção de Níveis de Maturidade - FORÇAR ALTURA */
         .maturity-levels {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-top: 2rem;
-            border: 1px solid #e9ecef;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
+            border-radius: 16px !important;
+            padding: 2rem !important;
+            margin-top: 2rem !important;
+            border: 1px solid #e9ecef !important;
+            min-height: 400px !important;
         }
 
         .maturity-levels h3 {
@@ -2011,7 +2033,7 @@
                     <h2 class="text-center mb-5">A nossa proposta de <span class="valor-gold">valor</span></h2>
                     
                     <div class="video-container-clean">
-                        <video class="video-player-clean" controls poster="images/video-thumbnail.jpg">
+                        <video class="video-player-clean" controls>
                             <source src="https://github.com/samuelrolo/samuel.rolo/raw/main/video/share2inspire_video_final_sincronizado%20.mp4" type="video/mp4">
                             O seu navegador não suporta vídeos HTML5.
                         </video>
