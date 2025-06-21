@@ -1,18 +1,19 @@
 /**
- * Integração Ifthenpay - Share2Inspire - CORRIGIDO
- * URLs CORRIGIDAS com /api/ - Junho 2025
+ * Integração Ifthenpay - Share2Inspire
+ * VERSÃO CORRIGIDA PARA NOVOS BLUEPRINTS - Junho 2025
  * Implementação completa: MB WAY, Multibanco, Payshop
+ * URLs corrigidas para usar backend como proxy
  */
 
 // Configuração global da integração Ifthenpay
 window.ifthenpayIntegration = {
-    // URLs CORRIGIDAS para usar o backend como proxy com /api/
+    // URLs corrigidas para usar o backend como proxy
     endpoints: {
-        mbway: 'https://share2inspire-beckend.lm.r.appspot.com/api/ifthenpay/mbway',
-        multibanco: 'https://share2inspire-beckend.lm.r.appspot.com/api/ifthenpay/multibanco',
-        payshop: 'https://share2inspire-beckend.lm.r.appspot.com/api/ifthenpay/payshop',
-        callback: 'https://share2inspire-beckend.lm.r.appspot.com/api/ifthenpay/callback',
-        health: 'https://share2inspire-beckend.lm.r.appspot.com/api/ifthenpay/health'
+        mbway: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/mbway',
+        multibanco: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/multibanco',
+        payshop: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/payshop',
+        callback: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/callback',
+        health: 'https://share2inspire-beckend.lm.r.appspot.com/ifthenpay/health'
     },
 
     // Backend URL corrigida
@@ -354,7 +355,7 @@ window.addEventListener('paymentConfirmed', function(event) {
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Ifthenpay Integration - URLs CORRIGIDAS - Carregada');
+    console.log('🚀 Ifthenpay Integration - Versão Corrigida Carregada');
     console.log('💳 Métodos suportados: MB WAY, Multibanco, Payshop');
     console.log('🔗 Backend URL:', window.ifthenpayIntegration.backendUrl);
     
