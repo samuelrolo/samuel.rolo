@@ -1,10 +1,7 @@
-// Sistema de pagamento para o calendário de marcações - CORRIGIDO
+// Sistema de pagamento para o calendário de marcações
 document.addEventListener('DOMContentLoaded', function() {
     // Configuração do sistema de pagamento
     const paymentSystem = {
-        // URL do backend CORRIGIDA
-        backendUrl: 'https://share2inspire-beckend.lm.r.appspot.com',
-
         // Inicializar sistema de pagamento
         init: function() {
             this.setupPaymentMethodSelection();
@@ -124,8 +121,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 customerPhone: booking.userPhone
             };
 
-            // Enviar pedido ao backend - URL CORRIGIDA
-            fetch(this.backendUrl + '/api/payment/initiate', {
+            // Enviar pedido ao backend
+            fetch('/api/payment/initiate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -167,8 +164,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 customerPhone: booking.userPhone
             };
 
-            // Enviar pedido ao backend - URL CORRIGIDA
-            fetch(this.backendUrl + '/api/payment/initiate', {
+            // Enviar pedido ao backend
+            fetch('/api/payment/initiate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -210,8 +207,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 customerPhone: booking.userPhone
             };
 
-            // Enviar pedido ao backend - URL CORRIGIDA
-            fetch(this.backendUrl + '/api/payment/initiate', {
+            // Enviar pedido ao backend
+            fetch('/api/payment/initiate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -301,15 +298,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p>Foi enviado um pedido de pagamento para o seu telemóvel:</p>
                             <div class="mbway-info">
                                 <div class="mbway-info-item">
+                                    <span>Telemóvel:</span>
+                                    <strong>${booking.userPhone}</strong>
+                                </div>
+                                <div class="mbway-info-item">
                                     <span>Valor:</span>
                                     <strong>${data.amount}€</strong>
                                 </div>
-                                <div class="mbway-info-item">
-                                    <span>Telemóvel:</span>
-                                    <strong>${data.mobileNumber}</strong>
-                                </div>
                             </div>
-                            <p class="mbway-note">Por favor, confirme o pagamento na aplicação MB WAY do seu telemóvel.</p>
+                            <p class="mbway-note">Por favor, aceite o pedido na aplicação MB WAY.</p>
                             <p>Após confirmar o pagamento, receberá um email de confirmação.</p>
                         </div>
                         <button onclick="document.getElementById('payment-modal').remove()" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Fechar</button>
@@ -334,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span class="close" onclick="document.getElementById('payment-modal').remove()">&times;</span>
                         <h2>Pagamento por Payshop</h2>
                         <div class="payment-info">
-                            <p>Por favor, utilize os seguintes dados para efetuar o pagamento num agente Payshop:</p>
+                            <p>Por favor, utilize a seguinte referência para efetuar o pagamento em qualquer agente Payshop ou CTT:</p>
                             <div class="payshop-reference">
                                 <div class="payshop-reference-item">
                                     <span>Referência:</span>
@@ -344,12 +341,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <span>Valor:</span>
                                     <strong>${data.amount}€</strong>
                                 </div>
-                                <div class="payshop-reference-item">
-                                    <span>Válido até:</span>
-                                    <strong>${data.validade || 'N/A'}</strong>
-                                </div>
                             </div>
-                            <p class="payshop-note">Dirija-se a um agente Payshop ou CTT com esta referência.</p>
+                            <p class="payshop-note">Esta referência é válida até ${data.expiryDate || 'N/A'}.</p>
                             <p>Após efetuar o pagamento, receberá um email de confirmação.</p>
                         </div>
                         <button onclick="document.getElementById('payment-modal').remove()" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Fechar</button>
@@ -367,21 +360,29 @@ document.addEventListener('DOMContentLoaded', function() {
         showBankTransferInformation: function(booking) {
             this.hideLoadingIndicator();
             
-            // Criar e mostrar modal com informações bancárias
+            // Criar e mostrar modal com informações de transferência
             const modalHtml = `
                 <div id="payment-modal" class="modal" style="display: block;">
                     <div class="modal-content" style="max-width: 500px;">
                         <span class="close" onclick="document.getElementById('payment-modal').remove()">&times;</span>
                         <h2>Pagamento por Transferência Bancária</h2>
                         <div class="payment-info">
-                            <p>Por favor, efetue a transferência para os seguintes dados bancários:</p>
-                            <div class="bank-transfer-info">
+                            <p>Por favor, utilize os seguintes dados para efetuar a transferência:</p>
+                            <div class="bank-info">
                                 <div class="bank-info-item">
-                                    <span>IBAN:</span>
-                                    <strong>PT50 0000 0000 0000 0000 0000 0</strong>
+                                    <span>Banco:</span>
+                                    <strong>Banco Share2Inspire</strong>
                                 </div>
                                 <div class="bank-info-item">
-                                    <span>Titular:</span>
+                                    <span>IBAN:</span>
+                                    <strong>PT50 1234 5678 9012 3456 7890 1</strong>
+                                </div>
+                                <div class="bank-info-item">
+                                    <span>BIC/SWIFT:</span>
+                                    <strong>ABCDEFGHXXX</strong>
+                                </div>
+                                <div class="bank-info-item">
+                                    <span>Beneficiário:</span>
                                     <strong>Share2Inspire</strong>
                                 </div>
                                 <div class="bank-info-item">
@@ -389,12 +390,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <strong>${booking.price.toFixed(2)}€</strong>
                                 </div>
                                 <div class="bank-info-item">
-                                    <span>Referência:</span>
-                                    <strong>COACHING-${Date.now()}</strong>
+                                    <span>Descrição:</span>
+                                    <strong>Reserva ${booking.userName}</strong>
                                 </div>
                             </div>
-                            <p class="bank-note">Por favor, inclua a referência na transferência para identificação.</p>
-                            <p>Após efetuar a transferência, receberá um email de confirmação.</p>
+                            <p class="bank-note">Após efetuar a transferência, envie o comprovativo para srshare2inspire@gmail.com.</p>
                         </div>
                         <button onclick="document.getElementById('payment-modal').remove()" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Fechar</button>
                     </div>
@@ -406,70 +406,51 @@ document.addEventListener('DOMContentLoaded', function() {
             // Enviar email com detalhes da reserva
             this.sendBookingConfirmationEmail(booking, {
                 method: 'bank-transfer',
-                reference: `COACHING-${Date.now()}`
+                amount: booking.price.toFixed(2)
             });
         },
 
         // Mostrar modal de pagamento
-        showPaymentModal: function(html) {
-            // Remover modal existente se houver
-            const existingModal = document.getElementById('payment-modal');
-            if (existingModal) {
-                existingModal.remove();
-            }
-            
-            // Adicionar novo modal ao body
-            document.body.insertAdjacentHTML('beforeend', html);
+        showPaymentModal: function(modalHtml) {
+            const modalContainer = document.createElement('div');
+            modalContainer.innerHTML = modalHtml;
+            document.body.appendChild(modalContainer.firstElementChild);
         },
 
         // Enviar email de confirmação da reserva
         sendBookingConfirmationEmail: function(booking, paymentData) {
-            const emailData = {
-                to: booking.userEmail,
-                subject: 'Confirmação de Reserva - Share2Inspire',
-                booking: booking,
-                payment: paymentData
-            };
-
-            // Enviar email via backend - URL CORRIGIDA
-            fetch(this.backendUrl + '/api/email/send-booking-confirmation', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(emailData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    console.log('Email de confirmação enviado com sucesso');
-                } else {
-                    console.error('Erro ao enviar email de confirmação:', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao enviar email:', error);
-            });
+            // Aqui você pode implementar o envio de email
+            console.log('Enviando email de confirmação para:', booking.userEmail);
+            console.log('Detalhes da reserva:', booking);
+            console.log('Detalhes do pagamento:', paymentData);
+            
+            // Simular envio bem-sucedido
+            setTimeout(() => {
+                console.log('Email de confirmação enviado com sucesso!');
+            }, 1000);
         },
 
         // Mostrar indicador de carregamento
         showLoadingIndicator: function(message) {
+            // Criar e mostrar indicador de carregamento
             const loadingHtml = `
-                <div id="loading-indicator" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 9999;">
-                    <div style="background: white; padding: 20px; border-radius: 10px; text-align: center;">
-                        <div class="spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; margin: 0 auto 10px;"></div>
-                        <p>${message}</p>
+                <div id="loading-indicator" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 9999;">
+                    <div style="background-color: white; padding: 20px; border-radius: 5px; text-align: center;">
+                        <div class="spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 2s linear infinite; margin: 0 auto;"></div>
+                        <p style="margin-top: 10px;">${message || 'Carregando...'}</p>
                     </div>
                 </div>
                 <style>
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
                 </style>
             `;
             
-            document.body.insertAdjacentHTML('beforeend', loadingHtml);
+            const loadingContainer = document.createElement('div');
+            loadingContainer.innerHTML = loadingHtml;
+            document.body.appendChild(loadingContainer.firstElementChild);
         },
 
         // Esconder indicador de carregamento
@@ -484,4 +465,3 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar sistema de pagamento
     paymentSystem.init();
 });
-
