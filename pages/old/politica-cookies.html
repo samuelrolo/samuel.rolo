@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Política de Cookies | Share2Inspire | Samuel Rolo</title>
-    <meta name="description" content="Política de Cookies da Share2Inspire. Informações sobre como utilizamos cookies no nosso website.">
+    <meta name="description" content="Política de Cookies da Share2Inspire. Saiba como utilizamos cookies no nosso site.">
     
     <!-- Favicon -->
     <link rel="icon" href="../images/favicon.png" type="image/png">
@@ -20,17 +20,333 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        /* Estilos para o footer */
+        footer {
+            background-color: #212529;
+            color: #fff;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+        
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .footer-left p {
+            margin: 0;
+            color: #BF9A33;
+        }
+        
+        .footer-right {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .footer-contact p {
+            margin: 0;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        
+        .footer-contact i {
+            color: #BF9A33;
+            margin-right: 8px;
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .footer-social a {
+            color: #BF9A33;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+        
+        .footer-social a:hover {
+            color: #fff;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
+        
+        .footer-links a {
+            color: #BF9A33;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        
+        .navbar {
+            background-color: #fff;
+            padding: 1rem 0;
+        }
+        
+        .navbar-nav {
+            margin-left: auto;
+        }
+        
+        .navbar-nav .nav-link {
+            color: #333;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+        }
+        
+        .navbar-nav .nav-link.active {
+            color: #BF9A33;
+            position: relative;
+        }
+        
+        .navbar-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 1rem;
+            right: 1rem;
+            height: 2px;
+            background-color: #BF9A33;
+        }
+        
+        /* Estilos para a página de política de cookies */
+        .page-header {
+            background-color: #212529;
+            color: #fff;
+            padding: 6rem 0 3rem;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+        
+        .page-header h1 {
+            color: #BF9A33;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .page-header .breadcrumb {
+            background-color: transparent;
+        }
+        
+        .page-header .breadcrumb-item a {
+            color: #BF9A33;
+        }
+        
+        .page-header .breadcrumb-item.active {
+            color: #fff;
+        }
+        
+        .policy-content {
+            padding: 2rem 0;
+        }
+        
+        .policy-text {
+            line-height: 1.8;
+        }
+        
+        .policy-text h2 {
+            color: #333;
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .policy-text h3 {
+            color: #333;
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            font-weight: 600;
+        }
+        
+        .policy-text p {
+            margin-bottom: 1.2rem;
+            color: #555;
+        }
+        
+        .policy-text ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+        
+        .policy-text ul li {
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+        
+        .policy-text strong {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        /* Responsividade - Melhorias */
+        @media (max-width: 991px) {
+            .page-header {
+                padding: 5.5rem 0 2.5rem;
+                margin-bottom: 3rem;
+            }
+            
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .policy-text h2 {
+                font-size: 2rem;
+                margin-bottom: 1.2rem;
+            }
+            
+            .policy-text h3 {
+                font-size: 1.4rem;
+                margin: 1.8rem 0 0.8rem;
+            }
+            
+            .policy-content {
+                padding: 1.5rem 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 5rem 0 2rem;
+                margin-bottom: 2.5rem;
+            }
+            
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .policy-text h2 {
+                font-size: 1.8rem;
+                margin-bottom: 1rem;
+            }
+            
+            .policy-text h3 {
+                font-size: 1.3rem;
+                margin: 1.5rem 0 0.7rem;
+            }
+            
+            .policy-text p {
+                margin-bottom: 1rem;
+                font-size: 0.95rem;
+            }
+            
+            .policy-text ul {
+                margin-bottom: 1.2rem;
+                padding-left: 1.2rem;
+            }
+            
+            .policy-text ul li {
+                margin-bottom: 0.4rem;
+                font-size: 0.95rem;
+            }
+            
+            .policy-content {
+                padding: 1.2rem 0;
+            }
+            
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .footer-right {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .footer-social {
+                justify-content: center;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            footer {
+                margin-top: 40px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .page-header {
+                padding: 4.5rem 0 1.5rem;
+                margin-bottom: 2rem;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .policy-text h2 {
+                font-size: 1.6rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            .policy-text h3 {
+                font-size: 1.2rem;
+                margin: 1.2rem 0 0.6rem;
+            }
+            
+            .policy-text p {
+                margin-bottom: 0.8rem;
+                font-size: 0.9rem;
+                line-height: 1.6;
+            }
+            
+            .policy-text ul {
+                margin-bottom: 1rem;
+                padding-left: 1rem;
+            }
+            
+            .policy-text ul li {
+                margin-bottom: 0.3rem;
+                font-size: 0.9rem;
+            }
+            
+            .policy-content {
+                padding: 1rem 0;
+            }
+            
+            footer {
+                margin-top: 30px;
+                padding: 15px 0;
+            }
+            
+            .footer-links a {
+                font-size: 13px;
+            }
+        }
+    </style>
 </head>
 <body>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-8GQ1KM9FQS');
-</script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-8GQ1KM9FQS');
+    </script>
     <!-- Header e Navegação -->
     <header class="header">
         <nav class="navbar navbar-expand-lg fixed-top">
@@ -56,10 +372,10 @@
                             <a class="nav-link" href="loja.html">Loja</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="hr-hub.html">HR Hub</a>
+                            <a class="nav-link" href="people-hub.html">People Hub</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="../index.html#contactos">Contactos</a>
+                            <a class="nav-link" href="../index.html#contatos">Contactos</a>
                         </li>
                     </ul>
                 </div>
@@ -84,76 +400,42 @@
         </div>
     </section>
 
-    <!-- Cookies Policy Content -->
-    <section class="legal-content">
+    <!-- Conteúdo da Política de Cookies -->
+    <section class="policy-content">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="legal-document">
-                        <h2>Política de Cookies da Share2Inspire</h2>
-                        <p class="last-updated">Última atualização: 15 de Maio de 2025</p>
+                    <div class="policy-text">
+                        <h2>Política de Cookies Share2Inspire</h2>
                         
-                        <div class="legal-section">
-                            <h3>1. O que são Cookies?</h3>
-                            <p>Cookies são pequenos ficheiros de texto que são armazenados no seu dispositivo (computador, tablet, smartphone) quando visita um website. Os cookies são amplamente utilizados para fazer os websites funcionarem de forma mais eficiente, bem como para fornecer informações aos proprietários do website.</p>
-                            <p>Os cookies permitem que um website reconheça o seu dispositivo e lembre-se de determinadas informações sobre a sua visita, como as suas preferências de idioma ou informações de login. Isto ajuda a melhorar a sua experiência de navegação e torna as suas visitas futuras mais convenientes.</p>
-                        </div>
+                        <h3>O que são cookies?</h3>
+                        <p>Como é prática comum em quase todos os sites profissionais, este site usa cookies, que são pequenos arquivos baixados no seu computador, para melhorar sua experiência. Esta página descreve quais informações eles recolhem, como as usamos e por que às vezes precisamos armazenar esses cookies. Também partilharemos como pode impedir que esses cookies sejam armazenados, no entanto, isso pode fazer o downgrade ou 'quebrar' certos elementos da funcionalidade do site.</p>
                         
-                        <div class="legal-section">
-                            <h3>2. Como Utilizamos os Cookies</h3>
-                            <p>A Share2Inspire utiliza cookies por várias razões, detalhadas abaixo. Infelizmente, na maioria dos casos, não existem opções padrão da indústria para desativar os cookies sem desativar completamente a funcionalidade e os recursos que eles adicionam a este website. Recomendamos que deixe todos os cookies ativos se não tiver certeza se precisa deles ou não, caso sejam utilizados para fornecer um serviço que utiliza.</p>
-                            
-                            <h4>2.1. Cookies Essenciais</h4>
-                            <p>Estes cookies são necessários para o funcionamento básico do website e não podem ser desativados nos nossos sistemas. Geralmente, são definidos apenas em resposta a ações realizadas por si que equivalem a uma solicitação de serviços, como definir as suas preferências de privacidade, fazer login ou preencher formulários. Pode configurar o seu navegador para bloquear ou alertá-lo sobre estes cookies, mas algumas partes do website não funcionarão corretamente.</p>
-                            
-                            <h4>2.2. Cookies de Preferências</h4>
-                            <p>Estes cookies permitem que o website forneça funcionalidades e personalização aprimoradas. Podem ser definidos por nós ou por fornecedores terceiros cujos serviços adicionamos às nossas páginas. Se não permitir estes cookies, alguns ou todos esses serviços podem não funcionar corretamente.</p>
-                            
-                            <h4>2.3. Cookies Analíticos</h4>
-                            <p>Estes cookies permitem-nos contar visitas e fontes de tráfego para que possamos medir e melhorar o desempenho do nosso website. Eles ajudam-nos a saber quais páginas são as mais e menos populares e a ver como os visitantes navegam pelo website. Todas as informações que estes cookies recolhem são agregadas e, portanto, anónimas. Se não permitir estes cookies, não saberemos quando visitou o nosso website.</p>
-                            
-                            <h4>2.4. Cookies de Marketing</h4>
-                            <p>Estes cookies podem ser definidos através do nosso website pelos nossos parceiros de publicidade. Podem ser utilizados por essas empresas para criar um perfil dos seus interesses e mostrar-lhe anúncios relevantes noutros websites. Eles não armazenam diretamente informações pessoais, mas são baseados na identificação exclusiva do seu navegador e dispositivo de Internet. Se não permitir estes cookies, terá menos publicidade direcionada.</p>
-                        </div>
+                        <h3>Como usamos os cookies?</h3>
+                        <p>Utilizamos cookies por vários motivos, detalhados abaixo. Infelizmente, na maioria dos casos, não existem opções padrão do setor para desativar os cookies sem desativar completamente a funcionalidade e os recursos que eles adicionam a este site. É recomendável que você deixe todos os cookies se não tiver certeza se precisa ou não deles, caso sejam usados para fornecer um serviço que você usa.</p>
                         
-                        <div class="legal-section">
-                            <h3>3. Cookies de Terceiros</h3>
-                            <p>Em alguns casos especiais, também utilizamos cookies fornecidos por terceiros confiáveis. A secção a seguir detalha quais cookies de terceiros pode encontrar através deste website.</p>
-                            <ul>
-                                <li>Este website utiliza o Google Analytics, que é uma das soluções de análise mais difundidas e confiáveis da web, para nos ajudar a entender como utiliza o website e como podemos melhorar a sua experiência. Estes cookies podem rastrear coisas como quanto tempo passa no website e as páginas que visita, para que possamos continuar a produzir conteúdo envolvente.</li>
-                                <li>Utilizamos cookies do Facebook e LinkedIn para rastrear a eficácia das nossas campanhas de marketing e entender melhor as interações dos utilizadores com o nosso conteúdo nas redes sociais.</li>
-                                <li>Ocasionalmente, testamos novos recursos e fazemos alterações subtis na forma como o website é entregue. Quando ainda estamos a testar novos recursos, estes cookies podem ser utilizados para garantir que receba uma experiência consistente enquanto estiver no website, enquanto entendemos quais otimizações os nossos utilizadores mais apreciam.</li>
-                            </ul>
-                        </div>
+                        <h3>Desativar cookies</h3>
+                        <p>Você pode impedir a configuração de cookies ajustando as configurações do seu navegador (consulte a Ajuda do navegador para saber como fazer isso). Esteja ciente de que a desativação de cookies afetará a funcionalidade deste e de muitos outros sites que você visita. A desativação de cookies geralmente resultará na desativação de determinadas funcionalidades e recursos deste site. Portanto, é recomendável que você não desative os cookies.</p>
                         
-                        <div class="legal-section">
-                            <h3>4. Como Gerir os Cookies</h3>
-                            <p>A maioria dos navegadores web permite algum controlo da maioria dos cookies através das configurações do navegador. Para saber mais sobre cookies, incluindo como ver quais cookies foram definidos e como gerenciá-los e excluí-los, visite <a href="https://www.allaboutcookies.org" target="_blank">www.allaboutcookies.org</a>.</p>
-                            
-                            <h4>4.1. Desativar Cookies</h4>
-                            <p>Pode impedir a definição de cookies ajustando as configurações no seu navegador (consulte a Ajuda do seu navegador para saber como fazer isso). Esteja ciente de que a desativação de cookies afetará a funcionalidade deste e de muitos outros websites que visita. A desativação de cookies geralmente resultará na desativação de certas funcionalidades e recursos deste website. Portanto, é recomendável que não desative os cookies.</p>
-                            
-                            <h4>4.2. Gestão de Cookies por Navegador</h4>
-                            <p>Aqui estão links para as instruções de gestão de cookies nos navegadores mais populares:</p>
-                            <ul>
-                                <li><a href="https://support.google.com/chrome/answer/95647" target="_blank">Google Chrome</a></li>
-                                <li><a href="https://support.mozilla.org/pt-PT/kb/cookies-informacoes-que-websites-guardam-no-seu-computador" target="_blank">Mozilla Firefox</a></li>
-                                <li><a href="https://support.apple.com/pt-pt/guide/safari/sfri11471/mac" target="_blank">Safari</a></li>
-                                <li><a href="https://support.microsoft.com/pt-pt/windows/eliminar-e-gerir-cookies-168dab11-0753-043d-7c16-ede5947fc64d" target="_blank">Microsoft Edge</a></li>
-                            </ul>
-                        </div>
+                        <h3>Cookies que definimos</h3>
+                        <ul>
+                            <li>Cookies relacionados à conta<br>Se você criar uma conta connosco, usaremos cookies para o gerenciamento do processo de inscrição e administração geral. Esses cookies geralmente serão excluídos quando você sair do sistema, porém, em alguns casos, eles poderão permanecer posteriormente para lembrar as preferências do seu site ao sair.</li>
+                            <li>Cookies relacionados ao login<br>Utilizamos cookies quando você está logado, para que possamos lembrar dessa ação. Isso evita que você precise fazer login sempre que visitar uma nova página. Esses cookies são normalmente removidos ou limpos quando você efetua logout para garantir que você possa acessar apenas a recursos e áreas restritas ao efetuar login.</li>
+                            <li>Cookies relacionados a formulários<br>Quando você envia dados por meio de um formulário como os encontrados nas páginas de contacto ou nos formulários de comentários, os cookies podem ser configurados para lembrar os detalhes do usuário para correspondência futura.</li>
+                            <li>Cookies de preferências do site<br>Para proporcionar uma ótima experiência neste site, fornecemos a funcionalidade para definir suas preferências de como esse site é executado quando você o usa. Para lembrar suas preferências, precisamos definir cookies para que essas informações possam ser chamadas sempre que você interagir com uma página for afetada por suas preferências.</li>
+                        </ul>
                         
-                        <div class="legal-section">
-                            <h3>5. Mais Informações</h3>
-                            <p>Esperamos que estas informações tenham esclarecido as coisas para si. Como mencionado anteriormente, se não tiver certeza se precisa ou não de algo, geralmente é mais seguro deixar os cookies ativados caso interajam com uma das funcionalidades que utiliza no nosso website.</p>
-                            <p>Se ainda tiver dúvidas sobre a nossa utilização de cookies, não hesite em contactar-nos através do email <a href="mailto:srshare2inspire@gmail.com">srshare2inspire@gmail.com</a>.</p>
-                        </div>
+                        <h3>Cookies de Terceiros</h3>
+                        <p>Em alguns casos especiais, também usamos cookies fornecidos por terceiros confiáveis. A seção a seguir detalha quais cookies de terceiros você pode encontrar através deste site.</p>
+                        <ul>
+                            <li>Este site usa o Google Analytics, que é uma das soluções de análise mais difundidas e confiáveis da Web, para nos ajudar a entender como você usa o site e como podemos melhorar sua experiência. Esses cookies podem rastrear itens como quanto tempo você gasta no site e as páginas visitadas, para que possamos continuar produzindo conteúdo atraente.</li>
+                        </ul>
+                        <p>Para mais informações sobre cookies do Google Analytics, consulte a página oficial do Google Analytics.</p>
                         
-                        <div class="legal-section">
-                            <h3>6. Alterações a Esta Política</h3>
-                            <p>Podemos atualizar esta Política de Cookies periodicamente para refletir, por exemplo, alterações nos cookies que utilizamos ou por outros motivos operacionais, legais ou regulamentares. Assim, incentivamos que visite esta página regularmente para se manter informado sobre a nossa utilização de cookies e tecnologias relacionadas.</p>
-                            <p>A data no topo desta Política de Cookies indica quando foi atualizada pela última vez.</p>
-                        </div>
+                        <h3>Mais informações</h3>
+                        <p>Esperemos que esteja esclarecido e, como mencionado anteriormente, se houver algo que você não tem certeza se precisa ou não, geralmente é mais seguro deixar os cookies ativados, caso interaja com um dos recursos que você usa em nosso site.</p>
+                        
+                        <p>Esta política é efetiva a partir de <strong>Maio de 2025</strong>.</p>
                     </div>
                 </div>
             </div>
@@ -161,120 +443,33 @@
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer id="contactos">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-6">
-                    <div class="footer-logo">
-                        <img src="../images/logo-white.png" alt="Share2Inspire Logo">
-                        <p>Partilhar para Inspirar a Mudança</p>
-                    </div>
+            <div class="footer-container">
+                <div class="footer-left">
+                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
                 </div>
-                <div class="col-lg-2 col-md-6">
-                    <div class="footer-links">
-                        <h4>Links Rápidos</h4>
-                        <ul>
-                            <li><a href="../index.html">Início</a></li>
-                            <li><a href="sobre.html">Sobre</a></li>
-                            <li><a href="servicos.html">Serviços</a></li>
-                            <li><a href="loja.html">Loja</a></li>
-                            <li><a href="hr-hub.html">HR Hub</a></li>
-                        </ul>
+                <div class="footer-right">
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer-links">
-                        <h4>Informações Legais</h4>
-                        <ul>
-                            <li><a href="politica-privacidade.html">Política de Privacidade</a></li>
-                            <li><a href="politica-cookies.html">Política de Cookies</a></li>
-                            <li><a href="tratamento-dados.html">Tratamento de Dados</a></li>
-                            <li><a href="informacao-legal.html">Informação Legal</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer-newsletter">
-                        <h4>Newsletter</h4>
-                        <p>Subscreva para receber as últimas novidades</p>
-                        <form id="newsletterForm" class="brevo-form">
-                            <div class="input-group">
-                                <input type="email" class="form-control" placeholder="Seu email" name="email" required>
-                                <button class="btn btn-primary" type="submit">Subscrever</button>
-                            </div>
-                            <div id="newsletterMessage" class="mt-2"></div>
-                        </form>
+                    <div class="footer-social">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="footer-bottom">
-                        <p>&copy; 2025 Share2Inspire. Todos os direitos reservados.</p>
-                    </div>
-                </div>
+            <div class="footer-links">
+                <a href="politica-privacidade.html">Política de Privacidade</a>
+                <a href="politica-cookies.html">Política de Cookies</a>
+                <a href="tratamento-dados.html">Tratamento de Dados</a>
+                <a href="informacao-legal.html">Informação Legal</a>
             </div>
         </div>
     </footer>
 
-    <!-- Feedback Button -->
-    <div class="feedback-button">
-        <button type="button" class="btn btn-feedback" data-bs-toggle="modal" data-bs-target="#feedbackModal">
-            <i class="fas fa-comment-alt"></i> Feedback
-        </button>
-    </div>
-
-    <!-- Feedback Modal -->
-    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="feedbackModalLabel">Deixa o teu Feedback</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="feedbackForm" class="brevo-form">
-                        <div class="mb-3">
-                            <label for="feedbackName" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="feedbackName" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="feedbackEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="feedbackEmail" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="feedbackRating" class="form-label">Avaliação</label>
-                            <div class="star-rating">
-                                <input type="radio" id="star5" name="rating" value="5"><label for="star5"></label>
-                                <input type="radio" id="star4" name="rating" value="4"><label for="star4"></label>
-                                <input type="radio" id="star3" name="rating" value="3"><label for="star3"></label>
-                                <input type="radio" id="star2" name="rating" value="2"><label for="star2"></label>
-                                <input type="radio" id="star1" name="rating" value="1"><label for="star1"></label>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="feedbackMessage" class="form-label">Mensagem</label>
-                            <textarea class="form-control" id="feedbackMessage" name="message" rows="4" required></textarea>
-                        </div>
-                        <div id="feedbackFormMessage" class="mb-3"></div>
-                        <button type="submit" class="btn btn-primary w-100">Enviar Feedback</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Integrações API -->
-    <script src="../js/brevo-integration.js"></script>
-    
-    <!-- Scripts dos formulários -->
-    <script src="../js/newsletter-form.js"></script>
-    <script src="../js/feedback.js"></script>
-    
-    <!-- Script principal -->
-    <script src="../js/main.js"></script>
 </body>
 </html>
