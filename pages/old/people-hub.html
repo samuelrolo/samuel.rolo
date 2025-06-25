@@ -135,9 +135,9 @@
             background-color: #BF9A33;
         }
         
-        /* Estilos específicos do People Hub */
+        /* Variáveis CSS */
         :root {
-            --primary-color: #bf9a33;
+            --primary-color: #BF9A33;
             --secondary-color: #333333;
             --accent-color: #a57b0a;
             --light-color: #f8f9fa;
@@ -147,34 +147,33 @@
             --border-color: #dee2e6;
         }
         
+        /* Estilos para a página */
         .page-header {
-            background-color: #212529;
-            color: #fff;
-            padding: 6rem 0 3rem;
-            margin-bottom: 4rem;
-            position: relative;
+            background-color: #f8f9fa;
+            padding: 100px 0 50px;
+            margin-bottom: 50px;
         }
         
         .page-header h1 {
-            color: var(--primary-color);
-            font-size: 3rem;
-            font-weight: 800;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
             margin-bottom: 1rem;
         }
         
-        .page-header .breadcrumb {
+        .breadcrumb {
             background-color: transparent;
             padding: 0;
             margin: 0;
         }
         
-        .page-header .breadcrumb-item a {
-            color: var(--primary-color);
+        .breadcrumb-item a {
+            color: #BF9A33;
             text-decoration: none;
         }
         
-        .page-header .breadcrumb-item.active {
-            color: #fff;
+        .breadcrumb-item.active {
+            color: #6c757d;
         }
         
         .newsletter-hero {
@@ -407,12 +406,12 @@
         /* Media queries para otimização mobile */
         @media (max-width: 768px) {
             .page-header {
-                padding: 4rem 0 2rem;
-                margin-bottom: 2rem;
+                padding: 80px 0 40px;
+                margin-bottom: 30px;
             }
             
             .page-header h1 {
-                font-size: 2.2rem;
+                font-size: 2rem;
             }
             
             .newsletter-hero {
@@ -490,6 +489,14 @@
         }
         
         @media (max-width: 576px) {
+            .page-header {
+                padding: 70px 0 30px;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
             .stats-grid {
                 grid-template-columns: 1fr;
             }
