@@ -1,0 +1,806 @@
+Compreendido. O código HTML que me forneceu anteriormente já utiliza os caminhos completos para as imagens que mencionou.
+
+Aqui está o código HTML completo e correto, com as imagens a apontar para os caminhos `raw` do GitHub, garantindo que são carregadas corretamente:
+
+```html
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serviços | Share2Inspire | Samuel Rolo</title>
+    <meta name="description" content="Serviços de consultoria, coaching e transformação organizacional por Samuel Rolo. Kickstart Pro, consultoria organizacional e coaching executivo.">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="../images/favicon.png" type="image/png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        /* Estilos para o footer */
+        footer {
+            background-color: #212529;
+            color: #fff;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+        
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .footer-left p {
+            margin: 0;
+            color: #BF9A33;
+        }
+        
+        .footer-right {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .footer-contact p {
+            margin: 0;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        
+        .footer-contact i {
+            color: #BF9A33;
+            margin-right: 8px;
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .footer-social a {
+            color: #BF9A33;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+        
+        .footer-social a:hover {
+            color: #fff;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
+        
+        .footer-links a {
+            color: #BF9A33;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        
+        .navbar {
+            background-color: #fff;
+            padding: 1rem 0;
+        }
+        
+        .navbar-nav {
+            margin-left: auto;
+        }
+        
+        .navbar-nav .nav-link {
+            color: #333;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+        }
+        
+        .navbar-nav .nav-link.active {
+            color: #BF9A33;
+            position: relative;
+        }
+        
+        .navbar-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 1rem;
+            right: 1rem;
+            height: 2px;
+            background-color: #BF9A33;
+        }
+        
+        /* Estilos para a página de serviços */
+        .page-header {
+            background-color: #f8f9fa;
+            padding: 100px 0 50px;
+            margin-bottom: 50px;
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .breadcrumb-item a {
+            color: #BF9A33;
+            text-decoration: none;
+        }
+        
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+        
+        .service-section {
+            padding: 80px 0;
+        }
+        
+        .service-section.bg-light {
+            background-color: #f8f9fa;
+        }
+        
+        .service-content h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .service-tagline {
+            font-size: 1.2rem;
+            color: #BF9A33;
+            margin-bottom: 1.5rem;
+        }
+        
+        .service-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .service-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin: 1.5rem 0 1rem;
+        }
+        
+        .service-benefits {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem;
+        }
+        
+        .service-benefits li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .service-benefits li i {
+            color: #BF9A33;
+            margin-right: 10px;
+            margin-top: 5px;
+        }
+        
+        .service-image img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-header {
+            background-color: #BF9A33;
+            color: #fff;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+        }
+        
+        .modal-body label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-footer .btn-primary {
+            background-color: #BF9A33;
+            border-color: #BF9A33;
+        }
+        
+        .modal-footer .btn-primary:hover {
+            background-color: #a88629;
+            border-color: #a88629;
+        }
+        
+        /* Estilos globais para botões primários */
+        .btn-primary {
+            background-color: #212529 !important;
+            border-color: #212529 !important;
+            color: #fff !important;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #BF9A33 !important;
+            border-color: #BF9A33 !important;
+            color: #fff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(191, 154, 51, 0.3);
+        }
+        
+        .btn-primary:focus {
+            background-color: #BF9A33 !important;
+            border-color: #BF9A33 !important;
+            box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25);
+        }
+        
+        /* Estilos específicos para pagamentos */
+        .payment-details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #BF9A33;
+        }
+        .status-pending {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        .instructions {
+            margin-top: 15px;
+            font-style: italic;
+            color: #6c757d;
+        }
+        
+        /* Media queries para otimização mobile */
+        @media (max-width: 992px) {
+            .service-content h2 {
+                font-size: 2rem;
+            }
+            
+            .service-tagline {
+                font-size: 1.1rem;
+            }
+            
+            .service-content h3 {
+                font-size: 1.3rem;
+            }
+            
+            .service-section {
+                padding: 60px 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 80px 0 40px;
+                margin-bottom: 30px;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .service-section {
+                padding: 40px 0;
+            }
+            
+            .service-content {
+                margin-top: 30px;
+            }
+            
+            .service-content h2 {
+                font-size: 1.8rem;
+                text-align: center;
+            }
+            
+            .service-tagline {
+                font-size: 1rem;
+                text-align: center;
+            }
+            
+            .service-content h3 {
+                font-size: 1.2rem;
+            }
+            
+            .service-benefits li {
+                margin-bottom: 0.8rem;
+            }
+            
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .footer-right {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .footer-social {
+                justify-content: center;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            /* Ajuste para ordem dos elementos em mobile */
+            .order-lg-1 {
+                order: 2;
+            }
+            
+            .order-lg-2 {
+                order: 1;
+                margin-bottom: 30px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .page-header {
+                padding: 70px 0 30px;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .service-section {
+                padding: 30px 0;
+            }
+            
+            .service-content h2 {
+                font-size: 1.6rem;
+            }
+            
+            .service-tagline {
+                font-size: 0.9rem;
+            }
+            
+            .service-content p {
+                font-size: 0.95rem;
+            }
+            
+            .service-content h3 {
+                font-size: 1.1rem;
+            }
+            
+            .service-benefits li {
+                font-size: 0.9rem;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Seção Oferta Comercial */
+        .commercial-offer-section {
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+            padding: 80px 0;
+            margin: 0;
+        }
+        
+        .commercial-offer-title {
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 50px;
+            letter-spacing: -1px;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .video-player {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .commercial-offer-section {
+                padding: 60px 0;
+            }
+            
+            .commercial-offer-title {
+                font-size: 1.8rem;
+                margin-bottom: 30px;
+            }
+            
+            .video-container {
+                margin: 0 20px;
+                border-radius: 15px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .commercial-offer-title {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Estilos para o vídeo comercial (manter para compatibilidade) */
+        .video-section-commercial {
+            margin: 3rem 0;
+            text-align: center;
+        }
+        
+        .video-container-commercial {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 8px;
+        }
+        
+        .video-player-commercial {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            background: #000;
+            outline: none;
+        }
+        
+        .video-player-commercial:focus {
+            outline: 2px solid #BF9A33;
+            outline-offset: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .video-container-commercial {
+                max-width: 100%;
+                margin: 0 1rem;
+                border-radius: 12px;
+                padding: 6px;
+            }
+            
+            .video-player-commercial {
+                border-radius: 8px;
+            }
+            
+            .video-section-commercial {
+                margin: 2rem 0;
+            }
+        }
+        
+        /* Estilos para o botão e modal de feedback */
+        .feedback-btn {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background-color: #bf9a33;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .feedback-btn:hover {
+            background-color: #a57b0a;
+            transform: scale(1.05);
+        }
+        
+        .rating {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .star {
+            color: #ccc;
+            cursor: pointer;
+            font-size: 24px;
+        }
+        
+        .star.hover, .star.active {
+            color: #bf9a33;
+        }
+    </style>
+</head>
+<body>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-8GQ1KM9FQS');
+    </script>
+    
+    <!-- Header e Navegação -->
+    <header class="header">
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="../index.html">
+                    <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img" style="height: 40px;">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.html">Início</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="servicos.html">Serviços</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="loja.html">Loja</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="people-hub.html">People Hub</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.html#contatos">Contactos</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Serviços</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Serviços</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Oferta Comercial -->
+    <section class="commercial-offer-section">
+        <div class="container">
+            <h2 class="commercial-offer-title">Oferta Comercial</h2>
+            <div class="video-container">
+                <video class="video-player" controls poster="../images/video-commercial-thumbnail.jpg">
+                    <source src="https://github.com/samuelrolo/samuel.rolo/raw/main/video/oferta%20comercial.mp4" type="video/mp4">
+                    O seu navegador não suporta vídeos HTML5.
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kickstart Pro Section -->
+    <section class="service-section" id="kickstart">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-12">
+                    <div class="service-content">
+                        <h2>Kickstart Pro | Express Coaching </h2>
+                        <p class="service-tagline">Impulsiona a tua carreira com uma sessão personalizada</p>
+                        <p>O Kickstart Pro é uma sessão de coaching personalizada às tuas necessidades, desenhada para impulsionar jovens em início de carreira.</p>
+                        <p>Durante esta sessão, vamos trabalhar contigo para identificar os principais desafios e oportunidades, desenvolver um plano de ação claro e fornecer ferramentas e técnicas específicas para ti.</p>
+                        <h3>Benefícios:</h3>
+                        <ul class="service-benefits">
+                            <li><i class="fas fa-check"></i> Clareza sobre os próximos passos estratégicos</li>
+                            <li><i class="fas fa-check"></i> Soluções práticas para desafios específicos</li>
+                            <li><i class="fas fa-check"></i> Plano de ação personalizado e implementável</li>
+                            <li><i class="fas fa-check"></i> Acesso a ferramentas e metodologias comprovadas</li>
+                            <li><i class="fas fa-check"></i> Acompanhamento pós-sessão para garantir resultados</li>
+                        </ul>
+                        <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#kickstartModal">Marcar Kickstart Pro</button>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12">
+                    <div class="service-image">
+                        <img src="https://github.com/samuelrolo/samuel.rolo/raw/main/images/kickstart-pro.jpg" alt="Kickstart Pro" class="img-fluid rounded">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Consultoria Organizacional Section -->
+    <section class="service-section bg-light" id="consultoria">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-12 order-lg-2">
+                    <div class="service-content">
+                        <h2>Consultoria Organizacional</h2>
+                        <p class="service-tagline">Transformação cultural e estratégica para organizações que procuram uma evolução sustentável</p>
+                        <p>A Consultoria Organizacional da Share2Inspire é um serviço abrangente que apoia organizações a implementar mudanças culturais e estratégicas de forma sustentável e centrada nas pessoas.</p>
+                        <p>Trabalhamos em estreita colaboração com os nossos clientes para diagnosticar desafios, desenvolver estratégias personalizadas e implementar processos de transformação.</p>
+                        <h3>Áreas de Intervenção:</h3>
+                        <ul class="service-benefits">
+                            <li><i class="fas fa-check"></i> Transformação cultural e gestão da mudança</li>
+                            <li><i class="fas fa-check"></i> Desenho e otimização de Políticas e Processos</li>
+                            <li><i class="fas fa-check"></i> Estratégia e inovação organizacional</li>
+                            <li><i class="fas fa-check"></i> Comunicação interna e engagement</li>
+                            <li><i class="fas fa-check"></i> Desenvolvimento de liderança e equipas</li>
+                        </ul>
+                        <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#consultoriaModal">Solicitar Proposta</button>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12 order-lg-1">
+                    <div class="service-image">
+                        <img src="https://github.com/samuelrolo/samuel.rolo/raw/main/images/consultoria-organizacional.jpg" alt="Consultoria Organizacional" class="img-fluid rounded">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coaching Executivo Section -->
+    <section class="service-section" id="coaching">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-12">
+                    <div class="service-content">
+                        <h2>Coaching Executivo</h2>
+                        <p class="service-tagline">Desenvolvimento personalizado para líderes que querem maximizar o seu potencial</p>
+                        <p>O Coaching Executivo da Share2Inspire é um processo personalizado de desenvolvimento que ajuda líderes a expandir a sua autoconsciência, aprimorar competências e alcançar objetivos profissionais e pessoais.</p>
+                        <p>Através de uma abordagem estruturada e confidencial, trabalhamos com executivos e gestores para superar desafios, potenciar pontos fortes e desenvolver novas capacidades de liderança.</p>
+                        <h3>Benefícios:</h3>
+                        <ul class="service-benefits">
+                            <li><i class="fas fa-check"></i> Maior autoconsciência e clareza de propósito</li>
+                            <li><i class="fas fa-check"></i> Desenvolvimento de competências de liderança</li>
+                            <li><i class="fas fa-check"></i> Melhoria na tomada de decisão e resolução de problemas</li>
+                            <li><i class="fas fa-check"></i> Equilíbrio entre vida profissional e pessoal</li>
+                            <li><i class="fas fa-check"></i> Plano de desenvolvimento personalizado</li>
+                        </ul>
+                        <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#coachingModal">Marcar Sessão</button>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12">
+                    <div class="service-image">
+                        <img src="https://github.com/samuelrolo/samuel.rolo/raw/main/images/coaching-executivo.jpg" alt="Coaching Executivo" class="img-fluid rounded">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workshops e Formação Section -->
+    <section class="service-section bg-light" id="workshops">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-12 order-lg-2">
+                    <div class="service-content">
+                        <h2>Workshops e Formação</h2>
+                        <p class="service-tagline">Experiências de aprendizagem imersivas e práticas para equipas e organizações</p>
+                        <p>Os Workshops e Formações da Share2Inspire são experiências de aprendizagem dinâmicas e práticas, desenhadas para desenvolver competências específicas em equipas e organizações.</p>
+                        <p>Cada workshop é personalizado às necessidades do cliente, combinando conteúdo relevante, metodologias interativas e ferramentas práticas que podem ser aplicadas imediatamente no contexto de trabalho.</p>
+                        <h3>Áreas Temáticas:</h3>
+                        <ul class="service-benefits">
+                            <li><i class="fas fa-check"></i> Liderança e gestão de equipas</li>
+                            <li><i class="fas fa-check"></i> Comunicação e feedback</li>
+                            <li><i class="fas fa-check"></i> Gestão da mudança e resiliência</li>
+                            <li><i class="fas fa-check"></i> Colaboração e trabalho em equipa</li>
+                            <li><i class="fas fa-check"></i> Produtividade e gestão do tempo</li>
+                        </ul>
+                        <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#workshopsModal">Solicitar Informações</button>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12 order-lg-1">
+                    <div class="service-image">
+                        <img src="https://github.com/samuelrolo/samuel.rolo/raw/main/images/workshops-formacoes.jpg" alt="Workshops e Formação" class="img-fluid rounded">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kickstart Pro Modal -->
+    <div class="modal fade" id="kickstartModal" tabindex="-1" aria-labelledby="kickstartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="kickstartModalLabel">Marcar Kickstart Pro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="kickstartForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Nome Completo *</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">Telefone *</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="company" class="form-label">Empresa/Organização</label>
+                                <input type="text" class="form-control" id="company" name="company">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="focus_area" class="form-label">Área de Foco Principal *</label>
+                            <select class="form-select" id="focus_area" name="focus_area" required>
+                                <option value="" selected disabled>Selecione uma opção</option>
+                                <option value="career_transition">Transição de Carreira</option>
+                                <option value="leadership_development">Desenvolvimento de Liderança</option>
+                                <option value="performance_improvement">Melhoria de Performance</option>
+                                <option value="work_life_balance">Equilíbrio Vida-Trabalho</option>
+                                <option value="other">Outro (especificar abaixo)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Mensagem (Descreva brevemente o seu objetivo) *</label>
+                            <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="preferred_date" class="form-label">Data Preferencial</label>
+                            <input type="date" class="form-control" id="preferred_date" name="preferred_date">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    Concordo com os <a href="termos-condicoes.html" target="_blank">Termos e Condições</a> e com a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *
+                               
