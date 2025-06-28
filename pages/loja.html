@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loja | Share2Inspire | Samuel Rolo</title>
-    <meta name="description" content="Loja online da Share2Inspire. Adquira o programa Kickstart Pro e outros recursos de desenvolvimento pessoal e organizacional.">
+    <meta name="description" content="Loja online da Share2Inspire. Livros e recursos para desenvolvimento pessoal e organizacional.">
     
     <!-- Favicon -->
     <link rel="icon" href="../images/favicon.png" type="image/png">
@@ -98,6 +98,11 @@
         .navbar {
             background-color: #fff;
             padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand img {
+            height: 40px;
         }
         
         .navbar-nav {
@@ -126,7 +131,7 @@
             background-color: #BF9A33;
         }
         
-        /* Estilos para a página de loja */
+        /* Estilos para a página da loja */
         .page-header {
             background-color: #f8f9fa;
             padding: 100px 0 50px;
@@ -155,55 +160,279 @@
             color: #6c757d;
         }
         
-        .product-section {
-            padding: 80px 0;
+        .shop-intro {
+            padding: 0 0 50px;
         }
         
-        .product-section.bg-light {
-            background-color: #f8f9fa;
-        }
-        
-        .product-content h2 {
+        .section-title {
             font-size: 2.2rem;
             font-weight: 700;
             color: #333;
-            margin-bottom: 0.5rem;
-        }
-        
-        .product-tagline {
-            font-size: 1.2rem;
-            color: #BF9A33;
-            margin-bottom: 1.5rem;
-        }
-        
-        .product-description p {
             margin-bottom: 1rem;
-            line-height: 1.6;
         }
         
-        .product-description h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 2rem;
+        }
+
+        /* Estilos para o slider de livros */
+        .book-slider-section {
+            padding: 80px 0;
+            background-color: #f8f9fa;
+        }
+
+        .book-slider-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .country-flags {
+            display: flex;
+            justify-content: center;
+            padding: 30px 0 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .flag-btn {
+            background: none;
+            border: none;
+            margin: 0 15px;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .flag-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .flag-btn.active {
+            background-color: #BF9A33;
+            box-shadow: 0 5px 15px rgba(191, 154, 51, 0.3);
+        }
+
+        .flag-btn img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .flag-btn.active img {
+            border-color: #fff;
+        }
+
+        .book-content {
+            padding: 50px;
+            min-height: 600px;
+        }
+
+        .book-slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .book-slide.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .book-row {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .book-image {
+            flex: 0 0 350px;
+        }
+
+        .book-image img {
+            width: 100%;
+            max-width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .book-image img:hover {
+            transform: scale(1.05);
+        }
+
+        .book-info {
+            flex: 1;
+        }
+
+        .book-title {
+            font-size: 2.5rem;
+            font-weight: 700;
             color: #333;
-            margin: 1.5rem 0 1rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
         }
-        
-        .product-features {
+
+        .book-subtitle {
+            font-size: 1.3rem;
+            color: #BF9A33;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        .book-description {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 2rem;
+        }
+
+        .book-features {
             list-style: none;
             padding: 0;
-            margin: 0 0 1.5rem;
+            margin: 0 0 2rem;
         }
-        
-        .product-features li {
-            margin-bottom: 0.5rem;
+
+        .book-features li {
+            margin-bottom: 0.8rem;
             display: flex;
             align-items: flex-start;
+            font-size: 1rem;
         }
-        
-        .product-features li i {
+
+        .book-features li i {
             color: #BF9A33;
-            margin-right: 10px;
-            margin-top: 5px;
+            margin-right: 12px;
+            margin-top: 3px;
+            font-size: 1.1rem;
+        }
+
+        .amazon-btn {
+            background: linear-gradient(135deg, #BF9A33 0%, #a57b0a 100%);
+            color: #fff;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(191, 154, 51, 0.3);
+        }
+
+        .amazon-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(191, 154, 51, 0.4);
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .amazon-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .book-row {
+                flex-direction: column;
+                text-align: center;
+                gap: 30px;
+            }
+
+            .book-image {
+                flex: none;
+            }
+
+            .book-content {
+                padding: 30px;
+            }
+
+            .book-title {
+                font-size: 2rem;
+            }
+
+            .book-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .book-slider-section {
+                padding: 50px 0;
+            }
+
+            .country-flags {
+                padding: 20px 0 15px;
+            }
+
+            .flag-btn {
+                margin: 0 10px;
+            }
+
+            .flag-btn img {
+                width: 40px;
+                height: 40px;
+            }
+
+            .book-content {
+                padding: 20px;
+                min-height: auto;
+            }
+
+            .book-title {
+                font-size: 1.8rem;
+            }
+
+            .book-subtitle {
+                font-size: 1rem;
+            }
+
+            .book-description {
+                font-size: 1rem;
+            }
+
+            .amazon-btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .book-slider-container {
+                margin: 0 15px;
+                border-radius: 10px;
+            }
+
+            .book-title {
+                font-size: 1.6rem;
+            }
+
+            .book-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .book-description {
+                font-size: 0.9rem;
+            }
+
+            .book-features li {
+                font-size: 0.9rem;
+            }
         }
         
         .cta-section {
@@ -228,222 +457,154 @@
             margin-right: auto;
         }
         
-        .product-image img {
-            width: 100%;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .modal-header {
-            background-color: #BF9A33;
-            color: #fff;
-        }
-        
-        .modal-title {
-            font-weight: 600;
-        }
-        
-        .modal-body label {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-        
-        .modal-footer .btn-primary {
-            background-color: #BF9A33;
-            border-color: #BF9A33;
-        }
-        
-        .modal-footer .btn-primary:hover {
-            background-color: #a88629;
-            border-color: #a88629;
-        }
-        
-        /* Estilos globais para botões primários */
+        /* Botões personalizados - Override Bootstrap azul */
         .btn-primary {
-            background-color: #212529 !important;
-            border-color: #212529 !important;
+            background-color: #BF9A33 !important;
+            border-color: #BF9A33 !important;
             color: #fff !important;
             font-weight: 600;
             padding: 0.75rem 2rem;
-            border-radius: 8px;
+            border-radius: 6px;
             transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
         }
         
         .btn-primary:hover {
-            background-color: #BF9A33 !important;
-            border-color: #BF9A33 !important;
+            background-color: #a57b0a !important;
+            border-color: #a57b0a !important;
             color: #fff !important;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(191, 154, 51, 0.3);
         }
         
         .btn-primary:focus {
-            background-color: #BF9A33 !important;
-            border-color: #BF9A33 !important;
+            background-color: #a57b0a !important;
+            border-color: #a57b0a !important;
+            color: #fff !important;
             box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25);
         }
         
-        /* Estilos para o botão e modal de feedback */
-        .feedback-btn {
+        .btn-primary:active {
+            background-color: #a57b0a !important;
+            border-color: #a57b0a !important;
+            color: #fff !important;
+        }
+        
+        .btn-primary:visited {
+            color: #fff !important;
+        }
+        
+        /* Botões grandes */
+        .btn-lg {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+        }
+        
+        /* Estilos para o sistema de feedback */
+        .feedback-container {
             position: fixed;
-            right: 20px;
             bottom: 20px;
-            background-color: #bf9a33;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 10px 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            right: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 15px;
             z-index: 1000;
-            transition: all 0.3s ease;
+            max-width: 300px;
+            border: 1px solid #BF9A33;
+            display: none;
+        }
+        
+        .feedback-container.show {
+            display: block;
+        }
+        
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .feedback-header h5 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .feedback-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .feedback-stars {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .feedback-stars i {
+            font-size: 20px;
+            color: #ddd;
+            cursor: pointer;
+            margin: 0 2px;
+            transition: color 0.3s;
+        }
+        
+        .feedback-stars i.active,
+        .feedback-stars i:hover {
+            color: #BF9A33;
+        }
+        
+        .feedback-comment textarea {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+        
+        .feedback-btn {
+            background-color: #BF9A33;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
         }
         
         .feedback-btn:hover {
             background-color: #a57b0a;
-            transform: scale(1.05);
         }
         
-        .rating {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .star {
-            color: #ccc;
+        .feedback-trigger {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #BF9A33;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 20px;
             cursor: pointer;
-            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 999;
+            transition: all 0.3s ease;
         }
         
-        .star.hover, .star.active {
-            color: #bf9a33;
-        }
-        
-        /* Media queries para otimização mobile */
-        @media (max-width: 992px) {
-            .product-content h2 {
-                font-size: 2rem;
-            }
-            
-            .product-tagline {
-                font-size: 1.1rem;
-            }
-            
-            .product-description h3 {
-                font-size: 1.3rem;
-            }
-            
-            .product-section {
-                padding: 60px 0;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .page-header {
-                padding: 80px 0 40px;
-                margin-bottom: 30px;
-            }
-            
-            .page-header h1 {
-                font-size: 2rem;
-            }
-            
-            .product-section {
-                padding: 40px 0;
-            }
-            
-            .product-content {
-                margin-top: 30px;
-            }
-            
-            .product-content h2 {
-                font-size: 1.8rem;
-                text-align: center;
-            }
-            
-            .product-tagline {
-                font-size: 1rem;
-                text-align: center;
-            }
-            
-            .product-description h3 {
-                font-size: 1.2rem;
-            }
-            
-            .product-features li {
-                margin-bottom: 0.8rem;
-            }
-            
-            .footer-container {
-                flex-direction: column;
-                text-align: center;
-                gap: 20px;
-            }
-            
-            .footer-right {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .footer-social {
-                justify-content: center;
-            }
-            
-            .footer-links {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-            
-            /* Ajuste para ordem dos elementos em mobile */
-            .order-lg-1 {
-                order: 2;
-            }
-            
-            .order-lg-2 {
-                order: 1;
-                margin-bottom: 30px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .page-header {
-                padding: 70px 0 30px;
-            }
-            
-            .page-header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .product-section {
-                padding: 30px 0;
-            }
-            
-            .product-content h2 {
-                font-size: 1.6rem;
-            }
-            
-            .product-tagline {
-                font-size: 0.9rem;
-            }
-            
-            .product-description p {
-                font-size: 0.95rem;
-            }
-            
-            .product-description h3 {
-                font-size: 1.1rem;
-            }
-            
-            .product-features li {
-                font-size: 0.9rem;
-            }
-            
-            .btn {
-                width: 100%;
-                margin-bottom: 10px;
-                padding: 0.6rem 1rem;
-                font-size: 0.9rem;
-            }
+        .feedback-trigger:hover {
+            background-color: #a57b0a;
+            transform: scale(1.1);
         }
     </style>
 </head>
@@ -462,7 +623,7 @@
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="../index.html">
-                    <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img" style="height: 40px;">
+                    <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -482,7 +643,7 @@
                             <a class="nav-link active" href="loja.html">Loja</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="people-hub.html">People Hub</a>
+                            <a class="nav-link" href="hr-hub.html">HR Hub</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Contactos</a>
@@ -493,116 +654,229 @@
         </nav>
     </header>
 
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>Loja</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Loja</li>
-                        </ol>
-                    </nav>
+    <main>
+        <!-- Header da Página -->
+        <section class="page-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <h1>Loja</h1>
+                        <p>Livros e recursos para o teu desenvolvimento pessoal e profissional</p>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb justify-content-center">
+                                <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Loja</li>
+                            </ol>
+                        </nav>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Kickstart Pro Section -->
-    <section class="product-section">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 order-lg-1">
-                    <div class="product-content">
-                        <h2>Kickstart Pro</h2>
-                        <p class="product-tagline">O programa completo para acelerar a sua transformação pessoal e profissional</p>
-                        
-                        <div class="product-description">
-                            <p>O <strong>Kickstart Pro</strong> é um programa intensivo de 30 dias desenhado para profissionais que querem dar um salto quântico na sua carreira e vida pessoal.</p>
-                            
-                            <h3>O que está incluído:</h3>
-                            <ul class="product-features">
-                                <li><i class="fas fa-check"></i> 30 dias de conteúdo estruturado e progressivo</li>
-                                <li><i class="fas fa-check"></i> Exercícios práticos diários</li>
-                                <li><i class="fas fa-check"></i> Templates e ferramentas exclusivas</li>
-                                <li><i class="fas fa-check"></i> Acesso a comunidade privada</li>
-                                <li><i class="fas fa-check"></i> 2 sessões de coaching em grupo</li>
-                                <li><i class="fas fa-check"></i> Certificado de conclusão</li>
-                                <li><i class="fas fa-check"></i> Acesso vitalício ao conteúdo</li>
-                            </ul>
-                            
-                            <h3>Para quem é este programa:</h3>
-                            <p>Profissionais ambiciosos que querem acelerar o seu crescimento, líderes que procuram desenvolver as suas competências e qualquer pessoa que deseje criar mudanças significativas na sua vida.</p>
-                            
-                            <div class="mt-4">
-                                <p class="mb-2"><strong>Investimento:</strong> <span style="font-size: 1.5rem; color: #BF9A33;">€297</span></p>
-                                <p class="mb-4"><small class="text-muted">Pagamento único • Acesso imediato • Garantia de 30 dias</small></p>
-                                
-                                <button class="btn btn-primary btn-lg me-3 mb-2" data-bs-toggle="modal" data-bs-target="#kickstartModal">
-                                    <i class="fas fa-shopping-cart"></i> Adquirir Agora
-                                </button>
-                                <button class="btn btn-outline-primary btn-lg mb-2" data-bs-toggle="modal" data-bs-target="#contactModal">
-                                    <i class="fas fa-info-circle"></i> Saber Mais
-                                </button>
+        <!-- Introdução da Loja -->
+        <section class="shop-intro">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 mx-auto text-center">
+                        <h2 class="section-title">Transforme a sua vida através da leitura</h2>
+                        <p class="section-subtitle">Descubra livros cuidadosamente selecionados que irão inspirar, motivar e guiar o seu crescimento pessoal e profissional. Cada obra é uma jornada de autodescoberta e desenvolvimento.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slider de Livros -->
+        <section class="book-slider-section">
+            <div class="container">
+                <div class="book-slider-container">
+                    <!-- Bandeiras dos Países -->
+                    <div class="country-flags">
+                        <button class="flag-btn active" data-country="pt" title="Português">
+                            <img src="https://flagcdn.com/w80/pt.png" alt="Portugal">
+                        </button>
+                        <button class="flag-btn" data-country="en" title="English">
+                            <img src="https://flagcdn.com/w80/gb.png" alt="Reino Unido">
+                        </button>
+                        <button class="flag-btn" data-country="es" title="Español">
+                            <img src="https://flagcdn.com/w80/es.png" alt="Espanha">
+                        </button>
+                    </div>
+
+                    <!-- Conteúdo dos Livros -->
+                    <div class="book-content">
+                        <!-- Versão Portuguesa -->
+                        <div class="book-slide active" id="book-pt">
+                            <div class="book-row">
+                                <div class="book-image">
+                                    <img src="../images/capa-livro.jpg" alt="Enquanto Há Vento, Há Sentimento - Capa">
+                                </div>
+                                <div class="book-info">
+                                    <h2 class="book-title">Enquanto Há Vento, Há Sentimento</h2>
+                                    <p class="book-subtitle">Uma jornada de autodescoberta e esperança</p>
+                                    <div class="book-description">
+                                        <p>Uma obra profundamente tocante que explora as complexidades das emoções humanas e o poder transformador da esperança. Este livro convida-o a uma jornada introspetiva, onde cada página revela novas perspetivas sobre a vida, o amor e a resiliência.</p>
+                                        <p>Através de uma narrativa envolvente e reflexões profundas, o autor partilha experiências que ressoam com a alma humana, oferecendo conforto e inspiração para todos aqueles que procuram significado e propósito nas suas vidas.</p>
+                                    </div>
+                                    <ul class="book-features">
+                                        <li><i class="fas fa-heart"></i> Uma narrativa emocionalmente rica e autêntica</li>
+                                        <li><i class="fas fa-lightbulb"></i> Reflexões profundas sobre a condição humana</li>
+                                        <li><i class="fas fa-compass"></i> Orientação para o crescimento pessoal</li>
+                                        <li><i class="fas fa-star"></i> Inspiração para superar desafios da vida</li>
+                                    </ul>
+                                    <a href="https://www.amazon.com.br/dp/B0FC2GGSPP" class="amazon-btn" target="_blank">
+                                        <i class="fab fa-amazon"></i>
+                                        Comprar na Amazon
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Versão Inglesa -->
+                        <div class="book-slide" id="book-en">
+                            <div class="book-row">
+                                <div class="book-image">
+                                    <img src="../images/capaEN.jpg" alt="While There Is Wind, There Is Feeling - Cover">
+                                </div>
+                                <div class="book-info">
+                                    <h2 class="book-title">While There Is Wind, There Is Feeling</h2>
+                                    <p class="book-subtitle">A beautifully written journey of self-discovery and hope</p>
+                                    <div class="book-description">
+                                        <p>A deeply moving work that explores the complexities of human emotions and the transformative power of hope. This book invites you on an introspective journey, where each page reveals new perspectives on life, love, and resilience.</p>
+                                        <p>Through engaging narrative and profound reflections, the author shares experiences that resonate with the human soul, offering comfort and inspiration to all those seeking meaning and purpose in their lives.</p>
+                                    </div>
+                                    <ul class="book-features">
+                                        <li><i class="fas fa-heart"></i> An emotionally rich and authentic narrative</li>
+                                        <li><i class="fas fa-lightbulb"></i> Deep reflections on the human condition</li>
+                                        <li><i class="fas fa-compass"></i> Guidance for personal growth</li>
+                                        <li><i class="fas fa-star"></i> Inspiration to overcome life's challenges</li>
+                                    </ul>
+                                    <a href="https://www.amazon.co.uk/dp/B0FF24CKFZ" class="amazon-btn" target="_blank">
+                                        <i class="fab fa-amazon"></i>
+                                        Buy on Amazon
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Versão Espanhola -->
+                        <div class="book-slide" id="book-es">
+                            <div class="book-row">
+                                <div class="book-image">
+                                    <img src="../images/CapaES.jpg" alt="Mientras Haya Viento, Hay Sentimiento - Portada">
+                                </div>
+                                <div class="book-info">
+                                    <h2 class="book-title">Mientras Haya Viento, Hay Sentimiento</h2>
+                                    <p class="book-subtitle">Un viaje de autodescubrimiento y esperanza</p>
+                                    <div class="book-description">
+                                        <p>Una obra profundamente conmovedora que explora las complejidades de las emociones humanas y el poder transformador de la esperanza. Este libro te invita a un viaje introspectivo, donde cada página revela nuevas perspectivas sobre la vida, el amor y la resistencia.</p>
+                                        <p>A través de una narrativa envolvente y reflexiones profundas, el autor comparte experiencias que resuenan con el alma humana, ofreciendo consuelo e inspiración a todos aquellos que buscan significado y propósito en sus vidas.</p>
+                                    </div>
+                                    <ul class="book-features">
+                                        <li><i class="fas fa-heart"></i> Una narrativa emocionalmente rica y auténtica</li>
+                                        <li><i class="fas fa-lightbulb"></i> Reflexiones profundas sobre la condición humana</li>
+                                        <li><i class="fas fa-compass"></i> Orientación para el crecimiento personal</li>
+                                        <li><i class="fas fa-star"></i> Inspiración para superar los desafíos de la vida</li>
+                                    </ul>
+                                    <a href="https://www.amazon.es/dp/B0FC2GGSPP" class="amazon-btn" target="_blank">
+                                        <i class="fab fa-amazon"></i>
+                                        Comprar en Amazon
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 order-lg-2">
-                    <div class="product-image">
-                        <img src="../images/kickstart-pro-cover.jpg" alt="Kickstart Pro Program" class="img-fluid">
-                    </div>
-                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h2>Pronto para acelerar o seu crescimento?</h2>
-                    <p>Junte-se a centenas de profissionais que já transformaram as suas carreiras com o Kickstart Pro.</p>
-                    <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#kickstartModal">
-                        <i class="fas fa-rocket"></i> Começar Agora
-                    </button>
+        <!-- Produto 2: 5-Minute Reset (Inglês) -->
+        <section class="product-section">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-7 order-lg-1 order-2">
+                        <div class="product-content">
+                            <h2>5-Minute Reset</h2>
+                            <p class="product-tagline">Quick strategies for personal and professional transformation</p>
+                            
+                            <div class="product-description">
+                                <p>A practical guide designed for busy professionals who want to implement meaningful changes without overwhelming their schedules. This book offers bite-sized strategies that can be applied in just five minutes.</p>
+                                
+                                <h3>What you'll discover:</h3>
+                                <ul class="product-features">
+                                    <li><i class="fas fa-check"></i> Quick mindfulness techniques for daily stress</li>
+                                    <li><i class="fas fa-check"></i> Micro-habits that create lasting change</li>
+                                    <li><i class="fas fa-check"></i> Leadership insights for busy executives</li>
+                                    <li><i class="fas fa-check"></i> Evidence-based approaches to personal development</li>
+                                </ul>
+                                
+                                <p><strong>Perfect for:</strong> Executives, entrepreneurs, and anyone looking to optimize their personal and professional performance with minimal time investment.</p>
+                                
+                                <a href="https://www.amazon.es/dp/B0FBZLLTP2" target="_blank" class="btn btn-primary">BUY ON AMAZON</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 order-lg-2 order-1 mb-4 mb-lg-0">
+                        <div class="product-image">
+                            <img src="../images/livro_ingles.png" alt="5-Minute Reset" class="img-fluid">
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+        
+        <!-- Produto 3: Guia Prático de Transformação Organizacional -->
+        <section class="product-section">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-5 mb-4 mb-lg-0">
+                        <div class="product-image">
+                            <img src="../images/capa.jpg" alt="Gestão da Mudança" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="product-content">
+                            <h2>Gestão da Mudança | Estratégias para Impulsionar a Transformação Organizacional</h2>
+                            <p class="product-tagline">Um guia prático para liderar transformações significativas</p>
+                            
+                            <div class="product-description">
+                                <p>Neste livro, o Samuel partilha a sua experiência em projectos de Gestão da Mudança, para inspirar mudanças com propósito, autenticidade e impacto.</p>
+                                
+                                <p>Combina insights de quem liderou diversos projectos de gestão da mudança, com a visão crítica e humanizada do autor. Este é um guia para profissionais e líderes que procuram implementar transformações com propósito nas suas organizações.</p>
+                                
+                                <h3>O que vai encontrar:</h3>
+                                <ul class="product-features">
+                                    <li><i class="fas fa-check"></i> Insights práticos de contextos reais</li>
+                                    <li><i class="fas fa-check"></i> Dicas práticas para diagnosticar e planear as mudanças</li>
+                                    <li><i class="fas fa-check"></i> Estratégias para superar resistências e alinhar equipas</li>
+                                </ul>
+                                
+                                <p><em>"Sem as pessoas, a mudança é apenas ruído..."</em></p>
+                                
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="https://amzn.eu/d/9gPIPXC" target="_blank" class="btn btn-primary">Comprar na Amazon</a>
+                                    <a href="https://play.google.com/store/books/details/Samuel_Rolo_Gest%C3%A3o_da_Mudan%C3%A7a?id=n3dcEQAAQBAJ" target="_blank" class="btn btn-primary">Comprar na Play Store</a>
+                                    <a href="https://hotm.art/Qigfq5W" target="_blank" class="btn btn-primary">Comprar na Hotmart</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-container">
-                <div class="footer-left">
-                    <p>&copy; 2024 Share2Inspire. Todos os direitos reservados.</p>
-                </div>
-                <div class="footer-right">
-                    <div class="footer-contact">
-                        <p><i class="fas fa-envelope"></i> samuel.rolo@share2inspire.pt</p>
-                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
-                    </div>
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" aria-label="LinkedIn">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank" aria-label="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
+        <!-- Call to Action -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 mx-auto text-center">
+                        <h2>Tens alguma dúvida sobre os nossos recursos?</h2>
+                        <p>Estamos aqui para te ajudar a escolher o recurso mais adequado às tuas necessidades de desenvolvimento. Entra em contacto connosco para uma recomendação personalizada.</p>
+                        <a href="#" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#contactModal">Fale Connosco</a>
                     </div>
                 </div>
             </div>
-            <div class="footer-links">
-                <a href="politica-privacidade.html">Política de Privacidade</a>
-                <a href="informacao-legal.html">Informação Legal</a>
-                <a href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Contactos</a>
-            </div>
-        </div>
-    </footer>
+        </section>
+    </main>
 
     <!-- Modal de Contacto -->
     <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
@@ -613,149 +887,200 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="contactForm">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="contactName" class="form-label">Nome *</label>
-                                <input type="text" class="form-control" id="contactName" name="name" required>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="mb-3">Informações de Contacto</h6>
+                            <div class="contact-info">
+                                <p><i class="fas fa-envelope me-2"></i> geral@share2inspire.com</p>
+                                <p><i class="fas fa-phone me-2"></i> +351 123 456 789</p>
+                                <p><i class="fas fa-map-marker-alt me-2"></i> Portugal</p>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="contactReason" class="form-label">Motivo *</label>
-                                <select class="form-select" id="contactReason" name="reason" required>
-                                    <option value="">Selecione um motivo</option>
-                                    <option value="kickstart-pro">Kickstart Pro</option>
-                                    <option value="consultoria">Consultoria</option>
-                                    <option value="coaching">Coaching Executivo</option>
-                                    <option value="formacao">Formação</option>
-                                    <option value="palestras">Palestras</option>
-                                    <option value="parcerias">Parcerias</option>
-                                    <option value="media">Media</option>
-                                    <option value="outro">Outro</option>
-                                </select>
+                            <div class="social-links mt-4">
+                                <h6 class="mb-3">Siga-nos</h6>
+                                <a href="#" class="me-3"><i class="fab fa-linkedin fa-2x"></i></a>
+                                <a href="#" class="me-3"><i class="fab fa-instagram fa-2x"></i></a>
+                                <a href="#"><i class="fab fa-facebook fa-2x"></i></a>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="contactEmail" class="form-label">Email *</label>
-                                <input type="email" class="form-control" id="contactEmail" name="email" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="contactPhone" class="form-label">Número de Telefone</label>
-                                <input type="tel" class="form-control" id="contactPhone" name="phone" placeholder="912345678">
-                                <div class="form-text">Formato: 9 dígitos sem espaços</div>
-                            </div>
+                        <div class="col-md-6">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Nome</label>
+                                    <input type="text" class="form-control" id="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Mensagem</label>
+                                    <textarea class="form-control" id="message" rows="4" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+                            </form>
                         </div>
-                        <div class="mb-3">
-                            <label for="contactSubject" class="form-label">Assunto *</label>
-                            <input type="text" class="form-control" id="contactSubject" name="subject" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contactMessage" class="form-label">Mensagem *</label>
-                            <textarea class="form-control" id="contactMessage" name="message" rows="4" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contactAttachment" class="form-label">Anexo (opcional)</label>
-                            <input type="file" class="form-control" id="contactAttachment" name="attachment" accept=".pdf,.doc,.docx,.jpg,.png">
-                            <div class="form-text">Formatos aceites: PDF, DOC, DOCX, JPG, PNG (máx. 5MB)</div>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="contactPrivacy" name="privacy" required>
-                            <label class="form-check-label" for="contactPrivacy">
-                                Li e aceito a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *
-                            </label>
-                        </div>
-                        <div id="contactFormMessage"></div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" form="contactForm" class="btn btn-primary">Enviar Mensagem</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Kickstart Pro -->
-    <div class="modal fade" id="kickstartModal" tabindex="-1" aria-labelledby="kickstartModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="kickstartModalLabel">Kickstart Pro - Formulário de Inscrição</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-left">
+                    <p>&copy; 2024 Share2Inspire. Todos os direitos reservados.</p>
                 </div>
-                <div class="modal-body">
-                    <form id="kickstartForm">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="kickstartName" class="form-label">Nome Completo *</label>
-                                <input type="text" class="form-control" id="kickstartName" name="name" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="kickstartEmail" class="form-label">Email *</label>
-                                <input type="email" class="form-control" id="kickstartEmail" name="email" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="kickstartPhone" class="form-label">Telefone *</label>
-                                <input type="tel" class="form-control" id="kickstartPhone" name="phone" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="kickstartCompany" class="form-label">Empresa</label>
-                                <input type="text" class="form-control" id="kickstartCompany" name="company">
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="kickstartGoals" class="form-label">Principais objetivos com o programa *</label>
-                            <textarea class="form-control" id="kickstartGoals" name="goals" rows="3" required></textarea>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="kickstartPrivacy" name="privacy" required>
-                            <label class="form-check-label" for="kickstartPrivacy">
-                                Li e aceito a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *
-                            </label>
-                        </div>
-                        <div id="kickstartFormMessage"></div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" form="kickstartForm" class="btn btn-primary">Proceder ao Pagamento</button>
+                <div class="footer-right">
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> geral@share2inspire.com</p>
+                        <p><i class="fas fa-phone"></i> +351 123 456 789</p>
+                    </div>
+                    <div class="footer-social">
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    </div>
                 </div>
             </div>
+            <div class="footer-links">
+                <a href="../index.html">Início</a>
+                <a href="sobre.html">Sobre</a>
+                <a href="servicos.html">Serviços</a>
+                <a href="loja.html">Loja</a>
+                <a href="hr-hub.html">HR Hub</a>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Contactos</a>
+            </div>
         </div>
+    </footer>
+
+    <!-- Sistema de Feedback -->
+    <button class="feedback-trigger" onclick="toggleFeedback()" aria-label="Feedback">
+        <i class="fas fa-comment"></i>
+    </button>
+
+    <div class="feedback-container" id="feedbackContainer">
+        <div class="feedback-header">
+            <h5>O seu feedback</h5>
+            <button class="feedback-close" onclick="toggleFeedback()">&times;</button>
+        </div>
+        <div class="feedback-stars" id="feedbackStars">
+            <i class="fas fa-star" data-rating="1"></i>
+            <i class="fas fa-star" data-rating="2"></i>
+            <i class="fas fa-star" data-rating="3"></i>
+            <i class="fas fa-star" data-rating="4"></i>
+            <i class="fas fa-star" data-rating="5"></i>
+        </div>
+        <div class="feedback-comment">
+            <textarea placeholder="Partilhe a sua opinião..." rows="3" id="feedbackText"></textarea>
+        </div>
+        <button class="feedback-btn" onclick="submitFeedback()">Enviar Feedback</button>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Formulário de contacto
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const messageDiv = document.getElementById('contactFormMessage');
-            messageDiv.innerHTML = '<div class="alert alert-success">Mensagem enviada com sucesso! Entraremos em contacto brevemente.</div>';
-            
-            setTimeout(() => {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
-                modal.hide();
-                this.reset();
-                messageDiv.innerHTML = '';
-            }, 2000);
+        // Slider de livros
+        document.addEventListener('DOMContentLoaded', function() {
+            const flagBtns = document.querySelectorAll('.flag-btn');
+            const bookSlides = document.querySelectorAll('.book-slide');
+
+            flagBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const country = this.getAttribute('data-country');
+                    
+                    // Remove active class from all flags and slides
+                    flagBtns.forEach(flag => flag.classList.remove('active'));
+                    bookSlides.forEach(slide => slide.classList.remove('active'));
+                    
+                    // Add active class to clicked flag and corresponding slide
+                    this.classList.add('active');
+                    document.getElementById(`book-${country}`).classList.add('active');
+                });
+            });
         });
 
-        // Formulário Kickstart Pro
-        document.getElementById('kickstartForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Sistema de feedback
+        let selectedRating = 0;
+
+        function toggleFeedback() {
+            const container = document.getElementById('feedbackContainer');
+            container.classList.toggle('show');
+        }
+
+        // Rating stars
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('.feedback-stars i');
             
-            const messageDiv = document.getElementById('kickstartFormMessage');
-            messageDiv.innerHTML = '<div class="alert alert-success">Inscrição registada! Será redirecionado para o pagamento.</div>';
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    selectedRating = parseInt(this.getAttribute('data-rating'));
+                    updateStars();
+                });
+                
+                star.addEventListener('mouseover', function() {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    highlightStars(rating);
+                });
+            });
             
-            setTimeout(() => {
-                // Aqui seria implementada a integração com o sistema de pagamento
-                window.location.href = 'pagamento_sucesso.html';
-            }, 2000);
+            document.querySelector('.feedback-stars').addEventListener('mouseleave', function() {
+                updateStars();
+            });
+        });
+
+        function highlightStars(rating) {
+            const stars = document.querySelectorAll('.feedback-stars i');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function updateStars() {
+            highlightStars(selectedRating);
+        }
+
+        function submitFeedback() {
+            const text = document.getElementById('feedbackText').value;
+            
+            if (selectedRating === 0) {
+                alert('Por favor, selecione uma classificação.');
+                return;
+            }
+            
+            // Aqui você pode implementar o envio do feedback
+            console.log('Feedback:', {
+                rating: selectedRating,
+                comment: text
+            });
+            
+            alert('Obrigado pelo seu feedback!');
+            
+            // Reset form
+            selectedRating = 0;
+            document.getElementById('feedbackText').value = '';
+            updateStars();
+            toggleFeedback();
+        }
+
+        // Smooth scrolling para links internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
         });
     </script>
 </body>
