@@ -1,4 +1,4 @@
-/* Main Styles for Share2Inspire Website - VERSÃO CORRIGIDA PARA SCROLL DO MODAL */
+/* Main Styles for Share2Inspire Website - VERSÃO CORRIGIDA */
 
 /* ===== Base Styles ===== */
 :root {
@@ -830,249 +830,147 @@ a:hover {
     right: 30px;
     /* CORREÇÃO: Reduzir z-index para evitar bloqueios */
     z-index: 50;
+}
+
+.btn-feedback {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
     background-color: var(--primary-color);
-    color: var(--dark-color);
+    color: #000; /* Texto preto para melhor contraste */
     border: none;
-    border-radius: 50px;
-    padding: 15px 20px;
-    font-weight: 600;
-    box-shadow: 0 4px 15px rgba(191, 154, 51, 0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
     transition: var(--transition);
-    cursor: pointer;
-    /* CORREÇÃO: Garantir que é clicável */
+    /* CORREÇÃO: Garantir que botão é clicável */
     pointer-events: auto;
 }
 
-.feedback-button:hover {
+.btn-feedback:hover {
+    transform: scale(1.1);
     background-color: var(--accent-color);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(191, 154, 51, 0.4);
+    color: #fff;
 }
 
-.feedback-button i {
-    margin-right: 8px;
+/* ===== Rating Stars ===== */
+.rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    margin: 1.5rem 0;
 }
 
-/* ===== CORREÇÃO PRINCIPAL: Estilos para os modais - SCROLL FUNCIONAL ===== */
-
-/* Modal Principal - Estrutura Flexbox */
-.modal-content {
-    background: white !important;
-    border-radius: 16px !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
-    width: 90% !important;
-    max-width: 700px !important;
-    /* CORREÇÃO: Usar max-height em vez de height fixo */
-    max-height: 90vh !important;
-    position: relative !important;
-    /* CORREÇÃO: Flexbox para controlo de layout */
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
+.rating input {
+    display: none;
 }
 
-/* Modal Body - SCROLL GARANTIDO */
-.modal-body {
-    padding: 20px !important;
-    /* CORREÇÃO: flex-grow para ocupar espaço disponível */
-    flex-grow: 1 !important;
-    /* CORREÇÃO: max-height calculado dinamicamente */
-    max-height: calc(90vh - 160px) !important;
-    /* CORREÇÃO: overflow-y auto para scroll automático */
-    overflow-y: auto !important;
-    background: white !important;
-    box-sizing: border-box !important;
-    /* CORREÇÃO: Garantir que pode fazer scroll */
-    -webkit-overflow-scrolling: touch !important;
+.rating label {
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    margin: 0 5px;
+    position: relative;
+    /* CORREÇÃO: Garantir que labels são clicáveis */
+    pointer-events: auto;
 }
 
-/* Modal Navigation/Footer - Fixo na base */
-.modal-navigation {
-    background: white !important;
-    padding: 15px 20px !important;
-    border-top: 1px solid #e9ecef !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    border-radius: 0 0 16px 16px !important;
-    height: 60px !important;
-    box-sizing: border-box !important;
-    /* CORREÇÃO: flex-shrink para manter tamanho fixo */
-    flex-shrink: 0 !important;
+.rating label:before {
+    content: '\f005';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 400;
+    font-size: 1.5rem;
+    color: #ccc;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
-/* Outros estilos de modal mantidos */
-.modal-clean {
+.rating input:checked ~ label:before,
+.rating label:hover ~ label:before,
+.rating label:hover:before {
+    content: '\f005';
+    font-weight: 900;
+    color: var(--primary-color);
+}
+
+/* ===== Service Page Styles ===== */
+.service-section {
+    padding: 5rem 0;
+}
+
+.service-image img {
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.service-content {
+    padding: 2rem;
+}
+
+.service-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.service-tagline {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+/* CORREÇÃO: Garantir que modais não bloqueiem a interface */
+.modal {
     z-index: 1050;
 }
 
-.modal-header-clean {
-    background: white !important;
-    border-bottom: 1px solid #e9ecef !important;
-    padding: 20px !important;
-    border-radius: 16px 16px 0 0 !important;
-    /* CORREÇÃO: flex-shrink para manter tamanho fixo */
-    flex-shrink: 0 !important;
+.modal-backdrop {
+    z-index: 1040;
 }
 
-.modal-title-clean {
-    color: #333 !important;
-    font-weight: 700 !important;
-    font-size: 1.5rem !important;
-    margin: 0 !important;
+/* CORREÇÃO: Estilos de debug para garantir scroll */
+.debug-scroll {
+    overflow-y: auto !important;
+    height: auto !important;
+    max-height: none !important;
 }
 
-.btn-close-clean {
-    background: none !important;
-    border: none !important;
-    font-size: 1.5rem !important;
-    color: #999 !important;
-    cursor: pointer !important;
-    padding: 0 !important;
-    width: 30px !important;
-    height: 30px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+/* CORREÇÃO: Garantir que elementos interativos são acessíveis */
+button, input, select, textarea, a {
+    pointer-events: auto !important;
 }
 
-.btn-close-clean:hover {
-    color: #333 !important;
+/* CORREÇÃO: Prevenir elementos que bloqueiem interações */
+.no-pointer-events {
+    pointer-events: none;
 }
 
-.form-group-clean {
-    margin-bottom: 20px !important;
+.no-pointer-events * {
+    pointer-events: auto;
 }
 
-.form-label-clean {
-    display: block !important;
-    margin-bottom: 8px !important;
-    font-weight: 600 !important;
-    color: #333 !important;
-    font-size: 0.95rem !important;
-}
-
-.form-control-clean {
-    width: 100% !important;
-    padding: 12px 16px !important;
-    border: 2px solid #e9ecef !important;
-    border-radius: 8px !important;
-    font-size: 1rem !important;
-    transition: all 0.3s ease !important;
-    background: white !important;
-    color: #333 !important;
-    box-sizing: border-box !important;
-}
-
-.form-control-clean:focus {
-    outline: none !important;
-    border-color: #BF9A33 !important;
-    box-shadow: 0 0 0 3px rgba(191, 154, 51, 0.1) !important;
-}
-
-.form-select-clean {
-    width: 100% !important;
-    padding: 12px 16px !important;
-    border: 2px solid #e9ecef !important;
-    border-radius: 8px !important;
-    font-size: 1rem !important;
-    transition: all 0.3s ease !important;
-    background: white !important;
-    color: #333 !important;
-    box-sizing: border-box !important;
-    appearance: none !important;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
-    background-position: right 12px center !important;
-    background-repeat: no-repeat !important;
-    background-size: 16px !important;
-    padding-right: 40px !important;
-}
-
-.form-select-clean:focus {
-    outline: none !important;
-    border-color: #BF9A33 !important;
-    box-shadow: 0 0 0 3px rgba(191, 154, 51, 0.1) !important;
-}
-
-.btn-primary-clean {
-    background: #BF9A33 !important;
-    color: white !important;
-    border: none !important;
-    padding: 12px 24px !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    font-size: 1rem !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-}
-
-.btn-primary-clean:hover {
-    background: #a57b0a !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 4px 12px rgba(191, 154, 51, 0.3) !important;
-}
-
-.btn-secondary-clean {
-    background: #6c757d !important;
-    color: white !important;
-    border: none !important;
-    padding: 12px 24px !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    font-size: 1rem !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-}
-
-.btn-secondary-clean:hover {
-    background: #5a6268 !important;
-    transform: translateY(-2px) !important;
-}
-
-/* ===== Responsividade ===== */
+/* ===== Media Queries para Responsividade ===== */
 @media (max-width: 768px) {
     .hero-content h1 {
         font-size: 2.5rem;
-        letter-spacing: 4px;
     }
     
-    .hero-content h2 {
+    .hero-subtitle {
+        font-size: 1.8rem;
+    }
+    
+    .section-title {
         font-size: 2rem;
-        letter-spacing: 3px;
     }
     
-    .modal-content {
-        width: 95% !important;
-        margin: 10px auto !important;
-        /* CORREÇÃO: Ajustar altura máxima em mobile */
-        max-height: 95vh !important;
-    }
-    
-    .modal-body {
-        padding: 15px !important;
-        /* CORREÇÃO: Recalcular altura máxima para mobile */
-        max-height: calc(95vh - 140px) !important;
-    }
-    
-    .modal-navigation {
-        padding: 12px 15px !important;
-        height: 50px !important;
-    }
-}
-
-@media (max-width: 576px) {
-    .modal-content {
-        width: 98% !important;
-        margin: 5px auto !important;
-        max-height: 98vh !important;
-    }
-    
-    .modal-body {
-        max-height: calc(98vh - 120px) !important;
+    /* CORREÇÃO: Garantir scroll em dispositivos móveis */
+    body {
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 }
 
