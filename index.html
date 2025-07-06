@@ -10,33 +10,6 @@
     <!-- Favicon -->
     <link rel="icon" href="images/logo.png" type="image/png">
     
-    <!-- Google Consent Mode v2 - DEVE SER CARREGADO ANTES DE QUALQUER SCRIPT DO GOOGLE -->
-    <script>
-        // Configuração inicial do Google Consent Mode v2
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        
-        // Definir estado padrão de consentimento (negado por padrão)
-        gtag('consent', 'default', {
-            'ad_storage': 'denied',
-            'ad_user_data': 'denied',
-            'ad_personalization': 'denied',
-            'analytics_storage': 'denied',
-            'functionality_storage': 'granted',
-            'personalization_storage': 'denied',
-            'security_storage': 'granted',
-            'wait_for_update': 500
-        });
-    </script>
-    
-    <!-- Google Tag Manager (substitua GTM-XXXXXXX pelo seu ID real) -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
-    <!-- End Google Tag Manager -->
-    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     
@@ -49,14 +22,15 @@
     <!-- Chart.js para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- CSS Externo -->
-    <link rel="stylesheet" href="css/style.css">
-    
+    <!-- CSS Corrigido -->
     <style>
+        /* CORREÇÃO ESPECÍFICA PARA PROBLEMAS DE MODAL - Share2Inspire Website */
+
+        /* ===== Base Styles ===== */
         :root {
-            --primary-color: #bf9a33; /* Dourado principal */
-            --secondary-color: #333333; /* Cinza escuro */
-            --accent-color: #a57b0a; /* Dourado suave */
+            --primary-color: #bf9a33;
+            --secondary-color: #333333;
+            --accent-color: #a57b0a;
             --light-color: #f8f9fa;
             --dark-color: #212529;
             --text-color: #333333;
@@ -64,7 +38,7 @@
             --border-color: #dee2e6;
             --success-color: #28a745;
             --error-color: #dc3545;
-            --warning-color: #fece43; /* Dourado claro (mesmo tom do logo) */
+            --warning-color: #fece43;
             --info-color: #17a2b8;
             --transition: all 0.3s ease;
             --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -73,7 +47,7 @@
         
         html {
             scroll-behavior: smooth;
-            scroll-padding-top: 80px; /* Compensa a altura da navbar fixa */
+            scroll-padding-top: 80px;
         }
         
         body {
@@ -89,6 +63,7 @@
             background-color: #fff;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             padding: 1rem 0;
+            z-index: 100;
         }
         
         .navbar-brand img {
@@ -204,7 +179,6 @@
             background-color: #fff;
         }
         
-        /* Ajuste específico para compensar navbar fixa */
         #intro {
             scroll-margin-top: 80px;
         }
@@ -248,7 +222,7 @@
             margin-bottom: 1.5rem;
         }
         
-        /* O Que Nos Move Section - Estilo Moderno */
+        /* O Que Nos Move Section */
         .what-moves-us-section {
             background-color: var(--dark-color);
             color: #fff;
@@ -399,7 +373,7 @@
             color: rgba(255, 255, 255, 0.8);
         }
         
-        /* Estilos globais para botões - Paleta Minimalista */
+        /* Estilos globais para botões */
         .btn-primary {
             background-color: var(--dark-color);
             border-color: var(--dark-color);
@@ -436,24 +410,7 @@
             box-shadow: 0 8px 20px rgba(44, 62, 80, 0.3);
         }
         
-        .btn-secondary {
-            background-color: #f5f5f5;
-            border-color: #f5f5f5;
-            color: var(--dark-color);
-            font-weight: 600;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-secondary:hover {
-            background-color: #e0e0e0;
-            border-color: #e0e0e0;
-            color: var(--dark-color);
-            transform: translateY(-2px);
-        }
-        
-        /* Estilo        /* Proposta de Valor Section */
+        /* Proposta de Valor Section */
         .value-proposition-section {
             padding: 6rem 0;
             background-color: #f8f9fa;
@@ -485,46 +442,555 @@
             border-radius: 8px;
         }
         
-        .value-proposition-text {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+        /* Secção de Diagnóstico Moderna */
+        .diagnostic-section-modern {
+            padding: 8rem 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            position: relative;
         }
         
-        .consultoria-box {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            border: 1px solid #dee2e6;
-            height: 100%;
-        }        
-        /* Estilos para os botões de ação */
-        .action-buttons-section {
-            background-color: var(--primary-color);
-            padding: 2rem 0;
-        }
-        
-        .action-button {
-            display: block;
-            background-color: #111;
-            color: #fff;
+        .section-header-modern {
             text-align: center;
-            padding: 1rem;
-            border-radius: 5px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: var(--transition);
-            margin-bottom: 1rem;
+            margin-bottom: 5rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
-        .action-button:hover {
-            background-color: #000;
+        .diagnostic-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--white);
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        .section-title-modern {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 2rem;
+            line-height: 1.1;
+        }
+        
+        .title-highlight {
             color: var(--primary-color);
         }
         
-        /* Estilos para o footer */
+        .section-subtitle-modern {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+        
+        .features-grid-modern {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+        
+        .feature-card-modern {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            transform: scaleX(0);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card-modern:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            border-color: var(--primary-color);
+        }
+        
+        .feature-card-modern:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-icon-modern {
+            width: 80px;
+            height: 80px;
+            background: var(--light-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2rem;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card-modern:hover .feature-icon-modern {
+            background: var(--primary-color);
+            color: var(--white);
+            transform: scale(1.1);
+        }
+        
+        .feature-title-modern {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+        }
+        
+        .feature-description-modern {
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        
+        .cta-container-modern {
+            text-align: center;
+            margin-top: 4rem;
+        }
+        
+        .hero-cta-modern {
+            background: #000000;
+            color: #ffffff;
+            padding: 1.5rem 3.5rem;
+            border: 3px solid #000000;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+        
+        .hero-cta-modern:hover {
+            background: #ffffff;
+            color: #000000;
+            border-color: #000000;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .cta-note-modern {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* ===== CORREÇÃO PRINCIPAL: Z-INDEX E INTERATIVIDADE DOS MODAIS ===== */
+
+        /* Modal backdrop - garantir z-index correto */
+        .modal {
+            z-index: 1055 !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: rgba(0, 0, 0, 0.8) !important;
+            backdrop-filter: blur(10px) !important;
+            pointer-events: auto !important;
+        }
+
+        .modal.show {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            pointer-events: auto !important;
+        }
+
+        /* Modal dialog - garantir posicionamento correto */
+        .modal-dialog {
+            position: relative !important;
+            z-index: 1056 !important;
+            pointer-events: auto !important;
+            margin: 1rem !important;
+            max-width: 90% !important;
+        }
+
+        .modal-xl {
+            max-width: 95% !important;
+        }
+
+        /* Modal content - estrutura flexbox corrigida */
+        .modal-content {
+            background: white !important;
+            border-radius: 16px !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+            width: 100% !important;
+            max-width: 700px !important;
+            max-height: 90vh !important;
+            position: relative !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+            pointer-events: auto !important;
+            z-index: 1057 !important;
+        }
+
+        /* Modal header - fixo no topo */
+        .modal-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+            color: white !important;
+            padding: 1.5rem 2rem !important;
+            text-align: center !important;
+            border-radius: 16px 16px 0 0 !important;
+            flex-shrink: 0 !important;
+            position: relative !important;
+            z-index: 1058 !important;
+            pointer-events: auto !important;
+        }
+
+        .modal-title {
+            font-size: 1.5rem !important;
+            font-weight: 600 !important;
+            color: white !important;
+            margin: 0 !important;
+            pointer-events: auto !important;
+        }
+
+        /* Botão de fechar - garantir clicabilidade */
+        .btn-close,
+        .close {
+            position: absolute !important;
+            top: 1rem !important;
+            right: 1.5rem !important;
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: none !important;
+            color: white !important;
+            font-size: 1.5rem !important;
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 50% !important;
+            cursor: pointer !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: all 0.3s ease !important;
+            z-index: 1059 !important;
+            pointer-events: auto !important;
+        }
+
+        .btn-close:hover,
+        .close:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+            transform: rotate(90deg) !important;
+            color: white !important;
+        }
+
+        /* Progress container */
+        .progress-container {
+            padding: 1.5rem 2rem 0 !important;
+            background: white !important;
+            flex-shrink: 0 !important;
+            pointer-events: auto !important;
+        }
+
+        .progress-bar {
+            width: 100% !important;
+            height: 8px !important;
+            background: #e9ecef !important;
+            border-radius: 10px !important;
+            overflow: hidden !important;
+            margin-bottom: 1rem !important;
+        }
+
+        .progress-fill {
+            height: 100% !important;
+            background: linear-gradient(90deg, #bf9a33, #d4af37) !important;
+            border-radius: 10px !important;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        .progress-text {
+            text-align: center !important;
+            color: #6c757d !important;
+            font-size: 0.9rem !important;
+            font-weight: 500 !important;
+        }
+
+        /* Modal body - SCROLL FUNCIONAL GARANTIDO */
+        .modal-body {
+            padding: 20px !important;
+            flex-grow: 1 !important;
+            max-height: calc(90vh - 200px) !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            background: white !important;
+            box-sizing: border-box !important;
+            -webkit-overflow-scrolling: touch !important;
+            pointer-events: auto !important;
+            position: relative !important;
+            z-index: 1057 !important;
+        }
+
+        /* Barra de scroll visível e estilizada */
+        .modal-body::-webkit-scrollbar {
+            width: 12px !important;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: #f1f1f1 !important;
+            border-radius: 6px !important;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #bf9a33 !important;
+            border-radius: 6px !important;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #a57b0a !important;
+        }
+
+        /* Question cards - garantir interatividade */
+        .question-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+            border-radius: 16px !important;
+            padding: 2rem !important;
+            border-left: 4px solid #d4af37 !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+            margin-bottom: 2rem !important;
+            min-height: 250px !important;
+            transition: all 0.3s ease !important;
+            pointer-events: auto !important;
+            position: relative !important;
+        }
+
+        .question-title {
+            font-size: 1.1rem !important;
+            font-weight: 600 !important;
+            color: #2c3e50 !important;
+            margin-bottom: 1.5rem !important;
+            line-height: 1.5 !important;
+            pointer-events: auto !important;
+        }
+
+        /* Rating options - GARANTIR CLICABILIDADE */
+        .rating-container {
+            display: flex !important;
+            gap: 0.75rem !important;
+            justify-content: center !important;
+            flex-wrap: wrap !important;
+            pointer-events: auto !important;
+        }
+
+        .rating-option {
+            position: relative !important;
+            pointer-events: auto !important;
+        }
+
+        .rating-option input[type="radio"] {
+            position: absolute !important;
+            opacity: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0 !important;
+            cursor: pointer !important;
+            z-index: 2 !important;
+            pointer-events: auto !important;
+        }
+
+        .rating-label {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 50px !important;
+            height: 50px !important;
+            border: 2px solid #e9ecef !important;
+            border-radius: 50% !important;
+            background: white !important;
+            color: #6c757d !important;
+            font-weight: 600 !important;
+            font-size: 1.1rem !important;
+            cursor: pointer !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            position: relative !important;
+            overflow: hidden !important;
+            pointer-events: auto !important;
+            z-index: 1 !important;
+        }
+
+        .rating-label::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            width: 0 !important;
+            height: 0 !important;
+            background: linear-gradient(135deg, #bf9a33, #d4af37) !important;
+            border-radius: 50% !important;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            transform: translate(-50%, -50%) !important;
+            z-index: 1 !important;
+        }
+
+        .rating-label span {
+            position: relative !important;
+            z-index: 2 !important;
+            transition: color 0.3s ease !important;
+            pointer-events: none !important;
+        }
+
+        .rating-option input[type="radio"]:checked + .rating-label {
+            border-color: #bf9a33 !important;
+            color: white !important;
+            transform: scale(1.1) !important;
+        }
+
+        .rating-option input[type="radio"]:checked + .rating-label::before {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .rating-label:hover {
+            border-color: #bf9a33 !important;
+            transform: scale(1.05) !important;
+            box-shadow: 0 4px 15px rgba(191, 154, 51, 0.3) !important;
+        }
+
+        /* Maturity levels section */
+        .maturity-levels {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
+            border-radius: 16px !important;
+            padding: 2rem !important;
+            margin-top: 2rem !important;
+            border: 1px solid #e9ecef !important;
+            min-height: 400px !important;
+            pointer-events: auto !important;
+        }
+
+        .maturity-levels h3 {
+            color: #2c3e50 !important;
+            font-size: 1.3rem !important;
+            font-weight: 700 !important;
+            margin-bottom: 1.5rem !important;
+            text-align: center !important;
+        }
+
+        .maturity-item {
+            display: flex !important;
+            align-items: flex-start !important;
+            gap: 1rem !important;
+            margin-bottom: 1.5rem !important;
+            padding: 1rem !important;
+            background: white !important;
+            border-radius: 12px !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+            transition: all 0.3s ease !important;
+            pointer-events: auto !important;
+        }
+
+        .maturity-number {
+            background: linear-gradient(135deg, #bf9a33, #d4af37) !important;
+            color: white !important;
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-weight: 700 !important;
+            font-size: 0.9rem !important;
+            flex-shrink: 0 !important;
+        }
+
+        .maturity-text {
+            color: #495057 !important;
+            line-height: 1.5 !important;
+            font-size: 0.95rem !important;
+        }
+
+        /* Modal navigation - fixo na base */
+        .modal-navigation {
+            background: white !important;
+            padding: 15px 20px !important;
+            border-top: 1px solid #e9ecef !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            border-radius: 0 0 16px 16px !important;
+            height: 60px !important;
+            box-sizing: border-box !important;
+            flex-shrink: 0 !important;
+            position: relative !important;
+            z-index: 1058 !important;
+            pointer-events: auto !important;
+        }
+
+        /* Botões de navegação - GARANTIR CLICABILIDADE */
+        .btn-nav {
+            padding: 0.75rem 2rem !important;
+            border: none !important;
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+            font-size: 0.95rem !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+            pointer-events: auto !important;
+            position: relative !important;
+            z-index: 1059 !important;
+        }
+
+        .btn-nav-secondary {
+            background: #e9ecef !important;
+            color: #6c757d !important;
+        }
+
+        .btn-nav-secondary:hover {
+            background: #dee2e6 !important;
+            transform: translateY(-1px) !important;
+        }
+
+        .btn-nav-primary {
+            background: linear-gradient(135deg, #2c3e50, #34495e) !important;
+            color: white !important;
+        }
+
+        .btn-nav-primary:hover {
+            background: linear-gradient(135deg, #34495e, #2c3e50) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 25px rgba(44, 62, 80, 0.3) !important;
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+            pointer-events: none !important;
+        }
+
+        /* Footer */
         footer {
             background-color: #212529;
             color: #fff;
@@ -596,8 +1062,32 @@
             color: #fff;
             text-decoration: underline;
         }
-        
-        /* Responsividade */        @media (max-width: 992px) {
+
+        /* Garantir que outros elementos não bloqueiem o modal */
+        body.modal-open {
+            overflow: hidden !important;
+        }
+
+        body.modal-open .modal {
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+        }
+
+        /* Garantir que elementos fora do modal não interfiram */
+        body.modal-open > *:not(.modal) {
+            pointer-events: none !important;
+        }
+
+        body.modal-open .modal {
+            pointer-events: auto !important;
+        }
+
+        body.modal-open .modal * {
+            pointer-events: auto !important;
+        }
+
+        /* Responsividade */
+        @media (max-width: 992px) {
             .hero-content h1 {
                 font-size: 3.5rem;
                 letter-spacing: 6px;
@@ -612,39 +1102,12 @@
                 font-size: 2rem;
             }
             
-            .feature-box {
-                flex-direction: column;
-            }
-            
-            .feature-title-box {
-                width: 100%;
-                margin-right: 0;
-                margin-bottom: 1rem;
-            }
-            
-            .value-item {
-                flex: 0 0 calc(50% - 2rem);
-            }
-            
             .footer-container {
                 flex-direction: column;
                 text-align: center;
                 gap: 20px;
             }
             
-            .diagnostic-features {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .diagnostic-card {
-                padding: 3rem 2rem;
-            }
-            
-            .diagnostic-title {
-                font-size: 2rem;
-            }
-        }    
             .footer-right {
                 flex-direction: column;
                 gap: 15px;
@@ -667,10 +1130,6 @@
                 letter-spacing: 3px;
             }
             
-            .value-item {
-                flex: 0 0 100%;
-            }
-            
             .footer-social {
                 justify-content: center;
             }
@@ -680,1237 +1139,75 @@
                 align-items: center;
                 gap: 10px;
             }
-        }
-        
-        /* Banner de Consentimento de Cookies */
-        .cookie-consent-banner {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: rgba(33, 37, 41, 0.95);
-            color: white;
-            padding: 15px;
-            z-index: 9999;
-            transform: translateY(100%);
-            transition: transform 0.5s ease-in-out;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Modal Styles - Moderno e Elegante */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            animation: fadeIn 0.3s ease;
-        }
 
-        .modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* SOLUÇÃO SIMPLES E DIRETA PARA O MODAL */
-        .modal-content {
-            background: white !important;
-            border-radius: 16px !important;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
-            width: 90% !important;
-            max-width: 700px !important;
-            height: 80vh !important;
-            position: relative !important;
-            overflow: hidden !important;
-        }
-
-        /* Header do Modal */
-        .modal-header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
-            color: white !important;
-            padding: 1.5rem 2rem !important;
-            text-align: center !important;
-            border-radius: 16px 16px 0 0 !important;
-            height: 100px !important;
-            box-sizing: border-box !important;
-        }
-
-        /* Corpo do Modal - SCROLL GARANTIDO */
-        .modal-body {
-            padding: 20px !important;
-            height: calc(80vh - 160px) !important;
-            overflow-y: scroll !important;
-            background: white !important;
-            box-sizing: border-box !important;
-        }
-
-        /* Navegação do Modal - FIXA NA BASE */
-        .modal-navigation {
-            background: white !important;
-            padding: 15px 20px !important;
-            border-top: 1px solid #e9ecef !important;
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            border-radius: 0 0 16px 16px !important;
-            height: 60px !important;
-            box-sizing: border-box !important;
-            position: absolute !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-        }
-
-        /* Barra de scroll visível */
-        .modal-body::-webkit-scrollbar {
-            width: 12px !important;
-        }
-
-        .modal-body::-webkit-scrollbar-track {
-            background: #f1f1f1 !important;
-            border-radius: 6px !important;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb {
-            background: #bf9a33 !important;
-            border-radius: 6px !important;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb:hover {
-            background: #a57b0a !important;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from { 
-                opacity: 0;
-                transform: translateY(50px) scale(0.95);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .modal-header p {
-            margin: 0.5rem 0 0 0;
-            opacity: 0.9;
-            font-size: 1rem;
-        }
-
-        .close {
-            position: absolute;
-            top: 1rem;
-            right: 1.5rem;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .close:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(90deg);
-        }
-
-        /* Progress Bar Moderna */
-        .progress-container {
-            padding: 1.5rem 2rem 0;
-            background: white;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 1rem;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #bf9a33, #d4af37);
-            border-radius: 10px;
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .progress-text {
-            text-align: center;
-            color: #6c757d;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        /* Corpo do Modal */
-        .modal-body {
-            padding: 20px;
-            height: 480px;
-            overflow-y: auto;
-            background: white;
-        }
-
-        /* Cartão de Pergunta Moderno - FORÇAR ALTURA MÍNIMA */
-        .question-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
-            border-radius: 16px !important;
-            padding: 2rem !important;
-            border-left: 4px solid #d4af37 !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
-            margin-bottom: 2rem !important;
-            min-height: 250px !important;
-            transition: all 0.3s ease !important;
-        }
-
-        .question-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-        }
-
-        .question-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
-        }
-
-        /* Rating Buttons Modernos */
-        .rating-container {
-            display: flex;
-            gap: 0.75rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .rating-option {
-            position: relative;
-        }
-
-        .rating-option input[type="radio"] {
-            display: none;
-        }
-
-        .rating-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border: 2px solid #e9ecef;
-            border-radius: 50%;
-            background: white;
-            color: #6c757d;
-            font-weight: 600;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .rating-label::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: linear-gradient(135deg, #bf9a33, #d4af37);
-            border-radius: 50%;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translate(-50%, -50%);
-            z-index: 1;
-        }
-
-        .rating-label span {
-            position: relative;
-            z-index: 2;
-            transition: color 0.3s ease;
-        }
-
-        .rating-option input[type="radio"]:checked + .rating-label {
-            border-color: #bf9a33;
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .rating-option input[type="radio"]:checked + .rating-label::before {
-            width: 100%;
-            height: 100%;
-        }
-
-        .rating-label:hover {
-            border-color: #bf9a33;
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(191, 154, 51, 0.3);
-        }
-
-        /* Seção de Níveis de Maturidade - FORÇAR ALTURA */
-        .maturity-levels {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
-            border-radius: 16px !important;
-            padding: 2rem !important;
-            margin-top: 2rem !important;
-            border: 1px solid #e9ecef !important;
-            min-height: 400px !important;
-        }
-
-        .maturity-levels h3 {
-            color: #2c3e50;
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .maturity-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .maturity-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .maturity-number {
-            background: linear-gradient(135deg, #bf9a33, #d4af37);
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-
-        .maturity-text {
-            color: #495057;
-            line-height: 1.5;
-            font-size: 0.95rem;
-        }
-        
-        /* Navegação do Modal */
-        .modal-navigation {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            padding: 15px 20px;
-            border-top: 1px solid #e9ecef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn-nav {
-            padding: 0.75rem 2rem;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-nav-secondary {
-            background: #e9ecef;
-            color: #6c757d;
-        }
-
-        .btn-nav-secondary:hover {
-            background: #dee2e6;
-            transform: translateY(-1px);
-        }
-
-        .btn-nav-primary {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            color: white;
-        }
-
-        .btn-nav-primary:hover {
-            background: linear-gradient(135deg, #34495e, #2c3e50);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(44, 62, 80, 0.3);
-        }
-
-        .btn-nav:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
             .modal-content {
-                width: 95%;
-                margin: 1rem;
+                width: 95% !important;
+                margin: 1rem !important;
+                max-height: 95vh !important;
             }
 
             .modal-header {
-                padding: 1.5rem;
+                padding: 1.5rem !important;
             }
 
             .modal-body {
-                padding: 1.5rem;
+                padding: 1.5rem !important;
+                max-height: calc(95vh - 180px) !important;
             }
 
             .question-card {
-                padding: 1.5rem;
+                padding: 1.5rem !important;
+                min-height: 200px !important;
             }
 
             .rating-container {
-                gap: 0.5rem;
+                gap: 0.5rem !important;
             }
 
             .rating-label {
-                width: 45px;
-                height: 45px;
-                font-size: 1rem;
+                width: 45px !important;
+                height: 45px !important;
+                font-size: 1rem !important;
             }
 
             .modal-navigation {
-                padding: 1rem 1.5rem;
-                flex-direction: column;
-                gap: 1rem;
+                padding: 1rem 1.5rem !important;
+                flex-direction: column !important;
+                gap: 1rem !important;
+                height: auto !important;
+                min-height: 80px !important;
             }
 
             .btn-nav {
-                width: 100%;
-                justify-content: center;
+                width: 100% !important;
+                justify-content: center !important;
             }
         }
-        .modal-xl {
-            max-width: 95%;
-        }
 
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 700px;
-            height: 600px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            padding: 1.5rem 2rem;
-            text-align: center;
-            border-radius: 16px 16px 0 0;
-            flex-shrink: 0;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--dark-color);
-        }
-
-        .btn-close {
-            background: var(--light-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            opacity: 1;
-        }
-
-        .modal-body {
-            padding: 20px;
-            overflow-y: auto;
-            background: white;
-            flex: 1;
-            min-height: 0;
-            max-height: calc(90vh - 140px);
-        }
-
-        /* Estilos para melhorar a visibilidade do scroll */
-        .modal-body::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .modal-body::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb {
-            background: #bf9a33;
-            border-radius: 4px;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb:hover {
-            background: #a57b0a;
-        }
-
-        /* Progress Bar - Estilo Moderno */
-        .progress-clean {
-            background: var(--light-color);
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 3rem;
-        }
-
-        .progress-clean-bar {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            height: 100%;
-            transition: width 0.4s ease;
-            border-radius: 3px;
-        }
-
-        /* Question Cards - Estilo Moderno */
-        .dimension-card-clean {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 3rem;
-            margin-bottom: 2rem;
-        }
-
-        .dimension-title-clean {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 2.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--light-color);
-        }
-
-        .question-item-clean {
-            margin-bottom: 2.5rem;
-            padding: 2rem;
-            background: var(--light-color);
-            border-radius: 12px;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .question-text-clean {
-            font-weight: 500;
-            color: var(--dark-color);
-            margin-bottom: 1.5rem;
-            font-size: 1.05rem;
-        }
-
-        .rating-container-clean {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1rem;
-        }
-
-        .rating-option-clean {
-            position: relative;
-        }
-
-        .rating-option-clean input[type="radio"] {
-            display: none;
-        }
-
-        .rating-option-clean label {
-            display: block;
-            padding: 1rem;
-            background: var(--white);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        .rating-option-clean label:hover {
-            border-color: var(--primary-color);
-            background: rgba(191, 154, 51, 0.05);
-        }
-
-        .rating-option-clean input[type="radio"]:checked + label {
-            background: var(--primary-color);
-            color: var(--white);
-            border-color: var(--primary-color);
-            transform: scale(1.05);
-        }
-
-        /* Navigation Buttons - Estilo Moderno */
-        .navigation-clean {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .btn-nav-clean {
-            padding: 1rem 2.5rem;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            font-size: 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-nav-primary-clean {
-            background: var(--dark-color);
-            color: var(--white);
-        }
-
-        .btn-nav-primary-clean:hover {
-            background: var(--primary-color);
-            color: var(--dark-color);
-            transform: translateY(-2px);
-        }
-
-        .btn-nav-secondary-clean {
-            background: var(--light-color);
-            color: var(--text-color);
-        }
-
-        .btn-nav-secondary-clean:hover {
-            background: var(--border-color);
-        }
-
-        .btn-nav-clean:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Secção de Diagnóstico Moderna - Baseada no indextest.html */
-        .diagnostic-section-modern {
-            padding: 8rem 0;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            position: relative;
-        }
-
-        .section-header-modern {
-            text-align: center;
-            margin-bottom: 5rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .diagnostic-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: var(--white);
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .section-title-modern {
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 2rem;
-            line-height: 1.1;
-        }
-
-        .title-highlight {
-            color: var(--primary-color);
-        }
-
-        .section-subtitle-modern {
-            font-size: 1.3rem;
-            color: var(--text-light);
-            margin-bottom: 3rem;
-            line-height: 1.6;
-        }
-
-        .features-grid-modern {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-            margin-bottom: 4rem;
-        }
-
-        .feature-card-modern {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 3rem 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card-modern::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            transform: scaleX(0);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card-modern:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-            border-color: var(--primary-color);
-        }
-
-        .feature-card-modern:hover::before {
-            transform: scaleX(1);
-        }
-
-        .feature-icon-modern {
-            width: 80px;
-            height: 80px;
-            background: var(--light-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
-            font-size: 2rem;
-            color: var(--primary-color);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card-modern:hover .feature-icon-modern {
-            background: var(--primary-color);
-            color: var(--white);
-            transform: scale(1.1);
-        }
-
-        .feature-title-modern {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 1rem;
-        }
-
-        .feature-description-modern {
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-
-        .cta-container-modern {
-            text-align: center;
-            margin-top: 4rem;
-        }
-
-        .hero-cta-modern {
-            background: #000000;
-            color: #ffffff;
-            padding: 1.5rem 3.5rem;
-            border: 3px solid #000000;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .hero-cta-modern:hover {
-            background: #ffffff;
-            color: #000000;
-            border-color: #000000;
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .cta-note-modern {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .diagnostic-section {
-            padding: 6rem 0;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            position: relative;
-        }
-        
-        .diagnostic-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23bf9a33" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            pointer-events: none;
-        }
-        
-        .diagnostic-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 4rem 3rem;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .diagnostic-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-        }
-        
-        .diagnostic-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
-            box-shadow: 0 10px 30px rgba(191, 154, 51, 0.3);
-        }
-        
-        .diagnostic-icon i {
-            font-size: 2.5rem;
-            color: #fff;
-        }
-        
-        .diagnostic-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--dark-color);
-        }
-        
-        .highlight-gold {
-            color: var(--primary-color);
-            position: relative;
-        }
-        
-        .diagnostic-description {
-            font-size: 1.2rem;
-            line-height: 1.8;
-            color: var(--text-light);
-            margin-bottom: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .diagnostic-features {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 3rem;
-            flex-wrap: wrap;
-        }
-        
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-        
-        .feature-item i {
-            color: var(--primary-color);
-            font-size: 1.1rem;
-        }
-        
-        .btn-diagnostic-modern {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: #fff;
-            border: none;
-            padding: 1.2rem 3rem;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            text-transform: uppercase;
-            box-shadow: 0 8px 25px rgba(191, 154, 51, 0.3);
-        }
-        
-        .btn-diagnostic-modern::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .btn-diagnostic-modern:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(191, 154, 51, 0.4);
-        }
-        
-        .btn-diagnostic-modern:hover::before {
-            left: 100%;
-        }
-        
-        .btn-diagnostic-modern i {
-            margin-right: 0.5rem;
-        }
-        
-        .cookie-consent-banner.show {
-            transform: translateY(0);
-        }
-        
-        .cookie-consent-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .cookie-consent-text h4 {
-            margin: 0 0 5px 0;
-            font-size: 16px;
-            color: #BF9A33;
-        }
-        
-        .cookie-consent-text p {
-            margin: 0;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-        
-        .cookie-consent-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .cookie-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .cookie-btn-accept {
-            background-color: #BF9A33;
-            color: #212529;
-        }
-        
-        .cookie-btn-accept:hover {
-            background-color: #a57b0a;
-        }
-        
-        .cookie-btn-decline {
-            background-color: transparent;
-            color: white;
-            border: 1px solid #6c757d;
-        }
-        
-        .cookie-btn-decline:hover {
-            background-color: #6c757d;
-        }
-        
-        .cookie-btn-settings {
-            background-color: transparent;
-            color: #BF9A33;
-            border: 1px solid #BF9A33;
-        }
-        
-        .cookie-btn-settings:hover {
-            background-color: #BF9A33;
-            color: #212529;
-        }
-        
-        /* Modal de Preferências de Cookies */
-        .cookie-preferences-modal {
-            display: none;
-            position: fixed;
-            z-index: 10000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-        
-        .cookie-preferences-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 0;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .cookie-preferences-header {
-            padding: 20px;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .cookie-preferences-header h3 {
-            margin: 0;
-            color: #212529;
-        }
-        
-        .cookie-preferences-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #6c757d;
-        }
-        
-        .cookie-preferences-body {
-            padding: 20px;
-        }
-        
-        .cookie-category {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .cookie-category:last-child {
-            border-bottom: none;
-        }
-        
-        .cookie-category-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .cookie-category h4 {
-            margin: 0;
-            color: #212529;
-        }
-        
-        .cookie-toggle {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        
-        .cookie-toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .cookie-toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-        
-        .cookie-toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        .cookie-toggle input:checked + .cookie-toggle-slider {
-            background-color: #BF9A33;
-        }
-        
-        .cookie-toggle input:checked + .cookie-toggle-slider:before {
-            transform: translateX(26px);
-        }
-        
-        .cookie-toggle.disabled {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-        
-        .cookie-preferences-footer {
-            padding: 20px;
-            border-top: 1px solid #dee2e6;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-        
-        /* Botão de Feedback */
-        .feedback-btn {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            background-color: #BF9A33;
-            color: #212529;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 20px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-        
-        .feedback-btn:hover {
-            background-color: #a57b0a;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Estilos para o formulário de feedback */
-        .rating {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-        
-        .star {
-            font-size: 24px;
-            cursor: pointer;
-            color: #ddd;
-            transition: color 0.2s;
-        }
-        
-        .star:hover,
-        .star.active {
-            color: #BF9A33;
-        }
-        
-        @media (max-width: 768px) {
-            .cookie-consent-content {
-                flex-direction: column;
-                text-align: center;
+        @media (max-width: 576px) {
+            .modal-content {
+                width: 98% !important;
+                margin: 0.5rem !important;
+                max-height: 98vh !important;
             }
             
-            .cookie-consent-buttons {
-                justify-content: center;
-                width: 100%;
+            .modal-body {
+                max-height: calc(98vh - 160px) !important;
+                padding: 1rem !important;
             }
             
-            .cookie-preferences-content {
-                width: 95%;
-                margin: 2% auto;
+            .modal-header {
+                padding: 1rem !important;
             }
             
-            .feedback-btn {
-                right: 15px;
-                bottom: 15px;
-                padding: 10px 16px;
-                font-size: 14px;
+            .question-card {
+                padding: 1rem !important;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-    
     <!-- Header e Navegação -->
     <header class="header">
         <nav class="navbar navbar-expand-lg fixed-top">
@@ -2063,8 +1360,7 @@
         </div>
     </section>
 
-    <!-- Secção de Diagnóstico de Maturidade de RH -->
-<!-- Secção de Diagnóstico Moderna -->
+    <!-- Secção de Diagnóstico Moderna -->
     <section class="diagnostic-section-modern" id="diagnostico">
         <div class="container">
             <div class="section-header-modern">
@@ -2124,10 +1420,9 @@
                 </p>
             </div>
         </div>
-
     </section>
 
-    <!-- Modal do Diagnóstico Moderno -->
+    <!-- Modal do Diagnóstico Corrigido -->
     <div class="modal fade modal-clean" id="diagnosticModalClean" tabindex="-1" aria-labelledby="diagnosticModalCleanLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -2135,7 +1430,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="diagnosticModalCleanLabel">Diagnóstico de Maturidade de RH</h5>
                     <p class="modal-subtitle">Avalie o nível de desenvolvimento dos seus processos de Recursos Humanos</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
                 </div>
 
                 <!-- Progress Bar -->
@@ -2201,7 +1496,7 @@
                     <h5 class="modal-title" id="resultsModalCleanLabel">
                         Resultados do Diagnóstico
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div id="resultsContentClean">
@@ -2239,139 +1534,8 @@
         </div>
     </footer>
 
-    <!-- Cookie Consent Banner -->
-    <div id="cookieConsentBanner" class="cookie-consent-banner">
-        <div class="cookie-consent-content">
-            <div class="cookie-consent-text">
-                <h4>Utilizamos cookies</h4>
-                <p>Este site utiliza cookies para melhorar a sua experiência. Ao continuar a navegar, concorda com a nossa utilização de cookies.</p>
-            </div>
-            <div class="cookie-consent-buttons">
-                <button class="cookie-btn cookie-btn-accept" onclick="acceptAllCookies()">Aceitar Todos</button>
-                <button class="cookie-btn cookie-btn-decline" onclick="declineAllCookies()">Recusar Não Essenciais</button>
-                <button class="cookie-btn cookie-btn-settings" onclick="openCookieSettings()">Preferências</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Cookie Preferences Modal -->
-    <div id="cookiePreferencesModal" class="cookie-preferences-modal">
-        <div class="cookie-preferences-content">
-            <div class="cookie-preferences-header">
-                <h3>Preferências de Cookies</h3>
-                <button class="cookie-preferences-close" onclick="closeCookieSettings()">&times;</button>
-            </div>
-            <div class="cookie-preferences-body">
-                <div class="cookie-category">
-                    <div class="cookie-category-header">
-                        <h4>Cookies Necessários</h4>
-                        <label class="cookie-toggle disabled">
-                            <input type="checkbox" checked disabled>
-                            <span class="cookie-toggle-slider"></span>
-                        </label>
-                    </div>
-                    <p>Estes cookies são essenciais para o funcionamento do site e não podem ser desativados.</p>
-                </div>
-                
-                <div class="cookie-category">
-                    <div class="cookie-category-header">
-                        <h4>Cookies Analíticos</h4>
-                        <label class="cookie-toggle">
-                            <input type="checkbox" id="analytics-cookies">
-                            <span class="cookie-toggle-slider"></span>
-                        </label>
-                    </div>
-                    <p>Ajudam-nos a entender como os visitantes interagem com o site, permitindo melhorar a experiência.</p>
-                </div>
-                
-                <div class="cookie-category">
-                    <div class="cookie-category-header">
-                        <h4>Cookies de Marketing</h4>
-                        <label class="cookie-toggle">
-                            <input type="checkbox" id="marketing-cookies">
-                            <span class="cookie-toggle-slider"></span>
-                        </label>
-                    </div>
-                    <p>Utilizados para rastrear visitantes em websites. A intenção é exibir anúncios relevantes e envolventes.</p>
-                </div>
-                
-                <div class="cookie-category">
-                    <div class="cookie-category-header">
-                        <h4>Cookies de Personalização</h4>
-                        <label class="cookie-toggle">
-                            <input type="checkbox" id="personalization-cookies">
-                            <span class="cookie-toggle-slider"></span>
-                        </label>
-                    </div>
-                    <p>Permitem oferecer funcionalidades e conteúdos personalizados com base nas suas preferências.</p>
-                </div>
-            </div>
-            <div class="cookie-preferences-footer">
-                <button class="btn btn-secondary" onclick="closeCookieSettings()">Cancelar</button>
-                <button class="btn btn-primary" onclick="savePreferences()">Guardar Preferências</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Botão de Feedback -->
-    <button id="feedbackBtn" class="feedback-btn">
-        <i class="fas fa-comment"></i> Feedback
-    </button>
-
-    <!-- Modal de Feedback -->
-    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="feedbackModalLabel">Deixe o seu Feedback</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="feedbackForm">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nome *</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="rating" class="form-label">Avaliação *</label>
-                            <input type="hidden" id="rating" name="rating" value="0">
-                            <div class="rating">
-                                <span class="star" data-value="1"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="2"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="3"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="4"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="5"><i class="far fa-star"></i></span>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="feedbackMessage" class="form-label">Mensagem *</label>
-                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3" required></textarea>
-                        </div>
-                        <div id="feedbackFormMessage"></div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" form="feedbackForm" class="btn btn-primary">Enviar Feedback</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Utilitários e Integrações -->
-    <script src="js/form-utils.js"></script>
-    <script src="js/brevo-integration.js"></script>
-
-    <!-- Formulários -->
-    <script src="js/contact-form.js"></script>
-    <script src="js/feedback-form.js"></script>
 
     <!-- JavaScript do Diagnóstico de RH Clean -->
     <script>
@@ -2385,13 +1549,6 @@
                         "É feita uma análise simples das lacunas de competências para planear necessidades futuras de pessoal?",
                         "As prioridades de RH são revistas em ciclos regulares (anual ou semestral)?",
                         "Os resultados dessas revisões originam acções concretas e acompanhamento?"
-                    ],
-                    levels: [
-                        "Práticas reactivas, sem ligação explícita à estratégia.",
-                        "Algum alinhamento e análises pontuais de lacunas; uso limitado de dados.",
-                        "Alinhamento consistente; planeamento baseado em dados básicos e cenários anuais.",
-                        "RH lidera o planeamento estratégico de pessoas, usando dados avançados e projecções a médio prazo.",
-                        "Planeamento de força de trabalho em tempo real, preditivo, reconhecido como benchmark no sector."
                     ]
                 },
                 {
@@ -2401,13 +1558,6 @@
                         "São produzidos relatórios regulares sobre métricas de RH (turnover, absentismo, etc.)?",
                         "Existe capacidade de análise preditiva ou modelação de cenários em RH?",
                         "Os dados de RH são integrados com outras áreas da organização para decisões estratégicas?"
-                    ],
-                    levels: [
-                        "Gestão manual ou sistemas muito básicos; poucos dados estruturados.",
-                        "HRIS básico implementado; relatórios simples e reactivos.",
-                        "Dashboards funcionais; algumas análises preditivas; dados começam a influenciar decisões.",
-                        "Analytics avançados; modelos preditivos robustos; integração com business intelligence.",
-                        "IA e machine learning aplicados; analytics em tempo real; RH data-driven como vantagem competitiva."
                     ]
                 },
                 {
@@ -2417,13 +1567,6 @@
                         "A marca empregadora é trabalhada de forma consistente?",
                         "São utilizadas múltiplas fontes e canais para atrair candidatos?",
                         "O processo de onboarding é estruturado e eficaz?"
-                    ],
-                    levels: [
-                        "Recrutamento ad-hoc; processos inconsistentes; marca empregadora inexistente.",
-                        "Processos básicos definidos; alguma presença online; onboarding mínimo.",
-                        "Estratégia de talent acquisition definida; marca empregadora em desenvolvimento; onboarding estruturado.",
-                        "Marca empregadora forte; múltiplos canais optimizados; candidate experience excelente.",
-                        "Referência no mercado; talent acquisition proactiva; tecnologia avançada; onboarding personalizado."
                     ]
                 },
                 {
@@ -2433,13 +1576,6 @@
                         "A experiência do colaborador é medida e monitorizada regularmente?",
                         "São implementadas acções com base no feedback dos colaboradores?",
                         "Existe um foco na retenção de talentos críticos?"
-                    ],
-                    levels: [
-                        "Integração informal; pouco foco na experiência do colaborador.",
-                        "Programa básico de integração; algumas medições de satisfação.",
-                        "Integração estruturada; employee experience medida; acções de melhoria implementadas.",
-                        "Programa de integração personalizado; employee journey mapeado; retenção proactiva.",
-                        "Experiência do colaborador diferenciadora; integração digital; retenção de talentos como vantagem competitiva."
                     ]
                 },
                 {
@@ -2449,13 +1585,6 @@
                         "Os objectivos individuais estão alinhados com os objectivos organizacionais?",
                         "É fornecido feedback regular e construtivo aos colaboradores?",
                         "Existe um processo de identificação e desenvolvimento de high performers?"
-                    ],
-                    levels: [
-                        "Avaliações esporádicas ou inexistentes; feedback limitado.",
-                        "Sistema básico anual; algum alinhamento de objectivos.",
-                        "Avaliações regulares; feedback estruturado; identificação de talentos.",
-                        "Gestão contínua de performance; coaching integrado; desenvolvimento de high performers.",
-                        "Performance management ágil; feedback em tempo real; cultura de high performance estabelecida."
                     ]
                 },
                 {
@@ -2465,13 +1594,6 @@
                         "São desenvolvidos programas específicos para líderes?",
                         "A liderança é avaliada em competências técnicas e comportamentais?",
                         "Existe um pipeline robusto de liderança interna?"
-                    ],
-                    levels: [
-                        "Sem planeamento de sucessão; desenvolvimento de liderança ad-hoc.",
-                        "Identificação básica de sucessores; alguns programas de desenvolvimento.",
-                        "Planos de sucessão para posições críticas; programas de liderança estruturados.",
-                        "Pipeline de liderança robusto; desenvolvimento acelerado; mentoring e coaching.",
-                        "Liderança como vantagem competitiva; sucessão interna consistente; líderes reconhecidos no mercado."
                     ]
                 },
                 {
@@ -2481,13 +1603,6 @@
                         "Existem iniciativas estruturadas de bem-estar dos colaboradores?",
                         "A diversidade e inclusão são promovidas activamente?",
                         "O engagement dos colaboradores é medido e trabalhado?"
-                    ],
-                    levels: [
-                        "Cultura não definida; bem-estar não é prioridade; pouca diversidade.",
-                        "Cultura em desenvolvimento; algumas iniciativas de bem-estar; consciência sobre diversidade.",
-                        "Cultura definida e comunicada; programas de bem-estar; iniciativas de D&I implementadas.",
-                        "Cultura forte e vivida; bem-estar integrado na estratégia; D&I como valor organizacional.",
-                        "Cultura como diferenciador competitivo; bem-estar holístico; liderança em D&I no sector."
                     ]
                 },
                 {
@@ -2497,45 +1612,6 @@
                         "A remuneração é competitiva face ao mercado?",
                         "São oferecidos benefícios alinhados com as necessidades dos colaboradores?",
                         "Existe flexibilidade e personalização na proposta de valor total?"
-                    ],
-                    levels: [
-                        "Remuneração inconsistente; benefícios básicos; pouca transparência.",
-                        "Política básica definida; benchmarking ocasional; benefícios standard.",
-                        "Política clara; remuneração competitiva; pacote de benefícios estruturado.",
-                        "Total rewards strategy; benefícios flexíveis; proposta de valor diferenciada.",
-                        "Remuneração como vantagem competitiva; benefícios inovadores; total rewards personalizado."
-                    ]
-                },
-                {
-                    title: "Agilidade & Resiliência",
-                    questions: [
-                        "A organização adapta-se rapidamente a mudanças no mercado?",
-                        "Existem processos para gestão de crises e continuidade de negócio?",
-                        "Os colaboradores são preparados para mudanças e transformações?",
-                        "A organização aprende e evolui com base em experiências passadas?"
-                    ],
-                    levels: [
-                        "Baixa capacidade de adaptação; processos rígidos; resistência à mudança.",
-                        "Alguma flexibilidade; planos básicos de contingência; mudança reactiva.",
-                        "Agilidade organizacional em desenvolvimento; gestão de mudança estruturada.",
-                        "Organização ágil; resiliência incorporada; change management avançado.",
-                        "Agilidade e resiliência como core competencies; organização antecipa e lidera mudanças."
-                    ]
-                },
-                {
-                    title: "Compliance & ESG",
-                    questions: [
-                        "A organização cumpre toda a legislação laboral aplicável?",
-                        "Existem políticas claras de ética e compliance?",
-                        "São implementadas práticas sustentáveis e de responsabilidade social?",
-                        "O reporting ESG inclui métricas de capital humano?"
-                    ],
-                    levels: [
-                        "Compliance básico; pouca consciência ESG; práticas mínimas.",
-                        "Compliance estruturado; algumas iniciativas ESG; políticas básicas.",
-                        "Compliance proactivo; ESG integrado na estratégia; reporting estruturado.",
-                        "Liderança em compliance; ESG como vantagem competitiva; reporting avançado.",
-                        "Benchmark em compliance e ESG; práticas inovadoras; reconhecimento externo."
                     ]
                 }
             ]
@@ -2546,43 +1622,28 @@
             surveys: [
                 {
                     name: "Survey 1",
-                    scores: [3.4, 2.1, 4.7, 3.0, 2.5, 1.8, 3.6, 4.0, 3.2, 2.9],
-                    average: 3.12,
-                    strengths: "Recrutamento (4,7) e Remuneração (4,0) já no patamar de excelência. Cultura razoavelmente sólida (3,6).",
-                    improvements: "Liderança & Sucessão (1,8) é o principal calcanhar de Aquiles. Tecnologia (2,1) e Desempenho (2,5) requerem sistemas e métricas.",
-                    diagnosis: "Maturidade N3: consistente, mas precisa profissionalizar liderança e analytics para dar o salto."
+                    scores: [3.4, 2.1, 4.7, 3.0, 2.5, 1.8, 3.6, 4.0],
+                    average: 3.14
                 },
                 {
                     name: "Survey 2", 
-                    scores: [4.2, 3.2, 5.0, 3.5, 3.0, 2.4, 4.1, 4.5, 3.7, 3.3],
-                    average: 3.69,
-                    strengths: "Marca empregadora (5,0) é referência. Estratégia (4,2), Cultura (4,1) e Benefícios (4,5) já em nível avançado.",
-                    improvements: "Liderança & Sucessão mantém-se abaixo da fasquia (2,4).",
-                    diagnosis: "Maturidade N4: RH avançado; priorizar sucessão e coaching executivo para chegar ao N5."
+                    scores: [4.2, 3.2, 5.0, 3.5, 3.0, 2.4, 4.1, 4.5],
+                    average: 3.74
                 },
                 {
                     name: "Survey 3",
-                    scores: [2.8, 2.6, 3.9, 2.7, 2.0, 2.1, 3.0, 2.8, 2.9, 2.2],
-                    average: 2.70,
-                    strengths: "Aquisição de Talentos razoável (3,9) para o contexto. Cultura no limiar (3,0).",
-                    improvements: "Desempenho (2,0), Liderança (2,1) e Compliance (2,2) necessitam processos básicos. Tecnologia ainda embrionária (2,6).",
-                    diagnosis: "Maturidade N2: foco em construir fundações de processo, governance e feedback contínuo."
+                    scores: [2.8, 2.6, 3.9, 2.7, 2.0, 2.1, 3.0, 2.8],
+                    average: 2.74
                 },
                 {
                     name: "Survey 4",
-                    scores: [3.9, 3.7, 4.6, 3.4, 3.1, 2.9, 3.8, 4.2, 3.5, 4.1],
-                    average: 3.72,
-                    strengths: "Talentos (4,6), Benefícios (4,2) e ESG (4,1) em nível elevado. Tecnologia (3,7) e Agilidade (3,5) já em consolidação.",
-                    improvements: "Liderança (2,9) continua intermédia; falta pipeline robusto.",
-                    diagnosis: "Maturidade N4: estrutura sólida; sucessão e gestão de performance impediram ainda o salto final ao N5."
+                    scores: [3.9, 3.7, 4.6, 3.4, 3.1, 2.9, 3.8, 4.2],
+                    average: 3.70
                 },
                 {
                     name: "Survey 5",
-                    scores: [1.9, 1.8, 2.5, 2.2, 1.7, 1.5, 2.1, 2.6, 2.0, 1.8],
-                    average: 2.01,
-                    strengths: "Benefícios é o indicador 'menos baixo' (2,6).",
-                    improvements: "Quase todas as áreas ≤ 2,0 – sobretudo Estratégia, Tecnologia e Liderança. Precisa de roadmap transversal e quick-wins de engagement.",
-                    diagnosis: "Maturidade N2-/N1: iniciar por estrutura mínima de planeamento, HRIS básico e programa-piloto de liderança."
+                    scores: [1.9, 1.8, 2.5, 2.2, 1.7, 1.5, 2.1, 2.6],
+                    average: 2.04
                 }
             ]
         };
@@ -2665,27 +1726,6 @@
             userResponsesClean[`${dimensionIndex}_${questionIndex}`] = value;
         }
 
-        function updateProgressClean() {
-            const progress = ((currentDimensionClean + 1) / surveyData.dimensions.length) * 100;
-            const progressBar = document.getElementById('progressBarClean');
-            progressBar.style.width = `${progress}%`;
-        }
-
-        function updateNavigationButtonsClean() {
-            const prevBtn = document.getElementById('prevBtnClean');
-            const nextBtn = document.getElementById('nextBtnClean');
-            
-            prevBtn.disabled = currentDimensionClean === 0;
-            
-            if (currentDimensionClean === surveyData.dimensions.length - 1) {
-                nextBtn.innerHTML = '<i class="fas fa-chart-line"></i> Ver Resultados';
-                nextBtn.onclick = finishSurveyClean;
-            } else {
-                nextBtn.innerHTML = 'Próxima <i class="fas fa-arrow-right"></i>';
-                nextBtn.onclick = nextDimensionClean;
-            }
-        }
-
         function previousDimensionClean() {
             if (currentDimensionClean > 0) {
                 currentDimensionClean--;
@@ -2700,7 +1740,7 @@
             }
         }
 
-        function finishSurveyClean() {
+        function finalizeSurveyClean() {
             calculateScoresClean();
             
             const diagnosticModal = bootstrap.Modal.getInstance(document.getElementById('diagnosticModalClean'));
