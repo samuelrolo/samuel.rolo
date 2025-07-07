@@ -22,7 +22,11 @@
     <!-- Chart.js para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- CSS Corrigido -->
     <style>
+        /* CORREÇÃO ESPECÍFICA PARA PROBLEMAS DE MODAL - Share2Inspire Website */
+
+        /* ===== Base Styles ===== */
         :root {
             --primary-color: #bf9a33;
             --secondary-color: #333333;
@@ -456,7 +460,7 @@
         .diagnostic-badge {
             display: inline-block;
             background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: white;
+            color: var(--white);
             padding: 0.75rem 2rem;
             border-radius: 50px;
             font-size: 0.9rem;
@@ -493,7 +497,7 @@
         }
         
         .feature-card-modern {
-            background: white;
+            background: var(--white);
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 3rem 2rem;
@@ -541,7 +545,7 @@
         
         .feature-card-modern:hover .feature-icon-modern {
             background: var(--primary-color);
-            color: white;
+            color: var(--white);
             transform: scale(1.1);
         }
         
@@ -580,7 +584,6 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             cursor: pointer;
-            border: none;
         }
         
         .hero-cta-modern:hover {
@@ -601,9 +604,9 @@
             gap: 0.5rem;
         }
 
-        /* ===== MODAIS CORRIGIDOS ===== */
+        /* ===== CORREÇÃO PRINCIPAL: Z-INDEX E INTERATIVIDADE DOS MODAIS ===== */
 
-        /* Modal backdrop */
+        /* Modal backdrop - garantir z-index correto */
         .modal {
             z-index: 1055 !important;
             position: fixed !important;
@@ -623,7 +626,7 @@
             pointer-events: auto !important;
         }
 
-        /* Modal dialog */
+        /* Modal dialog - garantir posicionamento correto */
         .modal-dialog {
             position: relative !important;
             z-index: 1056 !important;
@@ -636,7 +639,7 @@
             max-width: 95% !important;
         }
 
-        /* Modal content */
+        /* Modal content - estrutura flexbox corrigida */
         .modal-content {
             background: white !important;
             border-radius: 16px !important;
@@ -650,10 +653,9 @@
             overflow: hidden !important;
             pointer-events: auto !important;
             z-index: 1057 !important;
-            border: none !important;
         }
 
-        /* Modal header */
+        /* Modal header - fixo no topo */
         .modal-header {
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
             color: white !important;
@@ -664,7 +666,6 @@
             position: relative !important;
             z-index: 1058 !important;
             pointer-events: auto !important;
-            border-bottom: none !important;
         }
 
         .modal-title {
@@ -675,15 +676,9 @@
             pointer-events: auto !important;
         }
 
-        .modal-subtitle {
-            margin: 0.5rem 0 0 0 !important;
-            opacity: 0.9 !important;
-            font-size: 1rem !important;
-            color: white !important;
-        }
-
-        /* Botão de fechar */
-        .btn-close {
+        /* Botão de fechar - garantir clicabilidade */
+        .btn-close,
+        .close {
             position: absolute !important;
             top: 1rem !important;
             right: 1.5rem !important;
@@ -701,20 +696,13 @@
             transition: all 0.3s ease !important;
             z-index: 1059 !important;
             pointer-events: auto !important;
-            opacity: 1 !important;
         }
 
-        .btn-close:hover {
+        .btn-close:hover,
+        .close:hover {
             background: rgba(255, 255, 255, 0.3) !important;
             transform: rotate(90deg) !important;
             color: white !important;
-            opacity: 1 !important;
-        }
-
-        .btn-close::before {
-            content: "×" !important;
-            font-size: 1.5rem !important;
-            line-height: 1 !important;
         }
 
         /* Progress container */
@@ -748,7 +736,7 @@
             font-weight: 500 !important;
         }
 
-        /* Modal body */
+        /* Modal body - SCROLL FUNCIONAL GARANTIDO */
         .modal-body {
             padding: 20px !important;
             flex-grow: 1 !important;
@@ -763,7 +751,7 @@
             z-index: 1057 !important;
         }
 
-        /* Barra de scroll */
+        /* Barra de scroll visível e estilizada */
         .modal-body::-webkit-scrollbar {
             width: 12px !important;
         }
@@ -782,7 +770,7 @@
             background: #a57b0a !important;
         }
 
-        /* Question cards */
+        /* Question cards - garantir interatividade */
         .question-card {
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
             border-radius: 16px !important;
@@ -805,18 +793,7 @@
             pointer-events: auto !important;
         }
 
-        .question-item {
-            margin-bottom: 2rem !important;
-        }
-
-        .question-text {
-            font-size: 1rem !important;
-            color: #495057 !important;
-            margin-bottom: 1.5rem !important;
-            line-height: 1.6 !important;
-        }
-
-        /* Rating options */
+        /* Rating options - GARANTIR CLICABILIDADE */
         .rating-container {
             display: flex !important;
             gap: 0.75rem !important;
@@ -899,7 +876,7 @@
             box-shadow: 0 4px 15px rgba(191, 154, 51, 0.3) !important;
         }
 
-        /* Maturity levels */
+        /* Maturity levels section */
         .maturity-levels {
             background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
             border-radius: 16px !important;
@@ -951,7 +928,7 @@
             font-size: 0.95rem !important;
         }
 
-        /* Modal navigation */
+        /* Modal navigation - fixo na base */
         .modal-navigation {
             background: white !important;
             padding: 15px 20px !important;
@@ -968,7 +945,7 @@
             pointer-events: auto !important;
         }
 
-        /* Botões de navegação */
+        /* Botões de navegação - GARANTIR CLICABILIDADE */
         .btn-nav {
             padding: 0.75rem 2rem !important;
             border: none !important;
@@ -1012,95 +989,6 @@
             transform: none !important;
             pointer-events: none !important;
         }
-
-        /* Estilos para resultados */
-        .results-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .score-card {
-            background: linear-gradient(135deg, #bf9a33, #d4af37);
-            color: white;
-            padding: 2rem;
-            border-radius: 16px;
-            margin-bottom: 2rem;
-        }
-
-        .score-value {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .score-label {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
-        .chart-card {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            margin-bottom: 2rem;
-            height: 400px;
-        }
-
-        .comparison-table {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
-
-        .recommendations-card {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            margin-bottom: 2rem;
-        }
-
-        .recommendation-item {
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid #bf9a33;
-        }
-
-        .cta-card {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border-radius: 16px;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .btn-consultation {
-            background: #bf9a33;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-consultation:hover {
-            background: #a57b0a;
-            color: white;
-            text-decoration: none;
-            transform: translateY(-2px);
-        }
-
-        .score-high { color: #28a745; font-weight: 600; }
-        .score-medium { color: #ffc107; font-weight: 600; }
-        .score-low { color: #dc3545; font-weight: 600; }
 
         /* Footer */
         footer {
@@ -1175,49 +1063,7 @@
             text-decoration: underline;
         }
 
-        /* Feedback button */
-        .feedback-btn {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            background-color: #BF9A33;
-            color: #212529;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 20px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
-            z-index: 50;
-        }
-        
-        .feedback-btn:hover {
-            background-color: #a57b0a;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Rating stars para feedback */
-        .rating {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-        
-        .star {
-            font-size: 24px;
-            cursor: pointer;
-            color: #ddd;
-            transition: color 0.2s;
-        }
-        
-        .star:hover,
-        .star.active {
-            color: #BF9A33;
-        }
-
-        /* Garantir que elementos fora do modal não interfiram */
+        /* Garantir que outros elementos não bloqueiem o modal */
         body.modal-open {
             overflow: hidden !important;
         }
@@ -1227,6 +1073,7 @@
             overflow-y: auto !important;
         }
 
+        /* Garantir que elementos fora do modal não interfiram */
         body.modal-open > *:not(.modal) {
             pointer-events: none !important;
         }
@@ -1526,7 +1373,7 @@
                     <span class="title-highlight">Maturidade de RH</span>
                 </h2>
                 <p class="section-subtitle-modern">
-                    Avalie o nível de maturidade dos processos de Recursos Humanos da sua organização através de um questionário especializado baseado em 8 dimensões fundamentais.
+                    Avalie o nível de maturidade dos processos de Recursos Humanos da sua organização através de um questionário especializado baseado em 10 dimensões fundamentais.
                 </p>
             </div>
 
@@ -1537,7 +1384,7 @@
                     </div>
                     <h3 class="feature-title-modern">Avaliação em 8 dimensões críticas</h3>
                     <p class="feature-description-modern">
-                        Análise completa de processos fundamentais desde alinhamento estratégico até remuneração e benefícios.
+                        Análise completa de processos fundamentais desde alinhamento estratégico até compliance e ESG.
                     </p>
                 </div>
 
@@ -1575,7 +1422,7 @@
         </div>
     </section>
 
-    <!-- Modal do Diagnóstico -->
+    <!-- Modal do Diagnóstico Corrigido -->
     <div class="modal fade modal-clean" id="diagnosticModalClean" tabindex="-1" aria-labelledby="diagnosticModalCleanLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -1583,7 +1430,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="diagnosticModalCleanLabel">Diagnóstico de Maturidade de RH</h5>
                     <p class="modal-subtitle">Avalie o nível de desenvolvimento dos seus processos de Recursos Humanos</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
                 </div>
 
                 <!-- Progress Bar -->
@@ -1641,7 +1488,7 @@
         </div>
     </div>
 
-    <!-- Modal de Resultados -->
+    <!-- Results Modal Clean -->
     <div class="modal fade modal-clean" id="resultsModalClean" tabindex="-1" aria-labelledby="resultsModalCleanLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -1649,7 +1496,7 @@
                     <h5 class="modal-title" id="resultsModalCleanLabel">
                         Resultados do Diagnóstico
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div id="resultsContentClean">
@@ -1687,59 +1534,10 @@
         </div>
     </footer>
 
-    <!-- Botão de Feedback -->
-    <button id="feedbackBtn" class="feedback-btn" data-bs-toggle="modal" data-bs-target="#feedbackModal">
-        <i class="fas fa-comment"></i> Feedback
-    </button>
-
-    <!-- Modal de Feedback -->
-    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="feedbackModalLabel">Deixe o seu Feedback</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="feedbackForm">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nome *</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="rating" class="form-label">Avaliação *</label>
-                            <input type="hidden" id="rating" name="rating" value="0">
-                            <div class="rating">
-                                <span class="star" data-value="1"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="2"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="3"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="4"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="5"><i class="far fa-star"></i></span>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="feedbackMessage" class="form-label">Mensagem *</label>
-                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3" required></textarea>
-                        </div>
-                        <div id="feedbackFormMessage"></div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" form="feedbackForm" class="btn btn-primary">Enviar Feedback</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- JavaScript do Diagnóstico -->
+    <!-- JavaScript do Diagnóstico de RH Clean -->
     <script>
         // Dados do Survey de Maturidade de RH
         const surveyData = {
@@ -1825,42 +1623,27 @@
                 {
                     name: "Survey 1",
                     scores: [3.4, 2.1, 4.7, 3.0, 2.5, 1.8, 3.6, 4.0],
-                    average: 3.14,
-                    strengths: "Recrutamento (4,7) e Remuneração (4,0) já no patamar de excelência. Cultura razoavelmente sólida (3,6).",
-                    improvements: "Liderança & Sucessão (1,8) é o principal calcanhar de Aquiles. Tecnologia (2,1) e Desempenho (2,5) requerem sistemas e métricas.",
-                    diagnosis: "Maturidade N3: consistente, mas precisa profissionalizar liderança e analytics para dar o salto."
+                    average: 3.14
                 },
                 {
                     name: "Survey 2", 
                     scores: [4.2, 3.2, 5.0, 3.5, 3.0, 2.4, 4.1, 4.5],
-                    average: 3.74,
-                    strengths: "Marca empregadora (5,0) é referência. Estratégia (4,2), Cultura (4,1) e Benefícios (4,5) já em nível avançado.",
-                    improvements: "Liderança & Sucessão mantém-se abaixo da fasquia (2,4).",
-                    diagnosis: "Maturidade N4: RH avançado; priorizar sucessão e coaching executivo para chegar ao N5."
+                    average: 3.74
                 },
                 {
                     name: "Survey 3",
                     scores: [2.8, 2.6, 3.9, 2.7, 2.0, 2.1, 3.0, 2.8],
-                    average: 2.74,
-                    strengths: "Aquisição de Talentos razoável (3,9) para o contexto. Cultura no limiar (3,0).",
-                    improvements: "Desempenho (2,0), Liderança (2,1) e Remuneração (2,8) necessitam processos básicos. Tecnologia ainda embrionária (2,6).",
-                    diagnosis: "Maturidade N2: foco em construir fundações de processo, governance e feedback contínuo."
+                    average: 2.74
                 },
                 {
                     name: "Survey 4",
                     scores: [3.9, 3.7, 4.6, 3.4, 3.1, 2.9, 3.8, 4.2],
-                    average: 3.70,
-                    strengths: "Talentos (4,6), Benefícios (4,2) e Cultura (3,8) em nível elevado. Tecnologia (3,7) já em consolidação.",
-                    improvements: "Liderança (2,9) continua intermédia; falta pipeline robusto.",
-                    diagnosis: "Maturidade N4: estrutura sólida; sucessão e gestão de performance impediram ainda o salto final ao N5."
+                    average: 3.70
                 },
                 {
                     name: "Survey 5",
                     scores: [1.9, 1.8, 2.5, 2.2, 1.7, 1.5, 2.1, 2.6],
-                    average: 2.04,
-                    strengths: "Benefícios é o indicador 'menos baixo' (2,6).",
-                    improvements: "Quase todas as áreas ≤ 2,0 – sobretudo Estratégia, Tecnologia e Liderança. Precisa de roadmap transversal e quick-wins de engagement.",
-                    diagnosis: "Maturidade N2-/N1: iniciar por estrutura mínima de planeamento, HRIS básico e programa-piloto de liderança."
+                    average: 2.04
                 }
             ]
         };
@@ -1873,7 +1656,6 @@
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
             initializeSurveyClean();
-            initializeFeedbackStars();
         });
 
         function initializeSurveyClean() {
@@ -1893,8 +1675,8 @@
             
             dimension.questions.forEach((question, qIndex) => {
                 html += `
-                    <div class="question-item">
-                        <div class="question-text">${question}</div>
+                    <div class="question-item" style="margin-bottom: 2rem;">
+                        <div class="question-text" style="font-size: 1rem; color: #495057; margin-bottom: 1.5rem; line-height: 1.6;">${question}</div>
                         <div class="rating-container">
                 `;
                 
@@ -1996,7 +1778,7 @@
             let html = `
                 <div class="results-header">
                     <div class="score-card">
-                        <h3>Pontuação Global</h3>
+                        <h3 style="font-size: 1.3rem; margin-bottom: 1rem; opacity: 0.9;">Pontuação Global</h3>
                         <div class="score-value">${userAverage.toFixed(2)}</div>
                         <div class="score-label">Nível de Maturidade: ${getMaturityLevel(userAverage)}</div>
                     </div>
@@ -2005,33 +1787,33 @@
                 <div class="row">
                     <div class="col-lg-8">
                         <div class="chart-card">
-                            <h4>Pontuação por Dimensão</h4>
+                            <h4 style="color: var(--dark-color); font-weight: 600; margin-bottom: 2rem;">Pontuação por Dimensão</h4>
                             <canvas id="dimensionsChartClean" width="400" height="200"></canvas>
                         </div>
                     </div>
                     <div class="col-lg-4">
                         <div class="chart-card">
-                            <h4>Interpretação</h4>
-                            <p>${getMaturityDescription(userAverage)}</p>
+                            <h4 style="color: var(--dark-color); font-weight: 600; margin-bottom: 1.5rem;">Interpretação</h4>
+                            <p style="color: var(--text-light); line-height: 1.6;">${getMaturityDescription(userAverage)}</p>
                         </div>
                     </div>
                 </div>
                 
                 <div class="comparison-table">
                     <div style="padding: 1.5rem 1.5rem 0;">
-                        <h4>Comparação com Outros Surveys</h4>
+                        <h4 style="color: var(--dark-color); font-weight: 600; margin-bottom: 0;">Comparação com Outros Surveys</h4>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Dimensão</th>
-                                    <th class="text-center">Seu Score</th>
-                                    <th class="text-center">Survey 1</th>
-                                    <th class="text-center">Survey 2</th>
-                                    <th class="text-center">Survey 3</th>
-                                    <th class="text-center">Survey 4</th>
-                                    <th class="text-center">Survey 5</th>
+                                    <th style="color: var(--dark-color); font-weight: 600;">Dimensão</th>
+                                    <th style="color: var(--dark-color); font-weight: 600; text-align: center;">Seu Score</th>
+                                    <th style="color: var(--dark-color); font-weight: 600; text-align: center;">Survey 1</th>
+                                    <th style="color: var(--dark-color); font-weight: 600; text-align: center;">Survey 2</th>
+                                    <th style="color: var(--dark-color); font-weight: 600; text-align: center;">Survey 3</th>
+                                    <th style="color: var(--dark-color); font-weight: 600; text-align: center;">Survey 4</th>
+                                    <th style="color: var(--dark-color); font-weight: 600; text-align: center;">Survey 5</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -2040,7 +1822,7 @@
             surveyData.dimensions.forEach((dimension, index) => {
                 html += `
                     <tr>
-                        <td>${dimension.title}</td>
+                        <td style="font-weight: 500; color: var(--dark-color);">${dimension.title}</td>
                         <td class="text-center ${getScoreClass(userScoresClean[index])}">${userScoresClean[index].toFixed(1)}</td>
                 `;
                 
@@ -2052,13 +1834,13 @@
             });
             
             html += `
-                                <tr style="background: #f8f9fa; font-weight: 600;">
-                                    <td>Média Global</td>
-                                    <td class="text-center">${userAverage.toFixed(2)}</td>
+                                <tr style="background: var(--gray-50); font-weight: 600;">
+                                    <td style="color: var(--dark-color);">Média Global</td>
+                                    <td class="text-center" style="color: var(--dark-color);">${userAverage.toFixed(2)}</td>
             `;
             
             dummySurveys.surveys.forEach(survey => {
-                html += `<td class="text-center">${survey.average.toFixed(2)}</td>`;
+                html += `<td class="text-center" style="color: var(--dark-color);">${survey.average.toFixed(2)}</td>`;
             });
             
             html += `
@@ -2069,13 +1851,13 @@
                 </div>
                 
                 <div class="recommendations-card">
-                    <h4>Recomendações Personalizadas</h4>
+                    <h4 style="color: var(--dark-color); font-weight: 600; margin-bottom: 2rem;">Recomendações Personalizadas</h4>
                     ${generateRecommendations(userScoresClean)}
                 </div>
                 
                 <div class="cta-card">
-                    <h4>Quer aprofundar estes resultados?</h4>
-                    <p>Crie um plano de ação personalizado com a nossa consultoria especializada.</p>
+                    <h4 style="color: var(--dark-color); font-weight: 600; margin-bottom: 1.5rem;">Quer aprofundar estes resultados?</h4>
+                    <p style="color: var(--text-light); margin-bottom: 2rem;">Crie um plano de ação personalizado com a nossa consultoria especializada.</p>
                     <a href="#" class="btn-consultation" onclick="redirectToConsultationClean()">
                         <i class="fas fa-handshake"></i>
                         Solicitar Consultoria
@@ -2106,14 +1888,14 @@
                     datasets: [{
                         label: 'Sua Organização',
                         data: userScoresClean,
-                        borderColor: '#bf9a33',
+                        borderColor: 'var(--primary-color)',
                         backgroundColor: 'rgba(191, 154, 51, 0.1)',
-                        pointBackgroundColor: '#bf9a33',
+                        pointBackgroundColor: 'var(--primary-color)',
                         pointBorderColor: '#fff',
                         pointBorderWidth: 3,
                         pointRadius: 6,
                         pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#bf9a33',
+                        pointHoverBorderColor: 'var(--primary-color)',
                         pointHoverRadius: 8,
                         borderWidth: 2
                     }]
@@ -2127,20 +1909,20 @@
                             max: 5,
                             ticks: {
                                 stepSize: 1,
-                                color: '#6c757d',
+                                color: 'var(--text-light)',
                                 font: {
                                     size: 11,
                                     weight: '500'
                                 }
                             },
                             grid: {
-                                color: '#dee2e6'
+                                color: 'var(--gray-200)'
                             },
                             angleLines: {
-                                color: '#dee2e6'
+                                color: 'var(--gray-200)'
                             },
                             pointLabels: {
-                                color: '#212529',
+                                color: 'var(--dark-color)',
                                 font: {
                                     size: 10,
                                     weight: '500'
@@ -2235,52 +2017,6 @@
             setTimeout(() => {
                 window.location.href = 'pages/servicos.html#consultoria';
             }, 500);
-        }
-
-        // Feedback stars functionality
-        function initializeFeedbackStars() {
-            const stars = document.querySelectorAll('.star');
-            const ratingInput = document.getElementById('rating');
-            
-            stars.forEach((star, index) => {
-                star.addEventListener('click', () => {
-                    const rating = index + 1;
-                    ratingInput.value = rating;
-                    
-                    stars.forEach((s, i) => {
-                        if (i < rating) {
-                            s.classList.add('active');
-                            s.innerHTML = '<i class="fas fa-star"></i>';
-                        } else {
-                            s.classList.remove('active');
-                            s.innerHTML = '<i class="far fa-star"></i>';
-                        }
-                    });
-                });
-                
-                star.addEventListener('mouseover', () => {
-                    const rating = index + 1;
-                    
-                    stars.forEach((s, i) => {
-                        if (i < rating) {
-                            s.innerHTML = '<i class="fas fa-star"></i>';
-                        } else {
-                            s.innerHTML = '<i class="far fa-star"></i>';
-                        }
-                    });
-                });
-            });
-            
-            const feedbackModal = document.getElementById('feedbackModal');
-            feedbackModal.addEventListener('hidden.bs.modal', () => {
-                // Reset form
-                document.getElementById('feedbackForm').reset();
-                ratingInput.value = 0;
-                stars.forEach(star => {
-                    star.classList.remove('active');
-                    star.innerHTML = '<i class="far fa-star"></i>';
-                });
-            });
         }
     </script>
 </body>
