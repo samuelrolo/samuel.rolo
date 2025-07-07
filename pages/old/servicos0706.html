@@ -284,7 +284,7 @@
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="../index.html">
-                    <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img" style="height: 40px;">
+                    <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -307,7 +307,7 @@
                             <a class="nav-link" href="people-hub.html">People Hub</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Contactos</a>
+                            <a class="nav-link" href="../index.html#contactos">Contatos</a>
                         </li>
                     </ul>
                 </div>
@@ -710,78 +710,6 @@
         </div>
     </div>
 
-    <!-- Modal de Contacto -->
-    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="contactForm">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="contactName" class="form-label">Nome *</label>
-                                <input type="text" class="form-control" id="contactName" name="name" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="contactReason" class="form-label">Motivo *</label>
-                                <select class="form-select" id="contactReason" name="reason" required>
-                                    <option value="">Selecione um motivo</option>
-                                    <option value="cookies">Política de Cookies</option>
-                                    <option value="privacidade">Privacidade</option>
-                                    <option value="consultoria">Consultoria</option>
-                                    <option value="coaching">Coaching Executivo</option>
-                                    <option value="formacao">Formação</option>
-                                    <option value="palestras">Palestras</option>
-                                    <option value="parcerias">Parcerias</option>
-                                    <option value="media">Media</option>
-                                    <option value="outro">Outro</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="contactEmail" class="form-label">Email *</label>
-                                <input type="email" class="form-control" id="contactEmail" name="email" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="contactPhone" class="form-label">Número de Telefone</label>
-                                <input type="tel" class="form-control" id="contactPhone" name="phone" placeholder="912345678">
-                                <div class="form-text">Formato: 9 dígitos sem espaços</div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contactSubject" class="form-label">Assunto *</label>
-                            <input type="text" class="form-control" id="contactSubject" name="subject" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contactMessage" class="form-label">Mensagem *</label>
-                            <textarea class="form-control" id="contactMessage" name="message" rows="4" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contactAttachment" class="form-label">Anexo (opcional)</label>
-                            <input type="file" class="form-control" id="contactAttachment" name="attachment" accept=".pdf,.doc,.docx,.jpg,.png">
-                            <div class="form-text">Formatos aceites: PDF, DOC, DOCX, JPG, PNG (máx. 5MB)</div>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="contactPrivacy" name="privacy" required>
-                            <label class="form-check-label" for="contactPrivacy">
-                                Li e aceito a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *
-                            </label>
-                        </div>
-                        <div id="contactFormMessage"></div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" form="contactForm" class="btn btn-primary">Enviar Mensagem</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -854,21 +782,6 @@
                     }
                 });
             }
-        });
-
-        // Formulário de contacto
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const messageDiv = document.getElementById('contactFormMessage');
-            messageDiv.innerHTML = '<div class="alert alert-success">Mensagem enviada com sucesso! Entraremos em contacto brevemente.</div>';
-            
-            setTimeout(() => {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
-                modal.hide();
-                this.reset();
-                messageDiv.innerHTML = '';
-            }, 2000);
         });
     </script>
 </body>
