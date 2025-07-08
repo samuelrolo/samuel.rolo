@@ -2,7 +2,6 @@
  * Integração Ifthenpay - Share2Inspire - CORRIGIDO
  * URLs CORRIGIDAS com /api/ - Junho 2025
  * Implementação completa: MB WAY, Multibanco, Payshop
- * CORREÇÃO: Acesso correto às propriedades da resposta
  */
 
 // Configuração global da integração Ifthenpay
@@ -79,9 +78,7 @@ window.ifthenpayIntegration = {
                         mobileNumber: payload.mobileNumber,
                         status: 'pending',
                         method: 'mbway',
-                        // CORREÇÃO: Aceder às propriedades diretamente da resposta
-                        requestId: response.requestId,
-                        transactionId: response.transaction_id
+                        ...response.data
                     }
                 };
             } else {
@@ -116,7 +113,6 @@ window.ifthenpayIntegration = {
 
         try {
             const response = await this.callBackendEndpoint('multibanco', payload);
-            console.log('📥 Resposta Multibanco:', response);
             
             if (response.success) {
                 return {
@@ -125,13 +121,11 @@ window.ifthenpayIntegration = {
                     data: {
                         orderId: payload.orderId,
                         amount: payload.amount,
-                        // CORREÇÃO: Aceder às propriedades diretamente da resposta
-                        entity: response.entity,
-                        reference: response.reference,
-                        status: response.status || 'pending',
+                        entity: response.data.entity,
+                        reference: response.data.reference,
+                        status: 'pending',
                         method: 'multibanco',
-                        requestId: response.requestId,
-                        orderIdResponse: response.orderId
+                        ...response.data
                     }
                 };
             } else {
@@ -174,12 +168,11 @@ window.ifthenpayIntegration = {
                     data: {
                         orderId: payload.orderId,
                         amount: payload.amount,
-                        // CORREÇÃO: Aceder às propriedades diretamente da resposta
-                        reference: response.reference,
-                        validade: response.validade,
+                        reference: response.data.reference,
+                        validade: response.data.validade,
                         status: 'pending',
                         method: 'payshop',
-                        requestId: response.requestId
+                        ...response.data
                     }
                 };
             } else {
@@ -216,9 +209,7 @@ window.ifthenpayIntegration = {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const result = await response.json();
-        console.log(`📥 Resposta ${method}:`, result);
-        return result;
+        return await response.json();
     },
 
     /**
