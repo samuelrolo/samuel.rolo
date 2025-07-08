@@ -1,16 +1,13 @@
 /**
- * Integração Ifthenpay - Share2Inspire - VERSÃO FINAL CORRIGIDA
- * TODAS AS CORREÇÕES IMPLEMENTADAS:
- * - Acesso correto às propriedades da resposta (entity, reference)
- * - Tratamento de erros melhorado
- * - Logs detalhados para debug
- * - Validações robustas
- * - Formatação correta de dados
+ * Integração Ifthenpay - Share2Inspire - CORRIGIDO
+ * URLs CORRIGIDAS com /api/ - Junho 2025
+ * Implementação completa: MB WAY, Multibanco, Payshop
+ * CORREÇÃO: Acesso correto às propriedades da resposta
  */
 
 // Configuração global da integração Ifthenpay
 window.ifthenpayIntegration = {
-    // URLs do backend
+    // URLs CORRIGIDAS para usar o backend como proxy com /api/
     endpoints: {
         mbway: 'https://share2inspire-beckend.lm.r.appspot.com/api/ifthenpay/mbway',
         multibanco: 'https://share2inspire-beckend.lm.r.appspot.com/api/ifthenpay/multibanco',
@@ -19,13 +16,14 @@ window.ifthenpayIntegration = {
         health: 'https://share2inspire-beckend.lm.r.appspot.com/api/ifthenpay/health'
     },
 
+    // Backend URL corrigida
     backendUrl: 'https://share2inspire-beckend.lm.r.appspot.com',
 
     /**
      * Processar pagamento conforme método selecionado
      */
     async processPayment(method, paymentData) {
-        console.log(`💳 [IFTHENPAY] Processando pagamento ${method.toUpperCase()}:`, paymentData);
+        console.log(`💳 Processando pagamento ${method.toUpperCase()}:`, paymentData);
         
         try {
             // Validar dados básicos
@@ -42,7 +40,7 @@ window.ifthenpayIntegration = {
                     throw new Error(`Método de pagamento não suportado: ${method}`);
             }
         } catch (error) {
-            console.error(`❌ [IFTHENPAY] Erro no pagamento ${method}:`, error);
+            console.error(`❌ Erro no pagamento ${method}:`, error);
             return {
                 success: false,
                 message: `Erro no processamento ${method}: ${error.message}`
@@ -51,10 +49,10 @@ window.ifthenpayIntegration = {
     },
 
     /**
-     * Processar pagamento MB WAY - CORRIGIDO
+     * Processar pagamento MB WAY
      */
     async processMbWayPayment(data) {
-        console.log('📱 [MB WAY] Processando pagamento...');
+        console.log('📱 Processando MB WAY...');
         
         // Preparar payload para o backend
         const payload = {
@@ -66,11 +64,10 @@ window.ifthenpayIntegration = {
             description: data.description || 'Pagamento Share2Inspire'
         };
 
-        console.log('📤 [MB WAY] Payload:', payload);
+        console.log('📤 Payload MB WAY:', payload);
 
         try {
             const response = await this.callBackendEndpoint('mbway', payload);
-            console.log('📥 [MB WAY] Resposta completa:', response);
             
             if (response.success) {
                 return {
@@ -80,11 +77,11 @@ window.ifthenpayIntegration = {
                         orderId: payload.orderId,
                         amount: payload.amount,
                         mobileNumber: payload.mobileNumber,
-                        status: response.status || 'pending',
+                        status: 'pending',
                         method: 'mbway',
                         // CORREÇÃO: Aceder às propriedades diretamente da resposta
                         requestId: response.requestId,
-                        transactionId: response.requestId
+                        transactionId: response.transaction_id
                     }
                 };
             } else {
@@ -92,7 +89,7 @@ window.ifthenpayIntegration = {
             }
 
         } catch (error) {
-            console.error('❌ [MB WAY] Erro:', error);
+            console.error('❌ Erro MB WAY:', error);
             return {
                 success: false,
                 message: `Erro MB WAY: ${error.message}`
@@ -101,10 +98,10 @@ window.ifthenpayIntegration = {
     },
 
     /**
-     * Processar pagamento Multibanco - CORRIGIDO
+     * Processar pagamento Multibanco
      */
     async processMultibancoPayment(data) {
-        console.log('🏧 [MULTIBANCO] Processando pagamento...');
+        console.log('🏧 Processando Multibanco...');
         
         // Preparar payload para o backend
         const payload = {
@@ -115,19 +112,13 @@ window.ifthenpayIntegration = {
             description: data.description || 'Pagamento Share2Inspire'
         };
 
-        console.log('📤 [MULTIBANCO] Payload:', payload);
+        console.log('📤 Payload Multibanco:', payload);
 
         try {
             const response = await this.callBackendEndpoint('multibanco', payload);
-            console.log('📥 [MULTIBANCO] Resposta completa:', response);
+            console.log('📥 Resposta Multibanco:', response);
             
             if (response.success) {
-                // CORREÇÃO PRINCIPAL: Verificar se entity e reference existem
-                if (!response.entity || !response.reference) {
-                    console.error('❌ [MULTIBANCO] Resposta sem entity/reference:', response);
-                    throw new Error('Resposta inválida do servidor - dados de pagamento em falta');
-                }
-
                 return {
                     success: true,
                     message: response.message || 'Referência Multibanco gerada com sucesso',
@@ -148,7 +139,7 @@ window.ifthenpayIntegration = {
             }
 
         } catch (error) {
-            console.error('❌ [MULTIBANCO] Erro:', error);
+            console.error('❌ Erro Multibanco:', error);
             return {
                 success: false,
                 message: `Erro Multibanco: ${error.message}`
@@ -157,10 +148,10 @@ window.ifthenpayIntegration = {
     },
 
     /**
-     * Processar pagamento Payshop - CORRIGIDO
+     * Processar pagamento Payshop
      */
     async processPayshopPayment(data) {
-        console.log('🏪 [PAYSHOP] Processando pagamento...');
+        console.log('🏪 Processando Payshop...');
         
         // Preparar payload para o backend
         const payload = {
@@ -171,11 +162,10 @@ window.ifthenpayIntegration = {
             description: data.description || 'Pagamento Share2Inspire'
         };
 
-        console.log('📤 [PAYSHOP] Payload:', payload);
+        console.log('📤 Payload Payshop:', payload);
 
         try {
             const response = await this.callBackendEndpoint('payshop', payload);
-            console.log('📥 [PAYSHOP] Resposta completa:', response);
             
             if (response.success) {
                 return {
@@ -197,7 +187,7 @@ window.ifthenpayIntegration = {
             }
 
         } catch (error) {
-            console.error('❌ [PAYSHOP] Erro:', error);
+            console.error('❌ Erro Payshop:', error);
             return {
                 success: false,
                 message: `Erro Payshop: ${error.message}`
@@ -206,40 +196,29 @@ window.ifthenpayIntegration = {
     },
 
     /**
-     * Chamar endpoint do backend - MELHORADO
+     * Chamar endpoint do backend
      */
     async callBackendEndpoint(method, payload) {
         const url = this.endpoints[method];
         
-        console.log(`🔗 [${method.toUpperCase()}] Chamando: ${url}`);
-        console.log(`📤 [${method.toUpperCase()}] Dados enviados:`, payload);
+        console.log(`🔗 Chamando: ${url}`);
         
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            });
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
 
-            console.log(`📡 [${method.toUpperCase()}] Status HTTP: ${response.status}`);
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error(`❌ [${method.toUpperCase()}] Erro HTTP ${response.status}:`, errorText);
-                throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
-            }
-
-            const result = await response.json();
-            console.log(`📥 [${method.toUpperCase()}] Resposta JSON:`, result);
-            return result;
-
-        } catch (error) {
-            console.error(`❌ [${method.toUpperCase()}] Erro na chamada:`, error);
-            throw error;
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+
+        const result = await response.json();
+        console.log(`📥 Resposta ${method}:`, result);
+        return result;
     },
 
     /**
@@ -250,11 +229,11 @@ window.ifthenpayIntegration = {
             const response = await fetch(this.endpoints.health);
             const result = await response.json();
             
-            console.log('🏥 [HEALTH] Status Ifthenpay:', result);
+            console.log('🏥 Status Ifthenpay:', result);
             return result;
             
         } catch (error) {
-            console.error('❌ [HEALTH] Erro no health check:', error);
+            console.error('❌ Erro no health check:', error);
             return {
                 service: 'ifthenpay',
                 status: 'unhealthy',
@@ -264,11 +243,9 @@ window.ifthenpayIntegration = {
     },
 
     /**
-     * Validar dados de pagamento - MELHORADO
+     * Validar dados de pagamento
      */
     validatePaymentData(data, method) {
-        console.log(`🔍 [VALIDATION] Validando dados para ${method}:`, data);
-
         // Validações comuns
         if (!data.amount || parseFloat(data.amount) <= 0) {
             throw new Error('Valor inválido ou em falta');
@@ -294,7 +271,6 @@ window.ifthenpayIntegration = {
             }
         }
 
-        console.log('✅ [VALIDATION] Dados válidos');
         return true;
     },
 
@@ -317,32 +293,22 @@ window.ifthenpayIntegration = {
     },
 
     /**
-     * Formatar número de telemóvel - MELHORADO
+     * Formatar número de telemóvel
      */
     formatMobileNumber(phone) {
         if (!phone) return '';
         
-        console.log(`📱 [FORMAT] Formatando telefone: ${phone}`);
-        
         // Remover todos os caracteres não numéricos
         const cleaned = phone.replace(/\D/g, '');
-        console.log(`📱 [FORMAT] Telefone limpo: ${cleaned}`);
-        
-        let formatted;
         
         // Adicionar código do país se necessário
         if (cleaned.startsWith('351')) {
-            formatted = cleaned;
+            return cleaned;
         } else if (cleaned.startsWith('9') && cleaned.length === 9) {
-            formatted = `351${cleaned}`;
-        } else if (cleaned.length === 9) {
-            formatted = `351${cleaned}`;
+            return `351${cleaned}`;
         } else {
-            formatted = `351${cleaned}`;
+            return `351${cleaned}`;
         }
-        
-        console.log(`📱 [FORMAT] Telefone formatado: ${formatted}`);
-        return formatted;
     },
 
     /**
@@ -374,10 +340,13 @@ window.ifthenpayIntegration = {
      * Processar callback de pagamento (para uso futuro)
      */
     handlePaymentCallback(callbackData) {
-        console.log('📞 [CALLBACK] Callback recebido:', callbackData);
+        console.log('📞 Callback recebido:', callbackData);
+        
+        // Aqui pode implementar lógica para processar callbacks
+        // Por exemplo, atualizar UI, enviar confirmações, etc.
         
         if (callbackData.status === 'paid') {
-            console.log('✅ [CALLBACK] Pagamento confirmado!');
+            console.log('✅ Pagamento confirmado!');
             // Disparar evento personalizado
             window.dispatchEvent(new CustomEvent('paymentConfirmed', {
                 detail: callbackData
@@ -388,14 +357,15 @@ window.ifthenpayIntegration = {
 
 // Event listeners para callbacks de pagamento
 window.addEventListener('paymentConfirmed', function(event) {
-    console.log('🎉 [EVENT] Pagamento confirmado via callback:', event.detail);
+    console.log('🎉 Pagamento confirmado via callback:', event.detail);
+    // Aqui pode adicionar lógica para mostrar mensagem de sucesso, redirecionar, etc.
 });
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 [INIT] Ifthenpay Integration - VERSÃO FINAL CORRIGIDA - Carregada');
-    console.log('💳 [INIT] Métodos suportados: MB WAY, Multibanco, Payshop');
-    console.log('🔗 [INIT] Backend URL:', window.ifthenpayIntegration.backendUrl);
+    console.log('🚀 Ifthenpay Integration - URLs CORRIGIDAS - Carregada');
+    console.log('💳 Métodos suportados: MB WAY, Multibanco, Payshop');
+    console.log('🔗 Backend URL:', window.ifthenpayIntegration.backendUrl);
     
     // Verificar status de saúde do serviço
     window.ifthenpayIntegration.checkHealth();
