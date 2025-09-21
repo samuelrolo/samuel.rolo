@@ -3,35 +3,520 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S H A R E 2 I N S P I R E    |    S A M U E L     R O L O</title>
-    <meta name="description" content="Consultoria e coaching por Samuel Rolo. Desenvolvimento humano, transformação organizacional e liderança consciente.">
-    <meta name="keywords" content="consultoria, coaching, transformação organizacional, gestão da mudança, liderança consciente, desenvolvimento humano, cultura organizacional, comunicação estratégica, recursos humanos, Samuel Rolo, share2inspire, ebook gestão da mudança, futuro do trabalho, HR Innovation Hub, desenvolvimento de talento, coaching para líderes, palestras, keynote speaker, RH Portugal, liderança empática">
+    <title>HR Hub | Share2Inspire | Samuel Rolo</title>
+    <meta name="description" content="HR Innovation Hub - Newsletter e recursos para profissionais de RH por Samuel Rolo.">
     
     <!-- Favicon -->
-    <link rel="icon" href="images/logo.png" type="image/png">
+    <link rel="icon" href="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/favicon.png" type="image/png">
     
     <!-- Bootstrap CSS -->
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    
-    
-    <!-- Chart.js para gráficos -->
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="../css/main_inline_styles.css">
+    
+    <!-- Swiper CSS para o slider -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        /* Estilos específicos para HR Hub */
+        :root {
+            --primary-color: #bf9a33; /* Dourado principal */
+            --secondary-color: #333333; /* Cinza escuro */
+            --accent-color: #a57b0a; /* Dourado suave */
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --text-color: #333333;
+            --text-light: #6c757d;
+            --border-color: #dee2e6;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff;
+            color: var(--text-color);
+        }
+        
+        .page-header {
+            background-color: #212529;
+            color: #fff;
+            padding: 6rem 0 3rem;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+        
+        .page-header h1 {
+            color: var(--primary-color);
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+        
+        .page-header .breadcrumb {
+            background-color: transparent;
+        }
+        
+        .page-header .breadcrumb-item a {
+            color: var(--primary-color);
+        }
+        
+        .page-header .breadcrumb-item.active {
+            color: #fff;
+        }
+        
+        .newsletter-content {
+            padding: 2rem 0 5rem;
+        }
+        
+        .section-title {
+            color: var(--dark-color);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            text-align: center;
+        }
+        
+        .section-subtitle {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        /* Estatísticas */
+        .newsletter-stats {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 4rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        /* Artigo em Destaque */
+        .featured-article {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 4rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .featured-article:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .featured-image {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .featured-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .featured-article:hover .featured-image img {
+            transform: scale(1.05);
+        }
+        
+        .featured-content {
+            padding: 2rem;
+        }
+        
+        .featured-content h4 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+        
+        .article-date {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .article-summary {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        /* Artigos Recentes - Slider */
+        .articles-slider-container {
+            position: relative;
+            padding: 0 1rem;
+            margin-bottom: 4rem;
+        }
+        
+        .swiper-container {
+            padding: 1rem 0.5rem 3rem;
+        }
+        
+        .article-card {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .article-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .article-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .article-card:hover .article-image img {
+            transform: scale(1.05);
+        }
+        
+        .article-content {
+            padding: 1.5rem;
+        }
+        
+        .article-content h5 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+            min-height: 3rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* Controles do Slider */
+        .swiper-button-next, .swiper-button-prev {
+            color: var(--primary-color);
+            background-color: rgba(255, 255, 255, 0.8);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .swiper-button-next:after, .swiper-button-prev:after {
+            font-size: 1.2rem;
+        }
+        
+        .swiper-pagination-bullet-active {
+            background-color: var(--primary-color);
+        }
+        
+        /* Formulário de Subscrição */
+        .subscription-section {
+            background-color: #212529;
+            padding: 4rem 0;
+            margin-top: 3rem;
+            color: #fff;
+            text-align: center;
+        }
+        
+        .subscription-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .subscription-section p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .btn-subscribe {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+            border: 2px solid var(--primary-color);
+        }
+        
+        .btn-subscribe:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #fff;
+            transform: translateY(-3px);
+        }
+        
+        /* Botão Ler Artigo Completo */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--dark-color);
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #fff;
+        }
+        
+        .btn-outline-primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
+        
+        /* Header e Navegação */
+        .header {
+            padding-top: 100px; /* Espaço para a navbar fixa */
+        }
+        
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand img {
+            height: 50px;
+        }
+        
+        .navbar-nav .nav-link {
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            position: relative;
+        }
+        
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--primary-color);
+        }
+        
+        .navbar-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 1rem;
+            right: 1rem;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #212529;
+            color: #fff;
+            padding: 20px 0;
+        }
+        
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .footer-left p {
+            margin: 0;
+            color: #BF9A33;
+        }
+        
+        .footer-right {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .footer-contact p {
+            margin: 0;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        
+        .footer-contact i {
+            color: #BF9A33;
+            margin-right: 8px;
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .footer-social a {
+            color: #BF9A33;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+        
+        .footer-social a:hover {
+            color: #fff;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
+        
+        .footer-links a {
+            color: #BF9A33;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 991px) {
+            .featured-image {
+                height: 300px;
+                margin-bottom: 1rem;
+            }
+            
+            .featured-content {
+                padding: 1.5rem;
+            }
+            
+            .featured-content h4 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 5rem 0 2rem;
+            }
+            
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .footer-right {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .footer-social {
+                justify-content: center;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .featured-content h4 {
+                font-size: 1.3rem;
+            }
+            
+            .article-image {
+                height: 180px;
+            }
+        }
+    </style>
 </head>
-
 <body>
     <!-- Google tag (gtag.js) -->
-    
-    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-8GQ1KM9FQS');
+    </script>
     
     <!-- Header e Navegação -->
     <header class="header">
@@ -230,10 +715,10 @@
     </footer>
 
     <!-- Bootstrap JS -->
-    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Swiper JS para o slider -->
-    
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     
     <!-- Script para carregar dinamicamente o conteúdo da newsletter -->
     <script>
@@ -415,7 +900,5 @@
             loadNewsletterContent();
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/main.js"></script>
 </body>
 </html>
