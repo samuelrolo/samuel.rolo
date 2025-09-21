@@ -1,1608 +1,567 @@
-<!DOCTYPE html>
-<html lang="pt-PT">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sobre | Samuel Rolo</title>
-    <meta name="description" content="Samuel Rolo - Especialista em transformação organizacional e desenvolvimento humano.">
-    
-    <!-- Favicon -->
-    <link rel="icon" href="../images/favicon.png" type="image/png">
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../css/style.css">
-    
-    <style>
-        /* Reset e Base */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+<html>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   People Hub | Share2Inspire | Samuel Rolo
+  </title>
+  <meta content="Explore o People Hub da Share2Inspire para insights, tendências e ferramentas para profissionais de Recursos Humanos e líderes organizacionais. Mantenha-se atualizado com as últimas novidades em gestão de pessoas." name="description"/>
+  <meta content="People Hub, Recursos Humanos, HR, gestão de pessoas, tendências RH, liderança organizacional, Share2Inspire, Samuel Rolo" name="keywords"/>
+  <meta content="Samuel Rolo" name="author"/>
+  <!-- Open Graph / Facebook -->
+  <meta content="website" property="og:type"/>
+  <meta content="https://share2inspire.pt/pages/people-hub.html" property="og:url"/>
+  <meta content="People Hub | Share2Inspire | Samuel Rolo" property="og:title"/>
+  <meta content="Explore o People Hub da Share2Inspire para insights, tendências e ferramentas para profissionais de Recursos Humanos e líderes organizacionais. Mantenha-se atualizado com as últimas novidades em gestão de pessoas." property="og:description"/>
+  <meta content="https://share2inspire.pt/images/people-hub-og.jpg" property="og:image"/>
+  <!-- Twitter -->
+  <meta content="summary_large_image" property="twitter:card"/>
+  <meta content="https://share2inspire.pt/pages/people-hub.html" property="twitter:url"/>
+  <meta content="People Hub | Share2Inspire | Samuel Rolo" property="twitter:title"/>
+  <meta content="Explore o People Hub da Share2Inspire para insights, tendências e ferramentas para profissionais de Recursos Humanos e líderes organizacionais. Mantenha-se atualizado com as últimas novidades em gestão de pessoas." property="twitter:description"/>
+  <meta content="https://share2inspire.pt/images/people-hub-og.jpg" property="twitter:image"/>
+  <!-- Favicon -->
+  <link href="../images/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+  <link href="../images/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
+  <link href="../images/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+  <link href="../images/site.webmanifest" rel="manifest"/>
+  <link color="#5bbad5" href="../images/safari-pinned-tab.svg" rel="mask-icon"/>
+  <meta content="#da532c" name="msapplication-TileColor"/>
+  <meta content="#ffffff" name="theme-color"/>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Custom CSS -->
+  <link href="../css/style.css" rel="stylesheet"/>
+  <link href="../css/people-hub.css" rel="stylesheet"/>
+  <link href="../css/main_inline_styles.css" rel="stylesheet"/>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&amp;family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
+  <!-- Animate.css -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet"/>
+  <!-- AOS - Animate On Scroll -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
+  <!-- Custom JS for AOS initialization -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js">
+  </script>
+  <script>
+   AOS.init();
+  </script>
+  <style>
+   /* Estilos específicos para People Hub */
+        .people-hub-hero {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 80px 0;
+            text-align: center;
+            border-bottom: 1px solid #dee2e6;
         }
-        
-        :root {
-            --gold: #bf9a33;
-            --gold-light: #d4b55a;
-            --gold-dark: #a08428;
-            --charcoal: #1a1a1a;
-            --gray-50: #fafafa;
-            --gray-100: #f5f5f5;
-            --gray-200: #e5e5e5;
-            --gray-300: #d1d5db;
-            --gray-400: #a1a1aa;
-            --gray-600: #52525b;
-            --gray-800: #27272a;
-            --white: #ffffff;
-            --blue: #3b82f6;
-            --green: #10b981;
-            --purple: #8b5cf6;
-            --orange: #f59e0b;
-            --red: #ef4444;
+
+        .people-hub-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #343a40;
+            margin-bottom: 20px;
         }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.7;
-            color: var(--charcoal);
-            background-color: var(--white);
-            font-weight: 300;
-            font-size: 16px;
-        }
-        
-        /* Tipografia */
-        .serif {
-            font-family: 'Playfair Display', serif;
-        }
-        
-        h1 {
-            font-size: clamp(3rem, 6vw, 4.5rem);
-            font-weight: 600;
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-            color: var(--charcoal);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        h2 {
-            font-size: clamp(2rem, 4vw, 2.75rem);
-            font-weight: 600;
-            line-height: 1.2;
-            letter-spacing: -0.01em;
-            margin-bottom: 2rem;
-            color: var(--charcoal);
-            position: relative;
-        }
-        
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(90deg, var(--gold), var(--gold-light));
-            border-radius: 2px;
-        }
-        
-        h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            line-height: 1.3;
-            margin-bottom: 1rem;
-            color: var(--charcoal);
-        }
-        
-        p {
-            margin-bottom: 1.5rem;
-            color: var(--gray-600);
-            line-height: 1.8;
-        }
-        
-        .large-text {
+
+        .people-hub-hero p {
             font-size: 1.25rem;
-            line-height: 1.8;
-            font-weight: 400;
-        }
-        
-        .small-text {
-            font-size: 0.875rem;
-            color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        
-        /* Layout */
-        .container {
+            color: #6c757d;
             max-width: 800px;
-            margin: 0 auto;
-            padding: 0 2rem;
+            margin: 0 auto 30px;
         }
-        
-        .wide-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
+
+        .stats-section {
+            padding: 60px 0;
+            background-color: #f8f9fa;
         }
-        
-        .section {
-            padding: clamp(5rem, 10vw, 10rem) 0;
-            position: relative;
-        }
-        
-        .section-sm {
-            padding: clamp(4rem, 8vw, 8rem) 0;
-            position: relative;
-        }
-        
-        /* Background Graphics */
-        .section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(191, 154, 51, 0.03) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.02) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
-        }
-        
-        .section > * {
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* Hero */
-        .hero {
-            min-height: 100vh;
+
+        .stat-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+            height: 100%;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            text-align: center;
-            background: linear-gradient(135deg, var(--white) 0%, var(--gray-50) 100%);
-            padding-top: 120px;
-            position: relative;
-            overflow: hidden;
         }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 30% 20%, rgba(191, 154, 51, 0.08) 0%, transparent 60%),
-                radial-gradient(circle at 70% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 60%);
-            pointer-events: none;
+
+        .stat-card:hover {
+            transform: translateY(-5px);
         }
-        
-        .hero-content {
-            max-width: 700px;
-            position: relative;
-            z-index: 2;
+
+        .stat-card h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 10px;
         }
-        
-        .hero .small-text {
-            margin-bottom: 1.5rem;
+
+        .stat-card p {
             font-size: 1rem;
-            color: var(--gold);
-            font-weight: 600;
+            color: #6c757d;
+            margin-bottom: 0;
         }
-        
-        .hero h1 {
-            margin-bottom: 2.5rem;
-            background: linear-gradient(135deg, var(--charcoal) 0%, var(--gray-800) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+
+        .featured-article-section {
+            padding: 80px 0;
+            background-color: #fff;
         }
-        
-        .hero .large-text {
-            margin-bottom: 3rem;
-            color: var(--gray-600);
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+
+        .featured-article-card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
-        
-        /* Achievements */
-        .achievements {
-            background: linear-gradient(135deg, var(--charcoal) 0%, #2d2d2d 100%);
-            color: var(--white);
-            position: relative;
-            overflow: hidden;
+
+        .featured-article-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 20px;
         }
-        
-        .achievements::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(191, 154, 51, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(191, 154, 51, 0.05) 0%, transparent 50%);
-            pointer-events: none;
+
+        .featured-article-card h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #343a40;
+            margin-bottom: 15px;
         }
-        
-        .achievements h2 {
-            color: var(--white);
+
+        .featured-article-card p {
+            font-size: 1rem;
+            color: #6c757d;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .featured-article-card .btn {
+            margin-top: 20px;
+            align-self: flex-start;
+        }
+
+        .report-section {
+            padding: 80px 0;
+            background-color: #e9ecef;
+        }
+
+        .report-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .report-card h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #343a40;
+            margin-bottom: 15px;
+        }
+
+        .report-card p {
+            font-size: 1rem;
+            color: #6c757d;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .report-card .btn {
+            margin-top: 20px;
+            align-self: flex-start;
+        }
+
+        .cta-section {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: #fff;
+            padding: 80px 0;
             text-align: center;
-            margin-bottom: 1rem;
         }
-        
-        .achievements h2::after {
-            background: linear-gradient(90deg, var(--gold), var(--gold-light));
-        }
-        
-        .achievements-subtitle {
-            text-align: center;
-            color: var(--gray-300);
-            margin-bottom: 4rem;
-            font-size: 1.1rem;
-        }
-        
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        
-        .achievement {
-            text-align: center;
-            padding: 2.5rem 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s ease;
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .achievement::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(191, 154, 51, 0.1) 0%, transparent 100%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        
-        .achievement:hover::before {
-            opacity: 1;
-        }
-        
-        .achievement:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-        
-        .achievement-rank {
+
+        .cta-section h2 {
             font-size: 3rem;
             font-weight: 700;
-            color: var(--gold);
-            line-height: 1;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
+            margin-bottom: 20px;
         }
-        
-        .achievement-category {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--white);
-            margin-bottom: 0.75rem;
-            line-height: 1.4;
-            position: relative;
-            z-index: 1;
+
+        .cta-section p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
         }
-        
-        .achievement-platform {
-            font-size: 0.8rem;
-            color: var(--gray-300);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            position: relative;
-            z-index: 1;
+
+        .cta-section .btn {
+            background-color: #fff;
+            color: #007bff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        
-        /* Content Sections */
-        .content-section {
-            border-bottom: 1px solid var(--gray-200);
+
+        .cta-section .btn:hover {
+            background-color: #e2e6ea;
+            color: #0056b3;
         }
-        
-        .content-section:last-child {
+
+        /* Estilos para o breadcrumb */
+        .breadcrumb-section {
+            background-color: #f8f9fa;
+            padding: 20px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .breadcrumb-section .breadcrumb {
+            margin-bottom: 0;
+        }
+
+        .breadcrumb-section .breadcrumb-item a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .breadcrumb-section .breadcrumb-item.active {
+            color: #6c757d;
+        }
+
+        /* Estilos para o formulário de contacto no modal */
+        #contactModal .modal-content {
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        #contactModal .modal-header {
+            background-color: #007bff;
+            color: #fff;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
             border-bottom: none;
         }
-        
-        .content-section:nth-child(even) {
-            background: linear-gradient(135deg, var(--gray-50) 0%, #f8fafc 100%);
+
+        #contactModal .modal-header .btn-close {
+            filter: invert(1);
         }
-        
-        /* About Section Styling */
-        .about-content {
-            max-width: 800px;
-            margin: 0 auto;
+
+        #contactModal .modal-title {
+            font-weight: 700;
         }
-        
-        .about-intro {
-            font-size: 1.3rem;
-            line-height: 1.8;
-            color: var(--gray-700);
-            margin-bottom: 3rem;
-            text-align: center;
-            font-weight: 400;
+
+        #contactModal .form-label {
+            font-weight: 700;
+            color: #343a40;
         }
-        
-        .about-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 2rem;
+
+        #contactModal .form-control, #contactModal .form-select {
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            padding: 10px;
         }
-        
-        .highlight-text {
-            color: var(--gold);
-            font-weight: 600;
+
+        #contactModal .form-control:focus, #contactModal .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
         }
-        
-        /* Quote Styling */
-        .quote {
-            font-style: italic;
-            font-size: 1.5rem;
-            color: var(--gray-700);
-            text-align: center;
-            margin: 4rem 0;
-            padding: 3rem 2rem;
-            background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
-            border-radius: 20px;
-            border-left: 4px solid var(--gold);
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+
+        #contactModal .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            font-weight: 700;
+            border-radius: 5px;
+            padding: 10px 20px;
         }
-        
-        .quote::before {
-            content: '"';
-            font-size: 4rem;
-            color: var(--gold);
-            position: absolute;
-            top: 1rem;
-            left: 2rem;
-            font-family: 'Playfair Display', serif;
-            opacity: 0.3;
+
+        #contactModal .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
         }
-        
-        /* Skills Grid */
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2.5rem;
-            margin-top: 4rem;
+
+        #contactModal .btn-secondary {
+            border-radius: 5px;
+            padding: 10px 20px;
         }
-        
-        .skill {
-            padding: 2.5rem;
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: 20px;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        }
-        
-        .skill::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        
-        .skill:hover::before {
-            opacity: 0.03;
-        }
-        
-        .skill:hover {
-            border-color: var(--gold);
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(191, 154, 51, 0.15);
-        }
-        
-        .skill-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 2rem;
-            color: var(--white);
-            font-size: 1.5rem;
-            position: relative;
-            z-index: 1;
-            box-shadow: 0 8px 20px rgba(191, 154, 51, 0.3);
-        }
-        
-        .skill h3 {
-            color: var(--charcoal);
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .skill p {
-            color: var(--gray-600);
-            line-height: 1.7;
-            margin-bottom: 0;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* Skill Icons Colors */
-        .skill:nth-child(1) .skill-icon { background: linear-gradient(135deg, var(--blue) 0%, #60a5fa 100%); }
-        .skill:nth-child(2) .skill-icon { background: linear-gradient(135deg, var(--green) 0%, #34d399 100%); }
-        .skill:nth-child(3) .skill-icon { background: linear-gradient(135deg, var(--purple) 0%, #a78bfa 100%); }
-        .skill:nth-child(4) .skill-icon { background: linear-gradient(135deg, var(--orange) 0%, #fbbf24 100%); }
-        .skill:nth-child(5) .skill-icon { background: linear-gradient(135deg, var(--red) 0%, #f87171 100%); }
-        .skill:nth-child(6) .skill-icon { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); }
-        
-        /* Certifications */
-        .certifications-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2.5rem;
-            margin-top: 4rem;
-        }
-        
-        .certification {
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: 20px;
-            padding: 2.5rem;
-            text-align: center;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        }
-        
-        .certification::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        
-        .certification:hover::before {
-            opacity: 0.03;
-        }
-        
-        .certification:hover {
-            border-color: var(--gold);
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(191, 154, 51, 0.15);
-        }
-        
-        .certification-logo {
-            height: 70px;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .certification-logo i {
-            font-size: 3rem;
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .certification h4 {
-            color: var(--charcoal);
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
-            font-size: 1.1rem;
-        }
-        
-        .certification-issuer {
-            color: var(--gray-600);
-            margin-bottom: 0.5rem;
-            position: relative;
-            z-index: 1;
-            font-size: 0.9rem;
-        }
-        
-        .certification-date {
-            color: var(--gold);
-            font-weight: 600;
-            position: relative;
-            z-index: 1;
-            font-size: 0.85rem;
-        }
-        
-        /* Timeline */
-        .timeline {
-            position: relative;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem 0;
-        }
-        
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: linear-gradient(180deg, var(--gold) 0%, var(--gold-light) 100%);
-            transform: translateX(-50%);
-            border-radius: 2px;
-        }
-        
-        .timeline-item {
-            position: relative;
-            margin-bottom: 4rem;
-            width: 100%;
-        }
-        
-        .timeline-item:last-child {
-            margin-bottom: 0;
-        }
-        
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 2rem;
-            width: 20px;
-            height: 20px;
-            background: var(--gold);
-            border: 4px solid var(--white);
-            border-radius: 50%;
-            transform: translateX(-50%);
-            z-index: 2;
-            box-shadow: 0 4px 12px rgba(191, 154, 51, 0.3);
-        }
-        
-        .timeline-content {
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: 16px;
-            padding: 2.5rem;
-            position: relative;
-            width: calc(50% - 2rem);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            transition: all 0.4s ease;
-        }
-        
-        .timeline-content:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
-        }
-        
-        .timeline-item:nth-child(odd) .timeline-content {
-            left: 0;
-        }
-        
-        .timeline-item:nth-child(even) .timeline-content {
-            left: calc(50% + 2rem);
-        }
-        
-        .timeline-content::before {
-            content: '';
-            position: absolute;
-            top: 2rem;
-            width: 0;
-            height: 0;
-            border: 12px solid transparent;
-        }
-        
-        .timeline-item:nth-child(odd) .timeline-content::before {
-            right: -24px;
-            border-left-color: var(--white);
-        }
-        
-        .timeline-item:nth-child(even) .timeline-content::before {
-            left: -24px;
-            border-right-color: var(--white);
-        }
-        
-        .timeline-date {
+
+        #contactModal .form-text {
             font-size: 0.875rem;
-            color: var(--gold);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 1rem;
+            color: #6c757d;
         }
-        
-        .timeline-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--charcoal);
-            margin-bottom: 0.5rem;
-            line-height: 1.3;
+
+        #contactModal .alert {
+            margin-top: 15px;
         }
-        
-        .timeline-company {
-            font-size: 1rem;
-            color: var(--gray-600);
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-        
-        .timeline-description {
-            color: var(--gray-600);
-            line-height: 1.7;
-            margin-bottom: 0;
-        }
-        
-        /* Testimonials Section */
-        .testimonials-section {
-            background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
-            padding: 5rem 0;
-        }
-        
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: var(--charcoal);
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-        
-        .section-subtitle {
-            font-size: 1.1rem;
-            color: var(--gray-600);
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .testimonial-item {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 3rem;
-            margin: 0 1rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--gray-200);
-        }
-        
-        .testimonial-content p {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: var(--gray-700);
-            margin-bottom: 2rem;
-            font-style: italic;
-        }
-        
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .testimonial-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--gold);
-        }
-        
-        .testimonial-author h4 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--charcoal);
-            margin-bottom: 0.25rem;
-        }
-        
-        .testimonial-author p {
-            font-size: 0.9rem;
-            color: var(--gray-600);
-            margin: 0;
-        }
-        
-        .carousel-control-prev,
-        .carousel-control-next {
-            width: 50px;
-            height: 50px;
-            background: var(--gold);
-            border-radius: 50%;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0.8;
-            transition: all 0.3s ease;
-        }
-        
-        .carousel-control-prev:hover,
-        .carousel-control-next:hover {
-            opacity: 1;
-            background: var(--gold-dark);
-        }
-        
-        .carousel-control-prev {
-            left: -25px;
-        }
-        
-        .carousel-control-next {
-            right: -25px;
-        }
-        
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            width: 20px;
-            height: 20px;
-        }
-        
-        .carousel-indicators {
-            bottom: -50px;
-        }
-        
-        .carousel-indicators button {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--gray-300);
-            border: none;
-            margin: 0 5px;
-        }
-        
-        .carousel-indicators button.active {
-            background: var(--gold);
-        }
-        
-        /* Navigation */
-        .navbar {
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--gray-200);
-            padding: 1rem 0;
-            transition: all 0.3s ease;
-        }
-        
-        .navbar-brand img {
-            height: 40px;
-            transition: all 0.3s ease;
-        }
-        
-        .navbar-nav .nav-link {
-            color: var(--charcoal);
-            font-weight: 500;
-            padding: 0.75rem 1.25rem;
-            margin: 0 0.25rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .navbar-nav .nav-link:hover {
-            color: var(--gold);
-            background: rgba(191, 154, 51, 0.1);
-        }
-        
-        .navbar-nav .nav-link.active {
-            color: var(--gold);
-            background: rgba(191, 154, 51, 0.1);
-        }
-        
-        /* Footer */
-        footer {
-            background: linear-gradient(135deg, var(--charcoal) 0%, #2d2d2d 100%);
-            color: var(--white);
-            padding: 3rem 0 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(191, 154, 51, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(191, 154, 51, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-        }
-        
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .footer-left p {
-            margin: 0;
-            color: var(--gold);
-            font-weight: 500;
-        }
-        
-        .footer-right {
-            display: flex;
-            gap: 3rem;
-            align-items: center;
-        }
-        
-        .footer-contact p {
-            margin: 0 0 0.5rem;
-            color: var(--white);
-            font-size: 0.9rem;
-        }
-        
-        .footer-contact i {
-            color: var(--gold);
-            margin-right: 0.5rem;
-            width: 16px;
-        }
-        
-        .footer-social {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .footer-social a {
-            color: var(--gold);
-            font-size: 1.25rem;
-            transition: all 0.3s ease;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: rgba(191, 154, 51, 0.1);
-        }
-        
-        .footer-social a:hover {
-            color: var(--white);
-            background: var(--gold);
-            transform: translateY(-2px);
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 2rem;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .footer-links a {
-            color: var(--gold);
-            font-size: 0.9rem;
+
+        #contactModal .form-check-label a {
+            color: #007bff;
             text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 500;
         }
-        
-        .footer-links a:hover {
-            color: var(--white);
+
+        #contactModal .form-check-label a:hover {
             text-decoration: underline;
         }
-        
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .container {
-                padding: 0 1.5rem;
-            }
-            
-            .wide-container {
-                padding: 0 1.5rem;
-            }
-            
-            .timeline::before {
-                left: 2rem;
-            }
-            
-            .timeline-item::before {
-                left: 2rem;
-            }
-            
-            .timeline-content {
-                width: calc(100% - 4rem);
-                left: 4rem !important;
-            }
-            
-            .timeline-content::before {
-                left: -24px !important;
-                border-right-color: var(--white) !important;
-                border-left-color: transparent !important;
-            }
-            
-            .skills-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .certifications-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 2rem;
-            }
-            
-            .achievements-grid {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 1.5rem;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .hero {
-                padding-top: 100px;
-                min-height: 80vh;
-            }
-            
-            .section {
-                padding: clamp(3rem, 8vw, 6rem) 0;
-            }
-            
-            .section-sm {
-                padding: clamp(2.5rem, 6vw, 4rem) 0;
-            }
-            
-            .container {
-                padding: 0 1rem;
-            }
-            
-            .wide-container {
-                padding: 0 1rem;
-            }
-            
-            h1 {
-                font-size: clamp(2.5rem, 8vw, 3.5rem);
-            }
-            
-            h2 {
-                font-size: clamp(1.75rem, 6vw, 2.25rem);
-            }
-            
-            .timeline {
-                padding: 1rem 0;
-            }
-            
-            .timeline::before {
-                left: 1.5rem;
-            }
-            
-            .timeline-item::before {
-                left: 1.5rem;
-            }
-            
-            .timeline-content {
-                width: calc(100% - 3rem);
-                left: 3rem !important;
-                padding: 2rem;
-            }
-            
-            .timeline-content::before {
-                left: -24px !important;
-            }
-            
-            .skill {
-                padding: 2rem;
-            }
-            
-            .certification {
-                padding: 2rem;
-            }
-            
-            .achievement {
-                padding: 2rem 1rem;
-            }
-            
-            .testimonial-item {
-                padding: 2rem;
-                margin: 0 0.5rem;
-            }
-            
-            .carousel-control-prev,
-            .carousel-control-next {
-                display: none;
-            }
-            
-            .footer-container {
-                flex-direction: column;
-                text-align: center;
-                gap: 2rem;
-            }
-            
-            .footer-right {
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-            
-            .footer-social {
-                justify-content: center;
-            }
-            
-            .footer-links {
-                flex-direction: column;
-                align-items: center;
-                gap: 1rem;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .hero {
-                padding-top: 80px;
-            }
-            
-            .section {
-                padding: clamp(2.5rem, 6vw, 4rem) 0;
-            }
-            
-            .section-sm {
-                padding: clamp(2rem, 5vw, 3rem) 0;
-            }
-            
-            .timeline-content {
-                padding: 1.5rem;
-            }
-            
-            .skill {
-                padding: 1.5rem;
-            }
-            
-            .certification {
-                padding: 1.5rem;
-            }
-            
-            .achievement {
-                padding: 1.5rem 1rem;
-            }
-            
-            .testimonial-item {
-                padding: 1.5rem;
-            }
-            
-            .quote {
-                padding: 2rem 1.5rem;
-                margin: 3rem 0;
-            }
-            
-            .quote::before {
-                font-size: 3rem;
-                top: 0.5rem;
-                left: 1rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-8GQ1KM9FQS');
-    </script>
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="wide-container">
-            <a class="navbar-brand" href="../index.html">
-                <img src="../images/logo.png" alt="Share2Inspire Logo">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.html">Início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="sobre.html">Sobre o Fundador</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="servicos.html">Serviços</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="loja.html">Loja</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="people-hub.html">People Hub</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.html#contatos">Contactos</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <main>
-        <!-- Hero -->
-        <section class="hero">
-            <div class="container">
-                <div class="hero-content fade-in">
-                    <div class="small-text">FUNDADOR & CEO</div>
-                    <h1 class="serif">Samuel Rolo</h1>
-                    <p class="large-text">
-                        Especialista em transformação organizacional e desenvolvimento humano, 
-                        com mais de uma década de experiência em consultoria estratégica.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-       <!-- Achievements -->
-<section class="achievements section-sm">
-    <div class="wide-container">
-        <h2 class="serif">Reconhecimento Internacional</h2>
-        <p class="achievements-subtitle">
-            Posições de destaque em rankings globais de produtividade e crescimento pessoal - Favikon 2025
-        </p>
-        <div class="achievements-grid">
-            <div class="achievement slide-in-left">
-                <div class="achievement-rank">#1</div>
-                <div class="achievement-category">Healthy Lifestyle ⭐ Rising Star</div>
-                <div class="achievement-platform">LinkedIn • Portugal • 16.º Global</div>
-            </div>
-            <div class="achievement fade-in">
-                <div class="achievement-rank">#2</div>
-                <div class="achievement-category">Fitness & Personal Growth ⭐ Rising Star</div>
-                <div class="achievement-platform">LinkedIn • Portugal</div>
-            </div>
-            <div class="achievement fade-in">
-                <div class="achievement-rank">#2</div>
-                <div class="achievement-category">Productivity & Personal Growth ⭐ Rising Star</div>
-                <div class="achievement-platform">LinkedIn • 29.º Portugal • 102.º Global</div>
-            </div>
-            <div class="achievement fade-in">
-                <div class="achievement-rank">#2</div>
-                <div class="achievement-category">Technology & Innovation</div>
-                <div class="achievement-platform">LinkedIn • 10.º Portugal • 403.º Global</div>
-            </div>
-            <div class="achievement slide-in-right">
-                <div class="achievement-rank">#8</div>
-                <div class="achievement-category">IT & Tech</div>
-                <div class="achievement-platform">LinkedIn • 35.º Portugal • 2K Global</div>
-            </div>
-            <div class="achievement slide-in-right">
-                <div class="achievement-rank">#62</div>
-                <div class="achievement-category">Leaderboard Creators</div>
-                <div class="achievement-platform">LinkedIn • Top 2% Portugal • 10.9K Global</div>
-            </div>
-        </div>
+  </style>
+ </head>
+ <body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+   <div class="container">
+    <a class="navbar-brand" href="../index.html">
+     <img alt="Share2Inspire Logo" height="40" src="../images/logo.png"/>
+    </a>
+    <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
+     <span class="navbar-toggler-icon">
+     </span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+     <ul class="navbar-nav ms-auto">
+      <li class="nav-item">
+       <a class="nav-link" href="../index.html">
+        Início
+       </a>
+      </li>
+      <li class="nav-item">
+       <a aria-current="page" class="nav-link active" href="sobre.html">
+        Sobre o Fundador
+       </a>
+      </li>
+      <li class="nav-item">
+       <a class="nav-link" href="servicos.html">
+        Serviços
+       </a>
+      </li>
+      <li class="nav-item">
+       <a class="nav-link" href="loja.html">
+        Loja
+       </a>
+      </li>
+      <li class="nav-item">
+       <a class="nav-link" href="people-hub.html">
+        People Hub
+       </a>
+      </li>
+      <li class="nav-item">
+       <a class="nav-link" data-bs-target="#contactModal" data-bs-toggle="modal" href="#contactModal">
+        Contactos
+       </a>
+      </li>
+     </ul>
     </div>
-</section>
-
-        <!-- About -->
-        <section class="content-section section">
-            <div class="container">
-                <h2 class="serif">A Minha Trajectória</h2>
-                <div class="about-content">
-                    <div class="about-intro">
-                        A minha paixão pela <span class="highlight-text">transformação organizacional</span> nasceu da convicção de que as pessoas são o verdadeiro motor de qualquer mudança sustentável.
-                    </div>
-                    <p class="about-text">
-                        Ao longo dos anos, tenho dedicado a minha carreira a ajudar organizações e indivíduos a descobrirem o seu potencial máximo. Através da <span class="highlight-text">Share2Inspire</span>, combinamos metodologias comprovadas com uma abordagem humanizada, criando soluções personalizadas que geram resultados duradouros.
-                    </p>
-                    <p class="about-text">
-                        Acredito que o sucesso organizacional só é possível quando existe um alinhamento genuíno entre propósito, pessoas e processos. Esta filosofia tem orientado o meu trabalho e permitido transformar equipas, culturas e resultados em organizações de diversos sectores.
-                    </p>
-                    
-                    <div class="quote">
-                        "O verdadeiro líder não é aquele que tem seguidores, mas aquele que cria outros líderes."
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Skills -->
-        <section class="content-section section">
-            <div class="wide-container">
-                <h2 class="serif">Áreas de Especialização</h2>
-                <div class="skills-grid">
-                    <div class="skill">
-                        <div class="skill-icon">
-                            <i class="fas fa-sync-alt"></i>
-                        </div>
-                        <h3>Transformação Organizacional</h3>
-                        <p>Diagnóstico, planeamento e implementação de processos de transformação organizacional, com foco em resultados sustentáveis e alinhamento estratégico.</p>
-                    </div>
-                    <div class="skill">
-                        <div class="skill-icon">
-                            <i class="fas fa-cogs"></i>
-                        </div>
-                        <h3>Gestão da Mudança</h3>
-                        <p>Metodologias e ferramentas para facilitar processos de mudança, minimizar resistências e maximizar a adopção de novas formas de trabalhar.</p>
-                    </div>
-                    <div class="skill">
-                        <div class="skill-icon">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <h3>Coaching Executivo</h3>
-                        <p>Acompanhamento personalizado de líderes para potenciar o seu desenvolvimento, superar desafios e alcançar objectivos profissionais e pessoais.</p>
-                    </div>
-                    <div class="skill">
-                        <div class="skill-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <h3>Desenvolvimento de Liderança</h3>
-                        <p>Programas e intervenções para desenvolver competências de liderança adaptadas aos desafios actuais e futuros das organizações.</p>
-                    </div>
-                    <div class="skill">
-                        <div class="skill-icon">
-                            <i class="fas fa-laptop-code"></i>
-                        </div>
-                        <h3>Transformação Digital</h3>
-                        <p>Estratégias para integrar a tecnologia nos processos de negócio, com foco no factor humano e na adopção de novas ferramentas e mindsets.</p>
-                    </div>
-                    <div class="skill">
-                        <div class="skill-icon">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                        </div>
-                        <h3>Formação e Facilitação</h3>
-                        <p>Desenho e facilitação de workshops, formações e sessões de trabalho colaborativas para equipas e organizações.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Certifications -->
-        <section class="content-section section">
-            <div class="wide-container">
-                <h2 class="serif">Certificações & Formação</h2>
-                <div class="certifications-grid">
-                    <div class="certification">
-                        <div class="certification-logo">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <h4>Career Essentials in Generative AI</h4>
-                        <div class="certification-issuer">Microsoft & LinkedIn</div>
-                        <div class="certification-date">2023</div>
-                    </div>
-                    <div class="certification">
-                        <div class="certification-logo">
-                            <i class="fas fa-project-diagram"></i>
-                        </div>
-                        <h4>Professional Scrum Master™ I</h4>
-                        <div class="certification-issuer">Scrum.org</div>
-                        <div class="certification-date">2022</div>
-                    </div>
-                    <div class="certification">
-                        <div class="certification-logo">
-                            <i class="fab fa-aws"></i>
-                        </div>
-                        <h4>AWS Certified Cloud Practitioner</h4>
-                        <div class="certification-issuer">Amazon Web Services</div>
-                        <div class="certification-date">2022</div>
-                    </div>
-                    <div class="certification">
-                        <div class="certification-logo">
-                            <i class="fas fa-handshake"></i>
-                        </div>
-                        <h4>Negociação Avançada</h4>
-                        <div class="certification-issuer">Nova SBE</div>
-                        <div class="certification-date">2023</div>
-                    </div>
-                    <div class="certification">
-                        <div class="certification-logo">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <h4>AI & Business Strategy</h4>
-                        <div class="certification-issuer">Project Management Institute</div>
-                        <div class="certification-date">2023</div>
-                    </div>
-                    <div class="certification">
-                        <div class="certification-logo">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <h4>Coaching Employees</h4>
-                        <div class="certification-issuer">National Association of State Boards</div>
-                        <div class="certification-date">2023</div>
-                    </div>
-                    <div class="certification">
-                        <div class="certification-logo">
-                            <i class="fas fa-language"></i>
-                        </div>
-                        <h4>Go Fluente</h4>
-                        <div class="certification-issuer">goFLUENT</div>
-                        <div class="certification-date">2023</div>
-                    </div>
-                    <div class="certification">
-                        <div class="certification-logo">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <h4>Gestão de Recursos Humanos</h4>
-                        <div class="certification-issuer">ISCTE - Instituto Universitário</div>
-                        <div class="certification-date">2009-2012</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Timeline -->
-        <section class="content-section section">
-            <div class="container">
-                <h2 class="serif">Percurso Profissional</h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <div class="timeline-date">Maio 2025 - Presente</div>
-                            <h3 class="timeline-title">Fundador & CEO</h3>
-                            <div class="timeline-company">Share2Inspire</div>
-                            <p class="timeline-description">Criação e desenvolvimento da Share2Inspire, consultora especializada em transformação organizacional e desenvolvimento humano. Liderança de projectos de mudança em organizações de diversos sectores, com foco na criação de culturas de alto desempenho. Autor da newsletter HR Innovation HUB com mais de 1.300 subscritores.</p>
-                        </div>    
-                    </div>    
-                    
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <div class="timeline-date">Janeiro 2025 - Maio 2025</div>
-                            <h3 class="timeline-title">HR Transformation Team Leader</h3>
-                            <div class="timeline-company">BNP Paribas CIB</div>
-                            <p class="timeline-description">Liderança da transformação de RH através de iniciativas de digitalização, optimização de processos e implementação de estratégias de gestão da mudança para melhorar a eficiência, experiência dos colaboradores e adaptabilidade organizacional.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <div class="timeline-date">Setembro 2016 - Dezembro 2024</div>
-                            <h3 class="timeline-title">Senior Manager e Manager</h3>
-                            <div class="timeline-company">Deloitte</div>
-                            <p class="timeline-description">Liderança da equipa de Human Capital em Portugal na entrega de projectos e gestão de aspectos comerciais, incluindo implementação de HRIS, desenho de políticas e processos de RH, e gestão da mudança. Representação da Deloitte PT ao nível EMEA para Future of Work e Change.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <div class="timeline-date">Agosto 2015 - Setembro 2016</div>
-                            <h3 class="timeline-title">Senior Consultant</h3>
-                            <div class="timeline-company">Deloitte</div>
-                            <p class="timeline-description">Foco em desenho organizacional, levantamentos de processos de RH e suporte HRIS, desenvolvendo especialização no sector financeiro.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <div class="timeline-date">Janeiro 2015 - Agosto 2015</div>
-                            <h3 class="timeline-title">Senior Consultant</h3>
-                            <div class="timeline-company">EY</div>
-                            <p class="timeline-description">Gestão de projecto de transformação de RH no sector retalho, envolvendo desenho organizacional, levantamento de processos e definição de requisitos técnicos para o futuro ERP de RH em todas as geografias.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="timeline-item">
-                        <div class="timeline-content">
-                            <div class="timeline-date">Setembro 2012 - Dezembro 2014</div>
-                            <h3 class="timeline-title">Analyst e Consultant</h3>
-                            <div class="timeline-company">Deloitte</div>
-                            <p class="timeline-description">Projectos de consultoria para organizações de telecomunicações e retalho, incluindo animação de avaliações de desempenho e potencial, levantamento e desenho de processos, e definição de percursos formativos.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Testimonials Section -->
-        <section class="testimonials-section">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12 text-center">
-                        <h2 class="section-title">Recomendações</h2>
-                        <p class="section-subtitle">O que dizem sobre o trabalho do Samuel</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
-                                <div class="carousel-item active">
-                                    <div class="testimonial-item">
-                                        <div class="testimonial-content">
-                                            <p>"I had the pleasure of working with Samuel while he was Senior Consultant and Manager at Deloitte, and I can say that he is an exceptional professional. Samuel has a combination of technical and interpersonal skills that makes him a natural leader. During the time I supervised Samuel's work, he demonstrated an impressive ability to deal with complex projects, always keeping a clear focus on the results. His ability to meet customer needs and his commitment to excellence was a key to the projects success. Samuel also promotes a work environment that promotes his team professional growth. I recommend Samuel without hesitation, I know he will bring value to any team or project in which he is involved."</p>
-                                            <div class="testimonial-author">
-                                                <img src="../images/recommendations/Jose.png" alt="José Subtil" class="testimonial-avatar">
-                                                <div>
-                                                    <h4>José Subtil</h4>
-                                                    <p>Banking and Insurance Leader at Timestamp</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="carousel-item">
-                                    <div class="testimonial-item">
-                                        <div class="testimonial-content">
-                                            <p>"I had the plesure to work with Samuel during my last project at Deloitte. He is a dedicated professional that always goes above and beyond to make an impact that matters. Samuel does a remarkable job leading his teams while being commited and always available to help others. Moreover, he is extremely hard-working, determined and always challanges us to do our best. It was an honour learning from him!"</p>
-                                            <div class="testimonial-author">
-                                                <img src="../images/recommendations/Marta.png" alt="Marta Oliveira Dias" class="testimonial-avatar">
-                                                <div>
-                                                    <h4>Marta Oliveira Dias</h4>
-                                                    <p>Service Improvement Specialist @VodafoneZiggo</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="carousel-item">
-                                    <div class="testimonial-item">
-                                        <div class="testimonial-content">
-                                            <p>"I had the pleasure of working with Samuel in his first unofficial project as a senior consultant and was instantly impressed. Samuel effortlessly and expertly managed to juggle multiple issues in the toughest situation, his leadership and team building skills were exceptional, and I was very impressed by his consulting capabilities and willingness to coach new members. As a Senior Consultant, Samuel has my highest recommendation and I can safely say that I have learned a lot by working with him."</p>
-                                            <div class="testimonial-author">
-                                                <img src="../images/recommendations/Ricardo.png" alt="Ricardo Ramos da Silva" class="testimonial-avatar">
-                                                <div>
-                                                    <h4>Ricardo Ramos da Silva</h4>
-                                                    <p>Senior Manager | HRIT Senior Solution Architect | Senior Project Manager | Successfactors SME</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="carousel-item">
-                                    <div class="testimonial-item">
-                                        <div class="testimonial-content">
-                                            <p>"O Samuel é além de um profissional extremamente disponível e conhecedor da sua área de actuação, um ser humano ímpar. Procura congregar as ideias do grupo pra encontrar soluções que sejam sempre focadas em resultados. Foi um prazer imensurável trabalhar com o Samuel pois mais uma vez tive a certeza que vale mais trabalhar com boas pessoas do que com pessoas boas...."</p>
-                                            <div class="testimonial-author">
-                                                <img src="../images/recommendations/Ivo.png" alt="Ivo Guimarães" class="testimonial-avatar">
-                                                <div>
-                                                    <h4>Ivo Guimarães</h4>
-                                                    <p>Gestão de Talento | RH Analítico | Transformação Digital | SAP Success Factors | LMS</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="carousel-item">
-                                    <div class="testimonial-item">
-                                        <div class="testimonial-content">
-                                            <p>"O Samuel é sem dúvida um excelente profissional. Tive o privilégio de estudar com ele e desde cedo foi possível perceber a sua capacidade de liderança, a sua inteligência emocional e a sua capacidade de trabalho. Mais tarde, tive a oportunidade de trabalhar com ele e pude comprovar todas estas qualidades. O Samuel é um profissional extremamente dedicado, com uma capacidade de trabalho fora do comum e com uma visão estratégica que lhe permite antecipar problemas e encontrar soluções. É sem dúvida uma pessoa com quem gosto de trabalhar e que recomendo vivamente."</p>
-                                            <div class="testimonial-author">
-                                                <img src="../images/recommendations/joao_lince.png" alt="João Miguel Lince" class="testimonial-avatar">
-                                                <div>
-                                                    <h4>João Miguel Lince</h4>
-                                                    <p>Consultor de Recursos Humanos | Especialista em Gestão da Mudança | Formador</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="carousel-item">
-                                    <div class="testimonial-item">
-                                        <div class="testimonial-content">
-                                            <p>"I had the pleasure of working with Samuel to re-launch the human capital practice of Deloitte Portugal. Samuel has a very complete profile, combining soft skilss with technical ones. Demanding, he gives 100% of himself in everything he does, with enthusiasm and energy. Samuel is consistently and reliable, he is not afraid of tough situations, conflict solving and challenges."</p>
-                                            <div class="testimonial-author">
-                                                <img src="../images/recommendations/joana_russinho.png" alt="Joana Russinho" class="testimonial-avatar">
-                                                <div>
-                                                    <h4>Joana Russinho</h4>
-                                                    <p>Human Resources Leadership | Opinion Writer | Mentor, Nova SBE VOICE Leadership Initiative</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="carousel-item">
-                                    <div class="testimonial-item">
-                                        <div class="testimonial-content">
-                                            <p>"O Samuel é um excelente Consultor. Muito organizado e focado nos resultados, esforça-se imenso para entregar o melhor trabalho possível ao cliente. Por outro lado, tenta sempre explorar novas opções e novos conhecimentos, partilhando-os com quem trabalha com ele no seu dia-a-dia. Aprendi muito com o Samuel, e a sua ajuda permitiu-me abordar os desafios de um projecto de forma mais metódica e inovadora."</p>
-                                            <div class="testimonial-author">
-                                                <img src="../images/recommendations/margarida_melicias.png" alt="Margarida Melícias" class="testimonial-avatar">
-                                                <div>
-                                                    <h4>Margarida Melícias</h4>
-                                                    <p>People Sustainability Senior Manager at Jerónimo Martins</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="carousel-item">
-                                    <div class="testimonial-item">
-                                        <div class="testimonial-content">
-                                            <p>"Samuel has a strategic-oriented approach to his work, providing in depth analysis, innovative approaches and technically supported fundaments. I enjoyed working with Samuel and i would return to him for advisory and technical support regarding Human Resources theory. Mostly Samuel is organized, analytical, hardworking and a great spirit contributor for a team."</p>
-                                            <div class="testimonial-author">
-                                                <img src="../images/recommendations/joana_costa_pereira.png" alt="Joana Costa Pereira" class="testimonial-avatar">
-                                                <div>
-                                                    <h4>Joana Costa Pereira</h4>
-                                                    <p>Global Leadership Consulting, Senior Manager @ Boyden</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer id="contactos">
-        <div class="container">
-            <div class="footer-container">
-                <div class="footer-left">
-                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
-                </div>
-                <div class="footer-right">
-                    <div class="footer-contact">
-                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
-                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
-                    </div>
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-links">
-                <a href="politica-privacidade.html">Política de Privacidade</a>
-                <a href="politica-cookies.html">Política de Cookies</a>
-                <a href="tratamento-dados.html">Tratamento de Dados</a>
-                <a href="informacao-legal.html">Informação Legal</a>
-            </div>
+   </div>
+  </nav>
+  <!-- Breadcrumb Section -->
+  <section class="breadcrumb-section">
+   <div class="container">
+    <nav aria-label="breadcrumb">
+     <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+       <a href="../index.html">
+        Início
+       </a>
+      </li>
+      <li aria-current="page" class="breadcrumb-item active">
+       Sobre o Fundador
+      </li>
+     </ol>
+    </nav>
+   </div>
+  </section>
+  <main>
+   <!-- Hero Section -->
+   <section class="hero-section">
+    <div class="container">
+     <p class="lead animate__animated animate__fadeInDown">
+      FUNDADOR &amp; CEO
+     </p>
+     <h1 class="animate__animated animate__fadeInUp">
+      Samuel Rolo
+     </h1>
+     <p class="animate__animated animate__fadeInUp">
+      Especialista em transformação organizacional e desenvolvimento humano, com mais de uma década de experiência em consultoria estratégica.
+     </p>
+    </div>
+   </section>
+   <!-- About Content Section -->
+   <section class="about-content">
+    <div class="container">
+     <div class="row">
+      <div class="col-lg-8 mx-auto">
+       <h2>
+        A Minha Trajectória
+       </h2>
+       <p>
+        A minha paixão pela transformação organizacional nasceu da convicção de que as pessoas são o verdadeiro motor de qualquer mudança sustentável.
+       </p>
+       <p>
+        Ao longo dos anos, tenho dedicado a minha carreira a ajudar organizações e indivíduos a descobrirem o seu potencial máximo. Através da Share2Inspire, combinamos metodologias comprovadas com uma abordagem humanizada, criando soluções personalizadas que geram resultados duradouros.
+       </p>
+       <p>
+        Acredito que o sucesso organizacional só é possível quando existe um alinhamento genuíno entre propósito, pessoas e processos. Esta filosofia tem orientado o meu trabalho e permitido transformar equipas, culturas e resultados em organizações de diversos sectores.
+       </p>
+       <blockquote>
+        "O verdadeiro líder não é aquele que tem seguidores, mas aquele que cria outros líderes."
+       </blockquote>
+       <h3>
+        Áreas de Especialização
+       </h3>
+       <ul>
+        <li>
+         <i class="fas fa-check-circle">
+         </i>
+         Consultoria Estratégica de RH
+        </li>
+        <li>
+         <i class="fas fa-check-circle">
+         </i>
+         Desenvolvimento de Liderança
+        </li>
+        <li>
+         <i class="fas fa-check-circle">
+         </i>
+         Gestão da Mudança
+        </li>
+        <li>
+         <i class="fas fa-check-circle">
+         </i>
+         Cultura Organizacional
+        </li>
+        <li>
+         <i class="fas fa-check-circle">
+         </i>
+         Coaching Executivo
+        </li>
+       </ul>
+       <h3>
+        Certificações &amp; Formação
+       </h3>
+       <ul>
+        <li>
+         <i class="fas fa-award">
+         </i>
+         Certified Professional in Human Resources (CPHR)
+        </li>
+        <li>
+         <i class="fas fa-graduation-cap">
+         </i>
+         Mestrado em Gestão de Recursos Humanos
+        </li>
+        <li>
+         <i class="fas fa-graduation-cap">
+         </i>
+         Licenciatura em Psicologia Organizacional
+        </li>
+       </ul>
+       <h3>
+        Percurso Profissional
+       </h3>
+       <p>
+        <strong>
+         Senior Consultant &amp; Manager
+        </strong>
+        | Deloitte (2015-2023)
+       </p>
+       <p>
+        <strong>
+         HR Business Partner
+        </strong>
+        | Multinacional de Tecnologia (2012-2015)
+       </p>
+       <p>
+        <strong>
+         Consultor de RH
+        </strong>
+        | Empresa de Consultoria (2010-2012)
+       </p>
+       <h2>
+        Recomendações
+       </h2>
+       <div class="testimonial-card">
+        <p>
+         "I had the pleasure of working with Samuel while he was Senior Consultant and Manager at Deloitte, and I can say that he is an exceptional professional. Samuel has a combination of technical and interpersonal skills that makes him a natural leader. During the time I supervised Samuel's work, he demonstrated an impressive ability to deal with complex projects, always keeping a clear focus on the results. His ability to meet customer needs and his commitment to excellence was a key to the projects success. Samuel also promotes a work environment that promotes his team professional growth. I recommend Samuel without hesitation, I know he will bring value to any team or project in which he is involved."
+        </p>
+        <div class="author-info">
+         <img alt="José Subtil" src="../images/jose-subtil.jpg"/>
+         <div>
+          <h4>
+           José Subtil
+          </h4>
+          <p>
+           Banking and Insurance Leader at Timestamp
+          </p>
+         </div>
         </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Custom JS -->
-    <script>
-        // Smooth scrolling for anchor links
+       </div>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <!-- Footer -->
+  <footer id="contactos">
+   <div class="container">
+    <div class="footer-container">
+     <div class="footer-left">
+      <p>
+       © 2025 Share2Inspire. Todos os direitos reservados.
+      </p>
+     </div>
+     <div class="footer-right">
+      <div class="footer-contact">
+       <p>
+        <i class="fas fa-envelope">
+        </i>
+        srshare2inspire@gmail.com
+       </p>
+       <p>
+        <i class="fas fa-phone">
+        </i>
+        +351 961 925 050
+       </p>
+      </div>
+      <div class="footer-social">
+       <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank">
+        <i class="fab fa-linkedin">
+        </i>
+       </a>
+       <a href="https://www.instagram.com/share2inspire.pt/" target="_blank">
+        <i class="fab fa-instagram">
+        </i>
+       </a>
+      </div>
+     </div>
+    </div>
+    <div class="footer-links">
+     <a href="politica-privacidade.html">
+      Política de Privacidade
+     </a>
+     <a href="politica-cookies.html">
+      Política de Cookies
+     </a>
+     <a href="tratamento-dados.html">
+      Tratamento de Dados
+     </a>
+     <a href="informacao-legal.html">
+      Informação Legal
+     </a>
+    </div>
+   </div>
+  </footer>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+  </script>
+  <!-- Custom JS -->
+  <script>
+   // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -1656,7 +615,6 @@
             interval: 8000,
             wrap: true
         });
-    </script>
-</body>
+  </script>
+ </body>
 </html>
-
