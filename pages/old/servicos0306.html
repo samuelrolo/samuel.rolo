@@ -3,35 +3,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S H A R E 2 I N S P I R E    |    S A M U E L     R O L O</title>
-    <meta name="description" content="Consultoria e coaching por Samuel Rolo. Desenvolvimento humano, transformação organizacional e liderança consciente.">
-    <meta name="keywords" content="consultoria, coaching, transformação organizacional, gestão da mudança, liderança consciente, desenvolvimento humano, cultura organizacional, comunicação estratégica, recursos humanos, Samuel Rolo, share2inspire, ebook gestão da mudança, futuro do trabalho, HR Innovation Hub, desenvolvimento de talento, coaching para líderes, palestras, keynote speaker, RH Portugal, liderança empática">
+    <title>Serviços | Share2Inspire | Samuel Rolo</title>
+    <meta name="description" content="Serviços de consultoria, coaching e transformação organizacional por Samuel Rolo. Kickstart Pro, consultoria organizacional e coaching executivo.">
     
     <!-- Favicon -->
-    <link rel="icon" href="images/logo.png" type="image/png">
+    <link rel="icon" href="../images/favicon.png" type="image/png">
     
     <!-- Bootstrap CSS -->
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    
-    
-    <!-- Chart.js para gráficos -->
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="../css/main_inline_styles.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        /* Estilos para o footer */
+        footer {
+            background-color: #212529;
+            color: #fff;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+        
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .footer-left p {
+            margin: 0;
+            color: #BF9A33;
+        }
+        
+        .footer-right {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .footer-contact p {
+            margin: 0;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        
+        .footer-contact i {
+            color: #BF9A33;
+            margin-right: 8px;
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .footer-social a {
+            color: #BF9A33;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+        
+        .footer-social a:hover {
+            color: #fff;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
+        
+        .footer-links a {
+            color: #BF9A33;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        
+        .navbar {
+            background-color: #fff;
+            padding: 1rem 0;
+        }
+        
+        .navbar-nav {
+            margin-left: auto;
+        }
+        
+        .navbar-nav .nav-link {
+            color: #333;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+        }
+        
+        .navbar-nav .nav-link.active {
+            color: #BF9A33;
+            position: relative;
+        }
+        
+        .navbar-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 1rem;
+            right: 1rem;
+            height: 2px;
+            background-color: #BF9A33;
+        }
+        
+        /* Estilos para a página de serviços */
+        .page-header {
+            background-color: #f8f9fa;
+            padding: 100px 0 50px;
+            margin-bottom: 50px;
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .breadcrumb-item a {
+            color: #BF9A33;
+            text-decoration: none;
+        }
+        
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+        
+        .service-section {
+            padding: 80px 0;
+        }
+        
+        .service-section.bg-light {
+            background-color: #f8f9fa;
+        }
+        
+        .service-content h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .service-tagline {
+            font-size: 1.2rem;
+            color: #BF9A33;
+            margin-bottom: 1.5rem;
+        }
+        
+        .service-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .service-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin: 1.5rem 0 1rem;
+        }
+        
+        .service-benefits {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem;
+        }
+        
+        .service-benefits li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .service-benefits li i {
+            color: #BF9A33;
+            margin-right: 10px;
+            margin-top: 5px;
+        }
+        
+        .service-image img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-header {
+            background-color: #BF9A33;
+            color: #fff;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+        }
+        
+        .modal-body label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-footer .btn-primary {
+            background-color: #BF9A33;
+            border-color: #BF9A33;
+        }
+        
+        .modal-footer .btn-primary:hover {
+            background-color: #a88629;
+            border-color: #a88629;
+        }
+        
+        /* Media queries para otimização mobile */
+        @media (max-width: 992px) {
+            .service-content h2 {
+                font-size: 2rem;
+            }
+            
+            .service-tagline {
+                font-size: 1.1rem;
+            }
+            
+            .service-content h3 {
+                font-size: 1.3rem;
+            }
+            
+            .service-section {
+                padding: 60px 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 80px 0 40px;
+                margin-bottom: 30px;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .service-section {
+                padding: 40px 0;
+            }
+            
+            .service-content {
+                margin-top: 30px;
+            }
+            
+            .service-content h2 {
+                font-size: 1.8rem;
+                text-align: center;
+            }
+            
+            .service-tagline {
+                font-size: 1rem;
+                text-align: center;
+            }
+            
+            .service-content h3 {
+                font-size: 1.2rem;
+            }
+            
+            .service-benefits li {
+                margin-bottom: 0.8rem;
+            }
+            
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .footer-right {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .footer-social {
+                justify-content: center;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            /* Ajuste para ordem dos elementos em mobile */
+            .order-lg-1 {
+                order: 2;
+            }
+            
+            .order-lg-2 {
+                order: 1;
+                margin-bottom: 30px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .page-header {
+                padding: 70px 0 30px;
+            }
+            
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .service-section {
+                padding: 30px 0;
+            }
+            
+            .service-content h2 {
+                font-size: 1.6rem;
+            }
+            
+            .service-tagline {
+                font-size: 0.9rem;
+            }
+            
+            .service-content p {
+                font-size: 0.95rem;
+            }
+            
+            .service-content h3 {
+                font-size: 1.1rem;
+            }
+            
+            .service-benefits li {
+                font-size: 0.9rem;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
-
 <body>
     <!-- Google tag (gtag.js) -->
-    
-    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-8GQ1KM9FQS');
+    </script>
     <!-- Header e Navegação -->
     <header class="header">
         <nav class="navbar navbar-expand-lg fixed-top">
@@ -219,16 +561,55 @@
     </section>
 
        <!-- Integrações API -->
-    
-    
+    <script src="../js/brevo-integration.js"></script>
+    <script src="../js/ifthepay-integration.js"></script>
     
     <!-- Scripts dos formulários -->
-    
+    <script src="../js/kickstart-pro-form.js"></script>
     
     <!-- Script principal -->
+    <script src="../js/main.js"></script>
     
-    
-    
+    <script>
+        // Mostrar/ocultar campos específicos de MB WAY
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentMethodSelect = document.getElementById('kickstartPaymentMethod');
+            const mbwayFields = document.getElementById('mbwayFields');
+            
+            if (paymentMethodSelect && mbwayFields) {
+                paymentMethodSelect.addEventListener('change', function() {
+                    if (this.value === 'mbway') {
+                        mbwayFields.style.display = 'block';
+                    } else {
+                        mbwayFields.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Inicializar o preço com base na duração selecionada
+            updatePrice();
+        });
+        
+        // Função para atualizar o preço com base na duração selecionada
+        function updatePrice() {
+            const duration = document.getElementById('kickstartDuration').value;
+            const priceElement = document.getElementById('kickstartPrice');
+            
+            if (priceElement) {
+                if (duration === '30min') {
+                    priceElement.textContent = '30€';
+                } else {
+                    priceElement.textContent = '45€';
+                }
+                
+                // Update hidden field in form
+                const hiddenField = document.getElementById('kickstartDurationHidden');
+                if (hiddenField) {
+                    hiddenField.value = duration;
+                }
+            }
+        }
+    </script>
 
     <!-- Footer -->
     <footer id="contactos">
@@ -258,20 +639,57 @@
     </footer>
     
     <!-- Bootstrap JS -->
-    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Integrações API -->
-    
-    
+    <script src="../js/brevo-integration.js"></script>
+    <script src="../js/ifthepay-integration.js"></script>
     
     <!-- Scripts dos formulários -->
-    
+    <script src="../js/kickstart-pro-form.js"></script>
     
     <!-- Script principal -->
-    
-    
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/main.js"></script>
+    
+    <script>
+        // Mostrar/ocultar campos específicos de MB WAY
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentMethodSelect = document.getElementById('kickstartPaymentMethod');
+            const mbwayFields = document.getElementById('mbwayFields');
+            
+            if (paymentMethodSelect && mbwayFields) {
+                paymentMethodSelect.addEventListener('change', function() {
+                    if (this.value === 'mbway') {
+                        mbwayFields.style.display = 'block';
+                    } else {
+                        mbwayFields.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Inicializar o preço com base na duração selecionada
+            updatePrice();
+        });
+        
+        // Função para atualizar o preço com base na duração selecionada
+        function updatePrice() {
+            const duration = document.getElementById('kickstartDuration').value;
+            const priceElement = document.getElementById('kickstartPrice');
+            
+            if (priceElement) {
+                if (duration === '30min') {
+                    priceElement.textContent = '30€';
+                } else {
+                    priceElement.textContent = '45€';
+                }
+                
+                // Update hidden field in form
+                const hiddenField = document.getElementById('kickstartDurationHidden');
+                if (hiddenField) {
+                    hiddenField.value = duration;
+                }
+            }
+        }
+    </script>
 </body>
 </html>
