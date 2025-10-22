@@ -15,6 +15,164 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
+        /* ===== ESTILOS WIDGET CANDIDATE FIT ===== */
+        /* Fonte opcional. Remove se já carregas a Inter no site */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root{
+            --s2i-bg:#f7f7f8;
+            --s2i-text:#1b1b1f;
+            --s2i-muted:#5b5b63;
+            --s2i-border:#e6e6ea;
+            --s2i-white:#ffffff;
+            --s2i-gold:#bf9a33;      /* Share2Inspire */
+            --s2i-gold-ink:#8b7026;
+            --s2i-accent:#0f172a;    /* contraste elegante */
+            --s2i-success:#0ea5a4;
+        }
+
+        .s2i-section{
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: var(--s2i-bg);
+            padding: clamp(2.5rem, 3vw + 1rem, 4.5rem) 1rem;
+            color: var(--s2i-text);
+            position: sticky;
+            top: 70px;
+            z-index: 100;
+            max-height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .s2i-section.collapsed {
+            padding: 0.5rem 1rem;
+            max-height: 60px;
+        }
+
+        .s2i-container{max-width:1120px;margin:0 auto;}
+        .s2i-header{text-align:center;margin-bottom:2rem}
+        .s2i-header h2{font-size:clamp(1.5rem,1.2rem + 1.2vw,2rem);line-height:1.2;margin:0 0 .5rem}
+        .s2i-subtitle{color:var(--s2i-muted);margin:0}
+
+        .s2i-grid{
+            display:grid;
+            grid-template-columns:1fr;
+            gap:1.25rem;
+            margin-top:1.25rem;
+        }
+        @media (min-width:900px){
+            .s2i-grid{grid-template-columns:repeat(2,1fr);}
+        }
+
+        .s2i-card{
+            background:var(--s2i-white);
+            border:1px solid var(--s2i-border);
+            border-radius:14px;
+            padding:1.25rem;
+            box-shadow:0 4px 18px rgba(0,0,0,.06);
+            display:flex;
+            flex-direction:column;
+            min-height:100%;
+        }
+        .s2i-card-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:.5rem;
+            gap:.5rem;
+        }
+        .s2i-card h3{font-size:1.25rem;margin:0}
+        .s2i-pill{
+            background:#eef1f6;
+            color:var(--s2i-accent);
+            border-radius:999px;
+            padding:.35rem .7rem;
+            font-weight:600;
+            font-size:.8rem;
+            white-space:nowrap;
+        }
+        .s2i-pill-pro{
+            background:linear-gradient(90deg, var(--s2i-gold), #e5c875);
+            color:#2a2110;
+        }
+        .s2i-card-lead{color:var(--s2i-muted);margin:.25rem 0 1rem}
+        .s2i-list{margin:0 0 1.25rem 0;padding-left:1.1rem}
+        .s2i-list li{margin:.45rem 0}
+        .s2i-price{
+            margin-top:auto;
+            display:flex;
+            align-items:baseline;
+            gap:.5rem;
+        }
+        .s2i-amount{font-size:1.75rem;font-weight:700}
+        .s2i-note{color:var(--s2i-muted);font-size:.95rem}
+
+        .s2i-btn{
+            display:inline-block;
+            text-align:center;
+            text-decoration:none;
+            border-radius:10px;
+            padding:.85rem 1rem;
+            margin-top:1rem;
+            font-weight:600;
+            transition:transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+        }
+        .s2i-btn-primary{
+            background:linear-gradient(90deg, var(--s2i-gold), #e5c875);
+            color:#1b1b1f;
+            box-shadow:0 6px 18px rgba(191,154,51,.28);
+        }
+        .s2i-btn-primary:hover{transform:translateY(-1px)}
+        .s2i-btn-outline{
+            background:transparent;
+            color:var(--s2i-accent);
+            border:2px solid var(--s2i-accent);
+        }
+        .s2i-btn-outline:hover{background:var(--s2i-accent);color:#fff}
+
+        .s2i-pro{
+            outline:2px solid rgba(191,154,51,.25);
+        }
+
+        .s2i-footnote{
+            text-align:center;
+            color:var(--s2i-muted);
+            font-size:.9rem;
+            margin-top:1.25rem;
+        }
+
+        .s2i-section.collapsed .s2i-header,
+        .s2i-section.collapsed .s2i-grid,
+        .s2i-section.collapsed .s2i-footnote {
+            display: none;
+        }
+
+        .s2i-toggle-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--s2i-gold);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 101;
+        }
+
+        .s2i-toggle-btn:hover {
+            background: var(--s2i-gold-ink);
+            transform: scale(1.1);
+        }
+
+        /* ===== FIM ESTILOS WIDGET CANDIDATE FIT ===== */
+
         /* Cores do site Share2Inspire */
         :root {
             --primary-color: #bf9a33;
@@ -279,6 +437,65 @@ footer {
             </div>
         </div>
     </section>
+
+    <!-- ===== Candidate Fit – Share2Inspire ===== -->
+    <section id="candidate-fit" class="s2i-section">
+      <div class="s2i-container">
+        <header class="s2i-header">
+          <h2>Candidate Fit para Carreiras Corporativas, Consultoria e Transformação</h2>
+          <p class="s2i-subtitle">Compara o teu CV com a vaga certa, recebe um relatório claro e decide o próximo passo com confiança.</p>
+        </header>
+
+        <div class="s2i-grid">
+          <!-- Pack Gratuito -->
+          <article class="s2i-card s2i-free" aria-labelledby="pack-free-title">
+            <div class="s2i-card-header">
+              <h3 id="pack-free-title">Career Fit Basic</h3>
+              <p class="s2i-pill">Grátis</p>
+            </div>
+            <p class="s2i-card-lead">Primeiro diagnóstico estratégico para contextos corporativos e de consultoria.</p>
+            <ul class="s2i-list">
+              <li>Análise automática do CV face à vaga por URL ou texto</li>
+              <li>Pontuação de Fit de 0 a 100</li>
+              <li>Três forças principais e três lacunas críticas</li>
+              <li>Recomendações orientadas ao mercado corporativo e de consultoria</li>
+              <li>Relatório em PDF e dicas mensais</li>
+            </ul>
+            <div class="s2i-price">
+              <span class="s2i-amount">0 €</span>
+              <span class="s2i-note">1 relatório por mês</span>
+            </div>
+            <a class="s2i-btn s2i-btn-outline" href="#gerar-relatorio" data-action="free">Gerar relatório gratuito</a>
+          </article>
+
+          <!-- Pack KickStart Pro -->
+          <article class="s2i-card s2i-pro" aria-labelledby="pack-pro-title">
+            <div class="s2i-card-header">
+              <h3 id="pack-pro-title">Coaching KickStart Pro</h3>
+              <p class="s2i-pill s2i-pill-pro">Mais popular</p>
+            </div>
+            <p class="s2i-card-lead">Acelera a entrada ou progressão em multinacionais, consultoras e funções de transformação.</p>
+            <ul class="s2i-list">
+              <li>Tudo do Basic</li>
+              <li>Sessão individual de 45 minutos, online</li>
+              <li>Interpretação do relatório e plano de ação personalizado</li>
+              <li>Revisão estratégica do CV para consultoria e ambientes corporativos</li>
+              <li>Estratégia de networking e roteiro de 30 dias</li>
+            </ul>
+            <div class="s2i-price">
+              <span class="s2i-amount">145 €</span>
+              <span class="s2i-note">relatório Pro mais sessão</span>
+            </div>
+            <a class="s2i-btn s2i-btn-primary" href="https://calendly.com/teu-link" data-action="pro">Agendar KickStart Pro</a>
+          </article>
+        </div>
+
+        <footer class="s2i-footnote">
+          <p>Privacidade e RGPD. Processamos o teu CV apenas para gerar o relatório. Podes solicitar eliminação a qualquer momento.</p>
+        </footer>
+      </div>
+    </section>
+    <!-- ===== Fim Candidate Fit ===== -->
 
     <!-- Serviços Section -->
     <section class="services-section py-5">
@@ -1138,10 +1355,50 @@ footer {
         
         updateProgress();
     </script>
-</body>
-</html>\`;
-        }
+
+    <!-- Script para colapso do widget Candidate Fit -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const candidateFitSection = document.getElementById('candidate-fit');
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 's2i-toggle-btn';
+            toggleBtn.innerHTML = '−';
+            toggleBtn.setAttribute('aria-label', 'Colapsar widget');
+            toggleBtn.style.position = 'absolute';
+            toggleBtn.style.top = '1rem';
+            toggleBtn.style.right = '1rem';
+            
+            candidateFitSection.style.position = 'relative';
+            candidateFitSection.appendChild(toggleBtn);
+            
+            let isCollapsed = false;
+            
+            toggleBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                isCollapsed = !isCollapsed;
+                
+                if (isCollapsed) {
+                    candidateFitSection.classList.add('collapsed');
+                    toggleBtn.innerHTML = '+';
+                    toggleBtn.setAttribute('aria-label', 'Expandir widget');
+                } else {
+                    candidateFitSection.classList.remove('collapsed');
+                    toggleBtn.innerHTML = '−';
+                    toggleBtn.setAttribute('aria-label', 'Colapsar widget');
+                }
+            });
+            
+            // Analytics - Liga eventos para analytics
+            document.addEventListener('click', function(e){
+                const el = e.target.closest('[data-action]');
+                if(!el) return;
+                const action = el.getAttribute('data-action');
+                try {
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({ event: 'cta_click', product: 'candidate_fit', action });
+                } catch(_) {}
+            });
+        });
     </script>
 </body>
 </html>
-
