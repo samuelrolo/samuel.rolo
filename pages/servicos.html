@@ -36,17 +36,6 @@
             background: var(--s2i-bg);
             padding: clamp(2.5rem, 3vw + 1rem, 4.5rem) 1rem;
             color: var(--s2i-text);
-            position: sticky;
-            top: 70px;
-            z-index: 100;
-            max-height: 100vh;
-            overflow-y: auto;
-            transition: all 0.3s ease;
-        }
-
-        .s2i-section.collapsed {
-            padding: 0.5rem 1rem;
-            max-height: 60px;
         }
 
         .s2i-container{max-width:1120px;margin:0 auto;}
@@ -61,7 +50,10 @@
             margin-top:1.25rem;
         }
         @media (min-width:900px){
-            .s2i-grid{grid-template-columns:repeat(2,1fr);}
+            .s2i-grid{grid-template-columns:repeat(3,1fr);}
+        }
+        @media (max-width:768px){
+            .s2i-grid{grid-template-columns:1fr;}
         }
 
         .s2i-card{
@@ -134,6 +126,25 @@
             outline:2px solid rgba(191,154,51,.25);
         }
 
+        .s2i-premium{
+            outline:2px solid rgba(191,154,51,.25);
+        }
+
+        .s2i-pill-premium{
+            background:linear-gradient(90deg, #8b7026, #bf9a33);
+            color:#ffffff;
+        }
+
+        .s2i-btn-secondary{
+            background:var(--s2i-accent);
+            color:#ffffff;
+            border:none;
+        }
+        .s2i-btn-secondary:hover{
+            background:rgba(15,23,42,0.8);
+            transform:translateY(-1px);
+        }
+
         .s2i-footnote{
             text-align:center;
             color:var(--s2i-muted);
@@ -141,35 +152,7 @@
             margin-top:1.25rem;
         }
 
-        .s2i-section.collapsed .s2i-header,
-        .s2i-section.collapsed .s2i-grid,
-        .s2i-section.collapsed .s2i-footnote {
-            display: none;
-        }
 
-        .s2i-toggle-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: var(--s2i-gold);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            z-index: 101;
-        }
-
-        .s2i-toggle-btn:hover {
-            background: var(--s2i-gold-ink);
-            transform: scale(1.1);
-        }
 
         /* ===== FIM ESTILOS WIDGET CANDIDATE FIT ===== */
 
@@ -453,19 +436,12 @@ footer {
               <h3 id="pack-free-title">Career Fit Basic</h3>
               <p class="s2i-pill">Grátis</p>
             </div>
-            <p class="s2i-card-lead">Primeiro diagnóstico estratégico para contextos corporativos e de consultoria.</p>
-            <ul class="s2i-list">
-              <li>Análise automática do CV face à vaga por URL ou texto</li>
-              <li>Pontuação de Fit de 0 a 100</li>
-              <li>Três forças principais e três lacunas críticas</li>
-              <li>Recomendações orientadas ao mercado corporativo e de consultoria</li>
-              <li>Relatório em PDF e dicas mensais</li>
-            </ul>
+            <p class="s2i-card-lead">Análise automática do teu CV face à vaga. Recebe uma pontuação de Fit e recomendações claras.</p>
             <div class="s2i-price">
-              <span class="s2i-amount">0 €</span>
-              <span class="s2i-note">1 relatório por mês</span>
+              <span class="s2i-amount">45 €</span>
+              <span class="s2i-note">relatório único</span>
             </div>
-            <a class="s2i-btn s2i-btn-outline" href="#gerar-relatorio" data-action="free">Gerar relatório gratuito</a>
+            <a class="s2i-btn s2i-btn-outline" href="https://calendly.com/teu-link" data-action="free">Gerar relatório</a>
           </article>
 
           <!-- Pack KickStart Pro -->
@@ -474,25 +450,28 @@ footer {
               <h3 id="pack-pro-title">Coaching KickStart Pro</h3>
               <p class="s2i-pill s2i-pill-pro">Mais popular</p>
             </div>
-            <p class="s2i-card-lead">Acelera a entrada ou progressão em multinacionais, consultoras e funções de transformação.</p>
-            <ul class="s2i-list">
-              <li>Tudo do Basic</li>
-              <li>Sessão individual de 45 minutos, online</li>
-              <li>Interpretação do relatório e plano de ação personalizado</li>
-              <li>Revisão estratégica do CV para consultoria e ambientes corporativos</li>
-              <li>Estratégia de networking e roteiro de 30 dias</li>
-            </ul>
+            <p class="s2i-card-lead">Sessão de coaching personalizada de 45 minutos. Interpretação do relatório e plano de ação claro.</p>
             <div class="s2i-price">
               <span class="s2i-amount">145 €</span>
-              <span class="s2i-note">relatório Pro mais sessão</span>
+              <span class="s2i-note">relatório + sessão</span>
             </div>
             <a class="s2i-btn s2i-btn-primary" href="https://calendly.com/teu-link" data-action="pro">Agendar KickStart Pro</a>
           </article>
-        </div>
 
-        <footer class="s2i-footnote">
-          <p>Privacidade e RGPD. Processamos o teu CV apenas para gerar o relatório. Podes solicitar eliminação a qualquer momento.</p>
-        </footer>
+          <!-- Pack Transformação Corporativa -->
+          <article class="s2i-card s2i-premium" aria-labelledby="pack-premium-title">
+            <div class="s2i-card-header">
+              <h3 id="pack-premium-title">Transformação Corporativa</h3>
+              <p class="s2i-pill s2i-pill-premium">Premium</p>
+            </div>
+            <p class="s2i-card-lead">Programa completo de desenvolvimento. Múltiplas sessões e acompanhamento estratégico personalizado.</p>
+            <div class="s2i-price">
+              <span class="s2i-amount">À consultar</span>
+              <span class="s2i-note">programa customizado</span>
+            </div>
+            <a class="s2i-btn s2i-btn-secondary" href="https://calendly.com/teu-link" data-action="premium">Solicitar Consulta</a>
+          </article>
+        </div>
       </div>
     </section>
     <!-- ===== Fim Candidate Fit ===== -->
@@ -1356,48 +1335,16 @@ footer {
         updateProgress();
     </script>
 
-    <!-- Script para colapso do widget Candidate Fit -->
+    <!-- Script para analytics do widget Candidate Fit -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const candidateFitSection = document.getElementById('candidate-fit');
-            const toggleBtn = document.createElement('button');
-            toggleBtn.className = 's2i-toggle-btn';
-            toggleBtn.innerHTML = '−';
-            toggleBtn.setAttribute('aria-label', 'Colapsar widget');
-            toggleBtn.style.position = 'absolute';
-            toggleBtn.style.top = '1rem';
-            toggleBtn.style.right = '1rem';
-            
-            candidateFitSection.style.position = 'relative';
-            candidateFitSection.appendChild(toggleBtn);
-            
-            let isCollapsed = false;
-            
-            toggleBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                isCollapsed = !isCollapsed;
-                
-                if (isCollapsed) {
-                    candidateFitSection.classList.add('collapsed');
-                    toggleBtn.innerHTML = '+';
-                    toggleBtn.setAttribute('aria-label', 'Expandir widget');
-                } else {
-                    candidateFitSection.classList.remove('collapsed');
-                    toggleBtn.innerHTML = '−';
-                    toggleBtn.setAttribute('aria-label', 'Colapsar widget');
-                }
-            });
-            
-            // Analytics - Liga eventos para analytics
-            document.addEventListener('click', function(e){
-                const el = e.target.closest('[data-action]');
-                if(!el) return;
-                const action = el.getAttribute('data-action');
-                try {
-                    window.dataLayer = window.dataLayer || [];
-                    window.dataLayer.push({ event: 'cta_click', product: 'candidate_fit', action });
-                } catch(_) {}
-            });
+        document.addEventListener('click', function(e){
+            const el = e.target.closest('[data-action]');
+            if(!el) return;
+            const action = el.getAttribute('data-action');
+            try {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({ event: 'cta_click', product: 'candidate_fit', action });
+            } catch(_) {}
         });
     </script>
 </body>
