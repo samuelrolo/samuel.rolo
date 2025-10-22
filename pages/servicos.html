@@ -15,6 +15,147 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
+        /* ===== ESTILOS WIDGET CANDIDATE FIT ===== */
+        /* Fonte opcional. Remove se já carregas a Inter no site */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root{
+            --s2i-bg:#f7f7f8;
+            --s2i-text:#1b1b1f;
+            --s2i-muted:#5b5b63;
+            --s2i-border:#e6e6ea;
+            --s2i-white:#ffffff;
+            --s2i-gold:#bf9a33;      /* Share2Inspire */
+            --s2i-gold-ink:#8b7026;
+            --s2i-accent:#0f172a;    /* contraste elegante */
+            --s2i-success:#0ea5a4;
+        }
+
+        .s2i-section{
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: var(--s2i-bg);
+            padding: clamp(2.5rem, 3vw + 1rem, 4.5rem) 1rem;
+            color: var(--s2i-text);
+        }
+
+        .s2i-container{max-width:1120px;margin:0 auto;}
+        .s2i-header{text-align:center;margin-bottom:2rem}
+        .s2i-header h2{font-size:clamp(1.5rem,1.2rem + 1.2vw,2rem);line-height:1.2;margin:0 0 .5rem}
+        .s2i-subtitle{color:var(--s2i-muted);margin:0}
+
+        .s2i-grid{
+            display:grid;
+            grid-template-columns:1fr;
+            gap:1.25rem;
+            margin-top:1.25rem;
+        }
+        @media (min-width:900px){
+            .s2i-grid{grid-template-columns:repeat(3,1fr);}
+        }
+        @media (max-width:768px){
+            .s2i-grid{grid-template-columns:1fr;}
+        }
+
+        .s2i-card{
+            background:var(--s2i-white);
+            border:1px solid var(--s2i-border);
+            border-radius:14px;
+            padding:1.25rem;
+            box-shadow:0 4px 18px rgba(0,0,0,.06);
+            display:flex;
+            flex-direction:column;
+            min-height:100%;
+        }
+        .s2i-card-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:.5rem;
+            gap:.5rem;
+        }
+        .s2i-card h3{font-size:1.25rem;margin:0}
+        .s2i-pill{
+            background:#eef1f6;
+            color:var(--s2i-accent);
+            border-radius:999px;
+            padding:.35rem .7rem;
+            font-weight:600;
+            font-size:.8rem;
+            white-space:nowrap;
+        }
+        .s2i-pill-pro{
+            background:linear-gradient(90deg, var(--s2i-gold), #e5c875);
+            color:#2a2110;
+        }
+        .s2i-card-lead{color:var(--s2i-muted);margin:.25rem 0 1rem}
+        .s2i-list{margin:0 0 1.25rem 0;padding-left:1.1rem}
+        .s2i-list li{margin:.45rem 0}
+        .s2i-price{
+            margin-top:auto;
+            display:flex;
+            align-items:baseline;
+            gap:.5rem;
+        }
+        .s2i-amount{font-size:1.75rem;font-weight:700}
+        .s2i-note{color:var(--s2i-muted);font-size:.95rem}
+
+        .s2i-btn{
+            display:inline-block;
+            text-align:center;
+            text-decoration:none;
+            border-radius:10px;
+            padding:.85rem 1rem;
+            margin-top:1rem;
+            font-weight:600;
+            transition:transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+        }
+        .s2i-btn-primary{
+            background:linear-gradient(90deg, var(--s2i-gold), #e5c875);
+            color:#1b1b1f;
+            box-shadow:0 6px 18px rgba(191,154,51,.28);
+        }
+        .s2i-btn-primary:hover{transform:translateY(-1px)}
+        .s2i-btn-outline{
+            background:transparent;
+            color:var(--s2i-accent);
+            border:2px solid var(--s2i-accent);
+        }
+        .s2i-btn-outline:hover{background:var(--s2i-accent);color:#fff}
+
+        .s2i-pro{
+            outline:2px solid rgba(191,154,51,.25);
+        }
+
+        .s2i-premium{
+            outline:2px solid rgba(191,154,51,.25);
+        }
+
+        .s2i-pill-premium{
+            background:linear-gradient(90deg, #8b7026, #bf9a33);
+            color:#ffffff;
+        }
+
+        .s2i-btn-secondary{
+            background:var(--s2i-accent);
+            color:#ffffff;
+            border:none;
+        }
+        .s2i-btn-secondary:hover{
+            background:rgba(15,23,42,0.8);
+            transform:translateY(-1px);
+        }
+
+        .s2i-footnote{
+            text-align:center;
+            color:var(--s2i-muted);
+            font-size:.9rem;
+            margin-top:1.25rem;
+        }
+
+
+
+        /* ===== FIM ESTILOS WIDGET CANDIDATE FIT ===== */
+
         /* Cores do site Share2Inspire */
         :root {
             --primary-color: #bf9a33;
@@ -124,18 +265,104 @@
             font-weight: 600;
         }
         
-        footer {
-            background: var(--secondary-color) !important;
-        }
-        
-        footer a {
-            color: rgba(255, 255, 255, 0.8) !important;
-        }
-        
-        footer a:hover {
-            color: var(--primary-color) !important;
-        }
-    </style>
+        /* Footer */
+footer {
+    background-color: #212529;
+    color: #fff;
+    padding: 20px 0;
+    margin-top: 50px;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.footer-left p {
+    margin: 0;
+    color: #BF9A33;
+}
+
+.footer-right {
+    display: flex;
+    gap: 30px;
+}
+
+.footer-contact p {
+    margin: 0;
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+.footer-contact i {
+    color: #BF9A33;
+    margin-right: 8px;
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-social a {
+    color: #BF9A33;
+    font-size: 20px;
+    transition: color 0.3s;
+}
+
+.footer-social a:hover {
+    color: #fff;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px;
+}
+
+.footer-links a {
+    color: #BF9A33;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    .footer-right {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .footer-social {
+        justify-content: center;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+
+</style>
 </head>
 <body>
     <!-- Header e Navegação -->
@@ -193,6 +420,233 @@
             </div>
         </div>
     </section>
+
+    <!-- ===== Candidate Fit – Share2Inspire ===== -->
+    <section id="candidate-fit" class="s2i-section">
+      <div class="s2i-container">
+        <header class="s2i-header">
+          <h2>Candidate Fit para Carreiras Corporativas, Consultoria e Transformação</h2>
+          <p class="s2i-subtitle">Compara o teu CV com a vaga certa, recebe um relatório claro e decide o próximo passo com confiança.</p>
+        </header>
+
+        <div class="s2i-grid">
+          <!-- Report Free -->
+          <article class="s2i-card s2i-free" aria-labelledby="pack-free-title">
+            <div class="s2i-card-header">
+              <h3 id="pack-free-title">Report Free</h3>
+              <p class="s2i-pill">Grátis</p>
+            </div>
+            <p class="s2i-card-lead">Análise automática do teu CV face à vaga. Recebe uma pontuação de Fit e recomendações claras.</p>
+            <div class="s2i-price">
+              <span class="s2i-amount">0 €</span>
+              <span class="s2i-note">relatório único</span>
+            </div>
+            <a class="s2i-btn s2i-btn-outline" href="#candidate-fit-form" data-action="free">Gerar relatório</a>
+          </article>
+
+          <!-- Report + Sessão -->
+          <article class="s2i-card s2i-pro" aria-labelledby="pack-pro-title">
+            <div class="s2i-card-header">
+              <h3 id="pack-pro-title">Report + Sessão</h3>
+              <p class="s2i-pill s2i-pill-pro">Mais popular</p>
+            </div>
+            <p class="s2i-card-lead">Relatório + Sessão de coaching de 45 minutos. Interpretação e plano de ação personalizado.</p>
+            <div class="s2i-price">
+              <span class="s2i-amount">45 €</span>
+              <span class="s2i-note">relatório + sessão</span>
+            </div>
+            <a class="s2i-btn s2i-btn-primary" href="https://share2inspire.secure.simplybook.it/v2/index/index" data-action="pro">Agendar Sessão</a>
+          </article>
+
+          <!-- Só Sessão -->
+          <article class="s2i-card s2i-premium" aria-labelledby="pack-premium-title">
+            <div class="s2i-card-header">
+              <h3 id="pack-premium-title">Só Sessão</h3>
+              <p class="s2i-pill s2i-pill-premium">Coaching</p>
+            </div>
+            <p class="s2i-card-lead">Sessão de coaching de 45 minutos. Trabalho estratégico personalizado sem relatório.</p>
+            <div class="s2i-price">
+              <span class="s2i-amount">40 €</span>
+              <span class="s2i-note">sessão única</span>
+            </div>
+            <a class="s2i-btn s2i-btn-secondary" href="https://share2inspire.secure.simplybook.it/v2/index/index" data-action="premium">Agendar Sessão</a>
+          </article>
+        </div>
+      </div>
+    </section>
+    <!-- ===== Fim Candidate Fit ===== -->
+<!-- Formulário de Análise de CVs com Gemini -->
+<section id="candidate-fit-form" style="max-width:880px;margin:0 auto;padding:24px;background:#f5f5f5;border-radius:12px;margin-top:40px">
+  <h3 style="font-size:1.5rem;margin-bottom:8px;color:#1b1b1f">Gerar Candidate Fit Report</h3>
+  <p style="color:#666;margin-bottom:24px">Carrega o teu CV em PDF, cola a descrição da vaga e recebe um diagnóstico orientado a carreiras corporativas, consultoria e transformação.</p>
+
+  <form id="fitForm" style="background:#fff;padding:24px;border-radius:8px">
+    <div style="margin:16px 0">
+      <label style="display:block;font-weight:600;margin-bottom:8px;color:#1b1b1f">CV em PDF ou TXT</label>
+      <input type="file" name="file" accept=".pdf,.txt" required style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px">
+    </div>
+
+    <div style="margin:16px 0">
+      <label style="display:block;font-weight:600;margin-bottom:8px;color:#1b1b1f">Descrição da vaga</label>
+      <textarea name="job_text" rows="8" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-family:Arial,sans-serif" placeholder="Cola aqui a descrição da vaga" required></textarea>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0">
+      <div>
+        <label style="display:block;font-weight:600;margin-bottom:8px;color:#1b1b1f">Senioridade</label>
+        <select name="seniority" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px">
+          <option>Junior</option>
+          <option selected>Mid</option>
+          <option>Senior</option>
+          <option>Lead</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block;font-weight:600;margin-bottom:8px;color:#1b1b1f">País</label>
+        <input type="text" name="country" value="Portugal" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px">
+      </div>
+      <div>
+        <label style="display:block;font-weight:600;margin-bottom:8px;color:#1b1b1f">Setor alvo</label>
+        <input type="text" name="sector" value="Consultoria e Transformação" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px">
+      </div>
+    </div>
+
+    <button type="submit" style="margin-top:16px;padding:12px 24px;border:0;border-radius:8px;background:#bf9a33;color:#1b1b1f;font-weight:700;cursor:pointer;font-size:1rem;width:100%">
+      Analisar CV
+    </button>
+  </form>
+
+  <div id="fitOutput" style="background:#0b0f19;color:#e5e7eb;padding:16px;border-radius:8px;overflow:auto;margin-top:16px;display:none;max-height:600px;font-family:monospace;font-size:0.9rem"></div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@google/generative-ai@0.3.0/dist/index.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<script>
+  const API_KEY = 'AIzaSyCQ8L4ijOgASDQZ9AkRxzs75zLlXPy3iGE';
+  const form = document.getElementById('fitForm');
+  const out = document.getElementById('fitOutput');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fileInput = form.querySelector('input[name="file"]');
+    const jobText = form.querySelector('textarea[name="job_text"]').value;
+    const seniority = form.querySelector('select[name="seniority"]').value;
+    const country = form.querySelector('input[name="country"]').value;
+    const sector = form.querySelector('input[name="sector"]').value;
+
+    out.style.display = 'block';
+    out.textContent = 'Processando análise... Por favor, aguarde.';
+
+    try {
+      const file = fileInput.files[0];
+      if (!file) throw new Error('Selecione um ficheiro');
+
+      const fileText = await readFile(file);
+      const genAI = new GoogleGenerativeAI(API_KEY);
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
+      const prompt = `Sistema: És um avaliador de candidaturas para carreiras corporativas, consultoria e transformação. Produz um diagnóstico claro, conciso e acionável. Responde sempre em JSON.
+
+Contexto:
+- Senioridade alvo: ${seniority}
+- País e mercado alvo: ${country}
+- Setor alvo: ${sector}
+
+Descrição da vaga:
+"""
+${jobText}
+"""
+
+Texto integral do CV:
+"""
+${fileText}
+"""
+
+Dimensões e pesos:
+- skills_técnicas: 40%
+- experiência: 30%
+- soft_skills: 15%
+- fit_cultural: 10%
+- educação: 5%
+
+Regras:
+1. Avalia cada dimensão de 0 a 100
+2. Calcula score_global com os pesos acima
+3. Escreve pontos_fortes e lacunas de forma específica e não genérica
+4. Recomenda próximos_passos práticos para 30 dias
+5. Inclui um resumo em 3 linhas, linguagem executiva
+
+Formato de resposta JSON (OBRIGATÓRIO):
+{
+  "score_global": 0,
+  "dimensões": {
+    "skills_técnicas": 0,
+    "experiência": 0,
+    "soft_skills": 0,
+    "fit_cultural": 0,
+    "educação": 0
+  },
+  "pontos_fortes": ["...", "...", "..."],
+  "lacunas": ["...", "...", "..."],
+  "próximos_passos": ["...", "...", "..."],
+  "resumo": "..."
+}
+
+Responde APENAS com o JSON, sem explicações adicionais.`;
+
+      const result = await model.generateContent(prompt);
+      const responseText = result.response.text();
+      
+      // Tenta extrair JSON da resposta
+      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error('Resposta inválida do modelo');
+      
+      const json = JSON.parse(jsonMatch[0]);
+      
+      // Formata resultado de forma agradável
+      const pretty = JSON.stringify(json, null, 2);
+      out.textContent = pretty;
+
+      // Evento para analytics
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({event:'report_generated', score: json.score_global});
+    } catch(err) {
+      out.textContent = 'Erro: ' + err.message + '\n\nVerifica o ficheiro e tenta novamente.';
+      console.error(err);
+    }
+  });
+
+  function readFile(file) {
+    return new Promise((resolve, reject) => {
+      if (file.type === 'application/pdf') {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          try {
+            const { getDocument } = pdfjsLib;
+            const pdf = await getDocument({ data: e.target.result }).promise;
+            let text = '';
+            for (let i = 1; i <= pdf.numPages; i++) {
+              const page = await pdf.getPage(i);
+              const content = await page.getTextContent();
+              text += content.items.map(item => item.str).join(' ') + '\n';
+            }
+            resolve(text);
+          } catch(err) {
+            reject(new Error('Erro ao ler PDF: ' + err.message));
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = (err) => reject(err);
+        reader.readAsText(file);
+      }
+    });
+  }
+</script>
+
 
     <!-- Serviços Section -->
     <section class="services-section py-5">
@@ -400,19 +854,80 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
+    <footer id="contactos">
         <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <p>&copy; 2024 Share2Inspire. Todos os direitos reservados.</p>
+            <div class="footer-container">
+                <div class="footer-left">
+                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
                 </div>
-                <div class="col-md-6 text-end">
-                    <a href="#" class="text-white me-3">Política de Privacidade</a>
-                    <a href="#" class="text-white">Termos de Uso</a>
+                <div class="footer-right">
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
+                    </div>
+                    <div class="footer-social">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    </div>
                 </div>
+            </div>
+            <div class="footer-links">
+                <a href="politica-privacidade.html">Política de Privacidade</a>
+                <a href="politica-cookies.html">Política de Cookies</a>
+                <a href="tratamento-dados.html">Tratamento de Dados</a>
+                <a href="informacao-legal.html">Informação Legal</a>
             </div>
         </div>
     </footer>
+
+    <!-- Botão de Feedback -->
+    <button id="feedbackBtn" class="feedback-btn" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+        <i class="fas fa-comment"></i> Feedback
+    </button>
+
+    <!-- Modal de Feedback -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feedbackModalLabel">Deixe o seu Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="feedbackForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nome *</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">Avaliação *</label>
+                            <input type="hidden" id="rating" name="rating" value="0">
+                            <div class="rating">
+                                <span class="star" data-value="1"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="2"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="3"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="4"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="5"><i class="far fa-star"></i></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="feedbackMessage" class="form-label">Mensagem *</label>
+                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3" required></textarea>
+                        </div>
+                        <div id="feedbackFormMessage"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="feedbackForm" class="btn btn-primary">Enviar Feedback</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -760,7 +1275,105 @@
         .form-group input, .form-group select { width: 100%; padding: 10px; border: none; border-radius: 6px; background: rgba(255,255,255,0.1); color: white; }
         .form-group input::placeholder { color: rgba(255,255,255,0.7); }
         .results { text-align: center; padding: 40px; }
-    </style>
+    
+/* Footer */
+footer {
+    background-color: #212529;
+    color: #fff;
+    padding: 20px 0;
+    margin-top: 50px;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.footer-left p {
+    margin: 0;
+    color: #BF9A33;
+}
+
+.footer-right {
+    display: flex;
+    gap: 30px;
+}
+
+.footer-contact p {
+    margin: 0;
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+.footer-contact i {
+    color: #BF9A33;
+    margin-right: 8px;
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-social a {
+    color: #BF9A33;
+    font-size: 20px;
+    transition: color 0.3s;
+}
+
+.footer-social a:hover {
+    color: #fff;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px;
+}
+
+.footer-links a {
+    color: #BF9A33;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    .footer-right {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .footer-social {
+        justify-content: center;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+
+</style>
 </head>
 <body>
     <div class="container">
@@ -893,10 +1506,18 @@
         
         updateProgress();
     </script>
-</body>
-</html>\`;
-        }
+
+    <!-- Script para analytics do widget Candidate Fit -->
+    <script>
+        document.addEventListener('click', function(e){
+            const el = e.target.closest('[data-action]');
+            if(!el) return;
+            const action = el.getAttribute('data-action');
+            try {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({ event: 'cta_click', product: 'candidate_fit', action });
+            } catch(_) {}
+        });
     </script>
 </body>
 </html>
-

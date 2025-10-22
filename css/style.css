@@ -1,5 +1,28 @@
 /* CORREÇÃO ESPECÍFICA PARA PROBLEMAS DE MODAL - Share2Inspire Website */
 
+body {
+    padding-top: 70px; /* Ajuste conforme a altura do seu navbar fixo */
+}
+
+.navbar-brand .logo-img {
+    height: 50px; /* Ajuste o tamanho do logo se necessário */
+    width: auto;
+}
+
+.navbar {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.navbar-brand {
+    margin-right: 1rem;
+}
+
+.navbar-nav .nav-link {
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
 /* ===== CORREÇÃO PRINCIPAL: Z-INDEX E INTERATIVIDADE DOS MODAIS ===== */
 
 /* Modal backdrop - garantir z-index correto */

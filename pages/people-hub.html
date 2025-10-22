@@ -513,7 +513,105 @@
                 padding: 1.25rem;
             }
         }
-    </style>
+    
+/* Footer */
+footer {
+    background-color: #212529;
+    color: #fff;
+    padding: 20px 0;
+    margin-top: 50px;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.footer-left p {
+    margin: 0;
+    color: #BF9A33;
+}
+
+.footer-right {
+    display: flex;
+    gap: 30px;
+}
+
+.footer-contact p {
+    margin: 0;
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+.footer-contact i {
+    color: #BF9A33;
+    margin-right: 8px;
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-social a {
+    color: #BF9A33;
+    font-size: 20px;
+    transition: color 0.3s;
+}
+
+.footer-social a:hover {
+    color: #fff;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px;
+}
+
+.footer-links a {
+    color: #BF9A33;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    .footer-right {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .footer-social {
+        justify-content: center;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+
+</style>
 </head>
 <body>
     <!-- Google tag (gtag.js) -->
@@ -530,7 +628,7 @@
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="../index.html">
-                    <img src="../images/logo.png" alt="Inspire Logo" class="logo-img">
+                    <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img" style="height: 40px;">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -550,10 +648,10 @@
                             <a class="nav-link" href="loja.html">Loja</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="people-hub.html">People Hub</a>
+                            <a class="nav-link active" href="people-hub.html">People Hub</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="../index.html#contactos">Contactos</a>
+                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Contactos</a>
                         </li>
                     </ul>
                 </div>
@@ -668,34 +766,80 @@
     </div>
 
     <!-- Footer -->
-    <footer>
+    <footer id="contactos">
         <div class="container">
             <div class="footer-container">
                 <div class="footer-left">
-                    <p>&copy; 2024 Share2Inspire. Todos os direitos reservados.</p>
+                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
                 </div>
                 <div class="footer-right">
                     <div class="footer-contact">
-                        <p><i class="fas fa-envelope"></i> samuel.rolo@share2inspire.pt</p>
+                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
                         <p><i class="fas fa-phone"></i> +351 961 925 050</p>
                     </div>
                     <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" aria-label="LinkedIn">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank" aria-label="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
             <div class="footer-links">
                 <a href="politica-privacidade.html">Política de Privacidade</a>
+                <a href="politica-cookies.html">Política de Cookies</a>
+                <a href="tratamento-dados.html">Tratamento de Dados</a>
                 <a href="informacao-legal.html">Informação Legal</a>
-                <a href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Contactos</a>
             </div>
         </div>
     </footer>
+
+    <!-- Botão de Feedback -->
+    <button id="feedbackBtn" class="feedback-btn" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+        <i class="fas fa-comment"></i> Feedback
+    </button>
+
+    <!-- Modal de Feedback -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feedbackModalLabel">Deixe o seu Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="feedbackForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nome *</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">Avaliação *</label>
+                            <input type="hidden" id="rating" name="rating" value="0">
+                            <div class="rating">
+                                <span class="star" data-value="1"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="2"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="3"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="4"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="5"><i class="far fa-star"></i></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="feedbackMessage" class="form-label">Mensagem *</label>
+                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3" required></textarea>
+                        </div>
+                        <div id="feedbackFormMessage"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="feedbackForm" class="btn btn-primary">Enviar Feedback</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal de Contacto -->
     <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
