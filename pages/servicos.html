@@ -543,7 +543,6 @@ footer {
       if (!file) throw new Error('Selecione um ficheiro');
 
       const fileText = await readFile(file);
-      const { GoogleGenerativeAI } = window;
       const genAI = new GoogleGenerativeAI(API_KEY);
       const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
