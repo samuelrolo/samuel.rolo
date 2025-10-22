@@ -336,7 +336,105 @@
                 font-size: 13px;
             }
         }
-    </style>
+    
+/* Footer */
+footer {
+    background-color: #212529;
+    color: #fff;
+    padding: 20px 0;
+    margin-top: 50px;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.footer-left p {
+    margin: 0;
+    color: #BF9A33;
+}
+
+.footer-right {
+    display: flex;
+    gap: 30px;
+}
+
+.footer-contact p {
+    margin: 0;
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+.footer-contact i {
+    color: #BF9A33;
+    margin-right: 8px;
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-social a {
+    color: #BF9A33;
+    font-size: 20px;
+    transition: color 0.3s;
+}
+
+.footer-social a:hover {
+    color: #fff;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px;
+}
+
+.footer-links a {
+    color: #BF9A33;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    .footer-right {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .footer-social {
+        justify-content: center;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+
+</style>
 </head>
 <body>
     <!-- Google tag (gtag.js) -->
@@ -484,7 +582,7 @@
                         <h3>Alterações à Política de Tratamento de Dados</h3>
                         <p>Podemos atualizar esta política periodicamente. Quaisquer alterações serão publicadas nesta página e, quando apropriado, notificadas por email.</p>
                         
-                        <p>Última atualização: <strong>Maio de 2025</strong></p>
+                        <p>Última atualização: <strong>Outubro de 2025</strong></p>
                     </div>
                 </div>
             </div>
@@ -517,6 +615,55 @@
             </div>
         </div>
     </footer>
+
+    <!-- Botão de Feedback -->
+    <button id="feedbackBtn" class="feedback-btn" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+        <i class="fas fa-comment"></i> Feedback
+    </button>
+
+    <!-- Modal de Feedback -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feedbackModalLabel">Deixe o seu Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="feedbackForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nome *</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">Avaliação *</label>
+                            <input type="hidden" id="rating" name="rating" value="0">
+                            <div class="rating">
+                                <span class="star" data-value="1"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="2"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="3"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="4"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="5"><i class="far fa-star"></i></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="feedbackMessage" class="form-label">Mensagem *</label>
+                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3" required></textarea>
+                        </div>
+                        <div id="feedbackFormMessage"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="feedbackForm" class="btn btn-primary">Enviar Feedback</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
