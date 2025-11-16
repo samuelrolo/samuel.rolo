@@ -22,80 +22,7 @@
     <link rel="stylesheet" href="../css/style.css">
     
     <style>
-        /* Estilos para o footer */
-        footer {
-            background-color: #212529;
-            color: #fff;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-        
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-        
-        .footer-left p {
-            margin: 0;
-            color: #BF9A33;
-        }
-        
-        .footer-right {
-            display: flex;
-            gap: 30px;
-        }
-        
-        .footer-contact p {
-            margin: 0;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-        
-        .footer-contact i {
-            color: #BF9A33;
-            margin-right: 8px;
-        }
-        
-        .footer-social {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .footer-social a {
-            color: #BF9A33;
-            font-size: 20px;
-            transition: color 0.3s;
-        }
-        
-        .footer-social a:hover {
-            color: #fff;
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 15px;
-        }
-        
-        .footer-links a {
-            color: #BF9A33;
-            font-size: 14px;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-links a:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
-        
-        .navbar {
+.navbar {
             background-color: #fff;
             padding: 1rem 0;
         }
@@ -296,9 +223,6 @@
                 gap: 10px;
             }
             
-            footer {
-                margin-top: 40px;
-            }
         }
         
         @media (max-width: 576px) {
@@ -342,113 +266,7 @@
                 padding: 1rem 0;
             }
             
-            footer {
-                margin-top: 30px;
-                padding: 15px 0;
-            }
-            
-            .footer-links a {
-                font-size: 13px;
-            }
         }
-    
-/* Footer */
-footer {
-    background-color: #212529;
-    color: #fff;
-    padding: 20px 0;
-    margin-top: 50px;
-}
-
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
-}
-
-.footer-left p {
-    margin: 0;
-    color: #BF9A33;
-}
-
-.footer-right {
-    display: flex;
-    gap: 30px;
-}
-
-.footer-contact p {
-    margin: 0;
-    margin-bottom: 5px;
-    color: #fff;
-}
-
-.footer-contact i {
-    color: #BF9A33;
-    margin-right: 8px;
-}
-
-.footer-social {
-    display: flex;
-    gap: 15px;
-}
-
-.footer-social a {
-    color: #BF9A33;
-    font-size: 20px;
-    transition: color 0.3s;
-}
-
-.footer-social a:hover {
-    color: #fff;
-}
-
-.footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 15px;
-}
-
-.footer-links a {
-    color: #BF9A33;
-    font-size: 14px;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.footer-links a:hover {
-    color: #fff;
-    text-decoration: underline;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 20px;
-    }
-    
-    .footer-right {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .footer-social {
-        justify-content: center;
-    }
-    
-    .footer-links {
-        flex-direction: column;
-        gap: 10px;
-    }
-}
-
-
 </style>
 </head>
 <body>
@@ -471,7 +289,7 @@ footer {
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
+                                                            <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
                             <a class="nav-link" href="../index.html">Início</a>
                         </li>
@@ -483,6 +301,9 @@ footer {
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="loja.html">Loja</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="humanos-maquinas.html">Humanos &amp; Máquinas</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="people-hub.html">People Hub</a>
@@ -582,8 +403,8 @@ footer {
                         <p><i class="fas fa-phone"></i> +351 961 925 050</p>
                     </div>
                     <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
@@ -647,5 +468,8 @@ footer {
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Feedback Modal JS -->
+    <script src="../js/feedback.js"></script>
+
 </body>
 </html>
