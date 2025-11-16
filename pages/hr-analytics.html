@@ -18,7 +18,10 @@
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="../css/style.css">
+
     <!-- Chart.js para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
@@ -1101,145 +1104,7 @@
         .score-high { color: #28a745; font-weight: 600; }
         .score-medium { color: #ffc107; font-weight: 600; }
         .score-low { color: #dc3545; font-weight: 600; }
-
-        /* Footer */
-        footer {
-            background-color: #212529;
-            color: #fff;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-        
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-        
-        .footer-left p {
-            margin: 0;
-            color: #BF9A33;
-        }
-        
-        .footer-right {
-            display: flex;
-            gap: 30px;
-        }
-        
-        .footer-contact p {
-            margin: 0;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-        
-        .footer-contact i {
-            color: #BF9A33;
-            margin-right: 8px;
-        }
-        
-        .footer-social {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .footer-social a {
-            color: #BF9A33;
-            font-size: 20px;
-            transition: color 0.3s;
-        }
-        
-        .footer-social a:hover {
-            color: #fff;
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 15px;
-        }
-        
-        .footer-links a {
-            color: #BF9A33;
-            font-size: 14px;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-links a:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
-
-        /* Feedback button */
-        .feedback-btn {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            background-color: #BF9A33;
-            color: #212529;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 20px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
-            z-index: 50;
-        }
-        
-        .feedback-btn:hover {
-            background-color: #a57b0a;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Rating stars para feedback */
-        .rating {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-        
-        .star {
-            font-size: 24px;
-            cursor: pointer;
-            color: #ddd;
-            transition: color 0.2s;
-        }
-        
-        .star:hover,
-        .star.active {
-            color: #BF9A33;
-        }
-
-        /* Garantir que elementos fora do modal não interfiram */
-        body.modal-open {
-            overflow: hidden !important;
-        }
-
-        body.modal-open .modal {
-            overflow-x: hidden !important;
-            overflow-y: auto !important;
-        }
-
-        body.modal-open > *:not(.modal) {
-            pointer-events: none !important;
-        }
-
-        body.modal-open .modal {
-            pointer-events: auto !important;
-        }
-
-        body.modal-open .modal * {
-            pointer-events: auto !important;
-        }
-
-        /* Responsividade */
+/* Responsividade */
         @media (max-width: 992px) {
             .hero-content h1 {
                 font-size: 3.5rem;
