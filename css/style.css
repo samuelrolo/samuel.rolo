@@ -23,6 +23,25 @@ body {
     padding-left: 1rem;
 }
 
+/* Botões padrão alinhados ao layout principal */
+.btn-primary {
+    background-color: #212529 !important;
+    border-color: #212529 !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 2rem !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-primary:hover {
+    background-color: #BF9A33 !important;
+    border-color: #BF9A33 !important;
+    color: #212529 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 15px rgba(191, 154, 51, 0.3) !important;
+}
+
 /* ===== CORREÇÃO PRINCIPAL: Z-INDEX E INTERATIVIDADE DOS MODAIS ===== */
 
 /* Modal backdrop - garantir z-index correto */
