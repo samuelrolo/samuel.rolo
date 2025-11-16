@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#030914" />
+      <stop offset="100%" stop-color="#123055" />
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 0 40 L 40 40 40 0" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="2" />
+    </pattern>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)" />
+  <rect width="1200" height="675" fill="url(#grid)" />
+  <circle cx="280" cy="360" r="230" fill="none" stroke="#BF9A33" stroke-width="2" opacity="0.6" />
+  <circle cx="920" cy="250" r="180" fill="none" stroke="#BF9A33" stroke-width="2" opacity="0.4" />
+  <path d="M200 150 C400 60 600 300 800 180" stroke="#48c6ef" stroke-width="3" fill="none" opacity="0.4" />
+  <path d="M1000 540 C780 460 620 620 420 510" stroke="#ffae00" stroke-width="2" fill="none" opacity="0.4" />
+  <rect x="80" y="80" width="1040" height="515" fill="none" stroke="#BF9A33" stroke-width="8" rx="36" />
+  <text x="50%" y="48%" text-anchor="middle" font-family="'Poppins', 'Segoe UI', sans-serif" font-size="80" font-weight="700" fill="#ffffff">Edição #1</text>
+  <text x="50%" y="62%" text-anchor="middle" font-family="'Poppins', 'Segoe UI', sans-serif" font-size="54" font-weight="400" fill="#e6ecff">THE NEW BATTLEFIELD</text>
+  <text x="50%" y="82%" text-anchor="middle" font-family="'Poppins', 'Segoe UI', sans-serif" font-size="38" font-weight="500" fill="#BF9A33">Humanos &amp; Máquinas</text>
+</svg>
