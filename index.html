@@ -1389,6 +1389,9 @@
                             <a class="nav-link" href="pages/loja.html">Loja</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="pages/humanos-maquinas.html">Humanos &amp; Máquinas</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="pages/people-hub.html">People Hub</a>
                         </li>
                         <li class="nav-item">
@@ -1685,8 +1688,8 @@
                         <p><i class="fas fa-phone"></i> +351 961 925 050</p>
                     </div>
                     <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
@@ -1885,7 +1888,6 @@
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
             initializeSurveyClean();
-            initializeFeedbackStars();
         });
 
         function initializeSurveyClean() {
@@ -2249,52 +2251,10 @@
             }, 500);
         }
 
-        // Feedback stars functionality
-        function initializeFeedbackStars() {
-            const stars = document.querySelectorAll('.star');
-            const ratingInput = document.getElementById('rating');
-            
-            stars.forEach((star, index) => {
-                star.addEventListener('click', () => {
-                    const rating = index + 1;
-                    ratingInput.value = rating;
-                    
-                    stars.forEach((s, i) => {
-                        if (i < rating) {
-                            s.classList.add('active');
-                            s.innerHTML = '<i class="fas fa-star"></i>';
-                        } else {
-                            s.classList.remove('active');
-                            s.innerHTML = '<i class="far fa-star"></i>';
-                        }
-                    });
-                });
-                
-                star.addEventListener('mouseover', () => {
-                    const rating = index + 1;
-                    
-                    stars.forEach((s, i) => {
-                        if (i < rating) {
-                            s.innerHTML = '<i class="fas fa-star"></i>';
-                        } else {
-                            s.innerHTML = '<i class="far fa-star"></i>';
-                        }
-                    });
-                });
-            });
-            
-            const feedbackModal = document.getElementById('feedbackModal');
-            feedbackModal.addEventListener('hidden.bs.modal', () => {
-                // Reset form
-                document.getElementById('feedbackForm').reset();
-                ratingInput.value = 0;
-                stars.forEach(star => {
-                    star.classList.remove('active');
-                    star.innerHTML = '<i class="far fa-star"></i>';
-                });
-            });
-        }
     </script>
+
+    <!-- Feedback Modal JS -->
+    <script src="js/feedback.js"></script>
 
     <!-- Divider Component JS -->
     <script src="js/divider.js"></script>
