@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/style.css">
     
     <style>
         /* ===== ESTILOS WIDGET CANDIDATE FIT ===== */
@@ -264,112 +264,15 @@
             color: var(--primary-color) !important;
             font-weight: 600;
         }
-        
-        /* Footer */
-footer {
-    background-color: #212529;
-    color: #fff;
-    padding: 20px 0;
-    margin-top: 50px;
-}
-
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
-}
-
-.footer-left p {
-    margin: 0;
-    color: #BF9A33;
-}
-
-.footer-right {
-    display: flex;
-    gap: 30px;
-}
-
-.footer-contact p {
-    margin: 0;
-    margin-bottom: 5px;
-    color: #fff;
-}
-
-.footer-contact i {
-    color: #BF9A33;
-    margin-right: 8px;
-}
-
-.footer-social {
-    display: flex;
-    gap: 15px;
-}
-
-.footer-social a {
-    color: #BF9A33;
-    font-size: 20px;
-    transition: color 0.3s;
-}
-
-.footer-social a:hover {
-    color: #fff;
-}
-
-.footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 15px;
-}
-
-.footer-links a {
-    color: #BF9A33;
-    font-size: 14px;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.footer-links a:hover {
-    color: #fff;
-    text-decoration: underline;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 20px;
-    }
-    
-    .footer-right {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .footer-social {
-        justify-content: center;
-    }
-    
-    .footer-links {
-        flex-direction: column;
-        gap: 10px;
-    }
-}
-
-
 </style>
 </head>
 <body>
     <!-- Header e Navegação -->
-    <nav class="navbar navbar-expand-lg fixed-top">
+    <header class="header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="../index.html">
-                    <img src="../images/logo.png" alt="Inspire Logo" class="logo-img">
+                    <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -383,10 +286,13 @@ footer {
                             <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="servicos.html">Serviços</a>
+                            <a class="nav-link active" aria-current="page" href="servicos.html">Serviços</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="loja.html">Loja</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="humanos-maquinas.html">Humanos &amp; Máquinas</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="people-hub.html">People Hub</a>
@@ -398,6 +304,7 @@ footer {
                 </div>
             </div>
         </nav>
+    </header>
 
     <!-- Breadcrumb -->
     <div class="container mt-4">
@@ -866,8 +773,8 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                         <p><i class="fas fa-phone"></i> +351 961 925 050</p>
                     </div>
                     <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
@@ -1275,104 +1182,6 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
         .form-group input, .form-group select { width: 100%; padding: 10px; border: none; border-radius: 6px; background: rgba(255,255,255,0.1); color: white; }
         .form-group input::placeholder { color: rgba(255,255,255,0.7); }
         .results { text-align: center; padding: 40px; }
-    
-/* Footer */
-footer {
-    background-color: #212529;
-    color: #fff;
-    padding: 20px 0;
-    margin-top: 50px;
-}
-
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
-}
-
-.footer-left p {
-    margin: 0;
-    color: #BF9A33;
-}
-
-.footer-right {
-    display: flex;
-    gap: 30px;
-}
-
-.footer-contact p {
-    margin: 0;
-    margin-bottom: 5px;
-    color: #fff;
-}
-
-.footer-contact i {
-    color: #BF9A33;
-    margin-right: 8px;
-}
-
-.footer-social {
-    display: flex;
-    gap: 15px;
-}
-
-.footer-social a {
-    color: #BF9A33;
-    font-size: 20px;
-    transition: color 0.3s;
-}
-
-.footer-social a:hover {
-    color: #fff;
-}
-
-.footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 15px;
-}
-
-.footer-links a {
-    color: #BF9A33;
-    font-size: 14px;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.footer-links a:hover {
-    color: #fff;
-    text-decoration: underline;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 20px;
-    }
-    
-    .footer-right {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .footer-social {
-        justify-content: center;
-    }
-    
-    .footer-links {
-        flex-direction: column;
-        gap: 10px;
-    }
-}
-
-
 </style>
 </head>
 <body>
@@ -1521,5 +1330,8 @@ footer {
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai@latest/dist/index.min.js"></script>
+    <!-- Feedback Modal JS -->
+    <script src="../js/feedback.js"></script>
+
 </body>
 </html>
