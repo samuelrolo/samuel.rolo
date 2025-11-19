@@ -1,0 +1,35 @@
+<svg width="900" height="1200" viewBox="0 0 900 1200" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Retrato estilizado de Samuel Rolo</title>
+  <desc id="desc">Ilustração contemporânea em tons de azul escuro e dourado, alinhada com o layout do site.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f1118"/>
+      <stop offset="100%" stop-color="#1c2433"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#bf9a33"/>
+      <stop offset="100%" stop-color="#d8b55a"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="1200" rx="60" fill="url(#bg)"/>
+  <circle cx="460" cy="440" r="260" fill="#192233" opacity="0.9"/>
+  <path d="M280 980c20-220 360-220 380 0" fill="#121826" stroke="#1f2a3a" stroke-width="8"/>
+  <path d="M360 1040h210c8 0 14 6 14 14v40c0 8-6 14-14 14H360c-8 0-14-6-14-14v-40c0-8 6-14 14-14z" fill="#0f1118" stroke="#273246" stroke-width="8"/>
+  <path d="M390 710c10-44 12-80 10-126 12-18 38-28 60-28s48 10 60 28c-2 46 0 82 10 126 2 10-6 20-16 20H406c-10 0-18-10-16-20z" fill="#f5f2ec"/>
+  <path d="M374 540c-6-26-6-54 2-82 10-34 36-62 84-62s74 28 84 62c8 28 8 56 2 82-38 16-134 16-172 0z" fill="#f5f2ec"/>
+  <path d="M420 526c-4-32-2-56 4-78 16 10 56 10 72 0 6 22 8 46 4 78-22 6-58 6-80 0z" fill="#f0e7da"/>
+  <path d="M398 420c4-62 42-96 96-96 50 0 92 30 98 88-24 14-48 20-74 22-48 4-90-2-120-14z" fill="#1a2230"/>
+  <path d="M512 444c0 18-14 32-32 32s-32-14-32-32" fill="none" stroke="#1a2230" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="448" cy="432" r="10" fill="#1a2230"/>
+  <circle cx="520" cy="432" r="10" fill="#1a2230"/>
+  <path d="M440 392c-10-6-28-8-40 2" fill="none" stroke="#1a2230" stroke-width="10" stroke-linecap="round"/>
+  <path d="M512 394c10-6 28-8 40 2" fill="none" stroke="#1a2230" stroke-width="10" stroke-linecap="round"/>
+  <path d="M384 332c28-60 124-78 178-18 6 8 12 18 16 30l30-20c10-6 22 2 20 14l-12 70c-4 24-22 42-46 46-60 10-122 10-170-4-18-4-32-20-36-38l-14-62c-4-16 12-28 26-18l8 6z" fill="#202a3c"/>
+  <path d="M350 812c-12 0-22 10-20 22l16 108c2 10 10 18 20 18h210c10 0 18-8 20-18l16-108c2-12-8-22-20-22H350z" fill="url(#accent)"/>
+  <path d="M340 822h232" stroke="#f5f2ec" stroke-width="6" stroke-linecap="round" opacity="0.4"/>
+  <circle cx="360" cy="840" r="10" fill="#f5f2ec"/>
+  <circle cx="520" cy="840" r="10" fill="#f5f2ec"/>
+  <rect x="220" y="150" width="80" height="12" rx="6" fill="url(#accent)"/>
+  <rect x="600" y="170" width="60" height="12" rx="6" fill="url(#accent)"/>
+  <rect x="250" y="1040" width="400" height="32" rx="16" fill="#121826" opacity="0.8"/>
+</svg>
