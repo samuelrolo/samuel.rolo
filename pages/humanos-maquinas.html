@@ -3,46 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informação Legal | Share2Inspire | Samuel Rolo</title>
-    <meta name="description" content="Informação legal da Share2Inspire. Termos e condições de utilização do site e serviços.">
-    
+    <title>Humanos &amp; Máquinas | Share2Inspire</title>
+    <meta name="description" content="Humanos &amp; Máquinas é o espaço da Share2Inspire onde exploramos a nova geografia do poder na era digital, ligando tecnologia, política e consciência humana em artigos e podcasts.">
+
     <!-- Favicon -->
     <link rel="icon" href="../images/favicon.png" type="image/png">
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/style.css">
-    
+
     <style>
-.navbar {
+        :root {
+            --primary-color: #BF9A33;
+            --secondary-color: #333333;
+            --accent-color: #a57b0a;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --text-color: #333333;
+            --text-light: #6c757d;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
             background-color: #fff;
+        }
+
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             padding: 1rem 0;
         }
-        
-        .navbar-nav {
-            margin-left: auto;
-        }
-        
+
         .navbar-nav .nav-link {
-            color: #333;
             font-weight: 600;
+            color: var(--secondary-color);
             padding: 0.5rem 1rem;
-            margin: 0 0.25rem;
         }
-        
+
         .navbar-nav .nav-link.active {
-            color: #BF9A33;
+            color: var(--primary-color);
             position: relative;
         }
-        
+
         .navbar-nav .nav-link.active::after {
             content: '';
             position: absolute;
@@ -50,157 +62,215 @@
             left: 1rem;
             right: 1rem;
             height: 2px;
-            background-color: #BF9A33;
+            background-color: var(--primary-color);
         }
-        
-        /* Estilos para a página */
+
         .page-header {
             background-color: #f8f9fa;
-            padding: 100px 0 50px;
-            margin-bottom: 50px;
+            padding: 110px 0 50px;
         }
-        
+
         .page-header h1 {
             font-size: 2.5rem;
             font-weight: 700;
-            color: #333;
-            margin-bottom: 1rem;
+            color: var(--secondary-color);
         }
-        
+
         .breadcrumb {
-            background-color: transparent;
+            background: transparent;
             padding: 0;
-            margin: 0;
+            margin-bottom: 0;
         }
-        
+
         .breadcrumb-item a {
-            color: #BF9A33;
+            color: var(--primary-color);
             text-decoration: none;
         }
-        
-        .breadcrumb-item.active {
-            color: #6c757d;
+
+        .hero-humanos {
+            background: linear-gradient(135deg, #0d1117, #1e232d);
+            color: #fff;
+            padding: 4rem 0;
         }
-        
-        .content-section {
-            padding: 40px 0;
-        }
-        
-        .content-section h2 {
-            font-size: 1.8rem;
+
+        .hero-humanos .section-label {
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--primary-color);
             font-weight: 600;
-            color: #333;
+        }
+
+        .hero-humanos h2 {
+            font-size: 3rem;
+            font-weight: 700;
             margin-bottom: 1rem;
         }
-        
-        .content-section h3 {
-            font-size: 1.4rem;
+
+        .hero-humanos h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-humanos p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+        }
+
+        .btn-cta {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 0.85rem 2.5rem;
+            border-radius: 30px;
             font-weight: 600;
-            color: #333;
-            margin: 1.5rem 0 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        
-        .content-section p {
-            margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-        
-        .content-section ul {
-            margin-bottom: 1rem;
-            padding-left: 1.5rem;
-        }
-        
-        .content-section li {
-            margin-bottom: 0.5rem;
-            line-height: 1.6;
-        }
-        
-        .modal-header {
-            background-color: #BF9A33;
+
+        .btn-cta:hover {
+            background: var(--accent-color);
             color: #fff;
         }
-        
-        .modal-title {
-            font-weight: 600;
+
+        .articles-section {
+            padding: 4rem 0;
         }
-        
-        .modal-body label {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
+
+        .articles-section h2 {
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 3rem;
         }
-        
-        .modal-footer .btn-primary {
-            background-color: #BF9A33;
-            border-color: #BF9A33;
+
+        .article-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
-        
-        .modal-footer .btn-primary:hover {
-            background-color: #a88629;
-            border-color: #a88629;
+
+        .article-image-wrapper {
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         }
-        
-        /* Estilos globais para botões primários */
-        .btn-primary {
-            background-color: #212529 !important;
-            border-color: #212529 !important;
-            color: #fff !important;
-            font-weight: 600;
+
+        .article-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .article-card h3 {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        .article-card p {
+            color: var(--text-light);
+            flex: 1;
+        }
+
+        .btn-read-more {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
             padding: 0.75rem 2rem;
-            border-radius: 8px;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
             transition: all 0.3s ease;
         }
-        
-        .btn-primary:hover {
-            background-color: #BF9A33 !important;
-            border-color: #BF9A33 !important;
-            color: #fff !important;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(191, 154, 51, 0.3);
+
+        .btn-read-more:hover {
+            background: var(--accent-color);
+            color: #fff;
         }
-        
-        .btn-primary:focus {
-            background-color: #BF9A33 !important;
-            border-color: #BF9A33 !important;
-            box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25);
+
+        .podcast-section {
+            background: #f8f9fa;
+            padding: 4rem 0;
         }
-        
-        /* Media queries para otimização mobile */
+
+        .podcast-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .podcast-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .podcast-links a {
+            padding: 0.85rem 1.5rem;
+            border-radius: 30px;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .podcast-links a:hover {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .podcast-player iframe {
+            width: 100%;
+        }
+
+        .section-subtitle {
+            font-size: 1rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 992px) {
+            .hero-humanos h2 {
+                font-size: 2.5rem;
+            }
+
+            .hero-humanos h3 {
+                font-size: 1.25rem;
+            }
+        }
+
         @media (max-width: 768px) {
-            .page-header {
-                padding: 80px 0 40px;
-                margin-bottom: 30px;
-            }
-            
-            .page-header h1 {
-                font-size: 2rem;
-            }
-            
-            .content-section {
-                padding: 30px 0;
-            }
-            
-            .footer-container {
-                flex-direction: column;
+            .hero-humanos {
                 text-align: center;
-                gap: 20px;
             }
-            
-            .footer-right {
+
+            .podcast-links {
                 flex-direction: column;
-                gap: 15px;
-            }
-            
-            .footer-social {
-                justify-content: center;
-            }
-            
-            .footer-links {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
             }
         }
-</style>
+    </style>
 </head>
 <body>
     <!-- Google tag (gtag.js) -->
@@ -211,8 +281,7 @@
         gtag('js', new Date());
         gtag('config', 'G-8GQ1KM9FQS');
     </script>
-    
-    <!-- Header e Navegação -->
+
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
             <div class="container">
@@ -223,7 +292,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                                                            <ul class="navbar-nav ms-auto">
+                                        <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
                             <a class="nav-link" href="../index.html">Início</a>
                         </li>
@@ -237,7 +306,7 @@
                             <a class="nav-link" href="loja.html">Loja</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="humanos-maquinas.html">Humanos &amp; Máquinas</a>
+                            <a class="nav-link active" aria-current="page" href="humanos-maquinas.html">Humanos &amp; Máquinas</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="people-hub.html">People Hub</a>
@@ -251,80 +320,99 @@
         </nav>
     </header>
 
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>Informação Legal</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Informação Legal</li>
-                        </ol>
-                    </nav>
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h1>Humanos &amp; Máquinas</h1>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Humanos &amp; Máquinas</li>
+                            </ol>
+                        </nav>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Conteúdo Principal -->
-    <main class="main-content">
-        <div class="container">
-            <section class="content-section">
-                <h2>Termos e Condições de Utilização</h2>
-                
-                <h3>1. Objeto</h3>
-                <p>Os presentes termos e condições regulam a utilização do website share2inspire.pt e dos serviços prestados pela Share2Inspire, empresa individual de Samuel Rolo.</p>
-                
-                <h3>2. Identificação da Entidade</h3>
-                <p><strong>Denominação:</strong> Share2Inspire - Samuel Rolo<br>
-                <strong>NIF:</strong> 241596823<br>
-                <strong>Morada:</strong> Mafra<br>
-                <strong>Email:</strong> srshare2inspire@gmail.com<br>
-                <strong>Telefone:</strong> +351 961 925 050</p>
-                
-                <h3>3. Utilização do Website</h3>
-                <p>A utilização deste website implica a aceitação plena dos presentes termos e condições. O utilizador compromete-se a:</p>
-                <ul>
-                    <li>Utilizar o website de forma lícita e em conformidade com a legislação aplicável</li>
-                    <li>Não transmitir conteúdos que sejam ilegais, difamatórios ou que violem direitos de terceiros</li>
-                    <li>Não utilizar o website para fins comerciais não autorizados</li>
-                    <li>Respeitar os direitos de propriedade intelectual</li>
-                </ul>
-                
-                <h3>4. Propriedade Intelectual</h3>
-                <p>Todos os conteúdos presentes neste website, incluindo textos, imagens, logótipos, design e código, são propriedade da Share2Inspire ou dos seus licenciadores, estando protegidos por direitos de autor e outros direitos de propriedade intelectual.</p>
-                
-                <h3>5. Proteção de Dados Pessoais</h3>
-                <p>O tratamento de dados pessoais é efetuado em conformidade com o Regulamento Geral sobre a Proteção de Dados (RGPD) e demais legislação aplicável. Para mais informações, consulte a nossa <a href="politica-privacidade.html">Política de Privacidade</a>.</p>
-                
-                <h3>6. Responsabilidade</h3>
-                <p>A Share2Inspire não se responsabiliza por:</p>
-                <ul>
-                    <li>Interrupções ou falhas no funcionamento do website</li>
-                    <li>Danos resultantes da utilização indevida do website</li>
-                    <li>Conteúdos de terceiros ou links externos</li>
-                    <li>Vírus ou outros elementos nocivos que possam afetar o equipamento do utilizador</li>
-                </ul>
-                
-                <h3>7. Modificações</h3>
-                <p>A Share2Inspire reserva-se o direito de modificar os presentes termos e condições a qualquer momento, sendo as alterações publicadas nesta página.</p>
-                
-                <h3>8. Lei Aplicável e Foro Competente</h3>
-                <p>Os presentes termos e condições são regidos pela lei portuguesa. Em caso de litígio, será competente o foro da comarca do domicílio da Share2Inspire.</p>
-                
-                <h3>9. Contactos</h3>
-                <p>Para qualquer questão relacionada com estes termos e condições, pode contactar-nos através de:</p>
-                <ul>
-                    <li><strong>Email:</strong> srshare2inspire@gmail.com</li>
-                    <li><strong>Telefone:</strong> +351 961 925 050</li>
-                    <li><strong>Formulário de contacto:</strong> <a href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Clique aqui</a></li>
-                </ul>
-                
-                <p><em>Última atualização: Outubro de 2025</em></p>
-            </section>
-        </div>
+        <section class="hero-humanos">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center">
+                        <p class="section-label">Série Editorial</p>
+                        <h2>Humanos &amp; Máquinas</h2>
+                        <h3>O espaço onde a tecnologia, o poder e a consciência humana se encontram.</h3>
+                        <p>Nesta série editorial exploro como a tecnologia redesenha o poder, a economia e o trabalho, e que lugar resta à consciência humana nesta nova geopolítica digital. Aqui encontras os artigos e os episódios do podcast Humanos &amp; Máquinas.</p>
+                        <a class="btn-cta" href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7384145793324085248" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-linkedin"></i> Subscrever newsletter no LinkedIn
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="articles-section">
+            <div class="container">
+                <p class="section-subtitle text-center">Artigos Humanos &amp; Máquinas</p>
+                <h2 class="section-title text-center">Artigos em Destaque</h2>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="article-card">
+                            <div class="article-image-wrapper">
+                                <img class="article-image" src="../images/humanos-maquinas-new-battlefield.svg" alt="Ilustração do artigo Humanos &amp; Máquinas - The New Battlefield" loading="lazy">
+                            </div>
+                            <h3>Edição #1: The New Battlefield</h3>
+                            <p>Nesta primeira edição analiso a nova geografia do poder na era digital. O campo de batalha já não são apenas territórios físicos, mas infraestruturas invisíveis como dados, algoritmos, cabos submarinos e plataformas digitais. Questiono quem controla hoje o fluxo de informação, como isso influencia democracias e mercados, e porque é que a literacia digital deixou de ser opcional para cidadãos e líderes.</p>
+                            <a class="btn-read-more" href="https://www.linkedin.com/pulse/edi%C3%A7%C3%A3o-1-new-battlefield-samuel-rolo-ksinf/?trackingId=tjzct3EjSCuCCoSgS%2FvWoQ%3D%3D" target="_blank" rel="noopener noreferrer">Ler artigo no LinkedIn</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="article-card">
+                            <div class="article-image-wrapper">
+                                <img class="article-image" src="../images/humanos-maquinas-turning-point.svg" alt="Ilustração do artigo Humanos &amp; Máquinas - The Turning Point" loading="lazy">
+                            </div>
+                            <h3>The Turning Point: Technology, Power and Humanity</h3>
+                            <p>Este artigo explora o momento de viragem em que a tecnologia deixa de ser apenas ferramenta e passa a ser infraestrutra crítica do poder. Discuto como a inteligência artificial, as grandes plataformas e as redes globais de energia e dados estão a redefinir quem decide, quem beneficia e quem fica para trás. A questão central já não é apenas o que a tecnologia pode fazer, mas com que propósito é desenhada e ao serviço de quem é usada.</p>
+                            <a class="btn-read-more" href="https://www.linkedin.com/pulse/turning-point-technology-power-humanity-samuel-rolo-uugef/?trackingId=h1cYgcPKTHKNd57LBNR3yg%3D%3D" target="_blank" rel="noopener noreferrer">Ler artigo no LinkedIn</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="podcast-section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="podcast-card">
+                            <p class="section-subtitle">Podcast Humanos &amp; Máquinas</p>
+                            <h2 class="section-title">Ouvir o Podcast Humanos &amp; Máquinas</h2>
+                            <p>Se preferes ouvir em vez de ler, o Humanos &amp; Máquinas também vive em formato podcast. Em cada episódio aprofundo os temas dos artigos, com exemplos práticos, histórias reais e perguntas incómodas sobre o futuro do trabalho, da democracia e da liderança na era da inteligência artificial.</p>
+                            <div class="podcast-links">
+                                <a href="https://www.youtube.com/@share2inspire/podcasts" target="_blank" rel="noopener noreferrer">
+                                    <i class="fab fa-youtube"></i> Ver episódios no YouTube
+                                </a>
+                            </div>
+                            <div class="podcast-player">
+                                <iframe
+                                    data-testid="embed-iframe"
+                                    style="border-radius:12px"
+                                    src="https://open.spotify.com/embed/show/2P09p0F3HIR0jXRdCMPOSe?utm_source=generator&t=0"
+                                    width="100%"
+                                    height="352"
+                                    frameborder="0"
+                                    allowfullscreen=""
+                                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                    loading="lazy">
+                                </iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
@@ -422,6 +510,9 @@
                                 <label for="contactReason" class="form-label">Motivo *</label>
                                 <select class="form-select" id="contactReason" name="reason" required>
                                     <option value="">Selecione um motivo</option>
+                                    <option value="humanos-maquinas">Humanos &amp; Máquinas</option>
+                                    <option value="people-hub">People Hub</option>
+                                    <option value="newsletter">Newsletter</option>
                                     <option value="consultoria">Consultoria</option>
                                     <option value="coaching">Coaching Executivo</option>
                                     <option value="formacao">Formação</option>
@@ -459,7 +550,7 @@
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="contactPrivacy" name="privacy" required>
                             <label class="form-check-label" for="contactPrivacy">
-                                Li e aceito a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *
+                                Li e aceito a <a href="politica-privacidade.html" target="_blank" rel="noopener noreferrer">Política de Privacidade</a> *
                             </label>
                         </div>
                         <div id="contactFormMessage"></div>
@@ -475,17 +566,14 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
-        // Formulário de contacto
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            // Aqui seria implementada a lógica de envio do formulário
+
             const messageDiv = document.getElementById('contactFormMessage');
             messageDiv.innerHTML = '<div class="alert alert-success">Mensagem enviada com sucesso! Entraremos em contacto brevemente.</div>';
-            
-            // Fechar modal após 2 segundos
+
             setTimeout(() => {
                 const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
                 modal.hide();
@@ -499,4 +587,3 @@
 
 </body>
 </html>
-
