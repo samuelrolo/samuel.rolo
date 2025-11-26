@@ -1,48 +1,123 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tratamento de Dados | Share2Inspire | Samuel Rolo</title>
     <meta name="description" content="Informações sobre o tratamento de dados pessoais pela Share2Inspire.">
-    
+
     <!-- Favicon -->
     <link rel="icon" href="../images/favicon.png" type="image/png">
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/style.css">
-    
+
     <style>
-.navbar {
+        /* Estilos para o footer */
+        footer {
+            background-color: #212529;
+            color: #fff;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .footer-left p {
+            margin: 0;
+            color: #BF9A33;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-contact p {
+            margin: 0;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .footer-contact i {
+            color: #BF9A33;
+            margin-right: 8px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+
+        .footer-social a {
+            color: #BF9A33;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+
+        .footer-social a:hover {
+            color: #fff;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
+
+        .footer-links a {
+            color: #BF9A33;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        .navbar {
             background-color: #fff;
             padding: 1rem 0;
         }
-        
+
         .navbar-nav {
             margin-left: auto;
         }
-        
+
         .navbar-nav .nav-link {
             color: #333;
             font-weight: 600;
             padding: 0.5rem 1rem;
             margin: 0 0.25rem;
         }
-        
+
         .navbar-nav .nav-link.active {
             color: #BF9A33;
             position: relative;
         }
-        
+
         .navbar-nav .nav-link.active::after {
             content: '';
             position: absolute;
@@ -52,7 +127,7 @@
             height: 2px;
             background-color: #BF9A33;
         }
-        
+
         /* Estilos para a página de tratamento de dados */
         .page-header {
             background-color: #212529;
@@ -61,246 +136,351 @@
             margin-bottom: 4rem;
             position: relative;
         }
-        
+
         .page-header h1 {
             color: #BF9A33;
             font-size: 3rem;
             font-weight: 700;
             margin-bottom: 1rem;
         }
-        
+
         .page-header .breadcrumb {
             background-color: transparent;
         }
-        
+
         .page-header .breadcrumb-item a {
             color: #BF9A33;
         }
-        
+
         .page-header .breadcrumb-item.active {
             color: #fff;
         }
-        
+
         .policy-content {
             padding: 2rem 0;
         }
-        
+
         .policy-text {
             line-height: 1.8;
         }
-        
+
         .policy-text h2 {
             color: #333;
             font-size: 2.2rem;
             margin-bottom: 1.5rem;
             font-weight: 700;
         }
-        
+
         .policy-text h3 {
             color: #333;
             font-size: 1.5rem;
             margin: 2rem 0 1rem;
             font-weight: 600;
         }
-        
+
         .policy-text p {
             margin-bottom: 1.2rem;
             color: #555;
         }
-        
+
         .policy-text ul {
             margin-bottom: 1.5rem;
             padding-left: 1.5rem;
         }
-        
+
         .policy-text ul li {
             margin-bottom: 0.5rem;
             color: #555;
         }
-        
+
         .policy-text strong {
             font-weight: 600;
             color: #333;
         }
-        
+
         /* Responsividade - Melhorias */
         @media (max-width: 991px) {
             .page-header {
                 padding: 5.5rem 0 2.5rem;
                 margin-bottom: 3rem;
             }
-            
+
             .page-header h1 {
                 font-size: 2.5rem;
             }
-            
+
             .policy-text h2 {
                 font-size: 2rem;
                 margin-bottom: 1.2rem;
             }
-            
+
             .policy-text h3 {
                 font-size: 1.4rem;
                 margin: 1.8rem 0 0.8rem;
             }
-            
+
             .policy-content {
                 padding: 1.5rem 0;
             }
         }
-        
+
         @media (max-width: 768px) {
             .page-header {
                 padding: 5rem 0 2rem;
                 margin-bottom: 2.5rem;
             }
-            
+
             .page-header h1 {
                 font-size: 2.2rem;
             }
-            
+
             .policy-text h2 {
                 font-size: 1.8rem;
                 margin-bottom: 1rem;
             }
-            
+
             .policy-text h3 {
                 font-size: 1.3rem;
                 margin: 1.5rem 0 0.7rem;
             }
-            
+
             .policy-text p {
                 margin-bottom: 1rem;
                 font-size: 0.95rem;
             }
-            
+
             .policy-text ul {
                 margin-bottom: 1.2rem;
                 padding-left: 1.2rem;
             }
-            
+
             .policy-text ul li {
                 margin-bottom: 0.4rem;
                 font-size: 0.95rem;
             }
-            
+
             .policy-content {
                 padding: 1.2rem 0;
             }
-            
+
             .footer-container {
                 flex-direction: column;
                 text-align: center;
                 gap: 20px;
             }
-            
+
             .footer-right {
                 flex-direction: column;
                 gap: 15px;
             }
-            
+
             .footer-social {
                 justify-content: center;
             }
-            
+
             .footer-links {
                 flex-direction: column;
                 align-items: center;
                 gap: 10px;
             }
-            
+
+            footer {
+                margin-top: 40px;
+            }
         }
-        
+
         @media (max-width: 576px) {
             .page-header {
                 padding: 4.5rem 0 1.5rem;
                 margin-bottom: 2rem;
             }
-            
+
             .page-header h1 {
                 font-size: 1.8rem;
             }
-            
+
             .policy-text h2 {
                 font-size: 1.6rem;
                 margin-bottom: 0.8rem;
             }
-            
+
             .policy-text h3 {
                 font-size: 1.2rem;
                 margin: 1.2rem 0 0.6rem;
             }
-            
+
             .policy-text p {
                 margin-bottom: 0.8rem;
                 font-size: 0.9rem;
                 line-height: 1.6;
             }
-            
+
             .policy-text ul {
                 margin-bottom: 1rem;
                 padding-left: 1rem;
             }
-            
+
             .policy-text ul li {
                 margin-bottom: 0.3rem;
                 font-size: 0.9rem;
             }
-            
+
             .policy-content {
                 padding: 1rem 0;
             }
-            
+
+            footer {
+                margin-top: 30px;
+                padding: 15px 0;
+            }
+
+            .footer-links a {
+                font-size: 13px;
+            }
         }
-</style>
+
+        /* Footer */
+        footer {
+            background-color: #212529;
+            color: #fff;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .footer-left p {
+            margin: 0;
+            color: #BF9A33;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-contact p {
+            margin: 0;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .footer-contact i {
+            color: #BF9A33;
+            margin-right: 8px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+
+        .footer-social a {
+            color: #BF9A33;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+
+        .footer-social a:hover {
+            color: #fff;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
+
+        .footer-links a {
+            color: #BF9A33;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .footer-right {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .footer-social {
+                justify-content: center;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
 </head>
+
 <body>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
         gtag('config', 'G-8GQ1KM9FQS');
     </script>
     <!-- Header e Navegação -->
-    <header class="header">
-        <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="../index.html">
-                    <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                                                            <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="../index.html">Início</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="servicos.html">Serviços</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="loja.html">Loja</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="humanos-maquinas.html">Humanos &amp; Máquinas</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="people-hub.html">People Hub</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../index.html#contactos">Contactos</a>
-                        </li>
-                    </ul>
-                </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <img src="../images/logo.png" alt="Share2Inspire Logo" height="40">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="servicos.html">Serviços</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="loja.html">Loja</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="people-hub.html">People Hub</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#contactos">Contactos</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
     <!-- Page Header -->
     <section class="page-header">
@@ -326,9 +506,12 @@
                 <div class="col-lg-12">
                     <div class="policy-text">
                         <h2>Tratamento de Dados Pessoais</h2>
-                        
-                        <p>A Share2Inspire está empenhada em proteger a privacidade e os dados pessoais dos seus clientes e utilizadores. Este documento explica como recolhemos, utilizamos, partilhamos e protegemos os seus dados pessoais em conformidade com o Regulamento Geral de Proteção de Dados (RGPD) e outras leis de proteção de dados aplicáveis.</p>
-                        
+
+                        <p>A Share2Inspire está empenhada em proteger a privacidade e os dados pessoais dos seus
+                            clientes e utilizadores. Este documento explica como recolhemos, utilizamos, partilhamos e
+                            protegemos os seus dados pessoais em conformidade com o Regulamento Geral de Proteção de
+                            Dados (RGPD) e outras leis de proteção de dados aplicáveis.</p>
+
                         <h3>Responsável pelo Tratamento</h3>
                         <p>O responsável pelo tratamento dos seus dados pessoais é:</p>
                         <p>
@@ -338,7 +521,7 @@
                             Email: srshare2inspire@gmail.com<br>
                             Telefone: +351 961 925 050
                         </p>
-                        
+
                         <h3>Dados Pessoais que Recolhemos</h3>
                         <p>Podemos recolher os seguintes tipos de dados pessoais:</p>
                         <ul>
@@ -347,7 +530,7 @@
                             <li>Dados de utilização do website (endereço IP, cookies, histórico de navegação)</li>
                             <li>Informações fornecidas em formulários de contacto ou inscrição</li>
                         </ul>
-                        
+
                         <h3>Finalidades do Tratamento</h3>
                         <p>Tratamos os seus dados pessoais para as seguintes finalidades:</p>
                         <ul>
@@ -357,7 +540,7 @@
                             <li>Melhorar os nossos serviços e a experiência do utilizador</li>
                             <li>Cumprir obrigações legais e contratuais</li>
                         </ul>
-                        
+
                         <h3>Base Legal para o Tratamento</h3>
                         <p>O tratamento dos seus dados pessoais é baseado em uma ou mais das seguintes bases legais:</p>
                         <ul>
@@ -366,21 +549,29 @@
                             <li>Interesse legítimo (para melhorar os nossos serviços)</li>
                             <li>Cumprimento de obrigações legais</li>
                         </ul>
-                        
+
                         <h3>Período de Conservação</h3>
-                        <p>Conservamos os seus dados pessoais apenas pelo tempo necessário para cumprir as finalidades para as quais foram recolhidos, a menos que seja necessário conservá-los por períodos mais longos em virtude de obrigações legais, contratuais ou para a defesa de direitos em processos judiciais.</p>
-                        
+                        <p>Conservamos os seus dados pessoais apenas pelo tempo necessário para cumprir as finalidades
+                            para as quais foram recolhidos, a menos que seja necessário conservá-los por períodos mais
+                            longos em virtude de obrigações legais, contratuais ou para a defesa de direitos em
+                            processos judiciais.</p>
+
                         <h3>Partilha de Dados</h3>
                         <p>Podemos partilhar os seus dados pessoais com:</p>
                         <ul>
-                            <li>Prestadores de serviços que nos apoiam na gestão do website e na prestação dos nossos serviços</li>
+                            <li>Prestadores de serviços que nos apoiam na gestão do website e na prestação dos nossos
+                                serviços</li>
                             <li>Autoridades públicas, quando exigido por lei</li>
                         </ul>
-                        <p>Não vendemos, alugamos ou partilhamos os seus dados pessoais com terceiros para fins de marketing sem o seu consentimento explícito.</p>
-                        
+                        <p>Não vendemos, alugamos ou partilhamos os seus dados pessoais com terceiros para fins de
+                            marketing sem o seu consentimento explícito.</p>
+
                         <h3>Transferências Internacionais</h3>
-                        <p>Alguns dos nossos prestadores de serviços podem estar localizados fora do Espaço Económico Europeu (EEE). Quando transferimos os seus dados para fora do EEE, garantimos que são implementadas medidas de proteção adequadas, como cláusulas contratuais-tipo aprovadas pela Comissão Europeia.</p>
-                        
+                        <p>Alguns dos nossos prestadores de serviços podem estar localizados fora do Espaço Económico
+                            Europeu (EEE). Quando transferimos os seus dados para fora do EEE, garantimos que são
+                            implementadas medidas de proteção adequadas, como cláusulas contratuais-tipo aprovadas pela
+                            Comissão Europeia.</p>
+
                         <h3>Os Seus Direitos</h3>
                         <p>Em relação aos seus dados pessoais, tem os seguintes direitos:</p>
                         <ul>
@@ -393,16 +584,21 @@
                             <li>Direito de retirar o consentimento a qualquer momento</li>
                             <li>Direito de apresentar reclamação a uma autoridade de controlo</li>
                         </ul>
-                        
+
                         <h3>Como Exercer os Seus Direitos</h3>
-                        <p>Para exercer qualquer dos seus direitos ou para obter mais informações sobre o tratamento dos seus dados pessoais, pode contactar-nos através do email srshare2inspire@gmail.com ou por correio para o endereço acima indicado.</p>
-                        
+                        <p>Para exercer qualquer dos seus direitos ou para obter mais informações sobre o tratamento dos
+                            seus dados pessoais, pode contactar-nos através do email srshare2inspire@gmail.com ou por
+                            correio para o endereço acima indicado.</p>
+
                         <h3>Segurança dos Dados</h3>
-                        <p>Implementamos medidas técnicas e organizativas adequadas para proteger os seus dados pessoais contra tratamento não autorizado ou ilícito e contra a sua perda, destruição ou danificação acidental.</p>
-                        
+                        <p>Implementamos medidas técnicas e organizativas adequadas para proteger os seus dados pessoais
+                            contra tratamento não autorizado ou ilícito e contra a sua perda, destruição ou danificação
+                            acidental.</p>
+
                         <h3>Alterações à Política de Tratamento de Dados</h3>
-                        <p>Podemos atualizar esta política periodicamente. Quaisquer alterações serão publicadas nesta página e, quando apropriado, notificadas por email.</p>
-                        
+                        <p>Podemos atualizar esta política periodicamente. Quaisquer alterações serão publicadas nesta
+                            página e, quando apropriado, notificadas por email.</p>
+
                         <p>Última atualização: <strong>Outubro de 2025</strong></p>
                     </div>
                 </div>
@@ -423,8 +619,10 @@
                         <p><i class="fas fa-phone"></i> +351 961 925 050</p>
                     </div>
                     <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i
+                                class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i
+                                class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
@@ -473,7 +671,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="feedbackMessage" class="form-label">Mensagem *</label>
-                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3" required></textarea>
+                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3"
+                                required></textarea>
                         </div>
                         <div id="feedbackFormMessage"></div>
                     </form>
@@ -485,11 +684,9 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Feedback Modal JS -->
-    <script src="../js/feedback.js"></script>
-
 </body>
+
 </html>
