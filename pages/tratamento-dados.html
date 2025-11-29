@@ -16,424 +16,97 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../css/style.css">
-
-    <style>
-        /* Estilos para o footer */
-        footer {
-            background-color: #212529;
-            color: #fff;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .footer-left p {
-            margin: 0;
-            color: #BF9A33;
-        }
-
-        .footer-right {
-            display: flex;
-            gap: 30px;
-        }
-
-        .footer-contact p {
-            margin: 0;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-
-        .footer-contact i {
-            color: #BF9A33;
-            margin-right: 8px;
-        }
-
-        .footer-social {
-            display: flex;
-            gap: 15px;
-        }
-
-        .footer-social a {
-            color: #BF9A33;
-            font-size: 20px;
-            transition: color 0.3s;
-        }
-
-        .footer-social a:hover {
-            color: #fff;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 15px;
-        }
-
-        .footer-links a {
-            color: #BF9A33;
-            font-size: 14px;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
-
-        .navbar {
-            background-color: #fff;
-            padding: 1rem 0;
-        }
-
-        .navbar-nav {
-            margin-left: auto;
-        }
-
-        .navbar-nav .nav-link {
-            color: #333;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            margin: 0 0.25rem;
-        }
-
-        .navbar-nav .nav-link.active {
-            color: #BF9A33;
-            position: relative;
-        }
-
-        .navbar-nav .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 1rem;
-            right: 1rem;
-            height: 2px;
-            background-color: #BF9A33;
-        }
-
-        /* Estilos para a página de tratamento de dados */
-        .page-header {
-            background-color: #212529;
-            color: #fff;
-            padding: 6rem 0 3rem;
-            margin-bottom: 4rem;
-            position: relative;
-        }
-
-        .page-header h1 {
-            color: #BF9A33;
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .page-header .breadcrumb {
-            background-color: transparent;
-        }
-
-        .page-header .breadcrumb-item a {
-            color: #BF9A33;
-        }
-
-        .page-header .breadcrumb-item.active {
-            color: #fff;
-        }
-
-        .policy-content {
-            padding: 2rem 0;
-        }
-
-        .policy-text {
-            line-height: 1.8;
-        }
-
-        .policy-text h2 {
-            color: #333;
-            font-size: 2.2rem;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-        }
-
-        .policy-text h3 {
-            color: #333;
-            font-size: 1.5rem;
-            margin: 2rem 0 1rem;
-            font-weight: 600;
-        }
-
-        .policy-text p {
-            margin-bottom: 1.2rem;
-            color: #555;
-        }
-
-        .policy-text ul {
-            margin-bottom: 1.5rem;
-            padding-left: 1.5rem;
-        }
-
-        .policy-text ul li {
-            margin-bottom: 0.5rem;
-            color: #555;
-        }
-
-        .policy-text strong {
-            font-weight: 600;
-            color: #333;
-        }
-
-        /* Responsividade - Melhorias */
-        @media (max-width: 991px) {
-            .page-header {
-                padding: 5.5rem 0 2.5rem;
-                margin-bottom: 3rem;
-            }
-
-            .page-header h1 {
-                font-size: 2.5rem;
-            }
-
-            .policy-text h2 {
-                font-size: 2rem;
-                margin-bottom: 1.2rem;
-            }
-
-            .policy-text h3 {
-                font-size: 1.4rem;
-                margin: 1.8rem 0 0.8rem;
-            }
-
-            .policy-content {
-                padding: 1.5rem 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .page-header {
-                padding: 5rem 0 2rem;
-                margin-bottom: 2.5rem;
-            }
-
-            .page-header h1 {
-                font-size: 2.2rem;
-            }
-
-            .policy-text h2 {
-                font-size: 1.8rem;
-                margin-bottom: 1rem;
-            }
-
-            .policy-text h3 {
-                font-size: 1.3rem;
-                margin: 1.5rem 0 0.7rem;
-            }
-
-            .policy-text p {
-                margin-bottom: 1rem;
-                font-size: 0.95rem;
-            }
-
-            .policy-text ul {
-                margin-bottom: 1.2rem;
-                padding-left: 1.2rem;
-            }
-
-            .policy-text ul li {
-                margin-bottom: 0.4rem;
-                font-size: 0.95rem;
-            }
-
-            .policy-content {
-                padding: 1.2rem 0;
-            }
-
-            .footer-container {
-                flex-direction: column;
-                text-align: center;
-                gap: 20px;
-            }
-
-            .footer-right {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .footer-social {
-                justify-content: center;
-            }
-
-            .footer-links {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-
-            footer {
-                margin-top: 40px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .page-header {
-                padding: 4.5rem 0 1.5rem;
-                margin-bottom: 2rem;
-            }
-
-            .page-header h1 {
-                font-size: 1.8rem;
-            }
-
-            .policy-text h2 {
-                font-size: 1.6rem;
-                margin-bottom: 0.8rem;
-            }
-
-            .policy-text h3 {
-                font-size: 1.2rem;
-                margin: 1.2rem 0 0.6rem;
-            }
-
-            .policy-text p {
-                margin-bottom: 0.8rem;
-                font-size: 0.9rem;
-                line-height: 1.6;
-            }
-
-            .policy-text ul {
-                margin-bottom: 1rem;
-                padding-left: 1rem;
-            }
-
-            .policy-text ul li {
-                margin-bottom: 0.3rem;
-                font-size: 0.9rem;
-            }
-
-            .policy-content {
-                padding: 1rem 0;
-            }
-
-            footer {
-                margin-top: 30px;
-                padding: 15px 0;
-            }
-
-            .footer-links a {
-                font-size: 13px;
-            }
-        }
-
-        /* Footer */
-        footer {
-            background-color: #212529;
-            color: #fff;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .footer-left p {
-            margin: 0;
-            color: #BF9A33;
-        }
-
-        .footer-right {
-            display: flex;
-            gap: 30px;
-        }
-
-        .footer-contact p {
-            margin: 0;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-
-        .footer-contact i {
-            color: #BF9A33;
-            margin-right: 8px;
-        }
-
-        .footer-social {
-            display: flex;
-            gap: 15px;
-        }
-
-        .footer-social a {
-            color: #BF9A33;
-            font-size: 20px;
-            transition: color 0.3s;
-        }
-
-        .footer-social a:hover {
-            color: #fff;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 15px;
-        }
-
-        .footer-links a {
-            color: #BF9A33;
-            font-size: 14px;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .footer-container {
-                flex-direction: column;
-                text-align: center;
-                gap: 20px;
-            }
-
-            .footer-right {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .footer-social {
-                justify-content: center;
-            }
-
-            .footer-links {
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
+    padding: 20px 0;
+    margin-top: 50px;
+    }
+
+    .footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    }
+
+    .footer-left p {
+    margin: 0;
+    color: #BF9A33;
+    }
+
+    .footer-right {
+    display: flex;
+    gap: 30px;
+    }
+
+    .footer-contact p {
+    margin: 0;
+    margin-bottom: 5px;
+    color: #fff;
+    }
+
+    .footer-contact i {
+    color: #BF9A33;
+    margin-right: 8px;
+    }
+
+    .footer-social {
+    display: flex;
+    gap: 15px;
+    }
+
+    .footer-social a {
+    color: #BF9A33;
+    font-size: 20px;
+    transition: color 0.3s;
+    }
+
+    .footer-social a:hover {
+    color: #fff;
+    }
+
+    .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px;
+    }
+
+    .footer-links a {
+    color: #BF9A33;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+    color: #fff;
+    text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+    .footer-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+    }
+
+    .footer-right {
+    flex-direction: column;
+    gap: 15px;
+    }
+
+    .footer-social {
+    justify-content: center;
+    }
+
+    .footer-links {
+    flex-direction: column;
+    gap: 10px;
+    }
+    }
     </style>
 </head>
 
@@ -470,6 +143,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="loja.html">Loja</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="humanos-maquinas.html">Humanos & Máquinas</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="people-hub.html">People Hub</a>
