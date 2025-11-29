@@ -1,27 +1,37 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S H A R E 2 I N S P I R E    |    S A M U E L     R O L O</title>
-    <meta name="description" content="Consultoria e coaching por Samuel Rolo. Desenvolvimento humano, transformação organizacional e liderança consciente.">
-    <meta name="keywords" content="consultoria, coaching, transformação organizacional, gestão da mudança, liderança consciente, desenvolvimento humano, cultura organizacional, comunicação estratégica, recursos humanos, Samuel Rolo, share2inspire, ebook gestão da mudança, futuro do trabalho, HR Innovation Hub, desenvolvimento de talento, coaching para líderes, palestras, keynote speaker, RH Portugal, liderança empática">
-    
+    <title>S H A R E 2 I N S P I R E | S A M U E L R O L O</title>
+    <meta name="description"
+        content="Consultoria e coaching por Samuel Rolo. Desenvolvimento humano, transformação organizacional e liderança consciente.">
+    <meta name="keywords"
+        content="consultoria, coaching, transformação organizacional, gestão da mudança, liderança consciente, desenvolvimento humano, cultura organizacional, comunicação estratégica, recursos humanos, Samuel Rolo, share2inspire, ebook gestão da mudança, futuro do trabalho, HR Innovation Hub, desenvolvimento de talento, coaching para líderes, palestras, keynote speaker, RH Portugal, liderança empática">
+
     <!-- Favicon -->
     <link rel="icon" href="images/logo.png" type="image/png">
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
+    <!-- Divider Component CSS -->
+    <link href="css/divider.css" rel="stylesheet">
+
+    <!-- Header & Footer Shared CSS -->
+    <link href="css/header-footer.css" rel="stylesheet">
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
     <!-- Chart.js para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <style>
         :root {
             --primary-color: #bf9a33;
@@ -40,12 +50,12 @@
             --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             --border-radius: 5px;
         }
-        
+
         html {
             scroll-behavior: smooth;
             scroll-padding-top: 80px;
         }
-        
+
         body {
             font-family: 'Poppins', sans-serif;
             line-height: 1.6;
@@ -53,7 +63,7 @@
             margin: 0;
             padding: 0;
         }
-        
+
         /* Header e Navegação */
         .navbar {
             background-color: #fff;
@@ -61,27 +71,27 @@
             padding: 1rem 0;
             z-index: 100;
         }
-        
+
         .navbar-brand img {
             height: 40px;
         }
-        
+
         .navbar-nav {
             margin-left: auto;
         }
-        
+
         .navbar-nav .nav-link {
             color: #333;
             font-weight: 600;
             padding: 0.5rem 1rem;
             margin: 0 0.25rem;
         }
-        
+
         .navbar-nav .nav-link.active {
             color: #BF9A33;
             position: relative;
         }
-        
+
         .navbar-nav .nav-link.active::after {
             content: '';
             position: absolute;
@@ -91,7 +101,7 @@
             height: 2px;
             background-color: #BF9A33;
         }
-        
+
         /* Hero Section */
         .hero-section {
             height: 100vh;
@@ -105,7 +115,7 @@
             margin: 0;
             padding: 0;
         }
-        
+
         .hero-content {
             text-align: center;
             display: flex;
@@ -114,7 +124,7 @@
             align-items: center;
             height: 100%;
         }
-        
+
         .hero-content h1 {
             font-size: 4.5rem;
             font-weight: 700;
@@ -123,7 +133,7 @@
             margin-bottom: 1rem;
             margin: 0;
         }
-        
+
         .hero-content h2 {
             font-size: 3.5rem;
             font-weight: 700;
@@ -131,7 +141,7 @@
             margin: 0;
             letter-spacing: 6px;
         }
-        
+
         .scroll-down {
             position: absolute;
             bottom: 50px;
@@ -146,13 +156,13 @@
             text-decoration: none;
             color: inherit;
         }
-        
+
         .scroll-down:hover {
             transform: translateX(-50%) scale(1.1);
             text-decoration: none;
             color: inherit;
         }
-        
+
         .scroll-down .arrow {
             width: 30px;
             height: 30px;
@@ -162,80 +172,90 @@
             margin: 0 auto;
             animation: arrow-animation 2s infinite;
         }
-        
+
         @keyframes arrow-animation {
-            0% { opacity: 0; transform: rotate(45deg) translate(-20px, -20px); }
-            50% { opacity: 1; }
-            100% { opacity: 0; transform: rotate(45deg) translate(20px, 20px); }
+            0% {
+                opacity: 0;
+                transform: rotate(45deg) translate(-20px, -20px);
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform: rotate(45deg) translate(20px, 20px);
+            }
         }
-        
+
         /* Intro Section */
         .intro-section {
             padding: 6rem 0;
             background-color: #fff;
         }
-        
+
         #intro {
             scroll-margin-top: 80px;
         }
-        
+
         .intro-section h2 {
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 2rem;
             text-align: center;
         }
-        
+
         .intro-section .proposito-gold {
             color: var(--primary-color);
         }
-        
+
         .intro-section .share2inspire-highlight {
             color: var(--primary-color);
             font-weight: 700;
         }
-        
+
         .intro-section .lead {
             font-size: 1.3rem;
             margin-bottom: 2rem;
             color: var(--text-color);
         }
-        
+
         .intro-section p {
             font-size: 1.1rem;
             line-height: 1.8;
             margin-bottom: 1.5rem;
             color: var(--text-light);
         }
-        
+
         .text-column {
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
-        
+
         .text-column p {
             margin-bottom: 1.5rem;
         }
-        
+
         /* O Que Nos Move Section */
         .what-moves-us-section {
             background-color: var(--dark-color);
             color: #fff;
             padding: 8rem 0;
         }
-        
+
         .what-moves-us-section .section-header h2 {
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
             color: #fff;
         }
-        
+
         .what-moves-us-section .move-gold {
             color: var(--primary-color);
         }
-        
+
         .what-moves-us-section .section-subtitle {
             font-size: 1.2rem;
             color: rgba(255, 255, 255, 0.8);
@@ -243,14 +263,14 @@
             margin: 0 auto 4rem;
             line-height: 1.6;
         }
-        
+
         .values-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 3rem;
             margin-bottom: 5rem;
         }
-        
+
         .value-card {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -261,7 +281,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .value-card::before {
             content: '';
             position: absolute;
@@ -273,18 +293,18 @@
             transform: scaleX(0);
             transition: all 0.3s ease;
         }
-        
+
         .value-card:hover {
             transform: translateY(-8px);
             background: rgba(255, 255, 255, 0.08);
             border-color: var(--primary-color);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
-        
+
         .value-card:hover::before {
             transform: scaleX(1);
         }
-        
+
         .value-icon {
             width: 80px;
             height: 80px;
@@ -298,43 +318,43 @@
             color: var(--primary-color);
             transition: all 0.3s ease;
         }
-        
+
         .value-card:hover .value-icon {
             background: var(--primary-color);
             color: var(--dark-color);
             transform: scale(1.1);
         }
-        
+
         .value-title {
             font-size: 1.4rem;
             font-weight: 600;
             color: #fff;
             margin-bottom: 1.5rem;
         }
-        
+
         .value-description {
             color: rgba(255, 255, 255, 0.8);
             line-height: 1.6;
             font-size: 1rem;
         }
-        
+
         .core-values-section {
             margin-top: 4rem;
             padding-top: 4rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         .core-values-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
         }
-        
+
         .core-value-item {
             text-align: center;
             padding: 2rem 1rem;
         }
-        
+
         .core-value-icon {
             width: 60px;
             height: 60px;
@@ -348,12 +368,12 @@
             color: var(--dark-color);
             transition: all 0.3s ease;
         }
-        
+
         .core-value-item:hover .core-value-icon {
             transform: scale(1.1);
             box-shadow: 0 8px 25px rgba(191, 154, 51, 0.4);
         }
-        
+
         .core-value-title {
             font-size: 1.2rem;
             font-weight: 600;
@@ -362,13 +382,13 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
+
         .core-value-description {
             font-size: 0.95rem;
             line-height: 1.5;
             color: rgba(255, 255, 255, 0.8);
         }
-        
+
         /* Estilos globais para botões */
         .btn-primary {
             background-color: var(--dark-color);
@@ -379,7 +399,7 @@
             border-radius: 8px;
             transition: all 0.3s ease;
         }
-        
+
         .btn-primary:hover {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
@@ -387,7 +407,7 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(191, 154, 51, 0.3);
         }
-        
+
         .btn-outline-primary {
             background-color: transparent;
             border: 2px solid #2c3e50;
@@ -397,7 +417,7 @@
             border-radius: 8px;
             transition: all 0.3s ease;
         }
-        
+
         .btn-outline-primary:hover {
             background-color: #2c3e50;
             border-color: #2c3e50;
@@ -405,24 +425,24 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(44, 62, 80, 0.3);
         }
-        
+
         /* Proposta de Valor Section */
         .value-proposition-section {
             padding: 6rem 0;
             background-color: #f8f9fa;
         }
-        
+
         .value-proposition-section h2 {
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 4rem;
             text-align: center;
         }
-        
+
         .value-proposition-section .valor-gold {
             color: var(--primary-color);
         }
-        
+
         .video-container-clean {
             max-width: 800px;
             margin: 0 auto;
@@ -431,20 +451,20 @@
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        
+
         .video-player-clean {
             width: 100%;
             height: auto;
             border-radius: 8px;
         }
-        
+
         /* Secção de Diagnóstico Moderna */
         .diagnostic-section-modern {
             padding: 8rem 0;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             position: relative;
         }
-        
+
         .section-header-modern {
             text-align: center;
             margin-bottom: 5rem;
@@ -452,7 +472,7 @@
             margin-left: auto;
             margin-right: auto;
         }
-        
+
         .diagnostic-badge {
             display: inline-block;
             background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
@@ -465,7 +485,7 @@
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
-        
+
         .section-title-modern {
             font-size: 3.5rem;
             font-weight: 700;
@@ -473,25 +493,25 @@
             margin-bottom: 2rem;
             line-height: 1.1;
         }
-        
+
         .title-highlight {
             color: var(--primary-color);
         }
-        
+
         .section-subtitle-modern {
             font-size: 1.3rem;
             color: var(--text-light);
             margin-bottom: 3rem;
             line-height: 1.6;
         }
-        
+
         .features-grid-modern {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 3rem;
             margin-bottom: 4rem;
         }
-        
+
         .feature-card-modern {
             background: white;
             border: 1px solid var(--border-color);
@@ -502,7 +522,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .feature-card-modern::before {
             content: '';
             position: absolute;
@@ -514,17 +534,17 @@
             transform: scaleX(0);
             transition: all 0.3s ease;
         }
-        
+
         .feature-card-modern:hover {
             transform: translateY(-8px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
             border-color: var(--primary-color);
         }
-        
+
         .feature-card-modern:hover::before {
             transform: scaleX(1);
         }
-        
+
         .feature-icon-modern {
             width: 80px;
             height: 80px;
@@ -538,30 +558,30 @@
             color: var(--primary-color);
             transition: all 0.3s ease;
         }
-        
+
         .feature-card-modern:hover .feature-icon-modern {
             background: var(--primary-color);
             color: white;
             transform: scale(1.1);
         }
-        
+
         .feature-title-modern {
             font-size: 1.3rem;
             font-weight: 600;
             color: var(--dark-color);
             margin-bottom: 1rem;
         }
-        
+
         .feature-description-modern {
             color: var(--text-light);
             line-height: 1.6;
         }
-        
+
         .cta-container-modern {
             text-align: center;
             margin-top: 4rem;
         }
-        
+
         .hero-cta-modern {
             background: #000000;
             color: #ffffff;
@@ -582,7 +602,7 @@
             cursor: pointer;
             border: none;
         }
-        
+
         .hero-cta-modern:hover {
             background: #ffffff;
             color: #000000;
@@ -590,7 +610,7 @@
             transform: translateY(-3px);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
         }
-        
+
         .cta-note-modern {
             color: var(--text-light);
             font-size: 0.9rem;
@@ -882,13 +902,13 @@
             pointer-events: none !important;
         }
 
-        .rating-option input[type="radio"]:checked + .rating-label {
+        .rating-option input[type="radio"]:checked+.rating-label {
             border-color: #bf9a33 !important;
             color: white !important;
             transform: scale(1.1) !important;
         }
 
-        .rating-option input[type="radio"]:checked + .rating-label::before {
+        .rating-option input[type="radio"]:checked+.rating-label::before {
             width: 100% !important;
             height: 100% !important;
         }
@@ -1098,9 +1118,20 @@
             transform: translateY(-2px);
         }
 
-        .score-high { color: #28a745; font-weight: 600; }
-        .score-medium { color: #ffc107; font-weight: 600; }
-        .score-low { color: #dc3545; font-weight: 600; }
+        .score-high {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .score-medium {
+            color: #ffc107;
+            font-weight: 600;
+        }
+
+        .score-low {
+            color: #dc3545;
+            font-weight: 600;
+        }
 
         /* Footer */
         footer {
@@ -1109,7 +1140,7 @@
             padding: 20px 0;
             margin-top: 50px;
         }
-        
+
         .footer-container {
             display: flex;
             justify-content: space-between;
@@ -1117,43 +1148,43 @@
             flex-wrap: wrap;
             margin-bottom: 15px;
         }
-        
+
         .footer-left p {
             margin: 0;
             color: #BF9A33;
         }
-        
+
         .footer-right {
             display: flex;
             gap: 30px;
         }
-        
+
         .footer-contact p {
             margin: 0;
             margin-bottom: 5px;
             color: #fff;
         }
-        
+
         .footer-contact i {
             color: #BF9A33;
             margin-right: 8px;
         }
-        
+
         .footer-social {
             display: flex;
             gap: 15px;
         }
-        
+
         .footer-social a {
             color: #BF9A33;
             font-size: 20px;
             transition: color 0.3s;
         }
-        
+
         .footer-social a:hover {
             color: #fff;
         }
-        
+
         .footer-links {
             display: flex;
             justify-content: center;
@@ -1162,14 +1193,14 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 15px;
         }
-        
+
         .footer-links a {
             color: #BF9A33;
             font-size: 14px;
             text-decoration: none;
             transition: color 0.3s;
         }
-        
+
         .footer-links a:hover {
             color: #fff;
             text-decoration: underline;
@@ -1191,7 +1222,7 @@
             transition: all 0.3s ease;
             z-index: 50;
         }
-        
+
         .feedback-btn:hover {
             background-color: #a57b0a;
             transform: translateY(-2px);
@@ -1204,14 +1235,14 @@
             gap: 5px;
             margin-bottom: 10px;
         }
-        
+
         .star {
             font-size: 24px;
             cursor: pointer;
             color: #ddd;
             transition: color 0.2s;
         }
-        
+
         .star:hover,
         .star.active {
             color: #BF9A33;
@@ -1227,7 +1258,7 @@
             overflow-y: auto !important;
         }
 
-        body.modal-open > *:not(.modal) {
+        body.modal-open>*:not(.modal) {
             pointer-events: none !important;
         }
 
@@ -1245,48 +1276,50 @@
                 font-size: 3.5rem;
                 letter-spacing: 6px;
             }
-            
+
             .hero-content h2 {
                 font-size: 2.8rem;
                 letter-spacing: 4px;
             }
-            
-            .intro-section h2, .what-moves-us-section h2, .value-proposition-section h2 {
+
+            .intro-section h2,
+            .what-moves-us-section h2,
+            .value-proposition-section h2 {
                 font-size: 2rem;
             }
-            
+
             .footer-container {
                 flex-direction: column;
                 text-align: center;
                 gap: 20px;
             }
-            
+
             .footer-right {
                 flex-direction: column;
                 gap: 15px;
                 align-items: center;
             }
         }
-        
+
         @media (max-width: 768px) {
             .hero-section {
                 padding: 6rem 0;
             }
-            
+
             .hero-content h1 {
                 font-size: 2.5rem;
                 letter-spacing: 4px;
             }
-            
+
             .hero-content h2 {
                 font-size: 2rem;
                 letter-spacing: 3px;
             }
-            
+
             .footer-social {
                 justify-content: center;
             }
-            
+
             .footer-links {
                 flex-direction: column;
                 align-items: center;
@@ -1343,16 +1376,16 @@
                 margin: 0.5rem !important;
                 max-height: 98vh !important;
             }
-            
+
             .modal-body {
                 max-height: calc(98vh - 160px) !important;
                 padding: 1rem !important;
             }
-            
+
             .modal-header {
                 padding: 1rem !important;
             }
-            
+
             .question-card {
                 padding: 1rem !important;
             }
@@ -1363,12 +1396,13 @@
 <body>
     <!-- Header e Navegação -->
     <header class="header">
-        <nav class="navbar navbar-expand-lg fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="index.html">
                     <img src="images/logo.png" alt="Share2Inspire Logo" class="logo-img">
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
@@ -1384,6 +1418,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="pages/loja.html">Loja</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="pages/humanos-maquinas.html">Humanos &amp; Máquinas</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="pages/people-hub.html">People Hub</a>
@@ -1416,9 +1453,13 @@
             <div class="row justify-content-center">
                 <div class="col-lg-8 text-center">
                     <h2>O nosso <span class="proposito-gold">propósito</span></h2>
-                    <p class="lead">A <span class="share2inspire-highlight">Share2Inspire</span> nasceu com o propósito de partilhar conhecimento e inspirar a transformação positiva nas organizações e nas pessoas.</p>
-                    <p>Acreditamos que as verdadeiras transformações acontecem quando as pessoas estão no centro. A nossa missão é ajudar líderes e equipas a abraçar a mudança com mais confiança e humanidade.</p>
-                    <p>Através de consultoria, formação e coaching, trabalhamos para criar culturas organizacionais mais humanas, resilientes e orientadas para o propósito.</p>
+                    <p class="lead">A <span class="share2inspire-highlight">Share2Inspire</span> nasceu com o propósito
+                        de partilhar conhecimento e inspirar a transformação positiva nas organizações e nas pessoas.
+                    </p>
+                    <p>Acreditamos que as verdadeiras transformações acontecem quando as pessoas estão no centro. A
+                        nossa missão é ajudar líderes e equipas a abraçar a mudança com mais confiança e humanidade.</p>
+                    <p>Através de consultoria, formação e coaching, trabalhamos para criar culturas organizacionais mais
+                        humanas, resilientes e orientadas para o propósito.</p>
                     <div class="mt-4">
                         <a href="pages/sobre.html" class="btn btn-outline-primary">Conhecer o Samuel</a>
                     </div>
@@ -1427,6 +1468,15 @@
         </div>
     </section>
 
+    <!-- Divider Component -->
+    <div class="divider-simple divider-animated">
+        <div class="divider-line"></div>
+        <div class="divider-icon">
+            <i class="fas fa-star"></i>
+        </div>
+        <div class="divider-line"></div>
+    </div>
+
     <!-- O Que Nos Move Section -->
     <section class="what-moves-us-section" id="o-que-nos-move">
         <div class="container">
@@ -1434,35 +1484,41 @@
                 <div class="col-lg-10">
                     <div class="section-header text-center mb-5">
                         <h2>O que nos <span class="move-gold">move</span></h2>
-                        <p class="section-subtitle">Os valores fundamentais que orientam o nosso trabalho e definem a nossa abordagem única.</p>
+                        <p class="section-subtitle">Os valores fundamentais que orientam o nosso trabalho e definem a
+                            nossa abordagem única.</p>
                     </div>
-                    
+
                     <div class="values-grid">
                         <div class="value-card">
                             <div class="value-icon">
                                 <i class="fas fa-sync-alt"></i>
                             </div>
                             <h3 class="value-title">Transformação</h3>
-                            <p class="value-description">Acreditamos no poder da transformação organizacional como catalisador para o crescimento sustentável. Ajudamos as empresas a navegar processos de mudança complexos.</p>
+                            <p class="value-description">Acreditamos no poder da transformação organizacional como
+                                catalisador para o crescimento sustentável. Ajudamos as empresas a navegar processos de
+                                mudança complexos.</p>
                         </div>
-                        
+
                         <div class="value-card">
                             <div class="value-icon">
                                 <i class="fas fa-user-tie"></i>
                             </div>
                             <h3 class="value-title">Liderança</h3>
-                            <p class="value-description">Desenvolvemos líderes conscientes, capazes de inspirar e guiar equipas em ambientes de constante mudança, focando no equilíbrio entre resultados e bem-estar.</p>
+                            <p class="value-description">Desenvolvemos líderes conscientes, capazes de inspirar e guiar
+                                equipas em ambientes de constante mudança, focando no equilíbrio entre resultados e
+                                bem-estar.</p>
                         </div>
-                        
+
                         <div class="value-card">
                             <div class="value-icon">
                                 <i class="fas fa-lightbulb"></i>
                             </div>
                             <h3 class="value-title">Inovação</h3>
-                            <p class="value-description">Promovemos uma cultura de inovação contínua, onde as ideias são valorizadas e as pessoas são incentivadas a experimentar, aprender e crescer.</p>
+                            <p class="value-description">Promovemos uma cultura de inovação contínua, onde as ideias são
+                                valorizadas e as pessoas são incentivadas a experimentar, aprender e crescer.</p>
                         </div>
                     </div>
-                    
+
                     <div class="core-values-section">
                         <div class="core-values-grid">
                             <div class="core-value-item">
@@ -1470,23 +1526,26 @@
                                     <i class="fas fa-heart"></i>
                                 </div>
                                 <h4 class="core-value-title">Humanidade</h4>
-                                <p class="core-value-description">Colocamos as pessoas no centro de tudo o que fazemos.</p>
+                                <p class="core-value-description">Colocamos as pessoas no centro de tudo o que fazemos.
+                                </p>
                             </div>
-                            
+
                             <div class="core-value-item">
                                 <div class="core-value-icon">
                                     <i class="fas fa-handshake"></i>
                                 </div>
                                 <h4 class="core-value-title">Confiança</h4>
-                                <p class="core-value-description">Construímos relações baseadas na transparência e integridade.</p>
+                                <p class="core-value-description">Construímos relações baseadas na transparência e
+                                    integridade.</p>
                             </div>
-                            
+
                             <div class="core-value-item">
                                 <div class="core-value-icon">
                                     <i class="fas fa-rocket"></i>
                                 </div>
                                 <h4 class="core-value-title">Impacto</h4>
-                                <p class="core-value-description">Focamo-nos em gerar resultados tangíveis e duradouros.</p>
+                                <p class="core-value-description">Focamo-nos em gerar resultados tangíveis e duradouros.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -1501,10 +1560,12 @@
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <h2 class="text-center mb-5">A nossa proposta de <span class="valor-gold">valor</span></h2>
-                    
+
                     <div class="video-container-clean">
                         <video class="video-player-clean" controls>
-                            <source src="https://github.com/samuelrolo/samuel.rolo/raw/main/video/share2inspire_video_final_sincronizado%20.mp4" type="video/mp4">
+                            <source
+                                src="https://github.com/samuelrolo/samuel.rolo/raw/main/video/share2inspire_video_final_sincronizado%20.mp4"
+                                type="video/mp4">
                             O seu navegador não suporta vídeos HTML5.
                         </video>
                     </div>
@@ -1526,7 +1587,8 @@
                     <span class="title-highlight">Maturidade de RH</span>
                 </h2>
                 <p class="section-subtitle-modern">
-                    Avalie o nível de maturidade dos processos de Recursos Humanos da sua organização através de um questionário especializado baseado em 8 dimensões fundamentais.
+                    Avalie o nível de maturidade dos processos de Recursos Humanos da sua organização através de um
+                    questionário especializado baseado em 8 dimensões fundamentais.
                 </p>
             </div>
 
@@ -1537,7 +1599,8 @@
                     </div>
                     <h3 class="feature-title-modern">Avaliação em 8 dimensões críticas</h3>
                     <p class="feature-description-modern">
-                        Análise completa de processos fundamentais desde alinhamento estratégico até remuneração e benefícios.
+                        Análise completa de processos fundamentais desde alinhamento estratégico até remuneração e
+                        benefícios.
                     </p>
                 </div>
 
@@ -1557,7 +1620,8 @@
                     </div>
                     <h3 class="feature-title-modern">Recomendações práticas de melhoria</h3>
                     <p class="feature-description-modern">
-                        Receba insights personalizados e um plano de ação claro para evoluir a maturidade dos seus processos.
+                        Receba insights personalizados e um plano de ação claro para evoluir a maturidade dos seus
+                        processos.
                     </p>
                 </div>
             </div>
@@ -1576,13 +1640,15 @@
     </section>
 
     <!-- Modal do Diagnóstico -->
-    <div class="modal fade modal-clean" id="diagnosticModalClean" tabindex="-1" aria-labelledby="diagnosticModalCleanLabel" aria-hidden="true">
+    <div class="modal fade modal-clean" id="diagnosticModalClean" tabindex="-1"
+        aria-labelledby="diagnosticModalCleanLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <!-- Header do Modal -->
                 <div class="modal-header">
                     <h5 class="modal-title" id="diagnosticModalCleanLabel">Diagnóstico de Maturidade de RH</h5>
-                    <p class="modal-subtitle">Avalie o nível de desenvolvimento dos seus processos de Recursos Humanos</p>
+                    <p class="modal-subtitle">Avalie o nível de desenvolvimento dos seus processos de Recursos Humanos
+                    </p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -1611,29 +1677,35 @@
                         </div>
                         <div class="maturity-item">
                             <div class="maturity-number">2</div>
-                            <div class="maturity-text">Algum alinhamento e análises pontuais de lacunas; uso limitado de dados.</div>
+                            <div class="maturity-text">Algum alinhamento e análises pontuais de lacunas; uso limitado de
+                                dados.</div>
                         </div>
                         <div class="maturity-item">
                             <div class="maturity-number">3</div>
-                            <div class="maturity-text">Alinhamento consistente; planeamento baseado em dados básicos e cenários anuais.</div>
+                            <div class="maturity-text">Alinhamento consistente; planeamento baseado em dados básicos e
+                                cenários anuais.</div>
                         </div>
                         <div class="maturity-item">
                             <div class="maturity-number">4</div>
-                            <div class="maturity-text">RH lidera o planeamento estratégico de pessoas, usando dados avançados e projecções a médio prazo.</div>
+                            <div class="maturity-text">RH lidera o planeamento estratégico de pessoas, usando dados
+                                avançados e projecções a médio prazo.</div>
                         </div>
                         <div class="maturity-item">
                             <div class="maturity-number">5</div>
-                            <div class="maturity-text">Planeamento de força de trabalho em tempo real, preditivo, reconhecido como benchmark no sector.</div>
+                            <div class="maturity-text">Planeamento de força de trabalho em tempo real, preditivo,
+                                reconhecido como benchmark no sector.</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Navegação do Modal -->
                 <div class="modal-navigation">
-                    <button type="button" class="btn-nav btn-nav-secondary" id="prevBtnClean" onclick="previousDimensionClean()" disabled>
+                    <button type="button" class="btn-nav btn-nav-secondary" id="prevBtnClean"
+                        onclick="previousDimensionClean()" disabled>
                         <i class="fas fa-arrow-left"></i> Anterior
                     </button>
-                    <button type="button" class="btn-nav btn-nav-primary" id="nextBtnClean" onclick="nextDimensionClean()">
+                    <button type="button" class="btn-nav btn-nav-primary" id="nextBtnClean"
+                        onclick="nextDimensionClean()">
                         Próxima <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
@@ -1642,7 +1714,8 @@
     </div>
 
     <!-- Modal de Resultados -->
-    <div class="modal fade modal-clean" id="resultsModalClean" tabindex="-1" aria-labelledby="resultsModalCleanLabel" aria-hidden="true">
+    <div class="modal fade modal-clean" id="resultsModalClean" tabindex="-1" aria-labelledby="resultsModalCleanLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1659,38 +1732,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer id="contactos">
-        <div class="container">
-            <div class="footer-container">
-                <div class="footer-left">
-                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
-                </div>
-                <div class="footer-right">
-                    <div class="footer-contact">
-                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
-                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
-                    </div>
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-links">
-                <a href="pages/politica-privacidade.html">Política de Privacidade</a>
-                <a href="pages/politica-cookies.html">Política de Cookies</a>
-                <a href="pages/tratamento-dados.html">Tratamento de Dados</a>
-                <a href="pages/informacao-legal.html">Informação Legal</a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Botão de Feedback -->
-    <button id="feedbackBtn" class="feedback-btn" data-bs-toggle="modal" data-bs-target="#feedbackModal">
-        <i class="fas fa-comment"></i> Feedback
-    </button>
 
     <!-- Modal de Feedback -->
     <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
@@ -1723,14 +1764,16 @@
                         </div>
                         <div class="mb-3">
                             <label for="feedbackMessage" class="form-label">Mensagem *</label>
-                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3" required></textarea>
+                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3"
+                                required></textarea>
                         </div>
                         <div id="feedbackFormMessage"></div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" form="feedbackForm" class="btn btn-primary">Enviar Feedback</button>
+                    <button type="submit" form="feedbackForm" class="btn btn-primary">Enviar
+                        Feedback</button>
                 </div>
             </div>
         </div>
@@ -1831,7 +1874,7 @@
                     diagnosis: "Maturidade N3: consistente, mas precisa profissionalizar liderança e analytics para dar o salto."
                 },
                 {
-                    name: "Survey 2", 
+                    name: "Survey 2",
                     scores: [4.2, 3.2, 5.0, 3.5, 3.0, 2.4, 4.1, 4.5],
                     average: 3.74,
                     strengths: "Marca empregadora (5,0) é referência. Estratégia (4,2), Cultura (4,1) e Benefícios (4,5) já em nível avançado.",
@@ -1871,9 +1914,8 @@
         let userScoresClean = [];
 
         // Inicialização
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             initializeSurveyClean();
-            initializeFeedbackStars();
         });
 
         function initializeSurveyClean() {
@@ -1883,21 +1925,21 @@
         function loadDimensionClean(dimensionIndex) {
             const dimension = surveyData.dimensions[dimensionIndex];
             const surveyContent = document.getElementById('surveyContentClean');
-            
+
             let html = `
                 <div class="question-card">
                     <div class="question-title">
                         ${dimensionIndex + 1}. ${dimension.title}
                     </div>
             `;
-            
+
             dimension.questions.forEach((question, qIndex) => {
                 html += `
                     <div class="question-item">
                         <div class="question-text">${question}</div>
                         <div class="rating-container">
                 `;
-                
+
                 for (let i = 1; i <= 5; i++) {
                     const inputId = `qclean${dimensionIndex}_${qIndex}_${i}`;
                     const isChecked = userResponsesClean[`${dimensionIndex}_${qIndex}`] === i ? 'checked' : '';
@@ -1911,23 +1953,23 @@
                         </div>
                     `;
                 }
-                
+
                 html += `
                         </div>
                     </div>
                 `;
             });
-            
+
             html += `</div>`;
-            
+
             surveyContent.innerHTML = html;
-            
+
             // Update progress
             const progress = ((dimensionIndex + 1) / surveyData.dimensions.length) * 100;
             document.getElementById('progressBarClean').style.width = progress + '%';
             document.getElementById('currentQuestionClean').textContent = dimensionIndex + 1;
             document.getElementById('totalQuestionsClean').textContent = surveyData.dimensions.length;
-            
+
             // Update navigation buttons
             document.getElementById('prevBtnClean').disabled = dimensionIndex === 0;
             const nextBtn = document.getElementById('nextBtnClean');
@@ -1960,10 +2002,10 @@
 
         function finalizeSurveyClean() {
             calculateScoresClean();
-            
+
             const diagnosticModal = bootstrap.Modal.getInstance(document.getElementById('diagnosticModalClean'));
             diagnosticModal.hide();
-            
+
             setTimeout(() => {
                 showResultsClean();
             }, 500);
@@ -1971,11 +2013,11 @@
 
         function calculateScoresClean() {
             userScoresClean = [];
-            
+
             for (let d = 0; d < surveyData.dimensions.length; d++) {
                 let dimensionTotal = 0;
                 let questionCount = 0;
-                
+
                 for (let q = 0; q < surveyData.dimensions[d].questions.length; q++) {
                     const response = userResponsesClean[`${d}_${q}`];
                     if (response) {
@@ -1983,7 +2025,7 @@
                         questionCount++;
                     }
                 }
-                
+
                 const dimensionScore = questionCount > 0 ? (dimensionTotal / questionCount) : 0;
                 userScoresClean.push(dimensionScore);
             }
@@ -1992,7 +2034,7 @@
         function showResultsClean() {
             const resultsContent = document.getElementById('resultsContentClean');
             const userAverage = userScoresClean.reduce((a, b) => a + b, 0) / userScoresClean.length;
-            
+
             let html = `
                 <div class="results-header">
                     <div class="score-card">
@@ -2036,31 +2078,31 @@
                             </thead>
                             <tbody>
             `;
-            
+
             surveyData.dimensions.forEach((dimension, index) => {
                 html += `
                     <tr>
                         <td>${dimension.title}</td>
                         <td class="text-center ${getScoreClass(userScoresClean[index])}">${userScoresClean[index].toFixed(1)}</td>
                 `;
-                
+
                 dummySurveys.surveys.forEach(survey => {
                     html += `<td class="text-center ${getScoreClass(survey.scores[index])}">${survey.scores[index].toFixed(1)}</td>`;
                 });
-                
+
                 html += '</tr>';
             });
-            
+
             html += `
                                 <tr style="background: #f8f9fa; font-weight: 600;">
                                     <td>Média Global</td>
                                     <td class="text-center">${userAverage.toFixed(2)}</td>
             `;
-            
+
             dummySurveys.surveys.forEach(survey => {
                 html += `<td class="text-center">${survey.average.toFixed(2)}</td>`;
             });
-            
+
             html += `
                                 </tr>
                             </tbody>
@@ -2082,12 +2124,12 @@
                     </a>
                 </div>
             `;
-            
+
             resultsContent.innerHTML = html;
-            
+
             const resultsModal = new bootstrap.Modal(document.getElementById('resultsModalClean'));
             resultsModal.show();
-            
+
             setTimeout(() => {
                 createDimensionsChartClean();
             }, 300);
@@ -2095,7 +2137,7 @@
 
         function createDimensionsChartClean() {
             const ctx = document.getElementById('dimensionsChartClean').getContext('2d');
-            
+
             new Chart(ctx, {
                 type: 'radar',
                 data: {
@@ -2186,32 +2228,32 @@
 
         function generateRecommendations(scores) {
             let recommendations = "<div>";
-            
+
             // Identificar pontos fortes e fracos
             const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
             const weakAreas = [];
             const strongAreas = [];
-            
+
             scores.forEach((score, index) => {
                 if (score < avgScore - 0.5) {
-                    weakAreas.push({index, score, name: surveyData.dimensions[index].title});
+                    weakAreas.push({ index, score, name: surveyData.dimensions[index].title });
                 } else if (score > avgScore + 0.5) {
-                    strongAreas.push({index, score, name: surveyData.dimensions[index].title});
+                    strongAreas.push({ index, score, name: surveyData.dimensions[index].title });
                 }
             });
-            
+
             // Recomendações baseadas em áreas fracas
             if (weakAreas.length > 0) {
-                recommendations += "<div class='recommendation-item'><strong>Prioridades de Melhoria:</strong> Foque nas dimensões com menor pontuação: " + 
+                recommendations += "<div class='recommendation-item'><strong>Prioridades de Melhoria:</strong> Foque nas dimensões com menor pontuação: " +
                     weakAreas.map(area => area.name).join(", ") + ".</div>";
             }
-            
+
             // Recomendações baseadas em áreas fortes
             if (strongAreas.length > 0) {
-                recommendations += "<div class='recommendation-item'><strong>Pontos Fortes:</strong> Capitalize nas suas áreas de excelência: " + 
+                recommendations += "<div class='recommendation-item'><strong>Pontos Fortes:</strong> Capitalize nas suas áreas de excelência: " +
                     strongAreas.map(area => area.name).join(", ") + ".</div>";
             }
-            
+
             // Recomendações gerais baseadas no nível de maturidade
             if (avgScore < 2.5) {
                 recommendations += "<div class='recommendation-item'><strong>Foco Estratégico:</strong> Estabeleça processos básicos e estruturas fundamentais de RH.</div>";
@@ -2223,7 +2265,7 @@
                 recommendations += "<div class='recommendation-item'><strong>Otimização:</strong> Refine processos existentes e explore práticas inovadoras.</div>";
                 recommendations += "<div class='recommendation-item'><strong>Liderança:</strong> Posicione-se como referência no mercado e partilhe as suas melhores práticas.</div>";
             }
-            
+
             recommendations += "</div>";
             return recommendations;
         }
@@ -2231,58 +2273,50 @@
         function redirectToConsultationClean() {
             const resultsModal = bootstrap.Modal.getInstance(document.getElementById('resultsModalClean'));
             resultsModal.hide();
-            
+
             setTimeout(() => {
                 window.location.href = 'pages/servicos.html#consultoria';
             }, 500);
         }
 
-        // Feedback stars functionality
-        function initializeFeedbackStars() {
-            const stars = document.querySelectorAll('.star');
-            const ratingInput = document.getElementById('rating');
-            
-            stars.forEach((star, index) => {
-                star.addEventListener('click', () => {
-                    const rating = index + 1;
-                    ratingInput.value = rating;
-                    
-                    stars.forEach((s, i) => {
-                        if (i < rating) {
-                            s.classList.add('active');
-                            s.innerHTML = '<i class="fas fa-star"></i>';
-                        } else {
-                            s.classList.remove('active');
-                            s.innerHTML = '<i class="far fa-star"></i>';
-                        }
-                    });
-                });
-                
-                star.addEventListener('mouseover', () => {
-                    const rating = index + 1;
-                    
-                    stars.forEach((s, i) => {
-                        if (i < rating) {
-                            s.innerHTML = '<i class="fas fa-star"></i>';
-                        } else {
-                            s.innerHTML = '<i class="far fa-star"></i>';
-                        }
-                    });
-                });
-            });
-            
-            const feedbackModal = document.getElementById('feedbackModal');
-            feedbackModal.addEventListener('hidden.bs.modal', () => {
-                // Reset form
-                document.getElementById('feedbackForm').reset();
-                ratingInput.value = 0;
-                stars.forEach(star => {
-                    star.classList.remove('active');
-                    star.innerHTML = '<i class="far fa-star"></i>';
-                });
-            });
-        }
     </script>
-</body>
-</html>
 
+    <!-- Feedback Modal JS -->
+    <script src="js/feedback.js"></script>
+
+    <!-- Divider Component JS -->
+    <script src="js/divider.js"></script>
+
+    <!-- Footer -->
+    <footer id="contactos">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-left">
+                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
+                </div>
+                <div class="footer-right">
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
+                    </div>
+                    <div class="footer-social">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="pages/politica-privacidade.html">Política de Privacidade</a>
+                <a href="pages/politica-cookies.html">Política de Cookies</a>
+                <a href="pages/tratamento-dados.html">Tratamento de Dados</a>
+                <a href="pages/informacao-legal.html">Informação Legal</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

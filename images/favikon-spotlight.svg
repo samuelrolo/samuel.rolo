@@ -1,0 +1,36 @@
+<svg width="360" height="220" viewBox="0 0 360 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="favikonGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7d171"/>
+      <stop offset="100%" stop-color="#bf9a33"/>
+    </linearGradient>
+    <linearGradient id="favikonDark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#131722"/>
+      <stop offset="100%" stop-color="#1f2532"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="20" stdDeviation="20" flood-color="#0c0f16" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+  <rect width="360" height="220" rx="24" fill="url(#favikonDark)"/>
+  <g filter="url(#shadow)">
+    <rect x="20" y="24" width="320" height="172" rx="20" fill="#0f1320"/>
+    <rect x="32" y="36" width="296" height="148" rx="16" fill="#161b2b"/>
+    <rect x="32" y="36" width="296" height="72" rx="16" fill="url(#favikonGradient)"/>
+    <text x="48" y="68" fill="#1b1f2b" font-family="'Poppins', 'Montserrat', sans-serif" font-weight="700" font-size="28">
+      Favikon 2025
+    </text>
+    <text x="48" y="100" fill="#1b1f2b" font-family="'Poppins', 'Montserrat', sans-serif" font-weight="500" font-size="16">
+      Creator Index · Top Voices
+    </text>
+    <circle cx="288" cy="72" r="30" fill="#fff" opacity="0.2"/>
+    <circle cx="288" cy="72" r="22" fill="#fff" opacity="0.25"/>
+    <text x="274" y="81" fill="#1b1f2b" font-family="'Poppins', sans-serif" font-weight="700" font-size="20">#1</text>
+    <text x="48" y="138" fill="#ffffff" font-family="'Poppins', sans-serif" font-weight="600" font-size="20">
+      Healthy Lifestyle · Portugal
+    </text>
+    <text x="48" y="168" fill="#8f9abf" font-family="'Poppins', sans-serif" font-weight="400" font-size="15">
+      Workspace Well-Being · Productivity & Growth · Tech & Innovation
+    </text>
+  </g>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#040f1e" />
+      <stop offset="50%" stop-color="#0f2f44" />
+      <stop offset="100%" stop-color="#152a3f" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="rgba(35,161,255,0.25)" />
+      <stop offset="100%" stop-color="rgba(10,10,30,0)" />
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg2)" />
+  <rect width="1200" height="675" fill="url(#glow)" />
+  <g stroke="#2ad8ff" stroke-width="2" opacity="0.5">
+    <path d="M180 150 Q260 250 180 350 Q120 420 220 520" fill="none" />
+    <path d="M1020 150 Q940 250 1020 350 Q1080 420 980 520" fill="none" />
+    <path d="M340 200 C500 50 700 600 940 260" fill="none" />
+  </g>
+  <g stroke="#BF9A33" stroke-width="3" opacity="0.4">
+    <circle cx="300" cy="340" r="210" fill="none" />
+    <circle cx="900" cy="340" r="210" fill="none" />
+  </g>
+  <rect x="120" y="90" width="960" height="495" fill="none" stroke="#BF9A33" stroke-width="8" rx="46" />
+  <text x="50%" y="45%" text-anchor="middle" font-family="'Poppins','Segoe UI',sans-serif" font-size="72" font-weight="700" fill="#ffffff">THE TURNING POINT</text>
+  <text x="50%" y="59%" text-anchor="middle" font-family="'Poppins','Segoe UI',sans-serif" font-size="46" font-weight="400" fill="#e6ecff">TECHNOLOGY · POWER · HUMANITY</text>
+  <text x="50%" y="80%" text-anchor="middle" font-family="'Poppins','Segoe UI',sans-serif" font-size="36" font-weight="500" fill="#BF9A33">Humanos &amp; Máquinas</text>
+</svg>

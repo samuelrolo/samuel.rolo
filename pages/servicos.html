@@ -1,160 +1,363 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Serviços | Share2Inspire | Samuel Rolo</title>
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
-    
-    <style>
-        /* ===== ESTILOS WIDGET CANDIDATE FIT ===== */
-        /* Fonte opcional. Remove se já carregas a Inter no site */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-        :root{
-            --s2i-bg:#f7f7f8;
-            --s2i-text:#1b1b1f;
-            --s2i-muted:#5b5b63;
-            --s2i-border:#e6e6ea;
-            --s2i-white:#ffffff;
-            --s2i-gold:#bf9a33;      /* Share2Inspire */
-            --s2i-gold-ink:#8b7026;
-            --s2i-accent:#0f172a;    /* contraste elegante */
-            --s2i-success:#0ea5a4;
+    <!-- Header & Footer Shared CSS -->
+    <link href="../css/header-footer.css" rel="stylesheet">
+
+    <style>
+        /* ===== ESTILOS FORMULÁRIO CV ===== */
+        .s2i-form-section {
+            max-width: 880px;
+            margin: 40px auto 0;
+            padding: clamp(1.5rem, 3vw, 2.5rem);
+            background: var(--s2i-bg);
+            border-radius: 16px;
+            border: 1px solid var(--s2i-border);
         }
 
-        .s2i-section{
+        .s2i-form-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--s2i-text);
+            font-weight: 700;
+        }
+
+        .s2i-form-desc {
+            color: var(--s2i-muted);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .s2i-form-card {
+            background: var(--s2i-white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--s2i-border);
+        }
+
+        .s2i-input-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .s2i-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--s2i-text);
+            font-size: 0.95rem;
+        }
+
+        .s2i-input,
+        .s2i-select,
+        .s2i-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--s2i-border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--s2i-text);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: var(--s2i-white);
+        }
+
+        .s2i-input:focus,
+        .s2i-select:focus,
+        .s2i-textarea:focus {
+            outline: none;
+            border-color: var(--s2i-gold);
+            box-shadow: 0 0 0 3px rgba(191, 154, 51, 0.15);
+        }
+
+        .s2i-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .s2i-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .s2i-grid-3 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .s2i-btn-submit {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--s2i-gold), #e5c875);
+            color: #1b1b1f;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .s2i-btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(191, 154, 51, 0.25);
+        }
+
+        .s2i-btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .s2i-output {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            display: none;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            border: 1px solid #1e293b;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .s2i-loading {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #1b1b1f;
+            border-radius: 50%;
+            animation: s2i-spin 1s linear infinite;
+        }
+
+        @keyframes s2i-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== ESTILOS WIDGET CANDIDATE FIT ===== */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --s2i-bg: #f7f7f8;
+            --s2i-text: #1b1b1f;
+            --s2i-muted: #5b5b63;
+            --s2i-border: #e6e6ea;
+            --s2i-white: #ffffff;
+            --s2i-gold: #bf9a33;
+            /* Share2Inspire */
+            --s2i-gold-ink: #8b7026;
+            --s2i-accent: #0f172a;
+            /* contraste elegante */
+            --s2i-success: #0ea5a4;
+        }
+
+        .s2i-section {
             font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
             background: var(--s2i-bg);
             padding: clamp(2.5rem, 3vw + 1rem, 4.5rem) 1rem;
             color: var(--s2i-text);
         }
 
-        .s2i-container{max-width:1120px;margin:0 auto;}
-        .s2i-header{text-align:center;margin-bottom:2rem}
-        .s2i-header h2{font-size:clamp(1.5rem,1.2rem + 1.2vw,2rem);line-height:1.2;margin:0 0 .5rem}
-        .s2i-subtitle{color:var(--s2i-muted);margin:0}
-
-        .s2i-grid{
-            display:grid;
-            grid-template-columns:1fr;
-            gap:1.25rem;
-            margin-top:1.25rem;
-        }
-        @media (min-width:900px){
-            .s2i-grid{grid-template-columns:repeat(3,1fr);}
-        }
-        @media (max-width:768px){
-            .s2i-grid{grid-template-columns:1fr;}
+        .s2i-container {
+            max-width: 1120px;
+            margin: 0 auto;
         }
 
-        .s2i-card{
-            background:var(--s2i-white);
-            border:1px solid var(--s2i-border);
-            border-radius:14px;
-            padding:1.25rem;
-            box-shadow:0 4px 18px rgba(0,0,0,.06);
-            display:flex;
-            flex-direction:column;
-            min-height:100%;
-        }
-        .s2i-card-header{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:.5rem;
-            gap:.5rem;
-        }
-        .s2i-card h3{font-size:1.25rem;margin:0}
-        .s2i-pill{
-            background:#eef1f6;
-            color:var(--s2i-accent);
-            border-radius:999px;
-            padding:.35rem .7rem;
-            font-weight:600;
-            font-size:.8rem;
-            white-space:nowrap;
-        }
-        .s2i-pill-pro{
-            background:linear-gradient(90deg, var(--s2i-gold), #e5c875);
-            color:#2a2110;
-        }
-        .s2i-card-lead{color:var(--s2i-muted);margin:.25rem 0 1rem}
-        .s2i-list{margin:0 0 1.25rem 0;padding-left:1.1rem}
-        .s2i-list li{margin:.45rem 0}
-        .s2i-price{
-            margin-top:auto;
-            display:flex;
-            align-items:baseline;
-            gap:.5rem;
-        }
-        .s2i-amount{font-size:1.75rem;font-weight:700}
-        .s2i-note{color:var(--s2i-muted);font-size:.95rem}
-
-        .s2i-btn{
-            display:inline-block;
-            text-align:center;
-            text-decoration:none;
-            border-radius:10px;
-            padding:.85rem 1rem;
-            margin-top:1rem;
-            font-weight:600;
-            transition:transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
-        }
-        .s2i-btn-primary{
-            background:linear-gradient(90deg, var(--s2i-gold), #e5c875);
-            color:#1b1b1f;
-            box-shadow:0 6px 18px rgba(191,154,51,.28);
-        }
-        .s2i-btn-primary:hover{transform:translateY(-1px)}
-        .s2i-btn-outline{
-            background:transparent;
-            color:var(--s2i-accent);
-            border:2px solid var(--s2i-accent);
-        }
-        .s2i-btn-outline:hover{background:var(--s2i-accent);color:#fff}
-
-        .s2i-pro{
-            outline:2px solid rgba(191,154,51,.25);
+        .s2i-header {
+            text-align: center;
+            margin-bottom: 2rem
         }
 
-        .s2i-premium{
-            outline:2px solid rgba(191,154,51,.25);
+        .s2i-header h2 {
+            font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+            line-height: 1.2;
+            margin: 0 0 .5rem
         }
 
-        .s2i-pill-premium{
-            background:linear-gradient(90deg, #8b7026, #bf9a33);
-            color:#ffffff;
+        .s2i-subtitle {
+            color: var(--s2i-muted);
+            margin: 0
         }
 
-        .s2i-btn-secondary{
-            background:var(--s2i-accent);
-            color:#ffffff;
-            border:none;
-        }
-        .s2i-btn-secondary:hover{
-            background:rgba(15,23,42,0.8);
-            transform:translateY(-1px);
+        .s2i-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+            margin-top: 1.25rem;
         }
 
-        .s2i-footnote{
-            text-align:center;
-            color:var(--s2i-muted);
-            font-size:.9rem;
-            margin-top:1.25rem;
+        @media (min-width:900px) {
+            .s2i-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
+        @media (max-width:768px) {
+            .s2i-grid {
+                grid-template-columns: 1fr;
+            }
+        }
 
+        .s2i-card {
+            background: var(--s2i-white);
+            border: 1px solid var(--s2i-border);
+            border-radius: 14px;
+            padding: 1.25rem;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, .06);
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
 
-        /* ===== FIM ESTILOS WIDGET CANDIDATE FIT ===== */
+        .s2i-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: .5rem;
+            gap: .5rem;
+        }
+
+        .s2i-card h3 {
+            font-size: 1.25rem;
+            margin: 0
+        }
+
+        .s2i-pill {
+            background: #eef1f6;
+            color: var(--s2i-accent);
+            border-radius: 999px;
+            padding: .35rem .7rem;
+            font-weight: 600;
+            font-size: .8rem;
+            white-space: nowrap;
+        }
+
+        .s2i-pill-pro {
+            background: linear-gradient(90deg, var(--s2i-gold), #e5c875);
+            color: #2a2110;
+        }
+
+        .s2i-card-lead {
+            color: var(--s2i-muted);
+            margin: .25rem 0 1rem
+        }
+
+        .s2i-list {
+            margin: 0 0 1.25rem 0;
+            padding-left: 1.1rem
+        }
+
+        .s2i-list li {
+            margin: .45rem 0
+        }
+
+        .s2i-price {
+            margin-top: auto;
+            display: flex;
+            align-items: baseline;
+            gap: .5rem;
+        }
+
+        .s2i-amount {
+            font-size: 1.75rem;
+            font-weight: 700
+        }
+
+        .s2i-note {
+            color: var(--s2i-muted);
+            font-size: .95rem
+        }
+
+        .s2i-btn {
+            display: inline-block;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 10px;
+            padding: .85rem 1rem;
+            margin-top: 1rem;
+            font-weight: 600;
+            transition: transform .06s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+        }
+
+        .s2i-btn-primary {
+            background: linear-gradient(90deg, var(--s2i-gold), #e5c875);
+            color: #1b1b1f;
+            box-shadow: 0 6px 18px rgba(191, 154, 51, .28);
+        }
+
+        .s2i-btn-primary:hover {
+            transform: translateY(-1px)
+        }
+
+        .s2i-btn-outline {
+            background: transparent;
+            color: var(--s2i-accent);
+            border: 2px solid var(--s2i-accent);
+        }
+
+        .s2i-btn-outline:hover {
+            background: var(--s2i-accent);
+            color: #fff
+        }
+
+        .s2i-pro {
+            outline: 2px solid rgba(191, 154, 51, .25);
+        }
+
+        .s2i-premium {
+            outline: 2px solid rgba(191, 154, 51, .25);
+        }
+
+        .s2i-pill-premium {
+            background: linear-gradient(90deg, #8b7026, #bf9a33);
+            color: #ffffff;
+        }
+
+        .s2i-btn-secondary {
+            background: var(--s2i-accent);
+            color: #ffffff;
+            border: none;
+        }
+
+        .s2i-btn-secondary:hover {
+            background: rgba(15, 23, 42, 0.8);
+            transform: translateY(-1px);
+        }
+
+        .s2i-footnote {
+            text-align: center;
+            color: var(--s2i-muted);
+            font-size: .9rem;
+            margin-top: 1.25rem;
+        }
 
         /* Cores do site Share2Inspire */
         :root {
@@ -170,12 +373,12 @@
             --success: #28a745;
             --danger: #dc3545;
         }
-        
+
         /* Aplicar cores aos elementos */
         .text-primary {
             color: var(--primary-color) !important;
         }
-        
+
         .btn-primary {
             background: linear-gradient(135deg, var(--primary-color), var(--accent-color)) !important;
             border: none !important;
@@ -183,31 +386,31 @@
             font-weight: 600 !important;
             transition: all 0.3s ease !important;
         }
-        
+
         .btn-primary:hover {
             background: linear-gradient(135deg, var(--primary-dark), var(--primary-color)) !important;
             transform: translateY(-2px) !important;
             box-shadow: 0 8px 25px rgba(191, 154, 51, 0.3) !important;
         }
-        
+
         .btn-secondary {
             background: var(--secondary-color) !important;
             border: none !important;
             color: white !important;
         }
-        
+
         .btn-secondary:hover {
             background: var(--secondary-dark) !important;
         }
-        
+
         .navbar-brand img {
             height: 40px;
         }
-        
+
         .hero-section {
             background: linear-gradient(135deg, var(--background-light) 0%, var(--white) 100%) !important;
         }
-        
+
         .service-card {
             background: var(--white);
             border-radius: 16px;
@@ -215,189 +418,192 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             border: 1px solid #e9ecef;
         }
-        
+
         .modal-header {
             background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark)) !important;
             color: white !important;
         }
-        
+
         .form-control:focus {
             border-color: var(--primary-color) !important;
             box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25) !important;
         }
-        
+
         .form-select:focus {
             border-color: var(--primary-color) !important;
             box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25) !important;
         }
-        
+
         .alert-success {
             background-color: rgba(40, 167, 69, 0.1) !important;
             border-color: var(--success) !important;
             color: var(--success) !important;
         }
-        
+
         .alert-danger {
             background-color: rgba(220, 53, 69, 0.1) !important;
             border-color: var(--danger) !important;
             color: var(--danger) !important;
         }
-        
+
         .fas.fa-check {
             color: var(--success) !important;
         }
-        
+
         .breadcrumb-item a {
             color: var(--primary-color) !important;
             text-decoration: none;
         }
-        
+
         .breadcrumb-item a:hover {
             color: var(--primary-dark) !important;
         }
-        
+
         .nav-link:hover {
             color: var(--primary-color) !important;
         }
-        
+
         .nav-link.active {
             color: var(--primary-color) !important;
             font-weight: 600;
         }
-        
+
         /* Footer */
-footer {
-    background-color: #212529;
-    color: #fff;
-    padding: 20px 0;
-    margin-top: 50px;
-}
+        footer {
+            background-color: #212529;
+            color: #fff;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
 
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
-}
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
 
-.footer-left p {
-    margin: 0;
-    color: #BF9A33;
-}
+        .footer-left p {
+            margin: 0;
+            color: #BF9A33;
+        }
 
-.footer-right {
-    display: flex;
-    gap: 30px;
-}
+        .footer-right {
+            display: flex;
+            gap: 30px;
+        }
 
-.footer-contact p {
-    margin: 0;
-    margin-bottom: 5px;
-    color: #fff;
-}
+        .footer-contact p {
+            margin: 0;
+            margin-bottom: 5px;
+            color: #fff;
+        }
 
-.footer-contact i {
-    color: #BF9A33;
-    margin-right: 8px;
-}
+        .footer-contact i {
+            color: #BF9A33;
+            margin-right: 8px;
+        }
 
-.footer-social {
-    display: flex;
-    gap: 15px;
-}
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
 
-.footer-social a {
-    color: #BF9A33;
-    font-size: 20px;
-    transition: color 0.3s;
-}
+        .footer-social a {
+            color: #BF9A33;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
 
-.footer-social a:hover {
-    color: #fff;
-}
+        .footer-social a:hover {
+            color: #fff;
+        }
 
-.footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 15px;
-}
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
 
-.footer-links a {
-    color: #BF9A33;
-    font-size: 14px;
-    text-decoration: none;
-    transition: color 0.3s;
-}
+        .footer-links a {
+            color: #BF9A33;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
 
-.footer-links a:hover {
-    color: #fff;
-    text-decoration: underline;
-}
+        .footer-links a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 20px;
-    }
-    
-    .footer-right {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .footer-social {
-        justify-content: center;
-    }
-    
-    .footer-links {
-        flex-direction: column;
-        gap: 10px;
-    }
-}
+        /* Responsive */
+        @media (max-width: 768px) {
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
 
+            .footer-right {
+                flex-direction: column;
+                gap: 15px;
+            }
 
-</style>
+            .footer-social {
+                justify-content: center;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
 </head>
+
 <body>
     <!-- Header e Navegação -->
     <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="../index.html">
-                    <img src="../images/logo.png" alt="Inspire Logo" class="logo-img">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="../index.html">Início</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="servicos.html">Serviços</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="loja.html">Loja</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="people-hub.html">People Hub</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../index.html#contactos">Contactos</a>
-                        </li>
-                    </ul>
-                </div>
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <img src="../images/logo.png" alt="Inspire Logo" class="logo-img">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="servicos.html">Serviços</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="loja.html">Loja</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="humanos-maquinas.html">Humanos & Máquinas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="people-hub.html">People Hub</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#contactos">Contactos</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
+        </div>
+    </nav>
 
     <!-- Breadcrumb -->
     <div class="container mt-4">
@@ -423,130 +629,145 @@ footer {
 
     <!-- ===== Candidate Fit – Share2Inspire ===== -->
     <section id="candidate-fit" class="s2i-section">
-      <div class="s2i-container">
-        <header class="s2i-header">
-          <h2>Candidate Fit para Carreiras Corporativas, Consultoria e Transformação</h2>
-          <p class="s2i-subtitle">Compara o teu CV com a vaga certa, recebe um relatório claro e decide o próximo passo com confiança.</p>
-        </header>
+        <div class="s2i-container">
+            <header class="s2i-header">
+                <h2>Candidate Fit para Carreiras Corporativas, Consultoria e Transformação</h2>
+                <p class="s2i-subtitle">Compara o teu CV com a vaga certa, recebe um relatório claro e decide o próximo
+                    passo com confiança.</p>
+            </header>
 
-        <div class="s2i-grid">
-          <!-- Report Free -->
-          <article class="s2i-card s2i-free" aria-labelledby="pack-free-title">
-            <div class="s2i-card-header">
-              <h3 id="pack-free-title">Report Free</h3>
-              <p class="s2i-pill">Grátis</p>
-            </div>
-            <p class="s2i-card-lead">Análise automática do teu CV face à vaga. Recebe uma pontuação de Fit e recomendações claras.</p>
-            <div class="s2i-price">
-              <span class="s2i-amount">0 €</span>
-              <span class="s2i-note">relatório único</span>
-            </div>
-            <a class="s2i-btn s2i-btn-outline" href="#candidate-fit-form" data-action="free">Gerar relatório</a>
-          </article>
+            <div class="s2i-grid">
+                <!-- Report Free -->
+                <article class="s2i-card s2i-free" aria-labelledby="pack-free-title">
+                    <div class="s2i-card-header">
+                        <h3 id="pack-free-title">Report Free</h3>
+                        <p class="s2i-pill">Grátis</p>
+                    </div>
+                    <p class="s2i-card-lead">Análise automática do teu CV face à vaga. Recebe uma pontuação de Fit e
+                        recomendações claras.</p>
+                    <div class="s2i-price">
+                        <span class="s2i-amount">0 €</span>
+                        <span class="s2i-note">relatório único</span>
+                    </div>
+                    <a class="s2i-btn s2i-btn-outline" href="#candidate-fit-form" data-action="free">Gerar relatório</a>
+                </article>
 
-          <!-- Report + Sessão -->
-          <article class="s2i-card s2i-pro" aria-labelledby="pack-pro-title">
-            <div class="s2i-card-header">
-              <h3 id="pack-pro-title">Report + Sessão</h3>
-              <p class="s2i-pill s2i-pill-pro">Mais popular</p>
-            </div>
-            <p class="s2i-card-lead">Relatório + Sessão de coaching de 45 minutos. Interpretação e plano de ação personalizado.</p>
-            <div class="s2i-price">
-              <span class="s2i-amount">45 €</span>
-              <span class="s2i-note">relatório + sessão</span>
-            </div>
-            <a class="s2i-btn s2i-btn-primary" href="https://share2inspire.secure.simplybook.it/v2/index/index" data-action="pro">Agendar Sessão</a>
-          </article>
+                <!-- Report + Sessão -->
+                <article class="s2i-card s2i-pro" aria-labelledby="pack-pro-title">
+                    <div class="s2i-card-header">
+                        <h3 id="pack-pro-title">Report + Sessão</h3>
+                        <p class="s2i-pill s2i-pill-pro">Mais popular</p>
+                    </div>
+                    <p class="s2i-card-lead">Relatório + Sessão de coaching de 45 minutos. Interpretação e plano de ação
+                        personalizado.</p>
+                    <div class="s2i-price">
+                        <span class="s2i-amount">45 €</span>
+                        <span class="s2i-note">relatório + sessão</span>
+                    </div>
+                    <a class="s2i-btn s2i-btn-primary" href="https://share2inspire.secure.simplybook.it/v2/index/index"
+                        data-action="pro">Agendar Sessão</a>
+                </article>
 
-          <!-- Só Sessão -->
-          <article class="s2i-card s2i-premium" aria-labelledby="pack-premium-title">
-            <div class="s2i-card-header">
-              <h3 id="pack-premium-title">Só Sessão</h3>
-              <p class="s2i-pill s2i-pill-premium">Coaching</p>
+                <!-- Só Sessão -->
+                <article class="s2i-card s2i-premium" aria-labelledby="pack-premium-title">
+                    <div class="s2i-card-header">
+                        <h3 id="pack-premium-title">Só Sessão</h3>
+                        <p class="s2i-pill s2i-pill-premium">Coaching</p>
+                    </div>
+                    <p class="s2i-card-lead">Sessão de coaching de 45 minutos. Trabalho estratégico personalizado sem
+                        relatório.</p>
+                    <div class="s2i-price">
+                        <span class="s2i-amount">40 €</span>
+                        <span class="s2i-note">sessão única</span>
+                    </div>
+                    <a class="s2i-btn s2i-btn-secondary"
+                        href="https://share2inspire.secure.simplybook.it/v2/index/index" data-action="premium">Agendar
+                        Sessão</a>
+                </article>
             </div>
-            <p class="s2i-card-lead">Sessão de coaching de 45 minutos. Trabalho estratégico personalizado sem relatório.</p>
-            <div class="s2i-price">
-              <span class="s2i-amount">40 €</span>
-              <span class="s2i-note">sessão única</span>
-            </div>
-            <a class="s2i-btn s2i-btn-secondary" href="https://share2inspire.secure.simplybook.it/v2/index/index" data-action="premium">Agendar Sessão</a>
-          </article>
         </div>
-      </div>
     </section>
     <!-- ===== Fim Candidate Fit ===== -->
-<!-- Formulário de Análise de CVs com Gemini -->
-<section id="candidate-fit-form" style="max-width:880px;margin:0 auto;padding:24px;background:#f5f5f5;border-radius:12px;margin-top:40px">
-  <h3 style="font-size:1.5rem;margin-bottom:8px;color:#1b1b1f">Gerar Candidate Fit Report</h3>
-  <p style="color:#666;margin-bottom:24px">Carrega o teu CV em PDF, cola a descrição da vaga e recebe um diagnóstico orientado a carreiras corporativas, consultoria e transformação.</p>
 
-  <form id="fitForm" style="background:#fff;padding:24px;border-radius:8px">
-    <div style="margin:16px 0">
-      <label style="display:block;font-weight:600;margin-bottom:8px;color:#1b1b1f">CV em PDF ou TXT</label>
-      <input type="file" name="file" accept=".pdf,.txt" required style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px">
-    </div>
+    <!-- Formulário de Análise de CVs com Gemini -->
+    <section id="candidate-fit-form" class="s2i-form-section">
+        <h3 class="s2i-form-title">Gerar Candidate Fit Report</h3>
+        <p class="s2i-form-desc">Carrega o teu CV em PDF, cola a descrição da vaga e recebe um diagnóstico orientado a
+            carreiras corporativas, consultoria e transformação.</p>
 
-    <div style="margin:16px 0">
-      <label style="display:block;font-weight:600;margin-bottom:8px;color:#1b1b1f">Descrição da vaga</label>
-      <textarea name="job_text" rows="8" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-family:Arial,sans-serif" placeholder="Cola aqui a descrição da vaga" required></textarea>
-    </div>
+        <form id="fitForm" class="s2i-form-card">
+            <div class="s2i-input-group">
+                <label class="s2i-label">CV em PDF ou TXT</label>
+                <input type="file" name="file" accept=".pdf,.txt" required class="s2i-input">
+            </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0">
-      <div>
-        <label style="display:block;font-weight:600;margin-bottom:8px;color:#1b1b1f">Senioridade</label>
-        <select name="seniority" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px">
-          <option>Junior</option>
-          <option selected>Mid</option>
-          <option>Senior</option>
-          <option>Lead</option>
-        </select>
-      </div>
-      <div>
-        <label style="display:block;font-weight:600;margin-bottom:8px;color:#1b1b1f">País</label>
-        <input type="text" name="country" value="Portugal" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px">
-      </div>
-      <div>
-        <label style="display:block;font-weight:600;margin-bottom:8px;color:#1b1b1f">Setor alvo</label>
-        <input type="text" name="sector" value="Consultoria e Transformação" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px">
-      </div>
-    </div>
+            <div class="s2i-input-group">
+                <label class="s2i-label">Descrição da vaga</label>
+                <textarea name="job_text" rows="8" class="s2i-textarea" placeholder="Cola aqui a descrição da vaga"
+                    required></textarea>
+            </div>
 
-    <button type="submit" style="margin-top:16px;padding:12px 24px;border:0;border-radius:8px;background:#bf9a33;color:#1b1b1f;font-weight:700;cursor:pointer;font-size:1rem;width:100%">
-      Analisar CV
-    </button>
-  </form>
+            <div class="s2i-grid-3">
+                <div>
+                    <label class="s2i-label">Senioridade</label>
+                    <select name="seniority" class="s2i-select">
+                        <option>Junior</option>
+                        <option selected>Mid</option>
+                        <option>Senior</option>
+                        <option>Lead</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="s2i-label">País</label>
+                    <input type="text" name="country" value="Portugal" class="s2i-input">
+                </div>
+                <div>
+                    <label class="s2i-label">Setor alvo</label>
+                    <input type="text" name="sector" value="Consultoria e Transformação" class="s2i-input">
+                </div>
+            </div>
 
-  <div id="fitOutput" style="background:#0b0f19;color:#e5e7eb;padding:16px;border-radius:8px;overflow:auto;margin-top:16px;display:none;max-height:600px;font-family:monospace;font-size:0.9rem"></div>
-</section>
+            <button type="submit" class="s2i-btn-submit">
+                <span>Analisar CV</span>
+            </button>
+        </form>
 
-<script src="https://cdn.jsdelivr.net/npm/@google/generative-ai@0.3.0/dist/index.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+        <div id="fitOutput" class="s2i-output"></div>
+    </section>
 
-<script>
-  const API_KEY = 'AIzaSyCQ8L4ijOgASDQZ9AkRxzs75zLlXPy3iGE';
-  const form = document.getElementById('fitForm');
-  const out = document.getElementById('fitOutput');
+    <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai@0.3.0/dist/index.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const fileInput = form.querySelector('input[name="file"]');
-    const jobText = form.querySelector('textarea[name="job_text"]').value;
-    const seniority = form.querySelector('select[name="seniority"]').value;
-    const country = form.querySelector('input[name="country"]').value;
-    const sector = form.querySelector('input[name="sector"]').value;
+    <script>
+        const API_KEY = 'AIzaSyCQ8L4ijOgASDQZ9AkRxzs75zLlXPy3iGE';
+        const form = document.getElementById('fitForm');
+        const out = document.getElementById('fitOutput');
+        const submitBtn = form.querySelector('button[type="submit"]');
 
-    out.style.display = 'block';
-    out.textContent = 'Processando análise... Por favor, aguarde.';
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = form.querySelector('input[name="file"]');
+            const jobText = form.querySelector('textarea[name="job_text"]').value;
+            const seniority = form.querySelector('select[name="seniority"]').value;
+            const country = form.querySelector('input[name="country"]').value;
+            const sector = form.querySelector('input[name="sector"]').value;
 
-    try {
-      const file = fileInput.files[0];
-      if (!file) throw new Error('Selecione um ficheiro');
+            // UI Loading State
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="s2i-loading"></span> Analisando...';
+            out.style.display = 'none';
+            out.textContent = '';
 
-      const fileText = await readFile(file);
-      const genAI = new GoogleGenerativeAI(API_KEY);
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+            try {
+                const file = fileInput.files[0];
+                if (!file) throw new Error('Selecione um ficheiro');
 
-      const prompt = `Sistema: És um avaliador de candidaturas para carreiras corporativas, consultoria e transformação. Produz um diagnóstico claro, conciso e acionável. Responde sempre em JSON.
+                const fileText = await readFile(file);
+                const genAI = new GoogleGenerativeAI(API_KEY);
+                const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
+                const prompt = `Sistema: És um avaliador de candidaturas para carreiras corporativas, consultoria e transformação. Produz um diagnóstico claro, conciso e acionável. Responde sempre em JSON.
 
 Contexto:
 - Senioridade alvo: ${seniority}
@@ -595,58 +816,62 @@ Formato de resposta JSON (OBRIGATÓRIO):
 
 Responde APENAS com o JSON, sem explicações adicionais.`;
 
-      const result = await model.generateContent(prompt);
-      const responseText = result.response.text();
-      
-      // Tenta extrair JSON da resposta
-      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('Resposta inválida do modelo');
-      
-      const json = JSON.parse(jsonMatch[0]);
-      
-      // Formata resultado de forma agradável
-      const pretty = JSON.stringify(json, null, 2);
-      out.textContent = pretty;
+                const result = await model.generateContent(prompt);
+                const responseText = result.response.text();
 
-      // Evento para analytics
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({event:'report_generated', score: json.score_global});
-    } catch(err) {
-      out.textContent = 'Erro: ' + err.message + '\n\nVerifica o ficheiro e tenta novamente.';
-      console.error(err);
-    }
-  });
+                // Tenta extrair JSON da resposta (lidando com blocos de código markdown)
+                const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) throw new Error('Resposta inválida do modelo');
 
-  function readFile(file) {
-    return new Promise((resolve, reject) => {
-      if (file.type === 'application/pdf') {
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          try {
-            const { getDocument } = pdfjsLib;
-            const pdf = await getDocument({ data: e.target.result }).promise;
-            let text = '';
-            for (let i = 1; i <= pdf.numPages; i++) {
-              const page = await pdf.getPage(i);
-              const content = await page.getTextContent();
-              text += content.items.map(item => item.str).join(' ') + '\n';
+                const json = JSON.parse(jsonMatch[0]);
+
+                // Formata resultado de forma agradável
+                const pretty = JSON.stringify(json, null, 2);
+                out.style.display = 'block';
+                out.textContent = pretty;
+
+                // Evento para analytics
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({ event: 'report_generated', score: json.score_global });
+            } catch (err) {
+                out.style.display = 'block';
+                out.textContent = 'Erro: ' + err.message + '\n\nVerifica o ficheiro e tenta novamente.';
+                console.error(err);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
             }
-            resolve(text);
-          } catch(err) {
-            reject(new Error('Erro ao ler PDF: ' + err.message));
-          }
-        };
-        reader.readAsArrayBuffer(file);
-      } else {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.onerror = (err) => reject(err);
-        reader.readAsText(file);
-      }
-    });
-  }
-</script>
+        });
 
+        function readFile(file) {
+            return new Promise((resolve, reject) => {
+                if (file.type === 'application/pdf') {
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        try {
+                            const { getDocument } = pdfjsLib;
+                            const pdf = await getDocument({ data: e.target.result }).promise;
+                            let text = '';
+                            for (let i = 1; i <= pdf.numPages; i++) {
+                                const page = await pdf.getPage(i);
+                                const content = await page.getTextContent();
+                                text += content.items.map(item => item.str).join(' ') + '\n';
+                            }
+                            resolve(text);
+                        } catch (err) {
+                            reject(new Error('Erro ao ler PDF: ' + err.message));
+                        }
+                    };
+                    reader.readAsArrayBuffer(file);
+                } else {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.onerror = (err) => reject(err);
+                    reader.readAsText(file);
+                }
+            });
+        }
+    </script>
 
     <!-- Serviços Section -->
     <section class="services-section py-5">
@@ -657,15 +882,22 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                     <div class="col-lg-8">
                         <h2 class="h3 fw-bold text-primary mb-3">Kickstart Pro | Express Coaching</h2>
                         <p class="lead mb-3">Impulsiona a tua carreira com uma sessão personalizada</p>
-                        <p>O Kickstart Pro é uma sessão de coaching personalizada às tuas necessidades, desenhada para impulsionar jovens em início de carreira.</p>
-                        <p>Durante esta sessão, vamos trabalhar contigo para identificar os principais desafios e oportunidades, desenvolver um plano de ação claro e fornecer ferramentas e técnicas específicas para ti.</p>
-                        <p><strong>Nota:</strong> No final do agendamento, terás acesso a um questionário de autoavaliação que me ajudará a preparar melhor a nossa sessão.</p>
-                        
+                        <p>O Kickstart Pro é uma sessão de coaching personalizada às tuas necessidades, desenhada para
+                            impulsionar jovens em início de carreira.</p>
+                        <p>Durante esta sessão, vamos trabalhar contigo para identificar os principais desafios e
+                            oportunidades, desenvolver um plano de ação claro e fornecer ferramentas e técnicas
+                            específicas para ti.</p>
+                        <p><strong>Nota:</strong> No final do agendamento, terás acesso a um questionário de
+                            autoavaliação que me ajudará a preparar melhor a nossa sessão.</p>
+
                         <h4>Benefícios:</h4>
                         <ul class="list-unstyled">
-                            <li><i class="fas fa-check text-success me-2"></i> Clareza sobre os próximos passos estratégicos</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Soluções práticas para desafios específicos</li>
-                            <li><i class="fas fa-check text-success me-2"></i> Plano de ação personalizado e implementável</li>
+                            <li><i class="fas fa-check text-success me-2"></i> Clareza sobre os próximos passos
+                                estratégicos</li>
+                            <li><i class="fas fa-check text-success me-2"></i> Soluções práticas para desafios
+                                específicos</li>
+                            <li><i class="fas fa-check text-success me-2"></i> Plano de ação personalizado e
+                                implementável</li>
                         </ul>
                     </div>
                     <div class="col-lg-4 text-center">
@@ -704,7 +936,7 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -719,7 +951,7 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">
@@ -750,12 +982,12 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">Preço</label>
                             <div class="form-control-plaintext fw-bold" id="kickstartPrice">30€</div>
                         </div>
-                        
+
                         <!-- Campos MB WAY (ocultos por padrão) -->
                         <div id="mbwayFields" style="display: none;">
                             <div class="mb-3">
@@ -763,12 +995,13 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                                 <input type="tel" class="form-control" id="kickstartMBWayPhone" placeholder="912345678">
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
-                            <label for="kickstartMessage" class="form-label">Descreva brevemente os seus principais desafios ou objetivos</label>
+                            <label for="kickstartMessage" class="form-label">Descreva brevemente os seus principais
+                                desafios ou objetivos</label>
                             <textarea class="form-control" id="kickstartMessage" rows="3"></textarea>
                         </div>
-                        
+
                         <!-- Área para mensagens -->
                         <div id="kickstartFormMessage" style="display: none;"></div>
                     </form>
@@ -794,9 +1027,10 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                 <div class="modal-body">
                     <div class="text-center mb-4">
                         <p class="lead">Este questionário ajuda-me a preparar melhor a nossa sessão de coaching.</p>
-                        <p>Demora apenas 5-10 minutos e cobre 4 áreas fundamentais: Liderança, Inteligência Emocional, Comunicação e Equilíbrio Vida-Trabalho.</p>
+                        <p>Demora apenas 5-10 minutos e cobre 4 áreas fundamentais: Liderança, Inteligência Emocional,
+                            Comunicação e Equilíbrio Vida-Trabalho.</p>
                     </div>
-                    
+
                     <!-- Iframe para o questionário -->
                     <div id="assessmentContainer" style="height: 600px; overflow-y: auto;">
                         <iframe id="assessmentFrame" src="" style="width: 100%; height: 100%; border: none;"></iframe>
@@ -840,7 +1074,7 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                             <label for="contactMessage" class="form-label">Mensagem</label>
                             <textarea class="form-control" id="contactMessage" rows="4" required></textarea>
                         </div>
-                        
+
                         <!-- Área para mensagens -->
                         <div id="contactFormMessage" style="display: none;"></div>
                     </form>
@@ -866,8 +1100,10 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                         <p><i class="fas fa-phone"></i> +351 961 925 050</p>
                     </div>
                     <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i
+                                class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i
+                                class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
@@ -916,7 +1152,8 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                         </div>
                         <div class="mb-3">
                             <label for="feedbackMessage" class="form-label">Mensagem *</label>
-                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3" required></textarea>
+                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3"
+                                required></textarea>
                         </div>
                         <div id="feedbackFormMessage"></div>
                     </form>
@@ -931,56 +1168,53 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- JavaScript para integração real com backend -->
     <script>
         // URL do backend
         const API_BASE_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
-        
+
         // Função para mostrar mensagens
         function showMessage(container, message, type) {
             const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
             container.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
             container.style.display = 'block';
         }
-        
+
         // Função para atualizar preço
         function updatePrice() {
             const duration = document.getElementById('kickstartDuration').value;
             const priceElement = document.getElementById('kickstartPrice');
-            
             if (duration === '30 minutos') {
                 priceElement.textContent = '30€';
             } else if (duration === '1 hora') {
                 priceElement.textContent = '50€';
             }
         }
-        
+
         // Função para mostrar/esconder campos MB WAY
         function toggleMBWayFields() {
             const paymentMethod = document.getElementById('kickstartPaymentMethod').value;
             const mbwayFields = document.getElementById('mbwayFields');
-            
             if (paymentMethod === 'MB WAY') {
                 mbwayFields.style.display = 'block';
             } else {
                 mbwayFields.style.display = 'none';
             }
         }
-        
+
         // Função principal para processar formulário Kickstart
         async function processKickstartForm(event) {
             event.preventDefault();
-            
             const submitButton = document.getElementById('kickstartSubmitBtn');
             const originalText = submitButton.textContent;
             const messageContainer = document.getElementById('kickstartFormMessage');
-            
+
             // Desabilitar botão
             submitButton.disabled = true;
             submitButton.textContent = 'A processar...';
             messageContainer.style.display = 'none';
-            
+
             try {
                 // Coletar dados do formulário
                 const formData = {
@@ -988,43 +1222,40 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                     customerEmail: document.getElementById('kickstartEmail').value,
                     customerPhone: document.getElementById('kickstartPhone').value,
                     appointmentDate: document.getElementById('kickstartDate').value,
-                    appointmentTime: '10:00',
+                    appointmentTime: '10:00', // Valor padrão, idealmente seria selecionado pelo utilizador
                     format: document.getElementById('kickstartFormat').value,
                     duration: document.getElementById('kickstartDuration').value,
                     paymentMethod: document.getElementById('kickstartPaymentMethod').value,
                     message: document.getElementById('kickstartMessage').value,
                     amount: document.getElementById('kickstartDuration').value === '30 minutos' ? 30 : 50
                 };
-                
+
                 // Gerar ID único
                 const orderId = `kickstart_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
                 formData.orderId = orderId;
-                
+
                 // 1. Enviar email primeiro
                 console.log('Enviando email...');
                 const emailResponse = await fetch(`${API_BASE_URL}/api/email/kickstart`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
-                
+
                 if (!emailResponse.ok) {
                     throw new Error('Erro ao enviar email de confirmação');
                 }
-                
+
                 // 2. Processar pagamento
                 let paymentResult = null;
                 let paymentInfo = '';
-                
                 const paymentData = {
                     orderId: orderId,
                     amount: formData.amount,
                     customerName: formData.customerName,
                     customerEmail: formData.customerEmail
                 };
-                
+
                 if (formData.paymentMethod === 'Multibanco') {
                     console.log('Processando Multibanco...');
                     const response = await fetch(`${API_BASE_URL}/api/ifthenpay/multibanco`, {
@@ -1032,44 +1263,33 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(paymentData)
                     });
-                    
                     if (response.ok) {
                         paymentResult = await response.json();
                         if (paymentResult.success) {
-                            paymentInfo = `
-                                <p><strong>💳 Referência Multibanco:</strong></p>
-                                <p>Entidade: ${paymentResult.data.entity}</p>
-                                <p>Referência: ${paymentResult.data.reference}</p>
-                            `;
+                            paymentInfo = `<p><strong>💳 Referência Multibanco:</strong></p>
+                                         <p>Entidade: ${paymentResult.data.entity}</p>
+                                         <p>Referência: ${paymentResult.data.reference}</p>`;
                         }
                     }
-                    
                 } else if (formData.paymentMethod === 'MB WAY') {
                     console.log('Processando MB WAY...');
                     const mobileNumber = document.getElementById('kickstartMBWayPhone').value;
-                    
                     if (!mobileNumber) {
                         throw new Error('Número de telemóvel é obrigatório para MB WAY');
                     }
-                    
                     paymentData.mobileNumber = mobileNumber;
-                    
                     const response = await fetch(`${API_BASE_URL}/api/ifthenpay/mbway`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(paymentData)
                     });
-                    
                     if (response.ok) {
                         paymentResult = await response.json();
                         if (paymentResult.success) {
-                            paymentInfo = `
-                                <p><strong>📱 Pedido MB WAY enviado para ${mobileNumber}</strong></p>
-                                <p>Confirme o pagamento na aplicação MB WAY</p>
-                            `;
+                            paymentInfo = `<p><strong>📱 Pedido MB WAY enviado para ${mobileNumber}</strong></p>
+                                         <p>Confirme o pagamento na aplicação MB WAY</p>`;
                         }
                     }
-                    
                 } else if (formData.paymentMethod === 'Payshop') {
                     console.log('Processando Payshop...');
                     const response = await fetch(`${API_BASE_URL}/api/ifthenpay/payshop`, {
@@ -1077,44 +1297,37 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(paymentData)
                     });
-                    
                     if (response.ok) {
                         paymentResult = await response.json();
                         if (paymentResult.success) {
-                            paymentInfo = `
-                                <p><strong>🏪 Referência Payshop:</strong></p>
-                                <p>Referência: ${paymentResult.data.reference}</p>
-                                <p>Válida até: ${paymentResult.data.validade}</p>
-                            `;
+                            paymentInfo = `<p><strong>🏪 Referência Payshop:</strong></p>
+                                         <p>Referência: ${paymentResult.data.reference}</p>
+                                         <p>Válida até: ${paymentResult.data.validade}</p>`;
                         }
                     }
                 }
-                
+
                 // Mostrar sucesso
-                const successMessage = `
-                    <h5>✅ Pedido submetido com sucesso!</h5>
-                    <p>📧 Receberá um email de confirmação em breve.</p>
-                    ${paymentInfo}
-                `;
-                
+                const successMessage = `<h5>✅ Pedido submetido com sucesso!</h5>
+                                      <p>📧 Receberá um email de confirmação em breve.</p>
+                                      ${paymentInfo}`;
                 showMessage(messageContainer, successMessage, 'success');
-                
+
                 // Limpar formulário
                 document.getElementById('kickstartForm').reset();
                 updatePrice();
                 toggleMBWayFields();
-                
+
                 // Fechar modal após 3 segundos e mostrar questionário
                 setTimeout(() => {
                     const modal = bootstrap.Modal.getInstance(document.getElementById('kickstartModal'));
                     modal.hide();
-                    
                     // Mostrar modal do questionário após fechar o modal de kickstart
                     setTimeout(() => {
                         showAssessmentModal();
                     }, 500);
                 }, 3000);
-                
+
             } catch (error) {
                 console.error('Erro:', error);
                 showMessage(messageContainer, `❌ Erro: ${error.message}`, 'error');
@@ -1123,19 +1336,18 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                 submitButton.textContent = originalText;
             }
         }
-        
+
         // Função para processar formulário de contacto
         async function processContactForm(event) {
             event.preventDefault();
-            
             const submitButton = event.target.querySelector('button[type="submit"]');
             const originalText = submitButton.textContent;
             const messageContainer = document.getElementById('contactFormMessage');
-            
+
             submitButton.disabled = true;
             submitButton.textContent = 'A enviar...';
             messageContainer.style.display = 'none';
-            
+
             try {
                 const formData = {
                     customerName: document.getElementById('contactName').value,
@@ -1143,25 +1355,25 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                     customerPhone: document.getElementById('contactPhone').value || 'Não fornecido',
                     message: document.getElementById('contactMessage').value
                 };
-                
+
                 const response = await fetch(`${API_BASE_URL}/api/email/contact`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Erro ao enviar mensagem');
                 }
-                
+
                 showMessage(messageContainer, '✅ Mensagem enviada com sucesso!', 'success');
                 event.target.reset();
-                
+
                 setTimeout(() => {
                     const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
                     modal.hide();
                 }, 3000);
-                
+
             } catch (error) {
                 console.error('Erro:', error);
                 showMessage(messageContainer, `❌ Erro: ${error.message}`, 'error');
@@ -1170,38 +1382,38 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                 submitButton.textContent = originalText;
             }
         }
-        
+
         // Event listeners
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Atualizar preço
             const durationSelect = document.getElementById('kickstartDuration');
             if (durationSelect) {
                 durationSelect.addEventListener('change', updatePrice);
                 updatePrice();
             }
-            
+
             // Campos MB WAY
             const paymentMethodSelect = document.getElementById('kickstartPaymentMethod');
             if (paymentMethodSelect) {
                 paymentMethodSelect.addEventListener('change', toggleMBWayFields);
                 toggleMBWayFields();
             }
-            
+
             // Formulário Kickstart
             const kickstartForm = document.getElementById('kickstartForm');
             if (kickstartForm) {
                 kickstartForm.addEventListener('submit', processKickstartForm);
             }
-            
+
             // Formulário de contacto
             const contactForm = document.getElementById('contactForm');
             if (contactForm) {
                 contactForm.addEventListener('submit', processContactForm);
             }
-            
+
             // Limpar mensagens ao fechar modais
             document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('hidden.bs.modal', function() {
+                modal.addEventListener('hidden.bs.modal', function () {
                     const messageContainer = this.querySelector('[id$="FormMessage"]');
                     if (messageContainer) {
                         messageContainer.style.display = 'none';
@@ -1209,15 +1421,15 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                     }
                 });
             });
-            
+
             // Event listeners para o questionário
             const startAssessmentBtn = document.getElementById('startAssessment');
             if (startAssessmentBtn) {
                 startAssessmentBtn.addEventListener('click', loadAssessment);
             }
-            
+
             // Listener para mensagens do iframe do questionário
-            window.addEventListener('message', function(event) {
+            window.addEventListener('message', function (event) {
                 if (event.data.type === 'assessmentComplete') {
                     console.log('Dados do questionário recebidos:', event.data.data);
                     // Aqui podes enviar os dados para o backend via Brevo
@@ -1227,297 +1439,224 @@ Responde APENAS com o JSON, sem explicações adicionais.`;
                 }
             });
         });
-        
+
+        // Função para mostrar modal do questionário
+        function showAssessmentModal() {
+            let paymentResult = null;
+            let paymentInfo = '';
+            const paymentData = {
+                orderId: orderId,
+                amount: formData.amount,
+                customerName: formData.customerName,
+                customerEmail: formData.customerEmail
+            };
+
+            if (formData.paymentMethod === 'Multibanco') {
+                console.log('Processando Multibanco...');
+                const response = await fetch(`${API_BASE_URL}/api/ifthenpay/multibanco`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(paymentData)
+                });
+                if (response.ok) {
+                    paymentResult = await response.json();
+                    if (paymentResult.success) {
+                        paymentInfo = `<p><strong>💳 Referência Multibanco:</strong></p>
+                                         <p>Entidade: ${paymentResult.data.entity}</p>
+                                         <p>Referência: ${paymentResult.data.reference}</p>`;
+                    }
+                }
+            } else if (formData.paymentMethod === 'MB WAY') {
+                console.log('Processando MB WAY...');
+                const mobileNumber = document.getElementById('kickstartMBWayPhone').value;
+                if (!mobileNumber) {
+                    throw new Error('Número de telemóvel é obrigatório para MB WAY');
+                }
+                paymentData.mobileNumber = mobileNumber;
+                const response = await fetch(`${API_BASE_URL}/api/ifthenpay/mbway`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(paymentData)
+                });
+                if (response.ok) {
+                    paymentResult = await response.json();
+                    if (paymentResult.success) {
+                        paymentInfo = `<p><strong>📱 Pedido MB WAY enviado para ${mobileNumber}</strong></p>
+                                         <p>Confirme o pagamento na aplicação MB WAY</p>`;
+                    }
+                }
+            } else if (formData.paymentMethod === 'Payshop') {
+                console.log('Processando Payshop...');
+                const response = await fetch(`${API_BASE_URL}/api/ifthenpay/payshop`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(paymentData)
+                });
+                if (response.ok) {
+                    paymentResult = await response.json();
+                    if (paymentResult.success) {
+                        paymentInfo = `<p><strong>🏪 Referência Payshop:</strong></p>
+                                         <p>Referência: ${paymentResult.data.reference}</p>
+                                         <p>Válida até: ${paymentResult.data.validade}</p>`;
+                    }
+                }
+            }
+
+            // Mostrar sucesso
+            const successMessage = `<h5>✅ Pedido submetido com sucesso!</h5>
+                                      <p>📧 Receberá um email de confirmação em breve.</p>
+                                      ${paymentInfo}`;
+            showMessage(messageContainer, successMessage, 'success');
+
+            // Limpar formulário
+            document.getElementById('kickstartForm').reset();
+            updatePrice();
+            toggleMBWayFields();
+
+            // Fechar modal após 3 segundos e mostrar questionário
+            setTimeout(() => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('kickstartModal'));
+                modal.hide();
+                // Mostrar modal do questionário após fechar o modal de kickstart
+                setTimeout(() => {
+                    showAssessmentModal();
+                }, 500);
+            }, 3000);
+
+        } catch (error) {
+            console.error('Erro:', error);
+            showMessage(messageContainer, `❌ Erro: ${error.message}`, 'error');
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+        }
+        }
+
+        // Função para processar formulário de contacto
+        async function processContactForm(event) {
+            event.preventDefault();
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            const messageContainer = document.getElementById('contactFormMessage');
+
+            submitButton.disabled = true;
+            submitButton.textContent = 'A enviar...';
+            messageContainer.style.display = 'none';
+
+            try {
+                const formData = {
+                    customerName: document.getElementById('contactName').value,
+                    customerEmail: document.getElementById('contactEmail').value,
+                    customerPhone: document.getElementById('contactPhone').value || 'Não fornecido',
+                    message: document.getElementById('contactMessage').value
+                };
+
+                const response = await fetch(`${API_BASE_URL}/api/email/contact`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erro ao enviar mensagem');
+                }
+
+                showMessage(messageContainer, '✅ Mensagem enviada com sucesso!', 'success');
+                event.target.reset();
+
+                setTimeout(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
+                    modal.hide();
+                }, 3000);
+
+            } catch (error) {
+                console.error('Erro:', error);
+                showMessage(messageContainer, `❌ Erro: ${error.message}`, 'error');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function () {
+            // Atualizar preço
+            const durationSelect = document.getElementById('kickstartDuration');
+            if (durationSelect) {
+                durationSelect.addEventListener('change', updatePrice);
+                updatePrice();
+            }
+
+            // Campos MB WAY
+            const paymentMethodSelect = document.getElementById('kickstartPaymentMethod');
+            if (paymentMethodSelect) {
+                paymentMethodSelect.addEventListener('change', toggleMBWayFields);
+                toggleMBWayFields();
+            }
+
+            // Formulário Kickstart
+            const kickstartForm = document.getElementById('kickstartForm');
+            if (kickstartForm) {
+                kickstartForm.addEventListener('submit', processKickstartForm);
+            }
+
+            // Formulário de contacto
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', processContactForm);
+            }
+
+            // Limpar mensagens ao fechar modais
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('hidden.bs.modal', function () {
+                    const messageContainer = this.querySelector('[id$="FormMessage"]');
+                    if (messageContainer) {
+                        messageContainer.style.display = 'none';
+                        messageContainer.innerHTML = '';
+                    }
+                });
+            });
+
+            // Event listeners para o questionário
+            const startAssessmentBtn = document.getElementById('startAssessment');
+            if (startAssessmentBtn) {
+                startAssessmentBtn.addEventListener('click', loadAssessment);
+            }
+
+            // Listener para mensagens do iframe do questionário
+            window.addEventListener('message', function (event) {
+                if (event.data.type === 'assessmentComplete') {
+                    console.log('Dados do questionário recebidos:', event.data.data);
+                    // Aqui podes enviar os dados para o backend via Brevo
+                    // Por agora, apenas fecha o modal
+                    const assessmentModal = bootstrap.Modal.getInstance(document.getElementById('assessmentModal'));
+                    assessmentModal.hide();
+                }
+            });
+        });
+
         // Função para mostrar modal do questionário
         function showAssessmentModal() {
             const assessmentModal = new bootstrap.Modal(document.getElementById('assessmentModal'));
             assessmentModal.show();
         }
-        
+
         // Função para carregar o questionário no iframe
-        function loadAssessment() {
+        function loadAssessment(e) {
             const iframe = document.getElementById('assessmentFrame');
-            const assessmentHTML = \`data:text/html;charset=utf-8,\${encodeURIComponent(getAssessmentHTML())}\`;
+            const assessmentHTML = `data:text/html;charset=utf-8,${encodeURIComponent(getAssessmentHTML())}`;
             iframe.src = assessmentHTML;
-            
+
             // Esconder botão "Começar" e mostrar iframe
-            document.getElementById('startAssessment').style.display = 'none';
-            document.getElementById('assessmentContainer').style.display = 'block';
-        }
-        
-        // Função que retorna o HTML do questionário simplificado
-        function getAssessmentHTML() {
-            return \`<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Questionário de Autoavaliação</title>
-    <style>
-        body { font-family: 'Inter', sans-serif; padding: 20px; background: #f8f9fa; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .section { background: white; padding: 30px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .section-title { color: #bf9a33; font-size: 20px; font-weight: 600; margin-bottom: 20px; }
-        .question { margin-bottom: 25px; }
-        .question-text { font-weight: 500; margin-bottom: 15px; color: #2c3e50; }
-        .options { display: flex; flex-direction: column; gap: 10px; }
-        .option { padding: 12px; background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
-        .option:hover { border-color: #bf9a33; background: rgba(191,154,51,0.1); }
-        .option.selected { border-color: #bf9a33; background: rgba(191,154,51,0.15); }
-        .btn { background: linear-gradient(135deg, #bf9a33, #d4af37); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .btn:hover { transform: translateY(-2px); }
-        .progress-bar { width: 100%; height: 6px; background: #e9ecef; border-radius: 10px; margin-bottom: 20px; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #bf9a33, #d4af37); border-radius: 10px; transition: width 0.6s ease; }
-        .hidden { display: none; }
-        .contact-form { background: #2c3e50; color: white; padding: 30px; border-radius: 12px; margin-top: 20px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: none; border-radius: 6px; background: rgba(255,255,255,0.1); color: white; }
-        .form-group input::placeholder { color: rgba(255,255,255,0.7); }
-        .results { text-align: center; padding: 40px; }
-    
-/* Footer */
-footer {
-    background-color: #212529;
-    color: #fff;
-    padding: 20px 0;
-    margin-top: 50px;
-}
-
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
-}
-
-.footer-left p {
-    margin: 0;
-    color: #BF9A33;
-}
-
-.footer-right {
-    display: flex;
-    gap: 30px;
-}
-
-.footer-contact p {
-    margin: 0;
-    margin-bottom: 5px;
-    color: #fff;
-}
-
-.footer-contact i {
-    color: #BF9A33;
-    margin-right: 8px;
-}
-
-.footer-social {
-    display: flex;
-    gap: 15px;
-}
-
-.footer-social a {
-    color: #BF9A33;
-    font-size: 20px;
-    transition: color 0.3s;
-}
-
-.footer-social a:hover {
-    color: #fff;
-}
-
-.footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 15px;
-}
-
-.footer-links a {
-    color: #BF9A33;
-    font-size: 14px;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.footer-links a:hover {
-    color: #fff;
-    text-decoration: underline;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 20px;
-    }
-    
-    .footer-right {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .footer-social {
-        justify-content: center;
-    }
-    
-    .footer-links {
-        flex-direction: column;
-        gap: 10px;
-    }
-}
-
-
-</style>
-</head>
-<body>
-    <div class="container">
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
-        </div>
-        
-        <div class="section" id="section1">
-            <h2 class="section-title">🎯 Liderança</h2>
-            <div class="question">
-                <div class="question-text">1. Quando tens de tomar uma decisão importante numa equipa, como reages?</div>
-                <div class="options">
-                    <div class="option" onclick="selectOption(this, 'q1', 1)">Sinto-me inseguro(a) e prefiro que outros decidam</div>
-                    <div class="option" onclick="selectOption(this, 'q1', 2)">Consulto toda a gente antes de decidir</div>
-                    <div class="option" onclick="selectOption(this, 'q1', 3)">Analiso a situação e decido com confiança</div>
-                    <div class="option" onclick="selectOption(this, 'q1', 4)">Tomo decisões rapidamente e assumo total responsabilidade</div>
-                </div>
-            </div>
-            <div class="question">
-                <div class="question-text">2. Como motivas uma equipa que está desmotivada?</div>
-                <div class="options">
-                    <div class="option" onclick="selectOption(this, 'q2', 1)">Não sei bem como abordar a situação</div>
-                    <div class="option" onclick="selectOption(this, 'q2', 2)">Falo com cada pessoa individualmente</div>
-                    <div class="option" onclick="selectOption(this, 'q2', 3)">Organizo uma reunião para perceber os problemas</div>
-                    <div class="option" onclick="selectOption(this, 'q2', 4)">Crio um plano de ação inspirador e envolvo todos</div>
-                </div>
-            </div>
-            <button class="btn" onclick="nextSection()">Próxima Secção</button>
-        </div>
-        
-        <div class="section hidden" id="section2">
-            <h2 class="section-title">❤️ Inteligência Emocional</h2>
-            <div class="question">
-                <div class="question-text">3. Quando estás sob pressão, como reages?</div>
-                <div class="options">
-                    <div class="option" onclick="selectOption(this, 'q3', 1)">Fico ansioso(a) e perco o controlo facilmente</div>
-                    <div class="option" onclick="selectOption(this, 'q3', 2)">Sinto stress mas consigo funcionar</div>
-                    <div class="option" onclick="selectOption(this, 'q3', 3)">Mantenho-me calmo(a) e focado(a)</div>
-                    <div class="option" onclick="selectOption(this, 'q3', 4)">Uso a pressão como energia positiva</div>
-                </div>
-            </div>
-            <div class="question">
-                <div class="question-text">4. Como percebes as emoções dos outros?</div>
-                <div class="options">
-                    <div class="option" onclick="selectOption(this, 'q4', 1)">Tenho dificuldade em perceber o que os outros sentem</div>
-                    <div class="option" onclick="selectOption(this, 'q4', 2)">Às vezes noto quando alguém está mal</div>
-                    <div class="option" onclick="selectOption(this, 'q4', 3)">Consigo ler bem as emoções das pessoas</div>
-                    <div class="option" onclick="selectOption(this, 'q4', 4)">Sou muito empático(a) e ajudo outros a gerir emoções</div>
-                </div>
-            </div>
-            <button class="btn" onclick="showContactForm()">Finalizar</button>
-        </div>
-        
-        <div class="contact-form hidden" id="contactForm">
-            <h3>Quase terminado! 🎉</h3>
-            <p>Para receberes os resultados e eu poder preparar melhor a nossa sessão:</p>
-            <form id="assessmentForm" onsubmit="submitAssessment(event)">
-                <div class="form-group">
-                    <label>Nome Completo *</label>
-                    <input type="text" id="name" required>
-                </div>
-                <div class="form-group">
-                    <label>Email *</label>
-                    <input type="email" id="email" required>
-                </div>
-                <div class="form-group">
-                    <label>Principal interesse no coaching:</label>
-                    <select id="interest">
-                        <option value="lideranca">Desenvolvimento de Liderança</option>
-                        <option value="comunicacao">Melhoria da Comunicação</option>
-                        <option value="equilibrio">Equilíbrio Vida-Trabalho</option>
-                        <option value="inteligencia_emocional">Inteligência Emocional</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn">Enviar Resultados</button>
-            </form>
-        </div>
-        
-        <div class="results hidden" id="results">
-            <h2>✅ Obrigado!</h2>
-            <p>Os teus resultados foram enviados e vou usá-los para preparar a nossa sessão.</p>
-        </div>
-    </div>
-    
-    <script>
-        let currentSection = 1;
-        let answers = {};
-        
-        function selectOption(element, questionId, value) {
-            element.parentNode.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
-            element.classList.add('selected');
-            answers[questionId] = value;
-        }
-        
-        function nextSection() {
-            document.getElementById('section' + currentSection).classList.add('hidden');
-            currentSection++;
-            document.getElementById('section' + currentSection).classList.remove('hidden');
-            updateProgress();
-        }
-        
-        function updateProgress() {
-            const progress = (currentSection / 2) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-        }
-        
-        function showContactForm() {
-            document.getElementById('section2').classList.add('hidden');
-            document.getElementById('contactForm').classList.remove('hidden');
-        }
-        
-        function submitAssessment(event) {
-            event.preventDefault();
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                interest: document.getElementById('interest').value,
-                answers: answers,
-                timestamp: new Date().toISOString()
-            };
-            
-            window.parent.postMessage({
-                type: 'assessmentComplete',
-                data: formData
-            }, '*');
-            
-            document.getElementById('contactForm').classList.add('hidden');
-            document.getElementById('results').classList.remove('hidden');
-        }
-        
-        updateProgress();
-    </script>
-
-    <!-- Script para analytics do widget Candidate Fit -->
-    <script>
-        document.addEventListener('click', function(e){
             const el = e.target.closest('[data-action]');
-            if(!el) return;
+            if (!el) return;
             const action = el.getAttribute('data-action');
             try {
                 window.dataLayer = window.dataLayer || [];
                 window.dataLayer.push({ event: 'cta_click', product: 'candidate_fit', action });
-            } catch(_) {}
-        });
+            } catch (_) { }
+        }
     </script>
 </body>
+
 </html>

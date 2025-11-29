@@ -1,0 +1,324 @@
+/* ===== COMPONENTE SEPARADOR - SHARE2INSPIRE.PT ===== */
+/* Ficheiro: css/divider.css */
+/* Padrões: Bootstrap 5.3, Poppins Font, Cores: #bf9a33 (ouro), #212529 (escuro), #f8f9fa (claro) */
+
+/* ===== SEPARADORES PRINCIPAIS ===== */
+
+/* Separador Simples com Ícone */
+.divider-simple {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 3rem 0;
+    padding: 2rem 0;
+}
+
+.divider-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #bf9a33, transparent);
+}
+
+.divider-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(191, 154, 51, 0.1);
+    border-radius: 50%;
+    color: #bf9a33;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.divider-simple:hover .divider-icon {
+    background: rgba(191, 154, 51, 0.2);
+    transform: scale(1.1);
+}
+
+/* Separador com Texto */
+.divider-with-text {
+    position: relative;
+    text-align: center;
+    margin: 3rem 0;
+    padding: 2rem 0;
+}
+
+.divider-with-text::before,
+.divider-with-text::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #bf9a33, transparent);
+    transform: translateY(-50%);
+}
+
+.divider-with-text::before {
+    left: 0;
+}
+
+.divider-with-text::after {
+    right: 0;
+}
+
+.divider-text {
+    display: inline-block;
+    padding: 0 1.5rem;
+    background: #fff;
+    color: #bf9a33;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Separador com Gradiente */
+.divider-gradient {
+    height: 3px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        #bf9a33 10%, 
+        #d4af37 50%, 
+        #bf9a33 90%, 
+        transparent);
+    margin: 3rem 0;
+    border-radius: 2px;
+}
+
+/* Separador com Espaçamento Customizável */
+.divider-spacing {
+    width: 100%;
+    background: linear-gradient(180deg, 
+        transparent 0%, 
+        rgba(191, 154, 51, 0.05) 50%, 
+        transparent 100%);
+    border-top: 1px solid rgba(191, 154, 51, 0.1);
+    border-bottom: 1px solid rgba(191, 154, 51, 0.1);
+}
+
+/* ===== VARIAÇÕES TEMÁTICAS ===== */
+
+/* Separador Escuro (para secções claras) */
+.divider-dark .divider-line {
+    background: linear-gradient(90deg, transparent, #212529, transparent);
+}
+
+.divider-dark .divider-icon {
+    background: rgba(33, 37, 41, 0.1);
+    color: #212529;
+}
+
+.divider-dark .divider-text {
+    color: #212529;
+}
+
+/* Separador Claro (para secções escuras) */
+.divider-light .divider-line {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+}
+
+.divider-light .divider-icon {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.divider-light .divider-text {
+    color: rgba(255, 255, 255, 0.8);
+    background: transparent;
+}
+
+/* Separador Minimalista */
+.divider-minimal {
+    height: 1px;
+    background: #dee2e6;
+    margin: 2rem 0;
+}
+
+/* Separador com Animação */
+.divider-animated .divider-line {
+    animation: expandLine 1.5s ease-in-out forwards;
+}
+
+.divider-animated .divider-icon {
+    animation: scaleIcon 1.5s ease-in-out forwards;
+}
+
+@keyframes expandLine {
+    from {
+        width: 0;
+        opacity: 0;
+    }
+    to {
+        width: 100%;
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIcon {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ===== SEPARADORES TEMÁTICOS ADICIONAIS ===== */
+
+/* Separador Secundário (cor secundária) */
+.divider-secondary .divider-line {
+    background: linear-gradient(90deg, transparent, #333333, transparent);
+}
+
+.divider-secondary .divider-icon {
+    background: rgba(51, 51, 51, 0.1);
+    color: #333333;
+}
+
+.divider-secondary .divider-text {
+    color: #333333;
+}
+
+/* Separador Sucesso */
+.divider-success .divider-line {
+    background: linear-gradient(90deg, transparent, #28a745, transparent);
+}
+
+.divider-success .divider-icon {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.divider-success .divider-text {
+    color: #28a745;
+}
+
+/* Separador Informação */
+.divider-info .divider-line {
+    background: linear-gradient(90deg, transparent, #17a2b8, transparent);
+}
+
+.divider-info .divider-icon {
+    background: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
+}
+
+.divider-info .divider-text {
+    color: #17a2b8;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+@media (max-width: 768px) {
+    .divider-simple {
+        gap: 1rem;
+        margin: 2rem 0;
+        padding: 1.5rem 0;
+    }
+    
+    .divider-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    
+    .divider-with-text::before,
+    .divider-with-text::after {
+        width: 30%;
+    }
+    
+    .divider-text {
+        font-size: 0.9rem;
+        padding: 0 1rem;
+    }
+    
+    .divider-gradient {
+        margin: 2rem 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .divider-simple {
+        gap: 0.75rem;
+        margin: 1.5rem 0;
+        padding: 1rem 0;
+    }
+    
+    .divider-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .divider-with-text::before,
+    .divider-with-text::after {
+        width: 20%;
+    }
+    
+    .divider-text {
+        font-size: 0.85rem;
+        padding: 0 0.75rem;
+    }
+    
+    .divider-spacing {
+        margin: 1rem 0 !important;
+    }
+}
+
+/* ===== INTEGRAÇÃO COM BOOTSTRAP ===== */
+
+/* Compatibilidade com sistema de grid Bootstrap */
+.divider-container {
+    width: 100%;
+    padding: 0 15px;
+}
+
+/* Separador em containers */
+.container .divider-simple,
+.container-fluid .divider-simple {
+    margin-left: -15px;
+    margin-right: -15px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Separador em rows Bootstrap */
+.row .divider-simple {
+    grid-column: 1 / -1;
+}
+
+/* ===== ACESSIBILIDADE ===== */
+
+/* Suporte para modo escuro (prefers-color-scheme) */
+@media (prefers-color-scheme: dark) {
+    .divider-with-text {
+        .divider-text {
+            background: #212529;
+        }
+    }
+    
+    .divider-minimal {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Redução de movimento */
+@media (prefers-reduced-motion: reduce) {
+    .divider-simple:hover .divider-icon {
+        transform: none;
+    }
+    
+    .divider-animated .divider-line,
+    .divider-animated .divider-icon {
+        animation: none;
+    }
+}
+
