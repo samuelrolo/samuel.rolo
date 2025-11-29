@@ -38,37 +38,82 @@
             --text-light: #6c757d;
         }
 
+        /* Page Header matching People Hub */
+        .page-header {
+            background-color: #f8f9fa;
+            padding: 100px 0 50px;
+            margin-bottom: 50px;
+        }
 
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+
+        /* Hero Section matching People Hub Newsletter Hero */
+        .hero-humanos {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 4rem;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(191, 154, 51, 0.15);
+        }
 
         .hero-humanos .section-label {
             text-transform: uppercase;
             letter-spacing: 4px;
-            color: var(--primary-color);
+            color: rgba(255, 255, 255, 0.8);
             font-weight: 600;
+            margin-bottom: 1rem;
+            display: block;
         }
 
         .hero-humanos h2 {
             font-size: 3rem;
             font-weight: 700;
             margin-bottom: 1rem;
+            color: white;
         }
 
         .hero-humanos h3 {
             font-size: 1.5rem;
             font-weight: 500;
-            color: rgba(255, 255, 255, 0.85);
+            color: rgba(255, 255, 255, 0.9);
             margin-bottom: 1.5rem;
         }
 
         .hero-humanos p {
             font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.95);
             margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .btn-cta {
-            background: var(--primary-color);
-            color: #fff;
+            background: white;
+            color: var(--primary-color);
             border: none;
             padding: 0.85rem 2.5rem;
             border-radius: 30px;
@@ -79,11 +124,14 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            transition: all 0.3s ease;
         }
 
         .btn-cta:hover {
-            background: var(--accent-color);
-            color: #fff;
+            background: #f8f9fa;
+            color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .articles-section {
@@ -410,12 +458,12 @@
         </div>
     </footer>
 
-    <!--Botão de Feedback-- >
+    <!--Botão de Feedback-->
     <button id="feedbackBtn" class="feedback-btn" data-bs-toggle="modal" data-bs-target="#feedbackModal">
         <i class="fas fa-comment"></i> Feedback
     </button>
 
-    <!--Modal de Feedback-- >
+    <!--Modal de Feedback-->
     <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -460,7 +508,7 @@
         </div>
     </div>
 
-    <!--Modal de Contacto-- >
+    <!--Modal de Contacto-->
     <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -537,21 +585,21 @@
         </div>
     </div>
 
-    <!--Bootstrap JS-- >
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!--Bootstrap JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-            document.getElementById('contactForm').addEventListener('submit', function (e) {
-                e.preventDefault();
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            e.preventDefault();
 
             const messageDiv = document.getElementById('contactFormMessage');
             messageDiv.innerHTML = '<div class="alert alert-success">Mensagem enviada com sucesso! Entraremos em contacto brevemente.</div>';
 
             setTimeout(() => {
                 const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
-            modal.hide();
-            this.reset();
-            messageDiv.innerHTML = '';
+                modal.hide();
+                this.reset();
+                messageDiv.innerHTML = '';
             }, 2000);
         });
     </script>
