@@ -1,193 +1,95 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Informação Legal | Share2Inspire | Samuel Rolo</title>
-    <meta name="description" content="Informação legal da Share2Inspire. Termos e condições de utilização do site e serviços.">
-    
+    <meta name="description"
+        content="Informação legal da Share2Inspire. Termos e condições de utilização do site e serviços.">
+
     <!-- Favicon -->
     <link rel="icon" href="../images/favicon.png" type="image/png">
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/style.css">
-    
+
+    <!-- Header & Footer Shared CSS -->
+    <link href="../css/header-footer.css" rel="stylesheet">
+
     <style>
-        /* Estilos para o footer */
-        footer {
-            background-color: #212529;
-            color: #fff;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-        
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-        
-        .footer-left p {
-            margin: 0;
-            color: #BF9A33;
-        }
-        
-        .footer-right {
-            display: flex;
-            gap: 30px;
-        }
-        
-        .footer-contact p {
-            margin: 0;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-        
-        .footer-contact i {
-            color: #BF9A33;
-            margin-right: 8px;
-        }
-        
-        .footer-social {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .footer-social a {
-            color: #BF9A33;
-            font-size: 20px;
-            transition: color 0.3s;
-        }
-        
-        .footer-social a:hover {
-            color: #fff;
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 15px;
-        }
-        
-        .footer-links a {
-            color: #BF9A33;
-            font-size: 14px;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-links a:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
-        
-        .navbar {
-            background-color: #fff;
-            padding: 1rem 0;
-        }
-        
-        .navbar-nav {
-            margin-left: auto;
-        }
-        
-        .navbar-nav .nav-link {
-            color: #333;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            margin: 0 0.25rem;
-        }
-        
-        .navbar-nav .nav-link.active {
-            color: #BF9A33;
-            position: relative;
-        }
-        
-        .navbar-nav .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 1rem;
-            right: 1rem;
-            height: 2px;
-            background-color: #BF9A33;
-        }
-        
         /* Estilos para a página */
         .page-header {
             background-color: #f8f9fa;
             padding: 100px 0 50px;
             margin-bottom: 50px;
         }
-        
+
         .page-header h1 {
             font-size: 2.5rem;
             font-weight: 700;
             color: #333;
             margin-bottom: 1rem;
         }
-        
+
         .breadcrumb {
             background-color: transparent;
             padding: 0;
             margin: 0;
         }
-        
+
         .breadcrumb-item a {
             color: #BF9A33;
             text-decoration: none;
         }
-        
+
         .breadcrumb-item.active {
             color: #6c757d;
         }
-        
+
         .content-section {
             padding: 40px 0;
         }
-        
+
         .content-section h2 {
             font-size: 1.8rem;
             font-weight: 600;
             color: #333;
             margin-bottom: 1rem;
         }
-        
+
         .content-section h3 {
             font-size: 1.4rem;
             font-weight: 600;
             color: #333;
             margin: 1.5rem 0 1rem;
         }
-        
+
         .content-section p {
             margin-bottom: 1rem;
             line-height: 1.6;
         }
-        
+
         .content-section ul {
             margin-bottom: 1rem;
             padding-left: 1.5rem;
         }
-        
+
         .content-section li {
             margin-bottom: 0.5rem;
             line-height: 1.6;
         }
-        
+
         /* Estilos para o botão e modal de feedback */
         .feedback-btn {
             position: fixed;
@@ -198,55 +100,56 @@
             border: none;
             border-radius: 50px;
             padding: 10px 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             z-index: 1000;
             transition: all 0.3s ease;
         }
-        
+
         .feedback-btn:hover {
             background-color: #a57b0a;
             transform: scale(1.05);
         }
-        
+
         .rating {
             display: flex;
             gap: 5px;
         }
-        
+
         .star {
             color: #ccc;
             cursor: pointer;
             font-size: 24px;
         }
-        
-        .star.hover, .star.active {
+
+        .star.hover,
+        .star.active {
             color: #bf9a33;
         }
-        
+
         .modal-header {
             background-color: #BF9A33;
             color: #fff;
         }
-        
+
         .modal-title {
             font-weight: 600;
         }
-        
+
         .modal-body label {
             font-weight: 500;
             margin-bottom: 0.5rem;
         }
-        
+
         .modal-footer .btn-primary {
             background-color: #BF9A33;
             border-color: #BF9A33;
         }
-        
+
         .modal-footer .btn-primary:hover {
             background-color: #a88629;
             border-color: #a88629;
         }
-        
+
         /* Estilos globais para botões primários */
         .btn-primary {
             background-color: #212529 !important;
@@ -257,7 +160,7 @@
             border-radius: 8px;
             transition: all 0.3s ease;
         }
-        
+
         .btn-primary:hover {
             background-color: #BF9A33 !important;
             border-color: #BF9A33 !important;
@@ -265,194 +168,79 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(191, 154, 51, 0.3);
         }
-        
+
         .btn-primary:focus {
             background-color: #BF9A33 !important;
             border-color: #BF9A33 !important;
             box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25);
         }
-        
+
         /* Media queries para otimização mobile */
         @media (max-width: 768px) {
             .page-header {
                 padding: 80px 0 40px;
                 margin-bottom: 30px;
             }
-            
+
             .page-header h1 {
                 font-size: 2rem;
             }
-            
+
             .content-section {
                 padding: 30px 0;
             }
-            
-            .footer-container {
-                flex-direction: column;
-                text-align: center;
-                gap: 20px;
-            }
-            
-            .footer-right {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .footer-social {
-                justify-content: center;
-            }
-            
-            .footer-links {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
         }
-    
-/* Footer */
-footer {
-    background-color: #212529;
-    color: #fff;
-    padding: 20px 0;
-    margin-top: 50px;
-}
-
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
-}
-
-.footer-left p {
-    margin: 0;
-    color: #BF9A33;
-}
-
-.footer-right {
-    display: flex;
-    gap: 30px;
-}
-
-.footer-contact p {
-    margin: 0;
-    margin-bottom: 5px;
-    color: #fff;
-}
-
-.footer-contact i {
-    color: #BF9A33;
-    margin-right: 8px;
-}
-
-.footer-social {
-    display: flex;
-    gap: 15px;
-}
-
-.footer-social a {
-    color: #BF9A33;
-    font-size: 20px;
-    transition: color 0.3s;
-}
-
-.footer-social a:hover {
-    color: #fff;
-}
-
-.footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 15px;
-}
-
-.footer-links a {
-    color: #BF9A33;
-    font-size: 14px;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.footer-links a:hover {
-    color: #fff;
-    text-decoration: underline;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 20px;
-    }
-    
-    .footer-right {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .footer-social {
-        justify-content: center;
-    }
-    
-    .footer-links {
-        flex-direction: column;
-        gap: 10px;
-    }
-}
-
-
-</style>
+    </style>
 </head>
+
 <body>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
         gtag('config', 'G-8GQ1KM9FQS');
     </script>
-    
+
     <!-- Header e Navegação -->
-    <header class="header">
-        <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="../index.html">
-                    <img src="../images/logo.png" alt="Inspire Logo" class="logo-img">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="../index.html">Início</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="servicos.html">Serviços</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="loja.html">Loja</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="people-hub.html">People Hub</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../index.html#contactos">Contactos</a>
-                        </li>
-                    </ul>
-                </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <img src="../images/logo.png" alt="Share2Inspire Logo" height="40">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="servicos.html">Serviços</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="loja.html">Loja</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="humanos-maquinas.html">Humanos & Máquinas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="people-hub.html">People Hub</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#contactos">Contactos</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
     <!-- Page Header -->
     <section class="page-header">
@@ -476,32 +264,40 @@ footer {
         <div class="container">
             <section class="content-section">
                 <h2>Termos e Condições de Utilização</h2>
-                
+
                 <h3>1. Objeto</h3>
-                <p>Os presentes termos e condições regulam a utilização do website share2inspire.pt e dos serviços prestados pela Share2Inspire, empresa individual de Samuel Rolo.</p>
-                
+                <p>Os presentes termos e condições regulam a utilização do website share2inspire.pt e dos serviços
+                    prestados pela Share2Inspire, empresa individual de Samuel Rolo.</p>
+
                 <h3>2. Identificação da Entidade</h3>
                 <p><strong>Denominação:</strong> Share2Inspire - Samuel Rolo<br>
-                <strong>NIF:</strong> 241596823<br>
-                <strong>Morada:</strong> Mafra<br>
-                <strong>Email:</strong> srshare2inspire@gmail.com<br>
-                <strong>Telefone:</strong> +351 961 925 050</p>
-                
+                    <strong>NIF:</strong> 241596823<br>
+                    <strong>Morada:</strong> Mafra<br>
+                    <strong>Email:</strong> srshare2inspire@gmail.com<br>
+                    <strong>Telefone:</strong> +351 961 925 050
+                </p>
+
                 <h3>3. Utilização do Website</h3>
-                <p>A utilização deste website implica a aceitação plena dos presentes termos e condições. O utilizador compromete-se a:</p>
+                <p>A utilização deste website implica a aceitação plena dos presentes termos e condições. O utilizador
+                    compromete-se a:</p>
                 <ul>
                     <li>Utilizar o website de forma lícita e em conformidade com a legislação aplicável</li>
-                    <li>Não transmitir conteúdos que sejam ilegais, difamatórios ou que violem direitos de terceiros</li>
+                    <li>Não transmitir conteúdos que sejam ilegais, difamatórios ou que violem direitos de terceiros
+                    </li>
                     <li>Não utilizar o website para fins comerciais não autorizados</li>
                     <li>Respeitar os direitos de propriedade intelectual</li>
                 </ul>
-                
+
                 <h3>4. Propriedade Intelectual</h3>
-                <p>Todos os conteúdos presentes neste website, incluindo textos, imagens, logótipos, design e código, são propriedade da Share2Inspire ou dos seus licenciadores, estando protegidos por direitos de autor e outros direitos de propriedade intelectual.</p>
-                
+                <p>Todos os conteúdos presentes neste website, incluindo textos, imagens, logótipos, design e código,
+                    são propriedade da Share2Inspire ou dos seus licenciadores, estando protegidos por direitos de autor
+                    e outros direitos de propriedade intelectual.</p>
+
                 <h3>5. Proteção de Dados Pessoais</h3>
-                <p>O tratamento de dados pessoais é efetuado em conformidade com o Regulamento Geral sobre a Proteção de Dados (RGPD) e demais legislação aplicável. Para mais informações, consulte a nossa <a href="politica-privacidade.html">Política de Privacidade</a>.</p>
-                
+                <p>O tratamento de dados pessoais é efetuado em conformidade com o Regulamento Geral sobre a Proteção de
+                    Dados (RGPD) e demais legislação aplicável. Para mais informações, consulte a nossa <a
+                        href="politica-privacidade.html">Política de Privacidade</a>.</p>
+
                 <h3>6. Responsabilidade</h3>
                 <p>A Share2Inspire não se responsabiliza por:</p>
                 <ul>
@@ -510,21 +306,24 @@ footer {
                     <li>Conteúdos de terceiros ou links externos</li>
                     <li>Vírus ou outros elementos nocivos que possam afetar o equipamento do utilizador</li>
                 </ul>
-                
+
                 <h3>7. Modificações</h3>
-                <p>A Share2Inspire reserva-se o direito de modificar os presentes termos e condições a qualquer momento, sendo as alterações publicadas nesta página.</p>
-                
+                <p>A Share2Inspire reserva-se o direito de modificar os presentes termos e condições a qualquer momento,
+                    sendo as alterações publicadas nesta página.</p>
+
                 <h3>8. Lei Aplicável e Foro Competente</h3>
-                <p>Os presentes termos e condições são regidos pela lei portuguesa. Em caso de litígio, será competente o foro da comarca do domicílio da Share2Inspire.</p>
-                
+                <p>Os presentes termos e condições são regidos pela lei portuguesa. Em caso de litígio, será competente
+                    o foro da comarca do domicílio da Share2Inspire.</p>
+
                 <h3>9. Contactos</h3>
                 <p>Para qualquer questão relacionada com estes termos e condições, pode contactar-nos através de:</p>
                 <ul>
                     <li><strong>Email:</strong> srshare2inspire@gmail.com</li>
                     <li><strong>Telefone:</strong> +351 961 925 050</li>
-                    <li><strong>Formulário de contacto:</strong> <a href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Clique aqui</a></li>
+                    <li><strong>Formulário de contacto:</strong> <a href="#" data-bs-toggle="modal"
+                            data-bs-target="#contactModal">Clique aqui</a></li>
                 </ul>
-                
+
                 <p><em>Última atualização: Outubro de 2025</em></p>
             </section>
         </div>
@@ -543,8 +342,10 @@ footer {
                         <p><i class="fas fa-phone"></i> +351 961 925 050</p>
                     </div>
                     <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i
+                                class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"><i
+                                class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
@@ -593,7 +394,8 @@ footer {
                         </div>
                         <div class="mb-3">
                             <label for="feedbackMessage" class="form-label">Mensagem *</label>
-                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3" required></textarea>
+                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3"
+                                required></textarea>
                         </div>
                         <div id="feedbackFormMessage"></div>
                     </form>
@@ -642,7 +444,8 @@ footer {
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="contactPhone" class="form-label">Número de Telefone</label>
-                                <input type="tel" class="form-control" id="contactPhone" name="phone" placeholder="912345678">
+                                <input type="tel" class="form-control" id="contactPhone" name="phone"
+                                    placeholder="912345678">
                                 <div class="form-text">Formato: 9 dígitos sem espaços</div>
                             </div>
                         </div>
@@ -652,17 +455,20 @@ footer {
                         </div>
                         <div class="mb-3">
                             <label for="contactMessage" class="form-label">Mensagem *</label>
-                            <textarea class="form-control" id="contactMessage" name="message" rows="4" required></textarea>
+                            <textarea class="form-control" id="contactMessage" name="message" rows="4"
+                                required></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="contactAttachment" class="form-label">Anexo (opcional)</label>
-                            <input type="file" class="form-control" id="contactAttachment" name="attachment" accept=".pdf,.doc,.docx,.jpg,.png">
+                            <input type="file" class="form-control" id="contactAttachment" name="attachment"
+                                accept=".pdf,.doc,.docx,.jpg,.png">
                             <div class="form-text">Formatos aceites: PDF, DOC, DOCX, JPG, PNG (máx. 5MB)</div>
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="contactPrivacy" name="privacy" required>
                             <label class="form-check-label" for="contactPrivacy">
-                                Li e aceito a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a> *
+                                Li e aceito a <a href="politica-privacidade.html" target="_blank">Política de
+                                    Privacidade</a> *
                             </label>
                         </div>
                         <div id="contactFormMessage"></div>
@@ -678,16 +484,16 @@ footer {
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         // Formulário de contacto
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             // Aqui seria implementada a lógica de envio do formulário
             const messageDiv = document.getElementById('contactFormMessage');
             messageDiv.innerHTML = '<div class="alert alert-success">Mensagem enviada com sucesso! Entraremos em contacto brevemente.</div>';
-            
+
             // Fechar modal após 2 segundos
             setTimeout(() => {
                 const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
@@ -698,5 +504,5 @@ footer {
         });
     </script>
 </body>
-</html>
 
+</html>

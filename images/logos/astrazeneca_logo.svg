@@ -1,0 +1,18 @@
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Logótipo AstraZeneca estilizado</title>
+  <desc id="desc">Marca AstraZeneca em fundo transparente com lettering branco sobre faixa púrpura.</desc>
+  <defs>
+    <linearGradient id="az-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7a1a66"/>
+      <stop offset="100%" stop-color="#4f0f4a"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="400" rx="32" fill="url(#az-gradient)"/>
+  <g transform="translate(80 230)" fill="#f9f6f0" font-family="'Montserrat', 'Helvetica Neue', Arial, sans-serif">
+    <text font-size="130" font-weight="700" letter-spacing="-1">Astra</text>
+    <text font-size="130" font-weight="300" x="320" letter-spacing="-1">Zeneca</text>
+  </g>
+  <path d="M530 120c22-48 74-72 116-54 27 12 38 44 24 71-17 33-66 57-119 59" fill="none" stroke="#f2c94c" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M660 128c-6 13-26 29-50 37" fill="none" stroke="#f2c94c" stroke-width="14" stroke-linecap="round"/>
+  <circle cx="612" cy="200" r="10" fill="#f2c94c"/>
+</svg>

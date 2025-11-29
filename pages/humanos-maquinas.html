@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Humanos &amp; Máquinas | Share2Inspire</title>
+    <meta name="description"
+        content="Humanos &amp; Máquinas é o espaço da Share2Inspire onde exploramos a nova geografia do poder na era digital, ligando tecnologia, política e consciência humana em artigos e podcasts.">
+
+    <!-- Favicon -->
+    <link rel="icon" href="../images/favicon.png" type="image/png">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+
+    <!-- Header & Footer Shared CSS -->
+    <link href="../css/header-footer.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #BF9A33;
+            --secondary-color: #333333;
+            --accent-color: #a57b0a;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --text-color: #333333;
+            --text-light: #6c757d;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            background-color: #fff;
+        }
+
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 1rem 0;
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 600;
+            color: var(--secondary-color);
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar-nav .nav-link.active {
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        .navbar-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 1rem;
+            right: 1rem;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .page-header {
+            background-color: #f8f9fa;
+            padding: 110px 0 50px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .hero-humanos {
+            background: linear-gradient(135deg, #0d1117, #1e232d);
+            color: #fff;
+            padding: 4rem 0;
+        }
+
+        .hero-humanos .section-label {
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .hero-humanos h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .hero-humanos h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-humanos p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+        }
+
+        .btn-cta {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 0.85rem 2.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-cta:hover {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        .articles-section {
+            padding: 4rem 0;
+        }
+
+        .articles-section h2 {
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 3rem;
+        }
+
+        .article-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .article-image-wrapper {
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .article-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .article-card h3 {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        .article-card p {
+            color: var(--text-light);
+            flex: 1;
+        }
+
+        .btn-read-more {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-read-more:hover {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        .podcast-section {
+            background: #f8f9fa;
+            padding: 4rem 0;
+        }
+
+        .podcast-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .podcast-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .podcast-links a {
+            padding: 0.85rem 1.5rem;
+            border-radius: 30px;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .podcast-links a:hover {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .podcast-player iframe {
+            width: 100%;
+        }
+
+        .section-subtitle {
+            font-size: 1rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 992px) {
+            .hero-humanos h2 {
+                font-size: 2.5rem;
+            }
+
+            .hero-humanos h3 {
+                font-size: 1.25rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-humanos {
+                text-align: center;
+            }
+
+            .podcast-links {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-8GQ1KM9FQS');
+    </script>
+
+    <header class="header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="../index.html">
+                    <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.html">Início</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="servicos.html">Serviços</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="loja.html">Loja</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="humanos-maquinas.html">Humanos &amp;
+                                Máquinas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="people-hub.html">People Hub</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.html#contactos">Contactos</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h1>Humanos &amp; Máquinas</h1>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Humanos &amp; Máquinas</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="hero-humanos">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center">
+                        <p class="section-label">Série Editorial</p>
+                        <h2>Humanos &amp; Máquinas</h2>
+                        <h3>O espaço onde a tecnologia, o poder e a consciência humana se encontram.</h3>
+                        <p>Nesta série editorial exploro como a tecnologia redesenha o poder, a economia e o trabalho, e
+                            que lugar resta à consciência humana nesta nova geopolítica digital. Aqui encontras os
+                            artigos e os episódios do podcast Humanos &amp; Máquinas.</p>
+                        <a class="btn-cta"
+                            href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7384145793324085248"
+                            target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-linkedin"></i> Subscrever newsletter no LinkedIn
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="articles-section">
+            <div class="container">
+                <p class="section-subtitle text-center">Artigos Humanos &amp; Máquinas</p>
+                <h2 class="section-title text-center">Artigos em Destaque</h2>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="article-card">
+                            <div class="article-image-wrapper">
+                                <img class="article-image" src="../images/humanos-maquinas-new-battlefield.svg"
+                                    alt="Ilustração do artigo Humanos &amp; Máquinas - The New Battlefield"
+                                    loading="lazy">
+                            </div>
+                            <h3>Edição #1: The New Battlefield</h3>
+                            <p>Nesta primeira edição analiso a nova geografia do poder na era digital. O campo de
+                                batalha já não são apenas territórios físicos, mas infraestruturas invisíveis como
+                                dados, algoritmos, cabos submarinos e plataformas digitais. Questiono quem controla hoje
+                                o fluxo de informação, como isso influencia democracias e mercados, e porque é que a
+                                literacia digital deixou de ser opcional para cidadãos e líderes.</p>
+                            <a class="btn-read-more"
+                                href="https://www.linkedin.com/pulse/edi%C3%A7%C3%A3o-1-new-battlefield-samuel-rolo-ksinf/?trackingId=tjzct3EjSCuCCoSgS%2FvWoQ%3D%3D"
+                                target="_blank" rel="noopener noreferrer">Ler artigo no LinkedIn</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="article-card">
+                            <div class="article-image-wrapper">
+                                <img class="article-image" src="../images/humanos-maquinas-turning-point.svg"
+                                    alt="Ilustração do artigo Humanos &amp; Máquinas - The Turning Point"
+                                    loading="lazy">
+                            </div>
+                            <h3>The Turning Point: Technology, Power and Humanity</h3>
+                            <p>Este artigo explora o momento de viragem em que a tecnologia deixa de ser apenas
+                                ferramenta e passa a ser infraestrutra crítica do poder. Discuto como a inteligência
+                                artificial, as grandes plataformas e as redes globais de energia e dados estão a
+                                redefinir quem decide, quem beneficia e quem fica para trás. A questão central já não é
+                                apenas o que a tecnologia pode fazer, mas com que propósito é desenhada e ao serviço de
+                                quem é usada.</p>
+                            <a class="btn-read-more"
+                                href="https://www.linkedin.com/pulse/turning-point-technology-power-humanity-samuel-rolo-uugef/?trackingId=h1cYgcPKTHKNd57LBNR3yg%3D%3D"
+                                target="_blank" rel="noopener noreferrer">Ler artigo no LinkedIn</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="podcast-section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="podcast-card">
+                            <p class="section-subtitle">Podcast Humanos &amp; Máquinas</p>
+                            <h2 class="section-title">Ouvir o Podcast Humanos &amp; Máquinas</h2>
+                            <p>Se preferes ouvir em vez de ler, o Humanos &amp; Máquinas também vive em formato podcast.
+                                Em cada episódio aprofundo os temas dos artigos, com exemplos práticos, histórias reais
+                                e perguntas incómodas sobre o futuro do trabalho, da democracia e da liderança na era da
+                                inteligência artificial.</p>
+                            <div class="podcast-links">
+                                <a href="https://www.youtube.com/@share2inspire/podcasts" target="_blank"
+                                    rel="noopener noreferrer">
+                                    <i class="fab fa-youtube"></i> Ver episódios no YouTube
+                                </a>
+                            </div>
+                            <div class="podcast-player">
+                                <iframe data-testid="embed-iframe" style="border-radius:12px"
+                                    src="https://open.spotify.com/embed/show/2P09p0F3HIR0jXRdCMPOSe?utm_source=generator&t=0"
+                                    width="100%" height="352" frameborder="0" allowfullscreen=""
+                                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                    loading="lazy">
+                                </iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer id="contactos">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-left">
+                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
+                </div>
+                <div class="footer-right">
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
+                    </div>
+                    <div class="footer-social">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" rel="noopener noreferrer"><i
+                                class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire.pt/" target="_blank"
+                            rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="politica-privacidade.html">Política de Privacidade</a>
+                <a href="politica-cookies.html">Política de Cookies</a>
+                <a href="tratamento-dados.html">Tratamento de Dados</a>
+                <a href="informacao-legal.html">Informação Legal</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Botão de Feedback -->
+    <button id="feedbackBtn" class="feedback-btn" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+        <i class="fas fa-comment"></i> Feedback
+    </button>
+
+    <!-- Modal de Feedback -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feedbackModalLabel">Deixe o seu Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="feedbackForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nome *</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">Avaliação *</label>
+                            <input type="hidden" id="rating" name="rating" value="0">
+                            <div class="rating">
+                                <span class="star" data-value="1"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="2"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="3"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="4"><i class="far fa-star"></i></span>
+                                <span class="star" data-value="5"><i class="far fa-star"></i></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="feedbackMessage" class="form-label">Mensagem *</label>
+                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3"
+                                required></textarea>
+                        </div>
+                        <div id="feedbackFormMessage"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="feedbackForm" class="btn btn-primary">Enviar Feedback</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Contacto -->
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="contactForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="contactName" class="form-label">Nome *</label>
+                                <input type="text" class="form-control" id="contactName" name="name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="contactReason" class="form-label">Motivo *</label>
+                                <select class="form-select" id="contactReason" name="reason" required>
+                                    <option value="">Selecione um motivo</option>
+                                    <option value="humanos-maquinas">Humanos &amp; Máquinas</option>
+                                    <option value="people-hub">People Hub</option>
+                                    <option value="newsletter">Newsletter</option>
+                                    <option value="consultoria">Consultoria</option>
+                                    <option value="coaching">Coaching Executivo</option>
+                                    <option value="formacao">Formação</option>
+                                    <option value="palestras">Palestras</option>
+                                    <option value="parcerias">Parcerias</option>
+                                    <option value="media">Media</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="contactEmail" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="contactEmail" name="email" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="contactPhone" class="form-label">Número de Telefone</label>
+                                <input type="tel" class="form-control" id="contactPhone" name="phone"
+                                    placeholder="912345678">
+                                <div class="form-text">Formato: 9 dígitos sem espaços</div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactSubject" class="form-label">Assunto *</label>
+                            <input type="text" class="form-control" id="contactSubject" name="subject" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactMessage" class="form-label">Mensagem *</label>
+                            <textarea class="form-control" id="contactMessage" name="message" rows="4"
+                                required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactAttachment" class="form-label">Anexo (opcional)</label>
+                            <input type="file" class="form-control" id="contactAttachment" name="attachment"
+                                accept=".pdf,.doc,.docx,.jpg,.png">
+                            <div class="form-text">Formatos aceites: PDF, DOC, DOCX, JPG, PNG (máx. 5MB)</div>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="contactPrivacy" name="privacy" required>
+                            <label class="form-check-label" for="contactPrivacy">
+                                Li e aceito a <a href="politica-privacidade.html" target="_blank"
+                                    rel="noopener noreferrer">Política de Privacidade</a> *
+                            </label>
+                        </div>
+                        <div id="contactFormMessage"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="contactForm" class="btn btn-primary">Enviar Mensagem</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const messageDiv = document.getElementById('contactFormMessage');
+            messageDiv.innerHTML = '<div class="alert alert-success">Mensagem enviada com sucesso! Entraremos em contacto brevemente.</div>';
+
+            setTimeout(() => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
+                modal.hide();
+                this.reset();
+                messageDiv.innerHTML = '';
+            }, 2000);
+        });
+    </script>
+    <!-- Feedback Modal JS -->
+    <script src="../js/feedback.js"></script>
+
+</body>
+
+</html>
