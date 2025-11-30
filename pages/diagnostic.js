@@ -164,15 +164,25 @@ let userResponses = {};
 let userScores = [];
 
 // Inicialização
-document.addEventListener('DOMContentLoaded', function() {
-    // Verificar se o modal existe antes de inicializar
-    const modalElement = document.getElementById('diagnosticModalClean');
-    if (modalElement) {
-        modalElement.addEventListener('show.bs.modal', function () {
-            initializeSurvey();
-        });
-    }
+document.addEventListener('DOMContentLoaded', function () {
+    waitForBootstrapDiagnostic(() => {
+        // Verificar se o modal existe antes de inicializar
+        const modalElement = document.getElementById('diagnosticModalClean');
+        if (modalElement) {
+            modalElement.addEventListener('show.bs.modal', function () {
+                initializeSurvey();
+            });
+        }
+    });
 });
+
+function waitForBootstrapDiagnostic(callback) {
+    if (typeof bootstrap !== 'undefined') {
+        callback();
+    } else {
+        setTimeout(() => waitForBootstrapDiagnostic(callback), 100);
+    }
+}
 
 function initializeSurvey() {
     currentDimension = 0;
@@ -184,7 +194,7 @@ function initializeSurvey() {
 function loadDimension(dimensionIndex) {
     const dimension = surveyData.dimensions[dimensionIndex];
     const surveyContent = document.getElementById('surveyContentClean');
-    
+
     if (!surveyContent) return;
 
     let html = `
@@ -229,17 +239,17 @@ function loadDimension(dimensionIndex) {
     const progress = ((dimensionIndex + 1) / surveyData.dimensions.length) * 100;
     const progressBar = document.getElementById('progressBarClean');
     if (progressBar) progressBar.style.width = progress + '%';
-    
+
     const currentQuestionEl = document.getElementById('currentQuestionClean');
     if (currentQuestionEl) currentQuestionEl.textContent = dimensionIndex + 1;
-    
+
     const totalQuestionsEl = document.getElementById('totalQuestionsClean');
     if (totalQuestionsEl) totalQuestionsEl.textContent = surveyData.dimensions.length;
 
     // Atualizar botões de navegação
     const prevBtn = document.getElementById('prevBtnClean');
     if (prevBtn) prevBtn.disabled = dimensionIndex === 0;
-    
+
     const nextBtn = document.getElementById('nextBtnClean');
     if (nextBtn) {
         if (dimensionIndex === surveyData.dimensions.length - 1) {
@@ -267,7 +277,7 @@ function nextDimensionClean() {
     // Validar se todas as perguntas foram respondidas
     const currentQuestions = surveyData.dimensions[currentDimension].questions;
     let allAnswered = true;
-    
+
     for (let i = 0; i < currentQuestions.length; i++) {
         if (!userResponses[`${currentDimension}_${i}`]) {
             allAnswered = false;
@@ -294,7 +304,7 @@ function finishSurvey() {
     // Validar última dimensão
     const currentQuestions = surveyData.dimensions[currentDimension].questions;
     let allAnswered = true;
-    
+
     for (let i = 0; i < currentQuestions.length; i++) {
         if (!userResponses[`${currentDimension}_${i}`]) {
             allAnswered = false;
@@ -308,12 +318,12 @@ function finishSurvey() {
     }
 
     calculateScores();
-    
+
     // Fechar modal de diagnóstico e abrir resultados
     const diagnosticModalEl = document.getElementById('diagnosticModalClean');
     const diagnosticModal = bootstrap.Modal.getInstance(diagnosticModalEl);
     diagnosticModal.hide();
-    
+
     setTimeout(() => {
         showResults();
     }, 500);
@@ -321,16 +331,16 @@ function finishSurvey() {
 
 function calculateScores() {
     userScores = [];
-    
+
     for (let d = 0; d < surveyData.dimensions.length; d++) {
         let dimensionTotal = 0;
         let questionCount = surveyData.dimensions[d].questions.length;
-        
+
         for (let q = 0; q < questionCount; q++) {
             const response = userResponses[`${d}_${q}`] || 0;
             dimensionTotal += response;
         }
-        
+
         const dimensionScore = questionCount > 0 ? (dimensionTotal / questionCount) : 0;
         userScores.push(dimensionScore);
     }
@@ -342,7 +352,7 @@ function showResults() {
 
     const userAverage = userScores.reduce((a, b) => a + b, 0) / userScores.length;
     const maturityLevel = getMaturityLevel(userAverage);
-    
+
     let html = `
         <div class="results-section fade-in">
             <div class="text-center mb-5">
@@ -382,12 +392,12 @@ function showResults() {
                         </thead>
                         <tbody>
     `;
-    
+
     surveyData.dimensions.forEach((dimension, index) => {
         const score = userScores[index];
         const benchmarkAvg = benchmarkData.surveys[0].scores[index];
         const benchmarkTop = benchmarkData.surveys[1].scores[index];
-        
+
         html += `
             <tr>
                 <td style="font-weight: 500; color: #495057;">${dimension.title}</td>
@@ -399,7 +409,7 @@ function showResults() {
             </tr>
         `;
     });
-    
+
     html += `
                         </tbody>
                     </table>
@@ -422,12 +432,12 @@ function showResults() {
             </div>
         </div>
     `;
-    
+
     resultsContent.innerHTML = html;
-    
+
     const resultsModal = new bootstrap.Modal(document.getElementById('resultsModalClean'));
     resultsModal.show();
-    
+
     // Inicializar gráfico após o modal estar visível
     setTimeout(() => {
         createDimensionsChart();
@@ -453,14 +463,14 @@ function generateRecommendations() {
     const scoresWithIndex = userScores.map((score, index) => ({ score, index }));
     scoresWithIndex.sort((a, b) => a.score - b.score);
     const lowestDimensions = scoresWithIndex.slice(0, 3);
-    
+
     let html = '';
-    
+
     lowestDimensions.forEach(item => {
         const dimension = surveyData.dimensions[item.index];
         const levelIndex = Math.floor(item.score) - 1;
         const nextLevelText = dimension.levels[Math.min(levelIndex + 1, 4)];
-        
+
         html += `
             <div class="col-md-12 mb-3">
                 <div class="recommendation-item">
@@ -476,14 +486,14 @@ function generateRecommendations() {
             </div>
         `;
     });
-    
+
     return html;
 }
 
 function createDimensionsChart() {
     const ctx = document.getElementById('dimensionsChartClean');
     if (!ctx) return;
-    
+
     new Chart(ctx, {
         type: 'radar',
         data: {
