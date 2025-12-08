@@ -782,7 +782,7 @@
                             return response.json();
                         })
                         .then(data => {
-                            renderAnalysisResults(data);
+                            renderAnalysisResultsV2(data);
                         })
                         .catch(error => {
                             console.error('Erro:', error);
@@ -824,6 +824,73 @@
                         </div>
                         <div class="col-md-6">
                             <h6 class="text-warning"><i class="fas fa-lightbulb"></i> A Melhorar</h6>
+                            <ul class="list-unstyled mb-0">
+                                ${improvementsHtml}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+
+                analysisResults.style.display = 'block';
+                analysisResults.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            function renderAnalysisResultsV2(data) {
+                const analysisResults = document.getElementById('analysisResults');
+                if (!analysisResults) return;
+
+                // Handle Backend Response Structure (data.report)
+                let score = 0;
+                let summary = "Análise concluída.";
+                let strengths = [];
+                let improvements = [];
+
+                if (data.report) {
+                    const r = data.report;
+                    score = r.global_score || 0;
+                    summary = r.score_band ? `Classificação: ${r.score_band} - ${r.executive_summary ? r.executive_summary[0] : ''}` : "Análise completa.";
+
+                    if (r.executive_summary && Array.isArray(r.executive_summary)) {
+                        strengths = r.executive_summary.slice(0, 3);
+                    }
+
+                    if (r.roadmap && r.roadmap.quick_wins) {
+                        improvements = r.roadmap.quick_wins.slice(0, 3);
+                    }
+                } else if (data.score) {
+                    // Fallback
+                    score = data.score;
+                    summary = data.summary;
+                    strengths = data.strengths || [];
+                    improvements = data.improvements || [];
+                }
+
+                // Definir cor baseada no score
+                let colorClass = 'bg-danger';
+                if (score >= 50) colorClass = 'bg-warning';
+                if (score >= 80) colorClass = 'bg-success';
+
+                // Helpers para listas
+                const strengthsHtml = strengths.map(s => `<li><i class="fas fa-check-circle text-success"></i> ${s}</li>`).join('');
+                const improvementsHtml = improvements.map(i => `<li><i class="fas fa-exclamation-circle text-warning"></i> ${i}</li>`).join('');
+
+                analysisResults.innerHTML = `
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar ${colorClass}" role="progressbar" style="width: ${score}%;"
+                            aria-valuenow="${score}" aria-valuemin="0" aria-valuemax="100">${score}%</div>
+                    </div>
+                    <p class="mb-2"><strong>Resultados da Análise IA:</strong></p>
+                    <p class="small text-muted mb-3">${summary}</p>
+                    
+                    <div class="row small">
+                        <div class="col-md-6">
+                            <h6 class="text-success"><i class="fas fa-thumbs-up"></i> Pontos Fortes e Destaques</h6>
+                            <ul class="list-unstyled mb-2">
+                                ${strengthsHtml}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-warning"><i class="fas fa-lightbulb"></i> A Melhorar (Quick Wins)</h6>
                             <ul class="list-unstyled mb-0">
                                 ${improvementsHtml}
                             </ul>
