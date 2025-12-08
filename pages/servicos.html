@@ -728,9 +728,8 @@
             const analysisResults = document.getElementById('analysisResults');
             const cvFileInput = document.getElementById('cvFile');
             
-            // TODO: REPLACE THIS WITH YOUR DEPLOYED CLOUD FUNCTION URL
-            // Example: https://us-central1-your-project.cloudfunctions.net/analyze_cv
-            const BACKEND_URL = "INSERT_CLOUD_FUNCTION_URL_HERE"; 
+            // Configuração do Backend (Google App Engine)
+            const BACKEND_URL = "https://share2inspire-beckend.lm.r.appspot.com/api/services/analyze-cv"; 
 
             if (btnAnalyze) {
                 btnAnalyze.addEventListener('click', function () {
