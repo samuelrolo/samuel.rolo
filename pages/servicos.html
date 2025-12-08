@@ -589,7 +589,7 @@
                     formMessage.innerHTML = '';
 
                     // Iniciar Pagamento
-                    fetch('/api/payment/mbway', {
+                    fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/mbway', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -640,7 +640,7 @@
                     formMessage.innerHTML = '';
 
                     // Enviar FormData diretamente (para suportar upload de arquivos)
-                    fetch('/api/services/cv-review', {
+                    fetch('https://share2inspire-beckend.lm.r.appspot.com/api/services/cv-review', {
                         method: 'POST',
                         body: formData // O browser define automaticamente o Content-Type como multipart/form-data
                     })
