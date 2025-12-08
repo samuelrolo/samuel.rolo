@@ -495,32 +495,61 @@
                         </div>
 
                         <!-- Análise Inteligente (Simulação) -->
-                        <div class="card bg-light mb-4 border-0">
-                            <div class="card-body">
-                                <h6 class="card-title"><i class="fas fa-magic text-primary"></i> Pré-Avaliação
-                                    Inteligente</h6>
-                                <p class="small text-muted mb-2">Faz uma análise rápida do teu ficheiro antes de
-                                    submeteres.</p>
+                        <!-- Análise Inteligente (Simulação Melhorada) -->
+                        <div class="card border-0 shadow-sm mb-4"
+                            style="background: linear-gradient(to right, #f8f9fa, #e9ecef); border-radius: 12px; overflow: hidden;">
+                            <div class="card-body p-4">
+                                <h6 class="card-title fw-bold text-primary mb-3">
+                                    <i class="fas fa-robot me-2"></i>AI Smart Scan <span
+                                        class="badge bg-primary rounded-pill small"
+                                        style="font-size: 0.6em; vertical-align: top;">BETA</span>
+                                </h6>
+                                <p class="small text-muted mb-3">O nosso algoritmo vai analisar a estrutura do
+                                    teu ficheiro e os dados do teu perfil para identificar oportunidades
+                                    imediatas.</p>
 
                                 <div id="analysisSection">
-                                    <button type="button" class="btn btn-outline-primary btn-sm mb-2" id="btnAnalyzeCV">
-                                        <i class="fas fa-search"></i> Analisar Potencial do CV
+                                    <button type="button" class="btn btn-primary w-100 rounded-pill" id="btnAnalyzeCV">
+                                        <i class="fas fa-microscope me-2"></i> Analisar o meu CV Agora
                                     </button>
                                 </div>
-                                <div id="analysisResults" style="display: none;">
-                                    <div class="progress mb-2" style="height: 10px;">
-                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 65%;"
-                                            aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+
+                                <!-- Loading Animation -->
+                                <div id="analysisLoading" style="display: none;" class="text-center py-3">
+                                    <div class="d-flex justify-content-center align-items-center mb-2">
+                                        <div class="spinner-border text-primary" role="status"
+                                            style="width: 2rem; height: 2rem;"></div>
                                     </div>
-                                    <p class="mb-1"><strong>Potencial de Otimização Detectado: Alto</strong></p>
-                                    <ul class="small text-muted mb-0">
-                                        <li><i class="fas fa-exclamation-circle text-warning"></i> Estrutura pode ser
-                                            melhorada para ATS.</li>
-                                        <li><i class="fas fa-exclamation-circle text-warning"></i> Palavras-chave do
-                                            setor em falta.</li>
-                                        <li><i class="fas fa-check-circle text-success"></i> Formato de ficheiro válido.
-                                        </li>
-                                    </ul>
+                                    <p class="small text-muted" id="loadingText">A ler ficheiro...</p>
+                                </div>
+
+                                <!-- Results -->
+                                <div id="analysisResults" style="display: none;" class="mt-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <strong class="me-auto text-dark">Resultado da Análise
+                                            Preliminar</strong>
+                                        <span class="badge bg-success rounded-pill">Concluído</span>
+                                    </div>
+
+                                    <div class="progress mb-3" style="height: 8px; border-radius: 4px;">
+                                        <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated"
+                                            role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0"
+                                            aria-valuemax="100"></div>
+                                    </div>
+
+                                    <div class="bg-white p-3 rounded shadow-sm border">
+                                        <p class="mb-2 small"><strong><i
+                                                    class="fas fa-file-alt text-secondary me-2"></i>Ficheiro:</strong>
+                                            <span id="resFileName" class="text-muted">...</span>
+                                        </p>
+
+                                        <div id="dynamicFeedbackList" class="small">
+                                            <!-- Feedback dinâmico entra aqui -->
+                                        </div>
+                                    </div>
+                                    <p class="small text-muted mt-2 fst-italic"><i
+                                            class="fas fa-check-double text-primary me-1"></i> A revisão
+                                        profissional completa (após pagamento) irá aprofundar estes pontos.</p>
                                 </div>
                             </div>
                         </div>
@@ -537,20 +566,28 @@
                                 <input type="email" class="form-control" id="revisaoCvEmail" name="email" required>
                             </div>
                         </div>
+                        <div class="mb-3">
+                            <label for="revisaoCvPhone" class="form-label">Telemóvel (MB WAY) *</label>
+                            <input type="tel" class="form-control" id="revisaoCvPhone" name="phone"
+                                placeholder="912345678" required>
+                        </div>
+
+                        <!-- Características do Anúncio & Contexto -->
+                        <h6 class="mb-3 border-bottom pb-2">3. O teu Objetivo & Contexto</h6>
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="revisaoCvPhone" class="form-label">Telemóvel (MB WAY) *</label>
-                                <input type="tel" class="form-control" id="revisaoCvPhone" name="phone"
-                                    placeholder="912345678" required>
-                            </div>
                             <div class="col-md-6 mb-3">
                                 <label for="currentRole" class="form-label">Função Atual / Última</label>
                                 <input type="text" class="form-control" id="currentRole" name="current_role"
                                     placeholder="Ex: Gestor de Marketing">
                             </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="sector" class="form-label">Setor de Atividade</label>
+                                <input type="text" class="form-control" id="sector" name="sector"
+                                    placeholder="Ex: Tecnologia, Saúde...">
+                            </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <label for="revisaoCvExperience" class="form-label">Anos de Experiência</label>
                                 <select class="form-select" id="revisaoCvExperience" name="experience">
                                     <option value="Estudante">Estudante / Recém-Graduado</option>
@@ -560,21 +597,15 @@
                                     <option value="10+ anos">10+ anos (Expert)</option>
                                 </select>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="sector" class="form-label">Setor de Atividade</label>
-                                <input type="text" class="form-control" id="sector" name="sector"
-                                    placeholder="Ex: Tecnologia, Saúde...">
-                            </div>
                         </div>
-
-                        <!-- Características do Anúncio -->
-                        <h6 class="mb-3 border-bottom pb-2">3. O teu Objetivo</h6>
                         <div class="mb-3">
-                            <label for="adCharacteristics" class="form-label">Características do Anúncio / Oportunidade
+                            <label for="adCharacteristics" class="form-label">Características do Anúncio /
+                                Oportunidade
                                 Alvo</label>
                             <textarea class="form-control" id="adCharacteristics" name="ad_characteristics" rows="3"
                                 placeholder="Descreve a vaga ou o tipo de emprego que procuras (keywords, skills pedidas, etc.)"></textarea>
-                            <div class="form-text">Isto ajuda-nos a alinhar o teu CV com o que os recrutadores procuram.
+                            <div class="form-text">Isto ajuda-nos a alinhar o teu CV com o que os recrutadores
+                                procuram.
                             </div>
                         </div>
 
@@ -807,9 +838,134 @@
 
             // Processamento do formulário Revisão de CV
             const revisaoCvForm = document.getElementById('revisaoCvForm');
+
+            // --- AI SMART SCAN LOGIC ---
+            const btnAnalyzeCV = document.getElementById('btnAnalyzeCV');
+            if (btnAnalyzeCV) {
+                btnAnalyzeCV.addEventListener('click', function () {
+                    const cvFile = document.getElementById('cvFile').files[0];
+                    const role = document.getElementById('currentRole').value;
+                    const exp = document.getElementById('revisaoCvExperience').value;
+
+                    if (!cvFile) {
+                        alert("Por favor, carrega um ficheiro CV primeiro.");
+                        return;
+                    }
+
+                    // UI States
+                    const loadingDiv = document.getElementById('analysisLoading');
+                    const resultsDiv = document.getElementById('analysisResults');
+                    const analysisSection = document.getElementById('analysisSection');
+
+                    if (analysisSection) analysisSection.style.display = 'none';
+                    if (loadingDiv) loadingDiv.style.display = 'block';
+                    if (resultsDiv) resultsDiv.style.display = 'none';
+
+                    const formData = new FormData();
+                    formData.append('cv_file', cvFile);
+                    formData.append('current_role', role);
+                    formData.append('experience', exp);
+
+                    fetch('/api/services/analyze-cv', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (loadingDiv) loadingDiv.style.display = 'none';
+                            if (data.success && data.report) {
+                                renderAnalysisResults(data.report, cvFile.name);
+                                if (resultsDiv) resultsDiv.style.display = 'block';
+                            } else {
+                                alert("Erro na análise: " + (data.error || "Erro desconhecido"));
+                                if (analysisSection) analysisSection.style.display = 'block';
+                            }
+                        })
+                        .catch(err => {
+                            if (loadingDiv) loadingDiv.style.display = 'none';
+                            if (analysisSection) analysisSection.style.display = 'block';
+                            console.error(err);
+                            alert("Ocorreu um erro ao comunicar com o servidor.");
+                        });
+                });
+            }
+
+            function renderAnalysisResults(report, filename) {
+                const fNameSpan = document.getElementById('resFileName');
+                if (fNameSpan) fNameSpan.textContent = filename;
+
+                const listContainer = document.getElementById('dynamicFeedbackList');
+                if (!listContainer) return;
+
+                listContainer.innerHTML = '';
+
+                // 1. Global Score Badge
+                const scoreColor = report.global_score >= 85 ? '#bf9a33' : (report.global_score >= 70 ? '#28a745' : '#ffc107');
+                const scoreHtml = `
+                    <div class="text-center mb-4">
+                        <div style="width: 120px; height: 120px; border-radius: 50%; border: 8px solid ${scoreColor}; display: flex; align-items: center; justify-content: center; margin: 0 auto; background: #fff;">
+                            <div>
+                                <h2 style="color: ${scoreColor}; margin: 0; font-weight: bold;">${report.global_score}</h2>
+                                <span style="font-size: 10px; color: #6c757d;">GLOBAL SCORE</span>
+                            </div>
+                        </div>
+                        <h5 class="mt-2" style="color: ${scoreColor}">${report.score_band}</h5>
+                    </div>
+                `;
+                listContainer.innerHTML += scoreHtml;
+
+                // 2. Executive Summary
+                if (report.executive_summary && report.executive_summary.length > 0) {
+                    let summaryHtml = '<div class="mb-3 p-3 bg-light rounded border-start border-4 border-warning">';
+                    summaryHtml += '<h6 class="fw-bold mb-2">Resumo Executivo</h6><ul class="mb-0 ps-3">';
+                    report.executive_summary.forEach(item => {
+                        summaryHtml += `<li>${item}</li>`;
+                    });
+                    summaryHtml += '</ul></div>';
+                    listContainer.innerHTML += summaryHtml;
+                }
+
+                // 3. Dimensions Bars
+                let dimsHtml = '<div class="row g-3">';
+                for (const [dim, score] of Object.entries(report.dimensions)) {
+                    // Normalize 0-20 to 0-100%
+                    const pct = (score / 20) * 100;
+                    const cName = dim.charAt(0).toUpperCase() + dim.slice(1);
+                    dimsHtml += `
+                        <div class="col-6">
+                            <label class="small text-muted d-block">${cName}</label>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar" role="progressbar" style="width: ${pct}%; background-color: #343a40;" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <small class="float-end fw-bold">${score}/20</small>
+                        </div>
+                    `;
+                }
+                dimsHtml += '</div><hr class="my-3">';
+                listContainer.innerHTML += dimsHtml;
+
+                // 4. Roadmap / Quick Wins (Optional Highlight)
+                if (report.roadmap && report.roadmap.quick_wins.length > 0) {
+                    let winsHtml = '<p class="fw-bold mb-1"><i class="fas fa-bolt text-warning"></i> Melhorias Imediatas:</p><ul class="small text-muted ps-3">';
+                    report.roadmap.quick_wins.forEach(win => {
+                        winsHtml += `<li>${win}</li>`;
+                    });
+                    winsHtml += '</ul>';
+                    listContainer.innerHTML += winsHtml;
+                }
+            }
+
             if (revisaoCvForm) {
                 revisaoCvForm.addEventListener('submit', function (e) {
                     e.preventDefault();
+
+                    // Validação de Termos
+                    const termsCheckbox = document.getElementById('revisaoCvTerms');
+                    if (termsCheckbox && !termsCheckbox.checked) {
+                        alert("Por favor, aceite a Política de Privacidade para continuar.");
+                        termsCheckbox.focus();
+                        return;
+                    }
 
                     const submitBtn = revisaoCvForm.querySelector('button[type="submit"]');
                     const formMessage = document.getElementById('revisaoCvFormMessage');
@@ -836,7 +992,10 @@
                                     <h4><i class="fas fa-check-circle"></i> Pedido Recebido!</h4>
                                     <p>Por favor, aceite o pagamento de <strong>15.00€</strong> na sua aplicação MB WAY.</p>
                                     <hr>
-                                    <p>O seu CV foi enviado para análise. Receberá o feedback em 5 dias úteis após a confirmação do pagamento.</p>
+                                    <p class="small mb-3">O seu CV foi enviado para análise. Receberá o feedback em 5 dias úteis após a confirmação do pagamento.</p>
+                                    <button onclick="window.location.reload()" class="btn btn-outline-success btn-sm w-100">
+                                        <i class="fas fa-plus-circle"></i> Submeter Novo Pedido
+                                    </button>
                                 </div>
                                 `;
                                 revisaoCvForm.reset();
@@ -850,7 +1009,7 @@
                             console.error('Erro:', error);
                             formMessage.innerHTML = `<div class="alert alert-danger">Erro ao enviar pedido: ${error.message}</div>`;
                             submitBtn.disabled = false;
-                            submitBtn.innerHTML = 'Pagar e Solicitar (15.00€)';
+                            submitBtn.innerHTML = '<i class="fas fa-lock"></i> Pagar e Solicitar (15.00€)';
                         });
                 });
             }
