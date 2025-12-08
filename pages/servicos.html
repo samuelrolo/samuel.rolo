@@ -346,10 +346,10 @@
     </section>
 
     <!-- Revisão de CV Section -->
-    <section class="service-section bg-light" id="revisao-cv">
+    <section class="service-section" id="revisao-cv">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-6 col-md-12 order-lg-2">
+                <div class="col-lg-6 col-md-12">
                     <div class="service-content">
                         <h2>Revisão de CV</h2>
                         <p class="service-tagline">Potencia o teu currículo e destaca-te no mercado de trabalho</p>
@@ -369,7 +369,7 @@
                             data-bs-target="#revisaoCvModal">Solicitar Revisão de CV</button>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-12 order-lg-1">
+                <div class="col-lg-6 col-md-12">
                     <div class="service-image">
                         <img src="../images/revisao-cv.png" alt="Revisão de CV" class="img-fluid rounded">
                     </div>
@@ -814,61 +814,61 @@
                             <!--Bootstrap JS-- >
                         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Script para processamento dos formulários -->
-    <script>
-                                    document.addEventListener('DOMContentLoaded', function () {
+    <!--Script para processamento dos formulários-- >
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
             // Processamento do formulário Kickstart Pro
             const kickstartForm = document.getElementById('kickstartForm');
-                                    if (kickstartForm) {
-                                        kickstartForm.addEventListener('submit', function (e) {
-                                            e.preventDefault();
-                                            const formData = new FormData(kickstartForm);
-                                            const formMessage = document.getElementById('kickstartFormMessage');
+                            if (kickstartForm) {
+                                kickstartForm.addEventListener('submit', function (e) {
+                                    e.preventDefault();
+                                    const formData = new FormData(kickstartForm);
+                                    const formMessage = document.getElementById('kickstartFormMessage');
 
-                                            // Aqui seria a integração com a API Iftehpay ou outro serviço
-                                            // Por enquanto, apenas simulamos o sucesso
-                                            formMessage.innerHTML = '<div class="alert alert-success">Solicitação enviada com sucesso! Entraremos em contacto em breve.</div>';
-                                            kickstartForm.reset();
-                                        });
+                                    // Aqui seria a integração com a API Iftehpay ou outro serviço
+                                    // Por enquanto, apenas simulamos o sucesso
+                                    formMessage.innerHTML = '<div class="alert alert-success">Solicitação enviada com sucesso! Entraremos em contacto em breve.</div>';
+                                    kickstartForm.reset();
+                                });
             }
 
-                                    // Processamento do formulário Revisão de CV
-                                    const revisaoCvForm = document.getElementById('revisaoCvForm');
-                                    if (revisaoCvForm) {
-                                        revisaoCvForm.addEventListener('submit', function (e) {
-                                            e.preventDefault();
-                                            const formData = new FormData(revisaoCvForm);
-                                            const formMessage = document.getElementById('revisaoCvFormMessage');
-                                            const submitBtn = revisaoCvForm.querySelector('button[type="submit"]');
+                            // Processamento do formulário Revisão de CV
+                            const revisaoCvForm = document.getElementById('revisaoCvForm');
+                            if (revisaoCvForm) {
+                                revisaoCvForm.addEventListener('submit', function (e) {
+                                    e.preventDefault();
+                                    const formData = new FormData(revisaoCvForm);
+                                    const formMessage = document.getElementById('revisaoCvFormMessage');
+                                    const submitBtn = revisaoCvForm.querySelector('button[type="submit"]');
 
-                                            // Desabilitar botão
-                                            submitBtn.disabled = true;
-                                            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A enviar...';
-                                            formMessage.innerHTML = '';
+                                    // Desabilitar botão
+                                    submitBtn.disabled = true;
+                                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A enviar...';
+                                    formMessage.innerHTML = '';
 
-                                            // Enviar FormData diretamente (para suportar upload de arquivos)
-                                            fetch('/api/services/cv-review', {
-                                                method: 'POST',
-                                                body: formData // O browser define automaticamente o Content-Type como multipart/form-data
-                                            })
-                                                .then(response => response.json())
-                                                .then(result => {
-                                                    if (result.message) {
-                                                        formMessage.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
-                                                        revisaoCvForm.reset();
-                                                    } else {
-                                                        throw new Error(result.error || 'Erro desconhecido');
-                                                    }
-                                                })
-                                                .catch(error => {
-                                                    console.error('Erro:', error);
-                                                    formMessage.innerHTML = `<div class="alert alert-danger">Erro ao enviar pedido: ${error.message}</div>`;
-                                                })
-                                                .finally(() => {
-                                                    submitBtn.disabled = false;
-                                                    submitBtn.innerHTML = 'Solicitar Revisão';
-                                                });
+                                    // Enviar FormData diretamente (para suportar upload de arquivos)
+                                    fetch('/api/services/cv-review', {
+                                        method: 'POST',
+                                        body: formData // O browser define automaticamente o Content-Type como multipart/form-data
+                                    })
+                                        .then(response => response.json())
+                                        .then(result => {
+                                            if (result.message) {
+                                                formMessage.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
+                                                revisaoCvForm.reset();
+                                            } else {
+                                                throw new Error(result.error || 'Erro desconhecido');
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Erro:', error);
+                                            formMessage.innerHTML = `<div class="alert alert-danger">Erro ao enviar pedido: ${error.message}</div>`;
+                                        })
+                                        .finally(() => {
+                                            submitBtn.disabled = false;
+                                            submitBtn.innerHTML = 'Solicitar Revisão';
                                         });
+                                });
             }
         });
     </script>
