@@ -932,7 +932,7 @@
                     formData.append('current_role', role);
                     formData.append('experience', exp);
 
-                    fetch('/api/services/analyze-cv', {
+                    fetch('https://share2inspire-beckend.lm.r.appspot.com/api/services/analyze-cv', {
                         method: 'POST',
                         body: formData
                     })
