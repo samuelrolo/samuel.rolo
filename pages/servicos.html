@@ -243,6 +243,117 @@
                 font-size: 0.9rem;
             }
         }
+
+        /* --- New Professional Analysis UI --- */
+        .score-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+        }
+
+        /* Circular Gauge */
+        .score-circle-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+        }
+
+        .score-circle-svg {
+            transform: rotate(-90deg);
+        }
+
+        .score-circle-bg {
+            fill: none;
+            stroke: #eee;
+            stroke-width: 8;
+        }
+
+        .score-circle-progress {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 314;
+            /* 2 * PI * r(50) */
+            stroke-dashoffset: 314;
+            transition: stroke-dashoffset 1.5s ease-out;
+        }
+
+        .score-center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .score-number {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #888;
+        }
+
+        /* Dimension Bars */
+        .dimension-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .dimension-progress {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #f0f0f0;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .dimension-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease-in-out;
+        }
+
+        /* Insights List */
+        .insight-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+
+        .insight-icon {
+            margin-right: 10px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .blur-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(2px);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 
@@ -494,62 +605,99 @@
                             </div>
                         </div>
 
-                        <!-- Análise Inteligente (Simulação) -->
-                        <!-- Análise Inteligente (Simulação Melhorada) -->
+                        <!-- Análise Profissional (Real AI) -->
                         <div class="card border-0 shadow-sm mb-4"
-                            style="background: linear-gradient(to right, #f8f9fa, #e9ecef); border-radius: 12px; overflow: hidden;">
+                            style="background: linear-gradient(to right, #f8f9fa, #fff); border-radius: 12px; overflow: hidden; border: 1px solid #e9ecef;">
                             <div class="card-body p-4">
-                                <h6 class="card-title fw-bold text-primary mb-3">
-                                    <i class="fas fa-robot me-2"></i>AI Smart Scan <span
-                                        class="badge bg-primary rounded-pill small"
-                                        style="font-size: 0.6em; vertical-align: top;">BETA</span>
+                                <h6 class="card-title fw-bold text-dark mb-3">
+                                    <i class="fas fa-brain me-2 text-primary"></i>Análise Profissional de CV <span
+                                        class="badge bg-dark rounded-pill small"
+                                        style="font-size: 0.6em; vertical-align: top;">AI POWERED</span>
                                 </h6>
-                                <p class="small text-muted mb-3">O nosso algoritmo vai analisar a estrutura do
-                                    teu ficheiro e os dados do teu perfil para identificar oportunidades
-                                    imediatas.</p>
+                                <p class="small text-muted mb-4">Recebe uma avaliação executiva imediata sobre a força
+                                    do teu perfil.</p>
 
+                                <!-- State 1: Start -->
                                 <div id="analysisSection">
-                                    <button type="button" class="btn btn-primary w-100 rounded-pill" id="btnAnalyzeCV">
-                                        <i class="fas fa-microscope me-2"></i> Analisar o meu CV Agora
+                                    <button type="button" class="btn btn-dark w-100 rounded-pill py-2"
+                                        id="btnAnalyzeCV">
+                                        <i class="fas fa-search me-2"></i> Analisar o meu CV Agora
                                     </button>
+                                    <p class="text-center mt-2 mb-0" style="font-size: 0.7em; color: #999;">Powered by
+                                        Gemini Advanced AI</p>
                                 </div>
 
-                                <!-- Loading Animation -->
-                                <div id="analysisLoading" style="display: none;" class="text-center py-3">
-                                    <div class="d-flex justify-content-center align-items-center mb-2">
-                                        <div class="spinner-border text-primary" role="status"
-                                            style="width: 2rem; height: 2rem;"></div>
+                                <!-- State 2: Loading -->
+                                <div id="analysisLoading" style="display: none;" class="text-center py-4">
+                                    <div class="d-flex justify-content-center align-items-center mb-3">
+                                        <div class="spinner-border text-warning" role="status"
+                                            style="width: 2.5rem; height: 2.5rem;"></div>
                                     </div>
-                                    <p class="small text-muted" id="loadingText">A ler ficheiro...</p>
+                                    <h6 class="fw-bold text-dark" id="loadingTitle">A ler o teu perfil...</h6>
+                                    <p class="small text-muted" id="loadingText">Isto pode demorar alguns segundos.</p>
                                 </div>
 
-                                <!-- Results -->
-                                <div id="analysisResults" style="display: none;" class="mt-3">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <strong class="me-auto text-dark">Resultado da Análise
-                                            Preliminar</strong>
-                                        <span class="badge bg-success rounded-pill">Concluído</span>
-                                    </div>
+                                <!-- State 3: Results Dashboard -->
+                                <div id="analysisResults" style="display: none;" class="mt-4">
 
-                                    <div class="progress mb-3" style="height: 8px; border-radius: 4px;">
-                                        <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated"
-                                            role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0"
-                                            aria-valuemax="100"></div>
-                                    </div>
-
-                                    <div class="bg-white p-3 rounded shadow-sm border">
-                                        <p class="mb-2 small"><strong><i
-                                                    class="fas fa-file-alt text-secondary me-2"></i>Ficheiro:</strong>
-                                            <span id="resFileName" class="text-muted">...</span>
-                                        </p>
-
-                                        <div id="dynamicFeedbackList" class="small">
-                                            <!-- Feedback dinâmico entra aqui -->
+                                    <!-- Global Score Gauge -->
+                                    <div class="score-circle-container">
+                                        <svg class="score-circle-svg" width="120" height="120" viewBox="0 0 120 120">
+                                            <circle class="score-circle-bg" cx="60" cy="60" r="50"></circle>
+                                            <circle class="score-circle-progress" id="scoreCircle" cx="60" cy="60"
+                                                r="50"></circle>
+                                        </svg>
+                                        <div class="score-center-text">
+                                            <div class="score-number" id="globalScoreVal">--</div>
+                                            <div class="score-label" id="scoreBandVal">...</div>
                                         </div>
                                     </div>
-                                    <p class="small text-muted mt-2 fst-italic"><i
-                                            class="fas fa-check-double text-primary me-1"></i> A revisão
-                                        profissional completa (após pagamento) irá aprofundar estes pontos.</p>
+
+                                    <!-- Summary Quote -->
+                                    <div class="alert alert-light border-0 shadow-sm small fst-italic text-center mb-4"
+                                        id="aiSummaryText" style="color: #555; background: #fafafa;">
+                                        "..."
+                                    </div>
+
+                                    <!-- Dimensions -->
+                                    <div class="row">
+                                        <div class="col-12 mb-3">
+                                            <h6 class="small fw-bold text-uppercase text-muted border-bottom pb-1 mb-3">
+                                                Dimensões Chave</h6>
+                                            <div id="dimensionsList">
+                                                <!-- Dynamic Dimensions -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Insights Tabs -->
+                                    <ul class="nav nav-pills nav-fill small mb-3" id="pills-tab" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active py-1" id="pills-strengths-tab"
+                                                data-bs-toggle="pill" data-bs-target="#pills-strengths" type="button"
+                                                role="tab">Pontos Fortes</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link py-1" id="pills-improvements-tab"
+                                                data-bs-toggle="pill" data-bs-target="#pills-improvements" type="button"
+                                                role="tab">A Melhorar</button>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content custom-scroll" id="pills-tabContent"
+                                        style="max-height: 200px; overflow-y: auto;">
+                                        <div class="tab-pane fade show active" id="pills-strengths" role="tabpanel">
+                                            <div id="strengthsList"></div>
+                                        </div>
+                                        <div class="tab-pane fade" id="pills-improvements" role="tabpanel">
+                                            <div id="improvementsList"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- CTA -->
+                                    <div class="mt-4 pt-3 border-top text-center">
+                                        <p class="small fw-bold text-dark mb-2">Queres corrigir isto tudo?</p>
+                                        <p class="small text-muted mb-0">Solicita a revisão completa abaixo.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -723,6 +871,7 @@
                 });
             }
 
+<<<<<<< Updated upstream
             // Análise Inteligente Real
             const btnAnalyze = document.getElementById('btnAnalyzeCV');
             const analysisResults = document.getElementById('analysisResults');
@@ -794,6 +943,9 @@
                         });
                 });
             }
+=======
+
+>>>>>>> Stashed changes
 
             function renderAnalysisResults(data) {
                 if (!analysisResults) return;
@@ -905,33 +1057,35 @@
             // Processamento do formulário Revisão de CV
             const revisaoCvForm = document.getElementById('revisaoCvForm');
 
-            // --- AI SMART SCAN LOGIC ---
+            // --- AI SMART SCAN LOGIC (Client-Side Simulation) ---
+            // --- AI SMART SCAN LOGIC (Real Backend Integration) ---
             const btnAnalyzeCV = document.getElementById('btnAnalyzeCV');
+            const analysisResults = document.getElementById('analysisResults');
+            const analysisLoading = document.getElementById('analysisLoading');
+            const cvFileInput = document.getElementById('cvFile');
+
             if (btnAnalyzeCV) {
                 btnAnalyzeCV.addEventListener('click', function () {
-                    const cvFile = document.getElementById('cvFile').files[0];
-                    const role = document.getElementById('currentRole').value;
-                    const exp = document.getElementById('revisaoCvExperience').value;
-
-                    if (!cvFile) {
-                        alert("Por favor, carrega um ficheiro CV primeiro.");
+                    // 1. Validate File
+                    if (!cvFileInput.files || cvFileInput.files.length === 0) {
+                        alert("Por favor, faz upload do teu CV primeiro para que possamos analisá-lo.");
+                        cvFileInput.focus();
                         return;
                     }
 
-                    // UI States
-                    const loadingDiv = document.getElementById('analysisLoading');
-                    const resultsDiv = document.getElementById('analysisResults');
-                    const analysisSection = document.getElementById('analysisSection');
+                    const file = cvFileInput.files[0];
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert("O ficheiro é demasiado grande (Máx 5MB).");
+                        return;
+                    }
 
-                    if (analysisSection) analysisSection.style.display = 'none';
-                    if (loadingDiv) loadingDiv.style.display = 'block';
-                    if (resultsDiv) resultsDiv.style.display = 'none';
-
+                    // 2. Prepare Data
                     const formData = new FormData();
-                    formData.append('cv_file', cvFile);
-                    formData.append('current_role', role);
-                    formData.append('experience', exp);
+                    formData.append('cv_file', file);
+                    formData.append('current_role', document.getElementById('currentRole').value || 'Profissional');
+                    formData.append('experience', document.getElementById('revisaoCvExperience').value || 'Não especificado');
 
+<<<<<<< Updated upstream
                     fetch('https://share2inspire-beckend.lm.r.appspot.com/api/services/analyze-cv', {
                         method: 'POST',
                         body: formData
@@ -945,80 +1099,163 @@
                             } else {
                                 alert("Erro na análise: " + (data.error || "Erro desconhecido"));
                                 if (analysisSection) analysisSection.style.display = 'block';
+=======
+                    // 3. UI - Loading State
+                    btnAnalyzeCV.parentElement.style.display = 'none';
+                    if (analysisLoading) {
+                        analysisLoading.style.display = 'block';
+                        document.getElementById('loadingText').innerText = "A ler o teu perfil com Gemini AI...";
+
+                        // Rotate loading messages
+                        const msgs = ["A analisar estrutura...", "A verificar compatibilidade ATS...", "A calcular pontuação de impacto..."];
+                        let msgIdx = 0;
+                        const msgInterval = setInterval(() => {
+                            if (msgIdx < msgs.length) {
+                                document.getElementById('loadingText').innerText = msgs[msgIdx++];
+>>>>>>> Stashed changes
                             }
+                        }, 2500);
+
+                        // 4. API Call
+                        // IMPORTANT: Ensure Backend is Deployed or use localhost for testing
+                        const API_URL = 'https://share2inspire-beckend.lm.r.appspot.com/api/services/analyze-cv';
+
+                        fetch(API_URL, {
+                            method: 'POST',
+                            body: formData
                         })
-                        .catch(err => {
-                            if (loadingDiv) loadingDiv.style.display = 'none';
-                            if (analysisSection) analysisSection.style.display = 'block';
-                            console.error(err);
-                            alert("Ocorreu um erro ao comunicar com o servidor.");
-                        });
+                            .then(response => response.json())
+                            .then(data => {
+                                clearInterval(msgInterval);
+
+                                if (data.success && data.report) {
+                                    const report = data.report;
+
+                                    // Hide Loading
+                                    analysisLoading.style.display = 'none';
+                                    if (analysisResults) {
+                                        analysisResults.style.display = 'block';
+                                        // Scroll to results
+                                        analysisResults.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                    }
+
+                                    // --- RENDER DASHBOARD ---
+
+                                    // A. Global Score Gauge
+                                    const score = report.global_score || 0;
+                                    const scoreBand = report.score_band || "N/A";
+                                    document.getElementById('globalScoreVal').innerText = score;
+                                    document.getElementById('scoreBandVal').innerText = scoreBand;
+
+                                    // Color logic
+                                    let color = "#dc3545"; // Red
+                                    if (score >= 50) color = "#ffc107"; // Yellow
+                                    if (score >= 70) color = "#198754"; // Green
+                                    if (score >= 85) color = "#0d6efd"; // Blue
+
+                                    const circle = document.getElementById('scoreCircle');
+                                    if (circle) {
+                                        const radius = circle.r.baseVal.value;
+                                        const circumference = radius * 2 * Math.PI;
+                                        const offset = circumference - (score / 100) * circumference;
+
+                                        circle.style.stroke = color;
+                                        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+                                        circle.style.strokeDashoffset = circumference; // Start empty
+
+                                        // Trigger reflow
+                                        circle.getBoundingClientRect();
+
+                                        setTimeout(() => {
+                                            circle.style.strokeDashoffset = offset; // Animate to value
+                                        }, 100);
+                                    }
+
+                                    // B. Summary Box
+                                    if (document.getElementById('aiSummaryText'))
+                                        document.getElementById('aiSummaryText').innerText = `"${report.summary_text || 'Análise concluída.'}"`;
+
+                                    // C. Dimensions
+                                    const dimensionsList = document.getElementById('dimensionsList');
+                                    dimensionsList.innerHTML = '';
+                                    const dims = report.dimensions || {};
+
+                                    const dimLabels = {
+                                        "structure": "Estrutura",
+                                        "content_relevance": "Conteúdo",
+                                        "impact_metrics": "Impacto",
+                                        "ats_compatibility": "ATS",
+                                        "visual_clarity": "Visual"
+                                    };
+
+                                    for (const [key, val] of Object.entries(dims)) {
+                                        const label = dimLabels[key] || key;
+                                        const width = Math.min(100, Math.max(0, val));
+                                        let dimColor = "#eee";
+                                        if (width >= 70) dimColor = "#198754";
+                                        else if (width >= 50) dimColor = "#ffc107";
+                                        else dimColor = "#dc3545";
+
+                                        const html = `
+                                        <div>
+                                            <div class="dimension-label">
+                                                <span>${label}</span>
+                                                <span>${val}/100</span>
+                                            </div>
+                                            <div class="dimension-progress">
+                                                <div class="dimension-bar" style="width: ${width}%; background-color: ${dimColor};"></div>
+                                            </div>
+                                        </div>
+                                    `;
+                                        dimensionsList.insertAdjacentHTML('beforeend', html);
+                                    }
+
+                                    // D. Strengths & Improvements
+                                    const strengthsList = document.getElementById('strengthsList');
+                                    if (strengthsList) {
+                                        strengthsList.innerHTML = '';
+                                        (report.key_strengths || []).forEach(s => {
+                                            strengthsList.insertAdjacentHTML('beforeend', `
+                                            <div class="insight-item">
+                                                <i class="fas fa-check-circle text-success insight-icon"></i>
+                                                <div>${s}</div>
+                                            </div>
+                                        `);
+                                        });
+                                    }
+
+                                    const improvementsList = document.getElementById('improvementsList');
+                                    if (improvementsList) {
+                                        improvementsList.innerHTML = '';
+                                        (report.critical_improvements || []).forEach(s => {
+                                            improvementsList.insertAdjacentHTML('beforeend', `
+                                            <div class="insight-item">
+                                                <i class="fas fa-exclamation-circle text-danger insight-icon"></i>
+                                                <div>${s}</div>
+                                            </div>
+                                        `);
+                                        });
+                                    }
+
+                                    // Reset button state if needed (optional)
+                                    btnAnalyzeCV.innerHTML = '<i class="fas fa-redo"></i> Analisar Novamente';
+                                    btnAnalyzeCV.parentElement.style.display = 'block';
+                                    btnAnalyzeCV.className = 'btn btn-outline-secondary w-100 rounded-pill py-2 mt-4';
+
+                                } else {
+                                    throw new Error(data.error || "Erro desconhecido na análise.");
+                                }
+                            })
+                            .catch(err => {
+                                clearInterval(msgInterval);
+                                console.error(err);
+                                analysisLoading.style.display = 'none';
+                                alert("Não foi possível concluir a análise: " + (err.message || "Erro de conexão"));
+                                btnAnalyzeCV.parentElement.style.display = 'block';
+                                btnAnalyzeCV.innerText = "Tentar Novamente";
+                            });
+                    }
                 });
-            }
-
-            function renderAnalysisResults(report, filename) {
-                const fNameSpan = document.getElementById('resFileName');
-                if (fNameSpan) fNameSpan.textContent = filename;
-
-                const listContainer = document.getElementById('dynamicFeedbackList');
-                if (!listContainer) return;
-
-                listContainer.innerHTML = '';
-
-                // 1. Global Score Badge
-                const scoreColor = report.global_score >= 85 ? '#bf9a33' : (report.global_score >= 70 ? '#28a745' : '#ffc107');
-                const scoreHtml = `
-                    <div class="text-center mb-4">
-                        <div style="width: 120px; height: 120px; border-radius: 50%; border: 8px solid ${scoreColor}; display: flex; align-items: center; justify-content: center; margin: 0 auto; background: #fff;">
-                            <div>
-                                <h2 style="color: ${scoreColor}; margin: 0; font-weight: bold;">${report.global_score}</h2>
-                                <span style="font-size: 10px; color: #6c757d;">GLOBAL SCORE</span>
-                            </div>
-                        </div>
-                        <h5 class="mt-2" style="color: ${scoreColor}">${report.score_band}</h5>
-                    </div>
-                `;
-                listContainer.innerHTML += scoreHtml;
-
-                // 2. Executive Summary
-                if (report.executive_summary && report.executive_summary.length > 0) {
-                    let summaryHtml = '<div class="mb-3 p-3 bg-light rounded border-start border-4 border-warning">';
-                    summaryHtml += '<h6 class="fw-bold mb-2">Resumo Executivo</h6><ul class="mb-0 ps-3">';
-                    report.executive_summary.forEach(item => {
-                        summaryHtml += `<li>${item}</li>`;
-                    });
-                    summaryHtml += '</ul></div>';
-                    listContainer.innerHTML += summaryHtml;
-                }
-
-                // 3. Dimensions Bars
-                let dimsHtml = '<div class="row g-3">';
-                for (const [dim, score] of Object.entries(report.dimensions)) {
-                    // Normalize 0-20 to 0-100%
-                    const pct = (score / 20) * 100;
-                    const cName = dim.charAt(0).toUpperCase() + dim.slice(1);
-                    dimsHtml += `
-                        <div class="col-6">
-                            <label class="small text-muted d-block">${cName}</label>
-                            <div class="progress" style="height: 6px;">
-                                <div class="progress-bar" role="progressbar" style="width: ${pct}%; background-color: #343a40;" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                            <small class="float-end fw-bold">${score}/20</small>
-                        </div>
-                    `;
-                }
-                dimsHtml += '</div><hr class="my-3">';
-                listContainer.innerHTML += dimsHtml;
-
-                // 4. Roadmap / Quick Wins (Optional Highlight)
-                if (report.roadmap && report.roadmap.quick_wins.length > 0) {
-                    let winsHtml = '<p class="fw-bold mb-1"><i class="fas fa-bolt text-warning"></i> Melhorias Imediatas:</p><ul class="small text-muted ps-3">';
-                    report.roadmap.quick_wins.forEach(win => {
-                        winsHtml += `<li>${win}</li>`;
-                    });
-                    winsHtml += '</ul>';
-                    listContainer.innerHTML += winsHtml;
-                }
             }
 
             if (revisaoCvForm) {
