@@ -660,6 +660,117 @@
         .insight-icon {
             margin-top: 3px;
         }
+
+        /* --- New Professional Analysis UI --- */
+        .score-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+        }
+
+        /* Circular Gauge */
+        .score-circle-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+        }
+
+        .score-circle-svg {
+            transform: rotate(-90deg);
+        }
+
+        .score-circle-bg {
+            fill: none;
+            stroke: #eee;
+            stroke-width: 8;
+        }
+
+        .score-circle-progress {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 314;
+            /* 2 * PI * r(50) */
+            stroke-dashoffset: 314;
+            transition: stroke-dashoffset 1.5s ease-out;
+        }
+
+        .score-center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .score-number {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #888;
+        }
+
+        /* Dimension Bars */
+        .dimension-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .dimension-progress {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #f0f0f0;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .dimension-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease-in-out;
+        }
+
+        /* Insights List */
+        .insight-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+
+        .insight-icon {
+            margin-right: 10px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .blur-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(2px);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 
@@ -1136,6 +1247,11 @@
                 <div class="modal-body">
                     <form id="kickstartForm">
                         <div class="row">
+                            <div class="col-md-12">
+                                <p class="alert alert-info"><i class="fas fa-info-circle"></i> O Kickstart Pro tem um
+                                    custo de <strong>30.00€</strong>. O pagamento será solicitado via MB WAY após o
+                                    envio deste formulário.</p>
+                            </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="kickstartName" class="form-label">Nome Completo</label>
@@ -1150,6 +1266,8 @@
                             </div>
                         </div>
 
+                        <!-- Dados Pessoais e CV -->
+                        <h6 class="mb-3 border-bottom pb-2">1. O teu Currículo</h6>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
