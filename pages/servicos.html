@@ -871,81 +871,7 @@
                 });
             }
 
-<<<<<<< Updated upstream
-            // Análise Inteligente Real
-            const btnAnalyze = document.getElementById('btnAnalyzeCV');
-            const analysisResults = document.getElementById('analysisResults');
-            const cvFileInput = document.getElementById('cvFile');
 
-            // Configuração do Backend (Google App Engine)
-            const BACKEND_URL = "https://share2inspire-beckend.lm.r.appspot.com/api/services/analyze-cv";
-
-            if (btnAnalyze) {
-                btnAnalyze.addEventListener('click', function () {
-                    // 1. Validação básica
-                    if (!cvFileInput.files || cvFileInput.files.length === 0) {
-                        alert("Por favor, selecione um ficheiro PDF primeiro.");
-                        return;
-                    }
-
-                    const file = cvFileInput.files[0];
-                    if (file.type !== 'application/pdf') {
-                        alert("Por favor, carregue apenas ficheiros PDF para a análise automática.");
-                        return;
-                    }
-
-                    // 2. UI Loading State
-                    const originalText = btnAnalyze.innerHTML;
-                    btnAnalyze.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A analisar com IA...';
-                    btnAnalyze.disabled = true;
-                    if (analysisResults) analysisResults.style.display = 'none';
-
-                    // 3. Prepare Data
-                    const formData = new FormData();
-                    formData.append('cv_file', file);
-
-                    // 4. Call Backend
-                    // Note: If you have not deployed the backend yet, this will fail.
-                    if (BACKEND_URL === "INSERT_CLOUD_FUNCTION_URL_HERE") {
-                        console.warn("Backend URL not configured. Using Mock fallback for demonstration.");
-                        // Fallback for demo purposes if user hasn't deployed yet
-                        setTimeout(() => {
-                            renderAnalysisResults({
-                                score: 75,
-                                summary: "Demonstração: Backend ainda não configurado. Por favor configure a Cloud Function.",
-                                strengths: ["Exemplo de Ponto Forte 1", "Exemplo de Ponto Forte 2"],
-                                improvements: ["Configurar URL do Backend", "Fazer Deploy da Cloud Function"]
-                            });
-                            btnAnalyze.innerHTML = originalText;
-                            btnAnalyze.disabled = false;
-                        }, 1500);
-                        return;
-                    }
-
-                    fetch(BACKEND_URL, {
-                        method: 'POST',
-                        body: formData
-                    })
-                        .then(response => {
-                            if (!response.ok) throw new Error('Falha na análise');
-                            return response.json();
-                        })
-                        .then(data => {
-                            renderAnalysisResultsV2(data);
-                        })
-                        .catch(error => {
-                            console.error('Erro:', error);
-                            alert("Ocorreu um erro ao analisar o CV. Por favor tente novamente.");
-                        })
-                        .finally(() => {
-                            btnAnalyze.innerHTML = originalText;
-                            btnAnalyze.disabled = false;
-                        });
-                });
-            }
-=======
-
->>>>>>> Stashed changes
 
             function renderAnalysisResults(data) {
                 if (!analysisResults) return;
@@ -1085,21 +1011,6 @@
                     formData.append('current_role', document.getElementById('currentRole').value || 'Profissional');
                     formData.append('experience', document.getElementById('revisaoCvExperience').value || 'Não especificado');
 
-<<<<<<< Updated upstream
-                    fetch('https://share2inspire-beckend.lm.r.appspot.com/api/services/analyze-cv', {
-                        method: 'POST',
-                        body: formData
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (loadingDiv) loadingDiv.style.display = 'none';
-                            if (data.success && data.report) {
-                                renderAnalysisResults(data.report, cvFile.name);
-                                if (resultsDiv) resultsDiv.style.display = 'block';
-                            } else {
-                                alert("Erro na análise: " + (data.error || "Erro desconhecido"));
-                                if (analysisSection) analysisSection.style.display = 'block';
-=======
                     // 3. UI - Loading State
                     btnAnalyzeCV.parentElement.style.display = 'none';
                     if (analysisLoading) {
@@ -1112,7 +1023,6 @@
                         const msgInterval = setInterval(() => {
                             if (msgIdx < msgs.length) {
                                 document.getElementById('loadingText').innerText = msgs[msgIdx++];
->>>>>>> Stashed changes
                             }
                         }, 2500);
 
