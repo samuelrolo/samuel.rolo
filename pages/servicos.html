@@ -354,6 +354,106 @@
             align-items: center;
             justify-content: center;
         }
+
+        /* ... existing styles ... */
+
+        /* Modal Professionalization */
+        .modal-content {
+            border: none;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 1.5rem 2rem;
+            background-color: #fff;
+        }
+
+        .modal-title {
+            font-weight: 700;
+            color: #1a1a1a;
+            font-size: 1.25rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            background-color: #fff;
+        }
+
+        /* Form Styling */
+        .form-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #4a4a4a;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: #fff;
+            border-color: #BF9A33;
+            box-shadow: 0 0 0 4px rgba(191, 154, 51, 0.1);
+        }
+
+        .form-text {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.4rem;
+        }
+
+        /* Section Dividers in Form */
+        .form-section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #BF9A33;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 2rem 0 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-section-title i {
+            margin-right: 0.5rem;
+            opacity: 0.8;
+        }
+
+        /* AI Card Refinement */
+        .ai-analysis-card {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            border: 1px solid #eee;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            margin: 1.5rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ai-bg-accent {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(191, 154, 51, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+            border-radius: 50%;
+        }
     </style>
 </head>
 
@@ -362,765 +462,839 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
         gtag('js', new Date());
         gtag('config', 'G-8GQ1KM9FQS');
     </script>
-
-    <!-- Header e Navegação -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="../index.html">
-                <img src="../images/logo.png" alt="Share2Inspire Logo" height="40">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.html">Início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="servicos.html">Serviços</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="loja.html">Loja</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="humanos-maquinas.html">Humanos &amp; Máquinas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="people-hub.html">People Hub</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contactos">Contactos</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>Serviços</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Serviços</li>
-                        </ol>
-                    </nav>
+    < !-- Header e Navegação -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="container"><a class="navbar-brand" href="../index.html"><img src="../images/logo.png"
+                        alt="Share2Inspire Logo" height="40"></a><button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
+                    aria-expanded="false" aria-label="Toggle navigation"><span
+                        class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="../index.html">Início</a></li>
+                        <li class="nav-item"><a class="nav-link" href="sobre.html">Sobre o Fundador</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="servicos.html">Serviços</a></li>
+                        <li class="nav-item"><a class="nav-link" href="loja.html">Loja</a></li>
+                        <li class="nav-item"><a class="nav-link" href="humanos-maquinas.html">Humanos &amp;
+                                Máquinas</a></li>
+                        <li class="nav-item"><a class="nav-link" href="people-hub.html">People Hub</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#contactos">Contactos</a></li>
+                    </ul>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Product Info Section (Kickstart Pro Description) -->
-    <section class="service-section bg-white pb-4" id="kickstart-info">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-8 mx-auto text-center">
-                    <h2 class="fw-bold mb-3" style="color: #BF9A33;">Kickstart Pro | Express Coaching</h2>
-                    <p class="lead text-muted mb-4">Impulsiona a tua carreira com uma sessão personalizada</p>
-                    <p class="mb-3">O Kickstart Pro é uma sessão de coaching personalizada às tuas necessidades,
-                        desenhada para
-                        impulsionar jovens em início de carreira.</p>
-                    <p class="mb-4">Durante esta sessão, vamos trabalhar contigo para identificar os principais desafios
-                        e
-                        oportunidades, desenvolver um plano de ação claro e fornecer ferramentas e técnicas
-                        específicas para ti.</p>
-
-                    <div class="alert alert-light border shadow-sm text-start d-inline-block mx-auto">
-                        <strong><i class="fas fa-star text-warning me-2"></i>Benefícios:</strong>
-                        <ul class="mb-0 mt-2 smaller text-muted" style="list-style: none; padding-left: 0;">
-                            <li><i class="fas fa-check text-success me-2"></i>Clareza sobre os próximos passos
-                                estratégicos</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Soluções práticas para desafios
-                                específicos</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Plano de ação personalizado e
-                                implementável</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing Grid Section -->
-    <section class="service-section bg-light pt-5" id="pricing">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-12 text-center mb-5">
-                    <h2 class="fw-bold">Os Nossos Planos</h2>
-                    <p class="text-muted">Escolhe a opção ideal para o teu momento de carreira</p>
-                </div>
-            </div>
-
-            <div class="row g-4">
-                <!-- 1. Free: Avaliação de CV -->
-                <div class="col-lg-3 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
-                        <div class="card-body p-4 d-flex flex-column">
-                            <span class="badge bg-light text-dark mb-3 w-auto align-self-start">Básico</span>
-                            <h4 class="card-title fw-bold mb-2">Avaliação Grátis</h4>
-                            <p class="small text-muted mb-3">Análise automática do teu CV face a uma vaga.</p>
-                            <div class="mb-4">
-                                <span class="h2 fw-bold">0 €</span>
-                                <span class="text-muted small">/ relatório</span>
-                            </div>
-                            <ul class="list-unstyled small mb-auto text-muted space-y-2">
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Smart Scan AI</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Feedback Imediato</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Dicas de ATS</li>
-                            </ul>
-                            <button class="btn btn-outline-primary w-100 mt-4 rounded-pill"
-                                onclick="toggleSmartAnalysis()">
-                                Gerar Relatório
-                            </button>
+        </nav>
+        < !-- Page Header -->
+            <section class="page-header">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h1>Serviços</h1>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Serviços</li>
+                                </ol>
+                            </nav>
                         </div>
                     </div>
                 </div>
-
-                <!-- 2. Review: Revisão Profissional (20€) -->
-                <div class="col-lg-3 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm hover-shadow transition-all"
-                        style="border-top: 4px solid #BF9A33 !important;">
-                        <div class="card-body p-4 d-flex flex-column">
-                            <span class="badge bg-warning text-dark mb-3 w-auto align-self-start">Popular</span>
-                            <h4 class="card-title fw-bold mb-2">Revisão de CV</h4>
-                            <p class="small text-muted mb-3">Otimização completa do teu documento.</p>
-                            <div class="mb-4">
-                                <span class="h2 fw-bold">20 €</span>
-                                <span class="text-muted small">/ único</span>
-                            </div>
-                            <ul class="list-unstyled small mb-auto text-muted">
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Análise Humana + AI</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>CV otimizado (PDF)</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Correção Estrutural</li>
-                            </ul>
-                            <button class="btn btn-primary w-100 mt-4 rounded-pill"
-                                onclick="openServiceModal('review', 20)">
-                                Solicitar Revisão
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. Kickstart: Sessão Coaching (40€) -->
-                <div class="col-lg-3 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm hover-shadow transition-all">
-                        <div class="card-body p-4 d-flex flex-column">
-                            <span class="badge bg-info text-dark mb-3 w-auto align-self-start">Coaching</span>
-                            <h4 class="card-title fw-bold mb-2">Kickstart Pro</h4>
-                            <p class="small text-muted mb-3">Sessão individual focada em estratégia.</p>
-                            <div class="mb-4">
-                                <span class="h2 fw-bold">40 €</span>
-                                <span class="text-muted small">/ 45 min</span>
-                            </div>
-                            <ul class="list-unstyled small mb-auto text-muted">
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Sessão Online</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Plano de Ação</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Roleplay & Dicas</li>
-                            </ul>
-                            <button class="btn btn-outline-dark w-100 mt-4 rounded-pill"
-                                onclick="openServiceModal('kickstart', 40)">
-                                Agendar Sessão
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. Pack: Review + Session (50€) -->
-                <div class="col-lg-3 col-md-6">
-                    <div class="card h-100 border-0 shadow-sm hover-shadow transition-all bg-dark text-white">
-                        <div class="card-body p-4 d-flex flex-column">
-                            <span class="badge bg-warning text-dark mb-3 w-auto align-self-start">Best Value</span>
-                            <h4 class="card-title fw-bold mb-2 text-white">Pack Completo</h4>
-                            <p class="small text-white-50 mb-3">Revisão de CV + Sessão de Coaching.</p>
-                            <div class="mb-4">
-                                <span class="h2 fw-bold text-white">50 €</span>
-                                <span class="text-white-50 small text-decoration-line-through ms-2">60 €</span>
-                            </div>
-                            <ul class="list-unstyled small mb-auto text-white-50">
-                                <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Tudo da Revisão</li>
-                                <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Tudo do Kickstart</li>
-                                <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Acompanhamento VIP</li>
-                            </ul>
-                            <button class="btn btn-light text-dark w-100 mt-4 rounded-pill"
-                                onclick="openServiceModal('pack', 50)">
-                                Quero o Pack
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Smart Analysis Expandable Section (Hidden by default) -->
-            <div id="smartAnalysisExpandable" class="collapse mt-5">
-                <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
-                    <div class="card-header bg-dark text-white p-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h4 class="mb-0"><i class="fas fa-robot me-2"></i>Smart Analysis (Demonstração)</h4>
-                            <button type="button" class="btn-close btn-close-white" onclick="toggleSmartAnalysis()"
-                                aria-label="Close"></button>
-                        </div>
-                    </div>
-                    <div class="card-body p-5 bg-white">
-                        <!-- Reuse existing Smart Analysis UI here -->
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h5 class="fw-bold mb-3">Carregar CV para Análise</h5>
-                                <div class="mb-3">
-                                    <label class="form-label">O teu CV (PDF)</label>
-                                    <input type="file" class="form-control" id="smartScanFile">
+            </section>
+            < !-- Product Info Section (Kickstart Pro Description) -->
+                <section class="service-section py-5 position-relative overflow-hidden" id="kickstart-info"
+                    style="background: linear-gradient(180deg, #fff 0%, #f8f9fa 100%);">
+                    <div class="container position-relative z-1">
+                        <div class="row align-items-center g-5">
+                            < !-- Left: Value Proposition -->
+                                <div class="col-lg-6 text-center text-lg-start"><span
+                                        class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill text-uppercase fw-bold"
+                                        style="letter-spacing: 1px;">Coaching Expresso</span>
+                                    <h2 class="display-5 fw-bold mb-4" style="color: #2c3e50; letter-spacing: -1px;">
+                                        Kickstart Pro</h2>
+                                    <p class="lead text-secondary mb-4">Estás num momento decisivo da tua carreira? O
+                                        Kickstart Pro é a sessão estratégica de <strong>45 minutos</strong>desenhada
+                                        para desbloquear o teu potencial imediato. </p>
+                                    <p class="text-muted mb-4" style="line-height: 1.8;">Foca-te no que realmente
+                                        importa. Numa sessão intensiva 1:1,
+                                        vamos identificar os teus bloqueios atuais e desenhar um plano de ação prático
+                                        que podes implementar amanhã. Sem teorias vazias,
+                                        apenas estratégia real. </p>
+                                    <div class="d-flex gap-3 justify-content-center justify-content-lg-start"><button
+                                            onclick="openServiceModal('kickstart', 40)"
+                                            class="btn btn-dark rounded-pill px-4 py-3 fw-bold shadow-lg transition-all hover-transform"><i
+                                                class="fas fa-calendar-check me-2"></i>Agendar Sessão (40€) </button><a
+                                            href="#pricing"
+                                            class="btn btn-outline-secondary rounded-pill px-4 py-3 fw-bold hover-transform">Ver
+                                            Outros Planos </a></div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Setor Alvo</label>
-                                    <input type="text" class="form-control" id="smartScanSector"
-                                        placeholder="Ex: Marketing, TI...">
-                                </div>
-                                <button class="btn btn-primary w-100 rounded-pill" id="btnRunSmartScan">
-                                    <i class="fas fa-microscope me-2"></i> Correr Análise Preliminar
-                                </button>
-                            </div>
-                            <div class="col-md-6 border-start">
-                                <div id="smartScanResults" class="text-center text-muted py-5">
-                                    <i class="fas fa-chart-bar fa-3x mb-3 text-light"></i>
-                                    <p>Os resultados aparecerão aqui.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Kickstart Pro Modal -->
-    <div class="modal fade" id="kickstartModal" tabindex="-1" aria-labelledby="kickstartModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="kickstartModalLabel">Marcar Kickstart Pro</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="kickstartForm" class="service-form">
-                        <input type="hidden" name="service" value="Kickstart Pro">
-                        <input type="hidden" name="paymentMethod" value="mbway">
-                        <!-- Campo oculto rating -->
-                        <input type="hidden" name="rating" value="5">
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <p class="alert alert-info"><i class="fas fa-info-circle"></i> O Kickstart Pro tem um
-                                    custo de <strong>30.00€</strong>. O pagamento será solicitado via MB WAY após o
-                                    envio deste formulário.</p>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="kickstartName" class="form-label">Nome Completo *</label>
-                                    <input type="text" class="form-control" id="kickstartName" name="name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="kickstartEmail" class="form-label">Email *</label>
-                                    <input type="email" class="form-control" id="kickstartEmail" name="email" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="kickstartPhone" class="form-label">Telemóvel (MB WAY) *</label>
-                                    <input type="tel" class="form-control" id="kickstartPhone" name="phone" required
-                                        placeholder="912345678">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="kickstartExperience" class="form-label">Experiência Profissional</label>
-                                    <select class="form-select" id="kickstartExperience" name="experience">
-                                        <option value="Estudante">Estudante</option>
-                                        <option value="0-2 anos">0-2 anos</option>
-                                        <option value="3-5 anos">3-5 anos</option>
-                                        <option value="6-10 anos">6-10 anos</option>
-                                        <option value="10+ anos">10+ anos</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="kickstartObjectives" class="form-label">Quais são os teus principais objetivos
-                                para esta sessão? *</label>
-                            <textarea class="form-control" id="kickstartObjectives" name="objectives" rows="4"
-                                required></textarea>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="kickstartTerms" required>
-                            <label class="form-check-label" for="kickstartTerms">Concordo com a <a
-                                    href="politica-privacidade.html" target="_blank">Política de Privacidade</a>
-                                *</label>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Pagar e Agendar (MB WAY)</button>
-                        <div id="kickstartFormMessage" class="mt-3"></div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Revisão de CV Modal -->
-    <div class="modal fade" id="revisaoCvModal" tabindex="-1" aria-labelledby="revisaoCvModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="revisaoCvModalLabel">Solicitar Revisão de CV Profissional</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> Prazo de entrega: <strong>5 dias úteis</strong>. Preço:
-                        <strong>15.00€</strong> (Pagamento MB WAY).
-                    </div>
-
-                    <form id="revisaoCvForm" class="service-form" enctype="multipart/form-data">
-                        <input type="hidden" name="service" value="Revisão de CV">
-                        <input type="hidden" name="amount" value="15.00">
-
-                        <!-- Dados Pessoais e CV -->
-                        <h6 class="mb-3 border-bottom pb-2">1. O teu Currículo</h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="cvFile" class="form-label">Upload CV (PDF/Word) *</label>
-                                <input type="file" class="form-control" id="cvFile" name="cv_file"
-                                    accept=".pdf,.doc,.docx" required>
-                                <div class="form-text">Máximo 5MB. Apenas PDF ou Word.</div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="linkedinUrl" class="form-label">Perfil LinkedIn</label>
-                                <input type="url" class="form-control" id="linkedinUrl" name="linkedin_url"
-                                    placeholder="https://linkedin.com/in/...">
-                            </div>
-                        </div>
-
-                        <!-- Análise Profissional (Real AI) -->
-                        <div class="card border-0 shadow-sm mb-4"
-                            style="background: linear-gradient(to right, #f8f9fa, #fff); border-radius: 12px; overflow: hidden; border: 1px solid #e9ecef;">
-                            <div class="card-body p-4">
-                                <h6 class="card-title fw-bold text-dark mb-3">
-                                    <i class="fas fa-brain me-2 text-primary"></i>Análise Profissional de CV <span
-                                        class="badge bg-dark rounded-pill small"
-                                        style="font-size: 0.6em; vertical-align: top;">AI POWERED</span>
-                                </h6>
-                                <p class="small text-muted mb-4">Recebe uma avaliação executiva imediata sobre a força
-                                    do teu perfil.</p>
-
-                                <!-- State 1: Start -->
-                                <div id="analysisSection">
-                                    <button type="button" class="btn btn-dark w-100 rounded-pill py-2"
-                                        id="btnAnalyzeCV">
-                                        <i class="fas fa-search me-2"></i> Analisar o meu CV Agora
-                                    </button>
-                                    <p class="text-center mt-2 mb-0" style="font-size: 0.7em; color: #999;">Powered by
-                                        Gemini Advanced AI</p>
-                                </div>
-
-                                <!-- State 2: Loading -->
-                                <div id="analysisLoading" style="display: none;" class="text-center py-4">
-                                    <div class="d-flex justify-content-center align-items-center mb-3">
-                                        <div class="spinner-border text-warning" role="status"
-                                            style="width: 2.5rem; height: 2.5rem;"></div>
-                                    </div>
-                                    <h6 class="fw-bold text-dark" id="loadingTitle">A ler o teu perfil...</h6>
-                                    <p class="small text-muted" id="loadingText">Isto pode demorar alguns segundos.</p>
-                                </div>
-
-                                <!-- State 3: Results Dashboard -->
-                                <div id="analysisResults" style="display: none;" class="mt-4">
-
-                                    <!-- Global Score Gauge -->
-                                    <div class="score-circle-container">
-                                        <svg class="score-circle-svg" width="120" height="120" viewBox="0 0 120 120">
-                                            <circle class="score-circle-bg" cx="60" cy="60" r="50"></circle>
-                                            <circle class="score-circle-progress" id="scoreCircle" cx="60" cy="60"
-                                                r="50"></circle>
-                                        </svg>
-                                        <div class="score-center-text">
-                                            <div class="score-number" id="globalScoreVal">--</div>
-                                            <div class="score-label" id="scoreBandVal">...</div>
+                                < !-- Right: Benefits Cards -->
+                                    <div class="col-lg-6">
+                                        <div class="row g-3">
+                                            < !-- Card 1 -->
+                                                <div class="col-12">
+                                                    <div class="card border-0 shadow-sm p-4 h-100 bg-white hover-card-lift transition-all"
+                                                        style="border-left: 5px solid #BF9A33 !important; border-radius: 12px;">
+                                                        <div class="d-flex align-items-start">
+                                                            <div
+                                                                class="flex-shrink-0 bg-warning bg-opacity-10 p-3 rounded-circle me-3">
+                                                                <i class="fas fa-compass text-warning fa-lg"></i>
+                                                            </div>
+                                                            <div>
+                                                                <h5 class="fw-bold mb-1">Clareza Estratégica</h5>
+                                                                <p class="small text-muted mb-0">Sai da sessão com um
+                                                                    mapa claro dos teus próximos passos profissionais.
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                < !-- Card 2 -->
+                                                    <div class="col-12">
+                                                        <div class="card border-0 shadow-sm p-4 h-100 bg-white hover-card-lift transition-all"
+                                                            style="border-left: 5px solid #2c3e50 !important; border-radius: 12px;">
+                                                            <div class="d-flex align-items-start">
+                                                                <div
+                                                                    class="flex-shrink-0 bg-dark bg-opacity-10 p-3 rounded-circle me-3">
+                                                                    <i class="fas fa-tools text-dark fa-lg"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <h5 class="fw-bold mb-1">Soluções Práticas</h5>
+                                                                    <p class="small text-muted mb-0">Respostas diretas
+                                                                        para os desafios específicos que enfrentas
+                                                                        agora.</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    < !-- Card 3 -->
+                                                        <div class="col-12">
+                                                            <div class="card border-0 shadow-sm p-4 h-100 bg-white hover-card-lift transition-all"
+                                                                style="border-left: 5px solid #28a745 !important; border-radius: 12px;">
+                                                                <div class="d-flex align-items-start">
+                                                                    <div
+                                                                        class="flex-shrink-0 bg-success bg-opacity-10 p-3 rounded-circle me-3">
+                                                                        <i
+                                                                            class="fas fa-flag-checkered text-success fa-lg"></i>
+                                                                    </div>
+                                                                    <div>
+                                                                        <h5 class="fw-bold mb-1">Plano de Ação</h5>
+                                                                        <p class="small text-muted mb-0">Um guião
+                                                                            personalizado e implementável para atingires
+                                                                            os teus objetivos.</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                         </div>
                                     </div>
-
-                                    <!-- Summary Quote -->
-                                    <div class="alert alert-light border-0 shadow-sm small fst-italic text-center mb-4"
-                                        id="aiSummaryText" style="color: #555; background: #fafafa;">
-                                        "..."
-                                    </div>
-
-                                    <!-- Dimensions -->
-                                    <div class="row">
-                                        <div class="col-12 mb-3">
-                                            <h6 class="small fw-bold text-uppercase text-muted border-bottom pb-1 mb-3">
-                                                Dimensões Chave</h6>
-                                            <div id="dimensionsList">
-                                                <!-- Dynamic Dimensions -->
+                        </div>
+                    </div>
+                </section>
+                < !-- Pricing Grid Section -->
+                    <section class="service-section bg-light pt-5" id="pricing">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-12 text-center mb-5">
+                                    <h2 class="fw-bold">Os Nossos Planos</h2>
+                                    <p class="text-muted">Escolhe a opção ideal para o teu momento de carreira</p>
+                                </div>
+                            </div>
+                            <div class="row g-4 align-items-stretch">
+                                < !-- 1. Free: Avaliação de CV -->
+                                    <div class="col-lg-3 col-md-6 d-flex">
+                                        <div
+                                            class="card w-100 border-0 shadow-sm hover-shadow transition-all position-relative overflow-hidden">
+                                            <div class="card-body p-4 d-flex flex-column">
+                                                <div class="text-center mb-4"><span
+                                                        class="badge bg-light text-dark mb-2 px-3 py-2 rounded-pill">Básico</span>
+                                                    <h4 class="card-title fw-bold mb-2">Avaliação Grátis</h4>
+                                                    <p class="small text-muted mb-0" style="min-height: 40px;">Análise
+                                                        automática imediata do teu CV.</p>
+                                                </div>
+                                                <div class="text-center mb-4"><span class="h2 fw-bold d-block">0
+                                                        €</span><span class="text-muted small">/ relatório</span></div>
+                                                <ul
+                                                    class="list-unstyled small mb-auto text-muted space-y-2 border-top pt-3">
+                                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Smart
+                                                        Scan AI</li>
+                                                    <li class="mb-2"><i
+                                                            class="fas fa-check text-success me-2"></i>Feedback Imediato
+                                                    </li>
+                                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Dicas
+                                                        de ATS</li>
+                                                </ul><button
+                                                    class="btn btn-outline-primary w-100 mt-4 rounded-pill fw-bold"
+                                                    onclick="toggleSmartAnalysis()">Gerar Relatório </button>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- Insights Tabs -->
-                                    <ul class="nav nav-pills nav-fill small mb-3" id="pills-tab" role="tablist">
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link active py-1" id="pills-strengths-tab"
-                                                data-bs-toggle="pill" data-bs-target="#pills-strengths" type="button"
-                                                role="tab">Pontos Fortes</button>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link py-1" id="pills-improvements-tab"
-                                                data-bs-toggle="pill" data-bs-target="#pills-improvements" type="button"
-                                                role="tab">A Melhorar</button>
-                                        </li>
-                                    </ul>
-                                    <div class="tab-content custom-scroll" id="pills-tabContent"
-                                        style="max-height: 200px; overflow-y: auto;">
-                                        <div class="tab-pane fade show active" id="pills-strengths" role="tabpanel">
-                                            <div id="strengthsList"></div>
+                                    < !-- 2. Review: Revisão Profissional (20€) -->
+                                        <div class="col-lg-3 col-md-6 d-flex">
+                                            <div class="card w-100 border-0 shadow-sm hover-shadow transition-all position-relative overflow-hidden"
+                                                style="border-top: 4px solid #BF9A33 !important;">
+                                                <div class="card-body p-4 d-flex flex-column">
+                                                    <div class="text-center mb-4"><span
+                                                            class="badge bg-warning text-dark mb-2 px-3 py-2 rounded-pill">Popular</span>
+                                                        <h4 class="card-title fw-bold mb-2">Revisão de CV</h4>
+                                                        <p class="small text-muted mb-0" style="min-height: 40px;">
+                                                            Otimização profissional completa.</p>
+                                                    </div>
+                                                    <div class="text-center mb-4"><span class="h2 fw-bold d-block">20
+                                                            €</span><span class="text-muted small">/ único</span></div>
+                                                    <ul
+                                                        class="list-unstyled small mb-auto text-muted space-y-2 border-top pt-3">
+                                                        <li class="mb-2"><i
+                                                                class="fas fa-check text-success me-2"></i>Análise
+                                                            Humana+AI</li>
+                                                        <li class="mb-2"><i
+                                                                class="fas fa-check text-success me-2"></i>CV Otimizado
+                                                            (PDF)</li>
+                                                        <li class="mb-2"><i
+                                                                class="fas fa-check text-success me-2"></i>Correção
+                                                            Estrutural</li>
+                                                    </ul><button class="btn btn-primary w-100 mt-4 rounded-pill fw-bold"
+                                                        onclick="openServiceModal('review', 20)">Solicitar Revisão
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="tab-pane fade" id="pills-improvements" role="tabpanel">
-                                            <div id="improvementsList"></div>
+                                        < !-- 3. Kickstart: Sessão Coaching (40€) -->
+                                            <div class="col-lg-3 col-md-6 d-flex">
+                                                <div
+                                                    class="card w-100 border-0 shadow-sm hover-shadow transition-all position-relative overflow-hidden">
+                                                    <div class="card-body p-4 d-flex flex-column">
+                                                        <div class="text-center mb-4"><span
+                                                                class="badge bg-info text-white mb-2 px-3 py-2 rounded-pill">Coaching</span>
+                                                            <h4 class="card-title fw-bold mb-2">Kickstart Pro</h4>
+                                                            <p class="small text-muted mb-0" style="min-height: 40px;">
+                                                                Mentoria individual de carreira.</p>
+                                                        </div>
+                                                        <div class="text-center mb-4"><span
+                                                                class="h2 fw-bold d-block">40 €</span><span
+                                                                class="text-muted small">/ 45 min</span></div>
+                                                        <ul
+                                                            class="list-unstyled small mb-auto text-muted space-y-2 border-top pt-3">
+                                                            <li class="mb-2"><i
+                                                                    class="fas fa-check text-success me-2"></i>Sessão
+                                                                Online 1:1</li>
+                                                            <li class="mb-2"><i
+                                                                    class="fas fa-check text-success me-2"></i>Plano de
+                                                                Ação</li>
+                                                            <li class="mb-2"><i
+                                                                    class="fas fa-check text-success me-2"></i>Roleplay
+                                                                & Dicas</li>
+                                                        </ul><button
+                                                            class="btn btn-outline-dark w-100 mt-4 rounded-pill fw-bold"
+                                                            onclick="openServiceModal('kickstart', 40)">Agendar Sessão
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            < !-- 4. Pack: Review+Session (50€) -->
+                                                <div class="col-lg-3 col-md-6 d-flex">
+                                                    <div
+                                                        class="card w-100 border-0 shadow-sm hover-shadow transition-all position-relative overflow-hidden bg-dark text-white">
+                                                        <div class="card-body p-4 d-flex flex-column">
+                                                            <div class="text-center mb-4"><span
+                                                                    class="badge bg-danger text-white mb-2 px-3 py-2 rounded-pill">Best
+                                                                    Value</span>
+                                                                <h4 class="card-title fw-bold mb-2 text-white">Pack
+                                                                    Completo</h4>
+                                                                <p class="small text-white-50 mb-0"
+                                                                    style="min-height: 40px;">Revisão de CV+Sessão
+                                                                    Coaching.</p>
+                                                            </div>
+                                                            <div class="text-center mb-4"><span
+                                                                    class="h2 fw-bold text-white d-block">50
+                                                                    €</span><span
+                                                                    class="text-white-50 small text-decoration-line-through">60
+                                                                    €</span></div>
+                                                            <ul
+                                                                class="list-unstyled small mb-auto text-white-50 space-y-2 border-top border-secondary pt-3">
+                                                                <li class="mb-2"><i
+                                                                        class="fas fa-check text-warning me-2"></i>Tudo
+                                                                    da Revisão</li>
+                                                                <li class="mb-2"><i
+                                                                        class="fas fa-check text-warning me-2"></i>Tudo
+                                                                    do Kickstart</li>
+                                                                <li class="mb-2"><i
+                                                                        class="fas fa-check text-warning me-2"></i>Acompanhamento
+                                                                    VIP</li>
+                                                            </ul><button
+                                                                class="btn btn-light text-dark w-100 mt-4 rounded-pill fw-bold"
+                                                                onclick="openServiceModal('pack', 50)">Quero o Pack
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                            </div>
+                            < !-- Smart Analysis Expandable Section (Hidden by default) -->
+                                <div id="smartAnalysisExpandable" class="collapse mt-5">
+                                    <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                                        <div class="card-header bg-dark text-white p-4">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h4 class="mb-0"><i class="fas fa-robot me-2"></i>Smart Analysis
+                                                    (Demonstração)</h4><button type="button"
+                                                    class="btn-close btn-close-white" onclick="toggleSmartAnalysis()"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-5 bg-white">
+                                            < !-- Reuse existing Smart Analysis UI here -->
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <h5 class="fw-bold mb-3">Carregar CV para Análise</h5>
+                                                        <div class="mb-3"><label class="form-label">O teu CV
+                                                                (PDF)</label><input type="file" class="form-control"
+                                                                id="smartScanFile"></div>
+                                                        <div class="mb-3"><label class="form-label">Setor
+                                                                Alvo</label><input type="text" class="form-control"
+                                                                id="smartScanSector" placeholder="Ex: Marketing, TI...">
+                                                        </div><button class="btn btn-primary w-100 rounded-pill"
+                                                            id="btnRunSmartScan"><i
+                                                                class="fas fa-microscope me-2"></i>Correr Análise
+                                                            Preliminar </button>
+                                                    </div>
+                                                    <div class="col-md-6 border-start">
+                                                        <div id="smartScanResults" class="text-center text-muted py-5">
+                                                            <i class="fas fa-chart-bar fa-3x mb-3 text-light"></i>
+                                                            <p>Os resultados aparecerão aqui.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                         </div>
                                     </div>
+                                </div>
+                        </div>
+                    </section>
+                    < !-- Kickstart Pro Modal -->
+                        <div class="modal fade" id="kickstartModal" tabindex="-1" aria-labelledby="kickstartModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="kickstartModalLabel">Marcar Kickstart Pro</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="kickstartForm" class="service-form">
+                                            <input type="hidden" name="service" value="Kickstart Pro">
+                                            <input type="hidden" name="paymentMethod" value="mbway">
+                                            <input type="hidden" name="rating" value="5">
 
-                                    <!-- CTA -->
-                                    <div class="mt-4 pt-3 border-top text-center">
-                                        <p class="small fw-bold text-dark mb-2">Queres corrigir isto tudo?</p>
-                                        <p class="small text-muted mb-0">Solicita a revisão completa abaixo.</p>
+                                            <!-- 1. Dados Pessoais -->
+                                            <div class="form-section-title"><i class="fas fa-user-check"></i>1. O teu
+                                                Perfil</div>
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label for="kickstartName" class="form-label">Nome Completo
+                                                        *</label>
+                                                    <input type="text" class="form-control" id="kickstartName"
+                                                        name="name" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="kickstartEmail" class="form-label">Email *</label>
+                                                    <input type="email" class="form-control" id="kickstartEmail"
+                                                        name="email" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="kickstartPhone" class="form-label">Telemóvel (MB WAY)
+                                                        *</label>
+                                                    <input type="tel" class="form-control" id="kickstartPhone"
+                                                        name="phone" required placeholder="91xxxxxxx">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="kickstartExperience" class="form-label">Experiência
+                                                        Profissional</label>
+                                                    <select class="form-select" id="kickstartExperience"
+                                                        name="experience">
+                                                        <option value="Estudante">Estudante</option>
+                                                        <option value="0-2 anos">0-2 anos (Júnior)</option>
+                                                        <option value="3-5 anos">3-5 anos (Mid-Level)</option>
+                                                        <option value="6-10 anos">6-10 anos (Sénior)</option>
+                                                        <option value="10+ anos">10+anos (Expert)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- 2. Objetivos -->
+                                            <div class="form-section-title mt-4"><i class="fas fa-bullseye"></i>2.
+                                                Objetivos da Sessão</div>
+                                            <div class="mb-4">
+                                                <label for="kickstartObjectives" class="form-label">Quais são os teus
+                                                    principais desafios ou objetivos? *</label>
+                                                <textarea class="form-control" id="kickstartObjectives"
+                                                    name="objectives" rows="4" required
+                                                    placeholder="Ex: preparar para entrevista, mudar de carreira, negociar salário..."></textarea>
+                                            </div>
+
+                                            <!-- Info e Pagamento -->
+                                            <div class="alert alert-light border shadow-sm mb-4 d-flex align-items-center"
+                                                role="alert" style="border-radius: 12px; font-size: 0.9rem;">
+                                                <i class="fas fa-info-circle text-primary fs-4 me-3"></i>
+                                                <div>
+                                                    O Kickstart Pro tem um custo de <strong>40.00€</strong> (Sessão 45
+                                                    min).
+                                                    <br><span class="text-muted small">Pagamento solicitado via MB WAY
+                                                        após submissão.</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-4 mb-4 p-3 bg-light rounded-3">
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" id="kickstartTerms"
+                                                        required>
+                                                    <label class="form-check-label small text-muted"
+                                                        for="kickstartTerms">
+                                                        Concordo com a <a href="politica-privacidade.html"
+                                                            target="_blank" class="text-decoration-none">Política de
+                                                            Privacidade</a> e autorizo o tratamento dos dados para
+                                                        agendamento.
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <button type="submit"
+                                                class="btn btn-primary w-100 btn-lg rounded-pill shadow-sm fw-bold">
+                                                <i class="fas fa-calendar-check me-2"></i>Pagar e Agendar (MB WAY)
+                                            </button>
+                                            <div id="kickstartFormMessage" class="mt-3"></div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Dados Profissionais -->
-                        <h6 class="mb-3 border-bottom pb-2">2. O teu Perfil</h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="revisaoCvName" class="form-label">Nome Completo *</label>
-                                <input type="text" class="form-control" id="revisaoCvName" name="name" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="revisaoCvEmail" class="form-label">Email *</label>
-                                <input type="email" class="form-control" id="revisaoCvEmail" name="email" required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="revisaoCvPhone" class="form-label">Telemóvel (MB WAY) *</label>
-                            <input type="tel" class="form-control" id="revisaoCvPhone" name="phone"
-                                placeholder="912345678" required>
-                        </div>
-
-                        <!-- Características do Anúncio & Contexto -->
-                        <h6 class="mb-3 border-bottom pb-2">3. O teu Objetivo & Contexto</h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="currentRole" class="form-label">Função Atual / Última</label>
-                                <input type="text" class="form-control" id="currentRole" name="current_role"
-                                    placeholder="Ex: Gestor de Marketing">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="sector" class="form-label">Setor de Atividade</label>
-                                <input type="text" class="form-control" id="sector" name="sector"
-                                    placeholder="Ex: Tecnologia, Saúde...">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="revisaoCvExperience" class="form-label">Anos de Experiência</label>
-                                <select class="form-select" id="revisaoCvExperience" name="experience">
-                                    <option value="Estudante">Estudante / Recém-Graduado</option>
-                                    <option value="0-2 anos">0-2 anos (Júnior)</option>
-                                    <option value="3-5 anos">3-5 anos (Mid-Level)</option>
-                                    <option value="6-10 anos">6-10 anos (Sénior)</option>
-                                    <option value="10+ anos">10+ anos (Expert)</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="adCharacteristics" class="form-label">Características do Anúncio /
-                                Oportunidade
-                                Alvo</label>
-                            <textarea class="form-control" id="adCharacteristics" name="ad_characteristics" rows="3"
-                                placeholder="Descreve a vaga ou o tipo de emprego que procuras (keywords, skills pedidas, etc.)"></textarea>
-                            <div class="form-text">Isto ajuda-nos a alinhar o teu CV com o que os recrutadores
-                                procuram.
-                            </div>
-                        </div>
-
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="revisaoCvTerms" required>
-                            <label class="form-check-label" for="revisaoCvTerms">Concordo com a <a
-                                    href="politica-privacidade.html" target="_blank">Política de Privacidade</a>
-                                *</label>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100 btn-lg">
-                            <i class="fas fa-lock"></i> Pagar e Solicitar (15.00€)
-                        </button>
-                        <div id="revisaoCvFormMessage" class="mt-3"></div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer id="contactos">
-        <div class="container">
-            <div class="footer-container">
-                <div class="footer-left">
-                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
-                </div>
-                <div class="footer-right">
-                    <div class="footer-contact">
-                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
-                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
-                    </div>
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i
-                                class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire_" target="_blank"><i
-                                class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-links">
-                <a href="politica-privacidade.html">Política de Privacidade</a>
-                <a href="politica-cookies.html">Política de Cookies</a>
-                <a href="tratamento-dados.html">Tratamento de Dados</a>
-                <a href="informacao-legal.html">Informação Legal</a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Script para processamento dos formulários -->
-    <script>
-        // Global functions for Pricing Grid
-        function toggleSmartAnalysis() {
-            const el = document.getElementById('smartAnalysisExpandable');
-            // Check if already initialized, if not, do it
-            const bsCollapse = bootstrap.Collapse.getOrCreateInstance(el);
-            bsCollapse.toggle();
-
-            // Optional: Scroll to it
-            el.addEventListener('shown.bs.collapse', function () {
-                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            });
-        }
-
-        function openServiceModal(type, amount) {
-            if (type === 'kickstart') {
-                const modalEl = document.getElementById('kickstartModal');
-                const modal = new bootstrap.Modal(modalEl);
-
-                // Update Amount in Form
-                // Note: We need to ensure the form has an input for amount, or we append it
-                let form = document.getElementById('kickstartForm');
-                let amountInput = form.querySelector('input[name="amount"]');
-                if (!amountInput) {
-                    amountInput = document.createElement('input');
-                    amountInput.type = 'hidden';
-                    amountInput.name = 'amount';
-                    form.appendChild(amountInput);
-                }
-                amountInput.value = amount.toFixed(2);
-
-                // Update UI Text
-                const infoAlert = modalEl.querySelector('.alert-info');
-                if (infoAlert) {
-                    infoAlert.innerHTML = `<i class="fas fa-info-circle"></i> O Kickstart Pro tem um custo de <strong>${amount.toFixed(2)}€</strong>. O pagamento será solicitado via MB WAY.`;
-                }
-
-                modal.show();
-            } else {
-                // Review or Pack
-                const modalEl = document.getElementById('revisaoCvModal');
-                const modal = new bootstrap.Modal(modalEl);
-                const form = document.getElementById('revisaoCvForm');
-
-                // Update Hidden Fields
-                form.querySelector('input[name="service"]').value = (type === 'pack' ? 'Pack Completo' : 'Revisão de CV');
-                form.querySelector('input[name="amount"]').value = amount.toFixed(2);
-
-                // Update Submit Button
-                const btn = form.querySelector('button[type="submit"]');
-                btn.innerHTML = `<i class="fas fa-lock"></i> Pagar e Solicitar (${amount.toFixed(2)}€)`;
-
-                // Update Info Alert
-                const infoAlert = modalEl.querySelector('.alert-info');
-                if (infoAlert) {
-                    infoAlert.innerHTML = `<i class="fas fa-info-circle"></i> Prazo: <strong>5 dias úteis</strong>. Preço: <strong>${amount.toFixed(2)}€</strong> (Pagamento MB WAY).`;
-                }
-
-                // Title Update
-                const title = modalEl.querySelector('.modal-title');
-                title.textContent = (type === 'pack' ? 'Solicitar Pack (Revisão + Sessão)' : 'Solicitar Revisão de CV');
-
-                modal.show();
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            // Processamento do formulário Kickstart Pro (Sessão)
-            const kickstartForm = document.getElementById('kickstartForm');
-            if (kickstartForm) {
-                kickstartForm.addEventListener('submit', function (e) {
-                    e.preventDefault();
-
-                    const submitBtn = kickstartForm.querySelector('button[type="submit"]');
-                    const formMessage = document.getElementById('kickstartFormMessage');
-                    const formData = new FormData(kickstartForm);
-
-                    // Determine amount (default 40 if missing)
-                    const amt = formData.get('amount') || "40.00";
-
-                    // Dados para pagamento MB WAY
-                    const paymentData = {
-                        name: formData.get('name'),
-                        email: formData.get('email'),
-                        mobileNumber: formData.get('phone'),
-                        amount: amt,
-                        orderId: 'KICK-' + Date.now(),
-                        paymentMethod: 'mbway',
-                        description: 'Kickstart Pro - ' + formData.get('name')
-                    };
-
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A processar pagamento...';
-                    formMessage.innerHTML = '';
-
-                    // Iniciar Pagamento
-                    fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/mbway', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(paymentData)
-                    })
-                        .then(response => response.json())
-                        .then(result => {
-                            if (result.success) {
-                                formMessage.innerHTML = `
-                                <div class="alert alert-success">
-                                    <h4><i class="fas fa-check-circle"></i> Pedido de Pagamento Enviado!</h4>
-                                    <p>Por favor, aceite o pagamento de <strong>${amt}€</strong> na sua aplicação MB WAY.</p>
-                                    <hr>
-                                    <p class="mb-2">Após confirmar o pagamento, clique abaixo para agendar a sua sessão:</p>
-                                    <a href="https://calendar.app.google/3EM5D7pA8mV7mjZh6" target="_blank" class="btn btn-success w-100 fw-bold">
-                                        <i class="fas fa-calendar-alt me-2"></i> Agendar Sessão Agora
-                                    </a>
+                        < < !-- Revisão de CV Modal -->
+                            <div class="modal fade" id="revisaoCvModal" tabindex="-1"
+                                aria-labelledby="revisaoCvModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="revisaoCvModalLabel">Solicitar Revisão de CV
+                                            </h5><button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="alert alert-light border shadow-sm mb-4 d-flex align-items-center"
+                                                role="alert" style="border-radius: 12px; font-size: 0.9rem;"><i
+                                                    class="fas fa-info-circle text-primary fs-4 me-3"></i>
+                                                <div>Prazo de entrega: <strong>5 dias úteis</strong>. Preço:
+                                                    <strong>15.00€</strong>(Pagamento MB WAY).
+                                                </div>
+                                            </div>
+                                            <form id="revisaoCvForm" class="service-form" enctype="multipart/form-data">
+                                                <input type="hidden" name="service" value="Revisão de CV"><input
+                                                    type="hidden" name="amount" value="15.00">
+                                                < !-- Dados Pessoais e CV -->
+                                                    <div class="form-section-title"><i class="fas fa-file-upload"></i>1.
+                                                        O teu Currículo </div>
+                                                    <div class="row g-4">
+                                                        <div class="col-md-6"><label for="cvFile"
+                                                                class="form-label">Upload CV (PDF/Word) *</label><input
+                                                                type="file" class="form-control" id="cvFile"
+                                                                name="cv_file" accept=".pdf,.doc,.docx" required>
+                                                            <div class="form-text ms-1">Máximo 5MB. Apenas PDF ou Word.
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6"><label for="linkedinUrl"
+                                                                class="form-label">Perfil LinkedIn</label><input
+                                                                type="url" class="form-control" id="linkedinUrl"
+                                                                name="linkedin_url"
+                                                                placeholder="https://linkedin.com/in/..."></div>
+                                                    </div>
+                                                    < !-- Análise Profissional (Real AI) -->
+                                                        <div class="ai-analysis-card mt-4 mb-5">
+                                                            <div class="ai-bg-accent"></div>
+                                                            <div class="p-4 position-relative">
+                                                                <h6 class="card-title fw-bold text-dark mb-3"><i
+                                                                        class="fas fa-magic me-2 text-warning"></i>Análise
+                                                                    Preliminar de CV <span
+                                                                        class="badge bg-dark rounded-pill small ms-2"
+                                                                        style="font-size: 0.65em; vertical-align: middle; letter-spacing: 0.5px;">AI
+                                                                        POWERED</span></h6>
+                                                                <p class="small text-muted mb-4">Recebe uma avaliação
+                                                                    executiva imediata sobre a força do teu perfil antes
+                                                                    de enviares.</p>
+                                                                < !-- State 1: Start -->
+                                                                    <div id="analysisSection"><button type="button"
+                                                                            class="btn btn-dark w-100 rounded-pill py-2 shadow-sm"
+                                                                            id="btnAnalyzeCV"
+                                                                            style="transition: all 0.3s ease;"><i
+                                                                                class="fas fa-search me-2"></i>Analisar
+                                                                            o meu CV Agora </button>
+                                                                        <div class="text-center mt-2"><small
+                                                                                class="text-muted"
+                                                                                style="font-size: 0.7em; letter-spacing: 0.5px;">POWERED
+                                                                                BY GEMINI ADVANCED AI</small></div>
+                                                                    </div>
+                                                                    < !-- State 2: Loading -->
+                                                                        <div id="analysisLoading" style="display: none;"
+                                                                            class="text-center py-3">
+                                                                            <div class="spinner-border text-warning mb-2"
+                                                                                role="status"></div>
+                                                                            <h6 class="fw-bold text-dark mb-1"
+                                                                                id="loadingTitle">A ler o teu perfil...
+                                                                            </h6>
+                                                                            <p class="small text-muted mb-0"
+                                                                                id="loadingText">Isto pode demorar
+                                                                                alguns segundos.</p>
+                                                                        </div>
+                                                                        < !-- State 3: Results Dashboard -->
+                                                                            <div id="analysisResults"
+                                                                                style="display: none;" class="mt-4">
+                                                                                < !-- Results Content Injected by JS
+                                                                                    (reuse existing structure) -->
+                                                                                    < !-- Note: the JS injects HTML into
+                                                                                        this div. Ensure the JS injected
+                                                                                        HTML looks good or update JS
+                                                                                        too. -->
+                                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                        < !-- Dados Profissionais -->
+                                                            <div class="form-section-title"><i
+                                                                    class="fas fa-user-circle"></i>2. O teu Perfil
+                                                            </div>
+                                                            <div class="row g-3">
+                                                                <div class="col-md-6"><label for="revisaoCvName"
+                                                                        class="form-label">Nome Completo *</label><input
+                                                                        type="text" class="form-control"
+                                                                        id="revisaoCvName" name="name" required></div>
+                                                                <div class="col-md-6"><label for="revisaoCvEmail"
+                                                                        class="form-label">Email *</label><input
+                                                                        type="email" class="form-control"
+                                                                        id="revisaoCvEmail" name="email" required></div>
+                                                                <div class="col-12"><label for="revisaoCvPhone"
+                                                                        class="form-label">Telemóvel (MB WAY)
+                                                                        *</label><input type="tel" class="form-control"
+                                                                        id="revisaoCvPhone" name="phone"
+                                                                        placeholder="912345678" required></div>
+                                                            </div>
+                                                            < !-- Características do Anúncio & Contexto -->
+                                                                <div class="form-section-title"><i
+                                                                        class="fas fa-bullseye"></i>3. O teu Objetivo &
+                                                                    Contexto </div>
+                                                                <div class="row g-3">
+                                                                    <div class="col-md-6"><label for="currentRole"
+                                                                            class="form-label">Função Atual /
+                                                                            Última</label><input type="text"
+                                                                            class="form-control" id="currentRole"
+                                                                            name="current_role"
+                                                                            placeholder="Ex: Gestor de Marketing"></div>
+                                                                    <div class="col-md-6"><label for="sector"
+                                                                            class="form-label">Setor de
+                                                                            Atividade</label><input type="text"
+                                                                            class="form-control" id="sector"
+                                                                            name="sector"
+                                                                            placeholder="Ex: Tecnologia, Saúde...">
+                                                                    </div>
+                                                                    <div class="col-md-12"><label
+                                                                            for="revisaoCvExperience"
+                                                                            class="form-label">Anos de
+                                                                            Experiência</label><select
+                                                                            class="form-select" id="revisaoCvExperience"
+                                                                            name="experience">
+                                                                            <option value="Estudante">Estudante /
+                                                                                Recém-Graduado</option>
+                                                                            <option value="0-2 anos">0-2 anos (Júnior)
+                                                                            </option>
+                                                                            <option value="3-5 anos">3-5 anos
+                                                                                (Mid-Level)</option>
+                                                                            <option value="6-10 anos">6-10 anos (Sénior)
+                                                                            </option>
+                                                                            <option value="10+ anos">10+anos (Expert)
+                                                                            </option>
+                                                                        </select></div>
+                                                                    <div class="col-md-12"><label
+                                                                            for="adCharacteristics"
+                                                                            class="form-label">Características do
+                                                                            Anúncio / Oportunidade Alvo</label><textarea
+                                                                            class="form-control" id="adCharacteristics"
+                                                                            name="ad_characteristics" rows="3"
+                                                                            placeholder="Descreve a vaga ou o tipo de emprego que procuras..."></textarea>
+                                                                        <div class="form-text ms-1">Isto ajuda-nos a
+                                                                            alinhar o teu CV com o que os recrutadores
+                                                                            procuram.</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="mt-4 mb-4 p-3 bg-light rounded-3">
+                                                                    <div class="form-check"><input type="checkbox"
+                                                                            class="form-check-input" id="revisaoCvTerms"
+                                                                            required><label
+                                                                            class="form-check-label small text-muted"
+                                                                            for="revisaoCvTerms">Concordo com a <a
+                                                                                href="politica-privacidade.html"
+                                                                                target="_blank"
+                                                                                class="text-decoration-none">Política de
+                                                                                Privacidade</a>e autorizo o tratamento
+                                                                            dos meus dados para este serviço.</label>
+                                                                    </div>
+                                                                </div><button type="submit"
+                                                                    class="btn btn-primary w-100 btn-lg rounded-pill shadow-sm fw-bold"><i
+                                                                        class="fas fa-lock me-2"></i>Pagar e Solicitar
+                                                                    (15.00€) </button>
+                                                                <div id="revisaoCvFormMessage" class="mt-3"></div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
-                            `;
-                                submitBtn.style.display = 'none';
-                            } else {
-                                throw new Error(result.error || 'Erro ao iniciar pagamento');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erro:', error);
-                            formMessage.innerHTML = `<div class="alert alert-danger">Erro: ${error.message}</div>`;
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = 'Tentar Novamente (MB WAY)';
-                        });
-                });
-            }
+                            </div>
+                            < !-- Footer -->
+                                <footer id="contactos">
+                                    <div class="container">
+                                        <div class="footer-container">
+                                            <div class="footer-left">
+                                                <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
+                                            </div>
+                                            <div class="footer-right">
+                                                <div class="footer-contact">
+                                                    <p><i class="fas fa-envelope"></i>srshare2inspire@gmail.com</p>
+                                                    <p><i class="fas fa-phone"></i>+351 961 925 050</p>
+                                                </div>
+                                                <div class="footer-social"><a
+                                                        href="https://www.linkedin.com/in/samuelrolo/"
+                                                        target="_blank"><i class="fab fa-linkedin"></i></a><a
+                                                        href="https://www.instagram.com/share2inspire_"
+                                                        target="_blank"><i class="fab fa-instagram"></i></a></div>
+                                            </div>
+                                        </div>
+                                        <div class="footer-links"><a href="politica-privacidade.html">Política de
+                                                Privacidade</a><a href="politica-cookies.html">Política de Cookies</a><a
+                                                href="tratamento-dados.html">Tratamento de Dados</a><a
+                                                href="informacao-legal.html">Informação Legal</a></div>
+                                    </div>
+                                </footer>
+                                < !-- Bootstrap JS -->
+                                    <script
+                                        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                                    < !-- Script para processamento dos formulários -->
+                                        <script>
+                                            // Global functions for Pricing Grid
+                                            function toggleSmartAnalysis() {
+                                                const el = document.getElementById('smartAnalysisExpandable');
+                                                const bsCollapse = bootstrap.Collapse.getOrCreateInstance(el);
+                                                bsCollapse.toggle();
 
-            // ... (Smart Analysis Functions renderAnalysisResults, etc. remain unchanged) ...
+                                                el.addEventListener('shown.bs.collapse', function () {
+                                                    el.scrollIntoView({
+                                                        behavior: 'smooth',
+                                                        block: 'center'
+                                                    });
+                                                });
+                                            }
 
-            // Processamento do formulário Revisão de CV (Review & Pack)
-            const revisaoCvForm = document.getElementById('revisaoCvForm');
-            if (revisaoCvForm) {
-                revisaoCvForm.addEventListener('submit', function (e) {
-                    e.preventDefault();
+                                            function openServiceModal(type, amount) {
+                                                if (type === 'kickstart') {
+                                                    const modalEl = document.getElementById('kickstartModal');
+                                                    const modal = new bootstrap.Modal(modalEl);
 
-                    // Validação de Termos
-                    const termsCheckbox = document.getElementById('revisaoCvTerms');
-                    if (termsCheckbox && !termsCheckbox.checked) {
-                        alert("Por favor, aceite a Política de Privacidade para continuar.");
-                        termsCheckbox.focus();
-                        return;
-                    }
+                                                    // Update Amount in Form
+                                                    let form = document.getElementById('kickstartForm');
+                                                    let amountInput = form.querySelector('input[name="amount"]');
 
-                    const submitBtn = revisaoCvForm.querySelector('button[type="submit"]');
-                    const formMessage = document.getElementById('revisaoCvFormMessage');
-                    const formData = new FormData(revisaoCvForm);
+                                                    if (!amountInput) {
+                                                        amountInput = document.createElement('input');
+                                                        amountInput.type = 'hidden';
+                                                        amountInput.name = 'amount';
+                                                        form.appendChild(amountInput);
+                                                    }
 
-                    const serviceType = formData.get('service');
-                    const amount = formData.get('amount');
+                                                    amountInput.value = amount.toFixed(2);
 
-                    // Adicionar timestamp e ID do pedido
-                    formData.append('orderId', 'CV-' + Date.now());
+                                                    // Update UI Text
+                                                    const infoAlert = modalEl.querySelector('.alert-info');
+                                                    if (infoAlert) {
+                                                        infoAlert.innerHTML = `<i class="fas fa-info-circle"></i>O Kickstart Pro tem um custo de <strong>${amount.toFixed(2)}€</strong>. O pagamento será solicitado via MB WAY.`;
+                                                    }
 
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A processar pagamento...';
-                    formMessage.innerHTML = '';
+                                                    modal.show();
+                                                } else {
+                                                    // Review or Pack
+                                                    const modalEl = document.getElementById('revisaoCvModal');
+                                                    const modal = new bootstrap.Modal(modalEl);
+                                                    const form = document.getElementById('revisaoCvForm');
 
-                    // Enviar para o backend
-                    fetch('https://share2inspire-beckend.lm.r.appspot.com/api/services/cv-review', {
-                        method: 'POST',
-                        body: formData
-                    })
-                        .then(response => response.json())
-                        .then(result => {
-                            if (result.success) {
-                                let successHtml = `
-                                <div class="alert alert-success">
-                                    <h4><i class="fas fa-check-circle"></i> Pedido Recebido!</h4>
-                                    <p>Por favor, aceite o pagamento de <strong>${amount}€</strong> na sua aplicação MB WAY.</p>
-                                    <hr>
-                                `;
+                                                    // Update Hidden Fields
+                                                    form.querySelector('input[name="service"]').value = (type === 'pack' ? 'Pack Completo' : 'Revisão de CV');
+                                                    form.querySelector('input[name="amount"]').value = amount.toFixed(2);
 
-                                if (serviceType === 'Pack Completo') {
-                                    // PACK: Show Calendar Link
-                                    successHtml += `
-                                        <p class="mb-2">O seu CV foi enviado. Após o pagamento, <strong>agende a sua sessão:</strong></p>
-                                        <a href="https://calendar.app.google/3EM5D7pA8mV7mjZh6" target="_blank" class="btn btn-success w-100 fw-bold">
-                                            <i class="fas fa-calendar-alt me-2"></i> Agendar Sessão do Pack
-                                        </a>
-                                    `;
-                                } else {
-                                    // REVIEW ONLY
-                                    successHtml += `
-                                        <p class="small mb-3">O seu CV foi enviado para análise. Receberá o feedback em 5 dias úteis.</p>
-                                        <button onclick="window.location.reload()" class="btn btn-outline-success btn-sm w-100">
-                                            <i class="fas fa-plus-circle"></i> Submeter Novo Pedido
-                                        </button>
-                                    `;
-                                }
+                                                    // Update Submit Button
+                                                    const btn = form.querySelector('button[type="submit"]');
+                                                    btn.innerHTML = `<i class="fas fa-lock"></i>Pagar e Solicitar (${amount.toFixed(2)}€)`;
 
-                                successHtml += `</div>`;
-                                formMessage.innerHTML = successHtml;
+                                                    // Update Info Alert
+                                                    const infoAlert = modalEl.querySelector('.alert-info');
+                                                    if (infoAlert) {
+                                                        infoAlert.innerHTML = `<i class="fas fa-info-circle"></i>Prazo: <strong>5 dias úteis</strong>. Preço: <strong>${amount.toFixed(2)}€</strong>(Pagamento MB WAY).`;
+                                                    }
 
-                                revisaoCvForm.reset();
-                                const analysisResults = document.getElementById('analysisResults');
-                                if (analysisResults) analysisResults.style.display = 'none';
-                                submitBtn.style.display = 'none';
-                            } else {
-                                throw new Error(result.error || 'Erro desconhecido');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erro:', error);
-                            formMessage.innerHTML = `<div class="alert alert-danger">Erro ao enviar pedido: ${error.message}</div>`;
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = `<i class="fas fa-lock"></i> Pagar e Solicitar (${amount}€)`;
-                        });
-                });
-            }
-        });
-    </script>
+                                                    // Title Update
+                                                    const title = modalEl.querySelector('.modal-title');
+                                                    title.textContent = (type === 'pack' ? 'Solicitar Pack (Revisão + Sessão)' : 'Solicitar Revisão de CV');
+
+                                                    modal.show();
+                                                }
+                                            }
+
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                                // Processamento do formulário Kickstart Pro (Sessão)
+                                                const kickstartForm = document.getElementById('kickstartForm');
+
+                                                if (kickstartForm) {
+                                                    kickstartForm.addEventListener('submit', function (e) {
+                                                        e.preventDefault();
+
+                                                        const submitBtn = kickstartForm.querySelector('button[type="submit"]');
+                                                        const formMessage = document.getElementById('kickstartFormMessage');
+                                                        const formData = new FormData(kickstartForm);
+
+                                                        // Determine amount (default 40 if missing)
+                                                        const amt = formData.get('amount') || "40.00";
+
+                                                        // Dados para pagamento MB WAY
+                                                        const paymentData = {
+                                                            name: formData.get('name'),
+                                                            email: formData.get('email'),
+                                                            mobileNumber: formData.get('phone'),
+                                                            amount: amt,
+                                                            orderId: 'KICK-' + Date.now(),
+                                                            paymentMethod: 'mbway',
+                                                            description: 'Kickstart Pro - ' + formData.get('name')
+                                                        };
+
+                                                        submitBtn.disabled = true;
+                                                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A processar pagamento...';
+                                                        formMessage.innerHTML = '';
+
+                                                        // Iniciar Pagamento
+                                                        fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/mbway', {
+                                                            method: 'POST',
+                                                            headers: {
+                                                                'Content-Type': 'application/json'
+                                                            },
+                                                            body: JSON.stringify(paymentData)
+                                                        }).then(response => response.json()).then(result => {
+                                                            if (result.success) {
+                                                                formMessage.innerHTML = `<div class="alert alert-success"><h4><i class="fas fa-check-circle"></i> Pedido de Pagamento Enviado!</h4><p>Por favor, aceite o pagamento de <strong>${amt}€</strong> na sua aplicação MB WAY.</p><hr><p class="mb-2">Após confirmar o pagamento, clique abaixo para agendar a sua sessão:</p><a href="https://calendar.app.google/3EM5D7pA8mV7mjZh6" target="_blank" class="btn btn-success w-100 fw-bold"><i class="fas fa-calendar-alt me-2"></i> Agendar Sessão Agora </a></div>`;
+                                                                submitBtn.style.display = 'none';
+                                                            } else {
+                                                                throw new Error(result.error || 'Erro ao iniciar pagamento');
+                                                            }
+                                                        }).catch(error => {
+                                                            console.error('Erro:', error);
+                                                            formMessage.innerHTML = `<div class="alert alert-danger">Erro: ${error.message}</div>`;
+                                                            submitBtn.disabled = false;
+                                                            submitBtn.innerHTML = 'Tentar Novamente (MB WAY)';
+                                                        });
+                                                    });
+                                                }
+
+                                                // Smart Analysis (Client-Side Simulation)
+                                                const btnSmartScan = document.getElementById('btnRunSmartScan');
+
+                                                if (btnSmartScan) {
+                                                    btnSmartScan.addEventListener('click', function () {
+                                                        const fileInput = document.getElementById('smartScanFile');
+                                                        const sectorInput = document.getElementById('smartScanSector');
+                                                        const resultsContainer = document.getElementById('smartScanResults');
+
+                                                        if (!fileInput.files.length) {
+                                                            alert('Por favor, carrega um ficheiro (PDF) para analisar.');
+                                                            return;
+                                                        }
+
+                                                        // 1. Loading
+                                                        resultsContainer.innerHTML = `<div class="text-center py-5"><div class="spinner-border text-primary mb-3" role="status"></div><h5 class="fw-bold">A Analisar o teu CV...</h5><p class="text-muted small">A extrair palavras-chave e a comparar com o setor ${sectorInput.value || 'Geral'}...</p></div>`;
+
+                                                        // 2. Simulate Delay (3 seconds)
+                                                        setTimeout(() => {
+                                                            // 3. Render Results
+                                                            renderSmartAnalysisResults(resultsContainer);
+                                                        }, 3000);
+                                                    });
+                                                }
+
+                                                function renderSmartAnalysisResults(container) {
+                                                    // Random Score generation for demo touch
+                                                    const score = Math.floor(Math.random() * (75 - 55 + 1)) + 55; // Random between 55 and 75
+
+                                                    container.innerHTML = `<div class="text-center fade-in"><div class="mb-3 position-relative d-inline-block"><svg width="100" height="100" viewBox="0 0 120 120" style="transform: rotate(-90deg);"><circle cx="60" cy="60" r="54" fill="none" stroke="#eee" stroke-width="8" /><circle cx="60" cy="60" r="54" fill="none" stroke="#BF9A33" stroke-width="8" stroke-dasharray="339.292" stroke-dashoffset="${339.292 * (1 - score / 100)}" stroke-linecap="round" /></svg><div class="position-absolute top-50 start-50 translate-middle text-center"><div class="h3 fw-bold mb-0">${score}</div><div class="small text-muted" style="font-size: 10px;">MATCH</div></div></div><h5 class="fw-bold mb-2">Potencial Detetado</h5><p class="small text-muted mb-4">O teu CV tem uma boa base, mas precisa de otimização para passar nos ATS (sistemas de recrutamento).</p><div class="text-start bg-light p-3 rounded mb-3"><h6 class="fw-bold small mb-2"><i class="fas fa-check-circle text-success me-2"></i>Pontos Fortes:</h6><ul class="small text-muted mb-0 ps-3"><li>Estrutura base identificada.</li><li>Informação de contacto presente.</li></ul></div><div class="text-start bg-light p-3 rounded mb-3"><h6 class="fw-bold small mb-2"><i class="fas fa-exclamation-circle text-warning me-2"></i>A Melhorar:</h6><ul class="small text-muted mb-0 ps-3"><li>Ausência de palavras-chave do setor.</li><li>Formatação não otimizada para ATS.</li><li>Falta de métricas de impacto.</li></ul></div><div class="d-grid gap-2"><button class="btn btn-warning text-dark fw-bold btn-sm" onclick="openServiceModal('review', 20)"><i class="fas fa-lock me-2"></i> Desbloquear Análise Completa (20€)</button></div></div>`;
+                                                }
+
+                                                // Processamento do formulário Revisão de CV (Review & Pack)
+                                                const revisaoCvForm = document.getElementById('revisaoCvForm');
+
+                                                if (revisaoCvForm) {
+                                                    revisaoCvForm.addEventListener('submit', function (e) {
+                                                        e.preventDefault();
+
+                                                        // Validação de Termos
+                                                        const termsCheckbox = document.getElementById('revisaoCvTerms');
+
+                                                        if (termsCheckbox && !termsCheckbox.checked) {
+                                                            alert("Por favor, aceite a Política de Privacidade para continuar.");
+                                                            termsCheckbox.focus();
+                                                            return;
+                                                        }
+
+                                                        const submitBtn = revisaoCvForm.querySelector('button[type="submit"]');
+                                                        const formMessage = document.getElementById('revisaoCvFormMessage');
+                                                        const formData = new FormData(revisaoCvForm);
+
+                                                        const serviceType = formData.get('service');
+                                                        const amount = formData.get('amount');
+
+                                                        // Adicionar timestamp e ID do pedido
+                                                        formData.append('orderId', 'CV-' + Date.now());
+
+                                                        submitBtn.disabled = true;
+                                                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> A processar pagamento...';
+                                                        formMessage.innerHTML = '';
+
+                                                        // Enviar para o backend
+                                                        fetch('https://share2inspire-beckend.lm.r.appspot.com/api/services/cv-review', {
+                                                            method: 'POST',
+                                                            body: formData
+                                                        }).then(response => response.json()).then(result => {
+                                                            if (result.success) {
+                                                                let successHtml = `<div class="alert alert-success"><h4><i class="fas fa-check-circle"></i> Pedido Recebido!</h4><p>Por favor, aceite o pagamento de <strong>${amount}€</strong> na sua aplicação MB WAY.</p><hr>`;
+
+                                                                if (serviceType === 'Pack Completo') {
+                                                                    // PACK: Show Calendar Link
+                                                                    successHtml += `<p class="mb-2">O seu CV foi enviado. Após o pagamento, <strong>agende a sua sessão:</strong></p><a href="https://calendar.app.google/3EM5D7pA8mV7mjZh6" target="_blank" class="btn btn-success w-100 fw-bold"><i class="fas fa-calendar-alt me-2"></i> Agendar Sessão do Pack </a>`;
+                                                                } else {
+                                                                    // REVIEW ONLY
+                                                                    successHtml += `<p class="small mb-3">O seu CV foi enviado para análise. Receberá o feedback em 5 dias úteis.</p><button onclick="window.location.reload()" class="btn btn-outline-success btn-sm w-100"><i class="fas fa-plus-circle"></i> Submeter Novo Pedido </button>`;
+                                                                }
+
+                                                                successHtml += `</div>`;
+                                                                formMessage.innerHTML = successHtml;
+
+                                                                revisaoCvForm.reset();
+                                                                const analysisResults = document.getElementById('analysisResults');
+                                                                if (analysisResults) analysisResults.style.display = 'none';
+                                                                submitBtn.style.display = 'none';
+                                                            } else {
+                                                                throw new Error(result.error || 'Erro desconhecido');
+                                                            }
+
+                                                        }).catch(error => {
+                                                            console.error('Erro:', error);
+                                                            formMessage.innerHTML = `<div class="alert alert-danger">Erro ao enviar pedido: ${error.message}</div>`;
+                                                            submitBtn.disabled = false;
+                                                            submitBtn.innerHTML = `<i class="fas fa-lock"></i> Pagar e Solicitar (${amount}€)`;
+                                                        });
+                                                    });
+                                                }
+                                            });
+                                        </script>
 </body>
 
 </html>
