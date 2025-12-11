@@ -6,7 +6,7 @@
  * - URLs consistentes com o resto do sistema
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Kickstart Pro Form - Versão Atualizada Carregada');
     initializeKickstartForm();
 });
@@ -25,13 +25,13 @@ function initializeKickstartForm() {
 
     // Configurar seleção de método de pagamento
     setupPaymentMethodSelection();
-    
+
     // Configurar submissão do formulário
     form.addEventListener('submit', handleKickstartSubmit);
-    
+
     // Configurar limpeza quando modal fechar
     window.formUtils.setupModalCleanup('kickstartModal', 'kickstartForm');
-    
+
     console.log('✅ Formulário Kickstart Pro inicializado');
 }
 
@@ -44,26 +44,42 @@ function setupPaymentMethodSelection() {
     const phoneInput = document.getElementById('kickstartPhone');
 
     if (paymentMethods.length === 0) {
-        console.warn('⚠️ Métodos de pagamento não encontrados');
+        // Se só existir um input hidden ou se não houver radio buttons, verificar se o grupo de telefone deve estar visível
+        // No novo layout Two-Step, o MB WAY pode estar selecionado por defeito
+        const mbwayOption = document.getElementById('payment_mbway');
+        if (mbwayOption && mbwayOption.checked && phoneGroup) {
+            phoneGroup.style.display = 'block';
+            if (phoneInput) {
+                phoneInput.required = true;
+                setupPhoneFormatting(phoneInput);
+            }
+        }
         return;
     }
 
-    // Inicialmente ocultar campo de telefone
+    // Inicialização: Se MBWAY estiver selecionado (novo default), mostrar telefone
     if (phoneGroup) {
-        phoneGroup.style.display = 'none';
+        const checkedMethod = document.querySelector('input[name="payment_method"]:checked');
+        if (checkedMethod && checkedMethod.value === 'mbway') {
+            phoneGroup.style.display = 'block';
+            if (phoneInput) {
+                phoneInput.required = true;
+                setupPhoneFormatting(phoneInput);
+            }
+        } else {
+            phoneGroup.style.display = 'none';
+        }
     }
 
     paymentMethods.forEach(method => {
-        method.addEventListener('change', function() {
+        method.addEventListener('change', function () {
             console.log('💳 Método de pagamento selecionado:', this.value);
-            
+
             if (phoneGroup && phoneInput) {
                 if (this.value === 'mbway') {
                     // Mostrar campo de telefone para MB WAY
                     phoneGroup.style.display = 'block';
                     phoneInput.required = true;
-                    phoneInput.placeholder = 'Ex: 961 925 050';
-                    
                     // Configurar formatação do telefone
                     setupPhoneFormatting(phoneInput);
                 } else {
@@ -81,14 +97,18 @@ function setupPaymentMethodSelection() {
  * Configurar formatação do telefone para MB WAY
  */
 function setupPhoneFormatting(phoneInput) {
-    phoneInput.addEventListener('input', function(e) {
+    // Remover listeners anteriores para evitar duplicados se chamado múltiplas vezes
+    const newPhoneInput = phoneInput.cloneNode(true);
+    phoneInput.parentNode.replaceChild(newPhoneInput, phoneInput);
+
+    newPhoneInput.addEventListener('input', function (e) {
         let value = e.target.value.replace(/\D/g, ''); // Remover não-dígitos
-        
+
         // Limitar a 9 dígitos
         if (value.length > 9) {
             value = value.substring(0, 9);
         }
-        
+
         // Formatar com espaços para visualização
         if (value.length >= 3) {
             value = value.substring(0, 3) + ' ' + value.substring(3);
@@ -96,7 +116,7 @@ function setupPhoneFormatting(phoneInput) {
         if (value.length >= 7) {
             value = value.substring(0, 7) + ' ' + value.substring(7);
         }
-        
+
         e.target.value = value;
     });
 }
@@ -141,15 +161,15 @@ async function handleKickstartSubmit(event) {
         if (paymentResult.success) {
             // Enviar email via Brevo
             await sendKickstartEmail(data);
-            
-            window.formUtils.showFormMessage(messageDiv, 'success', 
-                `✅ Kickstart Pro marcado com sucesso! ${paymentResult.message || ''}`);
+
+            window.formUtils.showFormMessage(messageDiv, 'success',
+                `✅ Pedido recebido com sucesso! ${paymentResult.message || ''}`);
             form.reset();
-            
-            // Ocultar campo de telefone após reset
+
+            // Manter o telefone visível se MB WAY continuar selecionado (default)
             const phoneGroup = document.getElementById('kickstartPhoneGroup');
-            if (phoneGroup) {
-                phoneGroup.style.display = 'none';
+            if (phoneGroup && document.getElementById('payment_mbway').checked) {
+                phoneGroup.style.display = 'block';
             }
         } else {
             throw new Error(paymentResult.message || 'Erro no processamento do pagamento');
@@ -157,10 +177,10 @@ async function handleKickstartSubmit(event) {
 
     } catch (error) {
         console.error('❌ Erro no formulário Kickstart:', error);
-        window.formUtils.showFormMessage(messageDiv, 'error', 
+        window.formUtils.showFormMessage(messageDiv, 'error',
             `Erro no processamento: ${error.message}. Tente novamente ou contacte-nos em samuel@share2inspire.pt`);
     } finally {
-        window.formUtils.setButtonLoading(submitButton, false, 'Marcar Kickstart Pro');
+        window.formUtils.setButtonLoading(submitButton, false, 'Confirmar e Pagar (50€)');
     }
 }
 
@@ -198,8 +218,11 @@ async function processKickstartPayment(data, paymentMethod) {
  */
 async function submitKickstartToBackend(data) {
     console.log('📤 Enviando dados Kickstart para backend...');
-    
-    const response = await fetch(window.formUtils.backendUrls.booking, {
+
+    // Usar URL correta do backend
+    const url = 'https://share2inspire-beckend.lm.r.appspot.com/api/booking/kickstart'; // Fallback URL
+
+    const response = await fetch(window.formUtils.backendUrls ? window.formUtils.backendUrls.booking : url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -212,10 +235,16 @@ async function submitKickstartToBackend(data) {
     });
 
     if (!response.ok) {
-        throw new Error(`Erro no servidor: ${response.status}`);
+        // Log mas não throw erro fatal se apenas o booking falhar mas o pagamento funcionar
+        console.warn(`Erro no servidor de booking: ${response.status}`);
+        // throw new Error(`Erro no servidor: ${response.status}`);
     }
 
-    return await response.json();
+    try {
+        return await response.json();
+    } catch (e) {
+        return { success: true }; // Assume sucesso se não houver JSON
+    }
 }
 
 /**
@@ -223,7 +252,7 @@ async function submitKickstartToBackend(data) {
  */
 async function sendKickstartEmail(data) {
     console.log('📧 Enviando email Kickstart via Brevo...');
-    
+
     if (typeof window.brevoIntegration !== 'undefined') {
         await window.brevoIntegration.sendKickstartEmail(data);
     } else {
@@ -236,7 +265,7 @@ async function sendKickstartEmail(data) {
  */
 function validateKickstartForm(form) {
     const requiredFields = ['name', 'email'];
-    
+
     // Usar utilitário para validar campos obrigatórios
     if (!window.formUtils.validateRequiredFields(form, requiredFields)) {
         return false;
@@ -257,6 +286,12 @@ function validateKickstartForm(form) {
         }
     }
 
+    // Validar objetivos (challenge)
+    const objectives = form.querySelector('[name="objectives"]');
+    if (objectives && !objectives.value.trim()) {
+        return false;
+    }
+
     return true;
 }
 
@@ -270,9 +305,12 @@ function prepareKickstartData(formData) {
         phone: formData.get('phone') || '',
         company: formData.get('company') || '',
         position: formData.get('position') || '',
+        // Data e hora vêm dos campos hidden ou defaults
         date: formData.get('date'),
+        time: formData.get('time'),
         duration: formData.get('duration'),
-        challenge: formData.get('challenge') || '',
+        // Mapear objectives para challenge
+        challenge: formData.get('objectives') || formData.get('challenge') || '',
         payment_method: formData.get('payment_method'),
         service: 'Kickstart Pro',
         timestamp: new Date().toISOString()

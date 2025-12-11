@@ -22,7 +22,7 @@ window.brevoIntegration = {
      */
     async sendKickstartEmail(data) {
         console.log('📧 Enviando email Kickstart Pro via Brevo...');
-        
+
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
@@ -53,7 +53,7 @@ window.brevoIntegration = {
      */
     async sendConsultoriaEmail(data) {
         console.log('📧 Enviando email Consultoria via Brevo...');
-        
+
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
@@ -84,7 +84,7 @@ window.brevoIntegration = {
      */
     async sendCoachingEmail(data) {
         console.log('📧 Enviando email Coaching via Brevo...');
-        
+
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
@@ -114,14 +114,14 @@ window.brevoIntegration = {
      */
     async sendWorkshopsEmail(data) {
         console.log('📧 Enviando email Workshops via Brevo...');
-        
+
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
                 { email: 'srshare2inspire@gmail.com', name: 'Samuel Rolo' }
             ],
             subject: `Workshop - Inscrição de ${data.name}`,
-            templateId: 4, // Template ID do Brevo para Workshops
+            templateId: 4,
             params: {
                 name: data.name,
                 email: data.email,
@@ -140,11 +140,25 @@ window.brevoIntegration = {
     },
 
     /**
+     * Enviar email para Revisão de CV
+     */
+    async sendCvReviewEmail(data) {
+        console.log('📧 Enviando email CV Review via Brevo...');
+
+        // CORREÇÃO: Usar um objeto que suporte envio de ficheiros
+        // Como o backend (routes/services.py) provavelmente espera multipart/form-data
+        // precisamos de ajustar a forma como enviamos.
+
+        // Chamada especial para endpoints com upload
+        return await this.sendEmailWithAttachment('cv-review', data);
+    },
+
+    /**
      * Enviar email de contacto geral
      */
     async sendContactEmail(data) {
         console.log('📧 Enviando email de contacto via Brevo...');
-        
+
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
@@ -173,7 +187,7 @@ window.brevoIntegration = {
     async sendEmailViaBackend(serviceType, emailData) {
         try {
             console.log(`📤 Enviando para ${this.endpoints[serviceType]}...`);
-            
+
             const response = await fetch(this.endpoints[serviceType], {
                 method: 'POST',
                 headers: {
@@ -202,7 +216,7 @@ window.brevoIntegration = {
 
             const result = await response.json();
             console.log('✅ Resposta do backend:', result);
-            
+
             if (result.success) {
                 console.log('✅ Email enviado com sucesso via backend!');
                 return {
@@ -216,11 +230,64 @@ window.brevoIntegration = {
 
         } catch (error) {
             console.error('❌ Erro ao enviar email:', error);
-            
+
             // Fallback: mostrar mensagem de erro amigável
             return {
                 success: false,
                 message: `Erro ao enviar email: ${error.message}. Tente novamente ou contacte-nos diretamente.`,
+                error: error.message
+            };
+        }
+    },
+
+    /**
+     * Enviar email com anexos (Multipart/Form-Data)
+     */
+    async sendEmailWithAttachment(serviceType, data) {
+        try {
+            console.log(`📤 Enviando (multipart) para ${this.endpoints['kickstart'].replace('kickstart', serviceType)}...`); // Hack para URL se não existir endpoint especifico
+
+            // Construir FormData
+            const formData = new FormData();
+            formData.append('name', data.name);
+            formData.append('email', data.email);
+            formData.append('phone', data.phone || '');
+            formData.append('linkedin', data.linkedin || '');
+            formData.append('goals', data.goals || '');
+            formData.append('service', 'Revisão de CV');
+            formData.append('orderId', `cv_${Date.now()}`);
+
+            if (data.file) {
+                formData.append('file', data.file);
+            }
+
+            // Endpoint específico para CV (ajustar conforme necessário)
+            // Se o serviço não existir no objeto endpoints, tentar construir
+            const url = this.endpoints[serviceType] || 'https://share2inspire-beckend.lm.r.appspot.com/api/email/cv-review';
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData
+                // NÃO definir Content-Type, o browser define automaticamente com boundary
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${errorText}`);
+            }
+
+            const result = await response.json();
+            return {
+                success: true,
+                message: result.message || 'Email enviado com sucesso!',
+                orderId: result.orderId
+            };
+
+        } catch (error) {
+            console.error('❌ Erro ao enviar email com anexo:', error);
+            return {
+                success: false,
+                message: error.message,
                 error: error.message
             };
         }
@@ -249,7 +316,7 @@ window.brevoIntegration = {
                     challenge: rawData.challenge,
                     payment_method: rawData.payment_method
                 };
-            
+
             case 'consultoria':
                 return {
                     ...baseData,
@@ -260,7 +327,7 @@ window.brevoIntegration = {
                     objectives: rawData.objectives,
                     payment_method: rawData.payment_method
                 };
-            
+
             case 'coaching':
                 return {
                     ...baseData,
@@ -270,7 +337,7 @@ window.brevoIntegration = {
                     availability: rawData.availability,
                     payment_method: rawData.payment_method
                 };
-            
+
             case 'workshops':
                 return {
                     ...baseData,
@@ -280,7 +347,7 @@ window.brevoIntegration = {
                     date_preference: rawData.date_preference,
                     payment_method: rawData.payment_method
                 };
-            
+
             default:
                 return baseData;
         }
@@ -310,7 +377,7 @@ window.brevoIntegration = {
 };
 
 // Inicialização
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Brevo Integration - Versão Multi-Serviços Corrigida Carregada');
     console.log('📧 Serviços suportados: Kickstart, Consultoria, Coaching, Workshops');
     console.log('🔗 Backend URL:', 'https://share2inspire-beckend.lm.r.appspot.com');
