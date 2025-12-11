@@ -23,24 +23,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Analyze Button Handler
     analyzeBtn.addEventListener('click', async () => {
-        if (!selectedFile) return;
+        console.log("Analyze button clicked");
+        if (!selectedFile) {
+            console.log("No file selected2");
+            return;
+        }
 
         // UI Loading State
         setLoading(true);
 
         try {
             // 1. Extract Text
+            console.log("Starting text extraction...");
             const text = await CVParser.parse(selectedFile);
+            console.log("Text extracted, length:", text.length);
 
             // 2. Analyze Text (Rule-based for now)
+            console.log("Starting analysis...");
             const analysis = analyzeText(text);
 
             // 3. Show Results
+            console.log("Showing results...");
             populateResults(analysis);
             const resultsModal = new bootstrap.Modal(document.getElementById('cvResultsModal'));
             resultsModal.show();
 
         } catch (error) {
+            console.error("Analysis Error:", error);
             alert('Erro ao analisar o CV: ' + error.message);
         } finally {
             setLoading(false);
