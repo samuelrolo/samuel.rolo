@@ -10,11 +10,12 @@
 window.brevoIntegration = {
     // URLs corrigidas do backend
     endpoints: {
-        kickstart: 'https://share2inspire-beckend.lm.r.appspot.com/api/email/kickstart',
-        consultoria: 'https://share2inspire-beckend.lm.r.appspot.com/api/email/consultoria',
-        coaching: 'https://share2inspire-beckend.lm.r.appspot.com/api/email/coaching',
-        workshops: 'https://share2inspire-beckend.lm.r.appspot.com/api/email/workshops',
-        contact: 'https://share2inspire-beckend.lm.r.appspot.com/api/email/contact'
+        kickstart: 'https://share2inspire-beckend.lm.r.appspot.com/api/services/kickstart-email', // Corrigido para coincidir com services.py
+        consultoria: 'https://share2inspire-beckend.lm.r.appspot.com/api/email/consultoria', // AVISO: Não encontrado no backend
+        coaching: 'https://share2inspire-beckend.lm.r.appspot.com/api/email/coaching', // AVISO: Não encontrado no backend
+        workshops: 'https://share2inspire-beckend.lm.r.appspot.com/api/email/workshops', // AVISO: Não encontrado no backend
+        contact: 'https://share2inspire-beckend.lm.r.appspot.com/api/feedback/contact', // Corrigido para coincidir com feedback.py
+        cv_review: 'https://share2inspire-beckend.lm.r.appspot.com/api/services/cv-review' // Adicionado explícito
     },
 
     /**
