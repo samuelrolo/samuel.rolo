@@ -225,12 +225,7 @@ const ReportGenerator = {
             <div class="section-title">Resumo Executivo</div>
         </div>
         <div class="exec-summary">
-            <p>O perfil de <strong>${data.name}</strong> revela um profissional com <strong>${data.years} anos de experiência</strong> sólida na área. 
-            A análise automática detetou competências chave como ${data.skills.slice(0, 3).map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(', ')}, 
-            indicando uma forte aptidão para funções de ${data.role}.</p>
-            <br>
-            <p>A pontuação global de <strong>${data.averageScore}/5.0</strong> reflete um nível de maturidade profissional consistente, 
-            com destaque para a sua formação em ${data.education.join(' e ')}.</p>
+            ${data.executiveSummary.map(para => `<p>${para}</p><br>`).join('')}
         </div>
     </section>
 
@@ -266,7 +261,12 @@ const ReportGenerator = {
             <div class="section-title">Análise de Pontos Fortes</div>
         </div>
         <ul class="content-list strong-points">
-            ${data.strengths.map(strength => `<li>${strength}</li>`).join('')}
+            ${data.strengths.map(s => `
+                <li>
+                    <strong>${s.title}</strong>
+                    ${s.desc}
+                </li>
+            `).join('')}
         </ul>
     </section>
 
@@ -301,15 +301,15 @@ const ReportGenerator = {
                 <div style="display: flex; flex-direction: column; gap: 15px;">
                     <div style="border-left: 3px solid var(--color-gold); padding-left: 15px;">
                         <h4 style="margin: 0; font-size: 14px; color: var(--color-deep-blue);">Mês 1: Aprendizagem</h4>
-                        <p style="font-size: 12px; margin-top: 5px;">Investir em formação nas áreas onde foram detetadas menos keywords.</p>
+                        <p style="font-size: 12px; margin-top: 5px;">${data.actionPlan.m1}</p>
                     </div>
                     <div style="border-left: 3px solid var(--color-light-blue); padding-left: 15px;">
                         <h4 style="margin: 0; font-size: 14px; color: var(--color-deep-blue);">Mês 2: Aplicação</h4>
-                        <p style="font-size: 12px; margin-top: 5px;">Implementar as competências de liderança ou gestão em projetos práticos.</p>
+                        <p style="font-size: 12px; margin-top: 5px;">${data.actionPlan.m2}</p>
                     </div>
                     <div style="border-left: 3px solid var(--color-deep-blue); padding-left: 15px;">
                         <h4 style="margin: 0; font-size: 14px; color: var(--color-deep-blue);">Mês 3: Consolidação</h4>
-                        <p style="font-size: 12px; margin-top: 5px;">Avaliar progresso e atualizar o CV com as novas conquistas.</p>
+                        <p style="font-size: 12px; margin-top: 5px;">${data.actionPlan.m3}</p>
                     </div>
                 </div>
             </div>
