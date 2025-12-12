@@ -130,8 +130,10 @@ function analyzeText(text) {
         education: educationKeywords.filter(k => textLower.includes(k)).slice(0, 3).map(capitalize),
         dimensionScores: dimensionScores,
         averageScore: averageScore.toFixed(1),
-        strengths: generateStrengths(matchedSkills, estimatedYears),
-        recommendation: generateRecommendation(averageScore, matchedSkills)
+        strengths: generateStrengths(matchedSkills, estimatedYears, textLower),
+        recommendation: generateRecommendation(averageScore, matchedSkills),
+        executiveSummary: generateExecutiveSummary(detectName(text), estimatedYears, detectRole(text), matchedSkills, educationKeywords.filter(k => textLower.includes(k)).slice(0, 3).map(capitalize)),
+        actionPlan: generate90DayPlan(matchedSkills, estimatedYears)
     };
 }
 
@@ -141,34 +143,116 @@ function capitalize(str) {
 }
 
 function detectName(text) {
-    // Very naive name detection (first line usually)
     const lines = text.split('\n').filter(l => l.trim().length > 0);
-    if (lines.length > 0) return lines[0].substring(0, 30); // Cap at 30 chars
-    return null;
+    if (lines.length > 0) return lines[0].substring(0, 30);
+    return "Candidato";
 }
 
 function detectRole(text) {
-    if (text.toLowerCase().includes('diretor')) return "Diretor de Recursos Humanos";
-    if (text.toLowerCase().includes('manager')) return "HR Manager";
-    if (text.toLowerCase().includes('técnico')) return "Técnico de RH";
-    if (text.toLowerCase().includes('consultor')) return "Consultor de RH";
+    if (text.toLowerCase().includes('diretor') || text.toLowerCase().includes('director')) return "Diretor de Recursos Humanos";
+    if (text.toLowerCase().includes('manager') || text.toLowerCase().includes('gestor')) return "HR Manager";
+    if (text.toLowerCase().includes('business partner')) return "HR Business Partner";
+    if (text.toLowerCase().includes('técnico') || text.toLowerCase().includes('specialist')) return "Especialista de RH";
+    if (text.toLowerCase().includes('consultor') || text.toLowerCase().includes('consultant')) return "Consultor de RH";
     return "Profissional de RH";
 }
 
-function generateStrengths(skills, years) {
+function generateExecutiveSummary(name, years, role, skills, education) {
+    const skillText = skills.slice(0, 3).map(s => capitalize(s)).join(', ');
+    const eduText = education.length > 0 ? `apoiado por uma formação em ${education.join(' e ')}` : "com um forte background prático";
+
+    return [
+        `O perfil de <strong>${name || 'Candidato'}</strong> revela um profissional com uma trajetória de <strong>${years} anos</strong>, demonstrando uma consistência notável na área de Gestão de Pessoas. A análise identifica um posicionamento alinhado com funções de <strong>${role}</strong>, destacando-se pela combinação de competências em ${skillText}.`,
+
+        `A maturidade profissional evidenciada sugere uma capacidade de navegar entre desafios operacionais e estratégicos. O seu percurso, ${eduText}, indica um potencial elevado para impulsionar transformações organizacionais e acrescentar valor imediato, especialmente em contextos que valorizem a ${skills.includes('liderança') ? 'gestão de equipas e liderança' : 'execução técnica e otimização de processos'}.`
+    ];
+}
+
+function generateStrengths(skills, years, text) {
     let strengths = [];
-    if (years > 5) strengths.push("Sólida experiência profissional");
-    if (skills.length > 5) strengths.push("Perfil multifacetado com várias competências");
-    if (skills.includes('liderança')) strengths.push("Aptidão para gestão de equipas");
-    if (skills.includes('people analytics')) strengths.push("Orientação para dados (Data-driven)");
-    if (strengths.length === 0) strengths.push("Potencial de crescimento identificado");
-    return strengths;
+
+    // Experience Strength
+    if (years > 10) {
+        strengths.push({
+            title: "Senioridade e Consistência",
+            desc: "Trajetória profissional longa demonstrando resiliência e capacidade de adaptação a diferentes ciclos organizacionais."
+        });
+    } else if (years > 5) {
+        strengths.push({
+            title: "Sólida Experiência Operacional",
+            desc: "Domínio comprovado das funções fundamentais de RH, com autonomia para gerir processos end-to-end."
+        });
+    } else {
+        strengths.push({
+            title: "Potencial de Crescimento Acelerado",
+            desc: "Perfil dinâmico com vontade de aprender e rápida curva de evolução em novas funções."
+        });
+    }
+
+    // Skills Strengths
+    if (skills.includes('liderança') || skills.includes('gestão de equipas')) {
+        strengths.push({
+            title: "Liderança e Gestão de Pessoas",
+            desc: "Competência para motivar, desenvolver e alinhar equipas com os objetivos estratégicos da organização."
+        });
+    }
+
+    if (skills.includes('estratégia') || skills.includes('transformação digital')) {
+        strengths.push({
+            title: "Visão Estratégica e Transformação",
+            desc: "Capacidade de desenhar e implementar mudanças estruturais, ligando o capital humano aos resultados de negócio."
+        });
+    }
+
+    if (skills.includes('people analytics') || text.includes('dados') || text.includes('excel')) {
+        strengths.push({
+            title: "Orientação Analítica (Data-Driven)",
+            desc: "Utilização de dados para fundamentar decisões, otimizar processos e medir o retorno do investimento em RH."
+        });
+    }
+
+    if (skills.includes('recrutamento') || skills.includes('onboarding')) {
+        strengths.push({
+            title: "Talent Acquisition Excellence",
+            desc: "Forte aptidão para identificar, atrair e integrar o melhor talento, fortalecendo o employer branding."
+        });
+    }
+
+    // Default filler if not enough
+    if (strengths.length < 3) {
+        strengths.push({
+            title: "Compromisso e Profissionalismo",
+            desc: "Evidência de dedicação e alinhamento com boas práticas de gestão de recursos humanos."
+        });
+        strengths.push({
+            title: "Foco em Resultados",
+            desc: "Orientação pragmática para a concretização de objetivos e melhoria contínua."
+        });
+    }
+
+    return strengths.slice(0, 5);
 }
 
 function generateRecommendation(score, skills) {
-    if (score >= 4) return "Perfil de excelência! Considere focar em mentoria estratégica e inovação disruptiva.";
-    if (score >= 3) return "Perfil sólido. Sugerimos aprofundar competências em 'People Analytics' e digitalização de processos.";
-    return "Recomendamos investir em formação base de RH e desenvolver soft skills de comunicação.";
+    if (score >= 4.5) return "Perfil de topo. O foco deve transitar da gestão para a influência estratégica (C-Level Advisor) e inovação disruptiva.";
+    if (score >= 3.5) return "Perfil sénior muito sólido. Recomendamos aprofundar competências em Transformação Digital e Liderança de Mudança para chegar ao próximo nível.";
+    return "Perfil em crescimento. Investir na consolidação de hard skills e começar a liderar pequenos projetos para ganhar visibilidade.";
+}
+
+function generate90DayPlan(skills, years) {
+    if (years > 5) {
+        return {
+            m1: "Realizar um diagnóstico 360º das competências atuais e identificar lacunas em tecnologias emergentes (AI, Analytics).",
+            m2: "Desenhar e liderar um projeto piloto de inovação ou melhoria de processos que tenha impacto visível no negócio.",
+            m3: "Mentoria de perfis juniores e consolidação do posicionamento como Thought Leader interno ou no LinkedIn."
+        };
+    } else {
+        return {
+            m1: "Focar na aprendizagem intensiva das ferramentas core da função e alinhar expectativas com a liderança.",
+            m2: "Assumir autonomia total em processos recorrentes e identificar uma área para especialização.",
+            m3: "Solicitar feedback estruturado e apresentar um plano de melhoria contínua para a sua função."
+        };
+    }
 }
 
 /**
