@@ -372,11 +372,11 @@ function populateResults(data) {
             // 1. Send Payment Request
             const paymentResult = await window.ifthenpayIntegration.processPayment('mbway', {
                 amount: '30.00',
-                phone: phone,
+                mobileNumber: phone,
                 orderId: 'CVREV-' + Date.now(), // Unique ID
                 description: 'Revisão CV Profissional',
-                clientName: name,
-                clientEmail: email
+                customerName: name,
+                customerEmail: email
             });
 
             if (paymentResult.success) {
@@ -472,4 +472,73 @@ function renderChart(scores) {
         }
     });
 }
+
+// --- Contact Form Logic (Navbar) ---
+document.addEventListener('DOMContentLoaded', () => {
+    const contactForm = document.getElementById('contactForm');
+    const msgInput = document.getElementById('contactMessage');
+    const charCount = document.getElementById('charCount');
+
+    if (msgInput) {
+        msgInput.addEventListener('input', () => {
+            if (charCount) charCount.textContent = msgInput.value.length;
+        });
+    }
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+            const statusDiv = document.getElementById('contactStatus');
+            statusDiv.classList.add('d-none');
+            // Reset content
+            statusDiv.innerHTML = '';
+
+            const data = {
+                name: document.getElementById('contactName').value,
+                email: document.getElementById('contactEmail').value,
+                subject: document.getElementById('contactSubject').value,
+                message: document.getElementById('contactMessage').value
+            };
+
+            try {
+                if (window.brevoIntegration) {
+                    const result = await window.brevoIntegration.sendContactEmail(data);
+
+                    if (result.success) {
+                        statusDiv.innerHTML = '<div class="alert alert-success mt-3"><i class="fas fa-check-circle me-2"></i>Mensagem enviada com sucesso!</div>';
+                        statusDiv.classList.remove('d-none');
+                        contactForm.reset();
+                        if (charCount) charCount.textContent = '0';
+
+                        setTimeout(() => {
+                            try {
+                                const modalEl = document.getElementById('contactModal');
+                                const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                                modal.hide();
+                            } catch (e) { }
+                            statusDiv.classList.add('d-none');
+                        }, 3000);
+                    } else {
+                        throw new Error(result.message || "Erro ao enviar.");
+                    }
+                } else {
+                    throw new Error("Sistema de envio indisponível.");
+                }
+            } catch (error) {
+                console.error(error);
+                statusDiv.innerHTML = `<div class="alert alert-danger mt-3">Erro: ${error.message}</div>`;
+                statusDiv.classList.remove('d-none');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+    }
+});
 
