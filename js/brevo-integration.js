@@ -218,7 +218,7 @@ window.brevoIntegration = {
             const result = await response.json();
             console.log('✅ Resposta do backend:', result);
 
-            if (result.success) {
+            if (result.success || result.status === 'success') {
                 console.log('✅ Email enviado com sucesso via backend!');
                 return {
                     success: true,
@@ -226,7 +226,7 @@ window.brevoIntegration = {
                     orderId: result.orderId
                 };
             } else {
-                throw new Error(result.error || 'Erro desconhecido do backend');
+                throw new Error(result.error || 'O backend não retornou sucesso explícito.');
             }
 
         } catch (error) {
