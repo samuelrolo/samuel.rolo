@@ -197,6 +197,31 @@ const ReportGenerator = {
             body { background-color: white; }
             .container { width: 100%; max-width: none; padding: 15mm; }
         }
+        
+        /* Mobile Report View */
+        @media screen and (max-width: 768px) {
+            .container {
+                width: 100%;
+                padding: 20px;
+                margin: 0;
+            }
+            .header-profile {
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            .logo-container { text-align: center; }
+            .candidate-meta { justify-content: center; }
+        }
     </style>
 </head>
 <body>
@@ -263,8 +288,8 @@ const ReportGenerator = {
         <ul class="content-list strong-points">
             ${data.strengths.map(s => `
                 <li>
-                    <strong>${s.title}</strong>
-                    ${s.desc}
+                    <strong>${s.title || 'Ponto Forte'}</strong>
+                    ${s.desc || ''}
                 </li>
             `).join('')}
         </ul>
@@ -272,7 +297,7 @@ const ReportGenerator = {
 
     <section>
         <div class="section-header">
-            <div class="section-icon"><i class="fas fa-radar"></i></div>
+            <div class="section-icon"><i class="fas fa-bullseye"></i></div>
             <div class="section-title">Radar de Competências</div>
         </div>
         <div class="chart-container">

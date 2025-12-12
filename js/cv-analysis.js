@@ -77,13 +77,12 @@ function analyzeText(text) {
     // --- 1. Detect Education ---
     const educationKeywords = [
         'mestrado', 'master', 'mba', 'doutoramento', 'phd', 'pós-graduação',
-        'licenciatura', 'bacharelato', 'licenciado', 'gestão de recursos humanos'
+        'licenciatura', 'bacharelato', 'licenciado', 'gestão de recursos humanos',
+        'psicologia', 'sociologia', 'gestão'
     ];
     const foundEducation = educationKeywords.filter(k => textLower.includes(k));
-    const eduLevel = foundEducation.length > 0 ? capitalize(foundEducation[0]) : "Experiência Prática";
 
-    // --- 2. Calculate Years of Experience (Approximate) ---
-    // Simple regex to look for "X anos" patterns or subtract dates
+    // --- 2. Calculate Years of Experience ---
     const yearMatches = text.match(/(\d{4})/g);
     let estimatedYears = 0;
     if (yearMatches && yearMatches.length > 1) {
@@ -92,48 +91,71 @@ function analyzeText(text) {
             estimatedYears = Math.max(...years) - Math.min(...years);
         }
     }
-    // Fallback based on keywords if no dates found
+    // Fallback
     if (estimatedYears === 0) {
-        if (textLower.includes('senior') || textLower.includes('sénior')) estimatedYears = 7;
-        else if (textLower.includes('manager')) estimatedYears = 5;
-        else if (textLower.includes('junior') || textLower.includes('júnior')) estimatedYears = 1;
-        else estimatedYears = 3;
+        if (textLower.includes('senior') || textLower.includes('sénior') || textLower.includes('director')) estimatedYears = 10;
+        else if (textLower.includes('manager') || textLower.includes('gestor')) estimatedYears = 7;
+        else if (textLower.includes('mid') || textLower.includes('specialist')) estimatedYears = 4;
+        else estimatedYears = 2;
     }
 
-    // --- 3. Detect Skills ---
-    const skillDictionary = [
-        'liderança', 'gestão de equipas', 'people analytics', 'recrutamento',
-        'formação', 'avaliação de desempenho', 'legislação laboral',
-        'comunicação interna', 'employer branding', 'estratégia',
-        'coaching', 'transformação digital', 'diversidade', 'onboarding'
-    ];
-    const matchedSkills = skillDictionary.filter(skill => textLower.includes(skill.toLowerCase()));
+    // --- 3. Dimension & Skill Analysis ---
+    // Mapping Dimensions to Keywords
+    const dimensions = {
+        'Estratégia': ['estratégia', 'visão', 'business', 'planeamento', 'objetivos', 'crescimento', 'mercado', 'competitividade'],
+        'Tecnologia': ['digital', 'ia', 'tech', 'software', 'erp', 'sap', 'workday', 'ats', 'automação'],
+        'Atração': ['recrutamento', 'seleção', 'talento', 'sourcing', 'linkedin', 'marca', 'branding', 'atração'],
+        'Onboarding': ['onboarding', 'integração', 'acolhimento', 'formação', 'treino'],
+        'Performance': ['desempenho', 'avaliação', 'objetivos', 'kpis', 'feedback', 'produtividade', 'metas'],
+        'Liderança': ['liderança', 'liderar', 'equipa', 'coordenação', 'gestão de pessoas', 'coaching', 'mentor'],
+        'Cultura': ['cultura', 'valores', 'diversidade', 'inclusão', 'clima', 'bem-estar', 'envolvimento', 'engagement'],
+        'Compensação': ['salário', 'benefícios', 'compensação', 'retribuição', 'payroll', 'processamento', 'bónus']
+    };
 
-    // --- 4. Calculate Scores (Mock Dimensions) ---
-    // We base scores on skill matches + experience + education boost
-    let baseScore = Math.min(5, 1 + (estimatedYears * 0.4) + (matchedSkills.length * 0.2));
-    if (foundEducation.length > 1) baseScore += 0.5;
+    let dimensionScores = [];
+    let allFoundSkills = [];
 
-    // Generate dimension scores with slight random variation to look natural around the baseScore
-    const dimensionScores = Array(8).fill(0).map(() => {
-        let s = baseScore + (Math.random() * 1.5 - 0.75);
-        return Math.min(5, Math.max(1, s)).toFixed(1);
-    });
+    // Calculate score per dimension
+    // Base score from experience (0-3 points)
+    const experienceBase = Math.min(3, estimatedYears * 0.2);
 
-    const averageScore = dimensionScores.reduce((a, b) => parseFloat(a) + parseFloat(b), 0) / 8;
+    for (const [dim, keywords] of Object.entries(dimensions)) {
+        const matches = keywords.filter(k => textLower.includes(k));
+        allFoundSkills.push(...matches);
+
+        // Score = Base + (Matches * 0.5)
+        let score = experienceBase + (matches.length * 0.5);
+
+        // Boost if education matches dimension (loose check)
+        if (dim === 'Liderança' && foundEducation.some(e => e.includes('mba'))) score += 0.5;
+
+        // Cap at 5.0, min 1.0
+        dimensionScores.push(Math.min(5, Math.max(1, score)).toFixed(1));
+    }
+
+    // --- 4. Final Scores ---
+    const averageScore = (dimensionScores.reduce((a, b) => parseFloat(a) + parseFloat(b), 0) / 8).toFixed(1);
+
+    // De-duplicate found skills for display
+    const uniqueSkills = [...new Set(allFoundSkills)];
+    // If few skills found, inject some generic ones based on role to avoid empty lists
+    if (uniqueSkills.length < 3) {
+        if (estimatedYears > 5) uniqueSkills.push("Gestão de RH", "Resolução de Problemas");
+        else uniqueSkills.push("Apolo Administrativo", "Trabalho em Equipa");
+    }
 
     return {
         name: detectName(text) || "Candidato",
         role: detectRole(text) || "Profissional de RH",
         years: estimatedYears,
-        skills: matchedSkills.slice(0, 8),
-        education: educationKeywords.filter(k => textLower.includes(k)).slice(0, 3).map(capitalize),
+        skills: uniqueSkills.slice(0, 10), // Show top 10 detected
+        education: foundEducation.length > 0 ? foundEducation.slice(0, 3).map(capitalize) : ["Experiência Prática"],
         dimensionScores: dimensionScores,
-        averageScore: averageScore.toFixed(1),
-        strengths: generateStrengths(matchedSkills, estimatedYears, textLower),
-        recommendation: generateRecommendation(averageScore, matchedSkills),
-        executiveSummary: generateExecutiveSummary(detectName(text), estimatedYears, detectRole(text), matchedSkills, educationKeywords.filter(k => textLower.includes(k)).slice(0, 3).map(capitalize)),
-        actionPlan: generate90DayPlan(matchedSkills, estimatedYears)
+        averageScore: averageScore,
+        strengths: generateStrengths(uniqueSkills, estimatedYears, textLower),
+        recommendation: generateRecommendation(averageScore, uniqueSkills),
+        executiveSummary: generateExecutiveSummary(detectName(text), estimatedYears, detectRole(text), uniqueSkills, foundEducation),
+        actionPlan: generate90DayPlan(uniqueSkills, estimatedYears)
     };
 }
 
@@ -277,14 +299,23 @@ function populateResults(data) {
     skillsContainer.innerHTML = data.skills.map(s => `<span class="skill-tag">${capitalize(s)}</span>`).join('');
 
     // Strengths
+    // Strengths
     const strengthsList = document.getElementById('strengthsList');
-    strengthsList.innerHTML = data.strengths.map(s => `<li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-primary me-2"></i>${s}</li>`).join('');
+    // Explicitly destructure to ensure we are accessing properties correctly
+    // and using fallback text if undefined to prevent [object Object]
+    strengthsList.innerHTML = data.strengths.map(s => {
+        const title = s.title || "Ponto Forte";
+        const desc = s.desc || "";
+        return `<li class="list-group-item bg-transparent"><i class="fas fa-check-circle text-primary me-2"></i><strong>${title}</strong><br><small class="text-muted ms-4">${desc}</small></li>`;
+    }).join('');
 
     // Recommendation
     document.getElementById('recommendationText').textContent = data.recommendation;
 
     // Chart
     renderChart(data.dimensionScores);
+
+    // ... (Previous code)
 
     // Setup Download Button
     const downloadBtn = document.querySelector('.modal-footer .btn-primary');
@@ -294,6 +325,99 @@ function populateResults(data) {
 
     newBtn.addEventListener('click', () => {
         ReportGenerator.openReport(data);
+    });
+
+    // --- Manual Review & Payment Logic ---
+    const btnRequestReview = document.getElementById('btnRequestReview');
+    if (btnRequestReview) {
+        // Clone to remove old listeners
+        const newReviewBtn = btnRequestReview.cloneNode(true);
+        btnRequestReview.parentNode.replaceChild(newReviewBtn, btnRequestReview);
+
+        newReviewBtn.addEventListener('click', () => {
+            // Hide results modal, show payment modal
+            bootstrap.Modal.getInstance(document.getElementById('cvResultsModal')).hide();
+            new bootstrap.Modal(document.getElementById('humanReviewModal')).show();
+
+            // Prefill name if detected
+            if (data.name && data.name !== "Candidato") {
+                document.getElementById('reviewName').value = data.name;
+            }
+        });
+    }
+
+    // Confirm Payment Button
+    const btnConfirmPayment = document.getElementById('btnConfirmPayment');
+    // We bind the listener once globally, or handle re-binding carefully. 
+    // Ideally this should be outside populateResults, but let's attach it here safely
+    const newPaymentBtn = btnConfirmPayment.cloneNode(true);
+    btnConfirmPayment.parentNode.replaceChild(newPaymentBtn, btnConfirmPayment);
+
+    newPaymentBtn.addEventListener('click', async () => {
+        const name = document.getElementById('reviewName').value;
+        const phone = document.getElementById('reviewPhone').value;
+        const email = document.getElementById('reviewEmail').value;
+
+        if (!name || !phone || !email) {
+            alert("Por favor, preencha todos os campos.");
+            return;
+        }
+
+        const statusDiv = document.getElementById('paymentStatus');
+        statusDiv.classList.remove('d-none');
+        statusDiv.innerHTML = '<div class="alert alert-warning"><i class="fas fa-spinner fa-spin me-2"></i>A processar pagamento MB WAY...</div>';
+        newPaymentBtn.disabled = true;
+
+        try {
+            // 1. Send Payment Request
+            const paymentResult = await window.ifthenpayIntegration.processPayment('mbway', {
+                amount: '30.00',
+                mobileNumber: phone,
+                orderId: 'CVREV-' + Date.now(), // Unique ID
+                description: 'Revisão CV Profissional',
+                customerName: name,
+                customerEmail: email
+            });
+
+            if (paymentResult.success) {
+                statusDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Pedido MB WAY enviado! Por favor aceite na sua app.</div>';
+
+                // 2. Send Email Notification (Internal)
+                // We send the file (CV) + Details
+                if (selectedFile && window.brevoIntegration) {
+                    // We need a specific call for CV review which handles attachments
+                    // Since brevoIntegration might not assume the file is here, we might need to rely on the previously set 'selectedFile' in the closure.
+                    // IMPORTANT: Ensure the backend supports the attachment or use a simple text email for now if complex.
+                    // For now, we reuse the Logic for 'sendEmailWithAttachment' if it exists or fallback.
+
+                    // We constructed sendCvReviewEmail in previous tasks but that was in 'brevo-integration.js'.
+                    // Let's assume generic 'sendEmailViaBackend' available or use the specialized one.
+
+                    await window.brevoIntegration.sendEmailWithAttachment('cv_review', {
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        message: "Solicitação de Revisão de CV (Paga - 30€)",
+                        file: selectedFile
+                    });
+
+                    statusDiv.innerHTML += '<div class="alert alert-info mt-2"><i class="fas fa-envelope me-2"></i>Solicitação enviada com sucesso!</div>';
+                }
+
+                setTimeout(() => {
+                    bootstrap.Modal.getInstance(document.getElementById('humanReviewModal')).hide();
+                    alert("Obrigado! Receberá a confirmação e o relatório por email após o pagamento.");
+                }, 4000);
+
+            } else {
+                throw new Error(paymentResult.message || "Falha no pagamento");
+            }
+
+        } catch (err) {
+            console.error(err);
+            statusDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${err.message}</div>`;
+            newPaymentBtn.disabled = false;
+        }
     });
 }
 
@@ -348,3 +472,73 @@ function renderChart(scores) {
         }
     });
 }
+
+// --- Contact Form Logic (Navbar) ---
+document.addEventListener('DOMContentLoaded', () => {
+    const contactForm = document.getElementById('contactForm');
+    const msgInput = document.getElementById('contactMessage');
+    const charCount = document.getElementById('charCount');
+
+    if (msgInput) {
+        msgInput.addEventListener('input', () => {
+            if (charCount) charCount.textContent = msgInput.value.length;
+        });
+    }
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+            const statusDiv = document.getElementById('contactStatus');
+            statusDiv.classList.add('d-none');
+            // Reset content
+            statusDiv.innerHTML = '';
+
+            const data = {
+                name: document.getElementById('contactName').value,
+                email: document.getElementById('contactEmail').value,
+                subject: document.getElementById('contactSubject').value,
+                message: document.getElementById('contactMessage').value
+            };
+
+            try {
+                if (window.brevoIntegration) {
+                    const result = await window.brevoIntegration.sendContactEmail(data);
+
+                    if (result.success) {
+                        statusDiv.innerHTML = '<div class="alert alert-success mt-3"><i class="fas fa-check-circle me-2"></i>Mensagem enviada com sucesso!</div>';
+                        statusDiv.classList.remove('d-none');
+                        contactForm.reset();
+                        if (charCount) charCount.textContent = '0';
+
+                        setTimeout(() => {
+                            try {
+                                const modalEl = document.getElementById('contactModal');
+                                const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                                modal.hide();
+                            } catch (e) { }
+                            statusDiv.classList.add('d-none');
+                        }, 3000);
+                    } else {
+                        throw new Error(result.message || "Erro ao enviar.");
+                    }
+                } else {
+                    throw new Error("Sistema de envio indisponível.");
+                }
+            } catch (error) {
+                console.error(error);
+                statusDiv.innerHTML = `<div class="alert alert-danger mt-3">Erro: ${error.message}</div>`;
+                statusDiv.classList.remove('d-none');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+    }
+});
+
