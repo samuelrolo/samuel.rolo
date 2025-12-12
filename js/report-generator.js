@@ -197,6 +197,31 @@ const ReportGenerator = {
             body { background-color: white; }
             .container { width: 100%; max-width: none; padding: 15mm; }
         }
+        
+        /* Mobile Report View */
+        @media screen and (max-width: 768px) {
+            .container {
+                width: 100%;
+                padding: 20px;
+                margin: 0;
+            }
+            .header-profile {
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            .logo-container { text-align: center; }
+            .candidate-meta { justify-content: center; }
+        }
     </style>
 </head>
 <body>

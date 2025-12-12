@@ -110,11 +110,12 @@
 /* Modal Styling - Cleaner Look */
 .modal-content {
     border: none;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
 }
 
 .modal-header {
-    background-color: white; /* Was implied dark in screenshot, forcing white */
+    background-color: white;
+    /* Was implied dark in screenshot, forcing white */
     border-bottom: 2px solid var(--primary-color) !important;
 }
 
@@ -123,6 +124,39 @@
 }
 
 /* Force dark close button if header is white */
-.btn-close {
-    filter: none; 
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .cv-hero {
+        padding: 120px 0 60px;
+        background-position: center top;
+    }
+
+    .upload-card {
+        padding: 1.5rem !important;
+        margin-top: -30px;
+    }
+
+    .feature-box {
+        margin-bottom: 20px;
+    }
+
+    /* Adjust modal for mobile */
+    .modal-dialog {
+        margin: 10px;
+    }
+
+    .avatar-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    /* Ensure navbar collapses with dark bg */
+    .navbar-collapse {
+        background: rgba(33, 37, 41, 0.95);
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 10px;
+    }
 }
