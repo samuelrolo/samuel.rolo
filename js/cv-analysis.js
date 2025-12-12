@@ -201,6 +201,16 @@ function populateResults(data) {
 
     // Chart
     renderChart(data.dimensionScores);
+
+    // Setup Download Button
+    const downloadBtn = document.querySelector('.modal-footer .btn-primary');
+    // Remove previous event listeners to avoid duplicates (cloning node is a quick hack)
+    const newBtn = downloadBtn.cloneNode(true);
+    downloadBtn.parentNode.replaceChild(newBtn, downloadBtn);
+
+    newBtn.addEventListener('click', () => {
+        ReportGenerator.openReport(data);
+    });
 }
 
 function renderStars(score) {
