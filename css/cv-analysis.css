@@ -106,3 +106,23 @@
 .modal.show .modal-body {
     animation: fadeIn 0.4s ease-out;
 }
+
+/* Modal Styling - Cleaner Look */
+.modal-content {
+    border: none;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+.modal-header {
+    background-color: white; /* Was implied dark in screenshot, forcing white */
+    border-bottom: 2px solid var(--primary-color) !important;
+}
+
+.modal-title {
+    color: var(--secondary-color);
+}
+
+/* Force dark close button if header is white */
+.btn-close {
+    filter: none; 
+}
