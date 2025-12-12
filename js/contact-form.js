@@ -4,7 +4,7 @@
  */
 
 // Executar quando o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('🔄 Inicializando formulário de contacto...');
     initContactForm();
 });
@@ -15,10 +15,10 @@ document.addEventListener('DOMContentLoaded', function() {
 function initContactForm() {
     // Inicializar o modal de contacto se não existir
     initContactModal();
-    
+
     // Adicionar event listeners para os botões de contacto
     setupContactButtons();
-    
+
     // Garantir que o event listener do botão de submissão seja adicionado
     setTimeout(addSubmitButtonListener, 500);
 }
@@ -30,13 +30,13 @@ function addSubmitButtonListener() {
     const submitButton = document.getElementById('submitContact');
     if (submitButton) {
         console.log('✅ Adicionando event listener ao botão de submissão...');
-        
+
         // Remover event listeners existentes para evitar duplicação
         submitButton.removeEventListener('click', handleContactFormSubmit);
-        
+
         // Adicionar novo event listener
         submitButton.addEventListener('click', handleContactFormSubmit);
-        
+
         // Marcar que o event listener foi adicionado
         submitButton._hasClickListener = true;
     } else {
@@ -52,7 +52,7 @@ function initContactModal() {
     // Verificar se o modal já existe no DOM
     if (!document.getElementById('contactModal')) {
         console.log('🔄 Criando modal de contacto...');
-        
+
         // Criar o elemento do modal
         const modalHTML = `
         <!-- Modal de Contacto -->
@@ -135,12 +135,10 @@ function initContactModal() {
             </div>
           </div>
         </div>`;
-        
-        // Adicionar o modal ao DOM
-        const modalContainer = document.createElement('div');
-        modalContainer.innerHTML = modalHTML;
-        document.body.appendChild(modalContainer);
-        
+
+        // Adicionar o modal ao DOM (sem wrapper extra)
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
         // Inicializar o modal Bootstrap
         if (typeof bootstrap !== 'undefined') {
             const contactModal = document.getElementById('contactModal');
@@ -148,14 +146,14 @@ function initContactModal() {
                 new bootstrap.Modal(contactModal);
             }
         }
-        
+
         // Adicionar event listener para o botão de submissão
         setTimeout(addSubmitButtonListener, 100);
-        
+
         // Adicionar validação de formulário
         const contactForm = document.getElementById('contactForm');
         if (contactForm) {
-            contactForm.addEventListener('submit', function(event) {
+            contactForm.addEventListener('submit', function (event) {
                 event.preventDefault();
                 handleContactFormSubmit();
             });
@@ -168,25 +166,33 @@ function initContactModal() {
  */
 function setupContactButtons() {
     console.log('🔄 Configurando botões de contacto...');
-    
+
     // Selecionar todos os botões/links que devem abrir o modal de contacto
     const contactButtons = document.querySelectorAll('a[href*="#contactos"], .btn-secondary');
-    
+
     contactButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
+        button.addEventListener('click', function (event) {
             // Verificar se o link é para a secção de contactos
-            if (this.getAttribute('href') === 'index.html#contactos' || 
+            if (this.getAttribute('href') === 'index.html#contactos' ||
                 this.getAttribute('href') === '#contactos' ||
                 (this.classList.contains('btn-secondary') && this.textContent.includes('Contacto'))) {
                 event.preventDefault();
-                
+                console.log('👆 Botão de contacto clicado!');
+
                 // Abrir o modal
-                if (typeof bootstrap !== 'undefined') {
+                const bs = (typeof window.bootstrap !== 'undefined') ? window.bootstrap : ((typeof bootstrap !== 'undefined') ? bootstrap : null);
+
+                if (bs) {
                     const contactModal = document.getElementById('contactModal');
                     if (contactModal) {
-                        const modal = new bootstrap.Modal(contactModal);
+                        const modal = new bs.Modal(contactModal);
                         modal.show();
+                        console.log('✅ Modal aberto');
+                    } else {
+                        console.error('❌ Elemento contactModal não encontrado no DOM');
                     }
+                } else {
+                    console.error('❌ Bootstrap não encontrado');
                 }
             }
         });
@@ -198,33 +204,33 @@ function setupContactButtons() {
  */
 function handleContactFormSubmit() {
     console.log('🔄 Processando submissão do formulário...');
-    
+
     // Verificar se o formulário é válido
     const form = document.getElementById('contactForm');
     if (!form.checkValidity()) {
         form.reportValidity();
         return;
     }
-    
+
     // Verificar se a política de privacidade foi aceite
     const privacyPolicy = document.getElementById('privacyPolicy');
     if (!privacyPolicy.checked) {
         alert('Por favor, aceite a Política de Privacidade para continuar.');
         return;
     }
-    
+
     // Mostrar indicador de carregamento
     const submitButton = document.getElementById('submitContact');
     const originalButtonText = submitButton.innerHTML;
     window.formUtils.setButtonLoading(submitButton, true, 'A enviar...');
-    
+
     // Esconder mensagens anteriores
     document.getElementById('contactSuccess').classList.add('d-none');
     document.getElementById('contactError').classList.add('d-none');
-    
+
     // Recolher dados do formulário
     const formData = new FormData(form);
-    
+
     // Converter para objeto para envio via API
     const contactData = {
         name: formData.get('name'),
@@ -235,9 +241,9 @@ function handleContactFormSubmit() {
         message: formData.get('message'),
         hasAttachment: formData.get('attachment') && formData.get('attachment').size > 0
     };
-    
+
     console.log('📝 Dados do formulário:', contactData);
-    
+
     // Verificar se há anexo
     const attachment = formData.get('attachment');
     if (attachment && attachment.size > 0) {
@@ -248,19 +254,19 @@ function handleContactFormSubmit() {
             window.formUtils.setButtonLoading(submitButton, false, originalButtonText);
             return;
         }
-        
+
         // Converter anexo para base64 para envio
         const reader = new FileReader();
         reader.readAsDataURL(attachment);
-        reader.onload = function() {
+        reader.onload = function () {
             contactData.attachmentBase64 = reader.result.split(',')[1];
             contactData.attachmentName = attachment.name;
             contactData.attachmentType = attachment.type;
-            
+
             // Enviar dados com anexo
             sendContactData(contactData, submitButton, originalButtonText);
         };
-        reader.onerror = function() {
+        reader.onerror = function () {
             document.getElementById('contactError').textContent = 'Erro ao processar o anexo. Por favor, tente novamente.';
             document.getElementById('contactError').classList.remove('d-none');
             window.formUtils.setButtonLoading(submitButton, false, originalButtonText);
@@ -279,24 +285,24 @@ function handleContactFormSubmit() {
  */
 function sendContactData(data, submitButton, originalButtonText) {
     console.log('📤 Enviando dados para o backend...');
-    
+
     // Utilizar a integração Brevo para enviar o email
     if (window.brevoIntegration && typeof window.brevoIntegration.sendContactEmail === 'function') {
         console.log('🔄 Utilizando integração Brevo...');
-        
+
         window.brevoIntegration.sendContactEmail(data)
             .then(response => {
                 console.log('✅ Resposta do backend:', response);
-                
+
                 // Mostrar mensagem de sucesso
                 document.getElementById('contactSuccess').classList.remove('d-none');
-                
+
                 // Limpar formulário
                 document.getElementById('contactForm').reset();
-                
+
                 // Restaurar botão
                 window.formUtils.setButtonLoading(submitButton, false, originalButtonText);
-                
+
                 // Fechar modal após 3 segundos
                 setTimeout(() => {
                     if (typeof bootstrap !== 'undefined') {
@@ -309,18 +315,18 @@ function sendContactData(data, submitButton, originalButtonText) {
             })
             .catch(error => {
                 console.error('❌ Erro ao enviar mensagem:', error);
-                
+
                 // Mostrar mensagem de erro
                 const errorElement = document.getElementById('contactError');
                 errorElement.textContent = 'Erro ao enviar mensagem: ' + (error.message || 'Tente novamente mais tarde.');
                 errorElement.classList.remove('d-none');
-                
+
                 // Restaurar botão
                 window.formUtils.setButtonLoading(submitButton, false, originalButtonText);
             });
     } else {
         console.log('⚠️ Integração Brevo não disponível, utilizando fetch API...');
-        
+
         // Fallback se a integração não estiver disponível
         fetch(window.formUtils.backendUrls.brevo.contact, {
             method: 'POST',
@@ -330,44 +336,44 @@ function sendContactData(data, submitButton, originalButtonText) {
             },
             body: JSON.stringify(data)
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro ao enviar email: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('✅ Resposta do backend:', data);
-            
-            // Mostrar mensagem de sucesso
-            document.getElementById('contactSuccess').classList.remove('d-none');
-            
-            // Limpar formulário
-            document.getElementById('contactForm').reset();
-            
-            // Restaurar botão
-            window.formUtils.setButtonLoading(submitButton, false, originalButtonText);
-            
-            // Fechar modal após 3 segundos
-            setTimeout(() => {
-                if (typeof bootstrap !== 'undefined') {
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
-                    if (modal) {
-                        modal.hide();
-                    }
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao enviar email: ' + response.status);
                 }
-            }, 3000);
-        })
-        .catch(error => {
-            console.error('❌ Erro ao enviar mensagem:', error);
-            
-            // Mostrar mensagem de erro
-            const errorElement = document.getElementById('contactError');
-            errorElement.textContent = 'Erro ao enviar mensagem: ' + (error.message || 'Tente novamente mais tarde.');
-            errorElement.classList.remove('d-none');
-            
-            // Restaurar botão
-            window.formUtils.setButtonLoading(submitButton, false, originalButtonText);
-        });
+                return response.json();
+            })
+            .then(data => {
+                console.log('✅ Resposta do backend:', data);
+
+                // Mostrar mensagem de sucesso
+                document.getElementById('contactSuccess').classList.remove('d-none');
+
+                // Limpar formulário
+                document.getElementById('contactForm').reset();
+
+                // Restaurar botão
+                window.formUtils.setButtonLoading(submitButton, false, originalButtonText);
+
+                // Fechar modal após 3 segundos
+                setTimeout(() => {
+                    if (typeof bootstrap !== 'undefined') {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
+                        if (modal) {
+                            modal.hide();
+                        }
+                    }
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('❌ Erro ao enviar mensagem:', error);
+
+                // Mostrar mensagem de erro
+                const errorElement = document.getElementById('contactError');
+                errorElement.textContent = 'Erro ao enviar mensagem: ' + (error.message || 'Tente novamente mais tarde.');
+                errorElement.classList.remove('d-none');
+
+                // Restaurar botão
+                window.formUtils.setButtonLoading(submitButton, false, originalButtonText);
+            });
     }
 }
