@@ -12,11 +12,11 @@
 window.ifthenpayIntegration = {
     // URLs do backend
     endpoints: {
-        mbway: 'https://share2inspire-beckend.lm.r.appspot.com/api/ifthenpay/mbway',
-        multibanco: 'https://share2inspire-beckend.lm.r.appspot.com/api/ifthenpay/multibanco',
-        payshop: 'https://share2inspire-beckend.lm.r.appspot.com/api/ifthenpay/payshop',
-        callback: 'https://share2inspire-beckend.lm.r.appspot.com/api/ifthenpay/callback',
-        health: 'https://share2inspire-beckend.lm.r.appspot.com/api/ifthenpay/health'
+        mbway: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/mbway',
+        multibanco: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/multibanco',
+        payshop: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/payshop',
+        callback: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/callback',
+        health: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/health'
     },
 
     backendUrl: 'https://share2inspire-beckend.lm.r.appspot.com',
@@ -26,11 +26,11 @@ window.ifthenpayIntegration = {
      */
     async processPayment(method, paymentData) {
         console.log(`💳 [IFTHENPAY] Processando pagamento ${method.toUpperCase()}:`, paymentData);
-        
+
         try {
             // Validar dados básicos
             this.validatePaymentData(paymentData, method);
-            
+
             switch (method) {
                 case 'mbway':
                     return await this.processMbWayPayment(paymentData);
@@ -55,7 +55,7 @@ window.ifthenpayIntegration = {
      */
     async processMbWayPayment(data) {
         console.log('📱 [MB WAY] Processando pagamento...');
-        
+
         // Preparar payload para o backend
         const payload = {
             orderId: data.orderId || `MBWAY-${Date.now()}`,
@@ -71,7 +71,7 @@ window.ifthenpayIntegration = {
         try {
             const response = await this.callBackendEndpoint('mbway', payload);
             console.log('📥 [MB WAY] Resposta completa:', response);
-            
+
             if (response.success) {
                 return {
                     success: true,
@@ -105,7 +105,7 @@ window.ifthenpayIntegration = {
      */
     async processMultibancoPayment(data) {
         console.log('🏧 [MULTIBANCO] Processando pagamento...');
-        
+
         // Preparar payload para o backend
         const payload = {
             orderId: data.orderId || `MB-${Date.now()}`,
@@ -120,7 +120,7 @@ window.ifthenpayIntegration = {
         try {
             const response = await this.callBackendEndpoint('multibanco', payload);
             console.log('📥 [MULTIBANCO] Resposta completa:', response);
-            
+
             if (response.success) {
                 // CORREÇÃO PRINCIPAL: Verificar se entity e reference existem
                 if (!response.entity || !response.reference) {
@@ -161,7 +161,7 @@ window.ifthenpayIntegration = {
      */
     async processPayshopPayment(data) {
         console.log('🏪 [PAYSHOP] Processando pagamento...');
-        
+
         // Preparar payload para o backend
         const payload = {
             orderId: data.orderId || `PS-${Date.now()}`,
@@ -176,7 +176,7 @@ window.ifthenpayIntegration = {
         try {
             const response = await this.callBackendEndpoint('payshop', payload);
             console.log('📥 [PAYSHOP] Resposta completa:', response);
-            
+
             if (response.success) {
                 return {
                     success: true,
@@ -210,10 +210,10 @@ window.ifthenpayIntegration = {
      */
     async callBackendEndpoint(method, payload) {
         const url = this.endpoints[method];
-        
+
         console.log(`🔗 [${method.toUpperCase()}] Chamando: ${url}`);
         console.log(`📤 [${method.toUpperCase()}] Dados enviados:`, payload);
-        
+
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -249,10 +249,10 @@ window.ifthenpayIntegration = {
         try {
             const response = await fetch(this.endpoints.health);
             const result = await response.json();
-            
+
             console.log('🏥 [HEALTH] Status Ifthenpay:', result);
             return result;
-            
+
         } catch (error) {
             console.error('❌ [HEALTH] Erro no health check:', error);
             return {
@@ -287,7 +287,7 @@ window.ifthenpayIntegration = {
             if (!data.mobileNumber) {
                 throw new Error('Número de telemóvel obrigatório para MB WAY');
             }
-            
+
             const cleanPhone = data.mobileNumber.replace(/\D/g, '');
             if (cleanPhone.length < 9) {
                 throw new Error('Número de telemóvel inválido');
@@ -306,12 +306,12 @@ window.ifthenpayIntegration = {
             // Remover caracteres não numéricos exceto ponto
             amount = amount.replace(/[^\d.]/g, '');
         }
-        
+
         const numAmount = parseFloat(amount);
         if (isNaN(numAmount)) {
             throw new Error('Valor inválido');
         }
-        
+
         // Garantir 2 casas decimais
         return numAmount.toFixed(2);
     },
@@ -321,15 +321,15 @@ window.ifthenpayIntegration = {
      */
     formatMobileNumber(phone) {
         if (!phone) return '';
-        
+
         console.log(`📱 [FORMAT] Formatando telefone: ${phone}`);
-        
+
         // Remover todos os caracteres não numéricos
         const cleaned = phone.replace(/\D/g, '');
         console.log(`📱 [FORMAT] Telefone limpo: ${cleaned}`);
-        
+
         let formatted;
-        
+
         // Adicionar código do país se necessário
         if (cleaned.startsWith('351')) {
             formatted = cleaned;
@@ -340,7 +340,7 @@ window.ifthenpayIntegration = {
         } else {
             formatted = `351${cleaned}`;
         }
-        
+
         console.log(`📱 [FORMAT] Telefone formatado: ${formatted}`);
         return formatted;
     },
@@ -350,9 +350,9 @@ window.ifthenpayIntegration = {
      */
     formatMobileNumberDisplay(phone) {
         if (!phone) return '';
-        
+
         const cleaned = phone.replace(/\D/g, '');
-        
+
         if (cleaned.startsWith('351')) {
             const number = cleaned.substring(3);
             return `+351 ${number.substring(0, 3)} ${number.substring(3, 6)} ${number.substring(6)}`;
@@ -375,7 +375,7 @@ window.ifthenpayIntegration = {
      */
     handlePaymentCallback(callbackData) {
         console.log('📞 [CALLBACK] Callback recebido:', callbackData);
-        
+
         if (callbackData.status === 'paid') {
             console.log('✅ [CALLBACK] Pagamento confirmado!');
             // Disparar evento personalizado
@@ -387,16 +387,16 @@ window.ifthenpayIntegration = {
 };
 
 // Event listeners para callbacks de pagamento
-window.addEventListener('paymentConfirmed', function(event) {
+window.addEventListener('paymentConfirmed', function (event) {
     console.log('🎉 [EVENT] Pagamento confirmado via callback:', event.detail);
 });
 
 // Inicialização
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 [INIT] Ifthenpay Integration - VERSÃO FINAL CORRIGIDA - Carregada');
     console.log('💳 [INIT] Métodos suportados: MB WAY, Multibanco, Payshop');
     console.log('🔗 [INIT] Backend URL:', window.ifthenpayIntegration.backendUrl);
-    
+
     // Verificar status de saúde do serviço
     window.ifthenpayIntegration.checkHealth();
 });
