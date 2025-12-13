@@ -59,16 +59,27 @@
 
         /* Modal specific overrides if needed */
         #feedbackWidgetModal .modal-content {
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
+            border: none;
+            box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
         }
         #feedbackWidgetModal .modal-header {
-            background-color: #BF9A33;
-            color: white;
+            background-color: transparent;
+            color: #212529;
             border-bottom: none;
+            padding-bottom: 0;
+        }
+        #feedbackWidgetModal .modal-title {
+            font-weight: 700;
+            width: 100%;
+            text-align: center;
         }
         #feedbackWidgetModal .btn-close {
-            filter: invert(1) grayscale(100%) brightness(200%);
+            filter: none;
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
         }
     `;
     document.head.appendChild(style);
@@ -109,7 +120,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" id="submitFeedbackBtn" style="background-color: #BF9A33; border-color: #BF9A33;">Enviar Feedback</button>
+                        <button type="button" class="btn btn-primary fw-bold px-4 shadow-sm" id="submitFeedbackBtn" style="background-color: #BF9A33; border: none; border-radius: 8px;">Enviar Feedback</button>
                     </div>
                 </div>
             </div>
