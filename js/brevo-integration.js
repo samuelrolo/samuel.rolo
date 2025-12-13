@@ -201,6 +201,7 @@ window.brevoIntegration = {
                     name: emailData.to[0].name,
                     email: emailData.to[0].email,
                     phone: emailData.params.phone,
+                    templateId: emailData.templateId,
                     date: emailData.params.date || new Date().toISOString().split('T')[0],
                     time: emailData.params.time || '10:00',
                     orderId: `${serviceType}_${Date.now()}`,
