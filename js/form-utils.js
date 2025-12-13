@@ -13,7 +13,7 @@ window.formUtils = {
      * @param {HTMLElement} form - Elemento do formulário
      * @returns {HTMLElement} Container de mensagens
      */
-    getOrCreateMessageContainer: function(id, form) {
+    getOrCreateMessageContainer: function (id, form) {
         let container = document.getElementById(id);
         if (!container) {
             container = document.createElement('div');
@@ -30,11 +30,11 @@ window.formUtils = {
      * @param {string} type - Tipo de mensagem ('success', 'error', 'info')
      * @param {string} message - Texto da mensagem
      */
-    showFormMessage: function(container, type, message) {
-        const alertClass = type === 'success' ? 'alert-success' : 
-                          type === 'error' ? 'alert-danger' : 'alert-info';
+    showFormMessage: function (container, type, message) {
+        const alertClass = type === 'success' ? 'alert-success' :
+            type === 'error' ? 'alert-danger' : 'alert-info';
         container.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
-        
+
         // Auto dismiss após 8 segundos para mensagens de sucesso
         if (type === 'success') {
             setTimeout(() => {
@@ -53,7 +53,7 @@ window.formUtils = {
      * @param {boolean} loading - Estado de loading
      * @param {string} text - Texto a mostrar
      */
-    setButtonLoading: function(button, loading, text) {
+    setButtonLoading: function (button, loading, text) {
         if (loading) {
             button.disabled = true;
             button.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>${text}`;
@@ -68,7 +68,7 @@ window.formUtils = {
      * @param {string} email - Email a validar
      * @returns {boolean} Resultado da validação
      */
-    isValidEmail: function(email) {
+    isValidEmail: function (email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     },
 
@@ -78,7 +78,7 @@ window.formUtils = {
      * @param {Array<string>} requiredFields - Lista de campos obrigatórios
      * @returns {boolean} Resultado da validação
      */
-    validateRequiredFields: function(form, requiredFields) {
+    validateRequiredFields: function (form, requiredFields) {
         for (const field of requiredFields) {
             const input = form.querySelector(`[name="${field}"]`);
             if (!input || !input.value.trim()) {
@@ -94,7 +94,7 @@ window.formUtils = {
      * @param {HTMLFormElement} form - Formulário a validar
      * @returns {boolean} Resultado da validação
      */
-    validateEmail: function(form) {
+    validateEmail: function (form) {
         const email = form.querySelector('[name="email"]').value;
         if (!this.isValidEmail(email)) {
             console.warn('⚠️ Email inválido');
@@ -108,15 +108,15 @@ window.formUtils = {
      * @param {string} modalId - ID do modal
      * @param {string} formId - ID do formulário
      */
-    setupModalCleanup: function(modalId, formId) {
+    setupModalCleanup: function (modalId, formId) {
         const modal = document.getElementById(modalId);
         if (!modal) return;
 
-        modal.addEventListener('hidden.bs.modal', function() {
+        modal.addEventListener('hidden.bs.modal', function () {
             console.log('🚪 Modal fechado - limpando formulário');
             const form = document.getElementById(formId);
             if (form) form.reset();
-            
+
             // Limpar mensagens
             const messageDiv = document.getElementById(`${formId}Message`);
             if (messageDiv) {
@@ -131,13 +131,13 @@ window.formUtils = {
     backendUrls: {
         // URL principal do backend
         base: 'https://share2inspire-beckend.lm.r.appspot.com',
-        
+
         // Endpoints específicos
         booking: 'https://share2inspire-beckend.lm.r.appspot.com/booking',
-        
+
         // Endpoints Brevo
         brevo: {
-            kickstart: 'https://share2inspire-beckend.lm.r.appspot.com/email/kickstart',
+            kickstart: 'https://share2inspire-beckend.lm.r.appspot.com/api/services/kickstart-email',
             consultoria: 'https://share2inspire-beckend.lm.r.appspot.com/email/consultoria',
             coaching: 'https://share2inspire-beckend.lm.r.appspot.com/email/coaching',
             workshops: 'https://share2inspire-beckend.lm.r.appspot.com/email/workshops',
@@ -147,7 +147,7 @@ window.formUtils = {
 };
 
 // Inicialização
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Form Utils - Utilitários Centralizados Carregados');
 });
 
