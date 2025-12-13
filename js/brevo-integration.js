@@ -37,12 +37,13 @@ window.brevoIntegration = {
                 phone: data.phone || 'Não fornecido',
                 company: data.company || 'Não fornecido',
                 position: data.position || 'Não fornecido',
-                date: data.date,
-                duration: data.duration,
+                date: "Consultar Google Calendar (Agendamento Prévio)",
+                duration: "60 mins",
                 challenge: data.challenge,
                 payment_method: data.payment_method,
                 service: 'Kickstart Pro',
-                timestamp: new Date().toLocaleString('pt-PT')
+                timestamp: new Date().toLocaleString('pt-PT'),
+                calendar_note: "Os detalhes da videochamada (Google Meet) estão no convite do calendário enviado automaticamente pelo Google."
             }
         };
 
