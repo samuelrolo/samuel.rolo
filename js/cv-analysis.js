@@ -72,7 +72,34 @@ document.addEventListener('DOMContentLoaded', () => {
  * Core Analysis Logic (Rule-based)
  */
 function analyzeText(text) {
+    // --- Validation ---
+    if (!text || text.trim().length < 50) {
+        throw new Error("O ficheiro parece estar vazio ou não contém texto legível. Se for uma imagem, por favor converta para PDF ou Word.");
+    }
+
     const textLower = text.toLowerCase();
+
+    // Check for critical CV keywords to avoid analyzing random files
+    const cvIndicators = [
+        ['educação', 'formação', 'ensino', 'education', 'academic'],
+        ['experiência', 'experience', 'profissional', 'trabalho', 'work'],
+        ['contacto', 'contact', 'email', 'telemóvel', 'telefone', 'phone'],
+        ['competências', 'skills', 'idiomas', 'languages', 'perfil', 'profile']
+    ];
+
+    let indicatorsFound = 0;
+    for (const group of cvIndicators) {
+        if (group.some(keyword => textLower.includes(keyword))) {
+            indicatorsFound++;
+        }
+    }
+
+    // If less than 2 strong indicators found, reject
+    if (indicatorsFound < 2) {
+        throw new Error("Não detetámos um CV válido. Verifique se o documento contém secções de 'Experiência' e 'Formação'.");
+    }
+
+    // --- End Validation ---
 
     // --- 1. Detect Education ---
     const educationKeywords = [

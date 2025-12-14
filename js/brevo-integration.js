@@ -261,7 +261,7 @@ window.brevoIntegration = {
             formData.append('orderId', `cv_${Date.now()}`);
 
             if (data.file) {
-                formData.append('file', data.file);
+                formData.append('cv_file', data.file);
             }
 
             // Endpoint específico para CV (ajustar conforme necessário)
