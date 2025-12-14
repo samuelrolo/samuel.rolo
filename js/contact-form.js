@@ -55,7 +55,7 @@ function createDynamicContactModal() {
     <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
-          <div class="modal-header border-0 pb-0" style="background-color: #BF9A33;">
+          <div class="modal-header border-0 pb-0">
             <h4 class="modal-title fw-bold text-white mx-auto" id="contactModalLabel">Entre em Contacto</h4>
             <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
