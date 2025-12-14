@@ -1,7 +1,8 @@
 /* CORREÇÃO ESPECÍFICA PARA PROBLEMAS DE MODAL - Share2Inspire Website */
 
 body {
-    padding-top: 80px !important; /* Espaço para a navegação fixa */
+    padding-top: 80px !important;
+    /* Espaço para a navegação fixa */
 }
 
 .header .navbar {
@@ -114,7 +115,7 @@ body {
 .modal-content {
     background: white !important;
     border-radius: 16px !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4) !important;
     width: 100% !important;
     max-width: 700px !important;
     max-height: 90vh !important;
@@ -128,11 +129,12 @@ body {
 
 /* Modal header - fixo no topo */
 .modal-header {
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
-    color: white !important;
+    background: #212529 !important;
+    color: #BF9A33 !important;
     padding: 1.5rem 2rem !important;
     text-align: center !important;
     border-radius: 16px 16px 0 0 !important;
+    border-bottom: 1px solid #BF9A33 !important;
     flex-shrink: 0 !important;
     position: relative !important;
     z-index: 1058 !important;
@@ -142,7 +144,7 @@ body {
 .modal-title {
     font-size: 1.5rem !important;
     font-weight: 600 !important;
-    color: white !important;
+    color: #BF9A33 !important;
     margin: 0 !important;
     pointer-events: auto !important;
 }
@@ -330,13 +332,13 @@ body {
     pointer-events: none !important;
 }
 
-.rating-option input[type="radio"]:checked + .rating-label {
+.rating-option input[type="radio"]:checked+.rating-label {
     border-color: #bf9a33 !important;
     color: white !important;
     transform: scale(1.1) !important;
 }
 
-.rating-option input[type="radio"]:checked + .rating-label::before {
+.rating-option input[type="radio"]:checked+.rating-label::before {
     width: 100% !important;
     height: 100% !important;
 }
@@ -444,14 +446,15 @@ body {
 }
 
 .btn-nav-primary {
-    background: linear-gradient(135deg, #2c3e50, #34495e) !important;
-    color: white !important;
+    background: #BF9A33 !important;
+    color: #212529 !important;
+    border: 1px solid #BF9A33 !important;
 }
 
 .btn-nav-primary:hover {
-    background: linear-gradient(135deg, #34495e, #2c3e50) !important;
+    background: #a57b0a !important;
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 25px rgba(44, 62, 80, 0.3) !important;
+    box-shadow: 0 8px 25px rgba(191, 154, 51, 0.3) !important;
 }
 
 .btn-nav:disabled {
@@ -532,16 +535,16 @@ body.modal-open .modal {
         margin: 0.5rem !important;
         max-height: 98vh !important;
     }
-    
+
     .modal-body {
         max-height: calc(98vh - 160px) !important;
         padding: 1rem !important;
     }
-    
+
     .modal-header {
         padding: 1rem !important;
     }
-    
+
     .question-card {
         padding: 1rem !important;
     }
@@ -564,7 +567,7 @@ button,
 }
 
 /* Prevenir que elementos de fundo interfiram */
-body.modal-open > *:not(.modal) {
+body.modal-open>*:not(.modal) {
     pointer-events: none !important;
 }
 
@@ -717,4 +720,3 @@ footer {
 .star.active {
     color: #BF9A33;
 }
-

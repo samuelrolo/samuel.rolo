@@ -114,9 +114,8 @@
 }
 
 .modal-header {
-    background-color: white;
-    /* Was implied dark in screenshot, forcing white */
-    border-bottom: 2px solid var(--primary-color) !important;
+    background-color: #212529 !important;
+    border-bottom: 1px solid var(--primary-color) !important;
 }
 
 .modal-title {
