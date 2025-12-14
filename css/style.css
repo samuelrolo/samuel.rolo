@@ -720,3 +720,31 @@ footer {
 .star.active {
     color: #BF9A33;
 }
+
+/* === REFINAMENTO VISUAL: ELIMINAR AZUIS (BOOTSTRAP OVERRIDES) === */
+.text-primary {
+    color: #BF9A33 !important;
+}
+
+.bg-primary {
+    background-color: #BF9A33 !important;
+}
+
+.border-primary {
+    border-color: #BF9A33 !important;
+}
+
+.btn-primary {
+    background-color: #212529 !important;
+    /* Keep buttons Black */
+    border-color: #212529 !important;
+    color: #BF9A33 !important;
+    /* Text Gold */
+}
+
+.btn-primary:hover {
+    background-color: #BF9A33 !important;
+    /* Hover Gold */
+    color: #212529 !important;
+    /* Hover Text Black */
+}
