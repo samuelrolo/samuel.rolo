@@ -22,44 +22,24 @@
         property="og:description" />
     <meta content="https://share2inspire.pt/images/samuel-rolo-og.jpg" property="og:image" />
 
-    <!-- Twitter -->
-    <meta content="summary_large_image" property="twitter:card" />
-    <meta content="https://share2inspire.pt/pages/sobre.html" property="twitter:url" />
-    <meta content="Sobre o Fundador | Share2Inspire | Samuel Rolo" property="twitter:title" />
-    <meta
-        content="Conheça Samuel Rolo, fundador da Share2Inspire. Especialista em transformação organizacional e desenvolvimento humano."
-        property="twitter:description" />
-    <meta content="https://share2inspire.pt/images/samuel-rolo-og.jpg" property="twitter:image" />
-
     <!-- Favicon -->
     <link href="../images/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
     <link href="../images/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png" />
     <link href="../images/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png" />
-    <link href="../images/site.webmanifest" rel="manifest" />
-    <link color="#5bbad5" href="../images/safari-pinned-tab.svg" rel="mask-icon" />
-    <meta content="#da532c" name="msapplication-TileColor" />
-    <meta content="#ffffff" name="theme-color" />
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
     <!-- Custom CSS -->
     <link href="../css/style.css" rel="stylesheet" />
-    <link href="../css/main_inline_styles.css" rel="stylesheet" />
-
-    <!-- Header & Footer Shared CSS -->
     <link href="../css/header-footer.css" rel="stylesheet" />
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
 
     <!-- Google Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap"
         rel="stylesheet" />
-
-    <!-- Animate.css -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
 
     <!-- AOS - Animate On Scroll -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
@@ -69,311 +49,390 @@
             --primary-color: #BF9A33;
             --secondary-color: #333333;
             --accent-color: #a57b0a;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-            --text-color: #333333;
-            --text-light: #6c757d;
+            --dark-bg: #1a1a1a;
+            --dark-card: #242424;
+            --text-light: #e0e0e0;
         }
 
         body {
+            font-family: 'Montserrat', sans-serif;
             background-color: #fcfcfc;
-            color: var(--text-color);
             line-height: 1.6;
         }
 
-        /* Page Header matching People Hub */
-        .page-header {
-            background-color: #fff;
-            padding: 120px 0 60px;
-            margin-bottom: 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .page-header h1 {
-            font-size: 2.75rem;
-            font-weight: 800;
-            color: #1a1a1a;
-            margin-bottom: 1rem;
-            letter-spacing: -1px;
-        }
-
-        .breadcrumb {
-            background-color: transparent;
-            padding: 0;
-            margin: 0;
-        }
-
-        .breadcrumb-item a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .breadcrumb-item.active {
-            color: #999;
-        }
-
-        /* Hero Founder - Modernized */
-        .hero-founder {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: white;
-            padding: 6rem 0;
-            margin-top: 3rem;
-            margin-bottom: 5rem;
-            border-radius: 24px;
+        /* ==================== HERO DARK SECTION ==================== */
+        .hero-dark {
+            background-color: var(--dark-bg);
+            padding: 160px 0 80px;
+            text-align: center;
             position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(191, 154, 51, 0.25);
         }
 
-        .hero-founder .section-label {
+        .hero-dark .eyebrow {
             text-transform: uppercase;
-            letter-spacing: 3px;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            display: block;
-            font-size: 0.9rem;
+            letter-spacing: 4px;
+            color: #888;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
         }
 
-        .hero-founder h2 {
+        .hero-dark h1 {
             font-size: 3.5rem;
             font-weight: 800;
-            margin-bottom: 1rem;
-            color: white;
-            letter-spacing: -1px;
+            color: var(--primary-color);
+            margin-bottom: 2.5rem;
+            font-style: italic;
         }
 
-        .hero-founder p {
-            font-size: 1.25rem;
-            color: rgba(255, 255, 255, 0.95);
+        .profile-photo-container {
             margin-bottom: 2rem;
+        }
+
+        .profile-photo {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 5px solid var(--primary-color);
+            object-fit: cover;
+            box-shadow: 0 10px 40px rgba(191, 154, 51, 0.3);
+        }
+
+        .hero-dark .bio-text {
             max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            font-weight: 300;
+            margin: 0 auto 2rem;
+            color: var(--text-light);
+            font-size: 1rem;
+            line-height: 1.8;
+            opacity: 0.9;
         }
 
-        @media (max-width: 992px) {
-            .hero-founder {
-                border-radius: 0;
-                margin-top: 0;
-                margin-bottom: 3rem;
-            }
-
-            .hero-founder h2 {
-                font-size: 2.5rem;
-            }
+        .hero-dark .photo-credit {
+            font-size: 0.8rem;
+            color: #666;
         }
 
-        /* About Content Section */
-        .about-content {
+        .hero-dark .photo-credit a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        /* ==================== SKILL CARDS ROW ==================== */
+        .skill-cards-section {
+            background-color: var(--dark-bg);
             padding: 40px 0 80px;
         }
 
-        .about-content h2 {
-            font-size: 2.25rem;
+        .skill-card-mini {
+            background-color: #fff;
+            border-radius: 16px;
+            padding: 30px 25px;
+            text-align: left;
+            transition: all 0.3s ease;
+            height: 100%;
+            border-left: 4px solid transparent;
+        }
+
+        .skill-card-mini:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            border-left-color: var(--primary-color);
+        }
+
+        .skill-card-mini .icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .skill-card-mini h4 {
+            font-size: 1.1rem;
             font-weight: 700;
             color: #1a1a1a;
-            margin-bottom: 30px;
-            position: relative;
-            padding-bottom: 0;
-            letter-spacing: -0.5px;
+            margin-bottom: 15px;
         }
 
-        .about-content p {
-            font-size: 1.125rem;
-            line-height: 1.8;
-            color: #555;
-            margin-bottom: 24px;
+        .skill-card-mini .more-link {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .about-content blockquote {
-            background-color: #fff;
-            border-left: 4px solid var(--primary-color);
-            padding: 30px 40px;
-            margin: 40px 0;
-            font-style: italic;
-            font-size: 1.35rem;
+        .skill-card-mini .more-link:hover {
+            color: var(--accent-color);
+        }
+
+        /* ==================== SECTION HEADERS ==================== */
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
             color: #1a1a1a;
-            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
-            border-radius: 0 16px 16px 0;
-            font-weight: 500;
+            margin-bottom: 40px;
+            text-align: center;
         }
 
-        /* Timeline Section - Clean Cards */
-        .timeline-section {
+        .section-title span {
+            color: var(--primary-color);
+        }
+
+        /* ==================== EXPERIENCE TIMELINE ==================== */
+        .experience-section {
             padding: 80px 0;
             background-color: #f9f9f9;
         }
 
-        .timeline-item {
+        .experience-card {
             background-color: #fff;
-            padding: 30px;
-            margin-bottom: 24px;
-            border-radius: 16px;
+            padding: 25px 30px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
         }
 
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 20px;
-            bottom: 20px;
-            width: 4px;
-            background-color: var(--primary-color);
-            border-radius: 0 4px 4px 0;
-            opacity: 0.8;
+        .experience-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         }
 
-        .timeline-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.01);
-        }
-
-        .timeline-item h4 {
-            font-size: 1.25rem;
+        .experience-card h4 {
+            font-size: 1.15rem;
             font-weight: 700;
             color: #1a1a1a;
             margin-bottom: 5px;
         }
 
-        .timeline-item .company {
-            font-size: 1rem;
+        .experience-card .company {
             color: var(--primary-color);
             font-weight: 600;
-            margin-bottom: 8px;
+            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            font-size: 0.85rem;
         }
 
-        .timeline-item .period {
-            font-size: 0.9rem;
+        .experience-card .period {
             color: #888;
+            font-size: 0.85rem;
             font-family: monospace;
         }
 
-        /* Skills Section */
-        .skills-section {
-            padding: 100px 0;
+        /* ==================== COMPETÊNCIAS ==================== */
+        .competencies-section {
+            padding: 80px 0;
             background-color: #fff;
         }
 
-        .skill-category {
+        .competency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .competency-item {
+            background-color: #f9f9f9;
+            padding: 25px;
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .competency-item:hover {
             background-color: #fff;
-            padding: 40px 30px;
-            border-radius: 20px;
-            height: 100%;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            border: 1px solid rgba(0, 0, 0, 0.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transform: translateY(-5px);
         }
 
-        .skill-category:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        .competency-item i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-top: 3px;
         }
 
-        .skill-category h4 {
-            font-size: 1.3rem;
+        .competency-item h5 {
+            font-size: 1rem;
             font-weight: 700;
             color: #1a1a1a;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            margin-bottom: 5px;
         }
 
-        .skill-category h4 i {
-            color: var(--primary-color);
-            font-size: 1.5rem;
-        }
-
-        .skill-category p {
-            font-size: 1rem;
+        .competency-item p {
+            font-size: 0.9rem;
             color: #666;
-            line-height: 1.7;
-            margin-bottom: 0;
+            margin: 0;
         }
 
-        /* Testimonials Section */
-        .testimonials-section {
-            padding: 100px 0;
+        /* ==================== CERTIFICATIONS ==================== */
+        .certifications-section {
+            padding: 80px 0;
             background-color: #f9f9f9;
         }
 
-        .testimonial-card {
+        .certification-badge {
             background-color: #fff;
-            padding: 40px;
-            border-radius: 20px;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
             height: 100%;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
-            transition: all 0.4s ease;
-            border: 1px solid rgba(0, 0, 0, 0.02);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
         }
 
-        .testimonial-card:hover {
+        .certification-badge:hover {
             transform: translateY(-8px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
         }
 
-        .testimonial-card p {
-            font-size: 1.1rem;
-            color: #555;
-            line-height: 1.8;
-            font-style: italic;
-            margin-bottom: 25px;
-            font-weight: 300;
+        .certification-badge .icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
         }
 
-        .testimonial-card .author-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            padding-top: 20px;
-        }
-
-        .testimonial-card .author-info img {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #f8f9fa;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .testimonial-card .author-info h5 {
-            font-size: 1.15rem;
+        .certification-badge h5 {
+            font-size: 1rem;
             font-weight: 700;
             color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .certification-badge p {
+            font-size: 0.85rem;
+            color: #888;
+            margin: 0;
+        }
+
+        /* ==================== RECOMMENDATIONS SLIDER ==================== */
+        .recommendations-section {
+            padding: 80px 0;
+            background-color: var(--dark-bg);
+            color: #fff;
+        }
+
+        .recommendations-section .section-title {
+            color: #fff;
+        }
+
+        .recommendations-slider {
+            position: relative;
+            overflow: hidden;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .recommendations-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .recommendation-slide {
+            min-width: 100%;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .recommendation-card {
+            background-color: var(--dark-card);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .recommendation-card .quote {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--text-light);
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+
+        .recommendation-card .author-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .recommendation-card .author-info img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+        }
+
+        .recommendation-card .author-info .author-details {
+            text-align: left;
+        }
+
+        .recommendation-card .author-info h5 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
             margin-bottom: 2px;
         }
 
-        .testimonial-card .author-info p {
-            font-size: 0.9rem;
+        .recommendation-card .author-info p {
+            font-size: 0.85rem;
             color: #888;
-            margin-bottom: 0;
-            font-style: normal;
-            font-weight: 400;
+            margin: 0;
         }
 
-        /* Responsive */
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .slider-dot.active {
+            background-color: var(--primary-color);
+            transform: scale(1.2);
+        }
+
+        /* ==================== FOOTER ==================== */
+        footer {
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 40px 0;
+        }
+
+        footer a {
+            color: var(--primary-color);
+        }
+
+        /* ==================== RESPONSIVE ==================== */
         @media (max-width: 768px) {
-            .page-header h1 {
-                font-size: 2rem;
+            .hero-dark {
+                padding: 120px 0 60px;
             }
 
-            .hero-founder h2 {
-                font-size: 2.25rem;
+            .hero-dark h1 {
+                font-size: 2.5rem;
+            }
+
+            .profile-photo {
+                width: 140px;
+                height: 140px;
+            }
+
+            .skill-card-mini {
+                margin-bottom: 20px;
             }
         }
     </style>
@@ -418,228 +477,289 @@
         </div>
     </nav>
 
-    <!-- Page Header -->
-    <section class="page-header">
+    <!-- HERO DARK SECTION -->
+    <section class="hero-dark">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>Sobre o Fundador</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Sobre o Fundador</li>
-                        </ol>
-                    </nav>
-                </div>
+            <p class="eyebrow" data-aos="fade-down">Um Pouco Sobre Mim</p>
+            <h1 data-aos="fade-up">Quem sou eu?</h1>
+
+            <div class="profile-photo-container" data-aos="zoom-in" data-aos-delay="200">
+                <img src="../images/fundador.jpg" alt="Samuel Rolo - Fundador Share2Inspire" class="profile-photo">
             </div>
+
+            <p class="bio-text" data-aos="fade-up" data-aos-delay="300">
+                Olá, sou <strong>Samuel Rolo</strong>, Digital HR & Process Excellence Manager com mais de 14 anos de
+                experiência
+                em transformação organizacional. A minha missão é humanizar a tecnologia e a IA nas áreas de People &
+                Culture,
+                criando pontes entre pessoas, processos e propósito. Reconhecido como LinkedIn Top Voice,
+                trabalho para transformar organizações através de uma abordagem que combina inovação tecnológica com o
+                foco no que mais importa: as pessoas.
+            </p>
+
+            <p class="photo-credit" data-aos="fade-up" data-aos-delay="400">
+                Fundador & CEO da <a href="https://share2inspire.pt">Share2Inspire</a>
+            </p>
         </div>
     </section>
 
-    <section class="hero-founder">
+    <!-- SKILL CARDS -->
+    <section class="skill-cards-section">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 text-center">
-                    <p class="section-label animate__animated animate__fadeInDown">Fundador & CEO</p>
-                    <h2 class="animate__animated animate__fadeInUp">Samuel Rolo</h2>
-                    <p class="animate__animated animate__fadeInUp">Digital HR & Process Excellence Manager | Humanising
-                        AI in People & Culture | LinkedIn Top Voice</p>
+            <div class="row g-4">
+                <div class="col-6 col-md-3" data-aos="fade-up">
+                    <div class="skill-card-mini">
+                        <div class="icon"><i class="fas fa-project-diagram"></i></div>
+                        <h4>Transformação Digital</h4>
+                        <a href="#experience" class="more-link">Mais</a>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="skill-card-mini">
+                        <div class="icon"><i class="fas fa-users"></i></div>
+                        <h4>Gestão de RH</h4>
+                        <a href="#competencies" class="more-link">Mais</a>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="skill-card-mini">
+                        <div class="icon"><i class="fas fa-code"></i></div>
+                        <h4>Tecnologias & IA</h4>
+                        <a href="#competencies" class="more-link">Mais</a>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="300">
+                    <div class="skill-card-mini">
+                        <div class="icon"><i class="fas fa-graduation-cap"></i></div>
+                        <h4>Formação & Coaching</h4>
+                        <a href="#certifications" class="more-link">Mais</a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <main>
-        <!-- About Content Section -->
-        <section class="about-content">
+        <!-- EXPERIENCE SECTION -->
+        <section id="experience" class="experience-section">
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-10 mx-auto">
-                        <h2>A Minha Trajectória</h2>
-                        <p>A minha paixão pela transformação organizacional nasceu da convicção de que as
-                            pessoas são o verdadeiro motor de qualquer mudança sustentável. Ao longo dos
-                            anos,
-                            tenho dedicado a minha carreira a ajudar organizações e indivíduos a descobrirem
-                            o seu potencial máximo. </p>
-                        <p>Através da Share2Inspire,
-                            combinamos metodologias comprovadas com uma abordagem humanizada,
-                            criando soluções personalizadas que geram resultados duradouros. Acredito que o
-                            sucesso organizacional só é possível quando existe um alinhamento genuíno entre
-                            propósito,
-                            pessoas e processos. </p>
-                        <p>Esta filosofia tem orientado o meu trabalho e permitido transformar equipas,
-                            culturas e resultados em organizações de diversos sectores. Com mais de 14 anos
-                            de experiência em transformação de RH,
-                            tenho trabalhado em projetos de grande complexidade em empresas como
-                            AstraZeneca,
-                            BNP Paribas CIB,
-                            Deloitte e EY. </p>
-                        <blockquote>"O verdadeiro líder não é aquele que tem seguidores, mas aquele que cria
-                            outros líderes."
-                        </blockquote>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Timeline Section -->
-        <section class="timeline-section">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-10 mx-auto">
-                        <h2 class="text-center mb-5">Percurso Profissional</h2>
-                        <div class="timeline-item" data-aos="fade-up">
+                <h2 class="section-title" data-aos="fade-up">Percurso <span>Profissional</span></h2>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="experience-card" data-aos="fade-up">
                             <h4>Digital HR & Process Excellence Manager</h4>
                             <p class="company">AstraZeneca</p>
-                            <p class="period">Agosto de 2025 - Presente</p>
+                            <p class="period">Agosto 2025 - Presente</p>
                         </div>
-                        <div class="timeline-item" data-aos="fade-up" data-aos-delay="100">
-                            <h4>Founder</h4>
+                        <div class="experience-card" data-aos="fade-up" data-aos-delay="50">
+                            <h4>Founder & CEO</h4>
                             <p class="company">Share2Inspire</p>
-                            <p class="period">Abril de 2025 - Presente</p>
+                            <p class="period">Abril 2025 - Presente</p>
                         </div>
-                        <div class="timeline-item" data-aos="fade-up" data-aos-delay="200">
-                            <h4>Comissão de Gestão de Pessoas no Setor Social</h4>
-                            <p class="company">APG - Associação Portuguesa de Gestão das Pessoas</p>
-                            <p class="period">Abril de 2025 - Presente</p>
-                        </div>
-                        <div class="timeline-item" data-aos="fade-up" data-aos-delay="300">
+                        <div class="experience-card" data-aos="fade-up" data-aos-delay="100">
                             <h4>HR Transformation Leader</h4>
                             <p class="company">BNP Paribas CIB</p>
-                            <p class="period">Janeiro de 2025 - Maio de 2025</p>
+                            <p class="period">Janeiro 2025 - Maio 2025</p>
                         </div>
-                        <div class="timeline-item" data-aos="fade-up" data-aos-delay="400">
-                            <h4>Senior Manager</h4>
+                        <div class="experience-card" data-aos="fade-up" data-aos-delay="150">
+                            <h4>Senior Manager - Human Capital</h4>
                             <p class="company">Deloitte</p>
-                            <p class="period">Setembro de 2021 - Janeiro de 2025</p>
+                            <p class="period">Setembro 2021 - Janeiro 2025</p>
                         </div>
-                        <div class="timeline-item" data-aos="fade-up" data-aos-delay="500">
-                            <h4>Manager</h4>
+                        <div class="experience-card" data-aos="fade-up" data-aos-delay="200">
+                            <h4>Manager - Human Capital</h4>
                             <p class="company">Deloitte</p>
-                            <p class="period">Setembro de 2016 - Agosto de 2021</p>
+                            <p class="period">Setembro 2016 - Agosto 2021</p>
                         </div>
-                        <div class="timeline-item" data-aos="fade-up" data-aos-delay="600">
-                            <h4>Senior Consultant</h4>
-                            <p class="company">Deloitte</p>
-                            <p class="period">Agosto de 2015 - Agosto de 2016</p>
-                        </div>
-                        <div class="timeline-item" data-aos="fade-up" data-aos-delay="700">
+                        <div class="experience-card" data-aos="fade-up" data-aos-delay="250">
                             <h4>Senior Consultant</h4>
                             <p class="company">EY</p>
-                            <p class="period">Janeiro de 2015 - Agosto de 2015</p>
-                        </div>
-                        <div class="timeline-item" data-aos="fade-up" data-aos-delay="800">
-                            <h4>Consultant</h4>
-                            <p class="company">Deloitte</p>
-                            <p class="period">Setembro de 2013 - Dezembro de 2014</p>
-                        </div>
-                        <div class="timeline-item" data-aos="fade-up" data-aos-delay="900">
-                            <h4>Analyst</h4>
-                            <p class="company">Deloitte</p>
-                            <p class="period">Setembro de 2012 - Agosto de 2013</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Skills Section -->
-        <section class="skills-section">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-10 mx-auto">
-                        <h2 class="text-center mb-5">Áreas de Especialização & Competências</h2>
-                        <div class="row">
-                            <div class="col-md-6" data-aos="fade-up">
-                                <div class="skill-category">
-                                    <h4><i class="fas fa-project-diagram"></i>Gestão de Projetos e
-                                        Transformação</h4>
-                                    <p>Organizational Change,
-                                        HR Transformation Projects Framework,
-                                        Gestão de projetos internacionais,
-                                        Agile Methodologies,
-                                        Business Process Design,
-                                        Change Management </p>
-                                </div>
-                            </div>
-                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
-                                <div class="skill-category">
-                                    <h4><i class="fas fa-users"></i>Recursos Humanos</h4>
-                                    <p>Estratégias de RH,
-                                        HR Consulting,
-                                        Performance Appraisal,
-                                        Recrutamento,
-                                        Desenvolvimento organizacional,
-                                        Organizational culture,
-                                        People Sustainability </p>
-                                </div>
-                            </div>
-                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
-                                <div class="skill-category">
-                                    <h4><i class="fas fa-user-tie"></i>Liderança e Desenvolvimento
-                                    </h4>
-                                    <p>Liderança de equipe,
-                                        Coaching,
-                                        Desenvolvimento de negócios,
-                                        Career Launching,
-                                        Interpersonal leadership</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
-                                <div class="skill-category">
-                                    <h4><i class="fas fa-comments"></i>Comunicação e Conteúdo</h4>
-                                    <p>Content Strategy,
-                                        Internal Communications,
-                                        Content Design,
-                                        Apresentações,
-                                        Facilitação,
-                                        Workshop Development</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
-                                <div class="skill-category">
-                                    <h4><i class="fas fa-chart-line"></i>Análise e Resolução de
-                                        Problemas</h4>
-                                    <p>Pensamento estratégico,
-                                        Habilidades analíticas,
-                                        Data Analysis,
-                                        Indicadores-chave de desempenho</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="500">
-                                <div class="skill-category">
-                                    <h4><i class="fas fa-laptop-code"></i>Ferramentas e Tecnologias
-                                    </h4>
-                                    <p>SAP SuccessFactors,
-                                        ServiceNow,
-                                        Generative AI,
-                                        Microsoft Office Suite,
-                                        Canva</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="600">
-                                <div class="skill-category">
-                                    <h4><i class="fas fa-globe"></i>Idiomas</h4>
-                                    <p>Português (Nativo),
-                                        Inglês (C1 Avançado),
-                                        Espanhol (B1/B2 Intermédio Superior) </p>
-                                </div>
-                            </div>
-                            <div class="col-md-6" data-aos="fade-up" data-aos-delay="700">
-                                <div class="skill-category">
-                                    <h4><i class="fas fa-lightbulb"></i>Outras Competências</h4>
-                                    <p>Fusões e aquisições,
-                                        Future of Work,
-                                        Innovation,
-                                        Interpreneurship,
-                                        Resume Writing,
-                                        Personal Training</p>
-                                </div>
-                            </div>
+                            <p class="period">Janeiro 2015 - Agosto 2015</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Footer -->
+        <!-- COMPETENCIES SECTION -->
+        <section id="competencies" class="competencies-section">
+            <div class="container">
+                <h2 class="section-title" data-aos="fade-up">Competências em <span>Destaque</span></h2>
+                <div class="competency-grid">
+                    <div class="competency-item" data-aos="fade-up">
+                        <i class="fas fa-sync-alt"></i>
+                        <div>
+                            <h5>HR Transformation</h5>
+                            <p>Projetos internacionais de transformação de RH</p>
+                        </div>
+                    </div>
+                    <div class="competency-item" data-aos="fade-up" data-aos-delay="50">
+                        <i class="fas fa-robot"></i>
+                        <div>
+                            <h5>Humanising AI</h5>
+                            <p>Integração ética de IA em People & Culture</p>
+                        </div>
+                    </div>
+                    <div class="competency-item" data-aos="fade-up" data-aos-delay="100">
+                        <i class="fas fa-cogs"></i>
+                        <div>
+                            <h5>Process Excellence</h5>
+                            <p>Otimização de processos e metodologias Agile</p>
+                        </div>
+                    </div>
+                    <div class="competency-item" data-aos="fade-up" data-aos-delay="150">
+                        <i class="fas fa-chart-line"></i>
+                        <div>
+                            <h5>Change Management</h5>
+                            <p>Gestão de mudança organizacional</p>
+                        </div>
+                    </div>
+                    <div class="competency-item" data-aos="fade-up" data-aos-delay="200">
+                        <i class="fas fa-user-tie"></i>
+                        <div>
+                            <h5>Leadership Development</h5>
+                            <p>Coaching executivo e desenvolvimento de líderes</p>
+                        </div>
+                    </div>
+                    <div class="competency-item" data-aos="fade-up" data-aos-delay="250">
+                        <i class="fas fa-laptop-code"></i>
+                        <div>
+                            <h5>HR Tech</h5>
+                            <p>SAP SuccessFactors, ServiceNow, Generative AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CERTIFICATIONS SECTION -->
+        <section id="certifications" class="certifications-section">
+            <div class="container">
+                <h2 class="section-title" data-aos="fade-up">Certificações & <span>Reconhecimentos</span></h2>
+                <div class="row g-4 justify-content-center">
+                    <div class="col-6 col-md-3" data-aos="fade-up">
+                        <div class="certification-badge">
+                            <div class="icon"><i class="fab fa-linkedin"></i></div>
+                            <h5>LinkedIn Top Voice</h5>
+                            <p>Human Resources</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="100">
+                        <div class="certification-badge">
+                            <div class="icon"><i class="fas fa-award"></i></div>
+                            <h5>APG Portugal</h5>
+                            <p>Comissão Gestão Pessoas</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="200">
+                        <div class="certification-badge">
+                            <div class="icon"><i class="fas fa-briefcase"></i></div>
+                            <h5>Big 4 Experience</h5>
+                            <p>Deloitte & EY</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="300">
+                        <div class="certification-badge">
+                            <div class="icon"><i class="fas fa-globe-europe"></i></div>
+                            <h5>Projetos Internacionais</h5>
+                            <p>AstraZeneca, BNP Paribas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RECOMMENDATIONS SLIDER -->
+        <section class="recommendations-section">
+            <div class="container">
+                <h2 class="section-title" data-aos="fade-up">O Que Dizem <span>Sobre Mim</span></h2>
+
+                <div class="recommendations-slider" data-aos="fade-up">
+                    <div class="recommendations-track" id="recommendationsTrack">
+                        <!-- Slide 1 -->
+                        <div class="recommendation-slide">
+                            <div class="recommendation-card">
+                                <p class="quote">
+                                    "Samuel é um profissional excecional com uma capacidade única de combinar visão
+                                    estratégica
+                                    com execução operacional. A sua abordagem humanizada à transformação digital é
+                                    inspiradora."
+                                </p>
+                                <div class="author-info">
+                                    <img src="../images/Jose.png" alt="José">
+                                    <div class="author-details">
+                                        <h5>José Ferreira</h5>
+                                        <p>HR Director</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 2 -->
+                        <div class="recommendation-slide">
+                            <div class="recommendation-card">
+                                <p class="quote">
+                                    "Trabalhei com Samuel em vários projetos de transformação e a sua capacidade de
+                                    liderar
+                                    equipas multidisciplinares é notável. Um verdadeiro catalisador de mudança."
+                                </p>
+                                <div class="author-info">
+                                    <img src="../images/Marta.png" alt="Marta">
+                                    <div class="author-details">
+                                        <h5>Marta Santos</h5>
+                                        <p>Change Manager</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 3 -->
+                        <div class="recommendation-slide">
+                            <div class="recommendation-card">
+                                <p class="quote">
+                                    "A visão do Samuel sobre o futuro do trabalho e a humanização da tecnologia é
+                                    visionária.
+                                    Os seus insights sobre IA em RH são extremamente valiosos."
+                                </p>
+                                <div class="author-info">
+                                    <img src="../images/Ricardo.png" alt="Ricardo">
+                                    <div class="author-details">
+                                        <h5>Ricardo Oliveira</h5>
+                                        <p>Tech Lead</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 4 -->
+                        <div class="recommendation-slide">
+                            <div class="recommendation-card">
+                                <p class="quote">
+                                    "Um mentor inspirador que verdadeiramente investe no desenvolvimento das pessoas.
+                                    A sua paixão por criar líderes é contagiante e os resultados falam por si."
+                                </p>
+                                <div class="author-info">
+                                    <img src="../images/Tania.png" alt="Tânia">
+                                    <div class="author-details">
+                                        <h5>Tânia Costa</h5>
+                                        <p>Senior Consultant</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slider-dots" id="sliderDots">
+                        <div class="slider-dot active" data-index="0"></div>
+                        <div class="slider-dot" data-index="1"></div>
+                        <div class="slider-dot" data-index="2"></div>
+                        <div class="slider-dot" data-index="3"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
         <footer id="contactos">
             <div class="container">
                 <div class="footer-container">
@@ -652,10 +772,13 @@
                             <p><i class="fas fa-phone"></i> +351 961 925 050</p>
                         </div>
                         <div class="footer-social">
-                            <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"
-                                rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
+                            <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" rel="noopener noreferrer">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
                             <a href="https://www.instagram.com/share2inspire_" target="_blank"
-                                rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                                rel="noopener noreferrer">
+                                <i class="fab fa-instagram"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -667,78 +790,96 @@
                 </div>
             </div>
         </footer>
+    </main>
 
-        <!-- Custom JS -->
-        <script>
-            // Smooth scrolling for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+    </script>
+
+    <!-- Recommendations Auto-Slider -->
+    <script>
+        (function () {
+            const track = document.getElementById('recommendationsTrack');
+            const dots = document.querySelectorAll('.slider-dot');
+            let currentSlide = 0;
+            const totalSlides = dots.length;
+            const autoAdvanceInterval = 5000; // 5 seconds
+
+            function goToSlide(index) {
+                currentSlide = index;
+                track.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentSlide);
+                });
+            }
+
+            function nextSlide() {
+                goToSlide((currentSlide + 1) % totalSlides);
+            }
+
+            // Auto-advance
+            let autoAdvance = setInterval(nextSlide, autoAdvanceInterval);
+
+            // Click on dots
+            dots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    clearInterval(autoAdvance);
+                    goToSlide(parseInt(dot.dataset.index));
+                    autoAdvance = setInterval(nextSlide, autoAdvanceInterval);
                 });
             });
 
-            // Navbar scroll effect
-            window.addEventListener('scroll', function () {
-                const navbar = document.querySelector('.navbar');
-                if (window.scrollY > 100) {
-                    navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-                    navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-                } else {
-                    navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-                    navbar.style.boxShadow = 'none';
-                }
-            });
-        </script>
+            // Touch/Swipe support
+            let touchStartX = 0;
+            let touchEndX = 0;
 
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- AOS JS -->
-        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-        <script>
-            AOS.init({
-                duration: 800,
-                easing: 'ease-in-out',
-                once: true
-            });
-        </script>
-        <!-- Custom JS -->
-        <script>
-            // Smooth scrolling for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
+            track.addEventListener('touchstart', e => {
+                touchStartX = e.touches[0].clientX;
+            }, { passive: true });
+
+            track.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].clientX;
+                const diff = touchStartX - touchEndX;
+
+                if (Math.abs(diff) > 50) {
+                    clearInterval(autoAdvance);
+                    if (diff > 0) {
+                        goToSlide((currentSlide + 1) % totalSlides);
+                    } else {
+                        goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
                     }
-                });
-            });
-
-            // Navbar scroll effect
-            window.addEventListener('scroll', function () {
-                const navbar = document.querySelector('.navbar');
-                if (window.scrollY > 100) {
-                    navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-                    navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-                } else {
-                    navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-                    navbar.style.boxShadow = 'none';
+                    autoAdvance = setInterval(nextSlide, autoAdvanceInterval);
                 }
-            });
-        </script>
-        <script src="../js/brevo-integration.js"></script>
-        <!-- Global Feedback Widget -->
-        <script src="../js/feedback-widget.js"></script>
+            }, { passive: true });
+        })();
+    </script>
+
+    <!-- Navbar scroll effect -->
+    <script>
+        window.addEventListener('scroll', function () {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+                navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                navbar.style.boxShadow = 'none';
+            }
+        });
+    </script>
+
+    <script src="../js/brevo-integration.js"></script>
+    <script src="../js/feedback-widget.js"></script>
 </body>
 
 </html>
