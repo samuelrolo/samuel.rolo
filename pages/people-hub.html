@@ -665,7 +665,7 @@
                         <a class="nav-link active" aria-current="page" href="people-hub.html">People Hub</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="../index.html#contactos">Contactos</a>
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Contactos</a>
                     </li>
                 </ul>
             </div>
@@ -965,21 +965,9 @@
             });
         });
 
-        // Formulário de contacto
-        document.getElementById('contactForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const messageDiv = document.getElementById('contactFormMessage');
-            messageDiv.innerHTML = '<div class="alert alert-success">Mensagem enviada com sucesso! Entraremos em contacto brevemente.</div>';
-
-            setTimeout(() => {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
-                modal.hide();
-                this.reset();
-                messageDiv.innerHTML = '';
-            }, 2000);
-        });
     </script>
+    <script src="../js/contact-form.js"></script>
+
     <script src="../js/brevo-integration.js"></script>
     <!-- Global Feedback Widget -->
     <script src="../js/feedback-widget.js"></script>
