@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Analysis Result:", data.report);
 
             // Populate UI with AI Report
+            window.currentReportData = data.report;
             populateResults(data.report);
 
             // Show Modal
@@ -154,6 +155,9 @@ function populateResults(report) {
 
     // 9. Payment / Human Review Handler
     setupPaymentHandler(profile.detected_name);
+
+    // 10. Report Payment Handler
+    setupReportPaymentHandler(profile.detected_name);
 }
 
 function setupPaymentHandler(candidateName) {
@@ -364,4 +368,108 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// Report Payment Handler (1€)
+function setupReportPaymentHandler(candidateName) {
+    // Handler for Download Button (Redirect to Payment)
+    const downloadBtns = document.querySelectorAll('.modal-footer .btn-primary');
+    downloadBtns.forEach(btn => {
+        if (btn.id !== 'btnConfirmPayment' && btn.id !== 'btnConfirmReportPay') {
+            // This is the "Descarregar Relatório" button
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+
+            newBtn.addEventListener('click', () => {
+                // Close Results Modal
+                try {
+                    const resultsModal = bootstrap.Modal.getInstance(document.getElementById('cvResultsModal'));
+                    if (resultsModal) resultsModal.hide();
+                } catch (e) { }
+
+                // Show Report Payment Modal
+                const paymentModal = new bootstrap.Modal(document.getElementById('reportPaymentModal'));
+                paymentModal.show();
+
+                // Pre-fill name
+                if (candidateName && candidateName !== "Candidato") {
+                    const nameInput = document.getElementById('reportPayName');
+                    if (nameInput) nameInput.value = candidateName;
+                }
+            });
+        }
+    });
+
+    // Handle Payment Confirmation
+    const btnConfirmReportPay = document.getElementById('btnConfirmReportPay');
+    if (btnConfirmReportPay) {
+        // Remove old listeners
+        const newPaymentBtn = btnConfirmReportPay.cloneNode(true);
+        btnConfirmReportPay.parentNode.replaceChild(newPaymentBtn, btnConfirmReportPay);
+
+        newPaymentBtn.addEventListener('click', async () => {
+            const name = document.getElementById('reportPayName').value;
+            const phone = document.getElementById('reportPayPhone').value;
+            const email = document.getElementById('reportPayEmail').value;
+
+            if (!name || !phone || !email) {
+                alert("Por favor, preencha todos os campos.");
+                return;
+            }
+
+            const statusDiv = document.getElementById('reportPaymentStatus');
+            statusDiv.classList.remove('d-none');
+            statusDiv.innerHTML = '<div class="alert alert-warning"><i class="fas fa-spinner fa-spin me-2"></i>A processar pagamento MB WAY (1.00€)...</div>';
+            newPaymentBtn.disabled = true;
+
+            try {
+                // Ensure integration exists
+                if (!window.ifthenpayIntegration) {
+                    throw new Error("Sistema de pagamentos não inicializado.");
+                }
+
+                const paymentResult = await window.ifthenpayIntegration.processPayment('mbway', {
+                    amount: '1.00',
+                    mobileNumber: phone,
+                    orderId: 'CVREP-' + Date.now(),
+                    description: 'Relatório CV Completo',
+                    customerName: name,
+                    customerEmail: email
+                });
+
+                if (paymentResult.success) {
+                    statusDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Pedido MB WAY enviado! Aceite na app para descarregar.</div>';
+
+                    // Simulate payment confirmation wait logic
+                    // In a real scenario, we would poll the backend for status.
+                    // Here we trust the user accepts it and show the report after a delay/confirmation.
+
+                    setTimeout(() => {
+                        alert("Pagamento processado! O seu relatório será gerado de seguida.");
+
+                        try {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('reportPaymentModal'));
+                            if (modal) modal.hide();
+                        } catch (e) { }
+
+                        // Generate Report
+                        if (window.ReportGenerator && window.currentReportData) {
+                            window.ReportGenerator.openReport(window.currentReportData);
+                        } else {
+                            alert("Erro ao gerar relatório. Por favor contacte o suporte.");
+                        }
+                    }, 4000);
+
+                } else {
+                    throw new Error(paymentResult.message || "Falha no pagamento");
+                }
+
+            } catch (err) {
+                console.error(err);
+                statusDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${err.message}</div>`;
+                newPaymentBtn.disabled = false;
+            }
+        });
+    }
+}
+
 
