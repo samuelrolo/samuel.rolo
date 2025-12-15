@@ -22,417 +22,624 @@
         property="og:description" />
     <meta content="https://share2inspire.pt/images/samuel-rolo-og.jpg" property="og:image" />
 
+    <!-- Twitter -->
+    <meta content="summary_large_image" property="twitter:card" />
+    <meta content="https://share2inspire.pt/pages/sobre.html" property="twitter:url" />
+    <meta content="Sobre o Fundador | Share2Inspire | Samuel Rolo" property="twitter:title" />
+    <meta
+        content="Conheça Samuel Rolo, fundador da Share2Inspire. Especialista em transformação organizacional e desenvolvimento humano."
+        property="twitter:description" />
+    <meta content="https://share2inspire.pt/images/samuel-rolo-og.jpg" property="twitter:image" />
+
     <!-- Favicon -->
     <link href="../images/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
     <link href="../images/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png" />
     <link href="../images/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png" />
+    <link href="../images/site.webmanifest" rel="manifest" />
+    <link color="#5bbad5" href="../images/safari-pinned-tab.svg" rel="mask-icon" />
+    <meta content="#da532c" name="msapplication-TileColor" />
+    <meta content="#ffffff" name="theme-color" />
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
     <!-- Custom CSS -->
     <link href="../css/style.css" rel="stylesheet" />
+    <link href="../css/main_inline_styles.css" rel="stylesheet" />
+
+    <!-- Header & Footer Shared CSS -->
     <link href="../css/header-footer.css" rel="stylesheet" />
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap"
         rel="stylesheet" />
+
+    <!-- Animate.css -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
 
     <!-- AOS - Animate On Scroll -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- Swiper.js for Experience Slider -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <style>
         :root {
             --primary-color: #BF9A33;
             --secondary-color: #333333;
             --accent-color: #a57b0a;
-            --dark-bg: #1a1a1a;
-            --dark-card: #242424;
-            --text-light: #e0e0e0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --text-color: #333333;
+            --text-light: #6c757d;
         }
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #fcfcfc;
-            line-height: 1.6;
+        /* Page Header matching People Hub */
+        .page-header {
+            background-color: #f8f9fa;
+            padding: 100px 0 50px;
+            margin-bottom: 50px;
         }
 
-        /* ==================== HERO DARK SECTION ==================== */
-        .hero-dark {
-            background-color: var(--dark-bg);
-            padding: 160px 0 80px;
-            text-align: center;
-            position: relative;
-        }
-
-        .hero-dark .eyebrow {
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            color: #888;
-            font-size: 0.85rem;
-            font-weight: 600;
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
             margin-bottom: 1rem;
         }
 
-        .hero-dark h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            margin-bottom: 2.5rem;
-            font-style: italic;
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
         }
 
-        .profile-photo-container {
-            margin-bottom: 2rem;
-        }
-
-        .profile-photo {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            border: 5px solid var(--primary-color);
-            object-fit: cover;
-            box-shadow: 0 10px 40px rgba(191, 154, 51, 0.3);
-        }
-
-        .hero-dark .bio-text {
-            max-width: 700px;
-            margin: 0 auto 2rem;
-            color: var(--text-light);
-            font-size: 1rem;
-            line-height: 1.8;
-            opacity: 0.9;
-        }
-
-        .hero-dark .photo-credit {
-            font-size: 0.8rem;
-            color: #666;
-        }
-
-        .hero-dark .photo-credit a {
+        .breadcrumb-item a {
             color: var(--primary-color);
             text-decoration: none;
         }
 
-        /* ==================== SKILL CARDS ROW ==================== */
-        .skill-cards-section {
-            background-color: var(--dark-bg);
-            padding: 40px 0 80px;
+        .breadcrumb-item.active {
+            color: #6c757d;
         }
 
-        .skill-card-mini {
-            background-color: #fff;
-            border-radius: 16px;
-            padding: 30px 25px;
-            text-align: left;
-            transition: all 0.3s ease;
-            height: 100%;
-            border-left: 4px solid transparent;
-        }
-
-        .skill-card-mini:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-            border-left-color: var(--primary-color);
-        }
-
-        .skill-card-mini .icon {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-        }
-
-        .skill-card-mini h4 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 15px;
-        }
-
-        .skill-card-mini .more-link {
-            color: var(--primary-color);
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .skill-card-mini .more-link:hover {
-            color: var(--accent-color);
-        }
-
-        /* ==================== SECTION HEADERS ==================== */
-        .section-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 40px;
-            text-align: center;
-        }
-
-        .section-title span {
-            color: var(--primary-color);
-        }
-
-        /* ==================== EXPERIENCE TIMELINE ==================== */
-        .experience-section {
-            padding: 80px 0;
-            background-color: #f9f9f9;
-        }
-
-        .experience-card {
-            background-color: #fff;
-            padding: 25px 30px;
-            margin-bottom: 20px;
-            border-radius: 12px;
-            border-left: 4px solid var(--primary-color);
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-        }
-
-        .experience-card:hover {
-            transform: translateX(10px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        }
-
-        .experience-card h4 {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 5px;
-        }
-
-        .experience-card .company {
-            color: var(--primary-color);
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .experience-card .period {
-            color: #888;
-            font-size: 0.85rem;
-            font-family: monospace;
-        }
-
-        /* ==================== COMPETÊNCIAS ==================== */
-        .competencies-section {
-            padding: 80px 0;
-            background-color: #fff;
-        }
-
-        .competency-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        .competency-item {
-            background-color: #f9f9f9;
-            padding: 25px;
-            border-radius: 12px;
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .competency-item:hover {
-            background-color: #fff;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            transform: translateY(-5px);
-        }
-
-        .competency-item i {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            margin-top: 3px;
-        }
-
-        .competency-item h5 {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 5px;
-        }
-
-        .competency-item p {
-            font-size: 0.9rem;
-            color: #666;
-            margin: 0;
-        }
-
-        /* ==================== CERTIFICATIONS ==================== */
-        .certifications-section {
-            padding: 80px 0;
-            background-color: #f9f9f9;
-        }
-
-        .certification-badge {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 16px;
-            text-align: center;
-            height: 100%;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-        }
-
-        .certification-badge:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .certification-badge .icon {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-
-        .certification-badge h5 {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 8px;
-        }
-
-        .certification-badge p {
-            font-size: 0.85rem;
-            color: #888;
-            margin: 0;
-        }
-
-        /* ==================== RECOMMENDATIONS SLIDER ==================== */
-        .recommendations-section {
-            padding: 80px 0;
-            background-color: var(--dark-bg);
-            color: #fff;
-        }
-
-        .recommendations-section .section-title {
-            color: #fff;
-        }
-
-        .recommendations-slider {
+        /* Hero Founder matching Humanos & Máquinas */
+        .hero-founder {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 4rem;
+            border-radius: 15px;
             position: relative;
             overflow: hidden;
-            max-width: 900px;
-            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(191, 154, 51, 0.15);
         }
 
-        .recommendations-track {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
+        .hero-founder .section-label {
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: block;
         }
 
-        .recommendation-slide {
-            min-width: 100%;
-            padding: 0 20px;
-            box-sizing: border-box;
+        .hero-founder h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
         }
 
-        .recommendation-card {
-            background-color: var(--dark-card);
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .hero-founder p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .recommendation-card .quote {
-            font-size: 1.15rem;
+        @media (max-width: 992px) {
+            .hero-founder h2 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-founder {
+                text-align: center;
+            }
+        }
+
+        /* About Content Section */
+        .about-content {
+            padding: 80px 0;
+            background-color: #f8f9fa;
+        }
+
+        .about-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #343a40;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .about-content h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, #bf9a33 0%, #d4af37 100%);
+            border-radius: 2px;
+        }
+
+        .about-content h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #495057;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .about-content p {
+            font-size: 1.1rem;
             line-height: 1.8;
-            color: var(--text-light);
-            font-style: italic;
-            margin-bottom: 25px;
+            color: #6c757d;
+            margin-bottom: 20px;
         }
 
-        .recommendation-card .author-info {
+        .about-content blockquote {
+            background-color: #fff;
+            border-left: 5px solid #d4af37;
+            padding: 20px 30px;
+            margin: 30px 0;
+            font-style: italic;
+            font-size: 1.2rem;
+            color: #495057;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Timeline Section */
+        .timeline-section {
+            padding: 80px 0;
+            background-color: #fff;
+        }
+
+        .timeline-item {
+            background-color: #f8f9fa;
+            border-left: 4px solid #d4af37;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-item h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #343a40;
+            margin-bottom: 5px;
+        }
+
+        .timeline-item .company {
+            font-size: 1.1rem;
+            color: #bf9a33;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .timeline-item .period {
+            font-size: 0.95rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* Skills Section */
+        .skills-section {
+            padding: 80px 0;
+            background-color: #f8f9fa;
+        }
+
+        .skill-category {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .skill-category:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .skill-category h4 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #bf9a33;
+            margin-bottom: 15px;
+        }
+
+        .skill-category p {
+            font-size: 1rem;
+            color: #6c757d;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* Testimonials Section */
+        .testimonials-section {
+            padding: 80px 0;
+            background-color: #fff;
+        }
+
+        .testimonial-card {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .testimonial-card p {
+            font-size: 1rem;
+            color: #495057;
+            line-height: 1.7;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-card .author-info {
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 15px;
         }
 
-        .recommendation-card .author-info img {
+        .testimonial-card .author-info img {
             width: 60px;
             height: 60px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid var(--primary-color);
         }
 
-        .recommendation-card .author-info .author-details {
-            text-align: left;
-        }
-
-        .recommendation-card .author-info h5 {
-            font-size: 1rem;
+        .testimonial-card .author-info h5 {
+            font-size: 1.1rem;
             font-weight: 700;
-            color: #fff;
-            margin-bottom: 2px;
+            color: #343a40;
+            margin-bottom: 5px;
         }
 
-        .recommendation-card .author-info p {
-            font-size: 0.85rem;
-            color: #888;
-            margin: 0;
+        .testimonial-card .author-info p {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 0;
+            font-style: normal;
         }
 
-        .slider-dots {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 30px;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .about-content h2 {
+                font-size: 2rem;
+            }
+
         }
 
-        .slider-dot {
-            width: 10px;
-            height: 10px;
+        /* Hero Photo Styles */
+        .hero-photo {
+            width: 560px;
+            height: 560px;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
+            object-fit: cover;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            margin-bottom: 2rem;
+        }
+
+        .hero-founder .hero-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Experience Slider Styles */
+        .experience-slider-section {
+            padding: 60px 0;
+            background-color: #fff;
+        }
+
+        .experience-slider-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #343a40;
+            margin-bottom: 40px;
+        }
+
+        .experience-slide {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 16px;
+            padding: 30px 25px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(191, 154, 51, 0.1);
             transition: all 0.3s ease;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .slider-dot.active {
-            background-color: var(--primary-color);
-            transform: scale(1.2);
+        .experience-slide:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(191, 154, 51, 0.15);
         }
 
-        /* ==================== FOOTER ==================== */
-        footer {
-            background-color: #1a1a1a;
-            color: #fff;
-            padding: 40px 0;
+        .experience-slide .company-logo {
+            width: 100%;
+            max-width: 140px;
+            height: 70px;
+            object-fit: contain;
+            margin: 0 auto 20px;
+            border-radius: 8px;
         }
 
-        footer a {
+        .experience-slide h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #343a40;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .experience-slide .company-name {
+            font-size: 1rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .experience-slide .period {
+            font-size: 0.85rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .swiper-pagination-bullet {
+            background: var(--primary-color);
+            opacity: 0.4;
+        }
+
+        .swiper-pagination-bullet-active {
+            background: var(--primary-color);
+            opacity: 1;
+        }
+
+        .swiper-button-next,
+        .swiper-button-prev {
             color: var(--primary-color);
         }
 
-        /* ==================== RESPONSIVE ==================== */
+        .swiper-button-next::after,
+        .swiper-button-prev::after {
+            font-size: 1.5rem;
+        }
+
+        /* Modern Skills Section */
+        .skills-modern-section {
+            padding: 60px 0;
+            background-color: #f8f9fa;
+        }
+
+        .skills-modern-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #343a40;
+            margin-bottom: 40px;
+        }
+
+        .skill-group {
+            margin-bottom: 30px;
+        }
+
+        .skill-group-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .skill-group-title i {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill-tag {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            color: #495057;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+
+        .skill-tag:hover {
+            background: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Certifications Section - LinkedIn Style */
+        .certifications-section {
+            padding: 60px 0;
+            background-color: #f8f9fa;
+        }
+
+        .certifications-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #343a40;
+            margin-bottom: 40px;
+        }
+
+        .cert-list {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .cert-card {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .cert-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(191, 154, 51, 0.1);
+        }
+
+        .cert-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 4px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .cert-logo i {
+            color: #fff;
+            font-size: 1.3rem;
+        }
+
+        .cert-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .cert-content h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #191919;
+            margin-bottom: 2px;
+            line-height: 1.4;
+        }
+
+        .cert-content .issuer {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 2px;
+            font-weight: 400;
+        }
+
+        .cert-content .date {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 0;
+        }
+
+        .cert-badge {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .cert-badge a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: 1.5px solid var(--primary-color);
+            border-radius: 20px;
+            color: var(--primary-color);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .cert-badge a:hover {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .cert-badge a i {
+            font-size: 0.75rem;
+        }
+
         @media (max-width: 768px) {
-            .hero-dark {
-                padding: 120px 0 60px;
+            .cert-card {
+                flex-wrap: wrap;
+                padding: 16px;
             }
 
-            .hero-dark h1 {
-                font-size: 2.5rem;
+            .cert-badge {
+                width: 100%;
+                margin-top: 12px;
             }
 
-            .profile-photo {
-                width: 140px;
-                height: 140px;
+            .cert-badge a {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-photo {
+                width: 400px;
+                height: 400px;
             }
 
-            .skill-card-mini {
-                margin-bottom: 20px;
+            .experience-slide {
+                padding: 25px 20px;
+                min-height: 250px;
+            }
+
+            .cert-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -470,463 +677,272 @@
                         <a class="nav-link" href="people-hub.html">People Hub</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Contactos</a>
+                        <a class="nav-link" href="#contactos">Contactos</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- HERO DARK SECTION -->
-    <section class="hero-dark">
+    <!-- Page Header -->
+    <section class="page-header">
         <div class="container">
-            <p class="eyebrow" data-aos="fade-down">Um Pouco Sobre Mim</p>
-            <h1 data-aos="fade-up">Quem sou eu?</h1>
-
-            <div class="profile-photo-container" data-aos="zoom-in" data-aos-delay="200">
-                <img src="../images/fundador.jpg" alt="Samuel Rolo - Fundador Share2Inspire" class="profile-photo">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Sobre o Fundador</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Sobre o Fundador</li>
+                        </ol>
+                    </nav>
+                </div>
             </div>
-
-            <p class="bio-text" data-aos="fade-up" data-aos-delay="300">
-                Olá, sou <strong>Samuel Rolo</strong>, Digital HR & Process Excellence Manager com mais de 14 anos de
-                experiência
-                em transformação organizacional. A minha missão é humanizar a tecnologia e a IA nas áreas de People &
-                Culture,
-                criando pontes entre pessoas, processos e propósito. Reconhecido como LinkedIn Top Voice,
-                trabalho para transformar organizações através de uma abordagem que combina inovação tecnológica com o
-                foco no que mais importa: as pessoas.
-            </p>
-
-            <p class="photo-credit" data-aos="fade-up" data-aos-delay="400">
-                Fundador & CEO da <a href="https://share2inspire.pt">Share2Inspire</a>
-            </p>
         </div>
     </section>
 
-    <!-- SKILL CARDS -->
-    <section class="skill-cards-section">
+    <section class="hero-founder">
         <div class="container">
-            <div class="row g-4">
-                <div class="col-6 col-md-3" data-aos="fade-up">
-                    <div class="skill-card-mini">
-                        <div class="icon"><i class="fas fa-project-diagram"></i></div>
-                        <h4>Transformação Digital</h4>
-                        <a href="#experience" class="more-link">Mais</a>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="100">
-                    <div class="skill-card-mini">
-                        <div class="icon"><i class="fas fa-users"></i></div>
-                        <h4>Gestão de RH</h4>
-                        <a href="#competencies" class="more-link">Mais</a>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="200">
-                    <div class="skill-card-mini">
-                        <div class="icon"><i class="fas fa-code"></i></div>
-                        <h4>Tecnologias & IA</h4>
-                        <a href="#competencies" class="more-link">Mais</a>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="300">
-                    <div class="skill-card-mini">
-                        <div class="icon"><i class="fas fa-graduation-cap"></i></div>
-                        <h4>Formação & Coaching</h4>
-                        <a href="#certifications" class="more-link">Mais</a>
-                    </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center hero-content">
+                    <img src="../images/fundador.jpg" alt="Samuel Rolo"
+                        class="hero-photo animate__animated animate__fadeIn">
+                    <p class="section-label animate__animated animate__fadeInDown">Fundador & CEO</p>
+                    <h2 class="animate__animated animate__fadeInUp">Samuel Rolo</h2>
+                    <p class="animate__animated animate__fadeInUp">Digital HR & Process Excellence Manager | Humanising
+                        AI in People & Culture | LinkedIn Top Voice</p>
                 </div>
             </div>
         </div>
     </section>
 
     <main>
-        <!-- EXPERIENCE SECTION -->
-        <section id="experience" class="experience-section">
+        <!-- About Content Section -->
+        <section class="about-content">
             <div class="container">
-                <h2 class="section-title" data-aos="fade-up">Percurso <span>Profissional</span></h2>
+                <div class="row">
+                    <div class="col-lg-10 mx-auto">
+                        <h2>A Minha Trajectória</h2>
+                        <p>A minha paixão pela transformação organizacional nasceu da convicção de que as
+                            pessoas são o verdadeiro motor de qualquer mudança sustentável. Ao longo dos
+                            anos,
+                            tenho dedicado a minha carreira a ajudar organizações e indivíduos a descobrirem
+                            o seu potencial máximo. </p>
+                        <p>Através da Share2Inspire,
+                            combinamos metodologias comprovadas com uma abordagem humanizada,
+                            criando soluções personalizadas que geram resultados duradouros. Acredito que o
+                            sucesso organizacional só é possível quando existe um alinhamento genuíno entre
+                            propósito,
+                            pessoas e processos. </p>
+                        <p>Esta filosofia tem orientado o meu trabalho e permitido transformar equipas,
+                            culturas e resultados em organizações de diversos sectores. Com mais de 14 anos
+                            de experiência em transformação de RH,
+                            tenho trabalhado em projetos de grande complexidade em empresas como
+                            AstraZeneca,
+                            BNP Paribas CIB,
+                            Deloitte e EY. </p>
+                        <blockquote>"O verdadeiro líder não é aquele que tem seguidores, mas aquele que cria
+                            outros líderes."
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Experience Slider Section -->
+        <section class="experience-slider-section">
+            <div class="container">
+                <h2 data-aos="fade-up">Percurso Profissional</h2>
+                <div class="swiper experienceSwiper" data-aos="fade-up" data-aos-delay="100">
+                    <div class="swiper-wrapper">
+                        <!-- AstraZeneca -->
+                        <div class="swiper-slide">
+                            <div class="experience-slide">
+                                <img src="../images/logos/astrazeneca_logo.svg" alt="AstraZeneca" class="company-logo">
+                                <h4>Digital HR & Process Excellence Manager</h4>
+                                <p class="company-name">AstraZeneca</p>
+                                <p class="period">Agosto de 2025 - Presente</p>
+                            </div>
+                        </div>
+                        <!-- Share2Inspire -->
+                        <div class="swiper-slide">
+                            <div class="experience-slide">
+                                <img src="../images/logos/share2inspire_logo.png" alt="Share2Inspire"
+                                    class="company-logo">
+                                <h4>Founder</h4>
+                                <p class="company-name">Share2Inspire</p>
+                                <p class="period">Abril de 2025 - Presente</p>
+                            </div>
+                        </div>
+                        <!-- APG -->
+                        <div class="swiper-slide">
+                            <div class="experience-slide">
+                                <img src="../images/logos/apg_logo.png" alt="APG" class="company-logo">
+                                <h4>Comissão de Gestão de Pessoas no Setor Social</h4>
+                                <p class="company-name">APG - Associação Portuguesa de Gestão das Pessoas</p>
+                                <p class="period">Abril de 2025 - Presente</p>
+                            </div>
+                        </div>
+                        <!-- BNP Paribas -->
+                        <div class="swiper-slide">
+                            <div class="experience-slide">
+                                <img src="../images/logos/bnp_paribas_logo.svg" alt="BNP Paribas" class="company-logo">
+                                <h4>HR Transformation Leader</h4>
+                                <p class="company-name">BNP Paribas CIB</p>
+                                <p class="period">Janeiro de 2025 - Maio de 2025</p>
+                            </div>
+                        </div>
+                        <!-- Deloitte Senior Manager -->
+                        <div class="swiper-slide">
+                            <div class="experience-slide">
+                                <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
+                                <h4>Senior Manager</h4>
+                                <p class="company-name">Deloitte</p>
+                                <p class="period">Setembro de 2021 - Janeiro de 2025</p>
+                            </div>
+                        </div>
+                        <!-- Deloitte Manager -->
+                        <div class="swiper-slide">
+                            <div class="experience-slide">
+                                <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
+                                <h4>Manager</h4>
+                                <p class="company-name">Deloitte</p>
+                                <p class="period">Setembro de 2016 - Agosto de 2021</p>
+                            </div>
+                        </div>
+                        <!-- Deloitte Senior Consultant -->
+                        <div class="swiper-slide">
+                            <div class="experience-slide">
+                                <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
+                                <h4>Senior Consultant</h4>
+                                <p class="company-name">Deloitte</p>
+                                <p class="period">Agosto de 2015 - Agosto de 2016</p>
+                            </div>
+                        </div>
+                        <!-- EY -->
+                        <div class="swiper-slide">
+                            <div class="experience-slide">
+                                <img src="../images/logos/ey_logo.png" alt="EY" class="company-logo">
+                                <h4>Senior Consultant</h4>
+                                <p class="company-name">EY</p>
+                                <p class="period">Janeiro de 2015 - Agosto de 2015</p>
+                            </div>
+                        </div>
+                        <!-- Deloitte Consultant -->
+                        <div class="swiper-slide">
+                            <div class="experience-slide">
+                                <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
+                                <h4>Consultant</h4>
+                                <p class="company-name">Deloitte</p>
+                                <p class="period">Setembro de 2013 - Dezembro de 2014</p>
+                            </div>
+                        </div>
+                        <!-- Deloitte Analyst -->
+                        <div class="swiper-slide">
+                            <div class="experience-slide">
+                                <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
+                                <h4>Analyst</h4>
+                                <p class="company-name">Deloitte</p>
+                                <p class="period">Setembro de 2012 - Agosto de 2013</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-pagination"></div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+            </div>
+        </section>
+        <!-- Modern Skills Section -->
+        <section class="skills-modern-section">
+            <div class="container">
+                <h2 data-aos="fade-up">Competências em Destaque</h2>
                 <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <div class="experience-card" data-aos="fade-up">
-                            <h4>Digital HR & Process Excellence Manager</h4>
-                            <p class="company">AstraZeneca</p>
-                            <p class="period">Agosto 2025 - Presente</p>
-                        </div>
-                        <div class="experience-card" data-aos="fade-up" data-aos-delay="50">
-                            <h4>Founder & CEO</h4>
-                            <p class="company">Share2Inspire</p>
-                            <p class="period">Abril 2025 - Presente</p>
-                        </div>
-                        <div class="experience-card" data-aos="fade-up" data-aos-delay="100">
-                            <h4>HR Transformation Leader</h4>
-                            <p class="company">BNP Paribas CIB</p>
-                            <p class="period">Janeiro 2025 - Maio 2025</p>
-                        </div>
-                        <div class="experience-card" data-aos="fade-up" data-aos-delay="150">
-                            <h4>Senior Manager - Human Capital</h4>
-                            <p class="company">Deloitte</p>
-                            <p class="period">Setembro 2021 - Janeiro 2025</p>
-                        </div>
-                        <div class="experience-card" data-aos="fade-up" data-aos-delay="200">
-                            <h4>Manager - Human Capital</h4>
-                            <p class="company">Deloitte</p>
-                            <p class="period">Setembro 2016 - Agosto 2021</p>
-                        </div>
-                        <div class="experience-card" data-aos="fade-up" data-aos-delay="250">
-                            <h4>Senior Consultant</h4>
-                            <p class="company">EY</p>
-                            <p class="period">Janeiro 2015 - Agosto 2015</p>
+                    <div class="col-lg-8 text-center" data-aos="fade-up">
+                        <div class="skill-tags" style="justify-content: center;">
+                            <span class="skill-tag">HR Transformation</span>
+                            <span class="skill-tag">Generative AI</span>
+                            <span class="skill-tag">Change Management</span>
+                            <span class="skill-tag">Scrum Master</span>
+                            <span class="skill-tag">Coaching</span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- COMPETENCIES SECTION -->
-        <section id="competencies" class="competencies-section">
+        <!-- Certifications Section -->
+        <!-- Certifications Section - LinkedIn Style -->
+        <section class="certifications-section">
             <div class="container">
-                <h2 class="section-title" data-aos="fade-up">Competências em <span>Destaque</span></h2>
-                <div class="competency-grid">
-                    <div class="competency-item" data-aos="fade-up">
-                        <i class="fas fa-sync-alt"></i>
-                        <div>
-                            <h5>HR Transformation</h5>
-                            <p>Projetos internacionais de transformação de RH</p>
+                <h2 data-aos="fade-up">Certificações</h2>
+                <div class="cert-list">
+                    <!-- AstraZeneca AI -->
+                    <div class="cert-card" data-aos="fade-up">
+                        <div class="cert-logo"><i class="fas fa-robot"></i></div>
+                        <div class="cert-content">
+                            <h5>Thriving in the age of AI - Gold Certification</h5>
+                            <p class="issuer">AstraZeneca</p>
+                            <p class="date">Emitido em nov. de 2025</p>
+                        </div>
+                        <div class="cert-badge">
+                            <a href="https://www.credly.com/badges/93de728a-0b70-465c-9c6f-38f9838e9b32"
+                                target="_blank">
+                                Mostrar credencial <i class="fas fa-external-link-alt"></i>
+                            </a>
                         </div>
                     </div>
-                    <div class="competency-item" data-aos="fade-up" data-aos-delay="50">
-                        <i class="fas fa-robot"></i>
-                        <div>
-                            <h5>Humanising AI</h5>
-                            <p>Integração ética de IA em People & Culture</p>
+                    <!-- Scrum.org PSM I -->
+                    <div class="cert-card" data-aos="fade-up" data-aos-delay="50">
+                        <div class="cert-logo"><i class="fas fa-tasks"></i></div>
+                        <div class="cert-content">
+                            <h5>Professional Scrum Master™ I (PSM I)</h5>
+                            <p class="issuer">Scrum.org</p>
+                            <p class="date">Emitido em abr. de 2022</p>
                         </div>
                     </div>
-                    <div class="competency-item" data-aos="fade-up" data-aos-delay="100">
-                        <i class="fas fa-cogs"></i>
-                        <div>
-                            <h5>Process Excellence</h5>
-                            <p>Otimização de processos e metodologias Agile</p>
+                    <!-- Microsoft & LinkedIn -->
+                    <div class="cert-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="cert-logo"><i class="fab fa-microsoft"></i></div>
+                        <div class="cert-content">
+                            <h5>Career Essentials in Generative AI</h5>
+                            <p class="issuer">Microsoft & LinkedIn</p>
+                            <p class="date">Emitido em dez. de 2023</p>
+                        </div>
+                        <div class="cert-badge">
+                            <a href="https://www.linkedin.com/learning/certificates/19d0c1c0ccf4cd5016a295ca8c1d37da897804b22dff5f0d69d631047756790a"
+                                target="_blank">
+                                Mostrar credencial <i class="fas fa-external-link-alt"></i>
+                            </a>
                         </div>
                     </div>
-                    <div class="competency-item" data-aos="fade-up" data-aos-delay="150">
-                        <i class="fas fa-chart-line"></i>
-                        <div>
-                            <h5>Change Management</h5>
-                            <p>Gestão de mudança organizacional</p>
+                    <!-- ServiceNow HRSD -->
+                    <div class="cert-card" data-aos="fade-up" data-aos-delay="150">
+                        <div class="cert-logo"><i class="fas fa-users-cog"></i></div>
+                        <div class="cert-content">
+                            <h5>Human Resources Service Delivery (HRSD) Fundamentals</h5>
+                            <p class="issuer">ServiceNow</p>
+                        </div>
+                        <div class="cert-badge">
+                            <a href="https://learning.servicenow.com/lxp/en/hr-service-delivery/human-resources-service-delivery-hrsd-fundamentals-on"
+                                target="_blank">
+                                Mostrar credencial <i class="fas fa-external-link-alt"></i>
+                            </a>
                         </div>
                     </div>
-                    <div class="competency-item" data-aos="fade-up" data-aos-delay="200">
-                        <i class="fas fa-user-tie"></i>
-                        <div>
-                            <h5>Leadership Development</h5>
-                            <p>Coaching executivo e desenvolvimento de líderes</p>
-                        </div>
-                    </div>
-                    <div class="competency-item" data-aos="fade-up" data-aos-delay="250">
-                        <i class="fas fa-laptop-code"></i>
-                        <div>
-                            <h5>HR Tech</h5>
-                            <p>SAP SuccessFactors, ServiceNow, Generative AI</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- CERTIFICATIONS SECTION -->
-        <section id="certifications" class="certifications-section">
-            <div class="container">
-                <h2 class="section-title" data-aos="fade-up">Certificações & <span>Reconhecimentos</span></h2>
-                <div class="row g-4 justify-content-center">
-                    <div class="col-6 col-md-3" data-aos="fade-up">
-                        <div class="certification-badge">
-                            <div class="icon"><i class="fab fa-linkedin"></i></div>
-                            <h5>LinkedIn Top Voice</h5>
-                            <p>Human Resources</p>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="100">
-                        <div class="certification-badge">
-                            <div class="icon"><i class="fas fa-award"></i></div>
-                            <h5>APG Portugal</h5>
-                            <p>Comissão Gestão Pessoas</p>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="200">
-                        <div class="certification-badge">
-                            <div class="icon"><i class="fas fa-briefcase"></i></div>
-                            <h5>Big 4 Experience</h5>
-                            <p>Deloitte & EY</p>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="300">
-                        <div class="certification-badge">
-                            <div class="icon"><i class="fas fa-globe-europe"></i></div>
-                            <h5>Projetos Internacionais</h5>
-                            <p>AstraZeneca, BNP Paribas</p>
+                    <!-- Nova SBE Negociação -->
+                    <div class="cert-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="cert-logo"><i class="fas fa-handshake"></i></div>
+                        <div class="cert-content">
+                            <h5>Negociação Avançada</h5>
+                            <p class="issuer">Nova SBE Executive Education</p>
+                            <p class="date">Emitido em jan. de 2023</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- RECOMMENDATIONS SLIDER -->
-        <section class="recommendations-section">
-            <div class="container">
-                <h2 class="section-title" data-aos="fade-up">O Que Dizem <span>Sobre Mim</span></h2>
-
-                <div class="recommendations-slider" data-aos="fade-up">
-                    <div class="recommendations-track" id="recommendationsTrack">
-                        <!-- Slide 1 - Tomás Alegria Aguiar -->
-                        <div class="recommendation-slide">
-                            <div class="recommendation-card">
-                                <p class="quote">
-                                    "A vasta experiência que possui na entrega de projetos de transformação de RH de
-                                    grande complexidade, aliada à sua visão estratégica, liderança e espírito
-                                    colaborativo, garantem não só projetos bem-sucedidos e resultados de excelência, mas
-                                    também o desenvolvimento de todos com quem trabalha. O seu profissionalismo, a sua
-                                    capacidade de gestão de equipa e o seu perfeccionismo são verdadeiramente
-                                    inspiradores."
-                                </p>
-                                <div class="author-info">
-                                    <img src="../images/recommendations/tomas_alegria.png" alt="Tomás Alegria Aguiar">
-                                    <div class="author-details">
-                                        <h5>Tomás Alegria Aguiar</h5>
-                                        <p>Senior Consultant | SAP Integration Suite Lead</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 2 - José Subtil -->
-                        <div class="recommendation-slide">
-                            <div class="recommendation-card">
-                                <p class="quote">
-                                    "I had the pleasure of working with Samuel while he was Senior Consultant and
-                                    Manager at Deloitte, and I can say that he is an exceptional professional. Samuel
-                                    has a combination of technical and interpersonal skills that makes him a natural
-                                    leader. His ability to meet customer needs and his commitment to excellence was a
-                                    key to the projects success."
-                                </p>
-                                <div class="author-info">
-                                    <img src="../images/Jose.png" alt="José Subtil">
-                                    <div class="author-details">
-                                        <h5>José Subtil</h5>
-                                        <p>Banking and Insurance Leader at Timestamp</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 3 - Marta Oliveira Dias -->
-                        <div class="recommendation-slide">
-                            <div class="recommendation-card">
-                                <p class="quote">
-                                    "I had the pleasure to work with Samuel during my last project at Deloitte. He is a
-                                    dedicated professional that always goes above and beyond to make an impact that
-                                    matters. Samuel does a remarkable job leading his teams while being committed and
-                                    always available to help others. He is extremely hard-working, determined and always
-                                    challenges us to do our best."
-                                </p>
-                                <div class="author-info">
-                                    <img src="../images/Marta.png" alt="Marta Oliveira Dias">
-                                    <div class="author-details">
-                                        <h5>Marta Oliveira Dias</h5>
-                                        <p>Improvement & Performance Manager @VodafoneZiggo</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 4 - Hildebrando Sala -->
-                        <div class="recommendation-slide">
-                            <div class="recommendation-card">
-                                <p class="quote">
-                                    "O Samuel é um profissional de excelência com quem tive a oportunidade de trabalhar
-                                    e aprender em vários projectos estruturantes. Possui uma notável capacidade de
-                                    integração e aculturação. Trabalhar com o Samuel em processos de reestruturação,
-                                    melhorias, desenvolvimento de políticas e processos de recursos humanos foi
-                                    extremamente enriquecedor e de elevado valor."
-                                </p>
-                                <div class="author-info">
-                                    <img src="../images/Hildebrando.png" alt="Hildebrando Sala">
-                                    <div class="author-details">
-                                        <h5>Hildebrando Sala</h5>
-                                        <p>Director de Capital Humano</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 5 - Ricardo Ramos da Silva -->
-                        <div class="recommendation-slide">
-                            <div class="recommendation-card">
-                                <p class="quote">
-                                    "I had the pleasure of working with Samuel in his first unofficial project as a
-                                    senior consultant and was instantly impressed. Samuel effortlessly and expertly
-                                    managed to juggle multiple issues in the toughest situation, his leadership and team
-                                    building skills were exceptional. As a Senior Consultant, Samuel has my highest
-                                    recommendation."
-                                </p>
-                                <div class="author-info">
-                                    <img src="../images/Ricardo.png" alt="Ricardo Ramos da Silva">
-                                    <div class="author-details">
-                                        <h5>Ricardo Ramos da Silva</h5>
-                                        <p>HR and HRIT Expert | SAP SuccessFactors SME</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 6 - Ivo Guimarães -->
-                        <div class="recommendation-slide">
-                            <div class="recommendation-card">
-                                <p class="quote">
-                                    "O Samuel é além de um profissional extremamente disponível e conhecedor da sua área
-                                    de actuação, um ser humano ímpar. Procura congregar as ideias do grupo pra encontrar
-                                    soluções que sejam sempre focadas em resultados. Foi um prazer imensurável trabalhar
-                                    com o Samuel pois mais uma vez tive a certeza que vale mais trabalhar com boas
-                                    pessoas do que com pessoas boas."
-                                </p>
-                                <div class="author-info">
-                                    <img src="../images/Ivo.png" alt="Ivo Guimarães">
-                                    <div class="author-details">
-                                        <h5>Ivo Guimarães</h5>
-                                        <p>Gestão de Talento | RH Analítico | SAP SuccessFactors</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 7 - Mariana Cabral Janeiro -->
-                        <div class="recommendation-slide">
-                            <div class="recommendation-card">
-                                <p class="quote">
-                                    "O Samuel é uma pessoa extremamente dedicada ao seu trabalho. Estabelece objectivos
-                                    desafiantes e atinge-os com trabalho árduo, que é recompensado com o seu sucesso.
-                                    Trabalhar com ele é ter a certeza de que faremos parte de uma equipa vencedora!
-                                    Estou certa de que será bem sucedido profissionalmente."
-                                </p>
-                                <div class="author-info">
-                                    <img src="../images/recommendations/mariana_cabral.png"
-                                        alt="Mariana Cabral Janeiro">
-                                    <div class="author-details">
-                                        <h5>Mariana Cabral Janeiro</h5>
-                                        <p>Senior Business Analyst</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 8 - Paulo Viegas de Carvalho -->
-                        <div class="recommendation-slide">
-                            <div class="recommendation-card">
-                                <p class="quote">
-                                    "During the time I taught Corporate Finance to Samuel, he revealed a very
-                                    interested, team player and responsible character, as well as a knowledgeable person
-                                    about corporate finance issues. His work and continuous active participation in
-                                    classes, with relevant comments, confirmed that."
-                                </p>
-                                <div class="author-info">
-                                    <img src="../images/recommendations/paulo_viegas.png"
-                                        alt="Paulo Viegas de Carvalho">
-                                    <div class="author-details">
-                                        <h5>Paulo Viegas de Carvalho</h5>
-                                        <p>Senior Data Scientist</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 9 - Ana M. Correia -->
-                        <div class="recommendation-slide">
-                            <div class="recommendation-card">
-                                <p class="quote">
-                                    "Trabalhar com o Samuel é uma experiência bastante positiva. É uma pessoa que
-                                    procura sempre aprender mais e fazer melhor, mostrando ser muito empenhado e
-                                    dedicado naquilo que faz."
-                                </p>
-                                <div class="author-info">
-                                    <img src="../images/recommendations/ana_correia.png" alt="Ana M. Correia">
-                                    <div class="author-details">
-                                        <h5>Ana M. Correia</h5>
-                                        <p>Diretora Desenvolvimento Humano e Organizacional na Leroy Merlin</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 10 - Ana Rita Fraga -->
-                        <div class="recommendation-slide">
-                            <div class="recommendation-card">
-                                <p class="quote">
-                                    "No âmbito da universidade realizei trabalhos de grupo com o Samuel, tendo sido uma
-                                    experiência muito positiva. Considero o Samuel uma pessoa muito comunicativa,
-                                    disciplinada e criativa."
-                                </p>
-                                <div class="author-info">
-                                    <img src="../images/recommendations/ana_fraga.png" alt="Ana Rita Fraga">
-                                    <div class="author-details">
-                                        <h5>Ana Rita Fraga</h5>
-                                        <p>Responsável de Recursos Humanos</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 11 - Mariana Guedes -->
-                        <div class="recommendation-slide">
-                            <div class="recommendation-card">
-                                <p class="quote">
-                                    "Desenho de processos"
-                                </p>
-                                <div class="author-info">
-                                    <img src="../images/recommendations/mariana_guedes.png" alt="Mariana Guedes">
-                                    <div class="author-details">
-                                        <h5>Mariana Guedes</h5>
-                                        <p>Senior Manager Digital Content Creation</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Slide 12 - Luis Martinez -->
-                        <div class="recommendation-slide">
-                            <div class="recommendation-card">
-                                <p class="quote">
-                                    "Samuel attended my Leadership classes (degree in HRM). He is undoubtedly a bright
-                                    student and performed particularly well (top 10% of his class). He is highly
-                                    energetic and has strong convictions."
-                                </p>
-                                <div class="author-info">
-                                    <img src="../images/recommendations/luis_martinez.png" alt="Luis Martinez">
-                                    <div class="author-details">
-                                        <h5>Luis Martinez</h5>
-                                        <p>Associate Professor | Senior Editor @ Springer & Elsevier</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="slider-dots" id="sliderDots">
-                        <div class="slider-dot active" data-index="0"></div>
-                        <div class="slider-dot" data-index="1"></div>
-                        <div class="slider-dot" data-index="2"></div>
-                        <div class="slider-dot" data-index="3"></div>
-                        <div class="slider-dot" data-index="4"></div>
-                        <div class="slider-dot" data-index="5"></div>
-                        <div class="slider-dot" data-index="6"></div>
-                        <div class="slider-dot" data-index="7"></div>
-                        <div class="slider-dot" data-index="8"></div>
-                        <div class="slider-dot" data-index="9"></div>
-                        <div class="slider-dot" data-index="10"></div>
-                        <div class="slider-dot" data-index="11"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- FOOTER -->
+        <!-- Footer -->
         <footer id="contactos">
             <div class="container">
                 <div class="footer-container">
@@ -939,13 +955,10 @@
                             <p><i class="fas fa-phone"></i> +351 961 925 050</p>
                         </div>
                         <div class="footer-social">
-                            <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" rel="noopener noreferrer">
-                                <i class="fab fa-linkedin"></i>
-                            </a>
+                            <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"
+                                rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
                             <a href="https://www.instagram.com/share2inspire_" target="_blank"
-                                rel="noopener noreferrer">
-                                <i class="fab fa-instagram"></i>
-                            </a>
+                                rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
                         </div>
                     </div>
                 </div>
@@ -957,96 +970,130 @@
                 </div>
             </div>
         </footer>
-    </main>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Botão de Feedback -->
+        <button id="feedbackBtn" class="feedback-btn" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+            <i class="fas fa-comment"></i> Feedback
+        </button>
 
-    <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
-    </script>
+        <!-- Modal de Feedback -->
+        <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="feedbackModalLabel">Deixe o seu Feedback</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="feedbackForm">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Nome *</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="rating" class="form-label">Avaliação *</label>
+                                <input type="hidden" id="rating" name="rating" value="0">
+                                <div class="rating">
+                                    <span class="star" data-value="1"><i class="far fa-star"></i></span>
+                                    <span class="star" data-value="2"><i class="far fa-star"></i></span>
+                                    <span class="star" data-value="3"><i class="far fa-star"></i></span>
+                                    <span class="star" data-value="4"><i class="far fa-star"></i></span>
+                                    <span class="star" data-value="5"><i class="far fa-star"></i></span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="feedbackMessage" class="form-label">Mensagem *</label>
+                                <textarea class="form-control" id="feedbackMessage" name="message" rows="3"
+                                    required></textarea>
+                            </div>
+                            <div id="feedbackFormMessage"></div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" form="feedbackForm" class="btn btn-primary">Enviar Feedback</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- Recommendations Auto-Slider -->
-    <script>
-        (function () {
-            const track = document.getElementById('recommendationsTrack');
-            const dots = document.querySelectorAll('.slider-dot');
-            let currentSlide = 0;
-            const totalSlides = dots.length;
-            const autoAdvanceInterval = 5000; // 5 seconds
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Swiper.js -->
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+        <!-- AOS JS -->
+        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        <script>
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
+            });
 
-            function goToSlide(index) {
-                currentSlide = index;
-                track.style.transform = `translateX(-${currentSlide * 100}%)`;
-
-                dots.forEach((dot, i) => {
-                    dot.classList.toggle('active', i === currentSlide);
-                });
-            }
-
-            function nextSlide() {
-                goToSlide((currentSlide + 1) % totalSlides);
-            }
-
-            // Auto-advance
-            let autoAdvance = setInterval(nextSlide, autoAdvanceInterval);
-
-            // Click on dots
-            dots.forEach(dot => {
-                dot.addEventListener('click', () => {
-                    clearInterval(autoAdvance);
-                    goToSlide(parseInt(dot.dataset.index));
-                    autoAdvance = setInterval(nextSlide, autoAdvanceInterval);
+            // Initialize Experience Swiper
+            const experienceSwiper = new Swiper('.experienceSwiper', {
+                slidesPerView: 1,
+                spaceBetween: 20,
+                loop: true,
+                autoplay: {
+                    delay: 4000,
+                    disableOnInteraction: false,
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                breakpoints: {
+                    640: {
+                        slidesPerView: 2,
+                        spaceBetween: 20,
+                    },
+                    992: {
+                        slidesPerView: 3,
+                        spaceBetween: 30,
+                    },
+                },
+            });
+        </script>
+        <!-- Custom JS -->
+        <script>
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
                 });
             });
 
-            // Touch/Swipe support
-            let touchStartX = 0;
-            let touchEndX = 0;
-
-            track.addEventListener('touchstart', e => {
-                touchStartX = e.touches[0].clientX;
-            }, { passive: true });
-
-            track.addEventListener('touchend', e => {
-                touchEndX = e.changedTouches[0].clientX;
-                const diff = touchStartX - touchEndX;
-
-                if (Math.abs(diff) > 50) {
-                    clearInterval(autoAdvance);
-                    if (diff > 0) {
-                        goToSlide((currentSlide + 1) % totalSlides);
-                    } else {
-                        goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
-                    }
-                    autoAdvance = setInterval(nextSlide, autoAdvanceInterval);
+            // Navbar scroll effect
+            window.addEventListener('scroll', function () {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 100) {
+                    navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+                    navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+                } else {
+                    navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                    navbar.style.boxShadow = 'none';
                 }
-            }, { passive: true });
-        })();
-    </script>
-
-    <!-- Navbar scroll effect -->
-    <script>
-        window.addEventListener('scroll', function () {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 100) {
-                navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-                navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-            } else {
-                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-                navbar.style.boxShadow = 'none';
-            }
-        });
-    </script>
-
-    <script src="../js/brevo-integration.js"></script>
-    <script src="../js/feedback-widget.js"></script>
+            });
+        </script>
+        <!-- Feedback Modal JS -->
+        <script src="../js/feedback.js"></script>
 </body>
 
 </html>
