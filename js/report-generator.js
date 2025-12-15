@@ -5,36 +5,45 @@
 
 const ReportGenerator = {
 
-    generateHTML: function (data) {
-        // Current date for the report
+    generateHTML: function (report) {
+        const profile = report.candidate_profile || {};
+        const summary = report.executive_summary || {};
+        const verdict = report.final_verdict || {};
+        const improvements = report.improvement_areas || [];
+
+        // Scores
+        const ats = report.ats_compatibility?.score || 0;
+        const impact = report.content_analysis?.impact_score || 0;
+        const structure = report.structure_design?.score || 0;
+        const market = summary.market_fit_score || 0;
+        const readiness = verdict.readiness_score || 0;
+
+        // Current date
         const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
         const reportDate = new Date().toLocaleDateString('pt-PT', dateOptions);
 
-        // Prepare chart data script
+        // Chart Data (5-axis)
         const chartScript = `
             const ctx = document.getElementById('skillsRadar').getContext('2d');
             new Chart(ctx, {
                 type: 'radar',
                 data: {
                     labels: [
-                        'Estratégia & Visão', 
-                        'Gestão de Mudança', 
-                        'HR Tech & IA', 
-                        'Liderança', 
-                        'Comunicação', 
-                        'Análise de Dados', 
-                        'Gestão de Stakeholders',
-                        'Cultura & Pessoas'
+                        'Compatibilidade ATS', 
+                        'Impacto do Conteúdo', 
+                        'Estrutura & Design', 
+                        'Fit de Mercado', 
+                        'Prontidão'
                     ],
                     datasets: [{
-                        label: 'Nível de Competência',
-                        data: [${data.dimensionScores.join(', ')}],
-                        backgroundColor: 'rgba(58, 110, 165, 0.35)',
-                        borderColor: '#0A2540',
-                        pointBackgroundColor: '#D4A857',
+                        label: 'Pontuação',
+                        data: [${ats}, ${impact}, ${structure}, ${market}, ${readiness}],
+                        backgroundColor: 'rgba(191, 154, 51, 0.2)',
+                        borderColor: '#BF9A33',
+                        pointBackgroundColor: '#BF9A33',
                         pointBorderColor: '#fff',
                         pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#D4A857',
+                        pointHoverBorderColor: '#BF9A33',
                         borderWidth: 2,
                         pointRadius: 4
                     }]
@@ -49,8 +58,8 @@ const ReportGenerator = {
                                 color: '#1A1A1A'
                             },
                             suggestedMin: 0,
-                            suggestedMax: 5,
-                            ticks: { display: false, stepSize: 1 }
+                            suggestedMax: 100,
+                            ticks: { display: false, stepSize: 20 }
                         }
                     },
                     plugins: { legend: { display: false } },
@@ -60,25 +69,25 @@ const ReportGenerator = {
             });
         `;
 
-        // Build HTML content
+        // HTML Template
         return `
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório de Análise Profissional - ${data.name}</title>
+    <title>Relatório de Análise - ${profile.detected_name || 'Candidato'}</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --color-deep-blue: #0A2540;
-            --color-light-blue: #3A6EA5;
-            --color-gold: #D4A857;
-            --color-grey-bg: #F5F5F7;
-            --color-text-dark: #1A1A1A;
-            --color-text-muted: #555555;
+            --color-deep-blue: #1A1A1A; /* Black/Dark Grey */
+            --color-light-blue: #333333;
+            --color-gold: #BF9A33;
+            --color-grey-bg: #F9F9F9;
+            --color-text-dark: #212529;
+            --color-text-muted: #6c757d;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -96,257 +105,175 @@ const ReportGenerator = {
             background: white;
         }
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
             border-bottom: 2px solid var(--color-gold);
-            padding-bottom: 30px;
-            margin-bottom: 40px;
-        }
-        .header-profile { display: flex; gap: 20px; }
-        .avatar-placeholder {
-            width: 80px; height: 80px;
-            background-color: var(--color-grey-bg);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--color-deep-blue); font-size: 24px;
-            border: 2px solid var(--color-gold);
+            padding-bottom: 20px; margin-bottom: 40px;
+            display: flex; justify-content: space-between; align-items: flex-end;
         }
         .candidate-info h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 28px; color: var(--color-deep-blue);
+            font-size: 26px; color: var(--color-deep-blue);
             margin-bottom: 5px;
         }
         .candidate-info h2 {
             font-size: 14px; text-transform: uppercase;
-            letter-spacing: 1px; color: var(--color-light-blue);
+            letter-spacing: 1px; color: var(--color-gold);
             font-weight: 600; margin-bottom: 5px;
         }
-        .candidate-meta {
-            font-size: 12px; color: var(--color-text-muted);
-            display: flex; gap: 15px;
+        .meta-tags {
+            font-size: 11px; color: var(--color-text-muted);
+            display: flex; gap: 15px; text-transform: uppercase;
         }
-        .logo-container { text-align: right; }
-        .logo-text {
-            font-weight: 700; font-size: 20px; color: var(--color-deep-blue);
-        }
+        .logo-box { text-align: right; }
+        .logo-text { font-weight: 800; font-size: 22px; color: var(--color-deep-blue); }
         .logo-text span { color: var(--color-gold); }
-        .report-date { font-size: 12px; color: var(--color-text-muted); margin-top: 5px; }
-        
-        section { margin-bottom: 40px; }
-        .section-header {
-            display: flex; align-items: center; gap: 15px; margin-bottom: 20px;
-        }
-        .section-icon {
-            width: 32px; height: 32px;
-            background-color: var(--color-deep-blue); color: var(--color-gold);
-            border-radius: 6px; display: flex; align-items: center;
-            justify-content: center; font-size: 14px;
-        }
+        .report-date { font-size: 10px; color: #999; margin-top: 5px; }
+
+        section { margin-bottom: 35px; }
         .section-title {
-            font-size: 16px; font-weight: 700; text-transform: uppercase;
+            font-size: 15px; font-weight: 700; text-transform: uppercase;
             color: var(--color-deep-blue); letter-spacing: 0.5px;
-        }
-        
-        .exec-summary {
-            background-color: var(--color-grey-bg); padding: 25px;
             border-left: 4px solid var(--color-gold);
-            border-radius: 0 8px 8px 0; font-size: 14px; text-align: justify;
+            padding-left: 10px; margin-bottom: 15px;
         }
-        
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-        
-        .maturity-card {
-            background: linear-gradient(135deg, var(--color-deep-blue), #1e3a5a);
-            color: white; padding: 30px; border-radius: 12px;
-            text-align: center; box-shadow: 0 10px 20px rgba(10, 37, 64, 0.1);
+
+        .exec-summary-box {
+            background: var(--color-grey-bg); padding: 20px;
+            border-radius: 6px; font-size: 13px; text-align: justify;
         }
-        .score-large { font-size: 48px; font-weight: 700; color: var(--color-gold); line-height: 1; margin-bottom: 10px; }
-        .score-label { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; margin-bottom: 15px; }
-        .score-context { font-size: 13px; opacity: 0.8; line-height: 1.5; }
-        
-        .content-list { list-style: none; }
-        .content-list li {
-            margin-bottom: 12px; padding-left: 20px;
-            position: relative; font-size: 14px;
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+
+        .score-card {
+            text-align: center; padding: 20px;
+            border: 1px solid #eee; border-radius: 8px;
         }
-        .content-list li::before {
-            content: "•"; color: var(--color-gold); font-weight: bold;
-            position: absolute; left: 0;
+        .big-score { font-size: 42px; font-weight: 700; color: var(--color-gold); line-height: 1; }
+        .score-sub { font-size: 12px; text-transform: uppercase; color: #777; margin-top: 5px; }
+
+        .skills-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+        .skill-badge {
+            font-size: 11px; background: #fff; border: 1px solid #ddd;
+            padding: 4px 10px; border-radius: 20px; color: #444;
         }
-        .content-list.strong-points li { margin-bottom: 16px; }
-        
-        .recommendation-box {
-            border: 1px solid #e0e0e0; border-radius: 8px;
-            padding: 20px; margin-top: 15px;
+
+        .strengths-list li {
+            margin-bottom: 10px; font-size: 13px; padding-left: 20px; position: relative;
+            list-style: none;
         }
-        .plan-card {
-            background-color: white; border: 1px solid #eee;
-            border-top: 3px solid var(--color-light-blue);
-            padding: 20px; border-radius: 6px;
+        .strengths-list li::before {
+            content: "✓"; position: absolute; left: 0; color: var(--color-gold); font-weight: bold;
         }
-        
+
+        .improvement-table {
+            width: 100%; border-collapse: collapse; font-size: 12px;
+        }
+        .improvement-table th {
+            text-align: left; background: #f0f0f0; padding: 8px; font-weight: 600;
+        }
+        .improvement-table td {
+            border-bottom: 1px solid #eee; padding: 10px 8px; vertical-align: top;
+        }
+        .severity-badge {
+            display: inline-block; padding: 2px 6px; border-radius: 4px; color: #fff; font-size: 10px; font-weight: bold;
+        }
+        .sev-Critical { background: #dc3545; }
+        .sev-High { background: #fd7e14; }
+        .sev-Medium { background: #ffc107; color: #000; }
+
         footer {
-            margin-top: 60px; border-top: 1px solid #eee;
-            padding-top: 20px; display: flex; justify-content: space-between;
-            font-size: 10px; color: #999;
+            margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px;
+            font-size: 10px; color: #aaa; text-align: center;
         }
-        .chart-container { position: relative; height: 300px; width: 100%; }
-        
+
         @media print {
-            body { background-color: white; }
+            body { -webkit-print-color-adjust: exact; }
             .container { width: 100%; max-width: none; padding: 15mm; }
-        }
-        
-        /* Mobile Report View */
-        @media screen and (max-width: 768px) {
-            .container {
-                width: 100%;
-                padding: 20px;
-                margin: 0;
-            }
-            .header-profile {
-                flex-direction: column;
-                text-align: center;
-                align-items: center;
-            }
-            .grid-2 {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            header {
-                flex-direction: column;
-                gap: 20px;
-                text-align: center;
-            }
-            .logo-container { text-align: center; }
-            .candidate-meta { justify-content: center; }
         }
     </style>
 </head>
 <body>
 <div class="container">
     <header>
-        <div class="header-profile">
-            <div class="avatar-placeholder"><i class="fas fa-user-tie"></i></div>
-            <div class="candidate-info">
-                <h1>${data.name}</h1>
-                <h2>${data.role}</h2>
-                <div class="candidate-meta">
-                    <span><i class="fas fa-briefcase me-2"></i> ${data.years} Anos de Experiência</span>
-                    <span><i class="fas fa-graduation-cap me-2"></i> ${data.education.length > 0 ? data.education[0] : 'N/A'}</span>
-                </div>
+        <div class="candidate-info">
+            <h1>${profile.detected_name || 'Candidato'}</h1>
+            <h2>${profile.detected_role || 'Profissional'}</h2>
+            <div class="meta-tags">
+                <span><i class="fas fa-briefcase"></i> ${profile.detected_years_exp || 'N/D'} Exp.</span>
+                <span><i class="fas fa-layer-group"></i> ${profile.seniority_level || 'N/D'}</span>
             </div>
         </div>
-        <div class="logo-container">
+        <div class="logo-box">
             <div class="logo-text">Share<span>2Inspire</span></div>
-            <div class="report-date">Relatório Gerado em ${reportDate}</div>
+            <div class="report-date">${reportDate}</div>
         </div>
     </header>
 
     <section>
-        <div class="section-header">
-            <div class="section-icon"><i class="fas fa-align-left"></i></div>
-            <div class="section-title">Resumo Executivo</div>
-        </div>
-        <div class="exec-summary">
-            ${data.executiveSummary.map(para => `<p>${para}</p><br>`).join('')}
+        <div class="section-title">Visão Executiva</div>
+        <div class="exec-summary-box">
+            <p><strong>Posicionamento:</strong> ${summary.vision || 'Análise não disponível.'}</p>
+            <br>
+            <p><strong>Feedback Estratégico:</strong> ${summary.strategic_feedback || verdict.closing_comment || ''}</p>
         </div>
     </section>
 
     <div class="grid-2">
         <section>
-            <div class="section-header">
-                <div class="section-icon"><i class="fas fa-chart-bar"></i></div>
-                <div class="section-title">Nível de Maturidade</div>
-            </div>
-            <div class="maturity-card">
-                <div class="score-large">${data.averageScore}/5.0</div>
-                <div class="score-label">Avaliação Profissional</div>
-                <div class="score-context">
-                    Esta avaliação tem por base a contagem de anos de experiência, nível académico e dispersão de competências técnicas e comportamentais detetadas no CV.
+            <div class="section-title">Índice de Prontidão</div>
+            <div class="score-card">
+                <div class="big-score">${(readiness / 20).toFixed(1)}</div>
+                <div class="score-sub">Escala 0-5.0</div>
+                <div style="margin-top: 15px; font-size: 13px;">
+                    ${verdict.badge || 'Análise em curso'}
                 </div>
+            </div>
+            
+            <div class="section-title" style="margin-top: 30px;">Top Competências</div>
+            <div class="skills-cloud">
+                ${(report.skills_cloud || []).slice(0, 12).map(s => `<span class="skill-badge">${s}</span>`).join('')}
             </div>
         </section>
 
         <section>
-            <div class="section-header">
-                <div class="section-icon"><i class="fas fa-star"></i></div>
-                <div class="section-title">Competências Detetadas</div>
+            <div class="section-title">Radar de Performance</div>
+            <div style="height: 250px;">
+                <canvas id="skillsRadar"></canvas>
             </div>
-            <ul class="content-list">
-                ${data.skills.slice(0, 8).map(skill => `<li>${skill.charAt(0).toUpperCase() + skill.slice(1)}</li>`).join('')}
-            </ul>
         </section>
     </div>
 
     <section>
-        <div class="section-header">
-            <div class="section-icon"><i class="fas fa-thumbs-up"></i></div>
-            <div class="section-title">Análise de Pontos Fortes</div>
-        </div>
-        <ul class="content-list strong-points">
-            ${data.strengths.map(s => `
-                <li>
-                    <strong>${s.title || 'Ponto Forte'}</strong>
-                    ${s.desc || ''}
-                </li>
-            `).join('')}
+        <div class="section-title">Pontos Fortes Identificados</div>
+        <ul class="strengths-list">
+            ${(report.key_strengths || []).map(s => `<li>${s}</li>`).join('')}
         </ul>
     </section>
 
     <section>
-        <div class="section-header">
-            <div class="section-icon"><i class="fas fa-bullseye"></i></div>
-            <div class="section-title">Radar de Competências</div>
-        </div>
-        <div class="chart-container">
-            <canvas id="skillsRadar"></canvas>
-        </div>
+        <div class="section-title">Plano de Melhoria Prioritário</div>
+        <table class="improvement-table">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Área</th>
+                    <th style="width: 15%;">Impacto</th>
+                    <th>Recomendação</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${improvements.map(imp => `
+                    <tr>
+                        <td style="font-weight: 500;">${imp.area}</td>
+                        <td><span class="severity-badge sev-${imp.severity}">${imp.severity}</span></td>
+                        <td>${imp.suggestion}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
     </section>
 
-    <div class="grid-2">
-        <section>
-            <div class="section-header">
-                <div class="section-icon"><i class="fas fa-arrow-up"></i></div>
-                <div class="section-title">Sugestão de Evolução</div>
-            </div>
-            <div class="recommendation-box">
-                <div class="rec-title">Próximos Passos Recomendados</div>
-                <p style="font-size: 13px; color: #555;">${data.recommendation}</p>
-            </div>
-        </section>
-
-        <section>
-            <div class="section-header">
-                <div class="section-icon"><i class="fas fa-tasks"></i></div>
-                <div class="section-title">Plano de Ação a 90 Dias</div>
-            </div>
-            <div class="plan-card">
-                <div style="display: flex; flex-direction: column; gap: 15px;">
-                    <div style="border-left: 3px solid var(--color-gold); padding-left: 15px;">
-                        <h4 style="margin: 0; font-size: 14px; color: var(--color-deep-blue);">Mês 1: Aprendizagem</h4>
-                        <p style="font-size: 12px; margin-top: 5px;">${data.actionPlan.m1}</p>
-                    </div>
-                    <div style="border-left: 3px solid var(--color-light-blue); padding-left: 15px;">
-                        <h4 style="margin: 0; font-size: 14px; color: var(--color-deep-blue);">Mês 2: Aplicação</h4>
-                        <p style="font-size: 12px; margin-top: 5px;">${data.actionPlan.m2}</p>
-                    </div>
-                    <div style="border-left: 3px solid var(--color-deep-blue); padding-left: 15px;">
-                        <h4 style="margin: 0; font-size: 14px; color: var(--color-deep-blue);">Mês 3: Consolidação</h4>
-                        <p style="font-size: 12px; margin-top: 5px;">${data.actionPlan.m3}</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
-
     <footer>
-        <div class="footer-brand">
-            <span style="color: var(--color-deep-blue); font-weight: bold;">Share</span><span style="color: var(--color-gold); font-weight: bold;">2Inspire</span>
-        </div>
-        <div>CONFIDENCIAL - Uso exclusivo do candidato</div>
-        <div><i class="fas fa-envelope me-1"></i> srshare2inspire@gmail.com</div>
+        Relatório gerado automaticamente por Share2Inspire AI (Marlene Ruivo Persona).<br>
+        O conteúdo deste relatório é confidencial e destinado exclusivamente ao candidato.
     </footer>
 </div>
 <script>
@@ -357,10 +284,16 @@ const ReportGenerator = {
         `;
     },
 
-    openReport: function (data) {
-        const html = this.generateHTML(data);
+    openReport: function (report) {
+        // Generate the HTML with the new schema logic
+        const html = this.generateHTML(report);
         const win = window.open('', '_blank');
-        win.document.write(html);
-        win.document.close();
+        if (win) {
+            win.document.write(html);
+            win.document.close();
+            win.focus();
+        } else {
+            alert("Por favor, permita pop-ups para visualizar o relatório.");
+        }
     }
 };
