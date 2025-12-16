@@ -127,55 +127,53 @@ body {
     z-index: 1057 !important;
 }
 
-/* Modal header - fixo no topo */
+/* Modal header - Minimalista */
 .modal-header {
-    background: #212529 !important;
-    color: #BF9A33 !important;
-    padding: 1.5rem 2rem !important;
-    text-align: center !important;
-    border-radius: 16px 16px 0 0 !important;
-    border-bottom: 1px solid #BF9A33 !important;
+    background: #ffffff !important;
+    color: #1A1A1A !important;
+    padding: 1.25rem 1.5rem !important;
+    border-radius: 12px 12px 0 0 !important;
+    border-bottom: 1px solid #e5e5e5 !important;
     flex-shrink: 0 !important;
     position: relative !important;
     z-index: 1058 !important;
-    pointer-events: auto !important;
 }
 
 .modal-title {
-    font-size: 1.5rem !important;
+    font-size: 1.25rem !important;
     font-weight: 600 !important;
-    color: #BF9A33 !important;
+    color: #1A1A1A !important;
     margin: 0 !important;
-    pointer-events: auto !important;
 }
 
-/* Botão de fechar - garantir clicabilidade */
+/* Botão de fechar - Minimalista X preto */
 .btn-close,
 .close {
     position: absolute !important;
     top: 1rem !important;
-    right: 1.5rem !important;
-    background: rgba(255, 255, 255, 0.2) !important;
+    right: 1rem !important;
+    background: transparent !important;
     border: none !important;
-    color: white !important;
-    font-size: 1.5rem !important;
-    width: 40px !important;
-    height: 40px !important;
-    border-radius: 50% !important;
+    color: #1A1A1A !important;
+    font-size: 1.25rem !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 6px !important;
     cursor: pointer !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    transition: all 0.3s ease !important;
+    transition: background 0.2s ease !important;
     z-index: 1059 !important;
-    pointer-events: auto !important;
+    opacity: 0.7 !important;
+    filter: none !important;
 }
 
 .btn-close:hover,
 .close:hover {
-    background: rgba(255, 255, 255, 0.3) !important;
-    transform: rotate(90deg) !important;
-    color: white !important;
+    background: rgba(0, 0, 0, 0.05) !important;
+    opacity: 1 !important;
+    transform: none !important;
 }
 
 /* Progress container */
@@ -735,16 +733,48 @@ footer {
 }
 
 .btn-primary {
-    background-color: #212529 !important;
-    /* Keep buttons Black */
-    border-color: #212529 !important;
-    color: #BF9A33 !important;
-    /* Text Gold */
+    background-color: #1A1A1A !important;
+    border-color: #1A1A1A !important;
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    padding: 0.625rem 1.25rem !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
 }
 
 .btn-primary:hover {
     background-color: #BF9A33 !important;
-    /* Hover Gold */
-    color: #212529 !important;
-    /* Hover Text Black */
+    border-color: #BF9A33 !important;
+    color: #1A1A1A !important;
+}
+
+/* Secondary/Outline button */
+.btn-outline-secondary {
+    background-color: transparent !important;
+    border: 1px solid #dee2e6 !important;
+    color: #6c757d !important;
+    font-weight: 500 !important;
+    padding: 0.625rem 1.25rem !important;
+    border-radius: 8px !important;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa !important;
+    border-color: #ced4da !important;
+    color: #495057 !important;
+}
+
+/* Warning/Gold button */
+.btn-warning {
+    background-color: #BF9A33 !important;
+    border-color: #BF9A33 !important;
+    color: #1A1A1A !important;
+    font-weight: 500 !important;
+    padding: 0.625rem 1.25rem !important;
+    border-radius: 8px !important;
+}
+
+.btn-warning:hover {
+    background-color: #a88529 !important;
+    border-color: #a88529 !important;
 }
