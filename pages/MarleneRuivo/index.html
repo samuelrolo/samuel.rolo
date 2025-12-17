@@ -540,7 +540,7 @@
         <ul>
           <li><a href="#inicio">Início</a></li>
           <li><a href="#sobre">Sobre</a></li>
-          <li><a href="#consultas">Consultas</a></li>
+          <!-- <li><a href="#consultas">Consultas</a></li> Removed as per request -->
           <li><a href="#fodmap">FODMAP</a></li>
           <li><a href="#sintomas">Sintomas</a></li>
           <li><a href="#testemunhos">Testemunhos</a></li>
@@ -590,33 +590,93 @@
     </section>
 
     <section id="sobre" aria-labelledby="sobre-title">
-      <div class="section-head">
-        <div>
-          <span class="eyebrow">Sobre Marlene Ruivo</span>
-          <h2 id="sobre-title">Nutricionista especializada em saúde intestinal</h2>
-          <p class="subtitle">Sou a Marlene Ruivo, tenho 38 anos e sou Nutricionista há 15 anos, com uma forte
-            experiência na área da perda de peso e obesidade. Ao longo do meu percurso, percebi que muitas pessoas que
-            acompanhava carregavam não só desafios relacionados com o peso, mas também desconfortos intestinais
-            persistentes que afetavam profundamente o seu bem-estar e a sua qualidade de vida.</p>
-          <p class="subtitle">Esse reconhecimento despertou em mim uma curiosidade genuína — e rapidamente se
-            transformou numa paixão. Decidi aprofundar conhecimentos em saúde intestinal e formei-me em Dieta Low FODMAP
-            pela Monash University, dedicando-me desde então ao acompanhamento de pessoas com Síndrome do Intestino
-            Irritável (SII) e SIBO, e outros problemas gastrointestinais, ajudando-as a encontrar alívio, equilíbrio e
-            conforto através da nutrição.</p>
-          <p class="subtitle">Durante muitos anos trabalhei numa clínica privada, onde cresci profissionalmente e
-            acompanhei centenas de pessoas. Mas, ao fim de 15 anos, senti que precisava de dar um passo maior: criar o
-            meu próprio caminho, com tempo, foco e liberdade para me dedicar verdadeiramente à área que mais me inspira
-            — o intestino.</p>
-          <p class="subtitle">Hoje trabalho em nome individual, unindo ciência, experiência clínica e uma abordagem
-            profundamente humana. Acredito que a nutrição deve ser personalizada, empática e realista, e é com esse
-            compromisso que ajudo cada pessoa a recuperar a tranquilidade e o bem-estar que merece.</p>
+      <div class="section-head" style="align-items: center; justify-content: start;">
+        <span class="eyebrow">Sobre Marlene Ruivo</span>
+      </div>
+
+      <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(30px, 5vw, 60px); align-items: start;">
+
+        <!-- Left: Image + Quick Stats -->
+        <div style="position: relative;">
+          <img src="https://raw.githubusercontent.com/samuelrolo/Marlene.Ruivo/main/Assets/Foto%20Marlene%202.png"
+            alt="Marlene Ruivo"
+            style="width: 100%; border-radius: 24px; box-shadow: var(--shadow); object-fit: cover; aspect-ratio: 4/5;">
+
+          <div
+            style="background: var(--white); padding: 16px; border-radius: 16px; position: absolute; bottom: -20px; right: -20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 200px; border: 1px solid rgba(15, 118, 110, 0.08);">
+            <div style="color: var(--teal); font-weight: 800; font-size: 2rem; line-height: 1;">15+</div>
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--deep); line-height: 1.3; margin-top: 4px;">
+              Anos de experiência clínica</div>
+          </div>
         </div>
-        <ul class="list-inline">
-          <li class="chip">SII &amp; SIBO</li>
-          <li class="chip">Gestão de sintomas</li>
-          <li class="chip">Planos personalizados</li>
-          <li class="chip">Consultas online</li>
-        </ul>
+
+        <!-- Right: Content -->
+        <div>
+          <h2 id="sobre-title" style="margin-bottom: 24px;">Nutrição com empatia e ciência</h2>
+
+          <div style="display: grid; gap: 24px;">
+            <div style="display: flex; gap: 16px; align-items: flex-start;">
+              <div
+                style="width: 40px; height: 40px; border-radius: 50%; background: var(--mint-soft); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2"
+                  stroke-linecap="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <path d="M22 4L12 14.01l-3-3"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 4px;">Percurso Consolidado</h3>
+                <p style="font-size: 0.95rem;">15 anos dedicados à nutrição clínica (SousaClínica, Clínica do Tempo),
+                  agora focada em devolver qualidade de vida através da saúde intestinal.</p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 16px; align-items: flex-start;">
+              <div
+                style="width: 40px; height: 40px; border-radius: 50%; background: var(--mint-soft); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2"
+                  stroke-linecap="round">
+                  <path
+                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                  </path>
+                </svg>
+              </div>
+              <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 4px;">Especialização Monash</h3>
+                <p style="font-size: 0.95rem;">Formação certificada em dieta Low FODMAP pela Monash University, a
+                  referência mundial para tratamento de SII.</p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 16px; align-items: flex-start;">
+              <div
+                style="width: 40px; height: 40px; border-radius: 50%; background: var(--mint-soft); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2"
+                  stroke-linecap="round">
+                  <path
+                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                  </path>
+                </svg>
+              </div>
+              <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 4px;">Abordagem Humana</h3>
+                <p style="font-size: 0.95rem;">Acredito numa nutrição sem julgamentos, onde cada sintoma é validado e
+                  cada plano é adaptado à sua realidade real.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 32px;">
+            <ul class="list-inline">
+              <li class="chip">SII &amp; SIBO</li>
+              <li class="chip">Gestão de sintomas</li>
+              <li class="chip">Perda de Peso</li>
+            </ul>
+            <a class="btn" href="#consultas" style="margin-top: 24px;">Conhecer consultas</a>
+          </div>
+
+        </div>
       </div>
       <div class="grid">
         <div class="card">
@@ -700,55 +760,54 @@
         <div>
           <span class="eyebrow">Dieta FODMAP</span>
           <h2 id="fodmap-title">Ciência aplicada à sua rotina digestiva</h2>
-          <p class="subtitle">A dieta FODMAP reduz fermentação intestinal e melhora sintomas de SII quando guiada por
-            nutricionista certificado.</p>
+          <p class="subtitle">A estratégia gold-standard para o controlo da Síndrome do Intestino Irritável.</p>
         </div>
       </div>
-      <div class="grid">
-        <div class="card">
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 8c0-1.657 1.343-3 3-3h1c1.657 0 3 1.343 3 3v8a2 2 0 1 1-4 0v-7" stroke="#0f766e"
-                stroke-width="1.6" stroke-linecap="round" />
-              <path d="M12 7h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3h-1" stroke="#0f766e" stroke-width="1.6"
-                stroke-linecap="round" />
+
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <!-- Card 1 -->
+        <div class="card"
+          style="border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.03); background: var(--white); padding: 32px; position: relative; overflow: hidden;">
+          <div
+            style="background: var(--mint-soft); width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="1.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
             </svg>
           </div>
-          <h3>O que é</h3>
-          <p>Plano estruturado em fases: eliminação, reintrodução e personalização dos FODMAPs.</p>
+          <h3 style="font-size: 1.25rem; margin-bottom: 12px;">1. Eliminação</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6;">Retirada temporária de hidratos de carbono fermentáveis para
+            acalmar o intestino e reduzir sintomas.</p>
         </div>
-        <div class="card">
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7 12c0-2.21 1.79-4 4-4h2a4 4 0 0 1 4 4v3a3 3 0 0 1-3 3h-4a3 3 0 0 1-3-3v-3Z" stroke="#0f766e"
-                stroke-width="1.6" stroke-linecap="round" />
-              <path d="M10 11.5a2 2 0 0 1 2-2h0" stroke="#0f766e" stroke-width="1.6" stroke-linecap="round" />
+
+        <!-- Card 2 -->
+        <div class="card"
+          style="border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.03); background: var(--white); padding: 32px; position: relative; overflow: hidden;">
+          <div
+            style="background: var(--mint-soft); width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="1.5">
+              <circle cx="11" cy="4" r="2" />
+              <circle cx="18" cy="8" r="2" />
+              <circle cx="20" cy="16" r="2" />
+              <path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.92A3.5 3.5 0 0 1 5.5 10Z" />
             </svg>
           </div>
-          <h3>Para que serve</h3>
-          <p>Reduz gases, dor abdominal, distensão e oscilações entre diarreia e obstipação.</p>
+          <h3 style="font-size: 1.25rem; margin-bottom: 12px;">2. Reintrodução</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6;">Testes controlados para identificar exatamente quais os
+            alimentos gatilho para o seu corpo.</p>
         </div>
-        <div class="card">
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9.5 6.5H12a3.5 3.5 0 0 1 3.5 3.5v6.5a2.5 2.5 0 1 1-5 0V10" stroke="#0f766e" stroke-width="1.6"
-                stroke-linecap="round" />
-              <path d="M9 14h3" stroke="#0f766e" stroke-width="1.6" stroke-linecap="round" />
+
+        <!-- Card 3 -->
+        <div class="card"
+          style="border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.03); background: var(--white); padding: 32px; position: relative; overflow: hidden;">
+          <div
+            style="background: var(--mint-soft); width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="1.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
           </div>
-          <h3>Quando funciona</h3>
-          <p>Resultados em poucas semanas quando aplicada com rigor e acompanhada por profissional.</p>
-        </div>
-        <div class="card">
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 7.5c0-1.657 1.343-3 3-3h2c1.657 0 3 1.343 3 3v8.5a3 3 0 1 1-6 0v-7" stroke="#0f766e"
-                stroke-width="1.6" stroke-linecap="round" />
-              <path d="M12 7h1.5a2.5 2.5 0 0 1 2.5 2.5V12" stroke="#0f766e" stroke-width="1.6" stroke-linecap="round" />
-            </svg>
-          </div>
-          <h3>Porque exige acompanhamento</h3>
-          <p>Evita carências nutricionais, identifica gatilhos específicos e mantém equilíbrio alimentar.</p>
+          <h3 style="font-size: 1.25rem; margin-bottom: 12px;">3. Personalização</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6;">Plano alimentar final, variado e equilibrado, mantendo apenas
+            as restrições estritamente necessárias.</p>
         </div>
       </div>
     </section>
@@ -909,7 +968,7 @@
       </div>
     </section>
 
-    <section id="contactos" aria-labelledby="contactos-title">
+    <section id="contactos" aria-labelledby="contactos-title" style="margin-bottom: 0;">
       <div class="section-head">
         <div>
           <span class="eyebrow">Contactos e Marcações</span>
@@ -917,51 +976,113 @@
           <p class="subtitle">Envie uma mensagem ou agende a primeira consulta. Respondemos com brevidade.</p>
         </div>
       </div>
-      <div class="contact">
-        <!-- Photos from Assets -->
-        <!-- Booking Widget (Replaced by Wizard Trigger) -->
-        <div id="booking-widget"
-          style="background: var(--white); padding: 20px; border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(15, 118, 110, 0.08);">
-          <div style="text-align: center; padding: 40px 20px;">
-            <div
-              style="width: 64px; height: 64px; background: var(--mint-soft); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M8 2v3M16 2v3M3.5 9.09h17M21 8.5V17c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V8.5c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z"
-                  stroke="#0f766e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </div>
-            <h3 style="margin-bottom: 10px;">Agende a sua consulta</h3>
-            <p style="color: var(--muted); margin-bottom: 24px;">Garanta o seu acompanhamento. O agendamento é
-              confirmado após pagamento.</p>
 
-            <button class="btn" onclick="openBookingModal()" style="width: 100%;">Marcar Consulta</button>
+      <div style="display: grid; gap: 40px;">
+
+        <!-- Elegant Booking CTA -->
+        <div id="booking-widget"
+          style="background: linear-gradient(135deg, var(--deep), #1a2e35); padding: clamp(24px, 5vw, 40px); border-radius: 24px; color: var(--white); display: flex; flex-wrap: wrap; gap: 30px; align-items: center; justify-content: space-between; box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15); overflow: hidden; position: relative;">
+
+          <!-- Decorative circle -->
+          <div
+            style="position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(15, 118, 110, 0.4), transparent 70%); top: -100px; right: -50px; border-radius: 50%;">
           </div>
-        </div>
-        <div class="card" style="gap: 12px;">
-          <div class="muted-label">Contactos diretos</div>
-          <p><strong>Email:</strong> <a href="mailto:marleneruivonutricao@gmail.com">marleneruivonutricao@gmail.com</a>
-          </p>
-          <p><strong>Instagram:</strong> <a href="https://www.instagram.com/nutri_fodmap_marleneruivo" target="_blank"
-              rel="noreferrer">@nutri_fodmap_marleneruivo</a></p>
-          <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/marlene-ruivo-b2a2104a/" target="_blank"
-              rel="noreferrer">marlene-ruivo-b2a2104a</a></p>
-          <p><strong>Consultas:</strong> Mafra · Lisboa · Sintra · Online</p>
-          <div class="hero-card"
-            style="position: relative; inset: unset; box-shadow: none; background: var(--mint-soft);">
-            <div class="pill-icon" aria-hidden="true"
-              style="background: var(--white); box-shadow: 0 8px 18px rgba(12, 78, 68, 0.12);">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7.5 7.5c0-1.657 1.343-3 3-3h2a3 3 0 0 1 3 3v9a2.5 2.5 0 1 1-5 0v-7" stroke="#0f766e"
-                  stroke-width="1.6" stroke-linecap="round" />
+
+          <div style="position: relative; z-index: 1; max-width: 500px;">
+            <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+              <div
+                style="width: 48px; height: 48px; background: rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b8e0d8" stroke-width="2">
+                  <path d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm-7 2v14M3 10h18"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+              <div
+                style="width: 48px; height: 48px; background: rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b8e0d8" stroke-width="2">
+                  <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+            <h3 style="color: var(--white); font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: 12px;">Agende a sua
+              consulta</h3>
+            <p style="color: #cbd5e1; font-size: 1.05rem; line-height: 1.6;">Garanta o seu espaço na agenda. O processo
+              é simples: escolha o tipo de consulta, efetue o pagamento seguro via MB WAY e selecione o seu horário
+              preferido.</p>
+          </div>
+
+          <div style="position: relative; z-index: 1;">
+            <button onclick="openBookingModal()" class="btn"
+              style="padding: 16px 32px; font-size: 1.1rem; background: var(--mint); color: var(--deep); box-shadow: 0 8px 20px rgba(0,0,0,0.2);">
+              Marcar Agora
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" style="margin-left: 8px;">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
               </svg>
-            </div>
-            <div>
-              <div class="muted-label" style="color: var(--teal);">Suporte contínuo</div>
-              <strong>Check-ins e acompanhamento entre consultas</strong>
-            </div>
+            </button>
           </div>
         </div>
+
+        <!-- Direct Contacts Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+
+          <!-- Email Card -->
+          <a href="mailto:marleneruivonutricao@gmail.com" class="card"
+            style="text-decoration: none; transition: transform 0.2s; border: 1px solid rgba(15, 118, 110, 0.1);">
+            <div style="display: flex; gap: 16px; align-items: center;">
+              <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f766e"
+                  stroke-width="2">
+                  <rect width="20" height="16" x="2" y="4" rx="2" />
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg></div>
+              <div>
+                <div class="muted-label" style="font-size: 0.8rem; margin-bottom: 2px;">Email</div>
+                <strong style="color: var(--teal); word-break: break-all;">marleneruivonutricao@gmail.com</strong>
+              </div>
+            </div>
+          </a>
+
+          <!-- Socials Card -->
+          <div class="card" style="border: 1px solid rgba(15, 118, 110, 0.1);">
+            <div style="display: flex; gap: 16px; align-items: center;">
+              <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f766e"
+                  stroke-width="2">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                  <rect width="4" height="12" x="2" y="9" />
+                  <circle cx="4" cy="4" r="2" />
+                </svg></div>
+              <div>
+                <div class="muted-label" style="font-size: 0.8rem; margin-bottom: 6px;">Redes Sociais</div>
+                <div style="display: flex; gap: 12px;">
+                  <a href="https://www.instagram.com/nutri_fodmap_marleneruivo" target="_blank"
+                    style="font-weight: 700; color: var(--deep); border-bottom: 1px solid var(--teal);">Instagram</a>
+                  <a href="https://www.linkedin.com/in/marlene-ruivo-b2a2104a/" target="_blank"
+                    style="font-weight: 700; color: var(--deep); border-bottom: 1px solid var(--teal);">LinkedIn</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Location Card -->
+          <div class="card" style="border: 1px solid rgba(15, 118, 110, 0.1);">
+            <div style="display: flex; gap: 16px; align-items: center;">
+              <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f766e"
+                  stroke-width="2">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg></div>
+              <div>
+                <div class="muted-label" style="font-size: 0.8rem; margin-bottom: 2px;">Localizações</div>
+                <strong style="color: var(--deep);">Mafra · Lisboa · Sintra · Online</strong>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </section>
   </main>
