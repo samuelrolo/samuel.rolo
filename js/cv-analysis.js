@@ -453,7 +453,25 @@ function setupReportPaymentHandler(candidateName) {
 
                         // Generate Report
                         if (window.ReportGenerator && window.currentReportData) {
-                            window.ReportGenerator.openReport(window.currentReportData);
+                            // Update Status
+                            statusDiv.innerHTML = `
+                                <div class="alert alert-success">
+                                    <i class="fas fa-check-circle me-2"></i>Pagamento confirmado!
+                                    <div class="mt-2">
+                                        <button id="btnDownloadFinal" class="btn btn-success w-100">
+                                            <i class="fas fa-download me-2"></i>Descarregar Relatório
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+
+                            // Add listener to new button
+                            document.getElementById('btnDownloadFinal').addEventListener('click', () => {
+                                window.ReportGenerator.downloadReport(window.currentReportData);
+                                // Also try to open it just in case
+                                // window.ReportGenerator.openReport(window.currentReportData);
+                            });
+
                         } else {
                             alert("Erro ao gerar relatório. Por favor contacte o suporte.");
                         }

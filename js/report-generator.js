@@ -295,5 +295,24 @@ const ReportGenerator = {
         } else {
             alert("Por favor, permita pop-ups para visualizar o relatório.");
         }
+    },
+
+    downloadReport: function (report) {
+        const html = this.generateHTML(report);
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+
+        // Sanitize filename
+        const candidateName = (report.candidate_profile && report.candidate_profile.detected_name)
+            ? report.candidate_profile.detected_name.replace(/[^a-z0-9]/gi, '_').toLowerCase()
+            : 'candidato';
+
+        a.href = url;
+        a.download = `relatorio_cv_${candidateName}_share2inspire.html`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 };
