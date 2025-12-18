@@ -182,7 +182,7 @@
     <div class="modal fade" id="cvResultsModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header border-0 pb-0">
+                <div class="modal-header">
                     <h5 class="modal-title fw-bold">Resultados da Análise</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -248,12 +248,11 @@
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="button" class="btn btn-warning text-white" id="btnRequestReview"
-                        style="background-color: #BF9A33; border: none; margin-right: 10px;">
+                    <button type="button" class="btn btn-warning text-white" id="btnRequestReview">
                         <i class="fas fa-user-tie me-2"></i>Solicitar Revisão
                     </button>
-                    <button type="button" class="btn btn-primary">
-                        <i class="fas fa-download me-2"></i>Descarregar Relatório Completo
+                    <button type="button" class="btn btn-primary" id="btnOpenReportPayment">
+                        <i class="fas fa-envelope me-2"></i>Receber por Email
                     </button>
                 </div>
 
@@ -261,7 +260,7 @@
                 <div class="modal fade" id="humanReviewModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
-                            <div class="modal-header border-0 pb-0">
+                            <div class="modal-header">
                                 <h5 class="modal-title fw-bold">Revisão Profissional de CV</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
@@ -305,8 +304,7 @@
                             <div class="modal-footer border-0 pt-0">
                                 <button type="button" class="btn btn-outline-secondary"
                                     data-bs-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-primary" id="btnConfirmPayment"
-                                    style="background-color: #BF9A33; border: none; width: 100%;">
+                                <button type="button" class="btn btn-primary w-100" id="btnConfirmPayment">
                                     <i class="fas fa-check me-2"></i>Pagar e Solicitar
                                 </button>
                             </div>
@@ -322,7 +320,7 @@
     <div class="modal fade" id="reportPaymentModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header border-0 pb-0">
+                <div class="modal-header">
                     <h5 class="modal-title fw-bold">Desbloquear Relatório Completo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -358,8 +356,7 @@
                 </div>
                 <div class="modal-footer border-0 pt-0">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnConfirmReportPay"
-                        style="background-color: #BF9A33; border: none; width: 100%;">
+                    <button type="button" class="btn btn-primary w-100" id="btnConfirmReportPay">
                         <i class="fas fa-mobile-alt me-2"></i>Pagar com MB WAY
                     </button>
                 </div>
