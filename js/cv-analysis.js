@@ -137,22 +137,6 @@ function populateResults(report) {
     // 7. Radar Chart
     updateRadarChart(report);
 
-    // 8. Download Report Handler
-    const downloadBtn = document.querySelector('.modal-footer .btn-primary');
-    if (downloadBtn) {
-        const newBtn = downloadBtn.cloneNode(true);
-        downloadBtn.parentNode.replaceChild(newBtn, downloadBtn);
-        newBtn.addEventListener('click', () => {
-            if (window.ReportGenerator) {
-                // Adapt report to ReportGenerator expectation if needed, or update ReportGenerator later.
-                // For now pass raw report.
-                window.ReportGenerator.openReport(report);
-            } else {
-                alert("Gerador de relatórios a carregar...");
-            }
-        });
-    }
-
     // 9. Payment / Human Review Handler
     setupPaymentHandler(profile.detected_name);
 
@@ -396,63 +380,62 @@ function setupReportPaymentHandler(candidateName) {
             }
         });
     }
-});
 
-// Handle Payment Confirmation
-const btnConfirmReportPay = document.getElementById('btnConfirmReportPay');
-if (btnConfirmReportPay) {
-    // Remove old listeners
-    const newPaymentBtn = btnConfirmReportPay.cloneNode(true);
-    btnConfirmReportPay.parentNode.replaceChild(newPaymentBtn, btnConfirmReportPay);
+    // Handle Payment Confirmation
+    const btnConfirmReportPay = document.getElementById('btnConfirmReportPay');
+    if (btnConfirmReportPay) {
+        // Remove old listeners
+        const newPaymentBtn = btnConfirmReportPay.cloneNode(true);
+        btnConfirmReportPay.parentNode.replaceChild(newPaymentBtn, btnConfirmReportPay);
 
-    newPaymentBtn.addEventListener('click', async () => {
-        const name = document.getElementById('reportPayName').value;
-        const phone = document.getElementById('reportPayPhone').value;
-        const email = document.getElementById('reportPayEmail').value;
+        newPaymentBtn.addEventListener('click', async () => {
+            const name = document.getElementById('reportPayName').value;
+            const phone = document.getElementById('reportPayPhone').value;
+            const email = document.getElementById('reportPayEmail').value;
 
-        if (!name || !phone || !email) {
-            alert("Por favor, preencha todos os campos.");
-            return;
-        }
-
-        const statusDiv = document.getElementById('reportPaymentStatus');
-        statusDiv.classList.remove('d-none');
-        statusDiv.innerHTML = '<div class="alert alert-warning"><i class="fas fa-spinner fa-spin me-2"></i>A processar pagamento MB WAY (1.00€)...</div>';
-        newPaymentBtn.disabled = true;
-
-        try {
-            // Ensure integration exists
-            if (!window.ifthenpayIntegration) {
-                throw new Error("Sistema de pagamentos não inicializado.");
+            if (!name || !phone || !email) {
+                alert("Por favor, preencha todos os campos.");
+                return;
             }
 
-            const paymentResult = await window.ifthenpayIntegration.processPayment('mbway', {
-                amount: '1.00',
-                mobileNumber: phone,
-                orderId: 'CVREP-' + Date.now(),
-                description: 'Relatório CV Completo',
-                customerName: name,
-                customerEmail: email
-            });
+            const statusDiv = document.getElementById('reportPaymentStatus');
+            statusDiv.classList.remove('d-none');
+            statusDiv.innerHTML = '<div class="alert alert-warning"><i class="fas fa-spinner fa-spin me-2"></i>A processar pagamento MB WAY (1.00€)...</div>';
+            newPaymentBtn.disabled = true;
 
-            if (paymentResult.success) {
-                statusDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Pedido MB WAY enviado! Aceite na app para descarregar.</div>';
+            try {
+                // Ensure integration exists
+                if (!window.ifthenpayIntegration) {
+                    throw new Error("Sistema de pagamentos não inicializado.");
+                }
 
-                // Simulate payment confirmation wait logic
-                // In a real scenario, we would poll the backend for status.
-                // Here we trust the user accepts it and show the report after a delay/confirmation.
+                const paymentResult = await window.ifthenpayIntegration.processPayment('mbway', {
+                    amount: '1.00',
+                    mobileNumber: phone,
+                    orderId: 'CVREP-' + Date.now(),
+                    description: 'Relatório CV Completo',
+                    customerName: name,
+                    customerEmail: email
+                });
 
-                setTimeout(() => {
-                    alert("Pagamento processado! O seu relatório será gerado de seguida.");
+                if (paymentResult.success) {
+                    statusDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Pedido MB WAY enviado! Aceite na app para descarregar.</div>';
 
-                    try {
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('reportPaymentModal'));
-                        if (modal) modal.hide();
-                    } catch (e) { }
+                    // Simulate payment confirmation wait logic
+                    // In a real scenario, we would poll the backend for status.
+                    // Here we trust the user accepts it and show the report after a delay/confirmation.
 
-                    // Send Report via Email
-                    if (window.currentReportData) {
-                        statusDiv.innerHTML = `
+                    setTimeout(() => {
+                        alert("Pagamento processado! O seu relatório será gerado de seguida.");
+
+                        try {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('reportPaymentModal'));
+                            if (modal) modal.hide();
+                        } catch (e) { }
+
+                        // Send Report via Email
+                        if (window.currentReportData) {
+                            statusDiv.innerHTML = `
                                 <div class="alert alert-success border-0 shadow-sm" style="border-radius: 12px; background-color: #f0fff4; color: #155724;">
                                     <div class="d-flex align-items-center mb-2">
                                         <i class="fas fa-check-circle me-2 fs-4"></i>
@@ -462,19 +445,19 @@ if (btnConfirmReportPay) {
                                 </div>
                             `;
 
-                        fetch('https://share2inspire-beckend.lm.r.appspot.com/api/services/send-report-email', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                email: email,
-                                name: name,
-                                reportData: window.currentReportData
+                            fetch('https://share2inspire-beckend.lm.r.appspot.com/api/services/send-report-email', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    email: email,
+                                    name: name,
+                                    reportData: window.currentReportData
+                                })
                             })
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    statusDiv.innerHTML = `
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        statusDiv.innerHTML = `
                                         <div class="alert alert-success border-0 shadow-sm" style="border-radius: 12px; background-color: #f0fff4; color: #155724;">
                                             <div class="d-flex align-items-center mb-2">
                                                 <i class="fas fa-envelope-open-text me-2 fs-4"></i>
@@ -483,37 +466,37 @@ if (btnConfirmReportPay) {
                                             <p class="small mb-0">O relatório detalhado já está no seu email. Por favor verifique a sua caixa de entrada.</p>
                                         </div>
                                     `;
-                                } else {
-                                    throw new Error(data.error || "Erro ao enviar email.");
-                                }
-                            })
-                            .catch(err => {
-                                console.error(err);
-                                statusDiv.innerHTML = `
+                                    } else {
+                                        throw new Error(data.error || "Erro ao enviar email.");
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error(err);
+                                    statusDiv.innerHTML = `
                                     <div class="alert alert-danger border-0 shadow-sm" style="border-radius: 12px;">
                                         <i class="fas fa-exclamation-circle me-2"></i>
                                         <strong>Erro ao enviar email:</strong> ${err.message}
                                         <p class="small mt-2">Mas não se preocupe, o seu pagamento foi registado. Por favor, contacte o suporte: <strong>rsshare2inspire@gmail.com</strong></p>
                                     </div>
                                 `;
-                            });
+                                });
 
-                    } else {
-                        alert("Erro ao identificar os dados da análise. Por favor contacte o suporte.");
-                    }
-                }, 4000);
+                        } else {
+                            alert("Erro ao identificar os dados da análise. Por favor contacte o suporte.");
+                        }
+                    }, 4000);
 
-            } else {
-                throw new Error(paymentResult.message || "Falha no pagamento");
+                } else {
+                    throw new Error(paymentResult.message || "Falha no pagamento");
+                }
+
+            } catch (err) {
+                console.error(err);
+                statusDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${err.message}</div>`;
+                newPaymentBtn.disabled = false;
             }
-
-        } catch (err) {
-            console.error(err);
-            statusDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${err.message}</div>`;
-            newPaymentBtn.disabled = false;
-        }
-    });
-}
+        });
+    }
 }
 
 
