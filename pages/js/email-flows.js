@@ -9,7 +9,7 @@
 
 const EMAIL_CONFIG = {
     // Brevo API endpoint (via backend proxy for security)
-    API_ENDPOINT: 'https://europe-west1-share2inspire-9d77c.cloudfunctions.net/sendServiceEmail',
+    API_ENDPOINT: 'https://europe-west1-share2inspire-beckend.cloudfunctions.net/sendServiceEmail',
 
     // Sender details
     SENDER_NAME: 'Samuel Rolo | Share2Inspire',
