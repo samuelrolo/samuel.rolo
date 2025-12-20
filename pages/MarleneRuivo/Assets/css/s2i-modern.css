@@ -9,10 +9,11 @@
     --s2i-gray: #6c757d;
     --s2i-light-gray: #f8f9fa;
     --s2i-white: #ffffff;
-    
+
     --btn-height: 48px;
     --btn-padding-x: 18px;
-    --btn-radius: 50px; /* Capsule */
+    --btn-radius: 50px;
+    /* Capsule */
 }
 
 /* --- BUTTON SYSTEM --- */
@@ -21,12 +22,15 @@
 .btn-s2i-secondary,
 .btn-s2i-tertiary {
     height: var(--btn-height);
-    line-height: 1.5; /* Vertical align text */
+    line-height: 1.5;
+    /* Vertical align text */
     padding: 0 var(--btn-padding-x);
     border-radius: var(--btn-radius);
-    font-weight: 600; /* Semibold */
+    font-weight: 600;
+    /* Semibold */
     font-size: 1rem;
-    box-shadow: none !important; /* No heavy shadows */
+    box-shadow: none !important;
+    /* No heavy shadows */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -41,6 +45,7 @@
     color: var(--s2i-white);
     border-color: var(--s2i-gold);
 }
+
 .btn-s2i-primary:hover {
     background-color: var(--s2i-gold-hover);
     border-color: var(--s2i-gold-hover);
@@ -53,6 +58,7 @@
     color: var(--s2i-white);
     border-color: var(--s2i-black);
 }
+
 .btn-s2i-secondary:hover {
     background-color: #333;
     border-color: #333;
@@ -65,6 +71,7 @@
     color: var(--s2i-gray);
     border-color: var(--s2i-gray);
 }
+
 .btn-s2i-tertiary:hover {
     background-color: var(--s2i-gray);
     color: var(--s2i-white);
@@ -74,7 +81,8 @@
 .btn-s2i-primary i,
 .btn-s2i-secondary i,
 .btn-s2i-tertiary i {
-    font-size: 16px; /* Icon size fixed */
+    font-size: 16px;
+    /* Icon size fixed */
     margin-right: 8px;
 }
 
@@ -90,7 +98,8 @@
 .modal-title {
     font-weight: 700;
     color: var(--s2i-black);
-    margin: 0 auto; /* Center title */
+    margin: 0 auto;
+    /* Center title */
 }
 
 /* Close button - X only */
@@ -113,17 +122,20 @@ body.modal-open #feedbackWidget {
         bottom: 0;
         background: #fff;
         z-index: 10;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
         display: flex;
-        flex-direction: row; /* Ensure horizontal if possible or column if too tight */
+        flex-direction: row;
+        /* Ensure horizontal if possible or column if too tight */
         padding: 15px;
         flex-wrap: nowrap;
         gap: 10px;
-        padding-bottom: env(safe-area-inset-bottom, 20px); /* Safe area for iPhone */
+        padding-bottom: env(safe-area-inset-bottom, 20px);
+        /* Safe area for iPhone */
     }
-    
+
     .modal-footer .btn {
-        flex: 1; /* Split width equally */
+        flex: 1;
+        /* Split width equally */
         margin: 0 !important;
         font-size: 0.9rem;
         padding: 0 10px;
@@ -139,5 +151,87 @@ body.modal-open #feedbackWidget {
 
 .service-card-human {
     border: 2px solid var(--s2i-gold);
-    background-color: #fffbf0; /* Light gold tint */
+    background-color: #fffbf0;
+    /* Light gold tint */
+}
+
+/* --- FEEDBACK WIDGET (Minimized Badge) --- */
+
+#feedbackWidget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1050;
+}
+
+#feedbackWidget .feedback-badge {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--s2i-gold);
+    color: var(--s2i-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+#feedbackWidget .feedback-badge:hover {
+    transform: scale(1.1);
+}
+
+#feedbackWidget .feedback-form-container {
+    display: none;
+    position: absolute;
+    bottom: 60px;
+    right: 0;
+    width: 320px;
+    max-width: 90vw;
+    background: var(--s2i-white);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+}
+
+#feedbackWidget.expanded .feedback-badge {
+    display: none;
+}
+
+#feedbackWidget.expanded .feedback-form-container {
+    display: block;
+}
+
+/* --- GLOBAL BUTTON OVERRIDE (Apply to Bootstrap .btn too) --- */
+
+.btn {
+    height: var(--btn-height);
+    padding: 0 var(--btn-padding-x);
+    border-radius: var(--btn-radius);
+    font-weight: 600;
+    box-shadow: none !important;
+    transition: all 0.3s ease;
+}
+
+.btn i {
+    font-size: 16px;
+}
+
+/* Ensure all primary Bootstrap buttons match Gold */
+.btn-primary {
+    background-color: var(--s2i-gold) !important;
+    border-color: var(--s2i-gold) !important;
+    color: var(--s2i-white) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--s2i-gold-hover) !important;
+    border-color: var(--s2i-gold-hover) !important;
+}
+
+/* Outline buttons */
+.btn-outline-secondary,
+.btn-outline-dark {
+    border-width: 2px;
 }
