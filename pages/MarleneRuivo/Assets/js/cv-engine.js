@@ -173,14 +173,150 @@ const CV_ENGINE = {
                 this.data.strengths = Array.from(strengthNodes).map(node => node.innerText);
             }
 
+            // Capture hidden legacy recommendation text
+            const legacyText = document.getElementById('recommendationText')?.innerText || "";
+            if (legacyText && this.data.evolution.length === 0) {
+                this.convertTextToBullets(legacyText);
+            }
+
             console.log("CV Engine: Data scraped from DOM.", this.data);
             return true;
         } catch (e) {
             console.error("CV Engine: Error scraping DOM", e);
             return false;
         }
+    },
+
+    /**
+     * Convert raw text (paragraph) to structured bullets
+     */
+    convertTextToBullets: function (text) {
+        if (!text) return;
+
+        // Split by periods, filter empty or short strings
+        const sentences = text.split('.').map(s => s.trim()).filter(s => s.length > 20);
+
+        // Map sentences to Evolution objects
+        this.data.evolution = sentences.slice(0, 5).map(s => ({
+            title: "Recomendação Estratégica",
+            context: s,
+            evidence: "Detetado na análise de conteúdo.",
+            actions: ["Considerar aprofundar este tópico."]
+        }));
+
+        // Generate generic Feedback based on Score if empty
+        if (this.data.feedback.length === 0) {
+            this.generateGenericFeedback();
+        }
+    },
+
+    /**
+     * Generate Generic Feedback based on Maturity Score
+     */
+    generateGenericFeedback: function () {
+        const score = parseFloat(this.data.maturity.score) || 0;
+
+        if (score > 4.0) {
+            this.data.feedback = [
+                { title: "Perfil de Executivo", market_reading: "Elevada prontidão para funções de direção de topo.", recommendations: ["Focar em visibilidade externa."] },
+                { title: "Consistência", market_reading: "Percurso sólido e coerente.", recommendations: ["Explorar mentoring."] }
+            ];
+        } else if (score > 3.0) {
+            this.data.feedback = [
+                { title: "Especialista", market_reading: "Forte domínio técnico.", recommendations: ["Desenvolver soft skills de liderança."] },
+                { title: "Potencial", market_reading: "Base sólida para crescimento.", recommendations: ["Projetos transversais."] }
+            ];
+        } else {
+            this.data.feedback = [
+                { title: "Em Desenvolvimento", market_reading: "Fase inicial de estruturação.", recommendations: ["Reforçar hard skills."] },
+                { title: "Clareza", market_reading: "CV necessita de mais foco.", recommendations: ["Definir objetivos claros."] }
+            ];
+        }
+    },
+
+    /**
+     * Render data to the DOM (Evolution and Feedback containers)
+     */
+    renderToDOM: function () {
+        // Render Evolution
+        const evoContainer = document.getElementById('evolutionContainer');
+        if (evoContainer && this.data.evolution.length > 0) {
+            evoContainer.innerHTML = this.data.evolution.map(item => `
+                <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-start gap-2">
+                        <i class="fas fa-check-circle text-primary mt-1"></i>
+                        <div>
+                            <strong class="text-dark d-block">${item.title}</strong>
+                            <small class="text-muted">${item.context}</small>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render Feedback
+        const feedContainer = document.getElementById('feedbackContainer');
+        if (feedContainer && this.data.feedback.length > 0) {
+            feedContainer.innerHTML = this.data.feedback.map(item => `
+                <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-start gap-2">
+                        <i class="fas fa-arrow-up text-success mt-1"></i>
+                        <div>
+                            <strong class="text-dark d-block">${item.title}</strong>
+                            <small class="text-muted">${item.market_reading}</small>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    },
+
+    /**
+     * Start observing the legacy elements to trigger update
+     */
+    startLegacyObserver: function () {
+        const targetNode = document.getElementById('cvResultsModal');
+        if (!targetNode) return;
+
+        const observer = new MutationObserver((mutations) => {
+            // Simple poll: Check if we have a score and no bullets yet
+            const scoreEl = document.getElementById('maturityScore');
+            const hasScore = scoreEl && scoreEl.innerText !== '0.0' && scoreEl.innerText !== '';
+
+            if (hasScore) {
+                this.scrapeFromDOM();
+                if (this.data.evolution.length > 0 || this.data.feedback.length > 0) {
+                    this.renderToDOM();
+                } else {
+                    // Safety Net: If we have a score but no legacy text, force generation
+                    console.warn("CV Engine: Score detected but no legacy text. Forcing fallback generation.");
+                    this.generateGenericFeedback();
+                    this.data.evolution = [
+                        { title: "Análise Concluída", context: "O seu perfil foi analisado com sucesso.", evidence: "Baseado no score de maturidade.", actions: ["Consulte o relatório detalhado para mais insights."] },
+                        { title: "Próximos Passos", context: "Agende uma sessão de revisão humana para aprofundar estes resultados.", evidence: "Potencial de valorização detetado.", actions: ["Revisão com especialista."] }
+                    ];
+                    this.renderToDOM();
+                }
+            }
+        });
+
+        observer.observe(targetNode, { attributes: true, childList: true, subtree: true });
+
+        // Also fire once just in case
+        setTimeout(() => {
+            const scoreEl = document.getElementById('maturityScore');
+            if (scoreEl && scoreEl.innerText !== '0.0') {
+                this.scrapeFromDOM();
+                this.renderToDOM();
+            }
+        }, 2000);
     }
 };
+
+// Start Observer when loaded
+window.addEventListener('DOMContentLoaded', () => {
+    window.CV_ENGINE.startLegacyObserver();
+});
 
 // Export for use
 window.CV_ENGINE = CV_ENGINE;
