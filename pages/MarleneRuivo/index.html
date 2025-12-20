@@ -9,7 +9,9 @@
     content="Nutricionista Marlene Ruivo, especialista em saúde intestinal, síndrome do intestino irritável e dieta FODMAP. Consultas online e presenciais. Freelance a partir de dezembro de 2025." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -74,13 +76,16 @@
       --mint: #b8e0d8;
       --mint-soft: #d8efe9;
       --seafoam: #a1d0c1;
-      --teal: #0f766e;
+      --teal: #4A5D4E;
+      /* Verde Assinatura Marlene Ruivo */
       --deep: #0f172a;
-      --text: #1f2937;
+      --text: #333333;
       --muted: #4b5563;
-      --cloud: #f4f7f6;
+      --cloud: #FDFCF9;
+      /* Fundo bege osso */
       --white: #ffffff;
-      --shadow: 0 20px 60px rgba(10, 54, 46, 0.08);
+      --shadow: none;
+      /* Sem sombras pesadas */
       scroll-behavior: smooth;
     }
 
@@ -90,11 +95,19 @@
 
     body {
       margin: 0;
-      font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
       color: var(--text);
       background: var(--cloud);
-      line-height: 1.7;
+      line-height: 1.8;
       min-height: 100vh;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Lora', Georgia, serif;
+      color: var(--teal);
     }
 
     img {
@@ -108,12 +121,16 @@
     }
 
     header {
-      position: sticky;
+      position: fixed;
       top: 0;
-      z-index: 10;
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(12, 88, 79, 0.08);
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(74, 93, 78, 0.1);
+      transition: all 0.3s ease;
     }
 
     .nav-bar {
@@ -265,7 +282,7 @@
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: clamp(24px, 4vw, 40px);
       align-items: center;
-      box-shadow: var(--shadow);
+      box-shadow: none;
       position: relative;
       overflow: hidden;
     }
@@ -357,13 +374,52 @@
     }
 
     .card {
-      background: var(--white);
-      padding: 18px 18px 20px;
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(15, 118, 110, 0.06);
+      background: transparent;
+      padding: 24px;
+      border-radius: 20px;
+      box-shadow: none;
+      border: none;
       display: grid;
-      gap: 10px;
+      gap: 14px;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .widget-card {
+      background: transparent;
+      padding: 32px;
+      border-radius: 24px;
+      box-shadow: none;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .widget-card .widget-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(15, 118, 110, 0.08);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .widget-card h3 {
+      font-size: 1.15rem;
+      color: var(--deep);
+      margin: 0;
+    }
+
+    .widget-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0;
     }
 
     .card .icon {
@@ -720,6 +776,28 @@
       transform: translateY(0);
     }
 
+    /* Floating Animation */
+    @keyframes floatGentle {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    .hero-float {
+      animation: floatGentle 4s ease-in-out infinite;
+    }
+
+    /* Section Spacing */
+    section {
+      margin-bottom: clamp(60px, 10vw, 100px);
+    }
+
     .card.fade-in {
       opacity: 0;
       transform: translateY(20px);
@@ -747,6 +825,16 @@
     .testimonial {
       min-width: calc(100% - 100px);
       flex-shrink: 0;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+    }
+
+    .testimonial p {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+      hyphens: auto;
     }
 
     @media (min-width: 768px) {
@@ -811,6 +899,160 @@
       width: 24px;
       border-radius: 4px;
     }
+
+    /* GeniNutri Chat Widget */
+    .geninutri-widget {
+      position: fixed;
+      bottom: 90px;
+      right: 24px;
+      z-index: 99;
+    }
+
+    .geninutri-toggle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 24px rgba(15, 118, 110, 0.3);
+      transition: all 0.3s;
+    }
+
+    .geninutri-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 28px rgba(15, 118, 110, 0.4);
+    }
+
+    .geninutri-toggle svg {
+      width: 28px;
+      height: 28px;
+      fill: white;
+    }
+
+    .geninutri-chat {
+      position: absolute;
+      bottom: 75px;
+      right: 0;
+      width: 360px;
+      max-width: calc(100vw - 48px);
+      height: 500px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px) saturate(180%);
+      -webkit-backdrop-filter: blur(12px) saturate(180%);
+      border: 1px solid rgba(15, 118, 110, 0.1);
+      border-radius: 20px;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .geninutri-chat.open {
+      display: flex;
+    }
+
+    .geninutri-header {
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(15, 118, 110, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+      border-bottom: 1px solid rgba(15, 118, 110, 0.08);
+    }
+
+    .geninutri-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      color: var(--deep);
+    }
+
+    .geninutri-header p {
+      margin: 4px 0 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .geninutri-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .geninutri-message {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .geninutri-message.bot {
+      background: rgba(15, 118, 110, 0.08);
+      align-self: flex-start;
+      color: var(--deep);
+    }
+
+    .geninutri-message.user {
+      background: var(--teal);
+      color: white;
+      align-self: flex-end;
+    }
+
+    .geninutri-input {
+      padding: 16px;
+      border-top: 1px solid rgba(15, 118, 110, 0.08);
+      display: flex;
+      gap: 8px;
+    }
+
+    .geninutri-input input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid rgba(15, 118, 110, 0.15);
+      border-radius: 24px;
+      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .geninutri-input button {
+      padding: 12px 20px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 24px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+
+    .geninutri-input button:hover {
+      opacity: 0.9;
+    }
+
+    .geninutri-quick-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .quick-btn {
+      padding: 8px 14px;
+      background: rgba(15, 118, 110, 0.06);
+      border: 1px solid rgba(15, 118, 110, 0.12);
+      border-radius: 16px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quick-btn:hover {
+      background: rgba(15, 118, 110, 0.12);
+      border-color: var(--teal);
+    }
   </style>
 </head>
 
@@ -845,6 +1087,28 @@
       </div>
     </div>
   </header>
+
+  <!-- Discrete News Ticker -->
+  <div style="background: var(--mint-soft); padding: 8px 0; overflow: hidden; font-size: 0.8rem; color: var(--muted);">
+    <div class="news-scroll"
+      style="display: flex; gap: 40px; animation: scrollNews 30s linear infinite; white-space: nowrap;">
+      <span>🌱 Dieta Low FODMAP pode reduzir sintomas de SII em até 70%</span>
+      <span>🧪 Monash University atualiza app FODMAP com novos alimentos</span>
+      <span>📚 Estudo: Fibras solúveis melhoram microbiota intestinal</span>
+      <span>🌱 Dieta Low FODMAP pode reduzir sintomas de SII em até 70%</span>
+    </div>
+  </div>
+  <style>
+    @keyframes scrollNews {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+  </style>
 
   <!-- Mobile Menu -->
   <div class="mobile-overlay" onclick="toggleMobileMenu()"></div>
@@ -905,31 +1169,28 @@
       <div <div
         style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(30px, 5vw, 60px); align-items: start;">
 
-        <!-- Left: Premium White Background Photo -->
-        <div
-          style="position: relative; background: linear-gradient(135deg, #ffffff 0%, #f8fffe 100%); padding: 40px; border-radius: 28px; box-shadow: 0 20px 60px rgba(15, 118, 110, 0.08);">
-          <img src="Assets/marlene-cup.jpg" alt="Marlene Ruivo - Nutricionista"
-            style="width: 100%; border-radius: 20px; object-fit: cover; aspect-ratio: 3/4;">
+        <!-- Left: Clean Photo (no borders, blends naturally) -->
+        <div style="position: relative;">
+          <img src="Assets/marlene-cup.jpg" alt="Marlene Ruivo - Nutricionista" class="hero-float"
+            style="width: 100%; object-fit: cover; aspect-ratio: 3/4;">
 
-          <div
-            style="background: var(--white); padding: 20px; border-radius: 16px; margin-top: -30px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid rgba(15, 118, 110, 0.08);">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-              <div
-                style="width: 48px; height: 48px; background: var(--mint-soft); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2">
-                  <path
-                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
-              </div>
-              <div>
-                <div style="color: var(--teal); font-weight: 800; font-size: 1.5rem; line-height: 1;">15+</div>
-                <div style="font-size: 0.85rem; font-weight: 600; color: var(--muted); line-height: 1.2;">Anos</div>
-              </div>
-            </div>
-            <div style="font-size: 0.9rem; color: var(--deep); font-weight: 600;">Experiência clínica em nutrição</div>
+          <div style="display: flex; align-items: center; gap: 12px; margin-top: 20px;">
             <div
-              style="display: inline-block; background: var(--mint-soft); padding: 4px 12px; border-radius: 8px; margin-top: 8px; font-size: 0.8rem; font-weight: 700; color: var(--teal);">
-              Monash Certified</div>
+              style="width: 48px; height: 48px; background: var(--mint-soft); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2">
+                <path
+                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+            </div>
+            <div>
+              <div style="color: var(--teal); font-weight: 800; font-size: 1.5rem; line-height: 1;">15+</div>
+              <div style="font-size: 0.85rem; font-weight: 600; color: var(--muted); line-height: 1.2;">Anos de
+                experiência clínica</div>
+            </div>
+          </div>
+          <div
+            style="display: inline-block; background: var(--mint-soft); padding: 6px 14px; border-radius: 8px; margin-top: 12px; font-size: 0.85rem; font-weight: 700; color: var(--teal);">
+            Monash Certified
           </div>
         </div>
 
@@ -1044,37 +1305,128 @@
               <path d="M7 8.5V6a2 2 0 0 1 2-2h3" stroke="#0f766e" stroke-width="1.6" stroke-linecap="round" />
             </svg>
           </div>
-          <h3>Experiência clínica consolidada</h3>
-          <p>Atuação contínua em SousaClínica (desde 2021) e Clínica do Tempo (desde 2014), agora aplicada numa prática
-            autónoma focada em saúde intestinal.</p>
-          <div class="muted-label" style="color: var(--teal);">Segunda-feira</div>
-          <strong>Clínica Hygeia · Mafra</strong>
-          <p>9:00 - 13:00</p>
-          <p>1ª consulta: 60€ · Acompanhamento: 50€</p>
-        </div>
-        <div class="card" style="box-shadow: none; background: var(--white);">
-          <div class="muted-label" style="color: var(--teal);">Terça-feira</div>
-          <strong>Instituto Bettencourt – Saúde Integrativa · Lisboa</strong>
-          <p>9:00 - 16:00</p>
-          <p>1ª consulta: 60€ · Acompanhamento: 50€</p>
-        </div>
-        <div class="card" style="box-shadow: none; background: var(--white);">
-          <div class="muted-label" style="color: var(--teal);">Quarta-feira</div>
-          <strong>Clínica Sousi · Sintra</strong>
-          <p>9:00 - 17:00</p>
-          <p>1ª consulta: 60€ · Acompanhamento: 50€</p>
-        </div>
-        <div class="card" style="box-shadow: none; background: var(--mint-soft);">
-          <div class="muted-label" style="color: var(--teal);">Online</div>
-          <strong>Horário flexível (agenda partilhada)</strong>
-          <p>Disponibilidade por marcação</p>
-          <p>1ª consulta: 60€ · Acompanhamento: 50€</p>
+          <h3>Experiência clínica</h3>
+          <p>15+ anos em nutrição clínica, agora focada em saúde intestinal.</p>
         </div>
       </div>
-      <p style="margin-top: 14px; color: var(--muted);">Se não tiver agenda conciliável, é possível agendar
-        videochamada noutra data mediante disponibilidade. Também priorizamos ajustes para novos horários diários
-        sempre que possível.</p>
+    </section>
+
+    <!-- Locais de Consulta - Store Locator -->
+    <section id="locais" class="fade-in-section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Onde Atendo</span>
+          <h2>Locais de Consulta</h2>
+        </div>
       </div>
+
+      <div class="store-locator"
+        style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; background: var(--white); border-radius: 20px; overflow: hidden; border: 1px solid rgba(15,118,110,0.08); min-height: 400px;">
+
+        <!-- Location List -->
+        <div style="padding: 24px; overflow-y: auto; max-height: 450px;">
+          <div style="font-size: 0.85rem; color: var(--muted); margin-bottom: 16px;">3 localizações</div>
+
+          <!-- Mafra -->
+          <div class="location-item" onclick="showLocation('mafra')"
+            style="padding: 16px; border-radius: 12px; cursor: pointer; margin-bottom: 12px; border: 2px solid var(--teal); background: var(--mint-soft);">
+            <div style="display: flex; gap: 12px;">
+              <div
+                style="width: 80px; height: 60px; background: linear-gradient(135deg, var(--mint), var(--teal)); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 1.5rem;">🏥</span>
+              </div>
+              <div style="flex: 1;">
+                <strong style="color: var(--deep);">Clínica Hygeia</strong>
+                <div style="color: var(--teal); font-size: 0.8rem; font-weight: 600;">Segunda 9h-13h</div>
+                <div style="font-size: 0.85rem; color: var(--muted);">Mafra</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lisboa -->
+          <div class="location-item" onclick="showLocation('lisboa')"
+            style="padding: 16px; border-radius: 12px; cursor: pointer; margin-bottom: 12px; border: 1px solid rgba(15,118,110,0.1); transition: all 0.2s;">
+            <div style="display: flex; gap: 12px;">
+              <div
+                style="width: 80px; height: 60px; background: linear-gradient(135deg, #f0fdf4, var(--mint)); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 1.5rem;">🏛️</span>
+              </div>
+              <div style="flex: 1;">
+                <strong style="color: var(--deep);">Instituto Bettencourt</strong>
+                <div style="color: var(--teal); font-size: 0.8rem; font-weight: 600;">Terça 9h-16h</div>
+                <div style="font-size: 0.85rem; color: var(--muted);">Lisboa</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sintra -->
+          <div class="location-item" onclick="showLocation('sintra')"
+            style="padding: 16px; border-radius: 12px; cursor: pointer; margin-bottom: 12px; border: 1px solid rgba(15,118,110,0.1); transition: all 0.2s;">
+            <div style="display: flex; gap: 12px;">
+              <div
+                style="width: 80px; height: 60px; background: linear-gradient(135deg, #f0fdf4, var(--mint)); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 1.5rem;">🏰</span>
+              </div>
+              <div style="flex: 1;">
+                <strong style="color: var(--deep);">Clínica Sousi</strong>
+                <div style="color: var(--teal); font-size: 0.8rem; font-weight: 600;">Quarta 9h-17h</div>
+                <div style="font-size: 0.85rem; color: var(--muted);">Sintra</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Online -->
+          <div class="location-item"
+            style="padding: 16px; border-radius: 12px; cursor: pointer; background: var(--mint-soft); border: 1px dashed var(--teal);">
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <div
+                style="width: 80px; height: 60px; background: var(--teal); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 1.5rem;">💻</span>
+              </div>
+              <div style="flex: 1;">
+                <strong style="color: var(--deep);">Consulta Online</strong>
+                <div style="color: var(--teal); font-size: 0.8rem; font-weight: 600;">Horário flexível</div>
+                <a href="#contactos" style="font-size: 0.85rem; color: var(--teal); text-decoration: underline;">Agendar
+                  →</a>
+              </div>
+            </div>
+          </div>
+
+          <div
+            style="margin-top: 16px; padding: 12px; background: rgba(15,118,110,0.05); border-radius: 8px; font-size: 0.8rem; color: var(--muted);">
+            <strong>Preços:</strong> 1ª consulta 60€ · Seguimento 50€
+          </div>
+        </div>
+
+        <!-- Map -->
+        <div id="mapContainer" style="position: relative; background: #e5e5e5;">
+          <iframe id="clinicMap"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3112.123!2d-9.26!3d38.94!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzjCsDU2JzI0LjAiTiA5wrAxNScyMi40Ilc!5e0!3m2!1spt-PT!2spt!4v1"
+            style="width: 100%; height: 100%; border: 0; min-height: 400px;" allowfullscreen="" loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+
+          <!-- Map Quick Links -->
+          <div style="position: absolute; bottom: 16px; left: 16px; display: flex; gap: 8px;">
+            <a href="https://www.waze.com/ul?q=Clinica%20Hygeia%20Mafra" target="_blank"
+              style="padding: 8px 12px; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); font-size: 0.8rem; text-decoration: none; color: #333; display: flex; align-items: center; gap: 4px;">
+              🚗 Waze
+            </a>
+            <a href="https://maps.google.com/?q=Clinica+Hygeia+Mafra" target="_blank"
+              style="padding: 8px 12px; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); font-size: 0.8rem; text-decoration: none; color: #333; display: flex; align-items: center; gap: 4px;">
+              📍 Google Maps
+            </a>
+            <a href="https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[formatted_address]=Clinica%20Hygeia%20Mafra"
+              target="_blank"
+              style="padding: 8px 12px; background: #000; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); font-size: 0.8rem; text-decoration: none; color: white; display: flex; align-items: center; gap: 4px;">
+              🚕 Uber
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <p style="margin-top: 20px; color: var(--muted); text-align: center; font-size: 0.9rem;">Se não tiver agenda
+        conciliável, é possível agendar videochamada noutra data.</p>
     </section>
 
     <section id="fodmap" aria-labelledby="fodmap-title">
@@ -1134,15 +1486,84 @@
       </div>
     </section>
 
-    <section id="sintomas" aria-labelledby="sintomas-title">
+    <section id="sintomas" aria-labelledby="sintomas-title" class="fade-in-section" style="padding-top: 80px;">
       <div class="section-head">
         <div>
-          <span class="eyebrow">Sintomas</span>
-          <h2 id="sintomas-title">Alívio direcionado para os sinais mais comuns</h2>
-          <p class="subtitle">Identificamos padrões de sintomas, gatilhos alimentares e estratégias de gestão que cabem
-            no seu dia.</p>
+          <span class="eyebrow">Mapeador de Sintomas</span>
+          <h2 id="sintomas-title">Como se sente hoje?</h2>
+          <p class="subtitle">Responda a 3 perguntas rápidas para percebermos o melhor caminho para o seu conforto.</p>
         </div>
       </div>
+
+      <!-- Symptom Checker Interactive -->
+      <div id="symptom-checker" style="max-width: 700px; margin: 0 auto 60px; text-align: center;">
+        <div id="sc-step-1" class="sc-step">
+          <p style="font-weight: 600; margin-bottom: 24px; font-size: 1.1rem;">Qual é o sintoma que mais a(o) incomoda?
+          </p>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+            <button onclick="scNextStep(2, 'Inchaço')" class="sc-btn">Inchaço Abdominal</button>
+            <button onclick="scNextStep(2, 'Dor')" class="sc-btn">Dor ou Cãibras</button>
+            <button onclick="scNextStep(2, 'Gases')" class="sc-btn">Gases Excessivos</button>
+            <button onclick="scNextStep(2, 'Trânsito')" class="sc-btn">Alteração do Trânsito</button>
+          </div>
+        </div>
+
+        <div id="sc-step-2" class="sc-step" style="display: none;">
+          <p style="font-weight: 600; margin-bottom: 24px; font-size: 1.1rem;">Com que frequência isto acontece?</p>
+          <div style="display: flex; gap: 12px; justify-content: center;">
+            <button onclick="scNextStep(3, 'Diário')" class="sc-btn">Quase todos os dias</button>
+            <button onclick="scNextStep(3, 'Ocasional')" class="sc-btn">2 a 3 vezes por semana</button>
+          </div>
+        </div>
+
+        <div id="sc-step-3" class="sc-step" style="display: none;">
+          <p style="font-weight: 600; margin-bottom: 24px; font-size: 1.1rem;">Já notou se piora com algum destes
+            alimentos?</p>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+            <button onclick="scShowResult('fodmap')" class="sc-btn">Alho ou Cebola</button>
+            <button onclick="scShowResult('fodmap')" class="sc-btn">Pão ou Massas</button>
+            <button onclick="scShowResult('geral')" class="sc-btn">Não tenho a certeza</button>
+          </div>
+        </div>
+
+        <div id="sc-result" class="sc-step" style="display: none;">
+          <h3 style="color: var(--teal); margin-bottom: 16px;">Temos uma recomendação para si.</h3>
+          <p id="sc-result-text" style="margin-bottom: 24px; line-height: 1.7;"></p>
+          <a href="#contactos" class="btn"
+            style="background: var(--teal); color: white; padding: 16px 32px; border-radius: 50px;">Agendar Consulta de
+            Avaliação</a>
+        </div>
+      </div>
+
+      <style>
+        .sc-btn {
+          background: white;
+          border: 1px solid var(--teal);
+          color: var(--teal);
+          padding: 14px 24px;
+          border-radius: 50px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 0.95rem;
+          font-family: inherit;
+        }
+
+        .sc-btn:hover {
+          background: var(--teal);
+          color: white;
+        }
+
+        .sc-step {
+          transition: opacity 0.4s ease;
+        }
+      </style>
+
+      <!-- Digestive System Diagram -->
+      <div style="display: flex; justify-content: center; margin: 40px 0; padding: 40px 20px;">
+        <img src="Assets/digestive-system-minimal.png" alt="Sistema Digestivo - Onde atua a dieta FODMAP"
+          style="max-width: 400px; width: 100%; height: auto; opacity: 0.95;">
+      </div>
+
       <div class="symptoms">
         <div class="grid">
           <div class="card">
@@ -1275,7 +1696,171 @@
         </div>
         <div class="resource-card">
           <div class="muted-label">Guias práticos</div>
+          ```html
           <p>Listas de compras, gestão de refeições fora de casa e reintrodução faseada.</p>
+        </div>
+      </div>
+    </section>
+
+    </div>
+    </section>
+
+    <!-- Metodologia / Valores -->
+    <section class="fade-in-section" style="margin-bottom: 40px;">
+      <div
+        style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;">
+
+        <!-- Card 1 -->
+        <div class="widget-card" style="justify-content: flex-start;">
+          <div class="widget-icon" style="background: rgba(15, 118, 110, 0.1); color: var(--teal);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
+          <h3 style="font-size: 1.1rem; margin-top: 8px;">Atenção centrada na pessoa</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--muted);">Plano que respeita sintomas, rotinas e
+            preferências alimentares para avanços sustentáveis.</p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="widget-card" style="justify-content: flex-start;">
+          <div class="widget-icon" style="background: rgba(15, 118, 110, 0.1); color: var(--teal);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+            </svg>
+          </div>
+          <h3 style="font-size: 1.1rem; margin-top: 8px;">Acompanhamento próximo</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--muted);">Consultas regulares, monitorização de
+            sintomas e ajustes ágeis para manter o conforto digestivo.</p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="widget-card" style="justify-content: flex-start;">
+          <div class="widget-icon" style="background: rgba(15, 118, 110, 0.1); color: var(--teal);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+            </svg>
+          </div>
+          <h3 style="font-size: 1.1rem; margin-top: 8px;">Educação alimentar</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--muted);">Ferramentas práticas para reconhecer
+            gatilhos, gerir recaídas e manter equilíbrio a longo prazo.</p>
+        </div>
+
+        <!-- Card 4 (Experience) -->
+        <div class="widget-card" style="justify-content: flex-start;">
+          <div class="widget-icon" style="background: rgba(15, 118, 110, 0.1); color: var(--teal);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+          </div>
+          <h3 style="font-size: 1.1rem; margin-top: 8px;">Experiência clínica consolidada</h3>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--muted);">Atuação contínua em SousaClínica (desde
+            2021) e Clínica do Tempo (desde 2014), agora aplicada numa prática autónoma.</p>
+        </div>
+
+      </div>
+    </section>
+    <section id="locais" class="fade-in-section">
+      <div class="section-head">
+        <span class="eyebrow">Onde Atendo</span>
+        <h2>Locais de Consulta</h2>
+      </div>
+
+      <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto;">
+
+        <div class="widget-card">
+          <div class="widget-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f766e"
+              stroke-width="2">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg></div>
+          <h3>Clínica Hygeia</h3>
+          <p style="font-size: 0.85rem; color: var(--muted); margin: 4px 0;">Mafra</p>
+          <div style="margin: 12px 0; padding: 12px; background: rgba(15, 118, 110, 0.04); border-radius: 8px;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--teal); margin-bottom: 6px;">SEGUNDA-FEIRA
+            </div>
+            <div style="font-size: 0.9rem; color: var(--deep);">9:00 - 13:00</div>
+          </div>
+          <div style="font-size: 0.85rem; color: var(--muted); line-height: 1.6;">
+            <div>1ª consulta: 60€</div>
+            <div>Acompanhamento: 50€</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 16px;">
+            <a href="https://sheerme.com/hygeia-clinica-de-osteopatia-de-mafra" target="_blank" rel="noopener"
+              style="flex: 1; padding: 10px; background: rgba(15, 118, 110, 0.08); color: var(--teal); text-decoration: none; border-radius: 12px; font-size: 0.9rem; font-weight: 600; text-align: center;">📍
+              Onde</a>
+            <a href="https://www.waze.com/ul?q=Clínica%20Hygeia%20Mafra" target="_blank" rel="noopener"
+              style="flex: 1; padding: 10px; background: var(--teal); color: white; text-decoration: none; border-radius: 12px; font-size: 0.9rem; font-weight: 600; text-align: center;">🗺️
+              Como Chegar</a>
+          </div>
+        </div>
+
+        <div class="widget-card">
+          <div class="widget-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f766e"
+              stroke-width="2">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg></div>
+          <h3>Instituto Bettencourt</h3>
+          <p style="font-size: 0.85rem; color: var(--muted); margin: 4px 0;">Saúde Integrativa • Lisboa</p>
+          <div style="margin: 12px 0; padding: 12px; background: rgba(15, 118, 110, 0.04); border-radius: 8px;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--teal); margin-bottom: 6px;">TERÇA-FEIRA</div>
+            <div style="font-size: 0.9rem; color: var(--deep);">9:00 - 16:00</div>
+          </div>
+          <div style="font-size: 0.85rem; color: var(--muted); line-height: 1.6;">
+            <div>1ª consulta: 60€</div>
+            <div>Acompanhamento: 50€</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 16px;">
+            <a href="https://institutobettencourt.pt" target="_blank" rel="noopener"
+              style="flex: 1; padding: 10px; background: rgba(15, 118, 110, 0.08); color: var(--teal); text-decoration: none; border-radius: 12px; font-size: 0.9rem; font-weight: 600; text-align: center;">📍
+              Onde</a>
+            <a href="https://www.waze.com/ul?q=Instituto%20Bettencourt%20Lisboa" target="_blank" rel="noopener"
+              style="flex: 1; padding: 10px; background: var(--teal); color: white; text-decoration: none; border-radius: 12px; font-size: 0.9rem; font-weight: 600; text-align: center;">🗺️
+              Como Chegar</a>
+          </div>
+        </div>
+
+        <div class="widget-card">
+          <div class="widget-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f766e"
+              stroke-width="2">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg></div>
+          <h3>Clínica Sousi</h3>
+          <p style="font-size: 0.85rem; color: var(--muted); margin: 4px 0;">Sintra</p>
+          <div style="margin: 12px 0; padding: 12px; background: rgba(15, 118, 110, 0.04); border-radius: 8px;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--teal); margin-bottom: 6px;">QUARTA-FEIRA
+            </div>
+            <div style="font-size: 0.9rem; color: var(--deep);">9:00 - 17:00</div>
+          </div>
+          <div style="font-size: 0.85rem; color: var(--muted); line-height: 1.6;">
+            <div>1ª consulta: 60€</div>
+            <div>Acompanhamento: 50€</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 16px;">
+            <a href="https://sousiclinica.pt" target="_blank" rel="noopener"
+              style="flex: 1; padding: 10px; background: rgba(15, 118, 110, 0.08); color: var(--teal); text-decoration: none; border-radius: 12px; font-size: 0.9rem; font-weight: 600; text-align: center;">📍
+              Onde</a>
+            <a href="https://www.waze.com/ul?q=Clínica%20Sousi%20Sintra" target="_blank" rel="noopener"
+              style="flex: 1; padding: 10px; background: var(--teal); color: white; text-decoration: none; border-radius: 12px; font-size: 0.9rem; font-weight: 600; text-align: center;">🗺️
+              Como Chegar</a>
+          </div>
+        </div>
+
+        <div class="widget-card"
+          style="background: linear-gradient(135deg, rgba(15, 118, 110, 0.03) 0%, #ffffff 100%);">
+          <div class="widget-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f766e"
+              stroke-width="2">
+              <rect width="20" height="14" x="2" y="3" rx="2" />
+              <path d="M8 21h8M12 17v4" />
+            </svg></div>
+          <h3>Consulta Online</h3>
+          <p style="font-size: 0.85rem; margin: 4px 0 0;">Horário flexível via videochamada</p>
         </div>
       </div>
     </section>
@@ -1403,22 +1988,17 @@
             </div>
           </div>
 
-          <!-- Location Card -->
-          <div class="card" style="border: 1px solid rgba(15, 118, 110, 0.1);">
-            <div style="display: flex; gap: 16px; align-items: center;">
-              <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f766e"
-                  stroke-width="2">
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg></div>
-              <div>
-                <div class="muted-label" style="font-size: 0.8rem; margin-bottom: 2px;">Localizações</div>
-                <strong style="color: var(--deep);">Mafra · Lisboa · Sintra · Online</strong>
-              </div>
-            </div>
-          </div>
-
+          <circle cx="12" cy="10" r="3" />
+          </svg>
         </div>
+        <div>
+          <div class="muted-label" style="font-size: 0.8rem; margin-bottom: 2px;">Localizações</div>
+          <strong style="color: var(--deep);">Mafra · Lisboa · Sintra · Online</strong>
+        </div>
+      </div>
+      </div>
+
+      </div>
 
       </div>
     </section>
@@ -1466,6 +2046,45 @@
         médico individualizado. Política de privacidade e cookies em conformidade com RGPD e legislação
         portuguesa.</small>
     </div>
+    <!-- Discrete Instagram Strip -->
+    <div style="background: var(--white); padding: 20px 0; border-top: 1px solid rgba(15,118,110,0.08);">
+      <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M7.5 4h9A3.5 3.5 0 0 1 20 7.5v9a3.5 3.5 0 0 1-3.5 3.5h-9A3.5 3.5 0 0 1 4 16.5v-9A3.5 3.5 0 0 1 7.5 4Z"
+              stroke="#0f766e" stroke-width="1.6" />
+            <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0-6 0Z" stroke="#0f766e" stroke-width="1.6" />
+            <circle cx="16.5" cy="7.5" r="0.9" fill="#0f766e" />
+          </svg>
+          <a href="https://www.instagram.com/nutri_fodmap_marleneruivo/" target="_blank"
+            style="font-size: 0.85rem; color: var(--muted); text-decoration: none;">@nutri_fodmap_marleneruivo</a>
+        </div>
+        <div style="display: flex; gap: 8px; justify-content: center; overflow-x: auto; padding: 4px 0;">
+          <a href="https://www.instagram.com/nutri_fodmap_marleneruivo/" target="_blank"
+            style="width: 70px; height: 70px; border-radius: 8px; background: linear-gradient(135deg, var(--mint-soft), var(--mint)); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <span style="font-size: 1.5rem;">🍳</span>
+          </a>
+          <a href="https://www.instagram.com/nutri_fodmap_marleneruivo/" target="_blank"
+            style="width: 70px; height: 70px; border-radius: 8px; background: linear-gradient(135deg, var(--mint-soft), var(--mint)); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <span style="font-size: 1.5rem;">🥗</span>
+          </a>
+          <a href="https://www.instagram.com/nutri_fodmap_marleneruivo/" target="_blank"
+            style="width: 70px; height: 70px; border-radius: 8px; background: linear-gradient(135deg, var(--mint-soft), var(--mint)); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <span style="font-size: 1.5rem;">🍒</span>
+          </a>
+          <a href="https://www.instagram.com/nutri_fodmap_marleneruivo/" target="_blank"
+            style="width: 70px; height: 70px; border-radius: 8px; background: linear-gradient(135deg, var(--mint-soft), var(--mint)); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <span style="font-size: 1.5rem;">🥝</span>
+          </a>
+          <a href="https://www.instagram.com/nutri_fodmap_marleneruivo/" target="_blank"
+            style="width: 70px; height: 70px; border-radius: 8px; background: linear-gradient(135deg, var(--mint-soft), var(--mint)); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <span style="font-size: 1.5rem;">🍜</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
   </footer>
 
   <div class="cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies">
@@ -1480,6 +2099,67 @@
       </div>
     </div>
   </div>
+
+  <!-- GeniNutri Chat Widget -->
+  <div class="geninutri-widget">
+    <button class="geninutri-toggle" onclick="toggleGeniNutri()" aria-label="Abrir GeniNutri - Assistente Nutricional">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"
+          <div class="geninutri-chat" id="geninutriChat">
+          <div class="geninutri-header">
+            <div style="flex: 1;">
+              <h3>GeniNutri 🌿</h3>
+              <p>Assistente em Saúde Intestinal</p>
+            </div>
+            <button onclick="toggleGeniNutri()"
+              style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--muted); padding: 0 8px;">&times;</button>
+          </div>
+          <div class="geninutri-messages" id="geninutriMessages">
+            <div class="geninutri-message bot">
+              Olá! Sou a GeniNutri, especialista em dieta FODMAP e saúde intestinal. Como posso ajudar?
+            </div>
+          </div>
+
+          <!-- Quick Prompts placed ABOVE input -->
+          <div class="geninutri-quick-buttons" id="geninutriPrompts"
+            style="padding: 0 16px 8px 16px; margin-top: auto;">
+            <button class="quick-btn" onclick="askGeniNutri('O que é FODMAP?')">O que é FODMAP?</button>
+            <button class="quick-btn" onclick="askGeniNutri('Tenho sintomas')">Tenho sintomas</button>
+            <button class="quick-btn" onclick="askGeniNutri('Marcar consulta')">Marcar consulta</button>
+          </div>
+
+          <div class="geninutri-input">
+            <input type="text" id="geninutriInput" placeholder="Escreve a tua dúvida..."
+              onkeypress="if(event.key === 'Enter') sendGeniNutri()">
+            <button onclick="sendGeniNutri()">Enviar</button>
+          </div>
+  </div>
+
+  <button class="geninutri-toggle" onclick="toggleGeniNutri()" aria-label="Abrir Assistente">
+    <svg viewBox="0 0 24 24" fill="white">
+      <!-- Chat bubble -->
+      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
+      <!-- Leaf inside -->
+      <path
+        d="M12 7c-2.5 0-4.5 2-4.5 4.5 0 1.5.7 2.8 1.8 3.7l-.3 1.8 1.8-.6c.4.1.8.1 1.2.1 2.5 0 4.5-2 4.5-4.5S14.5 7 12 7z"
+        fill="#0f766e" />
+      <path
+        d="M13 9c-1 0-2 .5-2.5 1.2-.3.4-.5.9-.5 1.3 0 .8.5 1.5 1.2 1.8.2.1.5.2.8.2.5 0 1-.2 1.4-.5.6-.5 1-1.2 1-2 0-.3-.1-.7-.2-1-.4-.6-1-1-1.7-1z"
+        fill="white" />
+    </svg>
+  </button>
+  </div>
+
+  <!-- WhatsApp Button -->
+  <a href="https://wa.me/351915089258?text=Ol%C3%A1%2C%20gostaria%20de%20marcar%20uma%20consulta." class="whatsapp-btn"
+    target="_blank" rel="noopener noreferrer" aria-label="Contactar via WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  </a>
+
 
   <script>
     const consentKey = 'marlene_ruivo_consent';
@@ -1643,6 +2323,8 @@
             style="width: 10px; height: 10px; border-radius: 50%; background: #ccc; transition: 0.3s;"></div>
           <div class="step-indicator"
             style="width: 10px; height: 10px; border-radius: 50%; background: #ccc; transition: 0.3s;"></div>
+          <div class="step-indicator"
+            style="width: 10px; height: 10px; border-radius: 50%; background: #ccc; transition: 0.3s;"></div>
         </div>
 
         <!-- Step 1: Details -->
@@ -1702,9 +2384,76 @@
           <p style="text-align: center; margin-bottom: 20px;">Por favor escolha agora o horário da sua consulta.</p>
 
           <iframe src="https://calendar.app.google/ssACiBuaoJ74o6cp8?gv=true"
-            style="border: 0; width: 100%; height: 400px; border-radius: 12px; background: #f9f9f9;"
+            style="border: 0; width: 100%; height: 350px; border-radius: 12px; background: #f9f9f9;"
             title="Agenda de Consultas">
           </iframe>
+
+          <div style="margin-top: 20px; text-align: center; border-top: 1px solid #eee; padding-top: 20px;">
+            <p style="font-size: 0.9rem; margin-bottom: 12px; color: var(--deep);">Já escolheu o seu horário?</p>
+            <button onclick="showStep(4)" class="btn" style="width: 100%; background: var(--deep);">
+              Continuar para Avaliação de Sintomas →
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 4: Symptom Questionnaire -->
+        <div id="step-4" class="step-content" style="display: none;">
+          <h4 style="margin-top: 0; color: var(--teal);">Avaliação Pré-Consulta</h4>
+          <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 20px;">Para a Dra. Marlene preparar a sua
+            consulta, por favor responda brevemente.</p>
+
+          <form onsubmit="event.preventDefault(); submitClinicalForm();" style="display: grid; gap: 14px;">
+            <div>
+              <label style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 600;">Sintoma
+                Principal</label>
+              <select id="q-sintoma" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;"
+                required>
+                <option value="">Selecione...</option>
+                <option value="inchaco">Inchaço / Distensão Abdominal</option>
+                <option value="dor">Dor Abdominal</option>
+                <option value="obstipacao">Obstipação</option>
+                <option value="diarreia">Diarreia</option>
+                <option value="refluxo">Refluxo / Azia</option>
+                <option value="outro">Outro</option>
+              </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 600;">Intensidade
+                  (1-10)</label>
+                <input type="number" min="1" max="10" id="q-intensidade"
+                  style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;" required>
+              </div>
+              <div>
+                <label
+                  style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 600;">Frequência</label>
+                <select id="q-frequencia"
+                  style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;" required>
+                  <option value="diario">Diário</option>
+                  <option value="semanal">Semanal</option>
+                  <option value="mensal">Mensal</option>
+                  <option value="pos-refeicao">Após refeições</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 600;">Alimentos
+                Suspeitos (Opcional)</label>
+              <textarea id="q-alimentos" rows="2" placeholder="Ex: Leite, pão, maçã..."
+                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"></textarea>
+            </div>
+
+            <div>
+              <label style="display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 600;">Objetivo
+                Principal</label>
+              <textarea id="q-objetivo" rows="2" placeholder="Ex: Parar de ter dores, perder peso..."
+                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"></textarea>
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Enviar Informação Clínica</button>
+          </form>
         </div>
 
       </div>
@@ -1713,12 +2462,11 @@
 
   <!-- Floating CTA Button (appears on scroll) -->
   <div class="floating-cta" id="floatingCta">
-    <button class="btn" onclick="openBookingModal()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        style="margin-right: 8px;">
+    <button class="btn" onclick="openBookingModal()"
+      style="padding: 14px; display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 50%;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2ZM16 2v4M8 2v4M3 10h18" />
       </svg>
-      Marcar Agora
     </button>
   </div>
 
@@ -1775,10 +2523,77 @@
       });
     }
 
-    // Auto-play carousel
+    // Auto-play testimonials carousel
     setInterval(() => {
       moveTestimonial(1);
     }, 5000);
+
+    // Symptom Checker Logic
+    let scSymptom = '';
+    let scFrequency = '';
+
+    function scNextStep(step, value) {
+      if (step === 2) scSymptom = value;
+      if (step === 3) scFrequency = value;
+
+      document.querySelectorAll('.sc-step').forEach(el => el.style.display = 'none');
+      document.getElementById('sc-step-' + step).style.display = 'block';
+    }
+
+    function scShowResult(type) {
+      document.querySelectorAll('.sc-step').forEach(el => el.style.display = 'none');
+      const resultDiv = document.getElementById('sc-result');
+      const resultText = document.getElementById('sc-result-text');
+
+      if (type === 'fodmap') {
+        resultText.innerText = `Os seus sintomas de ${scSymptom.toLowerCase()} são muito comuns em casos de sensibilidade a FODMAPs. A Dra. Marlene pode ajudá-la(o) a identificar exatamente os gatilhos e a recuperar o seu bem-estar através de um plano certificado pela Monash University.`;
+      } else {
+        resultText.innerText = 'Parece haver um desequilíbrio intestinal que precisa de atenção. O primeiro passo é uma avaliação detalhada para percebermos a causa raiz do seu desconforto.';
+      }
+
+      resultDiv.style.display = 'block';
+
+      // Update GeniNutri session with symptom data
+      if (typeof userSession !== 'undefined') {
+        userSession.sintomaPrincipal = scSymptom;
+        userSession.faseAtual = 'triagem';
+        localStorage.setItem('geninutri_session', JSON.stringify(userSession));
+      }
+    }
+
+    // Locations Carousel
+    let currentLocation = 0;
+    const locationsTrack = document.getElementById('locationsTrack');
+    const locationCards = document.querySelectorAll('.location-card');
+    const locationIndicators = document.querySelectorAll('#locationIndicators .carousel-indicator');
+
+    function moveLocation(direction) {
+      currentLocation += direction;
+      if (currentLocation < 0) currentLocation = locationCards.length - 1;
+      if (currentLocation >= locationCards.length) currentLocation = 0;
+      updateLocationCarousel();
+    }
+
+    function goToLocation(index) {
+      currentLocation = index;
+      updateLocationCarousel();
+    }
+
+    function updateLocationCarousel() {
+      if (locationCards.length > 0) {
+        const cardWidth = locationCards[0].offsetWidth + 20; // include gap
+        locationsTrack.style.transform = `translateX(-${currentLocation * cardWidth}px)`;
+
+        locationIndicators.forEach((ind, i) => {
+          ind.classList.toggle('active', i === currentLocation);
+        });
+      }
+    }
+
+    // Auto-play locations carousel
+    setInterval(() => {
+      moveLocation(1);
+    }, 6000);
 
     // Scroll Fade-in Animations
     const fadeInSections = document.querySelectorAll('.fade-in-section');
@@ -1799,6 +2614,260 @@
 
     fadeInSections.forEach(section => fadeInObserver.observe(section));
     fadeInCards.forEach(card => fadeInObserver.observe(card));
+
+    // GeniNutri Advanced AI Logic with Memory & Context
+    const SESSION_KEY = 'geninutri_session';
+
+    // Session State Management
+    let userSession = {
+      sintomaPrincipal: null,
+      gatilhosIdentificados: [],
+      faseAtual: 'exploração',
+      localidadePreferencia: null,
+      historico: [],
+      ultimaPergunta: null
+    };
+
+    // Load previous session on init
+    function initGeniNutri() {
+      const saved = localStorage.getItem(SESSION_KEY);
+      if (saved) {
+        userSession = JSON.parse(saved);
+        if (userSession.historico.length > 0) {
+          addMessage('Olá! Ficámos a meio da nossa conversa. Queres continuar?', 'bot');
+          setTimeout(() => showRecoveryButtons(), 500);
+        }
+      }
+    }
+
+    function saveSession() {
+      localStorage.setItem(SESSION_KEY, JSON.stringify(userSession));
+    }
+
+    // Knowledge Base with Context
+    const fodmapDatabase = {
+      high: {
+        'maçã': 'High FODMAP (frutose)',
+        'alho': 'High FODMAP (fructans)',
+        'cebola': 'High FODMAP (fructans)',
+        'leite': 'High FODMAP (lactose)',
+        'trigo': 'High FODMAP (fructans)',
+        'banana madura': 'High FODMAP'
+      },
+      low: {
+        'banana verde': 'Low FODMAP',
+        'arroz': 'Low FODMAP',
+        'cenoura': 'Low FODMAP',
+        'frango': 'Low FODMAP',
+        'ovo': 'Low FODMAP'
+      }
+    };
+
+    function toggleGeniNutri() {
+      const chat = document.getElementById('geninutriChat');
+      const isOpening = !chat.classList.contains('open');
+      chat.classList.toggle('open');
+
+      // Toggle Floating CTA visibility to prevent overlap
+      const floatingCta = document.getElementById('floatingCta');
+      if (isOpening) {
+        floatingCta.style.display = 'none';
+        initGeniNutri();
+      } else {
+        floatingCta.style.display = 'block';
+        // Check if it should be visible based on scroll
+        if (window.scrollY > 600) floatingCta.classList.add('visible');
+      }
+    }
+
+    function askGeniNutri(question) {
+      addMessage(question, 'user');
+      userSession.historico.push({ tipo: 'user', texto: question, timestamp: Date.now() });
+      saveSession();
+      // Remove quick prompts after selection to clean up UI
+      const prompts = document.getElementById('geninutriPrompts');
+      if (prompts) prompts.style.display = 'none';
+
+      setTimeout(() => respondGeniNutriAdvanced(question), 800);
+    }
+
+    function sendGeniNutri() {
+      const input = document.getElementById('geninutriInput');
+      const message = input.value.trim();
+      if (!message) return;
+
+      addMessage(message, 'user');
+      userSession.historico.push({ tipo: 'user', texto: message, timestamp: Date.now() });
+      input.value = '';
+      saveSession();
+      setTimeout(() => respondGeniNutriAdvanced(message), 800);
+    }
+
+    function addMessage(text, type) {
+      const messagesDiv = document.getElementById('geninutriMessages');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `geninutri-message ${type}`;
+      msgDiv.textContent = text;
+      messagesDiv.appendChild(msgDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function respondGeniNutriAdvanced(userMessage) {
+      const msg = userMessage.toLowerCase();
+      let response = '';
+      let followUp = null;
+
+      // FOOD TRIGGER DETECTION with context
+      for (const [food, info] of Object.entries({ ...fodmapDatabase.high, ...fodmapDatabase.low })) {
+        if (msg.includes(food)) {
+          response = `${food}: ${info}. `;
+          if (info.includes('High')) {
+            userSession.gatilhosIdentificados.push(food);
+            response += `Tens notado desconforto após comer ${food}?`;
+            userSession.ultimaPergunta = 'sintoma_pos_alimento';
+          } else if (food === 'banana verde') {
+            response += 'Mas atenção: a banana madura já é High FODMAP. Costumas comer muita fruta durante o dia?';
+            userSession.ultimaPergunta = 'volume_frutose';
+          }
+          saveSession();
+          addMessage(response, 'bot');
+          return;
+        }
+      }
+
+      // CRISIS MODE Detection
+      if (msg.includes('dor') && (msg.includes('muita') || msg.includes('agora') || msg.includes('crise'))) {
+        userSession.sintomaPrincipal = 'dor_aguda';
+        userSession.faseAtual = 'crise';
+        response = 'Lamento que estejas a passar por isso. Além da dor, sentes o abdómen inchado?';
+        userSession.ultimaPergunta = 'sintoma_secundario';
+        addMessage(response, 'bot');
+        saveSession();
+        return;
+      }
+
+      // CONTEXTUAL FOLLOW-UP based on last question
+      if (userSession.ultimaPergunta === 'sintoma_secundario') {
+        if (msg.includes('sim') || msg.includes('inchaço')) {
+          response = 'Entendo. Nestas fases de crise, a Dra. Marlene foca na Fase de Eliminação. Preferes consulta em Mafra, Lisboa, Sintra ou Online?';
+          userSession.ultimaPergunta = 'escolha_local';
+        } else {
+          response = 'Dor sem inchaço pode ter outras causas. É importante uma avaliação presencial. Posso mostrar-te os locais disponíveis?';
+        }
+        addMessage(response, 'bot');
+        saveSession();
+        return;
+      }
+
+      // LOCATION PREFERENCE
+      if (userSession.ultimaPergunta === 'escolha_local') {
+        if (msg.includes('mafra')) userSession.localidadePreferencia = 'mafra';
+        else if (msg.includes('lisboa')) userSession.localidadePreferencia = 'lisboa';
+        else if (msg.includes('sintra')) userSession.localidadePreferencia = 'sintra';
+        else if (msg.includes('online')) userSession.localidadePreferencia = 'online';
+
+        saveSession();
+        showLocationButtons(userSession.localidadePreferencia);
+        return;
+      }
+
+      // SYMPTOM Detection with Memory
+      if (msg.includes('inchaço') || msg.includes('gases') || msg.includes('dor abdominal')) {
+        const sintoma = msg.includes('inchaço') ? 'inchaço' : msg.includes('gases') ? 'gases' : 'dor';
+        userSession.sintomaPrincipal = sintoma;
+        response = `Sintomas de ${sintoma} são comuns em sensibilidade a FODMAPs. Estes sinais são comuns em casos de SII, mas apenas a Dra. Marlene pode confirmar num plano personalizado. `;
+
+        if (userSession.gatilhosIdentificados.length > 0) {
+          response += `Vejo que já identificaste: ${userSession.gatilhosIdentificados.join(', ')}. `;
+        }
+
+        response += 'Gostarias de marcar uma consulta de avaliação?';
+        userSession.faseAtual = 'conversao';
+
+        addMessage(response, 'bot');
+        setTimeout(() => showBookingButtons(), 1000);
+        saveSession();
+        return;
+      }
+
+      // FODMAP Info
+      if (msg.includes('fodmap') || msg.includes('o que é')) {
+        response = 'FODMAP são hidratos de carbono de cadeia curta que fermentam no intestino. A dieta Low FODMAP, desenvolvida pela Monash University, tem 3 fases: Eliminação, Reintrodução e Personalização.';
+        // NO manual addMessage here to prevent duplicate if fall-through happened (though return handles it)
+        // ensuring Clean return
+        addMessage(response, 'bot');
+        return;
+      }
+
+      // Default with context awareness
+      if (userSession.historico.length > 2) {
+        response = 'Posso ajudar com mais alguma dúvida sobre alimentos, sintomas ou marcar consulta?';
+      } else {
+        response = 'Posso ajudar com informações sobre FODMAP, identificar alimentos gatilho ou marcar consulta. O que te interessa?';
+      }
+
+      // Final catch-all message add if not returned previously
+      if (response) addMessage(response, 'bot');
+    }
+
+    function showRecoveryButtons() {
+      // Clear existing prompts into new ones logic
+      // For now, simpler to append message
+      const messagesDiv = document.getElementById('geninutriMessages');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'geninutri-quick-buttons';
+      msgDiv.innerHTML = `
+        <button class="quick-btn" onclick="continueSession()">✅ Continuar</button>
+        <button class="quick-btn" onclick="resetSession()">🔄 Recomeçar</button>
+      `;
+      // Append inside message flow for recovery
+      messagesDiv.appendChild(msgDiv);
+    }
+
+    function continueSession() {
+      addMessage('Óptimo! Onde ficámos?', 'bot');
+    }
+
+    function resetSession() {
+      localStorage.removeItem(SESSION_KEY);
+      userSession = { sintomaPrincipal: null, gatilhosIdentificados: [], faseAtual: 'exploração', localidadePreferencia: null, historico: [], ultimaPergunta: null };
+      addMessage('Conversa reiniciada. Como posso ajudar?', 'bot');
+    }
+
+    function showLocationButtons(location) {
+      const messagesDiv = document.getElementById('geninutriMessages');
+      const buttonsDiv = document.createElement('div');
+      buttonsDiv.className = 'geninutri-quick-buttons';
+
+      if (location === 'mafra') {
+        addMessage('Clínica Hygeia (Mafra) - Segundas 9h-13h. Consulta: 60€', 'bot');
+      } else if (location === 'lisboa') {
+        addMessage('Instituto Bettencourt (Lisboa) - Terças 9h-16h. Consulta: 60€', 'bot');
+      } else if (location === 'sintra') {
+        addMessage('Clínica Sousi (Sintra) - Quartas 9h-17h. Consulta: 60€', 'bot');
+      } else {
+        addMessage('Consulta Online - Horário flexível. Consulta: 60€', 'bot');
+      }
+
+      buttonsDiv.innerHTML = `
+        <button class="quick-btn" onclick="openBookingModal()">📅 Marcar Consulta</button>
+        <button class="quick-btn" onclick="window.open('https://wa.me/351915089258', '_blank')">💬 WhatsApp</button>
+      `;
+      messagesDiv.appendChild(buttonsDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function showBookingButtons() {
+      const messagesDiv = document.getElementById('geninutriMessages');
+      const buttonsDiv = document.createElement('div');
+      buttonsDiv.className = 'geninutri-quick-buttons';
+      buttonsDiv.innerHTML = `
+        <button class="quick-btn" onclick="openBookingModal()">📅 Abrir Agenda</button>
+        <button class="quick-btn" onclick="window.open('https://wa.me/351915089258', '_blank')">💬 WhatsApp</button>
+      `;
+      messagesDiv.appendChild(buttonsDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
   </script>
 </body>
 
