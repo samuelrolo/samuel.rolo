@@ -155,27 +155,35 @@ body.modal-open #feedbackWidget {
     /* Light gold tint */
 }
 
-/* --- FEEDBACK WIDGET (Minimized Badge) --- */
+/* --- FEEDBACK WIDGET (Discrete Minimized Badge) --- */
 
 #feedbackWidget {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 12px;
+    right: 12px;
     z-index: 1050;
 }
 
 #feedbackWidget .feedback-badge {
-    width: 50px;
-    height: 50px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background-color: var(--s2i-gold);
+    background-color: var(--s2i-gray);
     color: var(--s2i-white);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transition: transform 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    opacity: 0.6;
+    font-size: 14px;
+}
+
+#feedbackWidget .feedback-badge:hover {
+    opacity: 1;
+    background-color: var(--s2i-gold);
+    transform: scale(1.1);
 }
 
 #feedbackWidget .feedback-badge:hover {
