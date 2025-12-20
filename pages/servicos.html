@@ -670,56 +670,113 @@
     <script src="../js/contact-form.js"></script>
     <script src="../js/brevo-integration.js"></script>
     <script src="../js/feedback-widget.js"></script>
+    <script src="../js/email-flows.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Kickstart Pro Form - Email confirmation first, payment link in email
             const kickstartForm = document.getElementById('kickstartForm');
             if (kickstartForm) {
-                kickstartForm.addEventListener('submit', function (e) {
+                kickstartForm.addEventListener('submit', async function (e) {
                     e.preventDefault();
+
                     const email = document.getElementById('kickstartEmail').value;
                     const name = document.getElementById('kickstartName').value;
+                    const submitBtn = kickstartForm.querySelector('button[type="submit"]');
+                    const messageDiv = document.getElementById('kickstartFormMessage');
 
-                    // Show success message (email would be sent via backend)
-                    document.getElementById('kickstartFormMessage').innerHTML = `
-                        <div class="alert alert-success">
-                            <i class="fas fa-check-circle me-2"></i>
-                            <strong>Confirmação enviada!</strong><br>
-                            Verifique o seu email (${email}) para confirmar a data da sessão e efetuar o pagamento de 35€.
-                        </div>`;
-                    kickstartForm.reset();
+                    // Validate email
+                    if (!window.EmailFlows.isValidEmail(email)) {
+                        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Por favor, introduza um email válido.</div>';
+                        return;
+                    }
 
-                    // TODO: Integrate with Brevo API to send confirmation email
-                    console.log('Kickstart confirmation to be sent to:', email, name);
+                    // Show loading state
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>A enviar...';
+
+                    try {
+                        const result = await window.EmailFlows.sendKickstartConfirmation(email, name);
+
+                        if (result.success) {
+                            messageDiv.innerHTML = `
+                                <div class="alert alert-success">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <strong>Confirmação enviada!</strong><br>
+                                    Verifique o seu email (${email}) para confirmar a data da sessão e efetuar o pagamento de 35€.
+                                </div>`;
+                            kickstartForm.reset();
+                        } else {
+                            messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>${result.message}</div>`;
+                        }
+                    } catch (error) {
+                        messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${error.message}</div>`;
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-envelope me-2"></i>Receber Confirmação por Email';
+                    }
                 });
             }
 
             // CV Review Form - File upload + email confirmation
             const cvReviewForm = document.getElementById('cvReviewForm');
             if (cvReviewForm) {
-                cvReviewForm.addEventListener('submit', function (e) {
+                cvReviewForm.addEventListener('submit', async function (e) {
                     e.preventDefault();
+
                     const email = document.getElementById('cvReviewEmail').value;
                     const fileInput = document.getElementById('cvReviewFile');
                     const file = fileInput.files[0];
+                    const submitBtn = cvReviewForm.querySelector('button[type="submit"]');
+                    const messageDiv = document.getElementById('cvReviewFormMessage');
 
-                    if (!file) {
-                        document.getElementById('cvReviewFormMessage').innerHTML = '<div class="alert alert-danger">Por favor, carregue o seu CV.</div>';
+                    // Validate email
+                    if (!window.EmailFlows.isValidEmail(email)) {
+                        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Por favor, introduza um email válido.</div>';
                         return;
                     }
 
-                    // Show success message
-                    document.getElementById('cvReviewFormMessage').innerHTML = `
-                        <div class="alert alert-success">
-                            <i class="fas fa-check-circle me-2"></i>
-                            <strong>Pedido registado!</strong><br>
-                            Enviámos um email para ${email} com o link de pagamento (25€).<br>
-                            Após o pagamento, o seu CV será analisado em até 5 dias úteis.
-                        </div>`;
-                    cvReviewForm.reset();
+                    // Validate file
+                    if (!file) {
+                        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Por favor, carregue o seu CV.</div>';
+                        return;
+                    }
 
-                    // TODO: Integrate with Brevo API to send CV as attachment + payment link
-                    console.log('CV Review request:', email, file.name);
+                    if (!window.EmailFlows.isValidCVFile(file)) {
+                        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Por favor, carregue um ficheiro PDF ou DOCX.</div>';
+                        return;
+                    }
+
+                    // Check file size (max 5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>O ficheiro é demasiado grande. Máximo: 5MB.</div>';
+                        return;
+                    }
+
+                    // Show loading state
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>A enviar...';
+
+                    try {
+                        const result = await window.EmailFlows.sendCVReviewConfirmation(email, file);
+
+                        if (result.success) {
+                            messageDiv.innerHTML = `
+                                <div class="alert alert-success">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <strong>Pedido registado!</strong><br>
+                                    Enviámos um email para ${email} com o link de pagamento (25€).<br>
+                                    Após o pagamento, o seu CV será analisado em até 5 dias úteis.
+                                </div>`;
+                            cvReviewForm.reset();
+                        } else {
+                            messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>${result.message}</div>`;
+                        }
+                    } catch (error) {
+                        messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${error.message}</div>`;
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-envelope me-2"></i>Receber Confirmação e Link de Pagamento';
+                    }
                 });
             }
         });
