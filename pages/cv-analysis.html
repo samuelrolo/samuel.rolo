@@ -25,6 +25,8 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/header-footer.css">
     <link rel="stylesheet" href="../css/cv-analysis.css">
+    <!-- Modern Design System -->
+    <link rel="stylesheet" href="MarleneRuivo/assets/css/s2i-modern.css">
 </head>
 
 <body>
@@ -188,70 +190,94 @@
                 </div>
                 <div class="modal-body p-4 p-lg-5">
                     <div class="row">
-                        <!-- Left Column: Summary -->
+                        <!-- Left Column: Overview -->
                         <div class="col-lg-4 mb-4 mb-lg-0 border-end border-light">
-                            <div class="text-center mb-4">
-                                <div class="avatar-circle mb-3">
-                                    <i class="fas fa-user"></i>
+                            <!-- Profile Block -->
+                            <div class="text-center mb-5">
+                                <div class="avatar-circle mb-3 bg-light d-inline-flex align-items-center justify-content-center rounded-circle"
+                                    style="width: 80px; height: 80px;">
+                                    <i class="fas fa-user fa-2x text-muted"></i>
                                 </div>
-                                <h4 id="resultName">Candidato</h4>
-                                <p id="resultRole" class="text-primary fw-bold mb-1">Profissional de RH</p>
-                                <p id="resultExp" class="text-muted small">Experiência detetada: 0 anos</p>
+                                <h4 id="resultName" class="fw-bold mb-1">Candidato</h4>
+                                <p id="resultRole" class="text-primary fw-bold mb-1">Função Detetada</p>
+                                <p id="resultExp" class="text-muted small">Experiência: -</p>
                             </div>
 
-                            <div class="maturity-score-card bg-light p-3 rounded mb-4 text-center">
-                                <h6 class="text-uppercase text-muted small fw-bold">Nível de Maturidade</h6>
+                            <!-- Maturity Block -->
+                            <div class="maturity-score-card bg-light p-4 rounded-3 mb-4 text-center">
+                                <h6 class="text-uppercase text-muted small fw-bold mb-3">Nível de Maturidade</h6>
                                 <div class="display-4 fw-bold text-dark" id="maturityScore">0.0</div>
-                                <div class="stars text-warning fs-5" id="maturityStars">
+                                <div class="stars text-warning fs-5 mb-3" id="maturityStars">
                                     <i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i
                                         class="far fa-star"></i><i class="far fa-star"></i>
                                 </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <h6 class="fw-bold mb-3"><i class="fas fa-graduation-cap me-2 text-primary"></i>Formação
-                                </h6>
-                                <ul id="educationList" class="list-unstyled text-muted small">
-                                    <li>Não detetada</li>
-                                </ul>
+                                <span id="maturityLabel" class="badge bg-dark text-white px-3 py-2 rounded-pill">Em
+                                    Análise</span>
                             </div>
                         </div>
 
-                        <!-- Right Column: Details -->
+                        <!-- Right Column: Strategic Details -->
                         <div class="col-lg-8 ps-lg-5">
-                            <h5 class="fw-bold mb-4">Competências Principais</h5>
-                            <div id="skillsContainer" class="d-flex flex-wrap gap-2 mb-5">
-                                <!-- Skills will be injected here -->
+
+                            <!-- Competencies -->
+                            <div class="mb-5">
+                                <h5 class="fw-bold mb-3 border-bottom pb-2">Competências Principais</h5>
+                                <div id="skillsContainer" class="d-flex flex-wrap gap-2">
+                                    <span class="badge bg-light text-dark border p-2">A carregar...</span>
+                                </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-md-6 mb-4">
-                                    <h5 class="fw-bold mb-3">Análise de Pontos Fortes</h5>
-                                    <ul id="strengthsList" class="list-group list-group-flush fs-6">
-                                        <!-- Strengths injected here -->
+                            <div class="row mb-5">
+                                <!-- Strengths -->
+                                <div class="col-md-6">
+                                    <h5 class="fw-bold mb-3 border-bottom pb-2">Pontos Fortes</h5>
+                                    <ul id="strengthsList" class="list-group list-group-flush small">
+                                        <li class="list-group-item px-0 border-0"><i
+                                                class="fas fa-check text-success me-2"></i>A analisar...</li>
                                     </ul>
                                 </div>
-                                <div class="col-md-6 mb-4">
-                                    <h5 class="fw-bold mb-3">Radar de Competências</h5>
-                                    <canvas id="cvRadarChart"></canvas>
+                                <!-- Radar Chart -->
+                                <div class="col-md-6 text-center">
+                                    <h5 class="fw-bold mb-3 border-bottom pb-2">Radar de Competências</h5>
+                                    <div style="max-height: 250px; position: relative;">
+                                        <canvas id="cvRadarChart"></canvas>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="mt-4 p-3 bg-light-primary rounded border border-primary-subtle">
-                                <h6 class="fw-bold text-primary mb-2"><i class="fas fa-rocket me-2"></i>Sugestão de
-                                    Evolução</h6>
-                                <p id="recommendationText" class="mb-0 text-muted small">Recomendação personalizada...
-                                </p>
+                            <!-- Evolution Suggestions (Bullets Only) -->
+                            <div class="mb-4">
+                                <h5 class="fw-bold text-primary mb-3"><i class="fas fa-rocket me-2"></i>Sugestões de
+                                    Evolução</h5>
+                                <div id="evolutionContainer" class="row g-3">
+                                    <!-- Dynamic Bullets Injected Here -->
+                                    <div class="col-12 text-muted small fst-italic">Geração de sugestões estratégicas em
+                                        curso...</div>
+                                </div>
                             </div>
+
+                            <!-- Strategic Feedback (Bullets Only) -->
+                            <div class="mb-4">
+                                <h5 class="fw-bold text-dark mb-3"><i class="fas fa-bullseye me-2"></i>Feedback
+                                    Estratégico</h5>
+                                <div id="feedbackContainer" class="row g-3">
+                                    <!-- Dynamic Bullets Injected Here -->
+                                    <div class="col-12 text-muted small fst-italic">Análise de mercado em curso...</div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-warning text-white" id="btnRequestReview">
-                        <i class="fas fa-user-tie me-2"></i>Solicitar Revisão
+                <div class="modal-footer border-top-0 pt-0 pb-4 px-4 justify-content-end gap-2">
+                    <!-- Mobile Sticky Footer Logic applied via CSS -->
+                    <button type="button" class="btn btn-s2i-tertiary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-s2i-secondary"
+                        onclick="window.location.href='servicos.html#human-review'">
+                        <i class="fas fa-user-tie me-2"></i>Revisão Humana
                     </button>
-                    <button type="button" class="btn btn-primary" id="btnOpenReportPayment">
-                        <i class="fas fa-envelope me-2"></i>Receber por Email
+                    <button type="button" class="btn btn-s2i-primary" id="btnDownloadReport">
+                        <i class="fas fa-file-pdf me-2"></i>Relatório PDF Completo
                     </button>
                 </div>
 
@@ -404,17 +430,58 @@
 
     <!-- Mammoth.js for DOCX -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <!-- jsPDF for Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <!-- Custom Scripts -->
+    <!-- Custom Scripts (New Architecture) -->
+    <script src="MarleneRuivo/assets/js/cv-engine.js"></script>
+    <script src="MarleneRuivo/assets/js/pdf-generator-modern.js"></script>
+
+    <!-- Legacy Scripts Adapter -->
     <script src="../js/brevo-integration.js"></script>
     <script src="../js/ifthenpay-integration.js"></script>
     <script src="../js/cv-parser.js"></script>
     <script src="../js/report-generator.js?v=1.4"></script>
-    <script src="../js/cv-analysis.js?v=1.4"></script>
+    <script src="../js/cv-analysis.js?v=2.0"></script>
 
     <!-- Global Feedback Widget -->
     <script src="../js/contact-form.js"></script>
     <script src="../js/feedback-widget.js"></script>
+
+    <!-- Glue Code: Connect Button to PDF Generator -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnDownload = document.getElementById('btnDownloadReport');
+            if (btnDownload) {
+                btnDownload.addEventListener('click', () => {
+                    // 1. Bridge: Scrape data from Legacy DOM into Modern Engine
+                    if (window.CV_ENGINE && typeof window.CV_ENGINE.scrapeFromDOM === 'function') {
+                        window.CV_ENGINE.scrapeFromDOM();
+                    }
+
+                    // 2. Check if Engine has data
+                    if (!window.CV_ENGINE || !window.CV_ENGINE.data.maturity.score) {
+                        // If no real data, generate mock for demonstration if needed, or alert
+                        // For now, let's use the mock generator if empty to test the flow
+                        console.warn("Sem dados reais. A gerar dados de teste...");
+                        window.CV_ENGINE.generateMockAnalysis();
+                        // Update UI with Mock Data (Optional, just to show something)
+                    }
+
+                    // 2. Generate PDF
+                    if (window.PDF_GENERATOR) {
+                        const blob = window.PDF_GENERATOR.generateReport(window.CV_ENGINE.data);
+                        if (blob) {
+                            const url = URL.createObjectURL(blob);
+                            window.open(url, '_blank');
+                        }
+                    } else {
+                        alert("Erro: Gerador de PDF não carregado.");
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

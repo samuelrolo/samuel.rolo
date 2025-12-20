@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <!-- Header & Footer Shared CSS -->
     <link href="../css/header-footer.css" rel="stylesheet">
+    <link rel="stylesheet" href="MarleneRuivo/assets/css/s2i-modern.css">
 
     <style>
         :root {
@@ -126,6 +127,7 @@
             margin-top: auto;
             border-top: 1px solid #f0f0f0;
             padding-top: 20px;
+            height: 100%;
         }
 
         .service-card .meta-label {
@@ -323,91 +325,108 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-services">
+    <!-- Page Header & Purpose -->
+    <section class="page-header pb-0 mb-0 bg-white">
         <div class="container">
-            <h1>Serviços pensados para momentos de decisão</h1>
-            <p class="lead">Ferramentas e acompanhamento estratégico para transformar percurso, posicionamento e impacto
-                profissional.</p>
-        </div>
-    </section>
-
-    <!-- Services Grid -->
-    <section class="services-grid">
-        <div class="container">
-            <div class="row g-4">
-                <!-- Card 1: Kickstart Pro -->
-                <div class="col-lg-4">
-                    <div class="service-card featured" id="kickstart">
-                        <div class="service-icon"><i class="fas fa-chess-knight"></i></div>
-                        <h2>Kickstart Pro</h2>
-                        <p class="subheadline">Sessão estratégica para desbloquear decisões, foco e próximos passos.</p>
-                        <p class="description">Uma sessão individual de follow up onde transformamos o diagnóstico do
-                            teu perfil em decisões claras. Trabalhamos posicionamento, prioridades e movimentos
-                            estratégicos de carreira, com uma abordagem humana, estruturada e orientada a impacto real.
-                        </p>
-                        <div class="meta-info">
-                            <span class="meta-label">Para quem é</span>
-                            <span class="meta-text">Profissionais sénior e líderes que sentem que estão num ponto de
-                                viragem e precisam de clareza estratégica.</span>
-                        </div>
-                        <button class="btn btn-service btn-kickstart" data-bs-toggle="modal"
-                            data-bs-target="#kickstartModal">Agendar Kickstart Pro</button>
-                    </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="mb-4">Serviços</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Serviços</li>
+                        </ol>
+                    </nav>
                 </div>
-
-                <!-- Card 2: Revisão Profissional de CV -->
-                <div class="col-lg-4">
-                    <div class="service-card" id="cv-review">
-                        <div class="service-icon"><i class="fas fa-file-signature"></i></div>
-                        <h2>Revisão Profissional de CV</h2>
-                        <p class="subheadline">Porque um bom percurso merece ser bem contado.</p>
-                        <p class="description">Revisão aprofundada do teu CV, focada em narrativa estratégica, clareza
-                            de impacto e leitura humana e algorítmica. Não é apenas correção, é reposicionamento
-                            profissional com intenção.</p>
-                        <div class="meta-info">
-                            <span class="meta-label">Inclui</span>
-                            <span class="meta-text">Estrutura, linguagem, impacto, alinhamento com mercado e ATS.</span>
-                        </div>
-                        <a href="#" class="btn btn-service btn-cv-review" data-bs-toggle="modal"
-                            data-bs-target="#contactModal">Solicitar Revisão Profissional de CV</a>
-                    </div>
-                </div>
-
-                <!-- Card 3: CV Analyzer -->
-                <div class="col-lg-4">
-                    <div class="service-card" id="cv-analyzer">
-                        <div class="service-icon"><i class="fas fa-microchip"></i></div>
-                        <h2>CV Analyzer</h2>
-                        <p class="subheadline">Diagnóstico inteligente do teu perfil profissional.</p>
-                        <p class="description">Ferramenta de análise baseada em IA que avalia competências, maturidade
-                            profissional, posicionamento e potencial de evolução. Ideal como ponto de partida ou
-                            instrumento de auto avaliação contínua.</p>
-                        <div class="meta-info">
-                            <span class="meta-label">Nota de posicionamento</span>
-                            <span class="meta-text">O CV Analyzer identifica. Os serviços humanos transformam.</span>
-                        </div>
-                        <a href="cv-analysis.html" class="btn btn-service btn-analyzer">Analisar o meu CV</a>
-                    </div>
+            </div>
+            <!-- New Purpose Block -->
+            <div class="row mt-5">
+                <div class="col-12 text-center max-w-800 mx-auto">
+                    <h2 class="h3 fw-bold mb-3" style="color: var(--s2i-black);">Ajudamos profissionais a evoluir a
+                        carreira com clareza estratégica e conhecimento aplicável.</h2>
+                    <p class="text-muted fs-5 mb-5">Análise inteligente, revisão humana e decisões orientadas a mercado.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Human Context Section -->
-    <section class="human-context">
+    <!-- Services Grid - 3 Core Services -->
+    <section class="service-section bg-white" id="services-grid">
         <div class="container">
-            <h2>Tecnologia informa. Pessoas transformam.</h2>
-            <p>Escolhe o ponto onde estás. Nós acompanhamos o próximo passo.</p>
-            <div class="transformation-steps">
-                <div class="step-item"><i class="fas fa-check-circle"></i> O CV Analyzer oferece diagnóstico e
-                    consciência.</div>
-                <div class="step-item"><i class="fas fa-arrow-right"></i></div>
-                <div class="step-item"><i class="fas fa-check-circle"></i> A Revisão Profissional traduz experiência em
-                    narrativa.</div>
-                <div class="step-item"><i class="fas fa-arrow-right"></i></div>
-                <div class="step-item"><i class="fas fa-check-circle"></i> O Kickstart Pro transforma insights em
-                    decisões.</div>
+            <div class="row g-4 d-flex align-items-stretch">
+                <!-- Service 1: Kickstart Pro -->
+                <div class="col-lg-4 col-md-12">
+                    <div class="card h-100 border-0 shadow-sm p-4 text-center">
+                        <div class="mb-3 text-warning">
+                            <i class="fas fa-rocket fa-3x" style="color: #BF9A33;"></i>
+                        </div>
+                        <h3 class="h4 fw-bold mb-3">Kickstart Pro</h3>
+                        <p class="text-muted flex-grow-1">Sessão individual de estratégia de carreira. Desbloqueie o seu
+                            potencial com um plano de ação imediato.</p>
+                        <ul class="list-unstyled text-start small mb-4 mx-auto" style="max-width: 280px;">
+                            <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Clareza estratégica</li>
+                            <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Plano de ação focado</li>
+                            <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Ferramentas práticas</li>
+                        </ul>
+                        <button class="btn btn-s2i-primary w-100" data-bs-toggle="modal"
+                            data-bs-target="#kickstartModal">
+                            Marcar Sessão
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Service 2: Acompanhamento Humano (Hybrid) -->
+                <div class="col-lg-4 col-md-12" id="human-review">
+                    <div
+                        class="card h-100 border-0 shadow p-4 text-center service-card-human position-relative overflow-hidden">
+                        <div class="position-absolute top-0 end-0 bg-warning text-white px-3 py-1 small fw-bold"
+                            style="border-bottom-left-radius: 10px; font-size: 0.75rem;">PREMIUM</div>
+                        <div class="mb-3 text-warning">
+                            <i class="fas fa-user-tie fa-3x" style="color: #BF9A33;"></i>
+                        </div>
+                        <h3 class="h4 fw-bold mb-3">Acompanhamento Humano</h3>
+                        <p class="text-muted mb-4">Apoio especializado para momentos decisivos.</p>
+
+                        <div class="d-grid gap-3 mt-auto">
+                            <!-- Sub-offer 1 -->
+                            <div class="border rounded p-3 bg-white">
+                                <h6 class="fw-bold mb-1">Express Coaching</h6>
+                                <p class="small text-muted mb-2">Sessões rápidas de orientação.</p>
+                                <button class="btn btn-s2i-secondary btn-sm w-100" data-bs-toggle="modal"
+                                    data-bs-target="#contactModal">Saber Mais</button>
+                            </div>
+                            <!-- Sub-offer 2 -->
+                            <div class="border rounded p-3 bg-white">
+                                <h6 class="fw-bold mb-1">Revisão Profissional CV</h6>
+                                <p class="small text-muted mb-2">Análise sénior detalhada.</p>
+                                <button class="btn btn-s2i-secondary btn-sm w-100"
+                                    onclick="window.location.href='cv-analysis.html#human-review'">Solicitar
+                                    Revisão</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service 3: CV Analyzer -->
+                <div class="col-lg-4 col-md-12">
+                    <div class="card h-100 border-0 shadow-sm p-4 text-center">
+                        <div class="mb-3 text-warning">
+                            <i class="fas fa-microchip fa-3x" style="color: #BF9A33;"></i>
+                        </div>
+                        <h3 class="h4 fw-bold mb-3">CV Analyzer AI</h3>
+                        <p class="text-muted flex-grow-1">Diagnóstico instantâneo do seu currículo com inteligência
+                            artificial. Identifique gaps e oportunidades.</p>
+                        <ul class="list-unstyled text-start small mb-4 mx-auto" style="max-width: 280px;">
+                            <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Análise de competências</li>
+                            <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Feedback automático</li>
+                            <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Radar de 6 dimensões</li>
+                        </ul>
+                        <a href="cv-analysis.html" class="btn btn-s2i-tertiary w-100">
+                            Aceder ao Analyser
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -557,31 +576,39 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer id="contactos">
+    <!-- Footer - Canonical Version -->
+    <footer id="contactos" style="background-color: #f8f9fa; padding: 60px 0; margin-top: auto;">
         <div class="container">
-            <div class="footer-container">
-                <div class="footer-left">
-                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
+            <div class="row">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <p class="text-muted mb-2">© 2025 Share2Inspire. Todos os direitos reservados.</p>
                 </div>
-                <div class="footer-right">
-                    <div class="footer-contact">
-                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
-                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
+                <div class="col-md-6 text-md-end">
+                    <div class="mb-3">
+                        <p class="mb-1"><i class="fas fa-envelope me-2 text-warning"></i>
+                            srshare2inspire@gmail.com</p>
+                        <p class="mb-1"><i class="fas fa-phone me-2 text-warning"></i> +351 961 925 050</p>
                     </div>
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i
-                                class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire_" target="_blank"><i
-                                class="fab fa-instagram"></i></a>
+                    <div>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-dark me-3"><i
+                                class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="https://www.instagram.com/share2inspire_" target="_blank" class="text-dark"><i
+                                class="fab fa-instagram fa-lg"></i></a>
                     </div>
                 </div>
             </div>
-            <div class="footer-links">
-                <a href="politica-privacidade.html">Política de Privacidade</a>
-                <a href="politica-cookies.html">Política de Cookies</a>
-                <a href="tratamento-dados.html">Tratamento de Dados</a>
-                <a href="informacao-legal.html">Informação Legal</a>
+            <hr class="my-4 opacity-25">
+            <div class="row small text-muted">
+                <div class="col-12 text-center text-md-start">
+                    <a href="politica-privacidade.html" class="text-decoration-none text-muted me-3">Política de
+                        Privacidade</a>
+                    <a href="politica-cookies.html" class="text-decoration-none text-muted me-3">Política de
+                        Cookies</a>
+                    <a href="tratamento-dados.html" class="text-decoration-none text-muted me-3">Tratamento
+                        de Dados</a>
+                    <a href="informacao-legal.html" class="text-decoration-none text-muted">Informação
+                        Legal</a>
+                </div>
             </div>
         </div>
     </footer>

@@ -1,0 +1,143 @@
+/* Share2Inspire Modern Design System
+   Contract: Gold/Black/Gray colors, 48px Buttons, Capsule Radius
+*/
+
+:root {
+    --s2i-gold: #BF9A33;
+    --s2i-gold-hover: #a88629;
+    --s2i-black: #212529;
+    --s2i-gray: #6c757d;
+    --s2i-light-gray: #f8f9fa;
+    --s2i-white: #ffffff;
+    
+    --btn-height: 48px;
+    --btn-padding-x: 18px;
+    --btn-radius: 50px; /* Capsule */
+}
+
+/* --- BUTTON SYSTEM --- */
+
+.btn-s2i-primary,
+.btn-s2i-secondary,
+.btn-s2i-tertiary {
+    height: var(--btn-height);
+    line-height: 1.5; /* Vertical align text */
+    padding: 0 var(--btn-padding-x);
+    border-radius: var(--btn-radius);
+    font-weight: 600; /* Semibold */
+    font-size: 1rem;
+    box-shadow: none !important; /* No heavy shadows */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    border: 2px solid transparent;
+}
+
+/* Dourado Primário */
+.btn-s2i-primary {
+    background-color: var(--s2i-gold);
+    color: var(--s2i-white);
+    border-color: var(--s2i-gold);
+}
+.btn-s2i-primary:hover {
+    background-color: var(--s2i-gold-hover);
+    border-color: var(--s2i-gold-hover);
+    color: var(--s2i-white);
+}
+
+/* Preto Secundário */
+.btn-s2i-secondary {
+    background-color: var(--s2i-black);
+    color: var(--s2i-white);
+    border-color: var(--s2i-black);
+}
+.btn-s2i-secondary:hover {
+    background-color: #333;
+    border-color: #333;
+    color: var(--s2i-white);
+}
+
+/* Terciário / Outline */
+.btn-s2i-tertiary {
+    background-color: transparent;
+    color: var(--s2i-gray);
+    border-color: var(--s2i-gray);
+}
+.btn-s2i-tertiary:hover {
+    background-color: var(--s2i-gray);
+    color: var(--s2i-white);
+}
+
+/* Mobile Icon adjustments */
+.btn-s2i-primary i,
+.btn-s2i-secondary i,
+.btn-s2i-tertiary i {
+    font-size: 16px; /* Icon size fixed */
+    margin-right: 8px;
+}
+
+/* --- MODAL SYSTEM --- */
+
+/* Normalization - Kickstart Pro Style */
+.modal-header {
+    border-bottom: 0;
+    padding-bottom: 0;
+    background-color: transparent;
+}
+
+.modal-title {
+    font-weight: 700;
+    color: var(--s2i-black);
+    margin: 0 auto; /* Center title */
+}
+
+/* Close button - X only */
+.btn-close {
+    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+    opacity: 0.5;
+}
+
+/* Hide Feedback Button when Modal is Open */
+body.modal-open #feedbackWidget {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none;
+}
+
+/* Mobile Specifics */
+@media (max-width: 576px) {
+    .modal-footer {
+        position: sticky;
+        bottom: 0;
+        background: #fff;
+        z-index: 10;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: row; /* Ensure horizontal if possible or column if too tight */
+        padding: 15px;
+        flex-wrap: nowrap;
+        gap: 10px;
+        padding-bottom: env(safe-area-inset-bottom, 20px); /* Safe area for iPhone */
+    }
+    
+    .modal-footer .btn {
+        flex: 1; /* Split width equally */
+        margin: 0 !important;
+        font-size: 0.9rem;
+        padding: 0 10px;
+    }
+
+    /* Max 2 buttons visible rule - handled by HTML structure, but enforced here just in case */
+    .modal-footer .btn:nth-child(n+3) {
+        display: none;
+    }
+}
+
+/* --- SERVICES PAGE SPECIFIC --- */
+
+.service-card-human {
+    border: 2px solid var(--s2i-gold);
+    background-color: #fffbf0; /* Light gold tint */
+}
