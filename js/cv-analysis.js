@@ -150,20 +150,6 @@ function populateResults(report) {
     // 7. Radar Chart
     updateRadarChart(report);
 
-    // 8. Download Report Handler
-    const downloadBtn = document.querySelector('.modal-footer .btn-primary');
-    if (downloadBtn) {
-        const newBtn = downloadBtn.cloneNode(true);
-        downloadBtn.parentNode.replaceChild(newBtn, downloadBtn);
-        newBtn.addEventListener('click', () => {
-            if (window.ReportGenerator) {
-                window.ReportGenerator.openReport(report);
-            } else {
-                alert("Gerador de relatórios a carregar...");
-            }
-        });
-    }
-
     // 9. Payment / Human Review Handler
     setupPaymentHandler(profile.detected_name);
 
@@ -384,33 +370,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Report Payment Handler (1€)
 function setupReportPaymentHandler(candidateName) {
-    // Handler for Download Button (Redirect to Payment)
-    const downloadBtns = document.querySelectorAll('.modal-footer .btn-primary');
-    downloadBtns.forEach(btn => {
-        if (btn.id !== 'btnConfirmPayment' && btn.id !== 'btnConfirmReportPay') {
-            // This is the "Descarregar Relatório" button
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
+    // Handler for "Receber por Email" Button
+    const btnOpenReportPayment = document.getElementById('btnOpenReportPayment');
+    if (btnOpenReportPayment) {
+        // Remove old listeners
+        const newBtn = btnOpenReportPayment.cloneNode(true);
+        btnOpenReportPayment.parentNode.replaceChild(newBtn, btnOpenReportPayment);
 
-            newBtn.addEventListener('click', () => {
-                // Close Results Modal
-                try {
-                    const resultsModal = bootstrap.Modal.getInstance(document.getElementById('cvResultsModal'));
-                    if (resultsModal) resultsModal.hide();
-                } catch (e) { }
+        newBtn.addEventListener('click', () => {
+            // Close Results Modal
+            try {
+                const resultsModal = bootstrap.Modal.getInstance(document.getElementById('cvResultsModal'));
+                if (resultsModal) resultsModal.hide();
+            } catch (e) { }
 
-                // Show Report Payment Modal
-                const paymentModal = new bootstrap.Modal(document.getElementById('reportPaymentModal'));
-                paymentModal.show();
+            // Show Report Payment Modal
+            const paymentModal = new bootstrap.Modal(document.getElementById('reportPaymentModal'));
+            paymentModal.show();
 
-                // Pre-fill name
-                if (candidateName && candidateName !== "Candidato") {
-                    const nameInput = document.getElementById('reportPayName');
-                    if (nameInput) nameInput.value = candidateName;
-                }
-            });
-        }
-    });
+            // Pre-fill name
+            if (candidateName && candidateName !== "Candidato") {
+                const nameInput = document.getElementById('reportPayName');
+                if (nameInput) nameInput.value = candidateName;
+            }
+        });
+    }
 
     // Handle Payment Confirmation
     const btnConfirmReportPay = document.getElementById('btnConfirmReportPay');
