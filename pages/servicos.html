@@ -314,66 +314,95 @@
         </div>
     </section>
 
-    <!-- Kickstart Pro Section -->
-    <section class="service-section" id="kickstart">
+    <!-- Services Grid Section -->
+    <section class="service-section py-5">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 col-md-12">
-                    <div class="service-content">
-                        <h2>Kickstart Pro | Express Coaching </h2>
-                        <p class="service-tagline">Impulsiona a tua carreira com uma sessão personalizada</p>
-                        <p>O Kickstart Pro é uma sessão de coaching personalizada às tuas necessidades, desenhada para
-                            impulsionar jovens em início de carreira.</p>
-                        <p>Durante esta sessão, vamos trabalhar contigo para identificar os principais desafios e
-                            oportunidades, desenvolver um plano de ação claro e fornecer ferramentas e técnicas
-                            específicas para ti.</p>
-                        <h3>Benefícios:</h3>
-                        <ul class="service-benefits">
-                            <li><i class="fas fa-check"></i> Clareza sobre os próximos passos estratégicos</li>
-                            <li><i class="fas fa-check"></i> Soluções práticas para desafios específicos</li>
-                            <li><i class="fas fa-check"></i> Plano de ação personalizado e implementável</li>
-                            <li><i class="fas fa-check"></i> Acesso a ferramentas e metodologias comprovadas</li>
-                            <li><i class="fas fa-check"></i> Acompanhamento pós-sessão para garantir resultados</li>
+            <div class="row g-4">
+                <!-- Kickstart Pro -->
+                <div class="col-lg-4">
+                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0"
+                        style="background: #fff; transition: transform 0.3s ease;">
+                        <div class="service-icon mb-4 mx-auto d-flex align-items-center justify-content-center"
+                            style="width: 80px; height: 80px; background: rgba(191, 154, 51, 0.1); border-radius: 50%;">
+                            <i class="fas fa-rocket fa-2x" style="color: #BF9A33;"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">Kickstart Pro</h3>
+                        <p class="service-tagline fw-semibold"
+                            style="color: #BF9A33; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
+                            Sessão estratégica de decisão</p>
+                        <p class="text-muted mb-4 px-2">Acompanhamento individual focado em follow up e clarificação de
+                            rumo profissional.</p>
+                        <ul class="list-unstyled text-start mb-5 px-3 small">
+                            <li class="mb-2"><i class="fas fa-check me-2 text-success"></i>Próximos passos estratégicos
+                            </li>
+                            <li class="mb-2"><i class="fas fa-check me-2 text-success"></i>Plano de ação implementável
+                            </li>
+                            <li class="mb-2"><i class="fas fa-check me-2 text-success"></i>Acompanhamento pós-sessão
+                            </li>
                         </ul>
-                        <button class="btn btn-primary mt-4" data-bs-toggle="modal"
-                            data-bs-target="#kickstartModal">Marcar Kickstart Pro</button>
+                        <div class="mt-auto">
+                            <button class="btn btn-dark w-100 py-3 rounded-pill fw-bold" data-bs-toggle="modal"
+                                data-bs-target="#kickstartModal">Marcar Sessão</button>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-12">
-                    <div class="service-image">
-                        <img src="../images/kickstart-pro.jpg" alt="Kickstart Pro" class="img-fluid rounded">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Revisão de CV Section -->
-    <section class="service-section bg-light" id="cv-review">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 col-md-12 order-lg-2">
-                    <div class="service-content">
-                        <h2>Revisão de CV</h2>
-                        <p class="service-tagline">Destaca-te no mercado com um currículo de alto impacto</p>
-                        <p>A tua experiência merece ser contada da melhor forma. O serviço de Revisão de CV analisa
-                            detalhadamente o teu currículo para garantir que ele comunica o teu valor de forma clara e
-                            eficaz aos recrutadores.</p>
-                        <p>Recebe feedback construtivo e sugestões práticas de melhoria, focadas tanto no conteúdo como
-                            na formatação e otimização para ATS (Applicant Tracking Systems).</p>
-                        <h3>O que está incluído:</h3>
-                        <ul class="service-benefits">
-                            <li><i class="fas fa-check"></i> Análise detalhada de estrutura e conteúdo</li>
-                            <li><i class="fas fa-check"></i> Feedback em vídeo ou escrito</li>
-                            <li><i class="fas fa-check"></i> Sugestões de palavras-chave para a tua área</li>
-                            <li><i class="fas fa-check"></i> Dicas de otimização para leitura humana e algorítmica</li>
+                <!-- Revisão Profissional de CV -->
+                <div class="col-lg-4">
+                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0"
+                        style="background: #fff; transform: scale(1.05); z-index: 2; border: 2px solid #BF9A33 !important; transition: transform 0.3s ease;">
+                        <div class="service-icon mb-4 mx-auto d-flex align-items-center justify-content-center"
+                            style="width: 80px; height: 80px; background: #BF9A33; border-radius: 50%;">
+                            <i class="fas fa-user-tie fa-2x text-white"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">Revisão de CV</h3>
+                        <p class="service-tagline fw-semibold"
+                            style="color: #BF9A33; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
+                            Orientação premium a mercado</p>
+                        <p class="text-muted mb-4 px-2">Análise humana e estratégica para garantir o máximo impacto
+                            junto de decisores.</p>
+                        <ul class="list-unstyled text-start mb-5 px-3 small">
+                            <li class="mb-2"><i class="fas fa-check me-2 text-white"
+                                    style="color: #BF9A33 !important;"></i>Otimização para leitura humana</li>
+                            <li class="mb-2"><i class="fas fa-check me-2 text-white"
+                                    style="color: #BF9A33 !important;"></i>Feedback escrito estratégico</li>
+                            <li class="mb-2"><i class="fas fa-check me-2 text-white"
+                                    style="color: #BF9A33 !important;"></i>Posicionamento de valor real</li>
                         </ul>
-                        <a href="cv-analysis.html" class="btn btn-primary mt-4">Experimentar CV Analyser</a>
+                        <div class="mt-auto">
+                            <a href="../index.html#contatos"
+                                class="btn btn-warning w-100 py-3 rounded-pill fw-bold text-white"
+                                style="background-color: #BF9A33; border: none;">Solicitar Revisão</a>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-12 order-lg-1">
-                    <div class="service-image">
-                        <img src="../images/revisao-cv.png" alt="Revisão de CV" class="img-fluid rounded">
+
+                <!-- CV Analyzer -->
+                <div class="col-lg-4">
+                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0"
+                        style="background: #fff; transition: transform 0.3s ease;">
+                        <div class="service-icon mb-4 mx-auto d-flex align-items-center justify-content-center"
+                            style="width: 80px; height: 80px; background: rgba(191, 154, 51, 0.1); border-radius: 50%;">
+                            <i class="fas fa-robot fa-2x" style="color: #BF9A33;"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">CV Analyzer</h3>
+                        <p class="service-tagline fw-semibold"
+                            style="color: #BF9A33; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
+                            Auto avaliação contínua</p>
+                        <p class="text-muted mb-4 px-2">Diagnóstico inteligente e instantâneo baseado em 6 dimensões
+                            críticas.</p>
+                        <ul class="list-unstyled text-start mb-5 px-3 small">
+                            <li class="mb-2"><i class="fas fa-check me-2 text-success"></i>Score de maturidade 0-100
+                            </li>
+                            <li class="mb-2"><i class="fas fa-check me-2 text-success"></i>Relatório PDF "Aprofundado"
+                            </li>
+                            <li class="mb-2"><i class="fas fa-check me-2 text-success"></i>Micro-insights acionáveis
+                            </li>
+                        </ul>
+                        <div class="mt-auto">
+                            <a href="cv-analysis.html"
+                                class="btn btn-outline-dark w-100 py-3 rounded-pill fw-bold">Iniciar Diagnóstico</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -387,253 +416,210 @@
 
 
     <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2>Não encontraste o que procuravas?</h2>
-                    <p>Entra em contacto connosco para desenharmos soluções personalizadas para os teus desafios.</p>
-                    <a href="../index.html#contatos" class="btn btn-primary">Contacta-nos</a>
-                </div>
-            </div>
+    <section class="cta-section py-5" style="background-color: #f8f9fa;">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-3">Não encontraste o que procuravas?</h2>
+            <p class="text-muted mb-4">Entra em contacto connosco para desenharmos soluções personalizadas para os teus
+                desafios.</p>
+            <a href="../index.html#contactos" class="btn btn-dark px-5 py-3 rounded-pill fw-bold">Contacta-nos</a>
         </div>
     </section>
 
-    <!-- Kickstart Pro Modal -->
+    <!-- Modal: Kickstart Pro -->
     <div class="modal fade" id="kickstartModal" tabindex="-1" aria-labelledby="kickstartModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header border-0 pb-0">
-                    <h4 class="modal-title fw-bold text-dark mx-auto" id="kickstartModalLabel">Marcar Kickstart Pro</h4>
-                    <button type="button" class="btn-close position-absolute end-0 top-0 m-3" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 720px;">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0 px-4 pt-4">
+                    <h5 class="modal-title fw-bold" id="kickstartModalLabel">Marcar Kickstart Pro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body px-5 py-4">
+                <div class="modal-body p-4">
                     <div class="mb-4">
-                        <h6 class="fw-bold text-dark mb-3">1. Agendamento</h6>
-                        <p class="text-muted mb-2 small">Garanta o seu horário no nosso calendário antes de prosseguir.
-                        </p>
+                        <h6 class="fw-bold text-dark mb-2">1. Agendamento</h6>
+                        <p class="text-muted small mb-3">Garanta o seu horário no nosso calendário antes de confirmar o
+                            pagamento.</p>
                         <a href="https://calendar.app.google/8gzvyuiJoPyS6t9i7" target="_blank"
-                            class="btn btn-outline-dark btn-sm rounded-pill px-3">
-                            <i class="fas fa-external-link-alt me-1"></i> Abrir Calendário
+                            class="btn btn-outline-dark btn-sm rounded-pill px-4 py-2 fw-semibold">
+                            <i class="fas fa-calendar-alt me-2"></i> Abrir Calendário
                         </a>
                     </div>
 
-                    <hr class="border-secondary opacity-10 my-4">
+                    <hr class="opacity-10 my-4">
 
                     <form id="kickstartForm">
                         <h6 class="fw-bold text-dark mb-3">2. Confirmação e Pagamento</h6>
                         <input type="hidden" name="service" value="Kickstart Pro">
-                        <input type="hidden" name="rating" value="5">
-                        <input type="hidden" name="date" value="Agendado via Google Calendar">
-                        <input type="hidden" name="time" value="00:00">
-                        <input type="hidden" name="duration" value="60">
 
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="kickstartName"
-                                    class="form-label text-muted small fw-bold text-uppercase">Nome Completo *</label>
-                                <input type="text" class="form-control bg-light border-0 py-2 rounded-3"
+                                    class="form-label small fw-bold text-muted text-uppercase">Nome Completo</label>
+                                <input type="text" class="form-control bg-light border-0 py-3 rounded-3"
                                     id="kickstartName" name="name" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="kickstartEmail"
-                                    class="form-label text-muted small fw-bold text-uppercase">Email *</label>
-                                <input type="email" class="form-control bg-light border-0 py-2 rounded-3"
+                                    class="form-label small fw-bold text-muted text-uppercase">Email</label>
+                                <input type="email" class="form-control bg-light border-0 py-3 rounded-3"
                                     id="kickstartEmail" name="email" required>
                             </div>
                             <div class="col-12">
-                                <label class="form-label text-muted small fw-bold text-uppercase">Método de
+                                <label class="form-label small fw-bold text-muted text-uppercase">Método de
                                     Pagamento</label>
-                                <div class="d-flex gap-3">
-                                    <div class="form-check p-0">
-                                        <input class="btn-check" type="radio" name="payment_method" id="payment_mbway"
-                                            value="mbway" checked>
-                                        <label
-                                            class="btn btn-outline-light text-dark border-0 bg-light py-2 px-3 rounded-3 shadow-sm d-flex align-items-center gap-2"
-                                            for="payment_mbway">
-                                            <i class="fas fa-mobile-alt text-danger"></i> MB WAY
-                                        </label>
-                                    </div>
+                                <div class="btn-group w-100" role="group">
+                                    <input type="radio" class="btn-check" name="payment_method" id="pay_mbway"
+                                        value="mbway" checked>
+                                    <label class="btn btn-outline-dark rounded-3 py-3" for="pay_mbway">
+                                        <i class="fas fa-mobile-alt me-2"></i> MB WAY
+                                    </label>
                                 </div>
                             </div>
-                            <div class="col-12" id="kickstartPhoneGroup">
+                            <div class="col-12">
                                 <label for="kickstartPhone"
-                                    class="form-label text-muted small fw-bold text-uppercase">Telemóvel (MB WAY)
-                                    *</label>
-                                <input type="tel" class="form-control bg-light border-0 py-2 rounded-3"
-                                    id="kickstartPhone" name="phone" placeholder="9XX XXX XXX" required>
+                                    class="form-label small fw-bold text-muted text-uppercase">Telemóvel (MB
+                                    WAY)</label>
+                                <input type="tel" class="form-control bg-light border-0 py-3 rounded-3"
+                                    id="kickstartPhone" name="phone" placeholder="9XXXXXXXX" required>
                             </div>
                             <div class="col-12">
                                 <label for="kickstartObjectives"
-                                    class="form-label text-muted small fw-bold text-uppercase">Objetivos da Sessão
-                                    *</label>
-                                <textarea class="form-control bg-light border-0 py-2 rounded-3" id="kickstartObjectives"
+                                    class="form-label small fw-bold text-muted text-uppercase">Objetivos da
+                                    Sessão</label>
+                                <textarea class="form-control bg-light border-0 py-3 rounded-3" id="kickstartObjectives"
                                     name="objectives" rows="3" required></textarea>
                             </div>
                             <div class="col-12">
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" id="kickstartTerms" required>
-                                    <label class="form-check-label small text-muted" for="kickstartTerms">
+                                    <label class="form-check-label small text-muted font-italic" for="kickstartTerms">
                                         Concordo com a <a href="politica-privacidade.html" target="_blank"
-                                            class="text-decoration-none text-primary">Política de Privacidade</a> *
+                                            class="text-decoration-none">Política de Privacidade</a>
                                     </label>
                                 </div>
                             </div>
                             <div class="col-12 mt-4">
-                                <button type="submit" class="btn btn-primary w-100 fw-bold py-2 rounded-3 shadow-sm"
-                                    style="background-color: var(--primary-color); border: none;">
+                                <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold border-0"
+                                    style="background-color: #BF9A33;">
                                     Confirmar e Pagar (50€)
                                 </button>
                             </div>
                         </div>
-                        <div id="kickstartFormMessage" class="mt-3"></div>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
 
-
-
-
-
-
-
-
-
-
-                <!-- Footer -->
-                <footer id="contactos">
-                    <div class="container">
-                        <div class="footer-container">
-                            <div class="footer-left">
-                                <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
+    <!-- Modal: Contacto -->
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 720px;">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0 px-4 pt-4">
+                    <h5 class="modal-title fw-bold" id="contactModalLabel">Entre em Contacto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="contactForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name"
+                                    class="form-label small fw-bold text-muted text-uppercase">Nome</label>
+                                <input type="text" class="form-control bg-light border-0 py-3 rounded-3" id="name"
+                                    name="name" required>
                             </div>
-                            <div class="footer-right">
-                                <div class="footer-contact">
-                                    <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
-                                    <p><i class="fas fa-phone"></i> +351 961 925 050</p>
-                                </div>
-                                <div class="footer-social">
-                                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i
-                                            class="fab fa-linkedin"></i></a>
-                                    <a href="https://www.instagram.com/share2inspire_" target="_blank"><i
-                                            class="fab fa-instagram"></i></a>
-                                </div>
+                            <div class="col-md-6">
+                                <label for="reason"
+                                    class="form-label small fw-bold text-muted text-uppercase">Motivo</label>
+                                <select class="form-select bg-light border-0 py-3 rounded-3" id="reason" name="reason"
+                                    required>
+                                    <option value="" disabled selected>Selecione um motivo</option>
+                                    <option value="Informações">Informações</option>
+                                    <option value="Orçamento">Orçamento</option>
+                                    <option value="Dúvida Técnica">Dúvida Técnica</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email"
+                                    class="form-label small fw-bold text-muted text-uppercase">Email</label>
+                                <input type="email" class="form-control bg-light border-0 py-3 rounded-3" id="email"
+                                    name="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone"
+                                    class="form-label small fw-bold text-muted text-uppercase">Telefone</label>
+                                <input type="tel" class="form-control bg-light border-0 py-3 rounded-3" id="phone"
+                                    name="phone">
+                            </div>
+                            <div class="col-12">
+                                <label for="message"
+                                    class="form-label small fw-bold text-muted text-uppercase">Mensagem</label>
+                                <textarea class="form-control bg-light border-0 py-3 rounded-3" id="message"
+                                    name="message" rows="4" required></textarea>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold border-0"
+                                    style="background-color: #BF9A33;">
+                                    Enviar Mensagem
+                                </button>
                             </div>
                         </div>
-                        <div class="footer-links">
-                            <a href="politica-privacidade.html">Política de Privacidade</a>
-                            <a href="politica-cookies.html">Política de Cookies</a>
-                            <a href="tratamento-dados.html">Tratamento de Dados</a>
-                            <a href="informacao-legal.html">Informação Legal</a>
-                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Standard Footer -->
+    <footer id="contactos">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-left">
+                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
+                </div>
+                <div class="footer-right">
+                    <div class="footer-contact">
+                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
                     </div>
-                </footer>
-
-                <!-- Modal de Contacto -->
-                <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header"
-                                style="background-color: var(--primary-color); color: var(--dark-color);">
-                                <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="contactForm" enctype="multipart/form-data">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="name" class="form-label">Nome *</label>
-                                            <input type="text" class="form-control" id="name" name="name" required>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="reason" class="form-label">Motivo *</label>
-                                            <select class="form-select" id="reason" name="reason" required>
-                                                <option value="" selected disabled>Selecione um motivo</option>
-                                                <option value="Informações">Informações</option>
-                                                <option value="Orçamento">Orçamento</option>
-                                                <option value="Parceria">Parceria</option>
-                                                <option value="Sugestão">Sugestão</option>
-                                                <option value="Reclamação">Reclamação</option>
-                                                <option value="Outro">Outro</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="email" class="form-label">Email *</label>
-                                            <input type="email" class="form-control" id="email" name="email" required>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="phone" class="form-label">Número de Telefone</label>
-                                            <input type="tel" class="form-control" id="phone" name="phone"
-                                                pattern="[0-9]{9}" placeholder="912345678">
-                                            <small class="text-muted">Formato: 9 dígitos sem espaços</small>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="subject" class="form-label">Assunto *</label>
-                                        <input type="text" class="form-control" id="subject" name="subject" required>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="message" class="form-label">Mensagem *</label>
-                                        <textarea class="form-control" id="message" name="message" rows="5"
-                                            required></textarea>
-                                    </div>
-
-                                    <div class="mb-3 form-check">
-                                        <input type="checkbox" class="form-check-input" id="privacy" name="privacy"
-                                            required>
-                                        <label class="form-check-label" for="privacy">Concordo com a <a
-                                                href="politica-privacidade.html" target="_blank">Política de
-                                                Privacidade</a>
-                                            *</label>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
-                                </form>
-                            </div>
-                        </div>
+                    <div class="footer-social">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i
+                                class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire_" target="_blank"><i
+                                class="fab fa-instagram"></i></a>
                     </div>
                 </div>
+            </div>
+            <div class="footer-links" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 15px;">
+                <a href="politica-privacidade.html">Política de Privacidade</a>
+                <a href="politica-cookies.html">Política de Cookies</a>
+                <a href="tratamento-dados.html">Tratamento de Dados</a>
+                <a href="informacao-legal.html">Informação Legal</a>
+            </div>
+        </div>
+    </footer>
 
-                <!-- Bootstrap JS -->
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/contact-form.js"></script>
+    <script src="../js/brevo-integration.js"></script>
+    <script src="../js/feedback-widget.js"></script>
 
-                <!-- Script para processamento dos formulários -->
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        // Processamento do formulário Kickstart Pro
-                        const kickstartForm = document.getElementById('kickstartForm');
-                        if (kickstartForm) {
-                            kickstartForm.addEventListener('submit', function (e) {
-                                e.preventDefault();
-                                const formData = new FormData(kickstartForm);
-                                const formMessage = document.getElementById('kickstartFormMessage');
-
-                                // Aqui seria a integração com a API Iftehpay ou outro serviço
-                                // Por enquanto, apenas simulamos o sucesso
-                                formMessage.innerHTML = '<div class="alert alert-success">Solicitação enviada com sucesso! Entraremos em contacto em breve.</div>';
-                                kickstartForm.reset();
-                            });
-                        }
-
-
-
-
-
-
-
-                    });
-                </script>
-                <!-- Global Feedback Widget -->
-                <script src="../js/contact-form.js"></script>
-                <script src="../js/brevo-integration.js"></script>
-                <script src="../js/feedback-widget.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const kickstartForm = document.getElementById('kickstartForm');
+            if (kickstartForm) {
+                kickstartForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const formMessage = document.createElement('div');
+                    formMessage.className = 'alert alert-success mt-3';
+                    formMessage.textContent = 'Solicitação enviada! Redirecionando para pagamento...';
+                    kickstartForm.appendChild(formMessage);
+                    // Aqui entraria a lógica de integração real com IFTHENPAY
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

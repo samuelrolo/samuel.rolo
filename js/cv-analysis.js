@@ -1,7 +1,10 @@
 /**
  * CV Analysis Controller
- * Handles UI interactions and the analysis logic.
+ * Refined for Share2Inspire Editorial Guidelines.
  */
+
+window.currentReportData = null;
+window.currentCVFile = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('cvFile');
@@ -25,6 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     analyzeBtn.addEventListener('click', async () => {
         if (!selectedFile) return;
 
+        // Store for later delivery
+        window.currentCVFile = selectedFile;
+
         // UI Loading State
         setLoading(true);
 
@@ -38,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Call Backend API
             console.log("Calling /api/services/analyze-cv...");
-            const response = await fetch('https://share2inspire-beckend.lm.r.appspot.com/api/services/analyze-cv', {
+            const response = await fetch('/api/services/analyze-cv', {
                 method: 'POST',
                 body: formData
             });
@@ -83,56 +89,63 @@ document.addEventListener('DOMContentLoaded', () => {
  * Populates the results modal with the AI Report
  * Expects new JSON schema from Backend
  */
+/**
+ * Populates the results modal with the AI Report
+ * Refined for Share2Inspire Editorial Guidelines
+ */
 function populateResults(report) {
     const profile = report.candidate_profile || {};
-    const summary = report.executive_summary || {};
     const verdict = report.final_verdict || {};
 
     // 1. Header Info
     document.getElementById('resultName').textContent = profile.detected_name || "Candidato";
     document.getElementById('resultRole').textContent = profile.detected_role || "Profissional";
-    document.getElementById('resultExp').textContent = `${profile.detected_years_exp || 'N/D'} | ${profile.seniority_level || ''}`;
+    document.getElementById('resultExp').textContent = `${profile.total_years_exp || 'N/D'} | ${profile.seniority || ''}`;
 
     // 2. Maturity Score (Convert 100 scale to 5.0)
-    const score100 = verdict.readiness_score || 0;
+    const score100 = verdict.score || 0;
     const score5 = (score100 / 20).toFixed(1);
-
     document.getElementById('maturityScore').textContent = score5;
     renderStars(score5);
 
-    // 3. Skills Cloud
-    const skillsContainer = document.getElementById('skillsContainer');
-    skillsContainer.innerHTML = '';
-    const skills = report.skills_cloud || [];
-    skills.forEach(skill => {
-        const badge = document.createElement('span');
-        badge.className = 'skill-tag';
-        badge.textContent = skill;
-        skillsContainer.appendChild(badge);
+    // Helper to create Strategic Bullets
+    const createStrategicBullet = (item) => {
+        const div = document.createElement('div');
+        div.className = 'strategic-bullet';
+        div.innerHTML = `
+            <div class="sb-title">${item.title || ''}</div>
+            <div class="sb-metric">${item.metric || ''}</div>
+            <div class="sb-detail">${item.detail || ''}</div>
+        `;
+        return div;
+    };
+
+    // 3. Maturity & Skills
+    const maturityContainer = document.getElementById('maturitySkillsContainer');
+    maturityContainer.innerHTML = '';
+    (report.maturity_and_skills || []).forEach(item => {
+        maturityContainer.appendChild(createStrategicBullet(item));
     });
 
-    // 4. Strengths
-    const strengthsList = document.getElementById('strengthsList');
-    strengthsList.innerHTML = '';
-    const strengths = report.key_strengths || [];
-    strengths.forEach(str => {
-        const li = document.createElement('li');
-        li.className = 'list-group-item bg-transparent border-0 ps-0';
-        li.innerHTML = `<i class="fas fa-check-circle text-success me-2"></i>${str}`;
-        strengthsList.appendChild(li);
+    // 4. Key Strengths
+    const strengthsContainer = document.getElementById('strengthsContainer');
+    strengthsContainer.innerHTML = '';
+    (report.key_strengths || []).forEach(item => {
+        strengthsContainer.appendChild(createStrategicBullet(item));
     });
 
-    // 5. Recommendation / Vision
-    const recText = document.getElementById('recommendationText');
-    if (recText) {
-        recText.innerHTML = `<strong>Visão:</strong> ${summary.vision || ''}<br><br><strong>Feedback Estratégico:</strong> ${summary.strategic_feedback || verdict.closing_comment || ''}`;
-    }
+    // 5. Evolution Roadmap
+    const evolutionContainer = document.getElementById('evolutionContainer');
+    evolutionContainer.innerHTML = '';
+    const evolution = report.evolution_roadmap || {};
+    (evolution.screen_summary || []).forEach(item => {
+        evolutionContainer.appendChild(createStrategicBullet(item));
+    });
 
-    // 6. Education
-    const eduList = document.getElementById('educationList');
-    if (eduList) {
-        eduList.innerHTML = '<li><i class="fas fa-info-circle me-2 text-primary"></i>Verificado na Análise Completa</li>';
-    }
+    // 6. Strategic Feedback
+    const strategyContainer = document.getElementById('strategicFeedbackScreen');
+    const feedback = report.strategic_feedback || {};
+    strategyContainer.innerHTML = feedback.screen_summary || "Análise executiva em curso...";
 
     // 7. Radar Chart
     updateRadarChart(report);
@@ -144,8 +157,6 @@ function populateResults(report) {
         downloadBtn.parentNode.replaceChild(newBtn, downloadBtn);
         newBtn.addEventListener('click', () => {
             if (window.ReportGenerator) {
-                // Adapt report to ReportGenerator expectation if needed, or update ReportGenerator later.
-                // For now pass raw report.
                 window.ReportGenerator.openReport(report);
             } else {
                 alert("Gerador de relatórios a carregar...");
@@ -259,14 +270,13 @@ function updateRadarChart(report) {
     if (window.myRadarChart instanceof Chart) {
         window.myRadarChart.destroy();
     }
-    // Check if chart instance is stored elsewhere or just global
-    // Previous code used chartInstance variable. I'll use window property for safety.
 
-    const ats = report.ats_compatibility?.score || 0;
-    const impact = report.content_analysis?.impact_score || 0;
-    const structure = report.structure_design?.score || 0;
-    const market = report.executive_summary?.market_fit_score || 0;
-    const readiness = report.final_verdict?.readiness_score || 0;
+    const radar = report.radar_data || {};
+    const ats = radar.ats || 0;
+    const impact = radar.impact || 0;
+    const structure = radar.structure || 0;
+    const market = radar.market_fit || 0;
+    const readiness = radar.readiness || 0;
 
     window.myRadarChart = new Chart(ctx, {
         type: 'radar',
@@ -295,10 +305,13 @@ function updateRadarChart(report) {
             },
             plugins: {
                 legend: { display: false }
-            }
+            },
+            responsive: true,
+            maintainAspectRatio: false
         }
     });
 }
+
 
 // --- Contact Form Logic (Navbar) ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -437,32 +450,26 @@ function setupReportPaymentHandler(candidateName) {
                 });
 
                 if (paymentResult.success) {
-                    statusDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Pedido MB WAY enviado! Aceite na app para descarregar.</div>';
+                    statusDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <strong>O teu pedido foi recebido.</strong> Assim que o pagamento for confirmado, receberás um email com os próximos passos.<br>
+                            <small class="mt-2 d-block">O Relatório Completo de Análise de CV em PDF será enviado automaticamente por email.</small>
+                        </div>
+                    `;
 
-                    // Simulate payment confirmation wait logic
-                    // In a real scenario, we would poll the backend for status.
-                    // Here we trust the user accepts it and show the report after a delay/confirmation.
+                    // We no longer call deliver-report immediately here.
+                    // The backend will handle it via the Ifthenpay callback or the user will receive it.
 
                     setTimeout(() => {
-                        alert("Pagamento processado! O seu relatório será gerado de seguida.");
-
-                        try {
-                            const modal = bootstrap.Modal.getInstance(document.getElementById('reportPaymentModal'));
-                            if (modal) modal.hide();
-                        } catch (e) { }
-
-                        // Generate Report
-                        if (window.ReportGenerator && window.currentReportData) {
-                            window.ReportGenerator.openReport(window.currentReportData);
-                        } else {
-                            alert("Erro ao gerar relatório. Por favor contacte o suporte.");
-                        }
-                    }, 4000);
-
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('reportPaymentModal'));
+                        if (modal) modal.hide();
+                        // Reset button
+                        newPaymentBtn.disabled = false;
+                    }, 5000);
                 } else {
                     throw new Error(paymentResult.message || "Falha no pagamento");
                 }
-
             } catch (err) {
                 console.error(err);
                 statusDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${err.message}</div>`;

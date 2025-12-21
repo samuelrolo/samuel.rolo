@@ -25,6 +25,49 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/header-footer.css">
     <link rel="stylesheet" href="../css/cv-analysis.css">
+    <style>
+        .details-list {
+            margin-bottom: 2rem;
+        }
+
+        .strategic-bullet {
+            border-left: 3px solid #BF9A33;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sb-title {
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-bottom: 2px;
+        }
+
+        .sb-metric {
+            font-size: 0.85rem;
+            color: #BF9A33;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .sb-detail {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            background: #eee;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-size: 2rem;
+            color: #BF9A33;
+        }
+    </style>
 </head>
 
 <body>
@@ -142,36 +185,51 @@
         </div>
     </section>
 
-    <!-- Contact Modal -->
+    <!-- Modal: Contacto -->
     <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 720px;">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0 px-4 pt-4">
+                    <h5 class="modal-title fw-bold" id="contactModalLabel">Entre em Contacto</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     <form id="contactForm">
-                        <div class="mb-3">
-                            <label for="contactName" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="contactName" required>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="contactName"
+                                    class="form-label small fw-bold text-muted text-uppercase">Nome</label>
+                                <input type="text" class="form-control bg-light border-0 py-3 rounded-3"
+                                    id="contactName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="contactEmail"
+                                    class="form-label small fw-bold text-muted text-uppercase">Email</label>
+                                <input type="email" class="form-control bg-light border-0 py-3 rounded-3"
+                                    id="contactEmail" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="contactSubject"
+                                    class="form-label small fw-bold text-muted text-uppercase">Assunto</label>
+                                <input type="text" class="form-control bg-light border-0 py-3 rounded-3"
+                                    id="contactSubject" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="contactMessage"
+                                    class="form-label small fw-bold text-muted text-uppercase">Mensagem (max 2000
+                                    caract.)</label>
+                                <textarea class="form-control bg-light border-0 py-3 rounded-3" id="contactMessage"
+                                    rows="4" maxlength="2000" required></textarea>
+                                <div class="form-text text-end"><span id="charCount">0</span>/2000</div>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold border-0"
+                                    style="background-color: #BF9A33;">
+                                    Enviar Mensagem
+                                </button>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="contactEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="contactEmail" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contactSubject" class="form-label">Assunto</label>
-                            <input type="text" class="form-control" id="contactSubject" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contactMessage" class="form-label">Mensagem (max 2000 caract.)</label>
-                            <textarea class="form-control" id="contactMessage" rows="4" maxlength="2000"
-                                required></textarea>
-                            <div class="form-text text-end"><span id="charCount">0</span>/2000</div>
-                        </div>
-                        <div id="contactStatus" class="d-none"></div>
-                        <button type="submit" class="btn btn-primary w-100">Enviar Mensagem</button>
+                        <div id="contactStatus" class="mt-3 d-none"></div>
                     </form>
                 </div>
             </div>
@@ -180,13 +238,13 @@
 
     <!-- Results Modal -->
     <div class="modal fade" id="cvResultsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0 pb-0">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 720px;">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0 px-4 pt-4">
                     <h5 class="modal-title fw-bold">Resultados da Análise</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4 p-lg-5">
+                <div class="modal-body p-4">
                     <div class="row">
                         <!-- Left Column: Summary -->
                         <div class="col-lg-4 mb-4 mb-lg-0 border-end border-light">
@@ -219,49 +277,70 @@
 
                         <!-- Right Column: Details -->
                         <div class="col-lg-8 ps-lg-5">
-                            <h5 class="fw-bold mb-4">Competências Principais</h5>
-                            <div id="skillsContainer" class="d-flex flex-wrap gap-2 mb-5">
-                                <!-- Skills will be injected here -->
+                            <!-- 1. Maturity & Skills -->
+                            <div class="mb-5">
+                                <h5 class="fw-bold mb-4">Maturidade e Competências</h5>
+                                <div id="maturitySkillsContainer" class="details-list">
+                                    <!-- Dynamic content -->
+                                </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-md-6 mb-4">
-                                    <h5 class="fw-bold mb-3">Análise de Pontos Fortes</h5>
-                                    <ul id="strengthsList" class="list-group list-group-flush fs-6">
-                                        <!-- Strengths injected here -->
-                                    </ul>
+                            <!-- 2. Key Strengths -->
+                            <div class="mb-5">
+                                <h5 class="fw-bold mb-4">Pontos Fortes</h5>
+                                <div id="strengthsContainer" class="details-list">
+                                    <!-- Dynamic content -->
                                 </div>
-                                <div class="col-md-6 mb-4">
-                                    <h5 class="fw-bold mb-3">Radar de Competências</h5>
+                            </div>
+
+                            <!-- 3. Evolution Roadmap (Screen Summary) -->
+                            <div class="mb-5">
+                                <h5 class="fw-bold mb-4">Sugestões de Evolução</h5>
+                                <div id="evolutionContainer" class="details-list">
+                                    <!-- Dynamic content -->
+                                </div>
+                            </div>
+
+                            <!-- 4. Strategic Feedback (Screen Summary) -->
+                            <div class="mb-5">
+                                <h5 class="fw-bold mb-4">Feedback Estratégico</h5>
+                                <div id="strategicFeedbackScreen" class="text-muted"
+                                    style="border-left: 3px solid #BF9A33; padding-left: 1rem;">
+                                    <!-- Executive summary -->
+                                </div>
+                            </div>
+
+                            <!-- 5. Radar Chart -->
+                            <div class="mb-4">
+                                <h5 class="fw-bold mb-4">Radar de Competências</h5>
+                                <div style="max-height: 350px;">
                                     <canvas id="cvRadarChart"></canvas>
                                 </div>
-                            </div>
-
-                            <div class="mt-4 p-3 bg-light-primary rounded border border-primary-subtle">
-                                <h6 class="fw-bold text-primary mb-2"><i class="fas fa-rocket me-2"></i>Sugestão de
-                                    Evolução</h6>
-                                <p id="recommendationText" class="mb-0 text-muted small">Recomendação personalizada...
-                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="button" class="btn btn-warning text-white" id="btnRequestReview"
-                        style="background-color: #BF9A33; border: none; margin-right: 10px;">
-                        <i class="fas fa-user-tie me-2"></i>Solicitar Revisão
-                    </button>
-                    <button type="button" class="btn btn-primary">
-                        <i class="fas fa-download me-2"></i>Descarregar Relatório Completo
+                <div class="modal-footer border-0 p-4 pt-0 d-flex flex-column gap-2">
+                    <div class="d-flex gap-2 w-100">
+                        <a href="servicos.html" class="btn btn-outline-dark flex-grow-1 rounded-pill fw-bold py-2">
+                            <i class="fas fa-rocket me-2"></i>Kickstart Pro
+                        </a>
+                        <button type="button" class="btn btn-dark flex-grow-1 rounded-pill fw-bold py-2"
+                            id="btnRequestReview">
+                            <i class="fas fa-user-tie me-2"></i>Solicitar Revisão
+                        </button>
+                    </div>
+                    <button type="button" class="btn btn-primary w-100 rounded-pill fw-bold py-3 border-0"
+                        id="btnDownloadReport" style="background-color: #BF9A33;">
+                        <i class="fas fa-download me-2"></i>Descarregar Relatório Completo (CV Analyzer)
                     </button>
                 </div>
 
                 <!-- Human Review Modal (Payment) -->
                 <div class="modal fade" id="humanReviewModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header border-0 pb-0">
+                    <div class="modal-dialog modal-dialog-centered" style="max-width: 720px;">
+                        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                            <div class="modal-header border-0 pb-0 px-4 pt-4">
                                 <h5 class="modal-title fw-bold">Revisão Profissional de CV</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
@@ -271,43 +350,46 @@
                                     sénior de RH, com feedback personalizado e sugestões de melhoria (Entregue em PDF).
                                 </p>
 
-                                <div class="alert alert-info border-0 bg-light rounded-3 p-3 mb-4">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="text-dark fw-bold"><i
-                                                class="fas fa-tag me-2 text-primary"></i>Custo do Serviço:</span>
-                                        <span class="fw-bold fs-5 text-primary">30,00€</span>
+                                <div
+                                    class="alert alert-info border-0 bg-light rounded-3 p-3 mb-4 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="text-dark fw-bold d-block"><i
+                                                class="fas fa-tag me-2 text-primary"></i>Custo: 30,00€</span>
+                                        <small class="text-muted"><i class="fas fa-clock me-1"></i> Entrega em máx. 5
+                                            dias úteis</small>
                                     </div>
-                                    <small class="d-block mt-2 text-muted" style="font-size: 0.85rem;"><i
-                                            class="fas fa-clock me-1"></i> Entrega em máx. 5 dias úteis email</small>
+                                    <span class="fw-bold fs-4 text-primary">30€</span>
                                 </div>
 
                                 <form id="humanReviewForm">
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-bold">Nome Completo</label>
-                                        <input type="text" class="form-control" id="reviewName" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-bold">Telemóvel ( MB WAY )</label>
-                                        <input type="tel" class="form-control" id="reviewPhone" placeholder="9xxxxxxxx"
-                                            required>
-                                        <div class="form-text">Número associado à conta MB WAY.</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-bold">Email para Receber Relatório</label>
-                                        <input type="email" class="form-control" id="reviewEmail" required>
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold text-muted text-uppercase">Nome
+                                                Completo</label>
+                                            <input type="text" class="form-control bg-light border-0 py-3 rounded-3"
+                                                id="reviewName" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold text-muted text-uppercase">Telemóvel
+                                                (MB WAY)</label>
+                                            <input type="tel" class="form-control bg-light border-0 py-3 rounded-3"
+                                                id="reviewPhone" placeholder="9xxxxxxxx" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold text-muted text-uppercase">Email para
+                                                Relatório</label>
+                                            <input type="email" class="form-control bg-light border-0 py-3 rounded-3"
+                                                id="reviewEmail" required>
+                                        </div>
                                     </div>
                                 </form>
 
-                                <div id="paymentStatus" class="mt-3 d-none">
-                                    <!-- Status messages injected here -->
-                                </div>
+                                <div id="paymentStatus" class="mt-3 d-none"></div>
                             </div>
-                            <div class="modal-footer border-0 pt-0">
-                                <button type="button" class="btn btn-outline-secondary"
-                                    data-bs-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-primary" id="btnConfirmPayment"
-                                    style="background-color: #BF9A33; border: none; width: 100%;">
-                                    <i class="fas fa-check me-2"></i>Pagar e Solicitar
+                            <div class="modal-footer border-0 p-4 pt-0">
+                                <button type="button" class="btn btn-primary w-100 py-3 rounded-pill fw-bold border-0"
+                                    id="btnConfirmPayment" style="background-color: #BF9A33;">
+                                    <i class="fas fa-check me-2"></i>Pagar e Solicitar Revisão
                                 </button>
                             </div>
                         </div>
@@ -320,9 +402,9 @@
 
     <!-- Report Payment Modal (1€) -->
     <div class="modal fade" id="reportPaymentModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0 pb-0">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 720px;">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0 px-4 pt-4">
                     <h5 class="modal-title fw-bold">Desbloquear Relatório Completo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -330,37 +412,40 @@
                     <p class="text-muted mb-4 small">Para descarregar o relatório detalhado em PDF, é necessário um
                         pagamento simbólico de 1,00€.</p>
 
-                    <div class="alert alert-info border-0 bg-light rounded-3 p-3 mb-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-dark fw-bold"><i class="fas fa-tag me-2 text-primary"></i>Valor:</span>
-                            <span class="fw-bold fs-5 text-primary">1,00€</span>
-                        </div>
+                    <div
+                        class="alert alert-info border-0 bg-light rounded-3 p-3 mb-4 d-flex justify-content-between align-items-center">
+                        <span class="text-dark fw-bold"><i class="fas fa-tag me-2 text-primary"></i>Valor do
+                            Diagnóstico:</span>
+                        <span class="fw-bold fs-4 text-primary">1,00€</span>
                     </div>
 
                     <form id="reportPaymentForm">
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Nome</label>
-                            <input type="text" class="form-control" id="reportPayName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Email</label>
-                            <input type="email" class="form-control" id="reportPayEmail" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Telemóvel (MB WAY)</label>
-                            <input type="tel" class="form-control" id="reportPayPhone" placeholder="9xxxxxxxx" required>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Nome</label>
+                                <input type="text" class="form-control bg-light border-0 py-3 rounded-3"
+                                    id="reportPayName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Email</label>
+                                <input type="email" class="form-control bg-light border-0 py-3 rounded-3"
+                                    id="reportPayEmail" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Telemóvel (MB
+                                    WAY)</label>
+                                <input type="tel" class="form-control bg-light border-0 py-3 rounded-3"
+                                    id="reportPayPhone" placeholder="9xxxxxxxx" required>
+                            </div>
                         </div>
                     </form>
 
-                    <div id="reportPaymentStatus" class="mt-3 d-none">
-                        <!-- Status messages injected here -->
-                    </div>
+                    <div id="reportPaymentStatus" class="mt-3 d-none"></div>
                 </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnConfirmReportPay"
-                        style="background-color: #BF9A33; border: none; width: 100%;">
-                        <i class="fas fa-mobile-alt me-2"></i>Pagar com MB WAY
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-primary w-100 py-3 rounded-pill fw-bold border-0"
+                        id="btnConfirmReportPay" style="background-color: #BF9A33;">
+                        <i class="fas fa-mobile-alt me-2"></i>Pagar 1,00€ com MB WAY
                     </button>
                 </div>
             </div>
