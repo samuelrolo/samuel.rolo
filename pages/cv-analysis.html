@@ -129,22 +129,42 @@
                         <div class="icon-wrapper mb-4">
                             <i class="fas fa-cloud-upload-alt fa-3x text-primary"></i>
                         </div>
-                        <h3>Carregue o seu CV</h3>
-                        <p class="text-muted mb-4">Suportamos PDF e DOCX (Máx. 5MB)</p>
+                        <h3>Análise de CV com IA</h3>
+                        <p class="text-muted mb-4">Receberá o relatório completo por email após confirmação de pagamento
+                            (1€)</p>
+
+                        <!-- User Info Fields -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <input type="text" id="userName" class="form-control" placeholder="Nome completo"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="email" id="userEmail" class="form-control" placeholder="Email" required>
+                            </div>
+                            <div class="col-12">
+                                <input type="tel" id="userPhone" class="form-control"
+                                    placeholder="Telemóvel (para pagamento MB WAY)" required pattern="[0-9]{9}">
+                            </div>
+                        </div>
 
                         <div class="file-upload-wrapper">
                             <input type="file" id="cvFile" accept=".pdf,.docx,.txt" class="file-input" hidden>
-                            <label for="cvFile" class="btn btn-primary btn-lg">
-                                <i class="fas fa-file-alt me-2"></i> Selecionar Ficheiro
+                            <label for="cvFile" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-file-alt me-2"></i> Selecionar CV
                             </label>
                             <span id="fileName" class="d-block mt-2 text-muted fst-italic"></span>
                         </div>
 
                         <button id="analyzeBtn" class="btn btn-dark btn-lg mt-4 px-5" disabled>
-                            <span id="btnText">Analizar Perfil</span>
+                            <span id="btnText">Analisar e Pagar (1€)</span>
                             <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"
                                 aria-hidden="true"></span>
                         </button>
+
+                        <p class="text-muted small mt-3 mb-0">
+                            <i class="fas fa-lock me-1"></i> Pagamento seguro via MB WAY
+                        </p>
                     </div>
                 </div>
             </div>

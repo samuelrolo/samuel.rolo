@@ -40,7 +40,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // Prepare FormData
             const formData = new FormData();
             formData.append('cv_file', selectedFile);
-            // Optionally send roles if user inputted (current UI doesn't have inputs for this yet, so relying on auto-detect)
+
+            // Add required fields for payment flow
+            const email = document.getElementById('userEmail')?.value || 'test@example.com';
+            const name = document.getElementById('userName')?.value || 'Utilizador';
+            const phone = document.getElementById('userPhone')?.value || '912345678';
+
+            formData.append('email', email);
+            formData.append('name', name);
+            formData.append('phone', phone);
 
             // Call Backend API
             console.log("Calling /api/services/analyze-cv...");
@@ -55,15 +63,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(data.error || "Falha na análise");
             }
 
-            console.log("Analysis Result:", data.report);
+            console.log("Payment Flow Response:", data);
 
-            // Populate UI with AI Report
-            window.currentReportData = data.report;
-            populateResults(data.report);
+            // NEW FLOW: Show payment confirmation message
+            // The analysis report will be delivered via email after payment confirmation
+            alert(data.message || "O teu pedido foi recebido. Assim que o pagamento for confirmado, receberás um email com os próximos passos.");
 
-            // Show Modal
-            const resultsModal = new bootstrap.Modal(document.getElementById('cvResultsModal'));
-            resultsModal.show();
+            // Reset form
+            fileInput.value = '';
+            fileNameDisplay.textContent = 'Nenhum ficheiro selecionado';
+            analyzeBtn.disabled = true;
 
         } catch (error) {
             console.error("Analysis Error:", error);
