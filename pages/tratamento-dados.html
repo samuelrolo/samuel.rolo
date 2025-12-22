@@ -16,97 +16,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    padding: 20px 0;
-    margin-top: 50px;
-    }
-
-    .footer-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
-    }
-
-    .footer-left p {
-    margin: 0;
-    color: #BF9A33;
-    }
-
-    .footer-right {
-    display: flex;
-    gap: 30px;
-    }
-
-    .footer-contact p {
-    margin: 0;
-    margin-bottom: 5px;
-    color: #fff;
-    }
-
-    .footer-contact i {
-    color: #BF9A33;
-    margin-right: 8px;
-    }
-
-    .footer-social {
-    display: flex;
-    gap: 15px;
-    }
-
-    .footer-social a {
-    color: #BF9A33;
-    font-size: 20px;
-    transition: color 0.3s;
-    }
-
-    .footer-social a:hover {
-    color: #fff;
-    }
-
-    .footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 15px;
-    }
-
-    .footer-links a {
-    color: #BF9A33;
-    font-size: 14px;
-    text-decoration: none;
-    transition: color 0.3s;
-    }
-
-    .footer-links a:hover {
-    color: #fff;
-    text-decoration: underline;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-    .footer-container {
-    flex-direction: column;
-    text-align: center;
-    gap: 20px;
-    }
-
-    .footer-right {
-    flex-direction: column;
-    gap: 15px;
-    }
-
-    .footer-social {
-    justify-content: center;
-    }
-
-    .footer-links {
-    flex-direction: column;
-    gap: 10px;
-    }
-    }
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="assets/s2i-modern.css">
     </style>
 </head>
 
@@ -119,47 +31,45 @@
         gtag('js', new Date());
         gtag('config', 'G-8GQ1KM9FQS');
     </script>
-    <!-- Header e Navegação -->
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="../index.html">
-                <img src="../images/logo.png" alt="Share2Inspire Logo" height="40">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.html">Início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="sobre.html">Sobre o Fundador</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="servicos.html">Serviços</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="loja.html">Loja</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="cv-analysis.html">CV Analyser</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="humanos-maquinas.html">Humanos & Máquinas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="people-hub.html">People Hub</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.html#contactos">Contactos</a>
-                    </li>
-                </ul>
+    <header class="header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="../index.html">
+                    <img src="../images/logo.png" alt="Share2Inspire Logo" height="40">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.html">Início</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="sobre.html">Sobre</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="servicos.html">Serviços</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="cv-analysis.html">CV Analyser</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="loja.html">Loja</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="people-hub.html">People Hub</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="modal"
+                                data-bs-target="#contactModal">Contactos</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
     <!-- Page Header -->
     <section class="page-header">
@@ -285,84 +195,121 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer id="contactos">
-        <div class="container">
-            <div class="footer-container">
-                <div class="footer-left">
-                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
-                </div>
-                <div class="footer-right">
-                    <div class="footer-contact">
-                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
-                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
-                    </div>
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i
-                                class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire_" target="_blank"><i
-                                class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-links">
-                <a href="politica-privacidade.html">Política de Privacidade</a>
-                <a href="politica-cookies.html">Política de Cookies</a>
-                <a href="tratamento-dados.html">Tratamento de Dados</a>
-                <a href="informacao-legal.html">Informação Legal</a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Botão de Feedback -->
-    <button id="feedbackBtn" class="feedback-btn" data-bs-toggle="modal" data-bs-target="#feedbackModal">
-        <i class="fas fa-comment"></i> Feedback
-    </button>
-
-    <!-- Modal de Feedback -->
-    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <!-- Contact Modal -->
+    <div class="modal fade s2i-modal" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="feedbackModalLabel">Deixe o seu Feedback</h5>
+                    <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="feedbackForm">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nome *</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                    <form id="contactForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="s2i-form-label">Nome *</label>
+                                <input type="text" class="s2i-form-control" id="name" name="name"
+                                    placeholder="O seu nome" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="s2i-form-label">Email *</label>
+                                <input type="email" class="s2i-form-control" id="email" name="email"
+                                    placeholder="O seu email" required>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="rating" class="form-label">Avaliação *</label>
-                            <input type="hidden" id="rating" name="rating" value="0">
-                            <div class="rating">
-                                <span class="star" data-value="1"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="2"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="3"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="4"><i class="far fa-star"></i></span>
-                                <span class="star" data-value="5"><i class="far fa-star"></i></span>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="s2i-form-label">Telefone</label>
+                                <input type="tel" class="s2i-form-control" id="phone" name="phone"
+                                    placeholder="9xxxxxxxx">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="reason" class="s2i-form-label">Motivo *</label>
+                                <select class="s2i-form-control" id="reason" name="reason" required>
+                                    <option value="" selected disabled>Selecione um motivo</option>
+                                    <option value="Informações">Informações</option>
+                                    <option value="Orçamento">Orçamento</option>
+                                    <option value="Dúvida Técnica">Dúvida Técnica</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="feedbackMessage" class="form-label">Mensagem *</label>
-                            <textarea class="form-control" id="feedbackMessage" name="message" rows="3"
-                                required></textarea>
+                            <label for="message" class="s2i-form-label">Mensagem *</label>
+                            <textarea class="s2i-form-control" id="message" name="message" rows="4"
+                                placeholder="Como podemos ajudar?" required></textarea>
                         </div>
-                        <div id="feedbackFormMessage"></div>
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
+                            <label class="form-check-label small text-muted" for="privacy">
+                                Aceito a <a href="politica-privacidade.html" target="_blank"
+                                    class="text-decoration-none s2i-text-gold">Política de Privacidade</a> *
+                            </label>
+                        </div>
+                        <div class="alert alert-success d-none" id="contactSuccess">
+                            <i class="fas fa-check-circle me-2"></i> Mensagem enviada com sucesso!
+                        </div>
+                        <div class="alert alert-danger d-none" id="contactError">
+                            <i class="fas fa-exclamation-circle me-2"></i> Erro ao enviar mensagem.
+                        </div>
+                        <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
+                            <i class="fas fa-paper-plane"></i> Enviar Mensagem
+                        </button>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" form="feedbackForm" class="btn btn-primary">Enviar Feedback</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <footer id="contactos" style="background-color: #1A1A1A; color: #fff; padding: 80px 0 40px;">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <img src="../images/logo.png" alt="Share2Inspire" height="50" class="mb-4">
+                    <p class="text-muted">Evolução de carreira com clareza, estratégia e narrativa de impacto.
+                        Transformamos intenção em resultados.</p>
+                </div>
+                <div class="col-lg-2">
+                    <h5 class="fw-bold mb-4">Links Rápidos</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="../index.html" class="text-muted text-decoration-none">Início</a></li>
+                        <li class="mb-2"><a href="sobre.html" class="text-muted text-decoration-none">Sobre</a></li>
+                        <li class="mb-2"><a href="servicos.html" class="text-muted text-decoration-none">Serviços</a>
+                        </li>
+                        <li class="mb-2"><a href="cv-analysis.html" class="text-muted text-decoration-none">CV
+                                Analyser</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h5 class="fw-bold mb-4">Contactos</h5>
+                    <p class="text-muted mb-2"><i class="fas fa-envelope me-2"></i> srshare2inspire@gmail.com</p>
+                    <p class="text-muted mb-2"><i class="fas fa-phone me-2"></i> +351 961 925 050</p>
+                </div>
+                <div class="col-lg-3">
+                    <h5 class="fw-bold mb-4">Siga-nos</h5>
+                    <div class="d-flex gap-3">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-white fs-4"><i
+                                class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/share2inspire_" target="_blank" class="text-white fs-4"><i
+                                class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-5" style="border-color: rgba(255,255,255,0.1);">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="text-muted mb-0 small">© 2025 Share2Inspire. Todos os direitos reservados.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
+                    <a href="politica-privacidade.html"
+                        class="text-muted text-decoration-none small me-3">Privacidade</a>
+                    <a href="politica-cookies.html" class="text-muted text-decoration-none small me-3">Cookies</a>
+                    <a href="informacao-legal.html" class="text-muted text-decoration-none small">Legal</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

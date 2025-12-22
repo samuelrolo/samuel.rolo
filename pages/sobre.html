@@ -49,6 +49,7 @@
 
     <!-- Header & Footer Shared CSS -->
     <link href="../css/header-footer.css" rel="stylesheet" />
+    <link href="assets/s2i-modern.css" rel="stylesheet" />
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
@@ -166,46 +167,177 @@
             font-size: 2.5rem;
             font-weight: 700;
             color: #343a40;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             position: relative;
             padding-bottom: 15px;
+            text-align: center;
         }
 
         .about-content h2::after {
             content: '';
             position: absolute;
             bottom: 0;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 80px;
             height: 4px;
             background: linear-gradient(135deg, #bf9a33 0%, #d4af37 100%);
             border-radius: 2px;
         }
 
-        .about-content h3 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #495057;
-            margin-top: 40px;
-            margin-bottom: 20px;
+        /* Mission Block */
+        .mission-block {
+            display: flex;
+            align-items: flex-start;
+            gap: 25px;
+            background: #fff;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.06);
+            margin-bottom: 40px;
+            border-left: 4px solid var(--primary-color);
         }
 
-        .about-content p {
+        .mission-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .mission-icon i {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .mission-content h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .mission-content p {
             font-size: 1.1rem;
             line-height: 1.8;
-            color: #6c757d;
-            margin-bottom: 20px;
+            color: #555;
+            margin-bottom: 0;
         }
 
-        .about-content blockquote {
-            background-color: #fff;
-            border-left: 5px solid #d4af37;
-            padding: 20px 30px;
-            margin: 30px 0;
+        /* Value Cards */
+        .value-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .value-card {
+            background: #fff;
+            padding: 30px 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .value-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(191, 154, 51, 0.15);
+        }
+
+        .value-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, rgba(191, 154, 51, 0.1) 0%, rgba(212, 175, 55, 0.15) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .value-icon i {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        .value-card h4 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #343a40;
+            margin-bottom: 12px;
+        }
+
+        .value-card p {
+            font-size: 0.95rem;
+            color: #6c757d;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* Hero Quote */
+        .hero-quote {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            padding: 40px 50px;
+            border-radius: 16px;
+            text-align: center;
+            position: relative;
+            border-left: none;
+        }
+
+        .hero-quote .quote-icon {
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.4);
+            position: absolute;
+            top: 20px;
+            left: 30px;
+        }
+
+        .hero-quote p {
+            font-size: 1.4rem;
+            color: #fff;
+            font-weight: 500;
             font-style: italic;
-            font-size: 1.2rem;
-            color: #495057;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .hero-quote cite {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-style: normal;
+            font-weight: 600;
+        }
+
+        @media (max-width: 992px) {
+            .value-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mission-block {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .mission-icon {
+                margin: 0 auto;
+            }
+
+            .hero-quote {
+                padding: 30px 25px;
+            }
+
+            .hero-quote p {
+                font-size: 1.15rem;
+            }
         }
 
         /* Timeline Section */
@@ -347,19 +479,152 @@
 
         /* Hero Photo Styles */
         .hero-photo {
-            width: 560px;
-            height: 560px;
+            width: 400px;
+            height: 400px;
             border-radius: 50%;
             object-fit: cover;
-            border: 8px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-            margin-bottom: 2rem;
+            border: 6px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1.5rem;
         }
 
         .hero-founder .hero-content {
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+
+        /* Hero Badge */
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 8px 20px;
+            border-radius: 30px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .hero-badge .badge-icon {
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .hero-badge .badge-text {
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Hero Tagline */
+        .hero-tagline {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 1.5rem;
+        }
+
+        .tagline-highlight {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Hero Social Links */
+        .hero-social {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .hero-social .social-link {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .hero-social .social-link:hover {
+            background: #fff;
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Hero Stats */
+        .hero-stats {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px 40px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+            display: inline;
+        }
+
+        .stat-plus {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .hero-photo {
+                width: 280px;
+                height: 280px;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px 30px;
+            }
+
+            .stat-divider {
+                width: 60px;
+                height: 1px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
         }
 
         /* Experience Slider Styles */
@@ -384,10 +649,17 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
             border: 1px solid rgba(191, 154, 51, 0.1);
             transition: all 0.3s ease;
+            height: 280px;
             min-height: 280px;
+            max-height: 280px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: center;
+        }
+
+        .swiper-slide {
+            height: auto;
         }
 
         .experience-slide:hover {
@@ -438,11 +710,53 @@
         .swiper-button-next,
         .swiper-button-prev {
             color: var(--primary-color);
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         .swiper-button-next::after,
         .swiper-button-prev::after {
             font-size: 1.5rem;
+        }
+
+        /* Recommendations Section Fixes */
+        .recommendations-section {
+            position: relative;
+            z-index: 1;
+        }
+
+        .recommendations-section .carousel-control-prev,
+        .recommendations-section .carousel-control-next {
+            width: 40px;
+            height: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 1;
+        }
+
+        .recommendations-section .carousel-control-prev {
+            left: -50px;
+        }
+
+        .recommendations-section .carousel-control-next {
+            right: -50px;
+        }
+
+        @media (max-width: 992px) {
+            .recommendations-section .carousel-control-prev {
+                left: 0;
+            }
+
+            .recommendations-section .carousel-control-next {
+                right: 0;
+            }
+        }
+
+        .recommendations-section .carousel-control-prev-icon,
+        .recommendations-section .carousel-control-next-icon {
+            background-color: rgba(51, 51, 51, 0.8);
+            border-radius: 50%;
+            padding: 20px;
         }
 
         /* Modern Skills Section */
@@ -501,6 +815,93 @@
             color: #fff;
             border-color: var(--primary-color);
             transform: translateY(-2px);
+        }
+
+        /* Skills & Certifications Combined Section */
+        .skills-certs-section {
+            padding: 60px 0;
+            background-color: #f8f9fa;
+        }
+
+        .section-subtitle {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #343a40;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-subtitle i {
+            color: var(--primary-color);
+        }
+
+        .skills-column,
+        .certs-column {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            height: 100%;
+        }
+
+        .skill-tags-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .cert-list-compact {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .cert-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: all 0.2s ease;
+        }
+
+        .cert-item:hover {
+            background: #f0f0f0;
+            transform: translateX(5px);
+        }
+
+        .cert-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .cert-icon i {
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .cert-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cert-info strong {
+            font-size: 0.95rem;
+            color: #343a40;
+            margin-bottom: 2px;
+        }
+
+        .cert-info span {
+            font-size: 0.8rem;
+            color: #6c757d;
         }
 
         /* Certifications Section - LinkedIn Style */
@@ -646,7 +1047,7 @@
 </head>
 
 <body>
-    <!-- Navbar -->
+    <!-- Header e Navegação -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="../index.html">
@@ -662,22 +1063,22 @@
                         <a class="nav-link" href="../index.html">Início</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="sobre.html">Sobre</a>
+                        <a class="nav-link active" aria-current="page" href="sobre.html">Sobre</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="servicos.html">Serviços</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="loja.html">Loja</a>
+                        <a class="nav-link" href="cv-analysis.html">CV Analyser</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="humanos-maquinas.html">Humanos & Máquinas</a>
+                        <a class="nav-link" href="loja.html">Loja</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="people-hub.html">People Hub</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#contactos">Contactos</a>
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Contactos</a>
                     </li>
                 </ul>
             </div>
@@ -704,13 +1105,41 @@
     <section class="hero-founder">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-8 text-center hero-content">
+                <div class="col-lg-10 text-center hero-content">
                     <img src="../images/fundador.jpg" alt="Samuel Rolo"
                         class="hero-photo animate__animated animate__fadeIn">
+                    <div class="hero-badge animate__animated animate__fadeInDown">
+                        <span class="badge-icon"><i class="fab fa-linkedin"></i></span>
+                        <span class="badge-text">LinkedIn Top Voice</span>
+                    </div>
                     <p class="section-label animate__animated animate__fadeInDown">Fundador & CEO</p>
                     <h2 class="animate__animated animate__fadeInUp">Samuel Rolo</h2>
-                    <p class="animate__animated animate__fadeInUp">Digital HR & Process Excellence Manager | Humanising
-                        AI in People & Culture | LinkedIn Top Voice</p>
+                    <p class="hero-tagline animate__animated animate__fadeInUp">
+                        <span class="tagline-highlight">Digital HR & Process Excellence Manager</span> |
+                        Humanising AI in People & Culture
+                    </p>
+                    <div class="hero-social animate__animated animate__fadeInUp">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="social-link"><i
+                                class="fab fa-linkedin-in"></i></a>
+                        <a href="mailto:srshare2inspire@gmail.com" class="social-link"><i
+                                class="fas fa-envelope"></i></a>
+                    </div>
+                    <div class="hero-stats animate__animated animate__fadeInUp" data-aos="fade-up">
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="14">0</span><span class="stat-plus">+</span>
+                            <span class="stat-label">Anos de Experiência</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="4">0</span>
+                            <span class="stat-label">Multinacionais</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="100">0</span><span class="stat-plus">+</span>
+                            <span class="stat-label">Projetos HR</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -722,20 +1151,51 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-10 mx-auto">
-                        <h2>A Minha Trajectória</h2>
-                        <p>A minha missão é ajudar profissionais a evoluírem as suas carreiras com clareza, estratégia e
-                            uma narrativa de impacto. Acredito que o verdadeiro diferencial competitivo de um
-                            profissional reside na sua capacidade de traduzir intenção em resultados visíveis e
-                            comunicáveis.</p>
-                        <p>Através da Share2Inspire, foco-me em fornecer ferramentas e insights que transformam a forma
-                            como os profissionais se posicionam no mercado. A excelência não é um destino, mas um
-                            processo de refinamento contínuo da nossa proposta de valor.</p>
-                        <p>Com mais de 14 anos de experiência em gestão de pessoas e processos em contexto global, tenho
-                            trabalhado com líderes e especialistas em organizações como AstraZeneca, BNP Paribas CIB,
-                            Deloitte e EY, sempre com o objetivo de alinhar o talento estratégico aos desafios do
-                            futuro.</p>
-                        <blockquote>"A tua carreira não deve ser um acaso, mas uma construção deliberada de clareza e
-                            autoridade estratégica."
+                        <h2 data-aos="fade-up">A Minha Trajectória</h2>
+
+                        <!-- Mission Statement -->
+                        <div class="mission-block" data-aos="fade-up">
+                            <div class="mission-icon">
+                                <i class="fas fa-compass"></i>
+                            </div>
+                            <div class="mission-content">
+                                <h3>Missão</h3>
+                                <p>Ajudar profissionais a evoluírem as suas carreiras com <strong>clareza</strong>,
+                                    <strong>estratégia</strong> e uma <strong>narrativa de impacto</strong>. O
+                                    verdadeiro diferencial competitivo reside na capacidade de traduzir intenção em
+                                    resultados visíveis e comunicáveis.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Value Cards -->
+                        <div class="value-cards" data-aos="fade-up">
+                            <div class="value-card">
+                                <div class="value-icon"><i class="fas fa-lightbulb"></i></div>
+                                <h4>Visão Estratégica</h4>
+                                <p>Transformar a forma como os profissionais se posicionam no mercado através de
+                                    ferramentas e insights práticos.</p>
+                            </div>
+                            <div class="value-card">
+                                <div class="value-icon"><i class="fas fa-chart-line"></i></div>
+                                <h4>Excelência Contínua</h4>
+                                <p>A excelência não é um destino, mas um processo de refinamento contínuo da nossa
+                                    proposta de valor.</p>
+                            </div>
+                            <div class="value-card">
+                                <div class="value-icon"><i class="fas fa-globe-europe"></i></div>
+                                <h4>Experiência Global</h4>
+                                <p>Mais de 14 anos em gestão de pessoas e processos em organizações como AstraZeneca,
+                                    BNP Paribas, Deloitte e EY.</p>
+                            </div>
+                        </div>
+
+                        <!-- Quote -->
+                        <blockquote class="hero-quote" data-aos="fade-up">
+                            <i class="fas fa-quote-left quote-icon"></i>
+                            <p>A tua carreira não deve ser um acaso, mas uma construção deliberada de clareza e
+                                autoridade estratégica.</p>
+                            <cite>— Samuel Rolo</cite>
                         </blockquote>
                     </div>
                 </div>
@@ -846,75 +1306,118 @@
                 </div>
             </div>
         </section>
-        <!-- Modern Skills Section -->
-        <section class="skills-modern-section">
+        <!-- Skills & Certifications Combined Section -->
+        <section class="skills-certs-section" style="padding: 60px 0; background-color: #f8f9fa;">
             <div class="container">
-                <h2 data-aos="fade-up">Competências em Destaque</h2>
-                <div class="row justify-content-center">
-                    <div class="col-lg-8 text-center" data-aos="fade-up">
-                        <div class="skill-tags" style="justify-content: center;">
-                            <span class="skill-tag">HR Transformation</span>
-                            <span class="skill-tag">Generative AI</span>
-                            <span class="skill-tag">Change Management</span>
-                            <span class="skill-tag">Scrum Master</span>
-                            <span class="skill-tag">Coaching</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+                <div class="row g-5">
+                    <!-- Skills Column -->
+                    <div class="col-lg-6" data-aos="fade-up">
+                        <div class="skills-column">
+                            <h3 class="section-subtitle"><i class="fas fa-star me-2"></i>Competências em Destaque</h3>
 
-        <!-- Certifications Section -->
-        <!-- Certifications Section - LinkedIn Style -->
-        <section class="certifications-section">
-            <div class="container">
-                <h2 data-aos="fade-up">Certificações</h2>
-                <div class="cert-list">
-                    <!-- AstraZeneca AI -->
-                    <div class="cert-card" data-aos="fade-up">
-                        <div class="cert-logo"><i class="fas fa-robot"></i></div>
-                        <div class="cert-content">
-                            <h5>Thriving in the age of AI - Gold Certification</h5>
-                            <p class="issuer">AstraZeneca</p>
-                            <p class="date">Emitido em nov. de 2025</p>
-                        </div>
+                            <!-- Key Skill Areas with Recommendations -->
+                            <div class="skill-area mb-4">
+                                <div class="skill-area-header d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="mb-0 fw-bold" style="color: #343a40;">HR Transformation</h5>
+                                    <span class="badge" style="background: rgba(191, 154, 51, 0.1); color: #BF9A33;">8
+                                        recomendações</span>
+                                </div>
+                                <div class="skill-tags-wrapper mb-2">
+                                    <span class="skill-tag">HR Policies Design</span>
+                                    <span class="skill-tag">HR Processes Design</span>
+                                    <span class="skill-tag">HR Policies Standardization</span>
+                                </div>
+                            </div>
 
-                    </div>
-                    <!-- Scrum.org PSM I -->
-                    <div class="cert-card" data-aos="fade-up" data-aos-delay="50">
-                        <div class="cert-logo"><i class="fas fa-tasks"></i></div>
-                        <div class="cert-content">
-                            <h5>Professional Scrum Master™ I (PSM I)</h5>
-                            <p class="issuer">Scrum.org</p>
-                            <p class="date">Emitido em abr. de 2022</p>
-                        </div>
-                    </div>
-                    <!-- Microsoft & LinkedIn -->
-                    <div class="cert-card" data-aos="fade-up" data-aos-delay="100">
-                        <div class="cert-logo"><i class="fab fa-microsoft"></i></div>
-                        <div class="cert-content">
-                            <h5>Career Essentials in Generative AI</h5>
-                            <p class="issuer">Microsoft & LinkedIn</p>
-                            <p class="date">Emitido em dez. de 2023</p>
-                        </div>
+                            <div class="skill-area mb-4">
+                                <div class="skill-area-header d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="mb-0 fw-bold" style="color: #343a40;">Change Management</h5>
+                                    <span class="badge" style="background: rgba(191, 154, 51, 0.1); color: #BF9A33;">5
+                                        recomendações</span>
+                                </div>
+                                <div class="skill-tags-wrapper mb-2">
+                                    <span class="skill-tag">Tech Adoption</span>
+                                    <span class="skill-tag">New Workplace</span>
+                                    <span class="skill-tag">Culture Change</span>
+                                </div>
+                            </div>
 
-                    </div>
-                    <!-- ServiceNow HRSD -->
-                    <div class="cert-card" data-aos="fade-up" data-aos-delay="150">
-                        <div class="cert-logo"><i class="fas fa-users-cog"></i></div>
-                        <div class="cert-content">
-                            <h5>Human Resources Service Delivery (HRSD) Fundamentals</h5>
-                            <p class="issuer">ServiceNow</p>
-                        </div>
+                            <div class="skill-area mb-4">
+                                <div class="skill-area-header d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="mb-0 fw-bold" style="color: #343a40;">Future of Work</h5>
+                                    <span class="badge" style="background: rgba(191, 154, 51, 0.1); color: #BF9A33;">5
+                                        recomendações</span>
+                                </div>
+                                <div class="skill-tags-wrapper mb-2">
+                                    <span class="skill-tag">Workplace Transition</span>
+                                    <span class="skill-tag">Digital HR</span>
+                                    <span class="skill-tag">Generative AI</span>
+                                </div>
+                            </div>
 
+                            <div class="skill-area mb-4">
+                                <div class="skill-area-header d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="mb-0 fw-bold" style="color: #343a40;">Consulting</h5>
+                                    <span class="badge" style="background: rgba(191, 154, 51, 0.1); color: #BF9A33;">21
+                                        recomendações</span>
+                                </div>
+                                <div class="skill-tags-wrapper mb-2">
+                                    <span class="skill-tag">Strategy</span>
+                                    <span class="skill-tag">Business Transformation</span>
+                                    <span class="skill-tag">Project Management</span>
+                                </div>
+                            </div>
+
+                            <!-- Additional Skills -->
+                            <div class="skill-tags-wrapper">
+                                <span class="skill-tag">Scrum Master</span>
+                                <span class="skill-tag">Coaching</span>
+                                <span class="skill-tag">Process Excellence</span>
+                                <span class="skill-tag">Leadership</span>
+                            </div>
+                        </div>
                     </div>
-                    <!-- Nova SBE Negociação -->
-                    <div class="cert-card" data-aos="fade-up" data-aos-delay="200">
-                        <div class="cert-logo"><i class="fas fa-handshake"></i></div>
-                        <div class="cert-content">
-                            <h5>Negociação Avançada</h5>
-                            <p class="issuer">Nova SBE Executive Education</p>
-                            <p class="date">Emitido em jan. de 2023</p>
+                    <!-- Certifications Column -->
+                    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                        <div class="certs-column">
+                            <h3 class="section-subtitle"><i class="fas fa-certificate me-2"></i>Certificações</h3>
+                            <div class="cert-list-compact">
+                                <div class="cert-item">
+                                    <div class="cert-icon"><i class="fas fa-robot"></i></div>
+                                    <div class="cert-info">
+                                        <strong>Thriving in the age of AI - Gold</strong>
+                                        <span>AstraZeneca • 2025</span>
+                                    </div>
+                                </div>
+                                <div class="cert-item">
+                                    <div class="cert-icon"><i class="fas fa-tasks"></i></div>
+                                    <div class="cert-info">
+                                        <strong>Professional Scrum Master™ I (PSM I)</strong>
+                                        <span>Scrum.org • 2022</span>
+                                    </div>
+                                </div>
+                                <div class="cert-item">
+                                    <div class="cert-icon"><i class="fab fa-microsoft"></i></div>
+                                    <div class="cert-info">
+                                        <strong>Career Essentials in Generative AI</strong>
+                                        <span>Microsoft & LinkedIn • 2023</span>
+                                    </div>
+                                </div>
+                                <div class="cert-item">
+                                    <div class="cert-icon"><i class="fas fa-users-cog"></i></div>
+                                    <div class="cert-info">
+                                        <strong>HRSD Fundamentals</strong>
+                                        <span>ServiceNow</span>
+                                    </div>
+                                </div>
+                                <div class="cert-item">
+                                    <div class="cert-icon"><i class="fas fa-handshake"></i></div>
+                                    <div class="cert-info">
+                                        <strong>Negociação Avançada</strong>
+                                        <span>Nova SBE • 2023</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1001,47 +1504,19 @@
             </div>
         </div>
 
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Swiper.js -->
-        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-        <!-- AOS JS -->
-        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-        <script>
-            AOS.init({
-                duration: 800,
-                easing: 'ease-in-out',
-                once: true
-            });
-
-            // Initialize Experience Swiper
-            const experienceSwiper = new Swiper('.experienceSwiper', {
-                slidesPerView: 1,
-                spaceBetween: 20,
-                loop: true,
-                autoplay: {
-                    delay: 4000,
-                    disableOnInteraction: false,
-                },
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable: true,
-                },
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-                breakpoints: {
-                    640: {
-                        slidesPerView: 2,
-                        spaceBetween: 20,
-                    },
-                    992: {
-                        slidesPerView: 3,
-                        spaceBetween: 30,
-                    },
-                },
-            });
+        prevEl: '.swiper-button-prev',
+        },
+        breakpoints: {
+        640: {
+        slidesPerView: 2,
+        spaceBetween: 20,
+        },
+        992: {
+        slidesPerView: 3,
+        spaceBetween: 30,
+        },
+        },
+        });
         </script>
         <!-- Custom JS -->
         <script>
@@ -1070,6 +1545,42 @@
                     navbar.style.boxShadow = 'none';
                 }
             });
+
+            // Animate stat counters
+            function animateCounters() {
+                const statNumbers = document.querySelectorAll('.stat-number');
+                statNumbers.forEach(stat => {
+                    const target = parseInt(stat.getAttribute('data-count'));
+                    const duration = 2000;
+                    const step = target / (duration / 16);
+                    let current = 0;
+
+                    const updateCounter = () => {
+                        current += step;
+                        if (current < target) {
+                            stat.textContent = Math.floor(current);
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            stat.textContent = target;
+                        }
+                    };
+                    updateCounter();
+                });
+            }
+
+            // Trigger counter animation when hero stats are visible
+            const heroStats = document.querySelector('.hero-stats');
+            if (heroStats) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            animateCounters();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.5 });
+                observer.observe(heroStats);
+            }
         </script>
         <!-- Recommendations Section - Real LinkedIn Testimonials -->
         <!-- Data source: data/recommendations.json -->
@@ -1239,9 +1750,135 @@
                 </div>
             </div>
         </section>
+    </main>
 
-        <!-- Feedback Section -->
-        <script src="../js/feedback.js"></script>
+    <!-- Contact Modal -->
+    <div class="modal fade s2i-modal" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="contactForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="s2i-form-label">Nome *</label>
+                                <input type="text" class="s2i-form-control" id="name" name="name"
+                                    placeholder="O seu nome" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="s2i-form-label">Email *</label>
+                                <input type="email" class="s2i-form-control" id="email" name="email"
+                                    placeholder="O seu email" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="s2i-form-label">Telefone</label>
+                                <input type="tel" class="s2i-form-control" id="phone" name="phone"
+                                    placeholder="9xxxxxxxx">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="reason" class="s2i-form-label">Motivo *</label>
+                                <select class="s2i-form-control" id="reason" name="reason" required>
+                                    <option value="" selected disabled>Selecione um motivo</option>
+                                    <option value="Informações">Informações</option>
+                                    <option value="Orçamento">Orçamento</option>
+                                    <option value="Dúvida Técnica">Dúvida Técnica</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="s2i-form-label">Mensagem *</label>
+                            <textarea class="s2i-form-control" id="message" name="message" rows="4"
+                                placeholder="Como podemos ajudar?" required></textarea>
+                        </div>
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
+                            <label class="form-check-label small text-muted" for="privacy">
+                                Aceito a <a href="politica-privacidade.html" target="_blank"
+                                    class="text-decoration-none s2i-text-gold">Política de Privacidade</a> *
+                            </label>
+                        </div>
+                        <div class="alert alert-success d-none" id="contactSuccess">
+                            <i class="fas fa-check-circle me-2"></i> Mensagem enviada com sucesso!
+                        </div>
+                        <div class="alert alert-danger d-none" id="contactError">
+                            <i class="fas fa-exclamation-circle me-2"></i> Erro ao enviar mensagem.
+                        </div>
+                        <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
+                            <i class="fas fa-paper-plane"></i> Enviar Mensagem
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="../js/contact-form.js"></script>
+    <script src="../js/feedback.js"></script>
+
+    <script>
+        // AOS Initialization
+        AOS.init({
+            duration: 800,
+            offset: 100,
+            once: true
+        });
+
+        // Initialize Experience Swiper
+        const experienceSwiper = new Swiper('.experienceSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 20,
+            loop: true,
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            breakpoints: {
+                640: {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                },
+                992: {
+                    slidesPerView: 3,
+                    spaceBetween: 30,
+                },
+            },
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
