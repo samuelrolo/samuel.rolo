@@ -1,0 +1,306 @@
+/*
+ * S2I Modern Design System
+ * Share2Inspire - Career Excellence
+ * Universal styles for modals, buttons, and mobile UX
+ */
+
+:root {
+    /* Brand Colors */
+    --s2i-gold: #BF9A33;
+    --s2i-dark: #1A1A1A;
+    --s2i-white: #FFFFFF;
+    --s2i-light-bg: #F8F9FA;
+    --s2i-text: #212529;
+    --s2i-text-muted: #6c757d;
+    --s2i-border: #dee2e6;
+    
+    /* Spacing */
+    --s2i-spacing-xs: 8px;
+    --s2i-spacing-sm: 16px;
+    --s2i-spacing-md: 24px;
+    --s2i-spacing-lg: 32px;
+    --s2i-spacing-xl: 48px;
+    
+    /* Typography */
+    --s2i-font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    
+    /* Effects */
+    --s2i-transition: all 0.3s ease;
+    --s2i-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --s2i-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --s2i-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+/* ============================================
+   UNIVERSAL MODAL SPECIFICATION
+   ============================================ */
+
+.s2i-modal .modal-dialog {
+    max-width: 720px;
+    margin: 1.75rem auto;
+}
+
+@media (max-width: 768px) {
+    .s2i-modal .modal-dialog {
+        margin: var(--s2i-spacing-sm);
+        max-width: calc(100% - 32px);
+    }
+}
+
+/* Modal Header: Title left, X button right, NO footer close button */
+.s2i-modal .modal-header {
+    padding: var(--s2i-spacing-md);
+    border-bottom: 1px solid var(--s2i-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.s2i-modal .modal-title {
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--s2i-text);
+    margin: 0;
+}
+
+.s2i-modal .btn-close {
+    margin: 0;
+    padding: 0;
+    opacity: 0.5;
+    transition: var(--s2i-transition);
+}
+
+.s2i-modal .btn-close:hover {
+    opacity: 1;
+}
+
+/* Modal Body: Consistent spacing */
+.s2i-modal .modal-body {
+    padding: var(--s2i-spacing-md);
+}
+
+/* Modal Footer: CTAs only, no redundant close button */
+.s2i-modal .modal-footer {
+    padding: var(--s2i-spacing-md);
+    border-top: 1px solid var(--s2i-border);
+    display: flex;
+    gap: var(--s2i-spacing-sm);
+    justify-content: flex-end;
+}
+
+/* Remove default Bootstrap close button from footer */
+.s2i-modal .modal-footer .btn-close {
+    display: none;
+}
+
+/* ============================================
+   BUTTON SYSTEM
+   ============================================ */
+
+.s2i-btn {
+    font-family: var(--s2i-font-family);
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 12px 24px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    transition: var(--s2i-transition);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+}
+
+.s2i-btn i {
+    font-size: 16px;
+}
+
+/* Primary Gold Button */
+.s2i-btn-primary {
+    background-color: var(--s2i-gold);
+    color: var(--s2i-white);
+    border-color: var(--s2i-gold);
+}
+
+.s2i-btn-primary:hover {
+    background-color: #a57b0a;
+    border-color: #a57b0a;
+    color: var(--s2i-white);
+    transform: translateY(-2px);
+    box-shadow: var(--s2i-shadow-md);
+}
+
+.s2i-btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Secondary Outline Button */
+.s2i-btn-secondary {
+    background-color: transparent;
+    color: var(--s2i-text);
+    border-color: var(--s2i-text);
+}
+
+.s2i-btn-secondary:hover {
+    background-color: var(--s2i-text);
+    color: var(--s2i-white);
+}
+
+/* Outline Gold Button */
+.s2i-btn-outline-gold {
+    background-color: transparent;
+    color: var(--s2i-gold);
+    border-color: var(--s2i-gold);
+}
+
+.s2i-btn-outline-gold:hover {
+    background-color: var(--s2i-gold);
+    color: var(--s2i-white);
+}
+
+/* Disabled State */
+.s2i-btn:disabled,
+.s2i-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Full Width Button */
+.s2i-btn-block {
+    width: 100%;
+}
+
+/* ============================================
+   MOBILE STICKY BOTTOM BAR
+   ============================================ */
+
+@media (max-width: 768px) {
+    .s2i-sticky-bottom {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: var(--s2i-white);
+        padding: var(--s2i-spacing-sm);
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        display: flex;
+        gap: var(--s2i-spacing-sm);
+        justify-content: center;
+    }
+    
+    /* Maximum 2 CTAs */
+    .s2i-sticky-bottom .s2i-btn {
+        flex: 1;
+        max-width: 50%;
+    }
+    
+    .s2i-sticky-bottom .s2i-btn:only-child {
+        max-width: 100%;
+    }
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+
+.s2i-form-group {
+    margin-bottom: var(--s2i-spacing-md);
+}
+
+.s2i-form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--s2i-text);
+    margin-bottom: var(--s2i-spacing-xs);
+    display: block;
+}
+
+.s2i-form-control {
+    font-family: var(--s2i-font-family);
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border: 2px solid var(--s2i-border);
+    border-radius: 8px;
+    transition: var(--s2i-transition);
+}
+
+.s2i-form-control:focus {
+    outline: none;
+    border-color: var(--s2i-gold);
+    box-shadow: 0 0 0 3px rgba(191, 154, 51, 0.1);
+}
+
+.s2i-form-control::placeholder {
+    color: var(--s2i-text-muted);
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
+
+.s2i-card {
+    background: var(--s2i-white);
+    border: 1px solid var(--s2i-border);
+    border-radius: 16px;
+    padding: var(--s2i-spacing-lg);
+    transition: var(--s2i-transition);
+}
+
+.s2i-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--s2i-shadow-lg);
+    border-color: var(--s2i-gold);
+}
+
+.s2i-card-featured {
+    border: 2px solid var(--s2i-gold);
+    position: relative;
+}
+
+.s2i-card-featured::before {
+    content: "Destaque";
+    position: absolute;
+    top: -12px;
+    right: 24px;
+    background: var(--s2i-gold);
+    color: var(--s2i-white);
+    padding: 4px 16px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.s2i-text-gold {
+    color: var(--s2i-gold);
+}
+
+.s2i-text-muted {
+    color: var(--s2i-text-muted);
+}
+
+.s2i-bg-light {
+    background-color: var(--s2i-light-bg);
+}
+
+.s2i-mb-sm { margin-bottom: var(--s2i-spacing-sm); }
+.s2i-mb-md { margin-bottom: var(--s2i-spacing-md); }
+.s2i-mb-lg { margin-bottom: var(--s2i-spacing-lg); }
+
+.s2i-mt-sm { margin-top: var(--s2i-spacing-sm); }
+.s2i-mt-md { margin-top: var(--s2i-spacing-md); }
+.s2i-mt-lg { margin-top: var(--s2i-spacing-lg); }
+
+.s2i-p-sm { padding: var(--s2i-spacing-sm); }
+.s2i-p-md { padding: var(--s2i-spacing-md); }
+.s2i-p-lg { padding: var(--s2i-spacing-lg); }
