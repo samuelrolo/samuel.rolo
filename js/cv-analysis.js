@@ -1,6 +1,7 @@
 /**
  * CV Analysis Controller
  * Refined for Share2Inspire Editorial Guidelines.
+ * NEW FLOW: Free analysis first, then option to pay for report
  */
 
 window.currentReportData = null;
@@ -24,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Analyze Button Handler
+    // Analyze Button Handler - FREE ANALYSIS FLOW
     analyzeBtn.addEventListener('click', async () => {
         if (!selectedFile) return;
 
@@ -41,16 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData();
             formData.append('cv_file', selectedFile);
 
-            // Add required fields for payment flow
-            const email = document.getElementById('userEmail')?.value || 'test@example.com';
-            const name = document.getElementById('userName')?.value || 'Utilizador';
-            const phone = document.getElementById('userPhone')?.value || '912345678';
-
-            formData.append('email', email);
+            // Add name for personalization
+            const name = document.getElementById('userName')?.value || 'Candidato';
             formData.append('name', name);
-            formData.append('phone', phone);
 
-            // Call Backend API
+            // Call Backend API - FREE ANALYSIS
             const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
             console.log("Calling backend:", BACKEND_URL + '/api/services/analyze-cv');
             const response = await fetch(BACKEND_URL + '/api/services/analyze-cv', {
@@ -64,16 +60,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(data.error || "Falha na análise");
             }
 
-            console.log("Payment Flow Response:", data);
+            console.log("Analysis Response:", data);
 
-            // NEW FLOW: Show payment confirmation message
-            // The analysis report will be delivered via email after payment confirmation
-            alert(data.message || "O teu pedido foi recebido. Assim que o pagamento for confirmado, receberás um email com os próximos passos.");
+            // Store report for later use
+            window.currentReportData = data.report;
 
-            // Reset form
-            fileInput.value = '';
-            fileNameDisplay.textContent = 'Nenhum ficheiro selecionado';
-            analyzeBtn.disabled = true;
+            // Populate and show results modal
+            populateResults(data.report);
+            const resultsModal = new bootstrap.Modal(document.getElementById('cvResultsModal'));
+            resultsModal.show();
+
+            // Setup action buttons
+            setupActionButtons();
 
         } catch (error) {
             console.error("Analysis Error:", error);
@@ -87,13 +85,39 @@ document.addEventListener('DOMContentLoaded', () => {
         analyzeBtn.disabled = isLoading;
         if (isLoading) {
             btnSpinner.classList.remove('d-none');
-            btnText.textContent = 'A analisar com AI...'; // Updated text
+            btnText.textContent = 'A analisar com AI...';
         } else {
             btnSpinner.classList.add('d-none');
-            btnText.textContent = 'Analizar Perfil';
+            btnText.textContent = 'Analisar CV';
         }
     }
 });
+
+// Setup Action Buttons after showing results
+function setupActionButtons() {
+    // Button 1: Pedir Revisão de CV - redirect to services
+    const btnRequestReview = document.getElementById('btnRequestReview');
+    if (btnRequestReview) {
+        btnRequestReview.onclick = () => {
+            window.location.href = 'servicos.html#cv-review';
+        };
+    }
+
+    // Button 2: Quero Relatório Personalizado - open payment modal
+    const btnOpenReportPayment = document.getElementById('btnOpenReportPayment');
+    if (btnOpenReportPayment) {
+        btnOpenReportPayment.onclick = () => {
+            // Close results modal
+            const resultsModal = bootstrap.Modal.getInstance(document.getElementById('cvResultsModal'));
+            if (resultsModal) resultsModal.hide();
+
+            // Open report payment modal
+            const paymentModal = new bootstrap.Modal(document.getElementById('reportPaymentModal'));
+            paymentModal.show();
+        };
+    }
+}
+
 
 /**
  * Populates the results modal with the AI Report
@@ -406,7 +430,7 @@ function setupReportPaymentHandler(candidateName) {
         });
     }
 
-    // Handle Payment Confirmation
+    // Handle Payment Confirmation - Call Backend API
     const btnConfirmReportPay = document.getElementById('btnConfirmReportPay');
     if (btnConfirmReportPay) {
         // Remove old listeners
@@ -429,48 +453,42 @@ function setupReportPaymentHandler(candidateName) {
             newPaymentBtn.disabled = true;
 
             try {
-                // Ensure integration exists
-                if (!window.ifthenpayIntegration) {
-                    throw new Error("Sistema de pagamentos não inicializado.");
-                }
-
-                const paymentResult = await window.ifthenpayIntegration.processPayment('mbway', {
-                    amount: '1.00',
-                    mobileNumber: phone,
-                    orderId: 'CVREP-' + Date.now(),
-                    description: 'Relatório CV Completo',
-                    customerName: name,
-                    customerEmail: email
+                // Call Backend API to initiate MB WAY payment
+                const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+                const response = await fetch(BACKEND_URL + '/api/services/request-report-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, phone })
                 });
 
-                if (paymentResult.success) {
-                    statusDiv.innerHTML = `
-                        <div class="alert alert-success">
-                            <i class="fas fa-check-circle me-2"></i>
-                            <strong>O teu pedido foi recebido.</strong> Assim que o pagamento for confirmado, receberás um email com os próximos passos.<br>
-                            <small class="mt-2 d-block">O Relatório Completo de Análise de CV em PDF será enviado automaticamente por email.</small>
-                        </div>
-                    `;
+                const paymentResult = await response.json();
 
-                    // We no longer call deliver-report immediately here.
-                    // The backend will handle it via the Ifthenpay callback or the user will receive it.
-
-                    setTimeout(() => {
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('reportPaymentModal'));
-                        if (modal) modal.hide();
-                        // Reset button
-                        newPaymentBtn.disabled = false;
-                    }, 5000);
-                } else {
-                    throw new Error(paymentResult.message || "Falha no pagamento");
+                if (!response.ok || !paymentResult.success) {
+                    throw new Error(paymentResult.error || "Falha no pagamento");
                 }
+
+                statusDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Pagamento MB WAY iniciado!</strong><br>
+                        <small>Por favor confirme na sua app MB WAY. Após confirmação, receberá o relatório por email.</small>
+                    </div>
+                `;
+
+                // Close modal after a few seconds
+                setTimeout(() => {
+                    try {
+                        const modalEl = document.getElementById('reportPaymentModal');
+                        const modal = bootstrap.Modal.getInstance(modalEl);
+                        if (modal) modal.hide();
+                    } catch (e) { }
+                }, 5000);
+
             } catch (err) {
-                console.error(err);
+                console.error("Payment Error:", err);
                 statusDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${err.message}</div>`;
                 newPaymentBtn.disabled = false;
             }
         });
     }
 }
-
-
