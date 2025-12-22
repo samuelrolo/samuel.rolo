@@ -258,6 +258,178 @@
             color: var(--primary-gold);
         }
 
+        /* Mural Cards */
+        .mural-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 25px;
+            height: 100%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .mural-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-gold);
+        }
+
+        .mural-card.featured {
+            border: 2px solid var(--primary-gold);
+        }
+
+        .featured-tag {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--primary-gold);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .mural-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .mural-icon i {
+            color: #fff;
+            font-size: 1.3rem;
+        }
+
+        .mural-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary-gold);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .mural-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark-bg);
+            margin-bottom: 8px;
+        }
+
+        .mural-tagline {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .mural-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+            flex-grow: 1;
+        }
+
+        .mural-features li {
+            font-size: 0.8rem;
+            color: #555;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mural-features li i {
+            color: #10B981;
+            font-size: 0.7rem;
+        }
+
+        .mural-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 15px;
+            margin-top: auto;
+        }
+
+        .mural-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-bg);
+        }
+
+        .mural-btn {
+            background: var(--primary-gold);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .mural-btn:hover {
+            background: #a58428;
+            color: #fff;
+        }
+
+        .mural-btn-disabled {
+            background: #e0e0e0;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        /* Uniformized Service Cards */
+        .service-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid #e0e0e0 !important;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            border-color: #BF9A33 !important;
+            box-shadow: 0 12px 35px rgba(191, 154, 51, 0.15);
+        }
+
+        .service-card .btn-service {
+            background: #BF9A33;
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .service-card .btn-service:hover {
+            background: #a58428;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(191, 154, 51, 0.3);
+        }
+
         @media (max-width: 768px) {
             .hero-services h1 {
                 font-size: 2.2rem;
@@ -284,72 +456,177 @@
         gtag('config', 'G-8GQ1KM9FQS');
     </script>
 
-    <!-- Header e Navegação -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="../index.html">
-                <img src="../images/logo.png" alt="Share2Inspire Logo" height="40">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.html">Início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="sobre.html">Sobre</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="servicos.html">Serviços</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="loja.html">Loja</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="cv-analysis.html">CV Analyser</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="humanos-maquinas.html">Humanos &amp; Máquinas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="people-hub.html">People Hub</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Contactos</a>
-                    </li>
-                </ul>
+    <header class="header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="../index.html">
+                    <img src="../images/logo.png" alt="Share2Inspire Logo" height="40">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.html">Início</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="sobre.html">Sobre</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="servicos.html">Serviços</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="cv-analysis.html">CV Analyser</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="loja.html">Loja</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="people-hub.html">People Hub</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="modal"
+                                data-bs-target="#contactModal">Contactos</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
     <!-- Page Header & Purpose -->
-    <section class="page-header pb-0 mb-0 bg-white">
+    <section class="page-header py-5" style="background: linear-gradient(135deg, #1A1A1A 0%, #2d2d2d 100%);">
         <div class="container">
             <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="mb-4">Serviços</h1>
+                <div class="col-lg-12 text-center text-white">
+                    <h1 class="display-4 fw-bold mb-3">Serviços</h1>
                     <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Serviços</li>
+                        <ol class="breadcrumb justify-content-center mb-0">
+                            <li class="breadcrumb-item"><a href="../index.html" class="text-decoration-none"
+                                    style="color: #BF9A33;">Início</a></li>
+                            <li class="breadcrumb-item active text-white-50" aria-current="page">Serviços</li>
                         </ol>
                     </nav>
                 </div>
             </div>
-            <!-- New Purpose Block -->
-            <div class="row mt-5">
-                <div class="col-12 text-center max-w-800 mx-auto">
-                    <h2 class="h3 fw-bold mb-3" style="color: var(--s2i-black);">Ajudamos profissionais a entrar no
-                        mercado e a evoluir a carreira de forma estratégica e consciente.</h2>
-                    <p class="text-muted fs-5 mb-5">Análise inteligente, revisão humana e decisões orientadas a mercado.
+        </div>
+    </section>
+
+    <!-- Purpose Block -->
+    <section class="purpose-block py-5 bg-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center" style="max-width: 800px; margin: 0 auto;">
+                    <h2 class="h3 fw-bold mb-3">Ajudamos profissionais a entrar no mercado e a evoluir a carreira de
+                        forma estratégica e consciente.</h2>
+                    <p class="text-muted fs-5 mb-0">Análise inteligente, revisão humana e decisões orientadas a mercado.
                     </p>
                 </div>
             </div>
         </div>
     </section>
+
+
+    <!-- Coming Soon Services - Animated Sliding Banner -->
+    <section class="coming-soon-services py-3"
+        style="background: linear-gradient(90deg, #1A1A1A, #2d2d2d); overflow: hidden;">
+        <div class="coming-soon-wrapper">
+            <div class="coming-soon-track">
+                <div class="coming-soon-content">
+                    <span class="coming-soon-label">EM BREVE</span>
+                    <div class="coming-soon-item">
+                        <i class="fab fa-linkedin-in"></i>
+                        <span>Estratégia de marca pessoal</span>
+                    </div>
+                    <span class="separator">•</span>
+                    <div class="coming-soon-item">
+                        <i class="fas fa-comments"></i>
+                        <span>Preparação de transição de carreira</span>
+                    </div>
+                    <span class="separator">•</span>
+                    <div class="coming-soon-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Programa mensal de coaching</span>
+                    </div>
+                    <span class="separator">•</span>
+                </div>
+                <div class="coming-soon-content">
+                    <span class="coming-soon-label">EM BREVE</span>
+                    <div class="coming-soon-item">
+                        <i class="fab fa-linkedin-in"></i>
+                        <span>Estratégia de marca pessoal</span>
+                    </div>
+                    <span class="separator">•</span>
+                    <div class="coming-soon-item">
+                        <i class="fas fa-comments"></i>
+                        <span>Preparação de transição de carreira</span>
+                    </div>
+                    <span class="separator">•</span>
+                    <div class="coming-soon-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Programa mensal de coaching</span>
+                    </div>
+                    <span class="separator">•</span>
+                </div>
+            </div>
+        </div>
+        <style>
+            .coming-soon-wrapper {
+                width: 100%;
+                overflow: hidden;
+            }
+
+            .coming-soon-track {
+                display: flex;
+                animation: scroll-left 20s linear infinite;
+            }
+
+            .coming-soon-content {
+                display: flex;
+                align-items: center;
+                gap: 2rem;
+                flex-shrink: 0;
+                padding-right: 2rem;
+            }
+
+            .coming-soon-label {
+                color: #BF9A33;
+                font-weight: 700;
+                font-size: 0.8rem;
+                letter-spacing: 2px;
+            }
+
+            .coming-soon-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: #fff;
+                font-size: 0.9rem;
+            }
+
+            .coming-soon-item i {
+                color: #BF9A33;
+                font-size: 1rem;
+            }
+
+            .separator {
+                color: #BF9A33;
+            }
+
+            @keyframes scroll-left {
+                0% {
+                    transform: translateX(0);
+                }
+
+                100% {
+                    transform: translateX(-50%);
+                }
+            }
+        </style>
+    </section>
+
 
     <!-- Services Grid Section -->
     <section class="service-section py-5">
@@ -378,7 +655,7 @@
                             </li>
                         </ul>
                         <div class="mt-auto">
-                            <button class="btn btn-dark w-100 py-3 rounded-pill fw-bold" data-bs-toggle="modal"
+                            <button class="btn btn-service" data-bs-toggle="modal"
                                 data-bs-target="#kickstartModal">Marcar Sessão</button>
                         </div>
                     </div>
@@ -386,11 +663,10 @@
 
                 <!-- Revisão Profissional de CV -->
                 <div class="col-lg-4">
-                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0"
-                        style="background: #fff; transform: scale(1.05); z-index: 2; border: 2px solid #BF9A33 !important; transition: transform 0.3s ease;">
+                    <div class="service-card h-100 d-flex flex-column text-center">
                         <div class="service-icon mb-4 mx-auto d-flex align-items-center justify-content-center"
-                            style="width: 80px; height: 80px; background: #BF9A33; border-radius: 50%;">
-                            <i class="fas fa-user-tie fa-2x text-white"></i>
+                            style="width: 80px; height: 80px; background: rgba(191, 154, 51, 0.1); border-radius: 50%;">
+                            <i class="fas fa-user-tie fa-2x" style="color: #BF9A33;"></i>
                         </div>
                         <h3 class="fw-bold mb-3">Revisão de CV</h3>
                         <p class="service-tagline fw-semibold"
@@ -407,9 +683,7 @@
                                     style="color: #BF9A33 !important;"></i>Posicionamento de valor real</li>
                         </ul>
                         <div class="mt-auto">
-                            <a href="cv-analysis.html#direct-review"
-                                class="btn btn-warning w-100 py-3 rounded-pill fw-bold text-white"
-                                style="background-color: #BF9A33; border: none;">Solicitar Revisão</a>
+                            <a href="cv-analysis.html#direct-review" class="btn btn-service">Solicitar Revisão</a>
                         </div>
                     </div>
                 </div>
@@ -437,8 +711,7 @@
                             </li>
                         </ul>
                         <div class="mt-auto">
-                            <a href="cv-analysis.html"
-                                class="btn btn-outline-dark w-100 py-3 rounded-pill fw-bold">Iniciar Diagnóstico</a>
+                            <a href="cv-analysis.html" class="btn btn-service">Iniciar Diagnóstico</a>
                         </div>
                     </div>
                 </div>
@@ -447,96 +720,124 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="cta-section py-5" style="background-color: #f8f9fa;">
-        <div class="container text-center">
-            <h2 class="fw-bold mb-3">Não encontraste o que procuravas?</h2>
-            <p class="text-muted mb-4">Entra em contacto connosco para desenharmos soluções personalizadas para os teus
-                desafios.</p>
-            <a href="../index.html#contactos" class="btn btn-dark px-5 py-3 rounded-pill fw-bold">Contacta-nos</a>
-        </div>
-    </section>
-    <div class="modal fade" id="kickstartModal" tabindex="-1" aria-labelledby="kickstartModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 720px;">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-                <div class="modal-header border-0 pb-0 px-4 pt-4">
-                    <h5 class="modal-title fw-bold" id="kickstartModalLabel">Marcar Kickstart Pro</h5>
+    <!-- Modals Section -->
+
+    <!-- Kickstart Modal -->
+    <div class="modal fade s2i-modal" id="kickstartModal" tabindex="-1" aria-labelledby="kickstartModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="kickstartModalLabel">Marcar Kickstart Pro</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4">
+                <div class="modal-body">
                     <div class="mb-4">
                         <h6 class="fw-bold text-dark mb-2">1. Agendamento</h6>
                         <p class="text-muted small mb-3">Garanta o seu horário no nosso calendário antes de confirmar o
                             pagamento.</p>
                         <a href="https://calendar.app.google/8gzvyuiJoPyS6t9i7" target="_blank"
-                            class="btn btn-outline-dark btn-sm rounded-pill px-4 py-2 fw-semibold">
+                            class="s2i-btn s2i-btn-outline s2i-btn-block">
                             <i class="fas fa-calendar-alt me-2"></i> Abrir Calendário
                         </a>
                     </div>
-
-                    <hr class="opacity-10 my-4">
-
+                    <hr class="s2i-hr">
                     <form id="kickstartForm">
                         <h6 class="fw-bold text-dark mb-3">2. Confirmação e Pagamento</h6>
                         <input type="hidden" name="service" value="Kickstart Pro">
+                        <input type="radio" class="btn-check" name="payment_method" id="pay_mbway" value="mbway"
+                            checked>
+                        <label class="btn btn-outline-dark rounded-3 py-3" for="pay_mbway">
+                            <i class="fas fa-mobile-alt me-2"></i> MB WAY
+                        </label>
+                </div>
+            </div>
+            <div class="col-12">
+                <label for="kickstartPhone" class="form-label small fw-bold text-muted text-uppercase">Telemóvel (MB
+                    WAY)</label>
+                <input type="tel" class="form-control bg-light border-0 py-3 rounded-3" id="kickstartPhone" name="phone"
+                    placeholder="9XXXXXXXX" required>
+            </div>
+            <div class="col-12">
+                <label for="kickstartObjectives" class="form-label small fw-bold text-muted text-uppercase">Objetivos da
+                    Sessão</label>
+                <textarea class="form-control bg-light border-0 py-3 rounded-3" id="kickstartObjectives"
+                    name="objectives" rows="3" required></textarea>
+            </div>
+            <div class="col-12">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="kickstartTerms" required>
+                    <label class="form-check-label small text-muted font-italic" for="kickstartTerms">
+                        Concordo com a <a href="politica-privacidade.html" target="_blank"
+                            class="text-decoration-none">Política de Privacidade</a>
+                    </label>
+                </div>
+            </div>
+            <div class="col-12 mt-4">
+                <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold border-0"
+                    style="background-color: #BF9A33;">
+                    Confirmar e Pagar (35€)
+                </button>
+            </div>
+        </div>
+        </form>
+    </div>
+    </div>
+    </div>
+    </div>
 
+    <!-- Modal: Contacto -->
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 720px;">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0 px-4 pt-4">
+                    <h5 class="modal-title fw-bold" id="contactModalLabel">Entre em Contacto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="contactForm">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="kickstartName"
-                                    class="form-label small fw-bold text-muted text-uppercase">Nome Completo</label>
-                                <input type="text" class="form-control bg-light border-0 py-3 rounded-3"
-                                    id="kickstartName" name="name" required>
+                                <label for="name"
+                                    class="form-label small fw-bold text-muted text-uppercase">Nome</label>
+                                <input type="text" class="form-control bg-light border-0 py-3 rounded-3" id="name"
+                                    name="name" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="kickstartEmail"
+                                <label for="reason"
+                                    class="form-label small fw-bold text-muted text-uppercase">Motivo</label>
+                                <select class="form-select bg-light border-0 py-3 rounded-3" id="reason" name="reason"
+                                    required>
+                                    <option value="" disabled selected>Selecione um motivo</option>
+                                    <option value="Informações">Informações</option>
+                                    <option value="Orçamento">Orçamento</option>
+                                    <option value="Dúvida Técnica">Dúvida Técnica</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email"
                                     class="form-label small fw-bold text-muted text-uppercase">Email</label>
-                                <input type="email" class="form-control bg-light border-0 py-3 rounded-3"
-                                    id="kickstartEmail" name="email" required>
+                                <input type="email" class="form-control bg-light border-0 py-3 rounded-3" id="email"
+                                    name="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone"
+                                    class="form-label small fw-bold text-muted text-uppercase">Telefone</label>
+                                <input type="tel" class="form-control bg-light border-0 py-3 rounded-3" id="phone"
+                                    name="phone">
                             </div>
                             <div class="col-12">
-                                <label class="form-label small fw-bold text-muted text-uppercase">Método de
-                                    Pagamento</label>
-                                <div class="btn-group w-100" role="group">
-                                    <input type="radio" class="btn-check" name="payment_method" id="pay_mbway"
-                                        value="mbway" checked>
-                                    <label class="btn btn-outline-dark rounded-3 py-3" for="pay_mbway">
-                                        <i class="fas fa-mobile-alt me-2"></i> MB WAY
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <label for="kickstartPhone"
-                                    class="form-label small fw-bold text-muted text-uppercase">Telemóvel (MB
-                                    WAY)</label>
-                                <input type="tel" class="form-control bg-light border-0 py-3 rounded-3"
-                                    id="kickstartPhone" name="phone" placeholder="9XXXXXXXX" required>
-                            </div>
-                            <div class="col-12">
-                                <label for="kickstartObjectives"
-                                    class="form-label small fw-bold text-muted text-uppercase">Objetivos da
-                                    Sessão</label>
-                                <textarea class="form-control bg-light border-0 py-3 rounded-3" id="kickstartObjectives"
-                                    name="objectives" rows="3" required></textarea>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="kickstartTerms" required>
-                                    <label class="form-check-label small text-muted font-italic" for="kickstartTerms">
-                                        Concordo com a <a href="politica-privacidade.html" target="_blank"
-                                            class="text-decoration-none">Política de Privacidade</a>
-                                    </label>
-                                </div>
+                                <label for="message"
+                                    class="form-label small fw-bold text-muted text-uppercase">Mensagem</label>
+                                <textarea class="form-control bg-light border-0 py-3 rounded-3" id="message"
+                                    name="message" rows="4" required></textarea>
                             </div>
                             <div class="col-12 mt-4">
-                                <<<<<<< HEAD <button type="submit"
-                                    class="btn btn-primary w-100 py-3 rounded-pill fw-bold border-0"
+                                <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold border-0"
                                     style="background-color: #BF9A33;">
-                                    Confirmar e Pagar (50€)
-                                    =======
-                                    <button type="submit" class="btn btn-primary w-100 fw-bold py-2 rounded-3 shadow-sm"
-                                        style="background-color: var(--primary-gold); border: none;">
-                                        Confirmar e Pagar (35€)
-                                        >>>>>>> e849ad4962be7638439a5c662ecb2bf65146676c
-                                    </button>
+                                    Enviar Mensagem
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -545,346 +846,196 @@
         </div>
     </div>
 
-    <<<<<<< HEAD <!-- Modal: Contacto -->
-        <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" style="max-width: 720px;">
-                <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-                    <div class="modal-header border-0 pb-0 px-4 pt-4">
-                        <h5 class="modal-title fw-bold" id="contactModalLabel">Entre em Contacto</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- CV Review Modal -->
+    <div class="modal fade" id="cvReviewModal" tabindex="-1" aria-labelledby="cvReviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h4 class="modal-title fw-bold text-dark mx-auto" id="cvReviewModalLabel">Revisão Profissional de CV
+                    </h4>
+                    <button type="button" class="btn-close position-absolute end-0 top-0 m-3" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4 py-4">
+                    <p class="text-muted small mb-4">Obtenha uma análise detalhada feita por um especialista sénior de
+                        RH, com feedback personalizado e sugestões de melhoria.</p>
+                    <div class="alert alert-warning border-0 rounded-3 p-3 mb-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-dark fw-bold"><i class="fas fa-tag me-2"></i>Valor do Serviço:</span>
+                            <span class="fw-bold fs-4 text-dark">25€</span>
+                        </div>
+                        <small class="d-block mt-2 text-muted"><i class="fas fa-clock me-1"></i> Entrega em até 5 dias
+                            úteis</small>
                     </div>
-                    <div class="modal-body p-4">
-                        <form id="contactForm">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="name"
-                                        class="form-label small fw-bold text-muted text-uppercase">Nome</label>
-                                    <input type="text" class="form-control bg-light border-0 py-3 rounded-3" id="name"
-                                        name="name" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="reason"
-                                        class="form-label small fw-bold text-muted text-uppercase">Motivo</label>
-                                    <select class="form-select bg-light border-0 py-3 rounded-3" id="reason"
-                                        name="reason" required>
-                                        <option value="" disabled selected>Selecione um motivo</option>
-                                        <option value="Informações">Informações</option>
-                                        <option value="Orçamento">Orçamento</option>
-                                        <option value="Dúvida Técnica">Dúvida Técnica</option>
-                                        <option value="Outro">Outro</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="email"
-                                        class="form-label small fw-bold text-muted text-uppercase">Email</label>
-                                    <input type="email" class="form-control bg-light border-0 py-3 rounded-3" id="email"
-                                        name="email" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="phone"
-                                        class="form-label small fw-bold text-muted text-uppercase">Telefone</label>
-                                    <input type="tel" class="form-control bg-light border-0 py-3 rounded-3" id="phone"
-                                        name="phone">
-                                </div>
-                                <div class="col-12">
-                                    <label for="message"
-                                        class="form-label small fw-bold text-muted text-uppercase">Mensagem</label>
-                                    <textarea class="form-control bg-light border-0 py-3 rounded-3" id="message"
-                                        name="message" rows="4" required></textarea>
-                                </div>
-                                <div class="col-12 mt-4">
-                                    <button type="submit"
-                                        class="btn btn-primary w-100 py-3 rounded-pill fw-bold border-0"
-                                        style="background-color: #BF9A33;">
-                                        Enviar Mensagem
-                                    </button>
-                                </div>
+                    <form id="cvReviewForm">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase">Email para Receber Relatório
+                                *</label>
+                            <input type="email" class="form-control bg-light border-0 py-2 rounded-3" id="cvReviewEmail"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase">Carregar o seu CV (PDF/DOCX)
+                                *</label>
+                            <input type="file" class="form-control bg-light border-0 py-2 rounded-3" id="cvReviewFile"
+                                accept=".pdf,.docx" required>
+                            <div class="form-text">O seu CV será analisado e devolvido com anotações detalhadas.</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="cvReviewTerms" required>
+                                <label class="form-check-label small text-muted" for="cvReviewTerms">
+                                    Concordo com a <a href="politica-privacidade.html" target="_blank"
+                                        class="text-decoration-none text-primary">Política de Privacidade</a> *
+                                </label>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                        <button type="submit" class="btn w-100 py-3 rounded-pill fw-bold"
+                            style="background-color: #BF9A33; color: #fff;">
+                            <i class="fas fa-envelope me-2"></i>Receber Confirmação e Link de Pagamento
+                        </button>
+                    </form>
+                    <div id="cvReviewFormMessage" class="mt-3"></div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Standard Footer -->
-        <footer id="contactos">
-            <div class="container">
-                <div class="footer-container">
-                    <div class="footer-left">
-                        <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
+    <!-- Footer -->
+    <footer id="contactos" style="background-color: #1A1A1A; color: #fff; padding: 50px 0;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <p class="mb-2">© 2025 Share2Inspire. Todos os direitos reservados.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="mb-3">
+                        <p class="mb-1"><i class="fas fa-envelope me-2" style="color: #BF9A33;"></i>
+                            srshare2inspire@gmail.com</p>
+                        <p class="mb-1"><i class="fas fa-phone me-2" style="color: #BF9A33;"></i> +351 961 925 050</p>
                     </div>
-                    <div class="footer-right">
-                        <div class="footer-contact">
-                            <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
-                            <p><i class="fas fa-phone"></i> +351 961 925 050</p>
-                        </div>
-                        <div class="footer-social">
-                            <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i
-                                    class="fab fa-linkedin"></i></a>
-                            <a href="https://www.instagram.com/share2inspire_" target="_blank"><i
-                                    class="fab fa-instagram"></i></a>
-                        </div>
+                    <div>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-white me-3"><i
+                                class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="https://www.instagram.com/share2inspire_" target="_blank" class="text-white"><i
+                                class="fab fa-instagram fa-lg"></i></a>
                     </div>
                 </div>
-                <div class="footer-links" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 15px;">
-                    <a href="politica-privacidade.html">Política de Privacidade</a>
-                    <a href="politica-cookies.html">Política de Cookies</a>
-                    <a href="tratamento-dados.html">Tratamento de Dados</a>
-                    <a href="informacao-legal.html">Informação Legal</a>
-                    =======
-                    <!-- CV Review Modal (with File Upload) -->
-                    <div class="modal fade" id="cvReviewModal" tabindex="-1" aria-labelledby="cvReviewModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header border-0 pb-0">
-                                    <h4 class="modal-title fw-bold text-dark mx-auto" id="cvReviewModalLabel">Revisão
-                                        Profissional de CV
-                                    </h4>
-                                    <button type="button" class="btn-close position-absolute end-0 top-0 m-3"
-                                        data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body px-4 py-4">
-                                    <p class="text-muted small mb-4">Obtenha uma análise detalhada feita por um
-                                        especialista sénior de
-                                        RH, com feedback personalizado e sugestões de melhoria.</p>
+            </div>
+            <hr class="my-4" style="opacity: 0.2;">
+            <div class="row small">
+                <div class="col-12 text-center text-md-start">
+                    <a href="politica-privacidade.html" class="text-decoration-none text-white-50 me-3">Política de
+                        Privacidade</a>
+                    <a href="politica-cookies.html" class="text-decoration-none text-white-50 me-3">Política de
+                        Cookies</a>
+                    <a href="tratamento-dados.html" class="text-decoration-none text-white-50 me-3">Tratamento de
+                        Dados</a>
+                    <a href="informacao-legal.html" class="text-decoration-none text-white-50">Informação Legal</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-                                    <div class="alert alert-warning border-0 rounded-3 p-3 mb-4">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="text-dark fw-bold"><i class="fas fa-tag me-2"></i>Valor do
-                                                Serviço:</span>
-                                            <span class="fw-bold fs-4 text-dark">25€</span>
-                                        </div>
-                                        <small class="d-block mt-2 text-muted"><i class="fas fa-clock me-1"></i> Entrega
-                                            em até 5 dias
-                                            úteis</small>
-                                    </div>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/contact-form.js"></script>
+    <script src="../js/brevo-integration.js"></script>
+    <script src="../js/feedback-widget.js"></script>
 
-                                    <form id="cvReviewForm">
-                                        <div class="mb-3">
-                                            <label class="form-label small fw-bold text-uppercase">Email para Receber
-                                                Relatório
-                                                *</label>
-                                            <input type="email" class="form-control bg-light border-0 py-2 rounded-3"
-                                                id="cvReviewEmail" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="form-label small fw-bold text-uppercase">Carregar o seu CV
-                                                (PDF/DOCX)
-                                                *</label>
-                                            <input type="file" class="form-control bg-light border-0 py-2 rounded-3"
-                                                id="cvReviewFile" accept=".pdf,.docx" required>
-                                            <div class="form-text">O seu CV será analisado e devolvido com anotações
-                                                detalhadas.</div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="cvReviewTerms"
-                                                    required>
-                                                <label class="form-check-label small text-muted" for="cvReviewTerms">
-                                                    Concordo com a <a href="politica-privacidade.html" target="_blank"
-                                                        class="text-decoration-none text-primary">Política de
-                                                        Privacidade</a> *
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <button type="submit" class="btn btn-s2i-primary w-100">
-                                            <i class="fas fa-envelope me-2"></i>Receber Confirmação e Link de Pagamento
-                                        </button>
-                                    </form>
-                                    <div id="cvReviewFormMessage" class="mt-3"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <script src="js/email-flows.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Kickstart Pro Form
+            const kickstartForm = document.getElementById('kickstartForm');
+            if (kickstartForm) {
+                kickstartForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
 
-                    <!-- Contact Modal -->
-                    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header" style="background-color: var(--primary-gold); color: #fff;">
-                                    <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="contactForm">
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <label for="name" class="form-label">Nome *</label>
-                                                <input type="text" class="form-control" id="name" name="name" required>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label for="email" class="form-label">Email *</label>
-                                                <input type="email" class="form-control" id="email" name="email"
-                                                    required>
-                                            </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="subject" class="form-label">Assunto *</label>
-                                            <input type="text" class="form-control" id="subject" name="subject"
-                                                required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="message" class="form-label">Mensagem *</label>
-                                            <textarea class="form-control" id="message" name="message" rows="5"
-                                                required></textarea>
-                                        </div>
-                                        <div class="mb-3 form-check">
-                                            <input type="checkbox" class="form-check-input" id="privacy" name="privacy"
-                                                required>
-                                            <label class="form-check-label" for="privacy">Concordo com a Política de
-                                                Privacidade
-                                                *</label>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    const email = document.getElementById('kickstartEmail').value;
+                    const name = document.getElementById('kickstartName').value;
+                    const submitBtn = kickstartForm.querySelector('button[type="submit"]');
+                    const messageDiv = document.getElementById('kickstartFormMessage');
 
-                    <!-- Footer - Canonical Version -->
-                    <footer id="contactos" style="background-color: #f8f9fa; padding: 60px 0; margin-top: auto;">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-6 mb-4 mb-md-0">
-                                    <p class="text-muted mb-2">© 2025 Share2Inspire. Todos os direitos reservados.</p>
-                                </div>
-                                <div class="col-md-6 text-md-end">
-                                    <div class="mb-3">
-                                        <p class="mb-1"><i class="fas fa-envelope me-2 text-warning"></i>
-                                            srshare2inspire@gmail.com</p>
-                                        <p class="mb-1"><i class="fas fa-phone me-2 text-warning"></i> +351 961 925 050
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"
-                                            class="text-dark me-3"><i class="fab fa-linkedin fa-lg"></i></a>
-                                        <a href="https://www.instagram.com/share2inspire_" target="_blank"
-                                            class="text-dark"><i class="fab fa-instagram fa-lg"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="my-4 opacity-25">
-                            <div class="row small text-muted">
-                                <div class="col-12 text-center text-md-start">
-                                    <a href="politica-privacidade.html"
-                                        class="text-decoration-none text-muted me-3">Política de
-                                        Privacidade</a>
-                                    <a href="politica-cookies.html"
-                                        class="text-decoration-none text-muted me-3">Política de
-                                        Cookies</a>
-                                    <a href="tratamento-dados.html"
-                                        class="text-decoration-none text-muted me-3">Tratamento
-                                        de Dados</a>
-                                    <a href="informacao-legal.html" class="text-decoration-none text-muted">Informação
-                                        Legal</a>
-                                </div>
-                            </div>
-                        </div>
-                    </footer>
+                    if (!window.EmailFlows.isValidEmail(email)) {
+                        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Por favor, introduza um email válido.</div>';
+                        return;
+                    }
 
-                    <!-- Scripts -->
-                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-                    <script src="../js/contact-form.js"></script>
-                    <script src="../js/brevo-integration.js"></script>
-                    <script src="../js/feedback-widget.js"></script>
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>A enviar...';
 
-                    <script src="js/email-flows.js"></script>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            // Kickstart Pro Form
-                            const kickstartForm = document.getElementById('kickstartForm');
-                            if (kickstartForm) {
-                                kickstartForm.addEventListener('submit', async function (e) {
-                                    e.preventDefault();
-
-                                    const email = document.getElementById('kickstartEmail').value;
-                                    const name = document.getElementById('kickstartName').value;
-                                    const submitBtn = kickstartForm.querySelector('button[type="submit"]');
-                                    const messageDiv = document.getElementById('kickstartFormMessage');
-
-                                    if (!window.EmailFlows.isValidEmail(email)) {
-                                        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Por favor, introduza um email válido.</div>';
-                                        return;
-                                    }
-
-                                    submitBtn.disabled = true;
-                                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>A enviar...';
-
-                                    try {
-                                        const result = await window.EmailFlows.sendKickstartConfirmation(email, name);
-                                        if (result.success) {
-                                            messageDiv.innerHTML = `
+                    try {
+                        const result = await window.EmailFlows.sendKickstartConfirmation(email, name);
+                        if (result.success) {
+                            messageDiv.innerHTML = `
                                 <div class="alert alert-success">
                                     <i class="fas fa-check-circle me-2"></i>
                                     <strong>Confirmação enviada!</strong><br>
                                     Verifique o seu email (${email}) para confirmar a data da sessão e efetuar o pagamento.
                                 </div>`;
-                                            kickstartForm.reset();
-                                        } else {
-                                            messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>${result.message}</div>`;
-                                        }
-                                    } catch (error) {
-                                        messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${error.message}</div>`;
-                                    } finally {
-                                        submitBtn.disabled = false;
-                                        submitBtn.innerHTML = '<i class="fas fa-envelope me-2"></i>Receber Confirmação por Email';
-                                    }
-                                });
-                            }
+                            kickstartForm.reset();
+                        } else {
+                            messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>${result.message}</div>`;
+                        }
+                    } catch (error) {
+                        messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${error.message}</div>`;
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-envelope me-2"></i>Receber Confirmação por Email';
+                    }
+                });
+            }
 
-                            // CV Review Form
-                            const cvReviewForm = document.getElementById('cvReviewForm');
-                            if (cvReviewForm) {
-                                cvReviewForm.addEventListener('submit', async function (e) {
-                                    e.preventDefault();
+            // CV Review Form
+            const cvReviewForm = document.getElementById('cvReviewForm');
+            if (cvReviewForm) {
+                cvReviewForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
 
-                                    const email = document.getElementById('cvReviewEmail').value;
-                                    const fileInput = document.getElementById('cvReviewFile');
-                                    const file = fileInput.files[0];
-                                    const submitBtn = cvReviewForm.querySelector('button[type="submit"]');
-                                    const messageDiv = document.getElementById('cvReviewFormMessage');
+                    const email = document.getElementById('cvReviewEmail').value;
+                    const fileInput = document.getElementById('cvReviewFile');
+                    const file = fileInput.files[0];
+                    const submitBtn = cvReviewForm.querySelector('button[type="submit"]');
+                    const messageDiv = document.getElementById('cvReviewFormMessage');
 
-                                    if (!window.EmailFlows.isValidEmail(email)) {
-                                        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Por favor, introduza um email válido.</div>';
-                                        return;
-                                    }
+                    if (!window.EmailFlows.isValidEmail(email)) {
+                        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Por favor, introduza um email válido.</div>';
+                        return;
+                    }
 
-                                    if (!file) {
-                                        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Por favor, carregue o seu CV.</div>';
-                                        return;
-                                    }
+                    if (!file) {
+                        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Por favor, carregue o seu CV.</div>';
+                        return;
+                    }
 
-                                    submitBtn.disabled = true;
-                                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>A enviar...';
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>A enviar...';
 
-                                    try {
-                                        const result = await window.EmailFlows.sendCVReviewConfirmation(email, file);
-                                        if (result.success) {
-                                            messageDiv.innerHTML = `
+                    try {
+                        const result = await window.EmailFlows.sendCVReviewConfirmation(email, file);
+                        if (result.success) {
+                            messageDiv.innerHTML = `
                                 <div class="alert alert-success">
                                     <i class="fas fa-check-circle me-2"></i>
                                     <strong>Pedido registado!</strong><br>
                                     Enviámos um email para ${email} com o link de pagamento.<br>
                                     Após o pagamento, o seu CV será analisado em até 5 dias úteis.
                                 </div>`;
-                                            cvReviewForm.reset();
-                                        } else {
-                                            messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>${result.message}</div>`;
-                                        }
-                                    } catch (error) {
-                                        messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${error.message}</div>`;
-                                    } finally {
-                                        submitBtn.disabled = false;
-                                        submitBtn.innerHTML = '<i class="fas fa-envelope me-2"></i>Receber Confirmação e Link de Pagamento';
-                                    }
-                                });
-                            }
-                        });
-                    </script>
+                            cvReviewForm.reset();
+                        } else {
+                            messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>${result.message}</div>`;
+                        }
+                    } catch (error) {
+                        messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${error.message}</div>`;
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-envelope me-2"></i>Receber Confirmação e Link de Pagamento';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

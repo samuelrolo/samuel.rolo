@@ -61,6 +61,7 @@
     <link rel="stylesheet" href="css/style.css?v=fix_mobile">
     <link rel="stylesheet" href="css/header-footer.css">
     <link rel="stylesheet" href="css/diagnostic.css">
+    <link rel="stylesheet" href="pages/assets/s2i-modern.css">
 
     <style>
         :root {
@@ -1956,6 +1957,9 @@
                             <a class="nav-link" href="pages/servicos.html">Serviços</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="pages/cv-analysis.html">CV Analyser</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="pages/loja.html">Loja</a>
                         </li>
                         <li class="nav-item">
@@ -2001,6 +2005,73 @@
             </div>
         </div>
     </section>
+
+    <!-- Services Preview Section -->
+    <section class="services-preview py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="text-uppercase small fw-bold" style="color: #BF9A33; letter-spacing: 2px;">Os nossos
+                    serviços</span>
+                <h2 class="mt-3 fw-bold">Como podemos ajudar</h2>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <!-- Kickstart Pro -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-preview-card p-4 h-100 text-center"
+                        style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
+                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
+                            style="width: 70px; height: 70px; background: rgba(191, 154, 51, 0.1); border-radius: 50%;">
+                            <i class="fas fa-rocket fa-2x" style="color: #BF9A33;"></i>
+                        </div>
+                        <h4 class="fw-bold mb-2">Kickstart Pro</h4>
+                        <p class="text-muted small mb-3">Sessão estratégica para clarificação de rumo profissional</p>
+                        <a href="pages/servicos.html" class="btn btn-sm px-4 py-2 rounded-pill fw-semibold"
+                            style="background: #BF9A33; color: #fff;">Saber mais</a>
+                    </div>
+                </div>
+                <!-- Revisão de CV -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-preview-card p-4 h-100 text-center"
+                        style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
+                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
+                            style="width: 70px; height: 70px; background: rgba(191, 154, 51, 0.1); border-radius: 50%;">
+                            <i class="fas fa-user-tie fa-2x" style="color: #BF9A33;"></i>
+                        </div>
+                        <h4 class="fw-bold mb-2">Revisão de CV</h4>
+                        <p class="text-muted small mb-3">Análise humana e estratégica para máximo impacto</p>
+                        <a href="pages/servicos.html" class="btn btn-sm px-4 py-2 rounded-pill fw-semibold"
+                            style="background: #BF9A33; color: #fff;">Saber mais</a>
+                    </div>
+                </div>
+                <!-- CV Analyzer -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-preview-card p-4 h-100 text-center"
+                        style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
+                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
+                            style="width: 70px; height: 70px; background: rgba(191, 154, 51, 0.1); border-radius: 50%;">
+                            <i class="fas fa-robot fa-2x" style="color: #BF9A33;"></i>
+                        </div>
+                        <h4 class="fw-bold mb-2">CV Analyzer</h4>
+                        <p class="text-muted small mb-3">Diagnóstico instantâneo com inteligência artificial</p>
+                        <a href="pages/servicos.html" class="btn btn-sm px-4 py-2 rounded-pill fw-semibold"
+                            style="background: #BF9A33; color: #fff;">Saber mais</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .service-preview-card:hover {
+            transform: translateY(-5px);
+            border-color: #BF9A33 !important;
+            box-shadow: 0 10px 30px rgba(191, 154, 51, 0.15);
+        }
+
+        .service-preview-card:hover .btn {
+            background: #a58428 !important;
+        }
+    </style>
 
     <!-- O Que Nos Move Section -->
     <section class="what-moves-us-section" id="o-que-nos-move">
@@ -2362,6 +2433,73 @@
             <div class="cookie-preferences-footer">
                 <button class="btn btn-secondary" onclick="closeCookieSettings()">Cancelar</button>
                 <button class="btn btn-primary" onclick="savePreferences()">Guardar Preferências</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="modal fade s2i-modal" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="contactForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="s2i-form-label">Nome *</label>
+                                <input type="text" class="s2i-form-control" id="name" name="name"
+                                    placeholder="O seu nome" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="s2i-form-label">Email *</label>
+                                <input type="email" class="s2i-form-control" id="email" name="email"
+                                    placeholder="O seu email" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="s2i-form-label">Telefone</label>
+                                <input type="tel" class="s2i-form-control" id="phone" name="phone"
+                                    placeholder="9xxxxxxxx">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="reason" class="s2i-form-label">Motivo *</label>
+                                <select class="s2i-form-control" id="reason" name="reason" required>
+                                    <option value="" selected disabled>Selecione um motivo</option>
+                                    <option value="Informações">Informações</option>
+                                    <option value="Orçamento">Orçamento</option>
+                                    <option value="Dúvida Técnica">Dúvida Técnica</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="s2i-form-label">Mensagem *</label>
+                            <textarea class="s2i-form-control" id="message" name="message" rows="4"
+                                placeholder="Como podemos ajudar?" required></textarea>
+                        </div>
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
+                            <label class="form-check-label small text-muted" for="privacy">
+                                Aceito a <a href="pages/politica-privacidade.html" target="_blank"
+                                    class="text-decoration-none s2i-text-gold">Política de Privacidade</a> *
+                            </label>
+                        </div>
+                        <div class="alert alert-success d-none" id="contactSuccess">
+                            <i class="fas fa-check-circle me-2"></i> Mensagem enviada com sucesso!
+                        </div>
+                        <div class="alert alert-danger d-none" id="contactError">
+                            <i class="fas fa-exclamation-circle me-2"></i> Erro ao enviar mensagem.
+                        </div>
+                        <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
+                            <i class="fas fa-paper-plane"></i> Enviar Mensagem
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

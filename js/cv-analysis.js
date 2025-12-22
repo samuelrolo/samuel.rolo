@@ -51,8 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('phone', phone);
 
             // Call Backend API
-            console.log("Calling /api/services/analyze-cv...");
-            const response = await fetch('/api/services/analyze-cv', {
+            const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+            console.log("Calling backend:", BACKEND_URL + '/api/services/analyze-cv');
+            const response = await fetch(BACKEND_URL + '/api/services/analyze-cv', {
                 method: 'POST',
                 body: formData
             });

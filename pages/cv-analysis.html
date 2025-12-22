@@ -74,42 +74,45 @@
 <body>
 
     <!-- Header -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="../index.html">
-                <img src="../images/logo.png" alt="Share2Inspire" height="50">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.html">Início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="people-hub.html">People Hub</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="servicos.html">Serviços</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="loja.html">Loja</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="cv-analysis.html">CV Analyser</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="sobre.html">Sobre</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Contactos</a>
-                    </li>
-                </ul>
+    <header class="header">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="../index.html">
+                    <img src="../images/logo.png" alt="Share2Inspire Logo" height="40">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../index.html">Início</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="sobre.html">Sobre</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="servicos.html">Serviços</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="cv-analysis.html">CV Analyser</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="loja.html">Loja</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="people-hub.html">People Hub</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="modal"
+                                data-bs-target="#contactModal">Contactos</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
     <!-- Hero Section -->
     <section class="cv-hero">
@@ -135,28 +138,33 @@
 
                         <!-- User Info Fields -->
                         <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <input type="text" id="userName" class="form-control" placeholder="Nome completo"
+                            <div class="col-md-6 text-start">
+                                <label for="userName" class="s2i-form-label">Nome Completo *</label>
+                                <input type="text" id="userName" class="s2i-form-control" placeholder="O seu nome"
                                     required>
                             </div>
-                            <div class="col-md-6">
-                                <input type="email" id="userEmail" class="form-control" placeholder="Email" required>
+                            <div class="col-md-6 text-start">
+                                <label for="userEmail" class="s2i-form-label">Email *</label>
+                                <input type="email" id="userEmail" class="s2i-form-control" placeholder="O seu email"
+                                    required>
                             </div>
-                            <div class="col-12">
-                                <input type="tel" id="userPhone" class="form-control"
-                                    placeholder="Telemóvel (para pagamento MB WAY)" required pattern="[0-9]{9}">
+                            <div class="col-12 text-start">
+                                <label for="userPhone" class="s2i-form-label">Telemóvel (MB WAY) *</label>
+                                <input type="tel" id="userPhone" class="s2i-form-control" placeholder="9XXXXXXXX"
+                                    required pattern="[0-9]{9}">
                             </div>
                         </div>
 
-                        <div class="file-upload-wrapper">
+                        <div class="file-upload-wrapper mb-4">
                             <input type="file" id="cvFile" accept=".pdf,.docx,.txt" class="file-input" hidden>
-                            <label for="cvFile" class="btn btn-outline-primary btn-lg">
-                                <i class="fas fa-file-alt me-2"></i> Selecionar CV
+                            <label for="cvFile" class="s2i-btn s2i-btn-block"
+                                style="background-color: #BF9A33; color: #000; border: 2px solid #BF9A33;">
+                                <i class="fas fa-file-alt me-2"></i> Selecionar CV (PDF/DOCX)
                             </label>
                             <span id="fileName" class="d-block mt-2 text-muted fst-italic"></span>
                         </div>
 
-                        <button id="analyzeBtn" class="btn btn-dark btn-lg mt-4 px-5" disabled>
+                        <button id="analyzeBtn" class="s2i-btn s2i-btn-primary s2i-btn-block" disabled>
                             <span id="btnText">Analisar e Pagar (1€)</span>
                             <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"
                                 aria-hidden="true"></span>
@@ -468,31 +476,118 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer id="contactos">
-        <div class="container">
-            <div class="footer-container">
-                <div class="footer-left">
-                    <p>© 2025 Share2Inspire. Todos os direitos reservados.</p>
+    <!-- Contact Modal -->
+    <div class="modal fade s2i-modal" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="footer-right">
-                    <div class="footer-contact">
-                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
-                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
-                    </div>
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i
+                <div class="modal-body">
+                    <form id="contactForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="s2i-form-label">Nome *</label>
+                                <input type="text" class="s2i-form-control" id="name" name="name"
+                                    placeholder="O seu nome" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="s2i-form-label">Email *</label>
+                                <input type="email" class="s2i-form-control" id="email" name="email"
+                                    placeholder="O seu email" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="s2i-form-label">Telefone</label>
+                                <input type="tel" class="s2i-form-control" id="phone" name="phone"
+                                    placeholder="9xxxxxxxx">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="reason" class="s2i-form-label">Motivo *</label>
+                                <select class="s2i-form-control" id="reason" name="reason" required>
+                                    <option value="" selected disabled>Selecione um motivo</option>
+                                    <option value="Informações">Informações</option>
+                                    <option value="Orçamento">Orçamento</option>
+                                    <option value="Dúvida Técnica">Dúvida Técnica</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="s2i-form-label">Mensagem *</label>
+                            <textarea class="s2i-form-control" id="message" name="message" rows="4"
+                                placeholder="Como podemos ajudar?" required></textarea>
+                        </div>
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
+                            <label class="form-check-label small text-muted" for="privacy">
+                                Aceito a <a href="politica-privacidade.html" target="_blank"
+                                    class="text-decoration-none s2i-text-gold">Política de Privacidade</a> *
+                            </label>
+                        </div>
+                        <div class="alert alert-success d-none" id="contactSuccess">
+                            <i class="fas fa-check-circle me-2"></i> Mensagem enviada com sucesso!
+                        </div>
+                        <div class="alert alert-danger d-none" id="contactError">
+                            <i class="fas fa-exclamation-circle me-2"></i> Erro ao enviar mensagem.
+                        </div>
+                        <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
+                            <i class="fas fa-paper-plane"></i> Enviar Mensagem
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="contactos" style="background-color: #1A1A1A; color: #fff; padding: 80px 0 40px;">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <img src="../images/logo.png" alt="Share2Inspire" height="50" class="mb-4">
+                    <p class="text-muted">Evolução de carreira com clareza, estratégia e narrativa de impacto.
+                        Transformamos intenção em resultados.</p>
+                </div>
+                <div class="col-lg-2">
+                    <h5 class="fw-bold mb-4">Links Rápidos</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="../index.html" class="text-muted text-decoration-none">Início</a></li>
+                        <li class="mb-2"><a href="sobre.html" class="text-muted text-decoration-none">Sobre</a></li>
+                        <li class="mb-2"><a href="servicos.html" class="text-muted text-decoration-none">Serviços</a>
+                        </li>
+                        <li class="mb-2"><a href="cv-analysis.html" class="text-muted text-decoration-none">CV
+                                Analyser</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h5 class="fw-bold mb-4">Contactos</h5>
+                    <p class="text-muted mb-2"><i class="fas fa-envelope me-2"></i> srshare2inspire@gmail.com</p>
+                    <p class="text-muted mb-2"><i class="fas fa-phone me-2"></i> +351 961 925 050</p>
+                </div>
+                <div class="col-lg-3">
+                    <h5 class="fw-bold mb-4">Siga-nos</h5>
+                    <div class="d-flex gap-3">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-white fs-4"><i
                                 class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire_" target="_blank"><i
+                        <a href="https://www.instagram.com/share2inspire_" target="_blank" class="text-white fs-4"><i
                                 class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
-            <div class="footer-links">
-                <a href="politica-privacidade.html">Política de Privacidade</a>
-                <a href="politica-cookies.html">Política de Cookies</a>
-                <a href="tratamento-dados.html">Tratamento de Dados</a>
-                <a href="informacao-legal.html">Informação Legal</a>
+            <hr class="my-5" style="border-color: rgba(255,255,255,0.1);">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="text-muted mb-0 small">© 2025 Share2Inspire. Todos os direitos reservados.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
+                    <a href="politica-privacidade.html"
+                        class="text-muted text-decoration-none small me-3">Privacidade</a>
+                    <a href="politica-cookies.html" class="text-muted text-decoration-none small me-3">Cookies</a>
+                    <a href="informacao-legal.html" class="text-muted text-decoration-none small">Legal</a>
+                </div>
             </div>
         </div>
     </footer>
