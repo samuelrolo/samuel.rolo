@@ -111,24 +111,15 @@ async function sendCVReviewConfirmation(email, cvFile, name = '') {
 async function sendKickstartConfirmation(email, name, sessionData = {}) {
     try {
         const payload = {
-            service: 'kickstart-pro',
-            to: {
-                email: email,
-                name: name || email.split('@')[0]
-            },
-            subject: 'Confirmação - Kickstart Pro | Share2Inspire',
-            templateData: {
-                userName: name,
-                serviceName: 'Kickstart Pro',
-                price: '35€',
-                paymentLink: EMAIL_CONFIG.MB_WAY_KICKSTART,
-                calendarLink: EMAIL_CONFIG.CALENDAR_LINK,
-                sessionDate: sessionData.date || 'A agendar após confirmação',
-                description: 'Sessão individual de 60 minutos para profissionais em início de carreira. Inclui preparação de entrevista, posicionamento estratégico e CV Review Express.'
-            }
+            name: name,
+            email: email,
+            phone: sessionData.phone,
+            objectives: sessionData.objectives,
+            date: sessionData.date // Optional
         };
 
-        const response = await fetch(EMAIL_CONFIG.API_ENDPOINT, {
+        // Call NEW backend endpoint
+        const response = await fetch('/api/services/kickstart-confirm', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -136,19 +127,21 @@ async function sendKickstartConfirmation(email, name, sessionData = {}) {
 
         if (!response.ok) {
             const error = await response.json();
-            throw new Error(error.message || 'Failed to send email');
+            throw new Error(error.error || 'Failed to request Kickstart');
         }
+
+        const data = await response.json();
 
         return {
             success: true,
-            message: `Email de confirmação enviado para ${email}. Verifique a sua caixa de entrada para agendar a sessão e efetuar o pagamento.`
+            message: data.message || `Pedido recebido. Verifique o seu telemóvel e email.`
         };
 
     } catch (error) {
-        console.error('Kickstart Pro email error:', error);
+        console.error('Kickstart Pro error:', error);
         return {
             success: false,
-            message: `Erro ao enviar email: ${error.message}. Por favor, tente novamente ou contacte-nos diretamente.`
+            message: `Erro: ${error.message}. Tente novamente.`
         };
     }
 }
