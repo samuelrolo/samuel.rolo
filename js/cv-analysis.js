@@ -187,63 +187,61 @@ function populateResults(report) {
     // 8. Setup Report Email Payment Button
     setupReportEmailHandler();
 }
+const btnReportEmail = document.getElementById('btnReportEmail');
+if (!btnReportEmail) return;
 
-function setupReportEmailHandler() {
-    const btnReportEmail = document.getElementById('btnReportEmail');
-    if (!btnReportEmail) return;
+btnReportEmail.onclick = async () => {
+    // Get user info
+    const name = document.getElementById('userName')?.value || 'Candidato';
+    const email = document.getElementById('userEmail')?.value;
 
-    btnReportEmail.onclick = async () => {
-        // Get user info
-        const name = document.getElementById('userName')?.value || 'Candidato';
-        const email = document.getElementById('userEmail')?.value;
+    if (!email) {
+        alert('Por favor, preencha o seu email para receber o relatório.');
+        return;
+    }
 
-        if (!email) {
-            alert('Por favor, preencha o seu email para receber o relatório.');
-            return;
+    if (!window.currentReportData || !window.currentCVFile) {
+        alert('Dados do relatório não disponíveis. Por favor, analise novamente o CV.');
+        return;
+    }
+
+    try {
+        // Disable button and show loading
+        btnReportEmail.disabled = true;
+        btnReportEmail.innerHTML = '\u003ci class="fas fa-spinner fa-spin me-2"\u003e\u003c/i\u003eA processar...';
+
+        // Prepare delivery request
+        const formData = new FormData();
+        formData.append('cv_file', window.currentCVFile);
+        formData.append('report', JSON.stringify(window.currentReportData));
+        formData.append('email', email);
+        formData.append('name', name);
+
+        const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+        const response = await fetch(`${BACKEND_URL}/api/services/deliver-report`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert('✅ Relatório enviado com sucesso! Verifique o seu email.');
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('cvResultsModal'));
+            if (modal) modal.hide();
+        } else {
+            throw new Error(data.error || 'Erro ao enviar relatório');
         }
 
-        if (!window.currentReportData || !window.currentCVFile) {
-            alert('Dados do relatório não disponíveis. Por favor, analise novamente o CV.');
-            return;
-        }
-
-        try {
-            // Disable button and show loading
-            btnReportEmail.disabled = true;
-            btnReportEmail.innerHTML = '\u003ci class="fas fa-spinner fa-spin me-2"\u003e\u003c/i\u003eA processar...';
-
-            // Prepare delivery request
-            const formData = new FormData();
-            formData.append('cv_file', window.currentCVFile);
-            formData.append('report', JSON.stringify(window.currentReportData));
-            formData.append('email', email);
-            formData.append('name', name);
-
-            const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
-            const response = await fetch(`${BACKEND_URL}/api/services/deliver-report`, {
-                method: 'POST',
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                alert('✅ Relatório enviado com sucesso! Verifique o seu email.');
-                // Close modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('cvResultsModal'));
-                if (modal) modal.hide();
-            } else {
-                throw new Error(data.error || 'Erro ao enviar relatório');
-            }
-
-        } catch (error) {
-            console.error('Report delivery error:', error);
-            alert('Erro ao enviar relatório: ' + error.message);
-            // Restore button
-            btnReportEmail.disabled = false;
-            btnReportEmail.innerHTML = '\u003ci class="fas fa-file-pdf me-2"\u003e\u003c/i\u003eReceber Relatório por Email (1.00€)';
-        }
-    };
+    } catch (error) {
+        console.error('Report delivery error:', error);
+        alert('Erro ao enviar relatório: ' + error.message);
+        // Restore button
+        btnReportEmail.disabled = false;
+        btnReportEmail.innerHTML = '\u003ci class="fas fa-file-pdf me-2"\u003e\u003c/i\u003eReceber Relatório por Email (1.00€)';
+    }
+};
 }
 
 function setupPaymentHandler(candidateName) {
