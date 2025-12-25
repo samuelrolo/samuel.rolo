@@ -449,7 +449,7 @@ function setupReportPaymentHandler(candidateName) {
 
             const statusDiv = document.getElementById('reportPaymentStatus');
             statusDiv.classList.remove('d-none');
-            statusDiv.innerHTML = '<div class="alert alert-warning"><i class="fas fa-spinner fa-spin me-2"></i>A processar pagamento MB WAY (1.00€)...</div>';
+            statusDiv.innerHTML = '<div class="alert alert-warning"><i class="fas fa-spinner fa-spin me-2"></i>A iniciar pagamento MB WAY...</div>';
             newPaymentBtn.disabled = true;
 
             try {
@@ -467,22 +467,51 @@ function setupReportPaymentHandler(candidateName) {
                     throw new Error(paymentResult.error || "Falha no pagamento");
                 }
 
+                // Payment Initiated - Start Polling
+                const orderId = paymentResult.payment.orderId;
                 statusDiv.innerHTML = `
-                    <div class="alert alert-success">
-                        <i class="fas fa-check-circle me-2"></i>
-                        <strong>Pagamento MB WAY iniciado!</strong><br>
-                        <small>Por favor confirme na sua app MB WAY. Após confirmação, receberá o relatório por email.</small>
+                    <div class="alert alert-info">
+                        <i class="fas fa-mobile-alt me-2"></i>
+                        <strong>Confirme na sua app MB WAY!</strong><br>
+                        <small>A aguardar confirmação... (Não feche esta janela)</small>
+                        <div class="progress mt-2" style="height: 5px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: 100%"></div>
+                        </div>
                     </div>
                 `;
 
-                // Close modal after a few seconds
-                setTimeout(() => {
+                // Poll for status
+                const pollInterval = setInterval(async () => {
                     try {
-                        const modalEl = document.getElementById('reportPaymentModal');
-                        const modal = bootstrap.Modal.getInstance(modalEl);
-                        if (modal) modal.hide();
-                    } catch (e) { }
-                }, 5000);
+                        const statusResponse = await fetch(`${BACKEND_URL}/api/payment/status/${orderId}`);
+                        const statusData = await statusResponse.json();
+
+                        if (statusData.result && statusData.result.success) {
+                            clearInterval(pollInterval);
+
+                            // Payment Confirmed! Deliver Report
+                            statusDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check me-2"></i>Pagamento confirmado! A gerar relatório...</div>';
+
+                            await deliverReport(name, email, window.currentCVFile, window.currentReportData);
+
+                            statusDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-envelope-open-text me-2"></i>Relatório enviado para o seu email!</div>';
+                            setTimeout(() => {
+                                bootstrap.Modal.getInstance(document.getElementById('reportPaymentModal')).hide();
+                            }, 4000);
+                        }
+                    } catch (e) {
+                        console.error("Polling error", e);
+                    }
+                }, 3000); // Check every 3s
+
+                // Timeout after 2 minutes
+                setTimeout(() => {
+                    clearInterval(pollInterval);
+                    if (!statusDiv.innerHTML.includes("enviado")) {
+                        statusDiv.innerHTML += '<div class="text-muted small mt-2">Tempo de espera excedido. Se confirmou o pagamento, receberá o relatório por email em breve.</div>';
+                        newPaymentBtn.disabled = false;
+                    }
+                }, 120000);
 
             } catch (err) {
                 console.error("Payment Error:", err);
@@ -491,4 +520,18 @@ function setupReportPaymentHandler(candidateName) {
             }
         });
     }
+}
+
+async function deliverReport(name, email, cvFile, reportData) {
+    const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('cv_file', cvFile);
+    formData.append('report', JSON.stringify(reportData));
+
+    await fetch(BACKEND_URL + '/api/services/deliver-report', {
+        method: 'POST',
+        body: formData
+    });
 }

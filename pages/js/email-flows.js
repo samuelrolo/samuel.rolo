@@ -108,7 +108,7 @@ async function sendCVReviewConfirmation(email, cvFile, name = '') {
  * @param {Object} sessionData - Optional session booking data
  * @returns {Promise<{success: boolean, message: string}>}
  */
-async function sendKickstartConfirmation(email, name, sessionData = {}) {
+    async sendKickstartConfirmation(email, name, sessionData = {}) {
     try {
         const payload = {
             name: name,
@@ -118,8 +118,9 @@ async function sendKickstartConfirmation(email, name, sessionData = {}) {
             date: sessionData.date // Optional
         };
 
-        // Call NEW backend endpoint
-        const response = await fetch('/api/services/kickstart-confirm', {
+        // Call NEW backend endpoint - MUST BE ABSOLUTE URL
+        const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+        const response = await fetch(`${BACKEND_URL}/api/services/kickstart-confirm`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
