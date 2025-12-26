@@ -1097,29 +1097,12 @@
                             messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>${result.message}</div>`;
                         }
                     } catch (error) {
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>A enviar...';
-
-                        try {
-                            const result = await window.EmailFlows.sendCVReviewConfirmation(email, file);
-                            if (result.success) {
-                                messageDiv.innerHTML = `
-                                <div class="alert alert-success">
-                                    <i class="fas fa-check-circle me-2"></i>
-                                    <strong>Pedido registado!</strong><br>
-                                    Enviámos um email para ${email} com o link de pagamento.<br>
-                                    Após o pagamento, o seu CV será analisado em até 5 dias úteis.
-                                </div>`;
-                                cvReviewForm.reset();
-                            } else {
-                                messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>${result.message}</div>`;
-                            }
-                        } catch (error) {
-                            messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${error.message}</div>`;
-                        } finally {
-                            submitBtn.disabled = false;
-                            submitBtn.innerHTML = '<i class="fas fa-envelope me-2"></i>Receber Confirmação e Link de Pagamento';
-                        }
-                    });
+                        messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${error.message}</div>`;
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-envelope me-2"></i>Receber Confirmação e Link de Pagamento';
+                    }
+                });
             }
         });
     </script>
