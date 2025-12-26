@@ -683,7 +683,8 @@
                                     style="color: #BF9A33 !important;"></i>Posicionamento de valor real</li>
                         </ul>
                         <div class="mt-auto">
-                            <a href="cv-analysis.html#direct-review" class="btn btn-service">Solicitar Revisão</a>
+                            <button class="btn btn-service" data-bs-toggle="modal"
+                                data-bs-target="#cvReviewModal">Solicitar Revisão</button>
                         </div>
                     </div>
                 </div>
@@ -901,18 +902,47 @@
                             úteis</small>
                     </div>
                     <form id="cvReviewForm">
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-uppercase">Email para Receber Relatório
-                                *</label>
-                            <input type="email" class="form-control bg-light border-0 py-2 rounded-3" id="cvReviewEmail"
-                                required>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase">Nome Completo *</label>
+                                <input type="text" class="form-control bg-light border-0 py-2 rounded-3"
+                                    id="cvReviewName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-uppercase">Email *</label>
+                                <input type="email" class="form-control bg-light border-0 py-2 rounded-3"
+                                    id="cvReviewEmail" required>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-uppercase">Carregar o seu CV (PDF/DOCX)
-                                *</label>
+
+                        <!-- CV File -->
+                        <div class="mb-3 mt-3">
+                            <label class="form-label small fw-bold text-uppercase">Carregar CV (PDF/DOCX) *</label>
                             <input type="file" class="form-control bg-light border-0 py-2 rounded-3" id="cvReviewFile"
                                 accept=".pdf,.docx" required>
                             <div class="form-text">O seu CV será analisado e devolvido com anotações detalhadas.</div>
+                        </div>
+
+                        <!-- Photo with Tooltip -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <label class="form-label small fw-bold text-uppercase">Fotografia Profissional
+                                    (Opcional)</label>
+                                <a href="#" data-bs-toggle="tooltip" data-bs-placement="top"
+                                    title="DO's: Fundo neutro, boa luz, sorriso profissional. DON'Ts: Selfies, cortes, óculos escuros.">
+                                    <i class="fas fa-info-circle text-gold"></i> Dicas Foto
+                                </a>
+                            </div>
+                            <input type="file" class="form-control bg-light border-0 py-2 rounded-3" id="cvReviewPhoto"
+                                accept="image/*">
+                        </div>
+
+                        <!-- Layout Instructions -->
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase">Instruções de Layout / Notas</label>
+                            <textarea class="form-control bg-light border-0 py-2 rounded-3" id="cvReviewInstructions"
+                                rows="3"
+                                placeholder="Preferências de design, cores, ou secções a destacar..."></textarea>
                         </div>
                         <div class="mb-3">
                             <div class="form-check">
@@ -1029,8 +1059,15 @@
                     e.preventDefault();
 
                     const email = document.getElementById('cvReviewEmail').value;
+                    const name = document.getElementById('cvReviewName').value;
+                    const instructions = document.getElementById('cvReviewInstructions').value;
+
                     const fileInput = document.getElementById('cvReviewFile');
                     const file = fileInput.files[0];
+
+                    const photoInput = document.getElementById('cvReviewPhoto');
+                    const photo = photoInput.files ? photoInput.files[0] : null;
+
                     const submitBtn = cvReviewForm.querySelector('button[type="submit"]');
                     const messageDiv = document.getElementById('cvReviewFormMessage');
 
@@ -1045,29 +1082,44 @@
                     }
 
                     submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>A enviar...';
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>A processar...';
 
                     try {
-                        const result = await window.EmailFlows.sendCVReviewConfirmation(email, file);
+                        const result = await window.EmailFlows.sendCVReviewConfirmation(email, file, name, instructions, photo);
                         if (result.success) {
                             messageDiv.innerHTML = `
                                 <div class="alert alert-success">
                                     <i class="fas fa-check-circle me-2"></i>
-                                    <strong>Pedido registado!</strong><br>
-                                    Enviámos um email para ${email} com o link de pagamento.<br>
-                                    Após o pagamento, o seu CV será analisado em até 5 dias úteis.
+                                    <strong>${result.message}</strong>
                                 </div>`;
                             cvReviewForm.reset();
                         } else {
                             messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>${result.message}</div>`;
                         }
                     } catch (error) {
-                        messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${error.message}</div>`;
-                    } finally {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = '<i class="fas fa-envelope me-2"></i>Receber Confirmação e Link de Pagamento';
-                    }
-                });
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>A enviar...';
+
+                        try {
+                            const result = await window.EmailFlows.sendCVReviewConfirmation(email, file);
+                            if (result.success) {
+                                messageDiv.innerHTML = `
+                                <div class="alert alert-success">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <strong>Pedido registado!</strong><br>
+                                    Enviámos um email para ${email} com o link de pagamento.<br>
+                                    Após o pagamento, o seu CV será analisado em até 5 dias úteis.
+                                </div>`;
+                                cvReviewForm.reset();
+                            } else {
+                                messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>${result.message}</div>`;
+                            }
+                        } catch (error) {
+                            messageDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Erro: ${error.message}</div>`;
+                        } finally {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<i class="fas fa-envelope me-2"></i>Receber Confirmação e Link de Pagamento';
+                        }
+                    });
             }
         });
     </script>
