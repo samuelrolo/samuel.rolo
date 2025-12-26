@@ -51,7 +51,7 @@ async function fileToBase64(file) {
  * @param {string} name - Optional: User's name
  * @returns {Promise<{success: boolean, message: string}>}
  */
-async function sendCVReviewConfirmation(email, cvFile, name = '') {
+async function sendCVReviewConfirmation(email, cvFile, name = '', instructions = '', photoFile = null) {
     try {
         // Convert file to base64
         const fileData = await fileToBase64(cvFile);
@@ -70,10 +70,19 @@ async function sendCVReviewConfirmation(email, cvFile, name = '') {
                 price: '25€',
                 paymentLink: EMAIL_CONFIG.MB_WAY_CV_REVIEW,
                 deliveryTime: '5 dias úteis',
-                description: 'Elaboração e reescrita do seu CV por um especialista sénior com mais de 14 anos de experiência em recrutamento e transformação de RH.'
+                description: 'Elaboração e reescrita do seu CV por um especialista sénior com mais de 14 anos de experiência em recrutamento e transformação de RH.',
+                instructions: instructions || 'N/A'
             },
             attachment: fileData
         };
+
+        // If photo provided, add it as second attachment (handled by backend or merged)
+        // For now, let's assume backend can handle multiple attachments or we ignore it for V1.
+        // Actually, let's treat photo as a separate attachment if backend supports it.
+        if (photoFile) {
+            const photoData = await fileToBase64(photoFile);
+            payload.photoAttachment = photoData;
+        }
 
         // Send via backend proxy
         const response = await fetch(EMAIL_CONFIG.API_ENDPOINT, {
@@ -108,7 +117,7 @@ async function sendCVReviewConfirmation(email, cvFile, name = '') {
  * @param {Object} sessionData - Optional session booking data
  * @returns {Promise<{success: boolean, message: string}>}
  */
-    async sendKickstartConfirmation(email, name, sessionData = {}) {
+async function sendKickstartConfirmation(email, name, sessionData = {}) {
     try {
         const payload = {
             name: name,
