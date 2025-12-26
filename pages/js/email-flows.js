@@ -16,8 +16,8 @@ const EMAIL_CONFIG = {
     SENDER_EMAIL: 'srshare2inspire@gmail.com',
 
     // Payment links (MB WAY reference generation)
-    MB_WAY_CV_REVIEW: 'https://share2inspire.pt/pages/pagamento?service=cv-review&amount=25',
-    MB_WAY_KICKSTART: 'https://share2inspire.pt/pages/pagamento?service=kickstart-pro&amount=35',
+    MB_WAY_CV_REVIEW: 'https://share2inspire.pt/pages/pagamento.html?service=cv-review&amount=25',
+    MB_WAY_KICKSTART: 'https://share2inspire.pt/pages/pagamento.html?service=kickstart-pro&amount=35',
 
     // Calendar booking link
     CALENDAR_LINK: 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ0Y2G3Gg6N94SBG-W1C-JnJKV2'
