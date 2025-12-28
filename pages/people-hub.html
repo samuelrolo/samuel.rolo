@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +9,6 @@
     <meta name="keywords"
         content="People, Recursos Humanos, Newsletter, Samuel Rolo, Share2Inspire, Transformação Digital, Liderança">
     <meta name="author" content="Samuel Rolo">
-
     <!-- Open Graph / Last Article -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://share2inspire.pt/pages/people-hub.html">
@@ -18,27 +16,20 @@
     <meta property="og:description" content="Insights, tendências e ferramentas para profissionais de RH">
     <meta property="og:image"
         content="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/images/midyear.jpg">
-
     <!-- Favicon -->
     <link rel="icon" href="../images/favicon.png" type="image/png">
-
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="assets/s2i-modern.css">
-
     <!-- Header & Footer Shared CSS -->
     <link href="../css/header-footer.css" rel="stylesheet">
-
     <style>
         /* Estilos para o footer */
         footer {
@@ -47,7 +38,6 @@
             padding: 20px 0;
             margin-top: 50px;
         }
-
         .footer-container {
             display: flex;
             justify-content: space-between;
@@ -55,43 +45,35 @@
             flex-wrap: wrap;
             margin-bottom: 15px;
         }
-
         .footer-left p {
             margin: 0;
             color: #BF9A33;
         }
-
         .footer-right {
             display: flex;
             gap: 30px;
         }
-
         .footer-contact p {
             margin: 0;
             margin-bottom: 5px;
             color: #fff;
         }
-
         .footer-contact i {
             color: #BF9A33;
             margin-right: 8px;
         }
-
         .footer-social {
             display: flex;
             gap: 15px;
         }
-
         .footer-social a {
             color: #BF9A33;
             font-size: 20px;
             transition: color 0.3s;
         }
-
         .footer-social a:hover {
             color: #fff;
         }
-
         .footer-links {
             display: flex;
             justify-content: center;
@@ -100,40 +82,33 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 15px;
         }
-
         .footer-links a {
             color: #BF9A33;
             font-size: 14px;
             text-decoration: none;
             transition: color 0.3s;
         }
-
         .footer-links a:hover {
             color: #fff;
             text-decoration: underline;
         }
-
         .navbar {
             background-color: #fff;
             padding: 1rem 0;
         }
-
         .navbar-nav {
             margin-left: auto;
         }
-
         .navbar-nav .nav-link {
             color: #333;
             font-weight: 600;
             padding: 0.5rem 1rem;
             margin: 0 0.25rem;
         }
-
         .navbar-nav .nav-link.active {
             color: #BF9A33;
             position: relative;
         }
-
         .navbar-nav .nav-link.active::after {
             content: '';
             position: absolute;
@@ -143,7 +118,6 @@
             height: 2px;
             background-color: #BF9A33;
         }
-
         /* Variáveis CSS */
         :root {
             --primary-color: #BF9A33;
@@ -155,36 +129,30 @@
             --text-light: #6c757d;
             --border-color: #dee2e6;
         }
-
         /* Estilos para a página */
         .page-header {
             background-color: #f8f9fa;
             padding: 100px 0 50px;
             margin-bottom: 50px;
         }
-
         .page-header h1 {
             font-size: 2.5rem;
             font-weight: 700;
             color: #333;
             margin-bottom: 1rem;
         }
-
         .breadcrumb {
             background-color: transparent;
             padding: 0;
             margin: 0;
         }
-
         .breadcrumb-item a {
             color: #BF9A33;
             text-decoration: none;
         }
-
         .breadcrumb-item.active {
             color: #6c757d;
         }
-
         .newsletter-hero {
             background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             color: white;
@@ -194,26 +162,22 @@
             position: relative;
             overflow: hidden;
         }
-
         .newsletter-hero h2 {
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 1rem;
         }
-
         .newsletter-hero p {
             font-size: 1.2rem;
             opacity: 0.9;
             margin-bottom: 2rem;
         }
-
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 2rem;
             margin-bottom: 4rem;
         }
-
         .stat-card {
             background: white;
             padding: 2rem;
@@ -222,19 +186,16 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
         .stat-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
-
         .stat-number {
             font-size: 2.5rem;
             font-weight: 800;
             color: var(--primary-color);
             margin-bottom: 0.5rem;
         }
-
         .stat-label {
             color: var(--text-light);
             font-weight: 500;
@@ -242,7 +203,6 @@
             letter-spacing: 0.5px;
             font-size: 0.9rem;
         }
-
         .featured-article {
             background: white;
             border-radius: 15px;
@@ -251,19 +211,16 @@
             margin-bottom: 4rem;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
         .featured-article:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
-
         .featured-article .article-image {
             height: 300px;
             background-size: cover;
             background-position: center;
             position: relative;
         }
-
         .featured-badge {
             position: absolute;
             top: 1rem;
@@ -276,11 +233,9 @@
             font-size: 0.9rem;
             z-index: 3;
         }
-
         .featured-article .article-content {
             padding: 2rem;
         }
-
         .featured-article h3 {
             font-size: 1.5rem;
             font-weight: 700;
@@ -288,19 +243,16 @@
             margin-bottom: 1rem;
             line-height: 1.3;
         }
-
         .featured-article .article-meta {
             color: var(--text-light);
             font-size: 0.9rem;
             margin-bottom: 1rem;
         }
-
         .featured-article .article-summary {
             color: var(--text-color);
             line-height: 1.6;
             margin-bottom: 1.5rem;
         }
-
         .btn-read-more {
             background: var(--primary-color);
             color: white;
@@ -312,13 +264,11 @@
             display: inline-block;
             transition: all 0.3s ease;
         }
-
         .btn-read-more:hover {
             background: var(--accent-color);
             color: white;
             transform: translateY(-2px);
         }
-
         .cta-section {
             background: linear-gradient(135deg, var(--dark-color), #2c3e50);
             color: white;
@@ -327,13 +277,11 @@
             text-align: center;
             margin-bottom: 4rem;
         }
-
         .cta-section h2 {
             font-size: 2.2rem;
             font-weight: 700;
             margin-bottom: 1rem;
         }
-
         .cta-section p {
             font-size: 1.1rem;
             opacity: 0.9;
@@ -342,7 +290,6 @@
             margin-left: auto;
             margin-right: auto;
         }
-
         .btn-cta {
             background: var(--primary-color);
             color: white;
@@ -355,38 +302,31 @@
             display: inline-block;
             transition: all 0.3s ease;
         }
-
         .btn-cta:hover {
             background: var(--accent-color);
             color: white;
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(191, 154, 51, 0.3);
         }
-
         .modal-header {
             background-color: #BF9A33;
             color: #fff;
         }
-
         .modal-title {
             font-weight: 600;
         }
-
         .modal-body label {
             font-weight: 500;
             margin-bottom: 0.5rem;
         }
-
         .modal-footer .btn-primary {
             background-color: #BF9A33;
             border-color: #BF9A33;
         }
-
         .modal-footer .btn-primary:hover {
             background-color: #a88629;
             border-color: #a88629;
         }
-
         /* Estilos globais para botões primários */
         .btn-primary {
             background-color: #212529 !important;
@@ -397,7 +337,6 @@
             border-radius: 8px;
             transition: all 0.3s ease;
         }
-
         .btn-primary:hover {
             background-color: #BF9A33 !important;
             border-color: #BF9A33 !important;
@@ -405,124 +344,98 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(191, 154, 51, 0.3);
         }
-
         .btn-primary:focus {
             background-color: #BF9A33 !important;
             border-color: #BF9A33 !important;
             box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25);
         }
-
         /* Media queries para otimização mobile */
         @media (max-width: 768px) {
             .page-header {
                 padding: 80px 0 40px;
                 margin-bottom: 30px;
             }
-
             .page-header h1 {
                 font-size: 2rem;
             }
-
             .newsletter-hero {
                 padding: 3rem 0;
                 margin-bottom: 3rem;
             }
-
             .newsletter-hero h2 {
                 font-size: 2rem;
             }
-
             .newsletter-hero p {
                 font-size: 1rem;
             }
-
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 1rem;
                 margin-bottom: 3rem;
             }
-
             .stat-card {
                 padding: 1.5rem;
             }
-
             .stat-number {
                 font-size: 2rem;
             }
-
             .featured-article .article-image {
                 height: 200px;
             }
-
             .featured-article .article-content {
                 padding: 1.5rem;
             }
-
             .featured-article h3 {
                 font-size: 1.3rem;
             }
-
             .cta-section {
                 padding: 3rem 0;
                 margin-bottom: 3rem;
             }
-
             .cta-section h2 {
                 font-size: 1.8rem;
             }
-
             .cta-section p {
                 font-size: 1rem;
             }
-
             .footer-container {
                 flex-direction: column;
                 text-align: center;
                 gap: 20px;
             }
-
             .footer-right {
                 flex-direction: column;
                 gap: 15px;
             }
-
             .footer-social {
                 justify-content: center;
             }
-
             .footer-links {
                 flex-direction: column;
                 align-items: center;
                 gap: 10px;
             }
         }
-
         @media (max-width: 576px) {
             .page-header {
                 padding: 70px 0 30px;
             }
-
             .page-header h1 {
                 font-size: 1.8rem;
             }
-
             .stats-grid {
                 grid-template-columns: 1fr;
             }
-
             .stat-card {
                 padding: 1.25rem;
             }
-
             .stat-number {
                 font-size: 1.8rem;
             }
-
             .featured-article .article-content {
                 padding: 1.25rem;
             }
         }
-
         /* Footer */
         footer {
             background-color: #212529;
@@ -530,7 +443,6 @@
             padding: 20px 0;
             margin-top: 50px;
         }
-
         .footer-container {
             display: flex;
             justify-content: space-between;
@@ -538,43 +450,35 @@
             flex-wrap: wrap;
             margin-bottom: 15px;
         }
-
         .footer-left p {
             margin: 0;
             color: #BF9A33;
         }
-
         .footer-right {
             display: flex;
             gap: 30px;
         }
-
         .footer-contact p {
             margin: 0;
             margin-bottom: 5px;
             color: #fff;
         }
-
         .footer-contact i {
             color: #BF9A33;
             margin-right: 8px;
         }
-
         .footer-social {
             display: flex;
             gap: 15px;
         }
-
         .footer-social a {
             color: #BF9A33;
             font-size: 20px;
             transition: color 0.3s;
         }
-
         .footer-social a:hover {
             color: #fff;
         }
-
         .footer-links {
             display: flex;
             justify-content: center;
@@ -583,19 +487,16 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 15px;
         }
-
         .footer-links a {
             color: #BF9A33;
             font-size: 14px;
             text-decoration: none;
             transition: color 0.3s;
         }
-
         .footer-links a:hover {
             color: #fff;
             text-decoration: underline;
         }
-
         /* Responsive */
         @media (max-width: 768px) {
             .footer-container {
@@ -603,16 +504,13 @@
                 text-align: center;
                 gap: 20px;
             }
-
             .footer-right {
                 flex-direction: column;
                 gap: 15px;
             }
-
             .footer-social {
                 justify-content: center;
             }
-
             .footer-links {
                 flex-direction: column;
                 gap: 10px;
@@ -620,7 +518,6 @@
         }
     </style>
 </head>
-
 <body>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
@@ -630,7 +527,6 @@
         gtag('js', new Date());
         gtag('config', 'G-8GQ1KM9FQS');
     </script>
-
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
             <div class="container">
@@ -670,7 +566,6 @@
             </div>
         </nav>
     </header>
-
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
@@ -687,7 +582,6 @@
             </div>
         </div>
     </section>
-
     <!-- Newsletter Hero Section -->
     <section class="newsletter-hero">
         <div class="container">
@@ -697,13 +591,12 @@
                     <p>Insights, tendências e ferramentas para profissionais de Recursos Humanos e líderes
                         organizacionais</p>
                     <a href="#newsletter-signup" class="btn-cta">
-                        <i class="fas fa-envelope"></i> Subscrever Newsletter
+                         Subscrever Newsletter
                     </a>
                 </div>
             </div>
         </div>
     </section>
-
     <!-- Stats Section -->
     <div class="container">
         <div class="stats-grid">
@@ -725,7 +618,6 @@
             </div>
         </div>
     </div>
-
     <!-- Latest Articles -->
     <section class="latest-articles container mb-5">
         <h2 class="text-center mb-5">Últimos Artigos</h2>
@@ -745,7 +637,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Article 2: Agentic AI -->
             <div class="col-md-4 mb-4">
                 <div class="card h-100 border-0 shadow-sm article-card">
@@ -761,7 +652,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Existing Article Card (kept as third) -->
             <div class="col-md-4 mb-4">
                 <div class="card h-100 border-0 shadow-sm article-card">
@@ -777,7 +667,6 @@
             </div>
         </div>
     </section>
-
     <!-- Featured Article -->
     <div class="container">
         <article class="featured-article">
@@ -787,8 +676,8 @@
             </div>
             <div class="article-content">
                 <div class="article-meta">
-                    <i class="fas fa-calendar"></i> 15 de Janeiro, 2024 •
-                    <i class="fas fa-clock"></i> 8 min de leitura
+                     15 de Janeiro, 2024 •
+                     8 min de leitura
                 </div>
                 <h3>O Futuro dos Recursos Humanos: Tendências para 2024</h3>
                 <div class="article-summary">
@@ -797,19 +686,18 @@
                         organização para os desafios e oportunidades que se avizinham.</p>
                 </div>
                 <a href="#" class="btn-read-more">
-                    <i class="fas fa-arrow-right"></i> Ler Artigo Completo
+                     Ler Artigo Completo
                 </a>
             </div>
         </article>
     </div>
-
     <!-- Download Section -->
     <div class="container">
         <section class="featured-article">
             <div class="article-content text-center">
                 <div class="article-meta">
-                    <i class="fas fa-file-pdf"></i> Relatório Exclusivo •
-                    <i class="fas fa-download"></i> Download Gratuito
+                     Relatório Exclusivo •
+                     Download Gratuito
                 </div>
                 <h3>Relatório HR Mid-Year 2025</h3>
                 <div class="article-summary">
@@ -819,12 +707,11 @@
                 </div>
                 <a href="https://github.com/samuelrolo/samuel.rolo/raw/main/hr-report/Share2Inspire_HR_25_MidYear_Report.pdf"
                     download="Share2Inspire_HR_25_MidYear_Report.pdf" class="btn-read-more" target="_blank">
-                    <i class="fas fa-download"></i> Descarregar Relatório (PDF)
+                     Descarregar Relatório (PDF)
                 </a>
             </div>
         </section>
     </div>
-
     <!-- CTA Section -->
     <div class="container">
         <section class="cta-section">
@@ -832,11 +719,10 @@
             <p>Junte-se a milhares de profissionais que recebem insights semanais sobre transformação organizacional,
                 liderança e desenvolvimento humano.</p>
             <button class="btn-cta" data-bs-toggle="modal" data-bs-target="#contactModal">
-                <i class="fas fa-rocket"></i> Começar Agora
+                 Começar Agora
             </button>
         </section>
     </div>
-
     <!-- Contact Modal -->
     <div class="modal fade s2i-modal" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel"
         aria-hidden="true">
@@ -890,20 +776,19 @@
                             </label>
                         </div>
                         <div class="alert alert-success d-none" id="contactSuccess">
-                            <i class="fas fa-check-circle me-2"></i> Mensagem enviada com sucesso!
+                             Mensagem enviada com sucesso!
                         </div>
                         <div class="alert alert-danger d-none" id="contactError">
-                            <i class="fas fa-exclamation-circle me-2"></i> Erro ao enviar mensagem.
+                             Erro ao enviar mensagem.
                         </div>
                         <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
-                            <i class="fas fa-paper-plane"></i> Enviar Mensagem
+                             Enviar Mensagem
                         </button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
     <footer id="contactos" style="background-color: #1A1A1A; color: #fff; padding: 80px 0 40px;">
         <div class="container">
             <div class="row g-4">
@@ -925,16 +810,14 @@
                 </div>
                 <div class="col-lg-3">
                     <h5 class="fw-bold mb-4">Contactos</h5>
-                    <p class="text-muted mb-2"><i class="fas fa-envelope me-2"></i> srshare2inspire@gmail.com</p>
-                    <p class="text-muted mb-2"><i class="fas fa-phone me-2"></i> +351 961 925 050</p>
+                    <p class="text-muted mb-2"> srshare2inspire@gmail.com</p>
+                    <p class="text-muted mb-2"> +351 961 925 050</p>
                 </div>
                 <div class="col-lg-3">
                     <h5 class="fw-bold mb-4">Siga-nos</h5>
                     <div class="d-flex gap-3">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-white fs-4"><i
-                                class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire_" target="_blank" class="text-white fs-4"><i
-                                class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-white fs-4"></a>
+                        <a href="https://www.instagram.com/share2inspire_" target="_blank" class="text-white fs-4"></a>
                     </div>
                 </div>
             </div>
@@ -952,21 +835,17 @@
             </div>
         </div>
     </footer>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
         // Track which button opened each modal for focus restoration
         let lastFocusedElement = null;
-
         // Store the element that triggered the modal
         document.querySelectorAll('[data-bs-toggle="modal"]').forEach(trigger => {
             trigger.addEventListener('click', () => {
                 lastFocusedElement = trigger;
             });
         });
-
         // Restore focus when modal is hidden
         document.querySelectorAll('.modal').forEach(modal => {
             modal.addEventListener('hidden.bs.modal', () => {
@@ -976,13 +855,10 @@
                 }
             });
         });
-
     </script>
     <script src="../js/contact-form.js"></script>
-
     <script src="../js/brevo-integration.js"></script>
     <!-- Global Feedback Widget -->
     <script src="../js/feedback-widget.js"></script>
 </body>
-
 </html>

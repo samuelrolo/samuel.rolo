@@ -1,0 +1,173 @@
+/* 
+ * Share2Inspire - Modern Design System
+ * Premium/Corporate Style
+ */
+
+:root {
+    --s2i-gold: #BF9A33;
+    --s2i-gold-dark: #a6852d;
+    --s2i-gold-light: #d4b35a;
+    --s2i-dark: #1A1A1A;
+    --s2i-gray-dark: #333333;
+    --s2i-gray-light: #F5F5F7;
+    --s2i-text: #444444;
+    --s2i-white: #FFFFFF;
+    --s2i-transition: all 0.3s ease;
+    --s2i-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--s2i-text);
+    background-color: #fcfcfc;
+}
+
+/* Buttons */
+.s2i-btn {
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    transition: var(--s2i-transition);
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.s2i-btn-primary {
+    background-color: var(--s2i-gold);
+    color: var(--s2i-white);
+}
+
+.s2i-btn-primary:hover {
+    background-color: var(--s2i-gold-dark);
+    color: var(--s2i-white);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(191, 154, 51, 0.3);
+}
+
+.s2i-btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--s2i-gold);
+    color: var(--s2i-gold);
+}
+
+.s2i-btn-outline:hover {
+    background-color: var(--s2i-gold);
+    color: var(--s2i-white);
+}
+
+/* Form Controls */
+.s2i-form-control {
+    border: 1px solid #e0e0e0;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: var(--s2i-transition);
+    background-color: var(--s2i-white);
+}
+
+.s2i-form-control:focus {
+    border-color: var(--s2i-gold);
+    box-shadow: 0 0 0 4px rgba(191, 154, 51, 0.1);
+    outline: none;
+}
+
+/* Maturity Score Card */
+.maturity-score-card {
+    background: var(--s2i-white);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--s2i-shadow);
+    text-align: center;
+    border-top: 5px solid var(--s2i-gold);
+}
+
+.maturity-score-value {
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--s2i-dark);
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.maturity-score-label {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--s2i-gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Details List */
+.details-list .strength-item, 
+.details-list .suggestion-item {
+    background: var(--s2i-white);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--s2i-gold);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    transition: var(--s2i-transition);
+}
+
+.details-list .strength-item:hover, 
+.details-list .suggestion-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+/* Modal Customization */
+.modal-content {
+    border: none;
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+.modal-header {
+    background-color: var(--s2i-dark);
+    color: var(--s2i-white);
+    padding: 25px 30px;
+    border: none;
+}
+
+.modal-title {
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.modal-body {
+    padding: 40px;
+    background-color: var(--s2i-gray-light);
+}
+
+/* Radar Chart Container */
+.chart-container {
+    background: var(--s2i-white);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: var(--s2i-shadow);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--s2i-dark);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title i {
+    color: var(--s2i-gold);
+}

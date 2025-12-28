@@ -180,7 +180,7 @@ async function handleKickstartSubmit(event) {
         window.formUtils.showFormMessage(messageDiv, 'error',
             `Erro no processamento: ${error.message}. Tente novamente ou contacte-nos em samuel@share2inspire.pt`);
     } finally {
-        window.formUtils.setButtonLoading(submitButton, false, 'Confirmar e Pagar (50€)');
+        window.formUtils.setButtonLoading(submitButton, false, 'Confirmar e Pagar (30€)');
     }
 }
 
@@ -192,7 +192,7 @@ async function processKickstartPayment(data, paymentMethod) {
 
     const paymentData = {
         orderId: `KICK-${Date.now()}`,
-        amount: data.amount || "50.00", // Valor padrão
+        amount: data.amount || "30.00", // Campanha lançamento (normal 40€)
         email: data.email,
         name: data.name,
         description: `Kickstart Pro - ${data.name}`,
