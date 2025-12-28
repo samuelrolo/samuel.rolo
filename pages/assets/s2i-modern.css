@@ -1,129 +1,269 @@
 /* 
- * Share2Inspire - Modern Design System 
- * Premium/Corporate Style (Gold & Dark)
+ * Share2Inspire - Modern Design System (Cyber-Premium Conversion Focused)
+ * Integração Híbrida: Glassmorphism + Funcionalidade Completa
  */
 
 :root {
     --s2i-gold: #BF9A33;
-    --s2i-gold-hover: #a38125;
+    --s2i-gold-dark: #a6852d;
+    --s2i-gold-light: #d4b35a;
     --s2i-dark: #1A1A1A;
-    --s2i-gray-light: #f8f9fa;
-    --s2i-text-muted: #6c757d;
+    --s2i-gray-dark: #333333;
+    --s2i-gray-light: #F5F5F7;
+    --s2i-text: #444444;
+    --s2i-white: #FFFFFF;
+    --s2i-transition: all 0.3s ease;
     --s2i-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    --s2i-radius: 12px;
 }
 
 body {
     font-family: 'Poppins', sans-serif;
+    color: var(--s2i-text);
     background-color: #fcfcfc;
-    color: #333;
 }
 
-/* --- Botões Personalizados --- */
+/* Buttons */
 .s2i-btn {
-    padding: 12px 24px;
-    border-radius: 50px;
-    /* Pill shape */
+    padding: 12px 28px;
+    border-radius: 8px;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.85rem;
     letter-spacing: 0.5px;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
+    font-size: 0.85rem;
+    transition: var(--s2i-transition);
+    border: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
 }
 
 .s2i-btn-primary {
-    background-color: var(--s2i-gold);
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(191, 154, 51, 0.3);
+    background: linear-gradient(45deg, var(--s2i-gold), var(--s2i-gold-dark));
+    color: var(--s2i-white);
+    box-shadow: 0 4px 15px rgba(191, 154, 51, 0.4);
 }
 
-.s2i-btn-primary:hover:not(:disabled) {
-    background-color: var(--s2i-gold-hover);
+.s2i-btn-primary:hover {
+    background: linear-gradient(45deg, var(--s2i-gold-dark), var(--s2i-gold));
+    color: var(--s2i-white);
     transform: translateY(-2px);
-    color: #fff;
-}
-
-.s2i-btn-primary:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-    box-shadow: none;
+    box-shadow: 0 6px 20px rgba(191, 154, 51, 0.6);
 }
 
 .s2i-btn-outline {
     background-color: transparent;
-    border-color: var(--s2i-gold);
+    border: 2px solid var(--s2i-gold);
     color: var(--s2i-gold);
 }
 
 .s2i-btn-outline:hover {
     background-color: var(--s2i-gold);
-    color: #fff;
+    color: var(--s2i-white);
 }
 
-/* --- Cartões e Upload --- */
+/* Form Controls */
+.s2i-form-control {
+    border: 1px solid #e0e0e0;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: var(--s2i-transition);
+    background-color: var(--s2i-white);
+}
+
+.s2i-form-control:focus {
+    border-color: var(--s2i-gold);
+    box-shadow: 0 0 0 4px rgba(191, 154, 51, 0.1);
+    outline: none;
+}
+
+/* Upload Section */
 .upload-section {
     position: relative;
     z-index: 10;
     margin-top: -60px;
-    /* Efeito de sobreposição ao Hero */
 }
 
+/* Maturity Score Card (Teaser) */
 .maturity-score-card {
-    background: #fff;
-    border-radius: var(--s2i-radius);
+    background: var(--s2i-white);
+    border-radius: 20px;
+    padding: 30px;
     box-shadow: var(--s2i-shadow);
-    transition: transform 0.3s ease;
-    overflow: hidden;
+    text-align: center;
+    border-top: 5px solid var(--s2i-gold);
 }
 
-/* --- Estilos do Modal de Resultados --- */
+.maturity-score-value {
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--s2i-dark);
+    line-height: 1;
+    margin-bottom: 5px;
+    /* Efeito de brilho sutil no número */
+    text-shadow: 0 0 5px rgba(191, 154, 51, 0.5);
+}
+
+.maturity-score-label {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--s2i-gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Details List (Teaser - Esconde Insights) */
+.details-list .strength-item, 
+.details-list .suggestion-item {
+    position: relative;
+    background: var(--s2i-white);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--s2i-gold);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    transition: var(--s2i-transition);
+}
+
+.details-list .strength-item:hover, 
+.details-list .suggestion-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+/* Efeito de Bloqueio/Teaser para Conteúdo Detalhado */
+.teaser-content {
+    position: relative;
+    padding: 10px 0;
+}
+
+.teaser-content p {
+    color: #999;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* Overlay de bloqueio visual (opcional, pode ser ativado via JS) */
+.teaser-blur {
+    filter: blur(4px);
+    color: transparent !important;
+    text-shadow: 0 0 8px rgba(0,0,0,0.5);
+    user-select: none;
+    pointer-events: none;
+}
+
+/* Modal Customization (Glassmorphism) */
 .modal-content {
     border: none;
-    border-radius: var(--s2i-radius);
+    border-radius: 24px;
     overflow: hidden;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    /* Glassmorphism Effect */
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
 
 .modal-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--s2i-dark);
+    color: var(--s2i-white);
+    padding: 25px 30px;
+    border: none;
 }
 
-.chart-container {
-    position: relative;
-    margin: auto;
-    width: 100%;
-}
-
-/* Listas de Detalhes (Pontos Fortes e Sugestões) */
-.details-list .strength-item,
-.details-list .suggestion-item {
-    border-bottom: 1px solid #eee;
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-}
-
-.details-list .strength-item:last-child,
-.details-list .suggestion-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
-
-/* Ícones e Títulos */
-.section-title {
-    font-size: 1.1rem;
+.modal-title {
+    font-weight: 700;
     letter-spacing: -0.5px;
 }
 
+.modal-body {
+    padding: 40px;
+    background-color: var(--s2i-gray-light);
+}
+
+/* Radar Chart Container */
+.chart-container {
+    background: var(--s2i-white);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: var(--s2i-shadow);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--s2i-dark);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title i {
+    color: var(--s2i-gold);
+}
+
+/* CTA Button - Glow Effect (Conversão) */
+.cta-glow-btn {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 4px 15px rgba(191, 154, 51, 0.4);
+    }
+    50% {
+        box-shadow: 0 6px 25px rgba(191, 154, 51, 0.7);
+    }
+}
+
+.cta-glow-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    transition: var(--s2i-transition);
+    transform: translateX(-100%);
+}
+
+.cta-glow-btn:hover::before {
+    transform: translateX(0);
+}
+
+/* Icon Wrapper Effects */
 .icon-wrapper i {
     filter: drop-shadow(0 4px 6px rgba(191, 154, 51, 0.2));
 }
 
-/* Score Display */
+/* Score Display Enhancement */
 #maturityScore {
     color: var(--s2i-gold);
     line-height: 1;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .maturity-score-value {
+        font-size: 3rem;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .upload-section {
+        margin-top: -40px;
+    }
 }

@@ -38,9 +38,18 @@ window.CV_ENGINE = {
 
             // Processar os dados reais extraídos
             this.runHeuristics(this.data.rawText);
+
+            // Extrair dados expandidos para PDF profissional
+            const expandedData = this.extractExpandedData(this.data.rawText);
+            this.data.personalInfo = {
+                ...this.data.personalInfo,
+                ...expandedData
+            };
+
             this.updateUI();
 
             console.log('[CV_ENGINE] Analysis complete. Score:', this.data.maturity.score);
+            console.log('[CV_ENGINE] Expanded data:', expandedData);
             return true; // Sucesso
         } catch (error) {
             console.error('[CV_ENGINE] Error during analysis:', error);
@@ -209,7 +218,7 @@ window.CV_ENGINE = {
     },
 
     /**
-     * Atualizar UI com os resultados da análise
+     * Atualizar UI com os resultados da análise (MODO TEASER)
      */
     updateUI() {
         // Update Maturity Score
@@ -224,7 +233,7 @@ window.CV_ENGINE = {
             window.renderRadarChart(this.data.competencies);
         }
 
-        // Render Lista de Pontos Fortes
+        // Render Lista de Pontos Fortes (MODO TEASER - Esconde detalhes)
         const sList = document.getElementById('strengthsList');
         if (sList) {
             sList.innerHTML = this.data.strengths.map(s => `
@@ -232,12 +241,16 @@ window.CV_ENGINE = {
                     <h6 class="fw-bold text-dark mb-1">
                         <i class="fas fa-check-circle text-success me-2"></i>${s.title}
                     </h6>
-                    <p class="small text-muted mb-0">${s.detail}</p>
+                    <div class="teaser-content">
+                        <p class="small mb-0 text-muted fst-italic">
+                            <i class="fas fa-lock me-1"></i> Análise estratégica detalhada disponível no relatório completo.
+                        </p>
+                    </div>
                 </div>
             `).join('');
         }
 
-        // Render Lista de Sugestões
+        // Render Lista de Sugestões (MODO TEASER - Esconde detalhes)
         const sugList = document.getElementById('suggestionsList');
         if (sugList) {
             sugList.innerHTML = this.data.suggestions.map(s => `
@@ -245,10 +258,108 @@ window.CV_ENGINE = {
                     <h6 class="fw-bold text-dark mb-1">
                         <i class="fas fa-arrow-up text-primary me-2"></i>${s.title}
                     </h6>
-                    <p class="small text-muted mb-0">${s.context}</p>
+                    <div class="teaser-content">
+                        <p class="small mb-0 text-muted fst-italic">
+                            <i class="fas fa-lock me-1"></i> Recomendações personalizadas e plano de ação bloqueados.
+                        </p>
+                    </div>
                 </div>
             `).join('');
         }
+    },
+
+    /**
+     * Extrair dados expandidos para o PDF profissional
+     * Analisa o texto para encontrar idiomas, empresas, datas de formação
+     */
+    extractExpandedData(text) {
+        // Idiomas comuns e seus níveis
+        const languagePatterns = {
+            'inglês': ['fluente', 'avançado', 'intermédio', 'básico', 'nativo'],
+            'espanhol': ['fluente', 'avançado', 'intermédio', 'básico'],
+            'francês': ['fluente', 'avançado', 'intermédio', 'básico'],
+            'alemão': ['fluente', 'avançado', 'intermédio', 'básico'],
+            'português': ['nativo', 'fluente'],
+            'italiano': ['fluente', 'avançado', 'intermédio'],
+            'chinês': ['fluente', 'avançado', 'intermédio', 'básico'],
+        };
+
+        const languages = [];
+        for (const [lang, levels] of Object.entries(languagePatterns)) {
+            if (text.includes(lang)) {
+                let level = 'Não especificado';
+                for (const lvl of levels) {
+                    if (text.includes(lvl)) {
+                        level = lvl.charAt(0).toUpperCase() + lvl.slice(1);
+                        break;
+                    }
+                }
+                languages.push({ name: lang.charAt(0).toUpperCase() + lang.slice(1), level });
+            }
+        }
+
+        // Empresas conhecidas (top companies)
+        const knownCompanies = ['google', 'microsoft', 'amazon', 'deloitte', 'ey', 'pwc', 'kpmg',
+            'accenture', 'mckinsey', 'bcg', 'bain', 'salesforce', 'oracle',
+            'ibm', 'sap', 'cisco', 'meta', 'facebook', 'apple', 'netflix',
+            'astrazeneca', 'bnp paribas', 'hsbc', 'santander', 'citi'];
+        const topCompanies = knownCompanies.filter(company => text.includes(company))
+            .map(c => c.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '))
+            .slice(0, 3); // Max 3 empresas
+
+        // Anos de experiência (heurística simples)
+        const yearMatches = text.match(/(\d{4})\s*-\s*(\d{4}|presente|atual)/gi);
+        let totalYears = 0;
+        if (yearMatches) {
+            yearMatches.forEach(match => {
+                const years = match.match(/\d{4}/g);
+                if (years && years.length === 2) {
+                    totalYears += parseInt(years[1]) - parseInt(years[0]);
+                } else if (years && years.length === 1) {
+                    totalYears += new Date().getFullYear() - parseInt(years[0]);
+                }
+            });
+        }
+
+        // Última formação/certificação (procurar por datas recentes)
+        const currentYear = new Date().getFullYear();
+        let lastTraining = null;
+        let trainingGap = 0;
+
+        for (let year = currentYear; year >= currentYear - 10; year--) {
+            if (text.includes(year.toString()) && (text.includes('certificação') ||
+                text.includes('formação') || text.includes('curso'))) {
+                lastTraining = year.toString();
+                trainingGap = currentYear - year;
+                break;
+            }
+        }
+
+        // Análise crítica de gap
+        let criticalAnalysis = '';
+        if (trainingGap >= 4) {
+            criticalAnalysis = `Não realiza formação formal há ${trainingGap} anos. Numa área em constante mudança, isto representa um risco de obsolescência de competências.`;
+        } else if (trainingGap >= 2) {
+            criticalAnalysis = `A última formação foi há ${trainingGap} anos. Recomenda-se atualização contínua para manter competitividade no mercado.`;
+        }
+
+        // Tópicos chave baseados no conteúdo
+        const keyTopics = [];
+        if (text.includes('digital') || text.includes('tecnologia')) keyTopics.push('Transformação Digital');
+        if (text.includes('dados') || text.includes('analytics')) keyTopics.push('Data Analytics');
+        if (text.includes('ia') || text.includes('inteligência artificial')) keyTopics.push('Inteligência Artificial');
+        if (text.includes('liderança') || text.includes('gestão')) keyTopics.push('Liderança e Gestão');
+        if (text.includes('estratégia')) keyTopics.push('Pensamento Estratégico');
+
+        return {
+            languages,
+            top_companies: topCompanies,
+            total_years_exp: Math.max(1, totalYears), // Mínimo 1 ano
+            last_training_date: lastTraining || 'Não detetado',
+            training_gap_years: trainingGap,
+            critical_analysis: criticalAnalysis,
+            main_key_topics: keyTopics.slice(0, 3) // Max 3 tópicos
+        };
     },
 
     /**
