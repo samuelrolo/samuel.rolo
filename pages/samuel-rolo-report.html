@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <style>
         :root {
             --color-deep-blue: #0A2540;
@@ -21,13 +20,11 @@
             --color-text-muted: #555555;
             --spacing-unit: 24px;
         }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: #fff; /* White background for print/PDF */
@@ -36,14 +33,12 @@
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
-
         .container {
             max-width: 210mm; /* A4 width roughly */
             margin: 0 auto;
             padding: 40px;
             background: white;
         }
-
         /* Header */
         header {
             display: flex;
@@ -53,12 +48,10 @@
             padding-bottom: 30px;
             margin-bottom: 40px;
         }
-
         .header-profile {
             display: flex;
             gap: 20px;
         }
-
         .avatar-placeholder {
             width: 80px;
             height: 80px;
@@ -71,14 +64,12 @@
             font-size: 24px;
             border: 2px solid var(--color-gold);
         }
-
         .candidate-info h1 {
             font-family: 'Playfair Display', serif;
             font-size: 28px;
             color: var(--color-deep-blue);
             margin-bottom: 5px;
         }
-
         .candidate-info h2 {
             font-size: 14px;
             text-transform: uppercase;
@@ -87,46 +78,38 @@
             font-weight: 600;
             margin-bottom: 5px;
         }
-
         .candidate-meta {
             font-size: 12px;
             color: var(--color-text-muted);
             display: flex;
             gap: 15px;
         }
-
         .logo-container {
             text-align: right;
         }
-
         .logo-text {
             font-weight: 700;
             font-size: 20px;
             color: var(--color-deep-blue);
         }
-        
         .logo-text span {
             color: var(--color-gold);
         }
-
         .report-date {
             font-size: 12px;
             color: var(--color-text-muted);
             margin-top: 5px;
         }
-
         /* Sections */
         section {
             margin-bottom: 40px;
         }
-
         .section-header {
             display: flex;
             align-items: center;
             gap: 15px;
             margin-bottom: 20px;
         }
-
         .section-icon {
             width: 32px;
             height: 32px;
@@ -138,7 +121,6 @@
             justify-content: center;
             font-size: 14px;
         }
-
         .section-title {
             font-size: 16px;
             font-weight: 700;
@@ -146,7 +128,6 @@
             color: var(--color-deep-blue);
             letter-spacing: 0.5px;
         }
-
         /* Executive Summary */
         .exec-summary {
             background-color: var(--color-grey-bg);
@@ -156,14 +137,12 @@
             font-size: 14px;
             text-align: justify;
         }
-
         /* Two Column Layout */
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 40px;
         }
-
         /* Maturity Score */
         .maturity-card {
             background: linear-gradient(135deg, var(--color-deep-blue), #1e3a5a);
@@ -173,7 +152,6 @@
             text-align: center;
             box-shadow: 0 10px 20px rgba(10, 37, 64, 0.1);
         }
-
         .score-large {
             font-size: 48px;
             font-weight: 700;
@@ -181,7 +159,6 @@
             line-height: 1;
             margin-bottom: 10px;
         }
-
         .score-label {
             font-size: 14px;
             text-transform: uppercase;
@@ -189,25 +166,21 @@
             opacity: 0.9;
             margin-bottom: 15px;
         }
-
         .score-context {
             font-size: 13px;
             opacity: 0.8;
             line-height: 1.5;
         }
-
         /* Content Lists */
         .content-list {
             list-style: none;
         }
-
         .content-list li {
             margin-bottom: 12px;
             padding-left: 20px;
             position: relative;
             font-size: 14px;
         }
-
         .content-list li::before {
             content: "•";
             color: var(--color-gold);
@@ -215,17 +188,14 @@
             position: absolute;
             left: 0;
         }
-
         .content-list.strong-points li {
             margin-bottom: 16px;
         }
-
         .content-list.strong-points strong {
             color: var(--color-deep-blue);
             display: block;
             margin-bottom: 4px;
         }
-
         /* Recommendations */
         .recommendation-box {
             border: 1px solid #e0e0e0;
@@ -233,21 +203,18 @@
             padding: 20px;
             margin-top: 15px;
         }
-
         .rec-title {
             font-weight: 700;
             color: var(--color-light-blue);
             margin-bottom: 10px;
             font-size: 14px;
         }
-        
         /* 90 Day Plan */
         .plan-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
         }
-
         .plan-card {
             background-color: white;
             border: 1px solid #eee;
@@ -255,24 +222,20 @@
             padding: 20px;
             border-radius: 6px;
         }
-        
         .plan-card h4 {
             font-size: 14px;
             color: var(--color-deep-blue);
             margin-bottom: 12px;
             font-weight: 700;
         }
-        
         .plan-card ul {
             font-size: 12px;
             color: var(--color-text-muted);
             padding-left: 15px;
         }
-        
         .plan-card li {
             margin-bottom: 6px;
         }
-
         /* Footer */
         footer {
             margin-top: 60px;
@@ -283,19 +246,16 @@
             font-size: 10px;
             color: #999;
         }
-
         /* Chart constraints */
         .chart-container {
             position: relative;
             height: 300px;
             width: 100%;
         }
-        
         @page {
             size: A4;
             margin: 0;
         }
-        
         @media print {
             body {
                 background-color: white;
@@ -309,20 +269,18 @@
     </style>
 </head>
 <body>
-
 <div class="container">
     <!-- Header -->
     <header>
         <div class="header-profile">
             <div class="avatar-placeholder">
-                <i class="fas fa-user-tie"></i>
             </div>
             <div class="candidate-info">
                 <h1>Samuel Rolo</h1>
                 <h2>Founder & CEO / Digital HR Strategist</h2>
                 <div class="candidate-meta">
-                    <span><i class="fas fa-briefcase me-2"></i> +14 Anos de Experiência</span>
-                    <span><i class="fas fa-map-marker-alt me-2"></i> Lisboa, Portugal</span>
+                    <span> +14 Anos de Experiência</span>
+                    <span> Lisboa, Portugal</span>
                 </div>
             </div>
         </div>
@@ -331,11 +289,10 @@
             <div class="report-date">Relatório Gerado em 11 de Dezembro de 2025</div>
         </div>
     </header>
-
     <!-- Executive Summary -->
     <section>
         <div class="section-header">
-            <div class="section-icon"><i class="fas fa-align-left"></i></div>
+            <div class="section-icon"></div>
             <div class="section-title">Resumo Executivo</div>
         </div>
         <div class="exec-summary">
@@ -344,12 +301,11 @@
             <p>A sua experiência demonstra uma capacidade rara de navegar entre a visão estratégica ("Future of Work", IA Humanizada) e a excelência operacional (implementação de SAP SuccessFactors, ServiceNow). Reconhecido como LinkedIn Top Voice, Samuel combina autoridade técnica com uma liderança empática, focada em maximizar o potencial humano através da tecnologia.</p>
         </div>
     </section>
-
     <div class="grid-2">
         <!-- Maturity Score -->
         <section>
             <div class="section-header">
-                <div class="section-icon"><i class="fas fa-chart-bar"></i></div>
+                <div class="section-icon"></div>
                 <div class="section-title">Nível de Maturidade Profissional</div>
             </div>
             <div class="maturity-card">
@@ -360,11 +316,10 @@
                 </div>
             </div>
         </section>
-
         <!-- Main Skills -->
         <section>
             <div class="section-header">
-                <div class="section-icon"><i class="fas fa-star"></i></div>
+                <div class="section-icon"></div>
                 <div class="section-title">Competências Principais</div>
             </div>
             <ul class="content-list">
@@ -376,11 +331,10 @@
             </ul>
         </section>
     </div>
-
     <!-- Strengths Analysis -->
     <section>
         <div class="section-header">
-            <div class="section-icon"><i class="fas fa-thumbs-up"></i></div>
+            <div class="section-icon"></div>
             <div class="section-title">Análise de Pontos Fortes</div>
         </div>
         <ul class="content-list strong-points">
@@ -406,11 +360,10 @@
             </li>
         </ul>
     </section>
-
     <!-- Radar Chart -->
     <section>
         <div class="section-header">
-            <div class="section-icon"><i class="fas fa-radar"></i></div>
+            <div class="section-icon"></div>
             <div class="section-title">Radar de Competências</div>
         </div>
         <div class="chart-container">
@@ -420,12 +373,11 @@
             O gráfico evidencia um perfil equilibrado com picos em Estratégia e Tecnologia, características essenciais para funções de C-Level ou Consultoria Sénior.
         </p>
     </section>
-
     <!-- Development & Action Plan -->
     <div class="grid-2">
         <section>
             <div class="section-header">
-                <div class="section-icon"><i class="fas fa-arrow-up"></i></div>
+                <div class="section-icon"></div>
                 <div class="section-title">Sugestão de Evolução</div>
             </div>
             <div class="recommendation-box">
@@ -440,10 +392,9 @@
                 </p>
             </div>
         </section>
-
         <section>
             <div class="section-header">
-                <div class="section-icon"><i class="fas fa-tasks"></i></div>
+                <div class="section-icon"></div>
                 <div class="section-title">Plano de Ação a 90 Dias</div>
             </div>
             <div class="plan-card" style="border-top: none; background: #fff; padding: 0;">
@@ -464,17 +415,15 @@
             </div>
         </section>
     </div>
-
     <!-- Footer -->
     <footer>
         <div class="footer-brand">
             <span style="color: var(--color-deep-blue); font-weight: bold;">Share</span><span style="color: var(--color-gold); font-weight: bold;">2Inspire</span>
         </div>
         <div>CONFIDENCIAL - Uso exclusivo do candidato</div>
-        <div><i class="fas fa-envelope me-1"></i> srshare2inspire@gmail.com</div>
+        <div> srshare2inspire@gmail.com</div>
     </footer>
 </div>
-
 <script>
     // Radar Chart Configuration
     const ctx = document.getElementById('skillsRadar').getContext('2d');
@@ -538,6 +487,5 @@
         }
     });
 </script>
-
 </body>
 </html>

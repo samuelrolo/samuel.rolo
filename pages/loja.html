@@ -1,30 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loja | Share2Inspire | Samuel Rolo</title>
     <meta name="description"
         content="Loja online da Share2Inspire. Livros e recursos para desenvolvimento pessoal e organizacional.">
-
     <!-- Favicon -->
     <link rel="icon" href="../images/favicon.png" type="image/png">
-
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="assets/s2i-modern.css">
-
     <style>
         /* Estilos para o footer */
         footer {
@@ -33,7 +26,6 @@
             padding: 20px 0;
             margin-top: 50px;
         }
-
         .footer-container {
             display: flex;
             justify-content: space-between;
@@ -41,43 +33,35 @@
             flex-wrap: wrap;
             margin-bottom: 15px;
         }
-
         .footer-left p {
             margin: 0;
             color: #BF9A33;
         }
-
         .footer-right {
             display: flex;
             gap: 30px;
         }
-
         .footer-contact p {
             margin: 0;
             margin-bottom: 5px;
             color: #fff;
         }
-
         .footer-contact i {
             color: #BF9A33;
             margin-right: 8px;
         }
-
         .footer-social {
             display: flex;
             gap: 15px;
         }
-
         .footer-social a {
             color: #BF9A33;
             font-size: 20px;
             transition: color 0.3s;
         }
-
         .footer-social a:hover {
             color: #fff;
         }
-
         .footer-links {
             display: flex;
             justify-content: center;
@@ -86,45 +70,37 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 15px;
         }
-
         .footer-links a {
             color: #BF9A33;
             font-size: 14px;
             text-decoration: none;
             transition: color 0.3s;
         }
-
         .footer-links a:hover {
             color: #fff;
             text-decoration: underline;
         }
-
         .navbar {
             background-color: #fff;
             padding: 1rem 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-
         .navbar-brand img {
             height: 40px;
         }
-
         .navbar-nav {
             margin-left: auto;
         }
-
         .navbar-nav .nav-link {
             color: #333;
             font-weight: 600;
             padding: 0.5rem 1rem;
             margin: 0 0.25rem;
         }
-
         .navbar-nav .nav-link.active {
             color: #BF9A33;
             position: relative;
         }
-
         .navbar-nav .nav-link.active::after {
             content: '';
             position: absolute;
@@ -134,59 +110,49 @@
             height: 2px;
             background-color: #BF9A33;
         }
-
         /* Estilos para a página da loja */
         .page-header {
             background-color: #f8f9fa;
             padding: 100px 0 50px;
             margin-bottom: 50px;
         }
-
         .page-header h1 {
             font-size: 2.5rem;
             font-weight: 700;
             color: #333;
             margin-bottom: 1rem;
         }
-
         .breadcrumb {
             background-color: transparent;
             padding: 0;
             margin: 0;
         }
-
         .breadcrumb-item a {
             color: #BF9A33;
             text-decoration: none;
         }
-
         .breadcrumb-item.active {
             color: #6c757d;
         }
-
         .shop-intro {
             padding: 0 0 50px;
         }
-
         .section-title {
             font-size: 2.2rem;
             font-weight: 700;
             color: #333;
             margin-bottom: 1rem;
         }
-
         .section-subtitle {
             font-size: 1.1rem;
             color: #6c757d;
             margin-bottom: 2rem;
         }
-
         /* Estilos para o slider de livros */
         .book-slider-section {
             padding: 80px 0;
             background-color: #f8f9fa;
         }
-
         .book-slider-container {
             position: relative;
             max-width: 1200px;
@@ -196,7 +162,6 @@
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
-
         .country-flags {
             display: flex;
             justify-content: center;
@@ -204,7 +169,6 @@
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-bottom: 1px solid #dee2e6;
         }
-
         .flag-btn {
             background: none;
             border: none;
@@ -215,17 +179,14 @@
             cursor: pointer;
             position: relative;
         }
-
         .flag-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
-
         .flag-btn.active {
             background-color: #BF9A33;
             box-shadow: 0 5px 15px rgba(191, 154, 51, 0.3);
         }
-
         .flag-btn img {
             width: 50px;
             height: 50px;
@@ -234,37 +195,30 @@
             border: 3px solid transparent;
             transition: border-color 0.3s ease;
         }
-
         .flag-btn.active img {
             border-color: #fff;
         }
-
         .book-content {
             padding: 50px;
             min-height: 600px;
         }
-
         .book-slide {
             display: none;
             opacity: 0;
             transition: opacity 0.5s ease;
         }
-
         .book-slide.active {
             display: block;
             opacity: 1;
         }
-
         .book-row {
             display: flex;
             align-items: center;
             gap: 50px;
         }
-
         .book-image {
             flex: 0 0 350px;
         }
-
         .book-image img {
             width: 100%;
             max-width: 350px;
@@ -272,15 +226,12 @@
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease;
         }
-
         .book-image img:hover {
             transform: scale(1.05);
         }
-
         .book-info {
             flex: 1;
         }
-
         .book-title {
             font-size: 2.5rem;
             font-weight: 700;
@@ -288,41 +239,35 @@
             margin-bottom: 0.5rem;
             line-height: 1.2;
         }
-
         .book-subtitle {
             font-size: 1.3rem;
             color: #BF9A33;
             margin-bottom: 2rem;
             font-weight: 500;
         }
-
         .book-description {
             font-size: 1.1rem;
             line-height: 1.7;
             color: #555;
             margin-bottom: 2rem;
         }
-
         .book-features {
             list-style: none;
             padding: 0;
             margin: 0 0 2rem;
         }
-
         .book-features li {
             margin-bottom: 0.8rem;
             display: flex;
             align-items: flex-start;
             font-size: 1rem;
         }
-
         .book-features li i {
             color: #BF9A33;
             margin-right: 12px;
             margin-top: 3px;
             font-size: 1.1rem;
         }
-
         .amazon-btn {
             background: linear-gradient(135deg, #BF9A33 0%, #a57b0a 100%);
             color: #fff;
@@ -338,18 +283,15 @@
             transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(191, 154, 51, 0.3);
         }
-
         .amazon-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(191, 154, 51, 0.4);
             color: #fff;
             text-decoration: none;
         }
-
         .amazon-btn i {
             font-size: 1.2rem;
         }
-
         /* Responsividade */
         @media (max-width: 992px) {
             .book-row {
@@ -357,102 +299,81 @@
                 text-align: center;
                 gap: 30px;
             }
-
             .book-image {
                 flex: none;
             }
-
             .book-content {
                 padding: 30px;
             }
-
             .book-title {
                 font-size: 2rem;
             }
-
             .book-subtitle {
                 font-size: 1.1rem;
             }
         }
-
         @media (max-width: 768px) {
             .book-slider-section {
                 padding: 50px 0;
             }
-
             .country-flags {
                 padding: 20px 0 15px;
             }
-
             .flag-btn {
                 margin: 0 10px;
             }
-
             .flag-btn img {
                 width: 40px;
                 height: 40px;
             }
-
             .book-content {
                 padding: 20px;
                 min-height: auto;
             }
-
             .book-title {
                 font-size: 1.8rem;
             }
-
             .book-subtitle {
                 font-size: 1rem;
             }
-
             .book-description {
                 font-size: 1rem;
             }
-
             .amazon-btn {
                 padding: 12px 30px;
                 font-size: 1rem;
             }
         }
-
         @media (max-width: 576px) {
             .book-slider-container {
                 margin: 0 15px;
                 border-radius: 10px;
             }
-
             .book-title {
                 font-size: 1.6rem;
             }
-
             .book-subtitle {
                 font-size: 0.9rem;
             }
-
             .book-description {
                 font-size: 0.9rem;
             }
-
             .book-features li {
                 font-size: 0.9rem;
             }
         }
-
         .cta-section {
             padding: 80px 0;
             text-align: center;
             background-color: #212529;
             color: #fff;
         }
-
         .cta-section h2 {
             font-size: 2.2rem;
             font-weight: 700;
             color: #fff;
             margin-bottom: 1rem;
         }
-
         .cta-section p {
             font-size: 1.1rem;
             margin-bottom: 2rem;
@@ -460,7 +381,6 @@
             margin-left: auto;
             margin-right: auto;
         }
-
         /* Botões personalizados - Override Bootstrap azul */
         .btn-primary {
             background-color: #BF9A33 !important;
@@ -473,7 +393,6 @@
             text-decoration: none;
             display: inline-block;
         }
-
         .btn-primary:hover {
             background-color: #a57b0a !important;
             border-color: #a57b0a !important;
@@ -481,30 +400,25 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(191, 154, 51, 0.3);
         }
-
         .btn-primary:focus {
             background-color: #a57b0a !important;
             border-color: #a57b0a !important;
             color: #fff !important;
             box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25);
         }
-
         .btn-primary:active {
             background-color: #a57b0a !important;
             border-color: #a57b0a !important;
             color: #fff !important;
         }
-
         .btn-primary:visited {
             color: #fff !important;
         }
-
         /* Botões grandes */
         .btn-lg {
             padding: 1rem 2.5rem;
             font-size: 1.1rem;
         }
-
         /* Estilos para o sistema de feedback */
         .feedback-container {
             position: fixed;
@@ -519,24 +433,20 @@
             border: 1px solid #BF9A33;
             display: none;
         }
-
         .feedback-container.show {
             display: block;
         }
-
         .feedback-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
-
         .feedback-header h5 {
             margin: 0;
             font-size: 16px;
             font-weight: 600;
         }
-
         .feedback-close {
             background: none;
             border: none;
@@ -544,13 +454,11 @@
             cursor: pointer;
             color: #6c757d;
         }
-
         .feedback-stars {
             display: flex;
             justify-content: center;
             margin-bottom: 15px;
         }
-
         .feedback-stars i {
             font-size: 20px;
             color: #ddd;
@@ -558,12 +466,10 @@
             margin: 0 2px;
             transition: color 0.3s;
         }
-
         .feedback-stars i.active,
         .feedback-stars i:hover {
             color: #BF9A33;
         }
-
         .feedback-comment textarea {
             width: 100%;
             border: 1px solid #ddd;
@@ -573,7 +479,6 @@
             resize: vertical;
             margin-bottom: 10px;
         }
-
         .feedback-btn {
             background-color: #BF9A33;
             color: #fff;
@@ -584,11 +489,9 @@
             font-size: 14px;
             width: 100%;
         }
-
         .feedback-btn:hover {
             background-color: #a57b0a;
         }
-
         .feedback-trigger {
             position: fixed;
             bottom: 20px;
@@ -605,12 +508,10 @@
             z-index: 999;
             transition: all 0.3s ease;
         }
-
         .feedback-trigger:hover {
             background-color: #a57b0a;
             transform: scale(1.1);
         }
-
         /* Footer */
         footer {
             background-color: #212529;
@@ -618,7 +519,6 @@
             padding: 20px 0;
             margin-top: 50px;
         }
-
         .footer-container {
             display: flex;
             justify-content: space-between;
@@ -626,43 +526,35 @@
             flex-wrap: wrap;
             margin-bottom: 15px;
         }
-
         .footer-left p {
             margin: 0;
             color: #BF9A33;
         }
-
         .footer-right {
             display: flex;
             gap: 30px;
         }
-
         .footer-contact p {
             margin: 0;
             margin-bottom: 5px;
             color: #fff;
         }
-
         .footer-contact i {
             color: #BF9A33;
             margin-right: 8px;
         }
-
         .footer-social {
             display: flex;
             gap: 15px;
         }
-
         .footer-social a {
             color: #BF9A33;
             font-size: 20px;
             transition: color 0.3s;
         }
-
         .footer-social a:hover {
             color: #fff;
         }
-
         .footer-links {
             display: flex;
             justify-content: center;
@@ -671,19 +563,16 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 15px;
         }
-
         .footer-links a {
             color: #BF9A33;
             font-size: 14px;
             text-decoration: none;
             transition: color 0.3s;
         }
-
         .footer-links a:hover {
             color: #fff;
             text-decoration: underline;
         }
-
         /* Responsive */
         @media (max-width: 768px) {
             .footer-container {
@@ -691,16 +580,13 @@
                 text-align: center;
                 gap: 20px;
             }
-
             .footer-right {
                 flex-direction: column;
                 gap: 15px;
             }
-
             .footer-social {
                 justify-content: center;
             }
-
             .footer-links {
                 flex-direction: column;
                 gap: 10px;
@@ -708,7 +594,6 @@
         }
     </style>
 </head>
-
 <body>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
@@ -718,7 +603,6 @@
         gtag('js', new Date());
         gtag('config', 'G-8GQ1KM9FQS');
     </script>
-
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
             <div class="container">
@@ -758,7 +642,6 @@
             </div>
         </nav>
     </header>
-
     <main>
         <!-- Cabeçalho da Página -->
         <section class="page-header">
@@ -776,7 +659,6 @@
                 </div>
             </div>
         </section>
-
         <!-- Introdução da Loja -->
         <section class="shop-intro">
             <div class="container">
@@ -789,7 +671,6 @@
                 </div>
             </div>
         </section>
-
         <!-- Slider de Livros -->
         <section class="book-slider-section">
             <div class="container">
@@ -806,7 +687,6 @@
                             <img src="https://flagcdn.com/w80/es.png" alt="Espanha">
                         </button>
                     </div>
-
                     <!-- Conteúdo dos Livros -->
                     <div class="book-content">
                         <!-- Versão Portuguesa -->
@@ -831,9 +711,6 @@
                                             style="background-color: #f8f9fa; border-left: 4px solid #BF9A33; padding: 15px; margin: 20px 0; border-radius: 5px;">
                                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
                                                 <div style="color: #BF9A33; margin-right: 8px;">
-                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                                        class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                                        class="fas fa-star"></i>
                                                 </div>
                                             </div>
                                             <p style="font-style: italic; margin-bottom: 8px; color: #555;">"Devorei o
@@ -845,22 +722,20 @@
                                         </div>
                                     </div>
                                     <ul class="book-features">
-                                        <li><i class="fas fa-heart"></i> Uma narrativa emocionalmente rica e autêntica
+                                        <li> Uma narrativa emocionalmente rica e autêntica
                                         </li>
-                                        <li><i class="fas fa-lightbulb"></i> Reflexões profundas sobre a condição humana
+                                        <li> Reflexões profundas sobre a condição humana
                                         </li>
-                                        <li><i class="fas fa-compass"></i> Orientação para o crescimento pessoal</li>
-                                        <li><i class="fas fa-star"></i> Inspiração para superar desafios da vida</li>
+                                        <li> Orientação para o crescimento pessoal</li>
+                                        <li> Inspiração para superar desafios da vida</li>
                                     </ul>
                                     <a href="https://www.amazon.com.br/dp/B0FC2GGSPP" class="amazon-btn"
                                         target="_blank">
-                                        <i class="fab fa-amazon"></i>
                                         Comprar na Amazon
                                     </a>
                                 </div>
                             </div>
                         </div>
-
                         <!-- Versão Inglesa -->
                         <div class="book-slide" id="book-en">
                             <div class="book-row">
@@ -884,9 +759,6 @@
                                             style="background-color: #f8f9fa; border-left: 4px solid #BF9A33; padding: 15px; margin: 20px 0; border-radius: 5px;">
                                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
                                                 <div style="color: #BF9A33; margin-right: 8px;">
-                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                                        class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                                        class="fas fa-star"></i>
                                                 </div>
                                             </div>
                                             <p style="font-style: italic; margin-bottom: 8px; color: #555;">"I devoured
@@ -898,21 +770,19 @@
                                         </div>
                                     </div>
                                     <ul class="book-features">
-                                        <li><i class="fas fa-heart"></i> An emotionally rich and authentic narrative
+                                        <li> An emotionally rich and authentic narrative
                                         </li>
-                                        <li><i class="fas fa-lightbulb"></i> Deep reflections on the human condition
+                                        <li> Deep reflections on the human condition
                                         </li>
-                                        <li><i class="fas fa-compass"></i> Guidance for personal growth</li>
-                                        <li><i class="fas fa-star"></i> Inspiration to overcome life's challenges</li>
+                                        <li> Guidance for personal growth</li>
+                                        <li> Inspiration to overcome life's challenges</li>
                                     </ul>
                                     <a href="https://www.amazon.co.uk/dp/B0FF24CKFZ" class="amazon-btn" target="_blank">
-                                        <i class="fab fa-amazon"></i>
                                         Buy on Amazon
                                     </a>
                                 </div>
                             </div>
                         </div>
-
                         <!-- Versão Espanhola -->
                         <div class="book-slide" id="book-es">
                             <div class="book-row">
@@ -936,9 +806,6 @@
                                             style="background-color: #f8f9fa; border-left: 4px solid #BF9A33; padding: 15px; margin: 20px 0; border-radius: 5px;">
                                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
                                                 <div style="color: #BF9A33; margin-right: 8px;">
-                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                                        class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                                        class="fas fa-star"></i>
                                                 </div>
                                             </div>
                                             <p style="font-style: italic; margin-bottom: 8px; color: #555;">"Devoré el
@@ -950,16 +817,15 @@
                                         </div>
                                     </div>
                                     <ul class="book-features">
-                                        <li><i class="fas fa-heart"></i> Una narrativa emocionalmente rica y auténtica
+                                        <li> Una narrativa emocionalmente rica y auténtica
                                         </li>
-                                        <li><i class="fas fa-lightbulb"></i> Reflexiones profundas sobre la condición
+                                        <li> Reflexiones profundas sobre la condición
                                             humana</li>
-                                        <li><i class="fas fa-compass"></i> Orientación para el crecimiento personal</li>
-                                        <li><i class="fas fa-star"></i> Inspiración para superar los desafíos de la vida
+                                        <li> Orientación para el crecimiento personal</li>
+                                        <li> Inspiración para superar los desafíos de la vida
                                         </li>
                                     </ul>
                                     <a href="https://www.amazon.es/dp/B0FC2GGSPP" class="amazon-btn" target="_blank">
-                                        <i class="fab fa-amazon"></i>
                                         Comprar en Amazon
                                     </a>
                                 </div>
@@ -969,7 +835,6 @@
                 </div>
             </div>
         </section>
-
         <!-- Produto 2: 5-Minute Reset (Inglês) -->
         <section class="product-section">
             <div class="container">
@@ -978,25 +843,21 @@
                         <div class="product-content">
                             <h2>5-Minute Reset</h2>
                             <p class="product-tagline">Quick strategies for personal and professional transformation</p>
-
                             <div class="product-description">
                                 <p>A practical guide designed for busy professionals who want to implement meaningful
                                     changes without overwhelming their schedules. This book offers bite-sized strategies
                                     that can be applied in just five minutes.</p>
-
                                 <h3>What you'll discover:</h3>
                                 <ul class="product-features">
-                                    <li><i class="fas fa-check"></i> Quick mindfulness techniques for daily stress</li>
-                                    <li><i class="fas fa-check"></i> Micro-habits that create lasting change</li>
-                                    <li><i class="fas fa-check"></i> Leadership insights for busy executives</li>
-                                    <li><i class="fas fa-check"></i> Evidence-based approaches to personal development
+                                    <li> Quick mindfulness techniques for daily stress</li>
+                                    <li> Micro-habits that create lasting change</li>
+                                    <li> Leadership insights for busy executives</li>
+                                    <li> Evidence-based approaches to personal development
                                     </li>
                                 </ul>
-
                                 <p><strong>Perfect for:</strong> Executives, entrepreneurs, and anyone looking to
                                     optimize their personal and professional performance with minimal time investment.
                                 </p>
-
                                 <a href="https://www.amazon.es/dp/B0FBZLLTP2" target="_blank"
                                     class="btn btn-primary">BUY ON AMAZON</a>
                             </div>
@@ -1010,7 +871,6 @@
                 </div>
             </div>
         </section>
-
         <!-- Produto 3: Guia Prático de Transformação Organizacional -->
         <section class="product-section">
             <div class="container">
@@ -1024,26 +884,21 @@
                         <div class="product-content">
                             <h2>Gestão da Mudança | Estratégias para Impulsionar a Transformação Organizacional</h2>
                             <p class="product-tagline">Um guia prático para liderar transformações significativas</p>
-
                             <div class="product-description">
                                 <p>Neste livro, o Samuel partilha a sua experiência em projectos de Gestão da Mudança,
                                     para inspirar mudanças com propósito, autenticidade e impacto.</p>
-
                                 <p>Combina insights de quem liderou diversos projectos de gestão da mudança, com a visão
                                     crítica e humanizada do autor. Este é um guia para profissionais e líderes que
                                     procuram implementar transformações com propósito nas suas organizações.</p>
-
                                 <h3>O que vai encontrar:</h3>
                                 <ul class="product-features">
-                                    <li><i class="fas fa-check"></i> Insights práticos de contextos reais</li>
-                                    <li><i class="fas fa-check"></i> Dicas práticas para diagnosticar e planear as
+                                    <li> Insights práticos de contextos reais</li>
+                                    <li> Dicas práticas para diagnosticar e planear as
                                         mudanças</li>
-                                    <li><i class="fas fa-check"></i> Estratégias para superar resistências e alinhar
+                                    <li> Estratégias para superar resistências e alinhar
                                         equipas</li>
                                 </ul>
-
                                 <p><em>"Sem as pessoas, a mudança é apenas ruído..."</em></p>
-
                                 <div class="d-flex flex-wrap gap-2">
                                     <a href="https://amzn.eu/d/9gPIPXC" target="_blank" class="btn btn-primary">Comprar
                                         na Amazon</a>
@@ -1058,7 +913,6 @@
                 </div>
             </div>
         </section>
-
         <!-- Testemunhos -->
         <section class="testimonials-section" style="padding: 80px 0; background-color: #f8f9fa;">
             <div class="container">
@@ -1074,11 +928,6 @@
                         <div class="testimonial-card"
                             style="background: #fff; border-radius: 15px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center;">
                             <div class="stars mb-3">
-                                <i class="fas fa-star" style="color: #BF9A33; font-size: 1.2rem;"></i>
-                                <i class="fas fa-star" style="color: #BF9A33; font-size: 1.2rem;"></i>
-                                <i class="fas fa-star" style="color: #BF9A33; font-size: 1.2rem;"></i>
-                                <i class="fas fa-star" style="color: #BF9A33; font-size: 1.2rem;"></i>
-                                <i class="fas fa-star" style="color: #BF9A33; font-size: 1.2rem;"></i>
                             </div>
                             <blockquote class="testimonial-text"
                                 style="font-size: 1.1rem; line-height: 1.7; color: #555; font-style: italic; margin-bottom: 2rem;">
@@ -1096,7 +945,6 @@
                 </div>
             </div>
         </section>
-
         <!-- Call to Action -->
         <section class="cta-section">
             <div class="container">
@@ -1112,7 +960,6 @@
             </div>
         </section>
     </main>
-
     <!-- Contact Modal -->
     <div class="modal fade s2i-modal" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel"
         aria-hidden="true">
@@ -1166,20 +1013,19 @@
                             </label>
                         </div>
                         <div class="alert alert-success d-none" id="contactSuccess">
-                            <i class="fas fa-check-circle me-2"></i> Mensagem enviada com sucesso!
+                             Mensagem enviada com sucesso!
                         </div>
                         <div class="alert alert-danger d-none" id="contactError">
-                            <i class="fas fa-exclamation-circle me-2"></i> Erro ao enviar mensagem.
+                             Erro ao enviar mensagem.
                         </div>
                         <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
-                            <i class="fas fa-paper-plane"></i> Enviar Mensagem
+                             Enviar Mensagem
                         </button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
     <footer id="contactos" style="background-color: #1A1A1A; color: #fff; padding: 80px 0 40px;">
         <div class="container">
             <div class="row g-4">
@@ -1201,16 +1047,14 @@
                 </div>
                 <div class="col-lg-3">
                     <h5 class="fw-bold mb-4">Contactos</h5>
-                    <p class="text-muted mb-2"><i class="fas fa-envelope me-2"></i> srshare2inspire@gmail.com</p>
-                    <p class="text-muted mb-2"><i class="fas fa-phone me-2"></i> +351 961 925 050</p>
+                    <p class="text-muted mb-2"> srshare2inspire@gmail.com</p>
+                    <p class="text-muted mb-2"> +351 961 925 050</p>
                 </div>
                 <div class="col-lg-3">
                     <h5 class="fw-bold mb-4">Siga-nos</h5>
                     <div class="d-flex gap-3">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-white fs-4"><i
-                                class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire_" target="_blank" class="text-white fs-4"><i
-                                class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-white fs-4"></a>
+                        <a href="https://www.instagram.com/share2inspire_" target="_blank" class="text-white fs-4"></a>
                     </div>
                 </div>
             </div>
@@ -1228,12 +1072,10 @@
             </div>
         </div>
     </footer>
-
     <!-- Botão de Feedback -->
     <button id="feedbackBtn" class="feedback-btn" data-bs-toggle="modal" data-bs-target="#feedbackModal">
-        <i class="fas fa-comment"></i> Feedback
+         Feedback
     </button>
-
     <!-- Modal de Feedback -->
     <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -1278,83 +1120,63 @@
             </div>
         </div>
     </div>
-
     <!-- Sistema de Feedback -->
     <button class="feedback-trigger" onclick="toggleFeedback()" aria-label="Feedback">
-        <i class="fas fa-comment"></i>
     </button>
-
     <div class="feedback-container" id="feedbackContainer">
         <div class="feedback-header">
             <h5>O seu feedback</h5>
             <button class="feedback-close" onclick="toggleFeedback()">&times;</button>
         </div>
         <div class="feedback-stars" id="feedbackStars">
-            <i class="fas fa-star" data-rating="1"></i>
-            <i class="fas fa-star" data-rating="2"></i>
-            <i class="fas fa-star" data-rating="3"></i>
-            <i class="fas fa-star" data-rating="4"></i>
-            <i class="fas fa-star" data-rating="5"></i>
         </div>
         <div class="feedback-comment">
             <textarea placeholder="Partilhe a sua opinião..." rows="3" id="feedbackText"></textarea>
         </div>
         <button class="feedback-btn" onclick="submitFeedback()">Enviar Feedback</button>
     </div>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
         // Slider de livros
         document.addEventListener('DOMContentLoaded', function () {
             const flagBtns = document.querySelectorAll('.flag-btn');
             const bookSlides = document.querySelectorAll('.book-slide');
-
             flagBtns.forEach(btn => {
                 btn.addEventListener('click', function () {
                     const country = this.getAttribute('data-country');
-
                     // Remove active class from all flags and slides
                     flagBtns.forEach(flag => flag.classList.remove('active'));
                     bookSlides.forEach(slide => slide.classList.remove('active'));
-
                     // Add active class to clicked flag and corresponding slide
                     this.classList.add('active');
                     document.getElementById(`book-${country}`).classList.add('active');
                 });
             });
         });
-
         // Sistema de feedback
         let selectedRating = 0;
-
         function toggleFeedback() {
             const container = document.getElementById('feedbackContainer');
             container.classList.toggle('show');
         }
-
         // Rating stars
         document.addEventListener('DOMContentLoaded', function () {
             const stars = document.querySelectorAll('.feedback-stars i');
-
             stars.forEach(star => {
                 star.addEventListener('click', function () {
                     selectedRating = parseInt(this.getAttribute('data-rating'));
                     updateStars();
                 });
-
                 star.addEventListener('mouseover', function () {
                     const rating = parseInt(this.getAttribute('data-rating'));
                     highlightStars(rating);
                 });
             });
-
             document.querySelector('.feedback-stars').addEventListener('mouseleave', function () {
                 updateStars();
             });
         });
-
         function highlightStars(rating) {
             const stars = document.querySelectorAll('.feedback-stars i');
             stars.forEach((star, index) => {
@@ -1365,34 +1187,27 @@
                 }
             });
         }
-
         function updateStars() {
             highlightStars(selectedRating);
         }
-
         function submitFeedback() {
             const text = document.getElementById('feedbackText').value;
-
             if (selectedRating === 0) {
                 alert('Por favor, selecione uma classificação.');
                 return;
             }
-
             // Aqui você pode implementar o envio do feedback
             console.log('Feedback:', {
                 rating: selectedRating,
                 comment: text
             });
-
             alert('Obrigado pelo seu feedback!');
-
             // Reset form
             selectedRating = 0;
             document.getElementById('feedbackText').value = '';
             updateStars();
             toggleFeedback();
         }
-
         // Smooth scrolling para links internos
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -1412,5 +1227,4 @@
     <!-- Global Feedback Widget -->
     <script src="../js/feedback-widget.js"></script>
 </body>
-
 </html>

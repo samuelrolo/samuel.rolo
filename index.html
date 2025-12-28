@@ -9,16 +9,13 @@
         content="Consultoria e coaching por Samuel Rolo. Desenvolvimento humano, transformação organizacional e liderança consciente.">
     <meta name="keywords"
         content="consultoria, coaching, transformação organizacional, gestão da mudança, liderança consciente, desenvolvimento humano, cultura organizacional, comunicação estratégica, recursos humanos, Samuel Rolo, share2inspire, ebook gestão da mudança, futuro do trabalho, HR Innovation Hub, desenvolvimento de talento, coaching para líderes, palestras, keynote speaker, RH Portugal, liderança empática">
-
     <!-- Favicon -->
     <link rel="icon" href="images/logo.png" type="image/png">
-
     <!-- Google Consent Mode v2 - DEVE SER CARREGADO ANTES DE QUALQUER SCRIPT DO GOOGLE -->
     <script>
         // Configuração inicial do Google Consent Mode v2
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
-
         // Definir estado padrão de consentimento (negado por padrão)
         gtag('consent', 'default', {
             'ad_storage': 'denied',
@@ -31,7 +28,6 @@
             'wait_for_update': 500
         });
     </script>
-
     <!-- Google Tag Manager (substitua GTM-XXXXXXX pelo seu ID real) -->
     <script>(function (w, d, s, l, i) {
             w[l] = w[l] || []; w[l].push({
@@ -42,27 +38,21 @@
                     'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'dataLayer', 'GTM-XXXXXXX');</script>
     <!-- End Google Tag Manager -->
-
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-
     <!-- Chart.js para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <!-- CSS Externo -->
     <link rel="stylesheet" href="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/css/style.css">
     <link rel="stylesheet" href="css/style.css?v=fix_mobile">
-    <link rel="stylesheet" href="css/header-footer.css">
     <link rel="stylesheet" href="css/diagnostic.css">
-    <link rel="stylesheet" href="pages/assets/s2i-modern.css">
-
+    <!-- Consolidated Styles: Design System + Header/Footer -->
+    <link rel="stylesheet" href="css/consolidated-styles.css">
     <style>
         :root {
             --primary-color: #bf9a33;
@@ -131,15 +121,18 @@
             background-color: #BF9A33;
         }
 
-        /* Hero Section */
+        /* Hero Section - V2.0 Conversion Focus */
         .hero-section {
             height: 100vh;
-            background-color: var(--dark-color);
+            min-height: 600px;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)), url('images/samuel-hero.jpg');
+            background-size: cover;
+            background-position: center top;
+            background-attachment: fixed;
             color: #fff;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             position: relative;
             margin: 0;
             padding: 0;
@@ -147,65 +140,80 @@
 
         .hero-content {
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
-
-        .hero-content h1 {
-            font-size: 4.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            letter-spacing: 8px;
-            margin-bottom: 1rem;
-            margin: 0;
-        }
-
-        .hero-content h2 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin: 0;
-            letter-spacing: 6px;
-        }
-
-        .scroll-down {
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            max-width: 1000px;
+            padding: 2rem;
             z-index: 2;
         }
 
-        .scroll-down .arrow {
-            width: 30px;
-            height: 30px;
-            border-right: 3px solid var(--primary-color);
-            border-bottom: 3px solid var(--primary-color);
-            transform: rotate(45deg);
-            margin: 0 auto;
-            animation: arrow-animation 2s infinite;
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
-        @keyframes arrow-animation {
-            0% {
-                opacity: 0;
-                transform: rotate(45deg) translate(-20px, -20px);
-            }
+        .hero-content .highlight {
+            color: var(--primary-color);
+        }
 
-            50% {
-                opacity: 1;
-            }
+        .hero-subtitle {
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
 
-            100% {
-                opacity: 0;
-                transform: rotate(45deg) translate(20px, 20px);
-            }
+        .hero-ctas {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero-primary {
+            background: var(--primary-color);
+            color: var(--dark-color);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-hero-primary:hover {
+            background: transparent;
+            color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(191, 154, 51, 0.4);
+        }
+
+        .btn-hero-secondary {
+            background: transparent;
+            color: #fff;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-hero-secondary:hover {
+            background: #fff;
+            color: var(--dark-color);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
         }
 
         /* Intro Section */
@@ -310,14 +318,7 @@
         }
 
         .value-card:hover {
-            transform: translateY(-8px);
-            background: rgba(255, 255, 255, 0.08);
             border-color: var(--primary-color);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .value-card:hover::before {
-            transform: scaleX(1);
         }
 
         .value-icon {
@@ -331,13 +332,6 @@
             margin: 0 auto 2rem;
             font-size: 2rem;
             color: var(--primary-color);
-            transition: all 0.3s ease;
-        }
-
-        .value-card:hover .value-icon {
-            background: var(--primary-color);
-            color: var(--dark-color);
-            transform: scale(1.1);
         }
 
         .value-title {
@@ -381,12 +375,6 @@
             margin: 0 auto 1.5rem;
             font-size: 1.5rem;
             color: var(--dark-color);
-            transition: all 0.3s ease;
-        }
-
-        .core-value-item:hover .core-value-icon {
-            transform: scale(1.1);
-            box-shadow: 0 8px 25px rgba(191, 154, 51, 0.4);
         }
 
         .core-value-title {
@@ -412,15 +400,12 @@
             font-weight: 600;
             padding: 0.75rem 2rem;
             border-radius: 8px;
-            transition: all 0.3s ease;
         }
 
         .btn-primary:hover {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
             color: var(--dark-color);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(191, 154, 51, 0.3);
         }
 
         .btn-outline-primary {
@@ -430,15 +415,12 @@
             font-weight: 600;
             padding: 0.75rem 2rem;
             border-radius: 8px;
-            transition: all 0.3s ease;
         }
 
         .btn-outline-primary:hover {
             background-color: #2c3e50;
             border-color: #2c3e50;
             color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(44, 62, 80, 0.3);
         }
 
         .btn-secondary {
@@ -448,14 +430,12 @@
             font-weight: 600;
             padding: 0.75rem 2rem;
             border-radius: 8px;
-            transition: all 0.3s ease;
         }
 
         .btn-secondary:hover {
             background-color: #e0e0e0;
             border-color: #e0e0e0;
             color: var(--dark-color);
-            transform: translateY(-2px);
         }
 
         /* Estilo        /* Proposta de Valor Section */
@@ -661,7 +641,6 @@
             align-items: center;
         }
 
-
         @media (max-width: 768px) {
             .hero-section {
                 padding: 6rem 0;
@@ -702,8 +681,6 @@
             color: white;
             padding: 15px;
             z-index: 9999;
-            transform: translateY(100%);
-            transition: transform 0.5s ease-in-out;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
         }
 
@@ -718,7 +695,6 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
-            animation: fadeIn 0.3s ease;
         }
 
         .modal.show {
@@ -1929,11 +1905,43 @@
 </head>
 
 <body>
+    <!-- Launch Campaign Banner -->
+    <div class="sticky-top" id="launchBanner"
+        style="z-index: 1040; background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%); color: #1A1A1A; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div class="container">
+            <div class="row align-items-center py-2">
+                <div class="col-lg-10 col-md-9 text-center text-md-start">
+                    <h6 class="mb-0 fw-bold d-inline">
+                        🚀 Campanha de Lançamento - Primeiros 30 Dias&nbsp;&nbsp;|&nbsp;&nbsp;
+                    </h6>
+                    <span class="small">
+                        <strong>Kickstart Pro</strong>: <span class="text-decoration-line-through">40€</span> <strong
+                            class="text-dark">30€</strong> (-25%)&nbsp;&nbsp;|&nbsp;&nbsp;
+                        <strong>Revisão CV</strong>: <span class="text-decoration-line-through">25€</span> <strong
+                            class="text-dark">20€</strong> (-20%)&nbsp;&nbsp;|&nbsp;&nbsp;
+                        Cupão <code class="bg-dark text-warning px-2 py-1 rounded"
+                            style="font-size: 0.85rem;">NEWS2I10</code> para <strong>-10% extra</strong>
+                    </span>
+                </div>
+                <div class="col-lg-2 col-md-3 text-center text-md-end mt-2 mt-md-0">
+                    <a href="pages/servicos.html" class="btn btn-sm btn-dark fw-bold px-3 py-1"
+                        style="border-radius: 20px;">
+                        Ver Serviços
+                    </a>
+                    <button class="btn btn-sm btn-link text-dark p-0 ms-2"
+                        onclick="document.getElementById('launchBanner').style.display='none'"
+                        style="text-decoration: none; font-size: 1.2rem;">
+                        ×
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0"
             style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-
     <!-- Header e Navegação -->
     <header class="header">
         <nav class="navbar navbar-expand-lg fixed-top">
@@ -1974,20 +1982,24 @@
             </div>
         </nav>
     </header>
-
-    <!-- Hero Section -->
+    <!-- Hero Section - V2.0 -->
     <section class="hero-section">
         <div class="container">
             <div class="hero-content">
-                <h1>SHARE2INSPIRE</h1>
-                <h2>SAMUEL ROLO</h2>
+                <h1>Acelere a sua Carreira com <span class="highlight">Estratégia</span> e <span
+                        class="highlight">Inovação</span></h1>
+                <p class="hero-subtitle">Samuel Rolo | Autor & Career Coach<br>Do diagnóstico do seu CV à transformação
+                    profissional</p>
+                <div class="hero-ctas">
+                    <a href="pages/servicos.html" class="btn-hero-primary">Conhecer o Kickstart Pro</a>
+                    <a href="pages/cv-analysis.html" class="btn-hero-secondary">Analisar o meu CV Agora</a>
+                </div>
             </div>
         </div>
         <div class="scroll-down">
             <div class="arrow"></div>
         </div>
     </section>
-
     <!-- Intro Section -->
     <section class="intro-section" id="intro">
         <div class="container">
@@ -2005,14 +2017,13 @@
             </div>
         </div>
     </section>
-
     <!-- Services Preview Section -->
     <section class="services-preview py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);">
         <div class="container">
             <div class="text-center mb-5">
                 <span class="text-uppercase small fw-bold" style="color: #BF9A33; letter-spacing: 2px;">Os nossos
                     serviços</span>
-                <h2 class="mt-3 fw-bold">Como podemos ajudar</h2>
+                <h2 class="mt-3 fw-bold">Acelerar Carreira</h2>
             </div>
             <div class="row g-4 justify-content-center">
                 <!-- Kickstart Pro -->
@@ -2021,7 +2032,7 @@
                         style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
                         <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
                             style="width: 70px; height: 70px; background: rgba(191, 154, 51, 0.1); border-radius: 50%;">
-                            <i class="fas fa-rocket fa-2x" style="color: #BF9A33;"></i>
+                            <i class="fas fa-rocket" style="color: #BF9A33; font-size: 1.8rem;"></i>
                         </div>
                         <h4 class="fw-bold mb-2">Kickstart Pro</h4>
                         <p class="text-muted small mb-3">Sessão estratégica para clarificação de rumo profissional</p>
@@ -2035,7 +2046,7 @@
                         style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
                         <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
                             style="width: 70px; height: 70px; background: rgba(191, 154, 51, 0.1); border-radius: 50%;">
-                            <i class="fas fa-user-tie fa-2x" style="color: #BF9A33;"></i>
+                            <i class="fas fa-file-alt" style="color: #BF9A33; font-size: 1.8rem;"></i>
                         </div>
                         <h4 class="fw-bold mb-2">Revisão de CV</h4>
                         <p class="text-muted small mb-3">Análise humana e estratégica para máximo impacto</p>
@@ -2049,7 +2060,7 @@
                         style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
                         <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
                             style="width: 70px; height: 70px; background: rgba(191, 154, 51, 0.1); border-radius: 50%;">
-                            <i class="fas fa-robot fa-2x" style="color: #BF9A33;"></i>
+                            <i class="fas fa-brain" style="color: #BF9A33; font-size: 1.8rem;"></i>
                         </div>
                         <h4 class="fw-bold mb-2">CV Analyzer</h4>
                         <p class="text-muted small mb-3">Diagnóstico instantâneo com inteligência artificial</p>
@@ -2060,7 +2071,6 @@
             </div>
         </div>
     </section>
-
     <style>
         .service-preview-card:hover {
             transform: translateY(-5px);
@@ -2072,7 +2082,6 @@
             background: #a58428 !important;
         }
     </style>
-
     <!-- O Que Nos Move Section -->
     <section class="what-moves-us-section" id="o-que-nos-move">
         <div class="container">
@@ -2083,61 +2092,49 @@
                         <p class="section-subtitle">Os valores fundamentais que orientam o nosso trabalho e definem a
                             nossa abordagem única.</p>
                     </div>
-
                     <div class="values-grid">
                         <div class="value-card">
                             <div class="value-icon">
-                                <i class="fas fa-sync-alt"></i>
                             </div>
                             <h3 class="value-title">Transformação</h3>
                             <p class="value-description">Acreditamos no poder da transformação organizacional como
                                 catalisador para o crescimento sustentável. Ajudamos as empresas a navegar processos de
                                 mudança complexos.</p>
                         </div>
-
                         <div class="value-card">
                             <div class="value-icon">
-                                <i class="fas fa-user-tie"></i>
                             </div>
                             <h3 class="value-title">Liderança</h3>
                             <p class="value-description">Desenvolvemos líderes conscientes, capazes de inspirar e guiar
                                 equipas em ambientes de constante mudança, focando no equilíbrio entre resultados e
                                 bem-estar.</p>
                         </div>
-
                         <div class="value-card">
                             <div class="value-icon">
-                                <i class="fas fa-lightbulb"></i>
                             </div>
                             <h3 class="value-title">Inovação</h3>
                             <p class="value-description">Promovemos uma cultura de inovação contínua, onde as ideias são
                                 valorizadas e as pessoas são incentivadas a experimentar, aprender e crescer.</p>
                         </div>
                     </div>
-
                     <div class="core-values-section">
                         <div class="core-values-grid">
                             <div class="core-value-item">
                                 <div class="core-value-icon">
-                                    <i class="fas fa-heart"></i>
                                 </div>
                                 <h4 class="core-value-title">Humanidade</h4>
                                 <p class="core-value-description">Colocamos as pessoas no centro de tudo o que fazemos.
                                 </p>
                             </div>
-
                             <div class="core-value-item">
                                 <div class="core-value-icon">
-                                    <i class="fas fa-handshake"></i>
                                 </div>
                                 <h4 class="core-value-title">Confiança</h4>
                                 <p class="core-value-description">Construímos relações baseadas na transparência e
                                     integridade.</p>
                             </div>
-
                             <div class="core-value-item">
                                 <div class="core-value-icon">
-                                    <i class="fas fa-rocket"></i>
                                 </div>
                                 <h4 class="core-value-title">Impacto</h4>
                                 <p class="core-value-description">Focamo-nos em gerar resultados tangíveis e duradouros.
@@ -2149,14 +2146,12 @@
             </div>
         </div>
     </section>
-
     <!-- Proposta de Valor Section -->
     <section class="value-proposition-section" id="proposta-valor">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <h2 class="text-center mb-5">A nossa proposta de <span class="valor-gold">valor</span></h2>
-
                     <div class="video-container-clean">
                         <video class="video-player-clean" controls poster="images/video-thumbnail.jpg">
                             <source
@@ -2169,14 +2164,12 @@
             </div>
         </div>
     </section>
-
     <!-- Secção de Diagnóstico de Maturidade de RH -->
     <!-- Secção de Diagnóstico Moderna -->
     <section class="diagnostic-section-modern" id="diagnostico">
         <div class="container">
             <div class="section-header-modern">
                 <div class="diagnostic-badge">
-                    <i class="fas fa-chart-line"></i>
                     Avaliação Profissional
                 </div>
                 <h2 class="section-title-modern">
@@ -2188,31 +2181,25 @@
                     questionário especializado baseado em 10 dimensões fundamentais.
                 </p>
             </div>
-
             <div class="features-grid-modern">
                 <div class="feature-card-modern">
                     <div class="feature-icon-modern">
-                        <i class="fas fa-microscope"></i>
                     </div>
                     <h3 class="feature-title-modern">Avaliação em 8 dimensões críticas</h3>
                     <p class="feature-description-modern">
                         Análise completa de processos fundamentais desde alinhamento estratégico até compliance e ESG.
                     </p>
                 </div>
-
                 <div class="feature-card-modern">
                     <div class="feature-icon-modern">
-                        <i class="fas fa-chart-bar"></i>
                     </div>
                     <h3 class="feature-title-modern">Relatório personalizado instantâneo</h3>
                     <p class="feature-description-modern">
                         Compare os seus resultados com benchmarks do mercado e identifique oportunidades de melhoria.
                     </p>
                 </div>
-
                 <div class="feature-card-modern">
                     <div class="feature-icon-modern">
-                        <i class="fas fa-lightbulb"></i>
                     </div>
                     <h3 class="feature-title-modern">Recomendações práticas de melhoria</h3>
                     <p class="feature-description-modern">
@@ -2221,21 +2208,16 @@
                     </p>
                 </div>
             </div>
-
             <div class="cta-container-modern">
                 <button class="hero-cta-modern" data-bs-toggle="modal" data-bs-target="#diagnosticModalClean">
-                    <i class="fas fa-chart-line"></i>
                     Iniciar Avaliação Gratuita
                 </button>
                 <p class="cta-note-modern">
-                    <i class="fas fa-clock"></i>
                     Demora apenas 5-10 minutos • Resultados imediatos
                 </p>
             </div>
         </div>
-
     </section>
-
     <!-- Modal do Diagnóstico Moderno -->
     <div class="modal fade modal-clean" id="diagnosticModalClean" tabindex="-1"
         aria-labelledby="diagnosticModalCleanLabel" aria-hidden="true">
@@ -2248,7 +2230,6 @@
                     </p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-
                 <!-- Progress Bar -->
                 <div class="progress-container">
                     <div class="progress-bar">
@@ -2258,13 +2239,11 @@
                         <span id="currentQuestionClean">1</span> de <span id="totalQuestionsClean">8</span> perguntas
                     </div>
                 </div>
-
                 <!-- Corpo do Modal -->
                 <div class="modal-body">
                     <div id="surveyContentClean">
                         <!-- As perguntas serão inseridas aqui dinamicamente -->
                     </div>
-
                     <!-- Níveis de Maturidade -->
                     <div class="maturity-levels">
                         <h3>Níveis de Maturidade</h3>
@@ -2294,22 +2273,20 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Navegação do Modal -->
                 <div class="modal-navigation">
                     <button type="button" class="btn-nav btn-nav-secondary" id="prevBtnClean"
                         onclick="previousDimensionClean()" disabled>
-                        <i class="fas fa-arrow-left"></i> Anterior
+                        Anterior
                     </button>
                     <button type="button" class="btn-nav btn-nav-primary" id="nextBtnClean"
                         onclick="nextDimensionClean()">
-                        Próxima <i class="fas fa-arrow-right"></i>
+                        Próxima
                     </button>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Results Modal Clean -->
     <div class="modal fade modal-clean" id="resultsModalClean" tabindex="-1" aria-labelledby="resultsModalCleanLabel"
         aria-hidden="true">
@@ -2329,7 +2306,6 @@
             </div>
         </div>
     </div>
-
     <!-- Footer -->
     <footer id="contactos">
         <div class="container">
@@ -2339,14 +2315,12 @@
                 </div>
                 <div class="footer-right">
                     <div class="footer-contact">
-                        <p><i class="fas fa-envelope"></i> srshare2inspire@gmail.com</p>
-                        <p><i class="fas fa-phone"></i> +351 961 925 050</p>
+                        <p> srshare2inspire@gmail.com</p>
+                        <p> +351 961 925 050</p>
                     </div>
                     <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><i
-                                class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire_" target="_blank"><i
-                                class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"></a>
+                        <a href="https://www.instagram.com/share2inspire_" target="_blank"></a>
                     </div>
                 </div>
             </div>
@@ -2358,7 +2332,6 @@
             </div>
         </div>
     </footer>
-
     <!-- Cookie Consent Banner -->
     <div id="cookieConsentBanner" class="cookie-consent-banner">
         <div class="cookie-consent-content">
@@ -2375,7 +2348,6 @@
             </div>
         </div>
     </div>
-
     <!-- Cookie Preferences Modal -->
     <div id="cookiePreferencesModal" class="cookie-preferences-modal">
         <div class="cookie-preferences-content">
@@ -2394,7 +2366,6 @@
                     </div>
                     <p>Estes cookies são essenciais para o funcionamento do site e não podem ser desativados.</p>
                 </div>
-
                 <div class="cookie-category">
                     <div class="cookie-category-header">
                         <h4>Cookies Analíticos</h4>
@@ -2406,7 +2377,6 @@
                     <p>Ajudam-nos a entender como os visitantes interagem com o site, permitindo melhorar a experiência.
                     </p>
                 </div>
-
                 <div class="cookie-category">
                     <div class="cookie-category-header">
                         <h4>Cookies de Marketing</h4>
@@ -2418,7 +2388,6 @@
                     <p>Utilizados para rastrear visitantes em websites. A intenção é exibir anúncios relevantes e
                         envolventes.</p>
                 </div>
-
                 <div class="cookie-category">
                     <div class="cookie-category-header">
                         <h4>Cookies de Personalização</h4>
@@ -2436,7 +2405,6 @@
             </div>
         </div>
     </div>
-
     <!-- Contact Modal -->
     <div class="modal fade s2i-modal" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel"
         aria-hidden="true">
@@ -2490,27 +2458,24 @@
                             </label>
                         </div>
                         <div class="alert alert-success d-none" id="contactSuccess">
-                            <i class="fas fa-check-circle me-2"></i> Mensagem enviada com sucesso!
+                            Mensagem enviada com sucesso!
                         </div>
                         <div class="alert alert-danger d-none" id="contactError">
-                            <i class="fas fa-exclamation-circle me-2"></i> Erro ao enviar mensagem.
+                            Erro ao enviar mensagem.
                         </div>
                         <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
-                            <i class="fas fa-paper-plane"></i> Enviar Mensagem
+                            Enviar Mensagem
                         </button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
     <!-- Formulários -->
     <script src="js/contact-form.js"></script>
     <script src="js/brevo-integration.js"></script>
-
     <!-- JavaScript do Diagnóstico de RH Clean -->
     <script src="pages/diagnostic.js"></script>
     <!-- Global Feedback Widget -->

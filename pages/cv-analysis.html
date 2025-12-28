@@ -5,650 +5,491 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Análise de CV com IA | Share2Inspire</title>
-    <meta name="description"
-        content="Analise o seu Curriculum Vitae com inteligência artificial. Obtenha insights sobre as suas competências, senioridade e recomendações para evoluir.">
+    <meta name="description" content="Analise o seu Curriculum Vitae com inteligência artificial.">
 
-    <!-- Favicon -->
     <link rel="icon" href="../images/favicon.png" type="image/png">
-
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/header-footer.css">
-    <link rel="stylesheet" href="../css/cv-analysis.css">
-    <link rel="stylesheet" href="assets/s2i-modern.css">
-    <style>
-        .details-list {
-            margin-bottom: 2rem;
-        }
-
-        .strategic-bullet {
-            border-left: 3px solid #BF9A33;
-            padding-left: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .sb-title {
-            font-weight: 700;
-            color: #1A1A1A;
-            margin-bottom: 2px;
-        }
-
-        .sb-metric {
-            font-size: 0.85rem;
-            color: #BF9A33;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 2px;
-        }
-
-        .sb-detail {
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .avatar-circle {
-            width: 80px;
-            height: 80px;
-            background: #eee;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-            font-size: 2rem;
-            color: #BF9A33;
-        }
-    </style>
+    <!-- Consolidated Styles: Design System + Header/Footer -->
+    <link rel="stylesheet" href="../css/consolidated-styles.css">
 </head>
 
 <body>
-
-    <!-- Header -->
-    <header class="header">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="../index.html">
-                    <img src="../images/logo.png" alt="Share2Inspire Logo" height="40">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="../index.html">Início</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="sobre.html">Sobre</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="servicos.html">Serviços</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="cv-analysis.html">CV Analyser</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="loja.html">Loja</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="people-hub.html">People Hub</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="modal"
-                                data-bs-target="#contactModal">Contactos</a>
-                        </li>
-                    </ul>
-                </div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <img src="../images/logo.png" alt="Share2Inspire" height="50">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Início</a></li>
+                    <li class="nav-item"><a class="nav-link" href="people-hub.html">People Hub</a></li>
+                    <li class="nav-item"><a class="nav-link" href="servicos.html">Serviços</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="cv-analysis.html">CV Analyser</a></li>
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
-    <!-- Hero Section -->
-    <section class="cv-hero">
-        <div class="container text-center">
+    <section class="cv-hero py-5 mt-5" style="background: linear-gradient(135deg, #1A1A1A 0%, #333333 100%);">
+        <div class="container text-center py-5">
             <h1 class="display-4 fw-bold text-white mb-3">Análise de CV Inteligente</h1>
-            <p class="lead text-white-50 mb-5">Descubra o potencial do seu perfil com a nossa análise baseada em dados.
-            </p>
+            <p class="lead text-white-50 mb-0">Transforme o seu currículo numa ferramenta estratégica de carreira.</p>
         </div>
     </section>
 
-    <!-- Upload Section -->
-    <section class="upload-section">
+    <section class="upload-section py-5">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8 text-center">
-                    <div class="upload-card">
+                    <div class="maturity-score-card p-5">
                         <div class="icon-wrapper mb-4">
-                            <i class="fas fa-cloud-upload-alt fa-3x text-primary"></i>
+                            <i class="fas fa-cloud-upload-alt fa-4x" style="color: #BF9A33;"></i>
                         </div>
-                        <h3>Análise de CV com IA</h3>
-                        <p class="text-muted mb-4">Descubra o potencial do seu perfil com a nossa análise baseada em
-                            dados</p>
+                        <h3 class="fw-bold">Carregue o seu CV</h3>
+                        <p class="text-muted mb-4">O processamento é feito localmente e em tempo real.</p>
 
-                        <!-- User Info Fields -->
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6 text-start">
-                                <label for="userName" class="s2i-form-label">Nome Completo *</label>
-                                <input type="text" id="userName" class="s2i-form-control" placeholder="O seu nome"
-                                    required>
-                            </div>
-                            <div class="col-md-6 text-start">
-                                <label for="userEmail" class="s2i-form-label">Email *</label>
-                                <input type="email" id="userEmail" class="s2i-form-control" placeholder="O seu email"
-                                    required>
-                            </div>
-                            <!-- Phone Field removed as per user request -->
-                        </div>
-
-                        <div class="file-upload-wrapper mb-4">
-                            <input type="file" id="cvFile" accept=".pdf,.docx,.txt" class="file-input" hidden>
-                            <label for="cvFile" class="s2i-btn s2i-btn-block"
-                                style="background-color: #BF9A33; color: #000; border: 2px solid #BF9A33;">
-                                <i class="fas fa-file-alt me-2"></i> Selecionar CV (PDF/DOCX)
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="cvFile" accept=".pdf,.docx" class="file-input" hidden>
+                            <label for="cvFile" class="s2i-btn s2i-btn-outline">
+                                <i class="fas fa-file-pdf me-2"></i> Selecionar PDF ou DOCX
                             </label>
-                            <span id="fileName" class="d-block mt-2 text-muted fst-italic"></span>
+                            <span id="fileName" class="d-block mt-3 text-muted fst-italic"></span>
                         </div>
 
-                        <button id="analyzeBtn" class="s2i-btn s2i-btn-primary s2i-btn-block" disabled>
-                            <span id="btnText">Analisar o teu CV</span>
-                            <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"
-                                aria-hidden="true"></span>
+                        <button id="analyzeBtn" class="s2i-btn s2i-btn-primary mt-4 px-5" disabled>
+                            <span id="btnText">INICIAR ANÁLISE IA</span>
+                            <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2 d-none"></span>
                         </button>
-
-                        <p class="text-muted small mt-3 mb-0">
-                            <i class="fas fa-shield-alt me-1"></i> Análise gratuita e confidencial
-                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features-section py-5 bg-light">
-        <div class="container">
-            <div class="row g-4 justify-content-center">
-                <div class="col-md-4">
-                    <div class="feature-box text-center p-4">
-                        <div class="feature-icon mb-3">
-                            <i class="fas fa-search-plus text-primary"></i>
-                        </div>
-                        <h5>Análise de Competências</h5>
-                        <p class="text-muted small">Identificamos as suas hard e soft skills principais.</p>
-                    </div>
+    <div class="modal fade" id="resultsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title"><i class="fas fa-robot me-2"></i> Relatório de Análise Share2Inspire</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-box text-center p-4">
-                        <div class="feature-icon mb-3">
-                            <i class="fas fa-chart-line text-primary"></i>
-                        </div>
-                        <h5>Maturidade Profissional</h5>
-                        <p class="text-muted small">Avaliação baseada na sua experiência e formação.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-box text-center p-4">
-                        <div class="feature-icon mb-3">
-                            <i class="fas fa-lightbulb text-primary"></i>
-                        </div>
-                        <h5>Recomendações</h5>
-                        <p class="text-muted small">Sugestões personalizadas para evoluir na carreira.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Modal: Contacto -->
-    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 720px;">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-                <div class="modal-header border-0 pb-0 px-4 pt-4">
-                    <h5 class="modal-title fw-bold" id="contactModalLabel">Entre em Contacto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <form id="contactForm">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="contactName"
-                                    class="form-label small fw-bold text-muted text-uppercase">Nome</label>
-                                <input type="text" class="form-control bg-light border-0 py-3 rounded-3"
-                                    id="contactName" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="contactEmail"
-                                    class="form-label small fw-bold text-muted text-uppercase">Email</label>
-                                <input type="email" class="form-control bg-light border-0 py-3 rounded-3"
-                                    id="contactEmail" required>
-                            </div>
-                            <div class="col-12">
-                                <label for="contactSubject"
-                                    class="form-label small fw-bold text-muted text-uppercase">Assunto</label>
-                                <input type="text" class="form-control bg-light border-0 py-3 rounded-3"
-                                    id="contactSubject" required>
-                            </div>
-                            <div class="col-12">
-                                <label for="contactMessage"
-                                    class="form-label small fw-bold text-muted text-uppercase">Mensagem (max 2000
-                                    caract.)</label>
-                                <textarea class="form-control bg-light border-0 py-3 rounded-3" id="contactMessage"
-                                    rows="4" maxlength="2000" required></textarea>
-                                <div class="form-text text-end"><span id="charCount">0</span>/2000</div>
-                            </div>
-                            <div class="col-12 mt-4">
-                                <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold border-0"
-                                    style="background-color: #BF9A33;">
-                                    Enviar Mensagem
-                                </button>
-                            </div>
-                        </div>
-                        <div id="contactStatus" class="mt-3 d-none"></div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Results Modal -->
-    <div class="modal fade" id="cvResultsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 720px;">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-                <div class="modal-header border-0 pb-0 px-4 pt-4">
-                    <h5 class="modal-title fw-bold">Resultados da Análise</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="row">
-                        <!-- Left Column: Overview -->
-                        <div class="col-lg-4 mb-4 mb-lg-0 border-end border-light">
-                            <!-- Profile Block -->
-                            <div class="text-center mb-5">
-                                <div class="avatar-circle mb-3 bg-light d-inline-flex align-items-center justify-content-center rounded-circle"
-                                    style="width: 80px; height: 80px;">
-                                    <i class="fas fa-user fa-2x text-muted"></i>
-                                </div>
-                                <h4 id="resultName" class="fw-bold mb-1">Candidato</h4>
-                                <p id="resultRole" class="text-primary fw-bold mb-1">Função Detetada</p>
-                                <p id="resultExp" class="text-muted small">Experiência: -</p>
+                <div class="modal-body p-4 bg-light">
+                    <div class="row g-4">
+                        <div class="col-lg-4">
+                            <div
+                                class="maturity-score-card mb-4 bg-white p-4 rounded shadow-sm text-center border-top border-4 border-warning">
+                                <h6 class="text-uppercase text-muted small fw-bold mb-3">Maturidade Profissional</h6>
+                                <div class="display-1 fw-bold text-dark mb-0" id="maturityScore">0.0</div>
+                                <div class="badge bg-dark text-white px-3 py-2 rounded-pill mt-2" id="maturityLabel">Em
+                                    Análise</div>
                             </div>
 
-                            <!-- Maturity Block -->
-                            <div class="maturity-score-card bg-light p-4 rounded-3 mb-4 text-center">
-                                <h6 class="text-uppercase text-muted small fw-bold mb-3">Nível de Maturidade</h6>
-                                <div class="display-4 fw-bold text-dark" id="maturityScore">0.0</div>
-                                <div class="stars text-warning fs-5 mb-3" id="maturityStars">
-                                    <i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i
-                                        class="far fa-star"></i><i class="far fa-star"></i>
-                                </div>
-                                <span id="maturityLabel" class="badge bg-dark text-white px-3 py-2 rounded-pill">Em
-                                    Análise</span>
+                            <div class="chart-container bg-white p-3 rounded shadow-sm" style="height: 300px;">
+                                <canvas id="radarChart"></canvas>
                             </div>
                         </div>
 
-                        <!-- Right Column: Strategic Details -->
-                        <div class="col-lg-8 ps-lg-5">
-                            <!-- 1. Maturity & Skills -->
-                            <div class="mb-5">
-                                <h5 class="fw-bold mb-4">Maturidade e Competências</h5>
-                                <div id="maturitySkillsContainer" class="details-list">
-                                    <!-- Dynamic content -->
+                        <div class="col-lg-8">
+                            <div class="details-list">
+                                <div class="bg-white p-4 rounded shadow-sm mb-4">
+                                    <h5 class="section-title fw-bold mb-3 text-dark border-bottom pb-2">
+                                        <i class="fas fa-star text-warning me-2"></i> Pontos Fortes Detetados
+                                    </h5>
+                                    <div id="strengthsList">
+                                        <p class="text-muted small fst-italic">A aguardar análise...</p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- 2. Key Strengths -->
-                            <div class="mb-5">
-                                <h5 class="fw-bold mb-4">Pontos Fortes</h5>
-                                <div id="strengthsContainer" class="details-list">
-                                    <!-- Dynamic content -->
-                                </div>
-                            </div>
-
-                            <!-- 3. Evolution Roadmap (Screen Summary) -->
-                            <div class="mb-5">
-                                <h5 class="fw-bold mb-4">Sugestões de Evolução</h5>
-                                <div id="evolutionContainer" class="details-list">
-                                    <!-- Dynamic content -->
-                                </div>
-                            </div>
-
-                            <!-- 4. Strategic Feedback (Screen Summary) -->
-                            <div class="mb-5">
-                                <h5 class="fw-bold mb-4">Feedback Estratégico</h5>
-                                <div id="strategicFeedbackScreen" class="text-muted"
-                                    style="border-left: 3px solid #BF9A33; padding-left: 1rem;">
-                                    <!-- Executive summary -->
-                                </div>
-                            </div>
-
-                            <!-- 5. Radar Chart -->
-                            <div class="mb-4">
-                                <h5 class="fw-bold mb-4">Radar de Competências</h5>
-                                <div style="max-height: 350px;">
-                                    <canvas id="cvRadarChart"></canvas>
+                                <div class="bg-white p-4 rounded shadow-sm">
+                                    <h5 class="section-title fw-bold mb-3 text-dark border-bottom pb-2">
+                                        <i class="fas fa-rocket text-primary me-2"></i> Sugestões de Evolução
+                                    </h5>
+                                    <div id="suggestionsList">
+                                        <p class="text-muted small fst-italic">A aguardar análise...</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer border-0 p-4 pt-0 d-flex flex-column gap-2">
-                    <div class="d-flex gap-2 w-100">
-                        <button type="button" class="btn btn-dark flex-grow-1 rounded-pill fw-bold py-2"
-                            id="btnRequestReview">
-                            <i class="fas fa-user-tie me-2"></i>Solicitar Revisão
-                        </button>
-                    </div>
-                    <button type="button" class="btn btn-primary w-100 rounded-pill fw-bold py-3"
-                        style="background-color: #BF9A33; border: none;" id="btnReportEmail">
-                        <i class="fas fa-file-pdf me-2"></i>Receber Relatório por Email (1.00€)
+                <div class="modal-footer bg-white border-top">
+                    <button type="button" class="s2i-btn s2i-btn-outline" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="s2i-btn s2i-btn-primary" onclick="openReportPaymentModal()">
+                        <i class="fas fa-file-pdf me-2"></i> RELATÓRIO PDF COMPLETO (1€)
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Human Review Modal (Payment) -->
-    <div class="modal fade" id="humanReviewModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 720px;">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-                <div class="modal-header border-0 pb-0 px-4 pt-4">
-                    <h5 class="modal-title fw-bold">Revisão Profissional de CV</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <p class="text-muted mb-4 small">Obtenha uma análise detalhada feita por um especialista
-                        sénior de RH, com feedback personalizado e sugestões de melhoria (Entregue em PDF).
-                    </p>
-
-                    <div
-                        class="alert alert-info border-0 bg-light rounded-3 p-3 mb-4 d-flex justify-content-between align-items-center">
-                        <div>
-                            <span class="text-dark fw-bold d-block"><i class="fas fa-tag me-2 text-primary"></i>Custo:
-                                30,00€</span>
-                            <small class="text-muted"><i class="fas fa-clock me-1"></i> Entrega em máx. 5
-                                dias úteis</small>
-                        </div>
-                        <span class="fw-bold fs-4 text-primary">30€</span>
-                    </div>
-
-                    <form id="humanReviewForm">
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label class="form-label small fw-bold text-muted text-uppercase">Nome
-                                    Completo</label>
-                                <input type="text" class="form-control bg-light border-0 py-3 rounded-3" id="reviewName"
-                                    required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold text-muted text-uppercase">Telemóvel
-                                    (MB WAY)</label>
-                                <input type="tel" class="form-control bg-light border-0 py-3 rounded-3" id="reviewPhone"
-                                    placeholder="9xxxxxxxx" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold text-muted text-uppercase">Email para
-                                    Relatório</label>
-                                <input type="email" class="form-control bg-light border-0 py-3 rounded-3"
-                                    id="reviewEmail" required>
-                            </div>
-                        </div>
-                    </form>
-
-                    <div id="paymentStatus" class="mt-3 d-none"></div>
-                </div>
-                <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-primary w-100 py-3 rounded-pill fw-bold border-0"
-                        id="btnConfirmPayment" style="background-color: #BF9A33;">
-                        <i class="fas fa-check me-2"></i>Pagar e Solicitar Revisão
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Report Payment Modal (1€) -->
+    <!-- Payment Modal for 1€ PDF Report -->
     <div class="modal fade" id="reportPaymentModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 720px;">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-                <div class="modal-header border-0 pb-0 px-4 pt-4">
-                    <h5 class="modal-title fw-bold">Desbloquear Relatório Completo</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <p class="text-muted mb-4 small">Para descarregar o relatório detalhado em PDF, é necessário um
-                        pagamento simbólico de 1,00€.</p>
-
-                    <div
-                        class="alert alert-info border-0 bg-light rounded-3 p-3 mb-4 d-flex justify-content-between align-items-center">
-                        <span class="text-dark fw-bold"><i class="fas fa-tag me-2 text-primary"></i>Valor do
-                            Diagnóstico:</span>
-                        <span class="fw-bold fs-4 text-primary">1,00€</span>
-                    </div>
-
-                    <form id="reportPaymentForm">
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label class="form-label small fw-bold text-muted text-uppercase">Nome</label>
-                                <input type="text" class="form-control bg-light border-0 py-3 rounded-3"
-                                    id="reportPayName" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold text-muted text-uppercase">Email</label>
-                                <input type="email" class="form-control bg-light border-0 py-3 rounded-3"
-                                    id="reportPayEmail" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold text-muted text-uppercase">Telemóvel (MB
-                                    WAY)</label>
-                                <input type="tel" class="form-control bg-light border-0 py-3 rounded-3"
-                                    id="reportPayPhone" placeholder="9xxxxxxxx" required>
-                            </div>
-                        </div>
-                    </form>
-
-                    <div id="reportPaymentStatus" class="mt-3 d-none"></div>
-                </div>
-                <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-primary w-100 py-3 rounded-pill fw-bold border-0"
-                        id="btnConfirmReportPay" style="background-color: #BF9A33;">
-                        <i class="fas fa-mobile-alt me-2"></i>Pagar 1,00€ com MB WAY
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Contact Modal -->
-    <div class="modal fade s2i-modal" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel"
-        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header" style="background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%);">
+                    <h5 class="modal-title text-white">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> Relatório PDF Profissional
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <form id="contactForm">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="name" class="s2i-form-label">Nome *</label>
-                                <input type="text" class="s2i-form-control" id="name" name="name"
-                                    placeholder="O seu nome" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="email" class="s2i-form-label">Email *</label>
-                                <input type="email" class="s2i-form-control" id="email" name="email"
-                                    placeholder="O seu email" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="phone" class="s2i-form-label">Telefone</label>
-                                <input type="tel" class="s2i-form-control" id="phone" name="phone"
-                                    placeholder="9xxxxxxxx">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="reason" class="s2i-form-label">Motivo *</label>
-                                <select class="s2i-form-control" id="reason" name="reason" required>
-                                    <option value="" selected disabled>Selecione um motivo</option>
-                                    <option value="Informações">Informações</option>
-                                    <option value="Orçamento">Orçamento</option>
-                                    <option value="Dúvida Técnica">Dúvida Técnica</option>
-                                    <option value="Outro">Outro</option>
-                                </select>
-                            </div>
+                <div class="modal-body p-4">
+                    <!-- Pricing Info -->
+                    <div class="text-center mb-4 p-3 bg-light rounded">
+                        <div class="display-4 fw-bold text-dark">1,00€</div>
+                        <small class="text-muted">Relatório PDF detalhado enviado por email</small>
+                    </div>
+
+                    <!-- What's Included -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3"><i class="fas fa-check-circle text-success me-2"></i> O que está
+                            incluído:</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-file-pdf text-danger me-2"></i> Relatório PDF completo
+                                personalizado</li>
+                            <li class="mb-2"><i class="fas fa-chart-radar text-primary me-2"></i> Análise detalhada de 5
+                                competências</li>
+                            <li class="mb-2"><i class="fas fa-lightbulb text-warning me-2"></i> Sugestões estratégicas
+                                de evolução</li>
+                            <li class="mb-2"><i class="fas fa-envelope text-info me-2"></i> Entrega garantida por email
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Payment Form -->
+                    <form id="reportPaymentForm">
+                        <div class="mb-3">
+                            <label for="paymentName" class="form-label fw-bold">Nome Completo</label>
+                            <input type="text" class="form-control" id="paymentName" required
+                                placeholder="Ex: João Silva">
                         </div>
                         <div class="mb-3">
-                            <label for="message" class="s2i-form-label">Mensagem *</label>
-                            <textarea class="s2i-form-control" id="message" name="message" rows="4"
-                                placeholder="Como podemos ajudar?" required></textarea>
+                            <label for="paymentEmail" class="form-label fw-bold">Email</label>
+                            <input type="email" class="form-control" id="paymentEmail" required
+                                placeholder="seu@email.com">
+                            <small class="text-muted">Receberá o PDF neste email</small>
                         </div>
-                        <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
-                            <label class="form-check-label small text-muted" for="privacy">
-                                Aceito a <a href="politica-privacidade.html" target="_blank"
-                                    class="text-decoration-none s2i-text-gold">Política de Privacidade</a> *
-                            </label>
+                        <div class="mb-3">
+                            <label for="paymentPhone" class="form-label fw-bold">Telemóvel (MB WAY)</label>
+                            <input type="tel" class="form-control" id="paymentPhone" required placeholder="912 345 678"
+                                pattern="[0-9]{9}">
+                            <small class="text-muted">9 dígitos para pagamento MB WAY</small>
                         </div>
-                        <div class="alert alert-success d-none" id="contactSuccess">
-                            <i class="fas fa-check-circle me-2"></i> Mensagem enviada com sucesso!
-                        </div>
-                        <div class="alert alert-danger d-none" id="contactError">
-                            <i class="fas fa-exclamation-circle me-2"></i> Erro ao enviar mensagem.
-                        </div>
-                        <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
-                            <i class="fas fa-paper-plane"></i> Enviar Mensagem
+
+                        <!-- Payment Status -->
+                        <div id="paymentStatusMsg" class="d-none"></div>
+
+                        <!-- Payment Button -->
+                        <button type="submit" class="s2i-btn s2i-btn-primary w-100 mt-3 py-3" id="btnPayReport">
+                            <i class="fas fa-lock me-2"></i> PAGAR 1€ E RECEBER PDF
                         </button>
                     </form>
+
+                    <!-- Security Info -->
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt me-1"></i> Pagamento seguro via ifthenpay MB WAY
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer id="contactos" style="background-color: #1A1A1A; color: #fff; padding: 80px 0 40px;">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <img src="../images/logo.png" alt="Share2Inspire" height="50" class="mb-4">
-                    <p class="text-muted">Evolução de carreira com clareza, estratégia e narrativa de impacto.
-                        Transformamos intenção em resultados.</p>
-                </div>
-                <div class="col-lg-2">
-                    <h5 class="fw-bold mb-4">Links Rápidos</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="../index.html" class="text-muted text-decoration-none">Início</a></li>
-                        <li class="mb-2"><a href="sobre.html" class="text-muted text-decoration-none">Sobre</a></li>
-                        <li class="mb-2"><a href="servicos.html" class="text-muted text-decoration-none">Serviços</a>
-                        </li>
-                        <li class="mb-2"><a href="cv-analysis.html" class="text-muted text-decoration-none">CV
-                                Analyser</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3">
-                    <h5 class="fw-bold mb-4">Contactos</h5>
-                    <p class="text-muted mb-2"><i class="fas fa-envelope me-2"></i> srshare2inspire@gmail.com</p>
-                    <p class="text-muted mb-2"><i class="fas fa-phone me-2"></i> +351 961 925 050</p>
-                </div>
-                <div class="col-lg-3">
-                    <h5 class="fw-bold mb-4">Siga-nos</h5>
-                    <div class="d-flex gap-3">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-white fs-4"><i
-                                class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire_" target="_blank" class="text-white fs-4"><i
-                                class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-            </div>
-            <hr class="my-5" style="border-color: rgba(255,255,255,0.1);">
-            <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="text-muted mb-0 small">© 2025 Share2Inspire. Todos os direitos reservados.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
-                    <a href="politica-privacidade.html"
-                        class="text-muted text-decoration-none small me-3">Privacidade</a>
-                    <a href="politica-cookies.html" class="text-muted text-decoration-none small me-3">Cookies</a>
-                    <a href="informacao-legal.html" class="text-muted text-decoration-none small">Legal</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- PDF.js -->
+    <!-- PDF.js & Mammoth.js for Real File Reading -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-    </script>
-
-    <!-- Mammoth.js for DOCX -->
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-    <!-- jsPDF for Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <!-- Custom Scripts (New Architecture) -->
-    <script src="js/cv-engine.js"></script>
-    <script src="js/pdf-generator-modern.js"></script>
+    <!-- Project Scripts -->
+    <script src="../js/cv-engine.js"></script>
+    <script src="../js/pdf-generator.js"></script>
 
-    <!-- Legacy Scripts Adapter -->
-    <script src="js/brevo-integration.js"></script>
-    <script src="js/ifthenpay-integration.js"></script>
-    <script src="../js/cv-parser.js"></script>
-    <script src="../js/report-generator.js?v=1.4"></script>
-    <script src="../js/cv-analysis.js?v=2.1"></script>
-
-    <!-- Global Feedback Widget -->
-    <script src="../js/contact-form.js"></script>
-    <script src="../js/feedback-widget.js"></script>
-
-    <!-- Glue Code: Connect Button to PDF Generator -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const btnDownload = document.getElementById('btnDownloadReport');
-            if (btnDownload) {
-                btnDownload.addEventListener('click', () => {
-                    // 1. Bridge: Scrape data from Legacy DOM into Modern Engine
-                    if (window.CV_ENGINE && typeof window.CV_ENGINE.scrapeFromDOM === 'function') {
-                        window.CV_ENGINE.scrapeFromDOM();
-                    }
+        const fileInput = document.getElementById('cvFile');
+        const fileNameDisplay = document.getElementById('fileName');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const btnText = document.getElementById('btnText');
 
-                    // 2. Check if Engine has data
-                    if (!window.CV_ENGINE || !window.CV_ENGINE.data.maturity.score) {
-                        // If no real data, generate mock for demonstration if needed, or alert
-                        // For now, let's use the mock generator if empty to test the flow
-                        console.warn("Sem dados reais. A gerar dados de teste...");
-                        window.CV_ENGINE.generateMockAnalysis();
-                        // Update UI with Mock Data (Optional, just to show something)
-                    }
-
-                    // 2. Generate PDF
-                    if (window.PDF_GENERATOR) {
-                        const blob = window.PDF_GENERATOR.generateReport(window.CV_ENGINE.data);
-                        if (blob) {
-                            const url = URL.createObjectURL(blob);
-                            window.open(url, '_blank');
-                        }
-                    } else {
-                        alert("Erro: Gerador de PDF não carregado.");
-                    }
-                });
+        // Mostrar nome do ficheiro selecionado
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileNameDisplay.textContent = e.target.files[0].name;
+                analyzeBtn.disabled = false;
             }
         });
+
+        // Clique no Botão Analisar - REAL FILE PROCESSING
+        analyzeBtn.addEventListener('click', async () => {
+            // UI Loading
+            analyzeBtn.disabled = true;
+            btnSpinner.classList.remove('d-none');
+            btnText.textContent = 'A LER & ANALISAR...';
+
+            const file = fileInput.files[0];
+
+            if (file) {
+                try {
+                    // Chamar o Motor de Análise Real (PDF.js + Mammoth.js + Heuristics)
+                    const success = await window.CV_ENGINE.analyzeFile(file);
+
+                    if (success) {
+                        // Abrir Modal com Resultados
+                        const modal = new bootstrap.Modal(document.getElementById('resultsModal'));
+                        modal.show();
+                    }
+                } catch (error) {
+                    alert('Erro ao processar ficheiro: ' + error.message);
+                    console.error('[CV ANALYSIS] Error:', error);
+                }
+            }
+
+            // Reset UI
+            analyzeBtn.disabled = false;
+            btnSpinner.classList.add('d-none');
+            btnText.textContent = 'INICIAR ANÁLISE IA';
+        });
+
+        // Função Global para desenhar o gráfico (chamada pelo cv-engine.js)
+        window.renderRadarChart = (competencies) => {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+
+            // Destruir gráfico anterior se existir
+            if (window.myRadarChart) window.myRadarChart.destroy();
+
+            window.myRadarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['ATS', 'Impacto', 'Estrutura', 'Mercado', 'Posicionamento'],
+                    datasets: [{
+                        label: 'O Teu Perfil',
+                        data: [
+                            competencies.ats,
+                            competencies.impact,
+                            competencies.structure,
+                            competencies.market,
+                            competencies.positioning
+                        ],
+                        backgroundColor: 'rgba(191, 154, 51, 0.25)',
+                        borderColor: '#BF9A33',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#BF9A33',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#BF9A33'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20,
+                                display: true,
+                                backdropColor: 'transparent'
+                            },
+                            grid: {
+                                color: '#e0e0e0'
+                            },
+                            angleLines: {
+                                color: '#e0e0e0'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return context.label + ': ' + context.parsed.r + '/100';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        // Open Payment Modal Function
+        function openReportPaymentModal() {
+            // Close results modal
+            const resultsModalEl = document.getElementById('resultsModal');
+            if (resultsModalEl) {
+                const resultsModal = bootstrap.Modal.getInstance(resultsModalEl);
+                if (resultsModal) resultsModal.hide();
+            }
+
+            // Open payment modal
+            const paymentModal = new bootstrap.Modal(document.getElementById('reportPaymentModal'));
+            paymentModal.show();
+        }
+
+        // Handle Payment Form Submission
+        document.getElementById('reportPaymentForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('paymentName').value.trim();
+            const email = document.getElementById('paymentEmail').value.trim();
+            const phone = document.getElementById('paymentPhone').value.replace(/\D/g, ''); // Remove non-digits
+
+            if (!name || !email || !phone) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            if (phone.length !== 9) {
+                alert('O número de telemóvel deve ter 9 dígitos.');
+                return;
+            }
+
+            const btnPayReport = document.getElementById('btnPayReport');
+            const statusMsg = document.getElementById('paymentStatusMsg');
+            const originalBtnText = btnPayReport.innerHTML;
+
+            // Set loading state
+            btnPayReport.disabled = true;
+            btnPayReport.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> A processar...';
+            statusMsg.classList.remove('d-none');
+            statusMsg.innerHTML = '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i> A iniciar pagamento MB WAY...</div>';
+
+            try {
+                // Call backend to initiate payment
+                const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+                const response = await fetch(`${BACKEND_URL}/api/services/cv-analyzer-payment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        amount: '1.00',
+                        reportData: window.CV_ENGINE?.data || {}
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.error || 'Erro ao processar pagamento');
+                }
+
+                // Payment initiated successfully
+                statusMsg.innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="fas fa-mobile-alt me-2"></i>
+                        <strong>Pedido MB WAY enviado!</strong><br>
+                        <small>Por favor, confirme na sua aplicação MB WAY. Aguardamos confirmação...</small>
+                    </div>
+                `;
+
+                // Start polling for payment confirmation
+                const orderId = result.order_id || result.orderId;
+                pollPaymentStatus(orderId, name, email, BACKEND_URL);
+
+            } catch (error) {
+                console.error('Payment Error:', error);
+                statusMsg.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i> ${error.message}</div>`;
+                btnPayReport.disabled = false;
+                btnPayReport.innerHTML = originalBtnText;
+            }
+        });
+
+        // Poll Payment Status
+        async function pollPaymentStatus(orderId, name, email, backendUrl) {
+            const statusMsg = document.getElementById('paymentStatusMsg');
+            let pollCount = 0;
+            const maxPolls = 60; // 3 minutes (3s * 60)
+
+            const checkStatus = async () => {
+                try {
+                    const response = await fetch(`${backendUrl}/api/payment/status/${orderId}`);
+                    const data = await response.json();
+
+                    if (data.success && data.paid) {
+                        // Payment confirmed!
+                        statusMsg.innerHTML = `
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <strong>Pagamento confirmado!</strong><br>
+                                <small>A gerar e enviar relatório PDF para ${email}...</small>
+                            </div>
+                        `;
+
+                        // Trigger report delivery
+                        await deliverPDFReport(name, email, backendUrl);
+
+                        // Final success message
+                        statusMsg.innerHTML = `
+                            <div class="alert alert-success">
+                                <i class="fas fa-envelope-open-text me-2"></i>
+                                <strong>Relatório enviado com sucesso!</strong><br>
+                                <small>Verifique o seu email ${email}</small>
+                            </div>
+                        `;
+
+                        setTimeout(() => {
+                            bootstrap.Modal.getInstance(document.getElementById('reportPaymentModal')).hide();
+                        }, 4000);
+
+                        return; // Stop polling
+                    }
+
+                    // Continue polling
+                    pollCount++;
+                    if (pollCount < maxPolls) {
+                        setTimeout(checkStatus, 3000); // Check every 3 seconds
+                    } else {
+                        // Timeout
+                        statusMsg.innerHTML += '<div class="alert alert-warning small mt-2">Tempo de espera excedido. Se confirmou o pagamento, receberá o relatório por email em breve.</div>';
+                    }
+
+                } catch (error) {
+                    console.error('Polling error:', error);
+                }
+            };
+
+            // Start polling after 2 seconds
+            setTimeout(checkStatus, 2000);
+        }
+
+        // Deliver PDF Report
+        async function deliverPDFReport(name, email, backendUrl) {
+            const reportData = window.CV_ENGINE?.data || {};
+
+            await fetch(`${backendUrl}/api/services/deliver-cv-report`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    report: reportData
+                })
+            });
+        }
     </script>
+
+    <!-- Ifthenpay Integration (if needed for direct calls) -->
+    <script src="../js/ifthenpay-integration.js"></script>
 </body>
 
 </html>

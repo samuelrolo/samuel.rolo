@@ -1,3 +1,4 @@
+Orquídea
 <!DOCTYPE html>
 <html lang="pt-PT">
 
@@ -7,24 +8,19 @@
     <title>Humanos &amp; Máquinas | Share2Inspire</title>
     <meta name="description"
         content="Humanos &amp; Máquinas é o espaço da Share2Inspire onde exploramos a nova geografia do poder na era digital, ligando tecnologia, política e consciência humana em artigos e podcasts.">
-
     <!-- Favicon -->
     <link rel="icon" href="../images/favicon.png" type="image/png">
-
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="assets/s2i-modern.css">
-
+    <!-- Consolidated Styles: Design System + Header/Footer -->
+    <link rel="stylesheet" href="../css/consolidated-styles.css">
     <style>
         :root {
             --primary-color: #BF9A33;
@@ -34,20 +30,34 @@
             --dark-color: #212529;
             --text-color: #333333;
             --text-light: #6c757d;
+
+            /* Dark Tech Theme for Podcast */
+            --tech-dark: #0A0A0A;
+            --tech-cyan: #00D9FF;
+            --tech-purple: #9D4EDD;
+            --tech-gray: #1E1E1E;
         }
 
-        /* Page Header matching People Hub */
+        /* Dark Theme Override for Body */
+        body {
+            background-color: var(--tech-dark);
+            color: #E5E5E5;
+        }
+
+        /* Page Header - Dark Theme */
         .page-header {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, var(--tech-gray) 0%, var(--tech-dark) 100%);
             padding: 100px 0 50px;
             margin-bottom: 50px;
+            border-bottom: 2px solid var(--tech-cyan);
         }
 
         .page-header h1 {
             font-size: 2.5rem;
             font-weight: 700;
-            color: #333;
+            color: #fff;
             margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
         }
 
         .breadcrumb {
@@ -62,19 +72,23 @@
         }
 
         .breadcrumb-item.active {
-            color: #6c757d;
+            color: var(--tech-cyan);
         }
 
-        /* Hero Section matching People Hub Newsletter Hero */
+        .breadcrumb-item a:hover {
+            color: var(--tech-cyan);
+        }
+
+        /* Hero Section - Dark Tech Theme */
         .hero-humanos {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            background: linear-gradient(135deg, var(--tech-purple) 0%, var(--tech-cyan) 100%);
             color: white;
             padding: 4rem 0;
             margin-bottom: 4rem;
-            border-radius: 15px;
+            border-radius: 20px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(191, 154, 51, 0.15);
+            box-shadow: 0 20px 60px rgba(157, 78, 221, 0.4);
         }
 
         .hero-humanos .section-label {
@@ -134,23 +148,27 @@
 
         .articles-section {
             padding: 4rem 0;
+            background-color: var(--tech-dark);
         }
 
         .articles-section h2 {
             text-align: center;
             font-weight: 700;
             margin-bottom: 3rem;
+            color: #fff;
         }
 
         .article-card {
-            background: #fff;
+            background: var(--tech-gray);
             border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 15px 40px rgba(0, 217, 255, 0.1);
             padding: 2rem;
             height: 100%;
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            transition: all 0.3s ease;
         }
 
         .article-image-wrapper {
@@ -165,13 +183,19 @@
             display: block;
         }
 
+        .article-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--tech-cyan);
+            box-shadow: 0 20px 50px rgba(0, 217, 255, 0.2);
+        }
+
         .article-card h3 {
             font-size: 1.5rem;
-            color: var(--secondary-color);
+            color: #fff;
         }
 
         .article-card p {
-            color: var(--text-light);
+            color: #B0B0B0;
             flex: 1;
         }
 
@@ -193,15 +217,16 @@
         }
 
         .podcast-section {
-            background: #f8f9fa;
+            background: linear-gradient(180deg, var(--tech-dark) 0%, var(--tech-gray) 100%);
             padding: 4rem 0;
         }
 
         .podcast-card {
-            background: #fff;
+            background: var(--tech-gray);
             border-radius: 20px;
             padding: 2rem;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 15px 40px rgba(157, 78, 221, 0.2);
+            border: 1px solid rgba(157, 78, 221, 0.3);
         }
 
         .podcast-links {
@@ -232,7 +257,7 @@
 
         .section-subtitle {
             font-size: 1rem;
-            color: var(--text-light);
+            color: var(--tech-cyan);
             text-transform: uppercase;
             letter-spacing: 3px;
             font-weight: 600;
@@ -242,6 +267,7 @@
             font-size: 2.2rem;
             font-weight: 700;
             margin-bottom: 1rem;
+            color: #fff;
         }
 
         @media (max-width: 992px) {
@@ -275,7 +301,6 @@
         gtag('js', new Date());
         gtag('config', 'G-8GQ1KM9FQS');
     </script>
-
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
             <div class="container">
@@ -315,7 +340,6 @@
             </div>
         </nav>
     </header>
-
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
@@ -332,7 +356,6 @@
             </div>
         </div>
     </section>
-
     <section class="hero-humanos">
         <div class="container">
             <div class="row justify-content-center">
@@ -346,13 +369,12 @@
                     <a class="btn-cta"
                         href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7384145793324085248"
                         target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-linkedin"></i> Subscrever newsletter no LinkedIn
+                        Subscrever newsletter no LinkedIn
                     </a>
                 </div>
             </div>
         </div>
     </section>
-
     <section class="articles-section">
         <div class="container">
             <p class="section-subtitle text-center">Artigos Humanos &amp; Máquinas</p>
@@ -413,36 +435,85 @@
         </div>
     </section>
 
-    <section class="podcast-section">
+    <!-- Spotify Podcast Section -->
+    <section class="podcast-section" style="padding: 4rem 0 2rem;">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <div class="podcast-card">
-                        <p class="section-subtitle">Podcast Humanos &amp; Máquinas</p>
-                        <h2 class="section-title">Ver o Episódio mais Recente</h2>
-                        <p>Se preferes ver a conversa, o Humanos &amp; Máquinas também vive em vídeo.
-                            Em cada episódio aprofundo os temas dos artigos, com exemplos práticos, histórias reais
-                            e perguntas incómodas sobre o futuro do trabalho.</p>
-                        <div class="podcast-links">
-                            <a href="https://www.youtube.com/@share2inspire/podcasts" target="_blank"
-                                rel="noopener noreferrer">
-                                <i class="fab fa-youtube"></i> Ver todos os episódios
-                            </a>
-                        </div>
-                        <div class="podcast-player ratio ratio-16x9">
-                            <iframe src="https://www.youtube.com/embed/LRLuDbI3WME?si=LJbGlKuemRcabuDf"
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowfullscreen>
-                            </iframe>
+                        <p class="section-subtitle">🎧 Podcast Humanos & Máquinas</p>
+                        <h2 class="section-title">Ouvir no Spotify</h2>
+                        <p style="color: #B0B0B0; margin-bottom: 2rem;">Episódios completos disponíveis no Spotify.
+                            Subscreve para não perder nenhum episódio sobre tecnologia, poder e consciência humana.</p>
+
+                        <!-- Spotify Podcast Embed -->
+                        <div style="border-radius: 12px; overflow: hidden;">
+                            <iframe style="border-radius:12px"
+                                src="https://open.spotify.com/embed/show/4rOoJ6Eg1payBJSE3Yc3l1?utm_source=generator&theme=0"
+                                width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                loading="lazy"></iframe>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    </main>
 
+    <!-- Podcast Newsletter Signup -->
+    <section style="background-color: var(--tech-gray); padding: 3rem 0;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <div
+                        style="padding: 2rem; border-radius: 16px; background: linear-gradient(135deg, rgba(157, 78, 221, 0.1) 0%, rgba(0, 217, 255, 0.1) 100%); border: 1px solid rgba(0, 217, 255, 0.3);">
+                        <i class="fas fa-podcast"
+                            style="font-size: 3rem; color: var(--tech-cyan); margin-bottom: 1rem;"></i>
+                        <h3 style="color: #fff; font-weight: 700; margin-bottom: 1rem;">Nunca Percas um Episódio</h3>
+                        <p style="color: #B0B0B0; margin-bottom: 2rem; font-size: 1.1rem;">Subscreve a newsletter
+                            Humanos &amp; Máquinas e recebe os novos episódios e artigos diretamente no teu LinkedIn.
+                        </p>
+                        <a class="btn-cta"
+                            style="background: var(--tech-cyan); color: var(--tech-dark); font-weight: 700;"
+                            href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7384145793324085248"
+                            target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-linkedin me-2"></i> Subscrever Newsletter
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- YouTube Video Section -->
+    <section class="podcast-section" <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="podcast-card">
+                    <p class="section-subtitle">Podcast Humanos &amp; Máquinas</p>
+                    <h2 class="section-title">Ver o Episódio mais Recente</h2>
+                    <p>Se preferes ver a conversa, o Humanos &amp; Máquinas também vive em vídeo.
+                        Em cada episódio aprofundo os temas dos artigos, com exemplos práticos, histórias reais
+                        e perguntas incómodas sobre o futuro do trabalho.</p>
+                    <div class="podcast-links">
+                        <a href="https://www.youtube.com/@share2inspire/podcasts" target="_blank"
+                            rel="noopener noreferrer">
+                            Ver todos os episódios
+                        </a>
+                    </div>
+                    <div class="podcast-player ratio ratio-16x9">
+                        <iframe src="https://www.youtube.com/embed/LRLuDbI3WME?si=LJbGlKuemRcabuDf"
+                            title="YouTube video player" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+    </main>
     <!-- Contact Modal -->
     <div class="modal fade s2i-modal" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel"
         aria-hidden="true">
@@ -496,20 +567,19 @@
                             </label>
                         </div>
                         <div class="alert alert-success d-none" id="contactSuccess">
-                            <i class="fas fa-check-circle me-2"></i> Mensagem enviada com sucesso!
+                            Mensagem enviada com sucesso!
                         </div>
                         <div class="alert alert-danger d-none" id="contactError">
-                            <i class="fas fa-exclamation-circle me-2"></i> Erro ao enviar mensagem.
+                            Erro ao enviar mensagem.
                         </div>
                         <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
-                            <i class="fas fa-paper-plane"></i> Enviar Mensagem
+                            Enviar Mensagem
                         </button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
     <footer id="contactos" style="background-color: #1A1A1A; color: #fff; padding: 80px 0 40px;">
         <div class="container">
             <div class="row g-4">
@@ -531,16 +601,14 @@
                 </div>
                 <div class="col-lg-3">
                     <h5 class="fw-bold mb-4">Contactos</h5>
-                    <p class="text-muted mb-2"><i class="fas fa-envelope me-2"></i> srshare2inspire@gmail.com</p>
-                    <p class="text-muted mb-2"><i class="fas fa-phone me-2"></i> +351 961 925 050</p>
+                    <p class="text-muted mb-2"> srshare2inspire@gmail.com</p>
+                    <p class="text-muted mb-2"> +351 961 925 050</p>
                 </div>
                 <div class="col-lg-3">
                     <h5 class="fw-bold mb-4">Siga-nos</h5>
                     <div class="d-flex gap-3">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-white fs-4"><i
-                                class="fab fa-linkedin"></i></a>
-                        <a href="https://www.instagram.com/share2inspire_" target="_blank" class="text-white fs-4"><i
-                                class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-white fs-4"></a>
+                        <a href="https://www.instagram.com/share2inspire_" target="_blank" class="text-white fs-4"></a>
                     </div>
                 </div>
             </div>
@@ -558,10 +626,8 @@
             </div>
         </div>
     </footer>
-
     <!--Bootstrap JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <script src="../js/contact-form.js"></script>
     <script src="../js/brevo-integration.js"></script>
     <!-- Global Feedback Widget -->

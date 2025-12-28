@@ -1,0 +1,211 @@
+/**
+ * Minimal & Soft Modal Styling
+ * Suaves, barras finas, botões harmoniosos
+ */
+
+/* Modal Overlay */
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(4px);
+}
+
+/* Modal Container */
+.modal-content {
+    border: none !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+    overflow: hidden;
+}
+
+/* Modal Header - Minimal */
+.modal-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+    padding: 1.25rem 1.5rem;
+}
+
+.modal-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: #1A1A1A;
+    letter-spacing: -0.3px;
+}
+
+/* Close Button - Soft */
+.btn-close {
+    opacity: 0.4;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.btn-close:hover {
+    opacity: 0.8;
+    transform: scale(1.1);
+}
+
+/* Modal Body - Clean */
+.modal-body {
+    padding: 1.5rem;
+    background: #ffffff;
+}
+
+/* Form Controls - Soft Borders */
+.modal .form-control,
+.modal .form-select {
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    background-color: #fafafa;
+}
+
+.modal .form-control:focus,
+.modal .form-select:focus {
+    border-color: #BF9A33 !important;
+    box-shadow: 0 0 0 3px rgba(191, 154, 51, 0.1) !important;
+    background-color: #ffffff;
+    outline: none;
+}
+
+/* Input Groups - Harmonious */
+.modal .input-group {
+    border-radius: 8px;
+}
+
+.modal .input-group .btn {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+}
+
+.modal .input-group .btn:hover {
+    background-color: #BF9A33;
+    border-color: #BF9A33;
+    color: white;
+}
+
+/* Labels - Subtle */
+.modal .form-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.4rem;
+}
+
+/* Buttons - Soft & Harmonious */
+.modal .btn-primary,
+.modal .btn[style*="background-color: #BF9A33"] {
+    background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%) !important;
+    border: none !important;
+    border-radius: 50px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(191, 154, 51, 0.25);
+}
+
+.modal .btn-primary:hover,
+.modal .btn[style*="background-color: #BF9A33"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(191, 154, 51, 0.35);
+    filter: brightness(1.05);
+}
+
+.modal .btn-primary:active,
+.modal .btn[style*="background-color: #BF9A33"]:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(191, 154, 51, 0.3);
+}
+
+/* Alert Boxes - Soft */
+.modal .alert {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    padding: 1rem;
+    background-color: #fafafa;
+}
+
+.modal .alert-success {
+    background-color: rgba(40, 167, 69, 0.05);
+    border-color: rgba(40, 167, 69, 0.15);
+    color: #155724;
+}
+
+.modal .alert-light {
+    background-color: #f8f9fa;
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+/* Dividers - Thin */
+.modal hr {
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    margin: 1rem 0;
+}
+
+/* Badge - Soft */
+.modal .badge {
+    font-weight: 600;
+    padding: 0.35em 0.65em;
+    border-radius: 6px;
+    font-size: 0.8rem;
+}
+
+/* Price Breakdown - Clean */
+#kickstartPriceBreakdown,
+#cvReviewPriceBreakdown {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar - Minimal */
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Google Calendar iframe - Soft border */
+.modal iframe {
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    .modal-content {
+        border-radius: 12px !important;
+    }
+
+    .modal-header {
+        padding: 1rem 1.25rem;
+    }
+
+    .modal-body {
+        padding: 1.25rem;
+    }
+}
