@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,6 +23,7 @@
             max-width: 500px;
             margin: 0 auto;
         }
+
         .amount-display {
             font-size: 2.5rem;
             font-weight: 700;
@@ -29,6 +31,7 @@
         }
     </style>
 </head>
+
 <body>
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
@@ -82,51 +85,58 @@
             <p class="mb-0 text-white-50">&copy; 2024 Share2Inspire. Todos os direitos reservados.</p>
         </div>
     </footer>
+    </script>
+    <script src="../js/ifthenpay-integration.js"></script>
     <script>
         // Parse URL params
         const urlParams = new URLSearchParams(window.location.search);
         const service = urlParams.get('service') || 'unknown';
         const amount = urlParams.get('amount') || '0';
+        const orderId = urlParams.get('orderId') || `PAY-${Date.now()}`;
+
         // Display Data
         document.getElementById('amountDisplay').innerText = `${amount}€`;
         let serviceLabel = 'Serviço Share2Inspire';
         if (service === 'cv-review') serviceLabel = 'Revisão Profissional de CV';
         if (service === 'kickstart-pro') serviceLabel = 'Sessão Kickstart Pro';
+        if (service.includes('analyzer')) serviceLabel = 'Análise Completa de CV';
         document.getElementById('serviceName').innerText = serviceLabel;
+
         async function initiatePayment() {
             const phone = document.getElementById('mbwayPhone').value;
             const emailInput = document.getElementById('mbwayEmail').value;
             const feedback = document.getElementById('paymentFeedback');
             const btn = document.getElementById('payBtn');
+
             if (!phone || phone.length !== 9) {
                 feedback.innerHTML = '<span class="text-danger">Número de telemóvel inválido.</span>';
                 return;
             }
-            // Simple email validation if provided
+
             if (emailInput && !emailInput.includes('@')) {
                 feedback.innerHTML = '<span class="text-danger">Email inválido.</span>';
                 return;
             }
+
             btn.disabled = true;
             btn.innerHTML = 'A processar...';
+
             try {
-                // Call Backend API
-                const response = await fetch('https://share2inspire-beckend.lm.r.appspot.com/api/payment/create-mbway', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        mobile_number: phone,
-                        amount: amount,
-                        description: service,
-                        email: emailInput || 'no-email@checkout.com'
-                    })
+                // Use Ifthenpay Integration
+                const result = await window.ifthenpayIntegration.processPayment('mbway', {
+                    orderId: orderId,
+                    amount: amount,
+                    mobileNumber: phone,
+                    customerEmail: emailInput || 'pagamento@checkout.com',
+                    customerName: 'Cliente',
+                    description: serviceLabel
                 });
-                const data = await response.json();
-                if (data.status === 'success' || data.message?.includes('sucesso')) {
+
+                if (result.success) {
                     document.getElementById('paymentFormSection').classList.add('d-none');
                     document.getElementById('successSection').classList.remove('d-none');
                 } else {
-                    feedback.innerHTML = `<span class="text-danger">Erro: ${data.message || 'Falha no pagamento'}</span>`;
+                    feedback.innerHTML = `<span class="text-danger">Erro: ${result.message || 'Falha no pagamento'}</span>`;
                     btn.disabled = false;
                     btn.innerHTML = 'Pagar Agora';
                 }
@@ -140,4 +150,5 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
