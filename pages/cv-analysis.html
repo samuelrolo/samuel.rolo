@@ -76,42 +76,152 @@
     <div class="modal fade" id="resultsModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, #1A1A1A 0%, #2d2d2d 100%);">
-                    <h5 class="modal-title text-white"><i class="fas fa-chart-line me-2" style="color: #BF9A33;"></i>
-                        Análise Rápida</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <div class="modal-header"
+                    style="background: linear-gradient(135deg, #1A1A1A 0%, #2d2d2d 100%); border-bottom: none; padding: 1.75rem 2rem 1.25rem 2rem;">
+                    <div style="width: 100%;">
+                        <h5 class="modal-title text-white"
+                            style="font-weight: 500; font-size: 1.35rem; margin-bottom: 0.5rem;">Análise Inicial do
+                            Perfil</h5>
+                        <p class="text-white" style="font-size: 0.875rem; opacity: 0.85; margin: 0;">Leitura automática
+                            do teu CV, baseada em estrutura, conteúdo e posicionamento.</p>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        style="opacity: 0.7;"></button>
                 </div>
-                <div class="modal-body p-4 bg-light">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-10">
-                            <!-- Score Card -->
-                            <div
-                                class="maturity-score-card mb-4 bg-white p-4 rounded shadow-sm text-center border-top border-4 border-warning">
-                                <h6 class="text-uppercase text-muted small fw-bold mb-3">Maturidade Profissional</h6>
-                                <div class="display-1 fw-bold text-dark mb-0" id="maturityScore">0.0</div>
-                                <div class="badge bg-dark text-white px-3 py-2 rounded-pill mt-2" id="maturityLabel">Em
-                                    Análise</div>
-                            </div>
+                <div class="modal-body p-4" style="background: #f8f9fa;">
 
-                            <!-- Radar Chart -->
-                            <div class="chart-container bg-white p-4 rounded shadow-sm mb-4" style="height: 350px;">
-                                <canvas id="radarChart"></canvas>
-                            </div>
-
-                            <!-- Teaser Message -->
-                            <div class="bg-white p-4 rounded shadow-sm text-center">
-                                <i class="fas fa-lock fa-3x text-warning mb-3"></i>
-                                <h5 class="fw-bold mb-3">Desbloqueia a Análise Completa</h5>
-                                <p class="text-muted mb-4">Relatório PDF detalhado com pontos fortes, sugestões
-                                    estratégicas e plano de ação personalizado.</p>
-                                <div class="d-flex justify-content-center align-items-center gap-3">
-                                    <span class="fs-3 fw-bold text-success">1,00€</span>
-                                    <span class="text-muted">|</span>
-                                    <span class="small text-muted">Entrega por email</span>
-                                </div>
-                            </div>
+                    <!-- BLOCO 1: Retrato Profissional -->
+                    <div class="analysis-block mb-4 p-3"
+                        style="background: white; border-radius: 8px; border-left: 3px solid #BF9A33;">
+                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">Retrato
+                            Profissional</h6>
+                        <div style="font-size: 0.875rem; color: #495057; line-height: 1.7;">
+                            <div class="mb-2"><strong>Anos de experiência identificados:</strong> <span id="yearsExp">A
+                                    calcular...</span></div>
+                            <div class="mb-2"><strong>Área principal de especialização:</strong> <span id="mainArea">A
+                                    identificar...</span></div>
+                            <div class="mb-3"><strong>Nível de senioridade estimado:</strong> <span
+                                    id="seniorityLevel">A avaliar...</span></div>
+                            <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">Esta leitura
+                                resulta da análise do percurso, funções descritas e progressão temporal.</p>
                         </div>
                     </div>
+
+                    <!-- BLOCO 2: Maturidade e Posicionamento -->
+                    <div class="analysis-block mb-4 p-3"
+                        style="background: white; border-radius: 8px; text-align: center;">
+                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.75rem;">
+                            Maturidade Profissional</h6>
+                        <div class="display-3 fw-bold mb-2" style="color: #BF9A33;" id="maturityScore">0.0</div>
+                        <div style="font-size: 0.8rem; color: #6c757d; margin-bottom: 0.75rem;">/ 5</div>
+                        <div class="badge px-3 py-2 mb-3" style="background: #1A1A1A; color: white; font-size: 0.85rem;"
+                            id="maturityLabel">Em Análise</div>
+                        <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">O score reflete
+                            coerência de percurso, clareza narrativa e alinhamento com o mercado.</p>
+                    </div>
+
+                    <!-- BLOCO 3: Leitura do Perfil -->
+                    <div class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px;">
+                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">Leitura
+                            do Perfil</h6>
+                        <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.875rem; color: #495057;">
+                            <li class="mb-2">• Clareza do papel profissional atual</li>
+                            <li class="mb-2">• Consistência entre experiência e objetivos</li>
+                            <li class="mb-2">• Grau de especialização versus generalismo</li>
+                            <li>• Presença ou ausência de foco estratégico</li>
+                        </ul>
+                    </div>
+
+                    <!-- BLOCO 4: Competências Identificadas -->
+                    <div class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px;">
+                        <h6 class="mb-3" style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A;">Competências
+                            Detetadas</h6>
+                        <div class="mb-3">
+                            <div style="font-size: 0.8rem; font-weight: 600; color: #6c757d; margin-bottom: 0.5rem;">
+                                HARD SKILLS</div>
+                            <div id="hardSkillsList" style="font-size: 0.875rem; color: #495057;">A identificar...</div>
+                        </div>
+                        <div class="mb-3">
+                            <div style="font-size: 0.8rem; font-weight: 600; color: #6c757d; margin-bottom: 0.5rem;">
+                                SOFT SKILLS</div>
+                            <div id="softSkillsList" style="font-size: 0.875rem; color: #495057;">A identificar...</div>
+                        </div>
+                        <div class="mb-3">
+                            <div style="font-size: 0.8rem; font-weight: 600; color: #6c757d; margin-bottom: 0.5rem;">
+                                IDIOMAS</div>
+                            <div id="languagesList" style="font-size: 0.875rem; color: #495057;">A identificar...</div>
+                        </div>
+                        <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">A análise baseia-se
+                            apenas no que está explícito no documento.</p>
+                    </div>
+
+                    <!-- BLOCO 5: Formação e Atualização -->
+                    <div class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px;">
+                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">
+                            Aprendizagem e Atualização</h6>
+                        <div style="font-size: 0.875rem; color: #495057; line-height: 1.7;">
+                            <div class="mb-2"><strong>Última formação identificada:</strong> <span id="lastEducation">A
+                                    verificar...</span></div>
+                            <div class="mb-3"><strong>Ritmo de atualização:</strong> <span id="updateRhythm">A
+                                    avaliar...</span></div>
+                            <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">A frequência
+                                formativa influencia diretamente empregabilidade e mobilidade.</p>
+                        </div>
+                    </div>
+
+                    <!-- BLOCO 6: Estrutura e ATS -->
+                    <div class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px;">
+                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">Estrutura
+                            e Readiness para ATS</h6>
+                        <div style="font-size: 0.875rem; color: #495057; line-height: 1.7;">
+                            <div class="mb-2"><strong>Compatibilidade ATS:</strong> <span id="atsCompat">A
+                                    avaliar...</span></div>
+                            <div class="mb-2"><strong>Estrutura do CV:</strong> <span id="cvStructure">A
+                                    verificar...</span></div>
+                            <div class="mb-3"><strong>Legibilidade e hierarquia visual:</strong> <span
+                                    id="readability">A analisar...</span></div>
+                            <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">Pequenos
+                                ajustes estruturais podem ter impacto significativo na triagem automática.</p>
+                        </div>
+                    </div>
+
+                    <!-- BLOCO VISUAL: Radar Chart -->
+                    <div class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px;">
+                        <div class="chart-container" style="height: 280px;">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                        <p
+                            style="font-size: 0.8rem; color: #6c757d; text-align: center; margin: 0.75rem 0 0 0; font-style: italic;">
+                            Leitura comparativa entre estrutura, impacto, posicionamento, mercado e ATS.</p>
+                    </div>
+
+                    <!-- BLOCO FINAL: Teaser do Relatório -->
+                    <div class="analysis-block p-4"
+                        style="background: white; border-radius: 8px; border: 2px solid #BF9A33;">
+                        <div style="text-align: center; color: #BF9A33; margin-bottom: 1rem;">
+                            <i class="fas fa-file-alt" style="font-size: 2rem;"></i>
+                        </div>
+                        <h6
+                            style="font-size: 1rem; font-weight: 600; color: #1A1A1A; text-align: center; margin-bottom: 0.75rem;">
+                            O que não está aqui</h6>
+                        <p style="font-size: 0.875rem; color: #495057; text-align: center; margin-bottom: 1rem;">Esta é
+                            uma leitura inicial.<br>O relatório completo aprofunda decisões, riscos e oportunidades
+                            específicas do teu perfil.</p>
+                        <div style="font-size: 0.875rem; color: #495057; margin-bottom: 1.25rem;">
+                            <div style="margin-bottom: 0.5rem;"><strong>Inclui</strong></div>
+                            <ul style="list-style: none; padding-left: 1rem; margin: 0;">
+                                <li class="mb-1">• Diagnóstico detalhado</li>
+                                <li class="mb-1">• Pontos fortes e fragilidades reais</li>
+                                <li class="mb-1">• Recomendações acionáveis</li>
+                                <li>• Plano de evolução personalizado</li>
+                            </ul>
+                        </div>
+                        <div style="text-align: center; margin-bottom: 1.25rem;">
+                            <div style="font-size: 1.75rem; font-weight: 600; color: #BF9A33;">1,00 €</div>
+                            <div style="font-size: 0.85rem; color: #6c757d;">Relatório PDF enviado por email</div>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="modal-footer bg-white border-top" style="padding: 1.25rem 2rem;">
                     <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"
