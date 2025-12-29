@@ -446,7 +446,7 @@
         style="background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%); color: #1A1A1A; border: none; border-radius: 0; padding: 0.75rem;">
         <div class="container">
             <strong>🎉 Campanha de Lançamento:</strong>
-            <span class="small">Kickstart Pro <strong>30€</strong> (-25%) | Revisão CV <strong>20€</strong> (-20%) |
+            <span class="small">Kickstart Pro <strong>35€</strong> | Revisão CV <strong>25€</strong> |
                 Utilize <code class="bg-dark text-warning px-2">NEWS2I10</code> -10%</span>
             <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="alert"
                 aria-label="Close" style="font-size: 0.75rem; opacity: 0.8;"></button>
@@ -644,7 +644,7 @@
                                 <p class="small text-muted mb-4">Após agendar, introduza os seus dados para receber a
                                     confirmação e efetuar o pagamento.</p>
                                 <input type="hidden" name="service" value="Kickstart Pro">
-                                <input type="hidden" name="amount" value="30.00">
+                                <input type="hidden" name="amount" value="35.00">
                                 <div class="mb-3">
                                     <label for="kickstartName" class="form-label small fw-bold text-uppercase">Nome
                                         Completo</label>
@@ -702,7 +702,7 @@
                                         style="border-radius: 8px; border: 1px solid #e0e0e0;">
                                         <div class="d-flex justify-content-between small">
                                             <span>Preço base:</span>
-                                            <span id="kickstartBasePrice" class="fw-semibold">30.00€</span>
+                                            <span id="kickstartBasePrice" class="fw-semibold">35.00€</span>
                                         </div>
                                         <div class="d-flex justify-content-between small text-success mt-1">
                                             <span>Desconto cupão:</span>
@@ -720,8 +720,8 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <span class="text-decoration-line-through text-muted">40€</span>
-                                            <span class="fw-bold fs-4 text-success ms-2">30€</span>
-                                            <span class="badge bg-success ms-2">-25%</span>
+                                            <span class="fw-bold fs-4 text-success ms-2">35€</span>
+                                            <span class="badge bg-success ms-2">-12%</span>
                                         </div>
                                     </div>
                                     <small class="text-muted d-block mt-2">🎉 Campanha de Lançamento - Primeiros 30
@@ -730,7 +730,7 @@
                                 <button type="submit"
                                     class="btn btn-primary w-100 py-3 rounded-pill fw-bold border-0 bg-gold"
                                     style="background-color: #BF9A33;">
-                                    Confirmar e Pagar (30€)
+                                    Confirmar Pedido (35€)
                                 </button>
                                 <div id="kickstartFormMessage" class="mt-3 small"></div>
                             </form>
@@ -817,8 +817,7 @@
                             <span class="text-dark fw-bold">Campanha de Lançamento:</span>
                             <div>
                                 <span class="text-decoration-line-through text-muted me-2">25€</span>
-                                <span class="fw-bold fs-4 text-success">20€</span>
-                                <span class="badge bg-success ms-2">-20%</span>
+                                <span class="fw-bold fs-4 text-success">25€</span>
                             </div>
                         </div>
                         <small class="d-block mt-2 text-muted">🎉 Oferta de Lançamento | ⏱️ Entrega em até 5 dias
@@ -842,16 +841,17 @@
                             <label class="form-label small fw-bold text-uppercase">Carregar CV (PDF/DOCX) *</label>
                             <input type="file" class="form-control bg-light border-0 py-2 rounded-3" id="cvReviewFile"
                                 accept=".pdf,.docx" required>
-                            <div class="form-text">O seu CV será analisado e devolvido com anotações detalhadas.</div>
+                            <div class="form-text">O teu CV será analisado e devolvido com anotações detalhadas.</div>
                         </div>
                         <!-- Photo with Tooltip -->
                         <div class="mb-3">
-                            <div class="d-flex justify-content-between">
-                                <label class="form-label small fw-bold text-uppercase">Fotografia Profissional
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label class="form-label small fw-bold text-uppercase mb-0">Fotografia Profissional
                                     (Opcional)</label>
-                                <a href="#" data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="DO's: Fundo neutro, boa luz, sorriso profissional. DON'Ts: Selfies, cortes, óculos escuros.">
-                                    Dicas Foto
+                                <a href="#" class="text-gold text-decoration-none small" id="photoTipsLink"
+                                    data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="top"
+                                    title="<strong>✓ Recomendado:</strong> Fundo neutro, boa iluminação natural, roupa adequada, sorriso natural.<br><strong>✗ Evitar:</strong> Selfies, óculos de sol, filtros excessivos, fotos tremidas ou escuras.">
+                                    <i class="fas fa-info-circle me-1"></i>Dicas Foto
                                 </a>
                             </div>
                             <input type="file" class="form-control bg-light border-0 py-2 rounded-3" id="cvReviewPhoto"
@@ -892,7 +892,7 @@
                                 style="border-radius: 8px; border: 1px solid #e0e0e0;">
                                 <div class="d-flex justify-content-between small">
                                     <span>Preço base:</span>
-                                    <span id="cvReviewBasePrice" class="fw-semibold">20.00€</span>
+                                    <span id="cvReviewBasePrice" class="fw-semibold">25.00€</span>
                                 </div>
                                 <div class="d-flex justify-content-between small text-success mt-1">
                                     <span>Desconto cupão:</span>
@@ -989,7 +989,7 @@
                         messageDiv.innerHTML = `<div class="alert alert-danger">Erro: ${error.message}</div>`;
                     } finally {
                         submitBtn.disabled = false;
-                        submitBtn.innerHTML = 'Confirmar e Pagar (35€)';
+                        submitBtn.innerHTML = 'Confirmar Pedido (35€)';
                     }
                 });
             }
@@ -1012,7 +1012,7 @@
                         return;
                     }
                     if (!file) {
-                        messageDiv.innerHTML = '<div class="alert alert-danger">Por favor, carregue o seu CV.</div>';
+                        messageDiv.innerHTML = '<div class="alert alert-danger">Por favor, carrega o teu CV.</div>';
                         return;
                     }
                     submitBtn.disabled = true;
@@ -1036,6 +1036,14 @@
                     }
                 });
             }
+        });
+
+        // Initialize Bootstrap Tooltips
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         });
     </script>
 

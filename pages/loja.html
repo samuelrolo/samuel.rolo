@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,6 +27,7 @@
             padding: 20px 0;
             margin-top: 50px;
         }
+
         .footer-container {
             display: flex;
             justify-content: space-between;
@@ -33,35 +35,43 @@
             flex-wrap: wrap;
             margin-bottom: 15px;
         }
+
         .footer-left p {
             margin: 0;
             color: #BF9A33;
         }
+
         .footer-right {
             display: flex;
             gap: 30px;
         }
+
         .footer-contact p {
             margin: 0;
             margin-bottom: 5px;
             color: #fff;
         }
+
         .footer-contact i {
             color: #BF9A33;
             margin-right: 8px;
         }
+
         .footer-social {
             display: flex;
             gap: 15px;
         }
+
         .footer-social a {
             color: #BF9A33;
             font-size: 20px;
             transition: color 0.3s;
         }
+
         .footer-social a:hover {
             color: #fff;
         }
+
         .footer-links {
             display: flex;
             justify-content: center;
@@ -70,37 +80,45 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 15px;
         }
+
         .footer-links a {
             color: #BF9A33;
             font-size: 14px;
             text-decoration: none;
             transition: color 0.3s;
         }
+
         .footer-links a:hover {
             color: #fff;
             text-decoration: underline;
         }
+
         .navbar {
             background-color: #fff;
             padding: 1rem 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+
         .navbar-brand img {
             height: 40px;
         }
+
         .navbar-nav {
             margin-left: auto;
         }
+
         .navbar-nav .nav-link {
             color: #333;
             font-weight: 600;
             padding: 0.5rem 1rem;
             margin: 0 0.25rem;
         }
+
         .navbar-nav .nav-link.active {
             color: #BF9A33;
             position: relative;
         }
+
         .navbar-nav .nav-link.active::after {
             content: '';
             position: absolute;
@@ -110,49 +128,59 @@
             height: 2px;
             background-color: #BF9A33;
         }
+
         /* Estilos para a página da loja */
         .page-header {
             background-color: #f8f9fa;
             padding: 100px 0 50px;
             margin-bottom: 50px;
         }
+
         .page-header h1 {
             font-size: 2.5rem;
             font-weight: 700;
             color: #333;
             margin-bottom: 1rem;
         }
+
         .breadcrumb {
             background-color: transparent;
             padding: 0;
             margin: 0;
         }
+
         .breadcrumb-item a {
             color: #BF9A33;
             text-decoration: none;
         }
+
         .breadcrumb-item.active {
             color: #6c757d;
         }
+
         .shop-intro {
             padding: 0 0 50px;
         }
+
         .section-title {
             font-size: 2.2rem;
             font-weight: 700;
             color: #333;
             margin-bottom: 1rem;
         }
+
         .section-subtitle {
             font-size: 1.1rem;
             color: #6c757d;
             margin-bottom: 2rem;
         }
+
         /* Estilos para o slider de livros */
         .book-slider-section {
             padding: 80px 0;
             background-color: #f8f9fa;
         }
+
         .book-slider-container {
             position: relative;
             max-width: 1200px;
@@ -162,6 +190,7 @@
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
+
         .country-flags {
             display: flex;
             justify-content: center;
@@ -169,6 +198,7 @@
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-bottom: 1px solid #dee2e6;
         }
+
         .flag-btn {
             background: none;
             border: none;
@@ -179,14 +209,17 @@
             cursor: pointer;
             position: relative;
         }
+
         .flag-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
+
         .flag-btn.active {
             background-color: #BF9A33;
             box-shadow: 0 5px 15px rgba(191, 154, 51, 0.3);
         }
+
         .flag-btn img {
             width: 50px;
             height: 50px;
@@ -195,30 +228,37 @@
             border: 3px solid transparent;
             transition: border-color 0.3s ease;
         }
+
         .flag-btn.active img {
             border-color: #fff;
         }
+
         .book-content {
             padding: 50px;
             min-height: 600px;
         }
+
         .book-slide {
             display: none;
             opacity: 0;
             transition: opacity 0.5s ease;
         }
+
         .book-slide.active {
             display: block;
             opacity: 1;
         }
+
         .book-row {
             display: flex;
             align-items: center;
             gap: 50px;
         }
+
         .book-image {
             flex: 0 0 350px;
         }
+
         .book-image img {
             width: 100%;
             max-width: 350px;
@@ -226,12 +266,15 @@
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease;
         }
+
         .book-image img:hover {
             transform: scale(1.05);
         }
+
         .book-info {
             flex: 1;
         }
+
         .book-title {
             font-size: 2.5rem;
             font-weight: 700;
@@ -239,35 +282,41 @@
             margin-bottom: 0.5rem;
             line-height: 1.2;
         }
+
         .book-subtitle {
             font-size: 1.3rem;
             color: #BF9A33;
             margin-bottom: 2rem;
             font-weight: 500;
         }
+
         .book-description {
             font-size: 1.1rem;
             line-height: 1.7;
             color: #555;
             margin-bottom: 2rem;
         }
+
         .book-features {
             list-style: none;
             padding: 0;
             margin: 0 0 2rem;
         }
+
         .book-features li {
             margin-bottom: 0.8rem;
             display: flex;
             align-items: flex-start;
             font-size: 1rem;
         }
+
         .book-features li i {
             color: #BF9A33;
             margin-right: 12px;
             margin-top: 3px;
             font-size: 1.1rem;
         }
+
         .amazon-btn {
             background: linear-gradient(135deg, #BF9A33 0%, #a57b0a 100%);
             color: #fff;
@@ -283,15 +332,18 @@
             transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(191, 154, 51, 0.3);
         }
+
         .amazon-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(191, 154, 51, 0.4);
             color: #fff;
             text-decoration: none;
         }
+
         .amazon-btn i {
             font-size: 1.2rem;
         }
+
         /* Responsividade */
         @media (max-width: 992px) {
             .book-row {
@@ -299,81 +351,102 @@
                 text-align: center;
                 gap: 30px;
             }
+
             .book-image {
                 flex: none;
             }
+
             .book-content {
                 padding: 30px;
             }
+
             .book-title {
                 font-size: 2rem;
             }
+
             .book-subtitle {
                 font-size: 1.1rem;
             }
         }
+
         @media (max-width: 768px) {
             .book-slider-section {
                 padding: 50px 0;
             }
+
             .country-flags {
                 padding: 20px 0 15px;
             }
+
             .flag-btn {
                 margin: 0 10px;
             }
+
             .flag-btn img {
                 width: 40px;
                 height: 40px;
             }
+
             .book-content {
                 padding: 20px;
                 min-height: auto;
             }
+
             .book-title {
                 font-size: 1.8rem;
             }
+
             .book-subtitle {
                 font-size: 1rem;
             }
+
             .book-description {
                 font-size: 1rem;
             }
+
             .amazon-btn {
                 padding: 12px 30px;
                 font-size: 1rem;
             }
         }
+
         @media (max-width: 576px) {
             .book-slider-container {
                 margin: 0 15px;
                 border-radius: 10px;
             }
+
             .book-title {
                 font-size: 1.6rem;
             }
+
             .book-subtitle {
                 font-size: 0.9rem;
             }
+
             .book-description {
                 font-size: 0.9rem;
             }
+
             .book-features li {
                 font-size: 0.9rem;
             }
         }
+
         .cta-section {
             padding: 80px 0;
             text-align: center;
             background-color: #212529;
             color: #fff;
         }
+
         .cta-section h2 {
             font-size: 2.2rem;
             font-weight: 700;
             color: #fff;
             margin-bottom: 1rem;
         }
+
         .cta-section p {
             font-size: 1.1rem;
             margin-bottom: 2rem;
@@ -381,6 +454,7 @@
             margin-left: auto;
             margin-right: auto;
         }
+
         /* Botões personalizados - Override Bootstrap azul */
         .btn-primary {
             background-color: #BF9A33 !important;
@@ -393,6 +467,7 @@
             text-decoration: none;
             display: inline-block;
         }
+
         .btn-primary:hover {
             background-color: #a57b0a !important;
             border-color: #a57b0a !important;
@@ -400,25 +475,30 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(191, 154, 51, 0.3);
         }
+
         .btn-primary:focus {
             background-color: #a57b0a !important;
             border-color: #a57b0a !important;
             color: #fff !important;
             box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25);
         }
+
         .btn-primary:active {
             background-color: #a57b0a !important;
             border-color: #a57b0a !important;
             color: #fff !important;
         }
+
         .btn-primary:visited {
             color: #fff !important;
         }
+
         /* Botões grandes */
         .btn-lg {
             padding: 1rem 2.5rem;
             font-size: 1.1rem;
         }
+
         /* Estilos para o sistema de feedback */
         .feedback-container {
             position: fixed;
@@ -433,20 +513,24 @@
             border: 1px solid #BF9A33;
             display: none;
         }
+
         .feedback-container.show {
             display: block;
         }
+
         .feedback-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
+
         .feedback-header h5 {
             margin: 0;
             font-size: 16px;
             font-weight: 600;
         }
+
         .feedback-close {
             background: none;
             border: none;
@@ -454,11 +538,13 @@
             cursor: pointer;
             color: #6c757d;
         }
+
         .feedback-stars {
             display: flex;
             justify-content: center;
             margin-bottom: 15px;
         }
+
         .feedback-stars i {
             font-size: 20px;
             color: #ddd;
@@ -466,10 +552,12 @@
             margin: 0 2px;
             transition: color 0.3s;
         }
+
         .feedback-stars i.active,
         .feedback-stars i:hover {
             color: #BF9A33;
         }
+
         .feedback-comment textarea {
             width: 100%;
             border: 1px solid #ddd;
@@ -479,6 +567,7 @@
             resize: vertical;
             margin-bottom: 10px;
         }
+
         .feedback-btn {
             background-color: #BF9A33;
             color: #fff;
@@ -489,9 +578,11 @@
             font-size: 14px;
             width: 100%;
         }
+
         .feedback-btn:hover {
             background-color: #a57b0a;
         }
+
         .feedback-trigger {
             position: fixed;
             bottom: 20px;
@@ -508,10 +599,12 @@
             z-index: 999;
             transition: all 0.3s ease;
         }
+
         .feedback-trigger:hover {
             background-color: #a57b0a;
             transform: scale(1.1);
         }
+
         /* Footer */
         footer {
             background-color: #212529;
@@ -519,6 +612,7 @@
             padding: 20px 0;
             margin-top: 50px;
         }
+
         .footer-container {
             display: flex;
             justify-content: space-between;
@@ -526,35 +620,43 @@
             flex-wrap: wrap;
             margin-bottom: 15px;
         }
+
         .footer-left p {
             margin: 0;
             color: #BF9A33;
         }
+
         .footer-right {
             display: flex;
             gap: 30px;
         }
+
         .footer-contact p {
             margin: 0;
             margin-bottom: 5px;
             color: #fff;
         }
+
         .footer-contact i {
             color: #BF9A33;
             margin-right: 8px;
         }
+
         .footer-social {
             display: flex;
             gap: 15px;
         }
+
         .footer-social a {
             color: #BF9A33;
             font-size: 20px;
             transition: color 0.3s;
         }
+
         .footer-social a:hover {
             color: #fff;
         }
+
         .footer-links {
             display: flex;
             justify-content: center;
@@ -563,16 +665,19 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 15px;
         }
+
         .footer-links a {
             color: #BF9A33;
             font-size: 14px;
             text-decoration: none;
             transition: color 0.3s;
         }
+
         .footer-links a:hover {
             color: #fff;
             text-decoration: underline;
         }
+
         /* Responsive */
         @media (max-width: 768px) {
             .footer-container {
@@ -580,13 +685,16 @@
                 text-align: center;
                 gap: 20px;
             }
+
             .footer-right {
                 flex-direction: column;
                 gap: 15px;
             }
+
             .footer-social {
                 justify-content: center;
             }
+
             .footer-links {
                 flex-direction: column;
                 gap: 10px;
@@ -594,6 +702,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
@@ -680,7 +789,7 @@
                         <button class="flag-btn active" data-country="pt" title="Português">
                             <img src="https://flagcdn.com/w80/pt.png" alt="Portugal">
                         </button>
-                        <button class="flag-btn" data-country="en" title="English">
+                        <button class="flag-btn" data-country="en" title="Inglês">
                             <img src="https://flagcdn.com/w80/gb.png" alt="Reino Unido">
                         </button>
                         <button class="flag-btn" data-country="es" title="Español">
@@ -1013,13 +1122,13 @@
                             </label>
                         </div>
                         <div class="alert alert-success d-none" id="contactSuccess">
-                             Mensagem enviada com sucesso!
+                            Mensagem enviada com sucesso!
                         </div>
                         <div class="alert alert-danger d-none" id="contactError">
-                             Erro ao enviar mensagem.
+                            Erro ao enviar mensagem.
                         </div>
                         <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
-                             Enviar Mensagem
+                            Enviar Mensagem
                         </button>
                     </form>
                 </div>
@@ -1074,7 +1183,7 @@
     </footer>
     <!-- Botão de Feedback -->
     <button id="feedbackBtn" class="feedback-btn" data-bs-toggle="modal" data-bs-target="#feedbackModal">
-         Feedback
+        Feedback
     </button>
     <!-- Modal de Feedback -->
     <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
@@ -1227,4 +1336,5 @@
     <!-- Global Feedback Widget -->
     <script src="../js/feedback-widget.js"></script>
 </body>
+
 </html>

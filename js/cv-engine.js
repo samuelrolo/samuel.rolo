@@ -169,7 +169,7 @@ window.CV_ENGINE = {
         if (impactCount >= 5) {
             this.data.strengths.push({
                 title: "Vocabulário de Alto Impacto",
-                detail: `Utiliza ${impactCount} verbos de ação que demonstram resultados concretos.`
+                detail: `Utilizas ${impactCount} verbos de ação que demonstram resultados concretos.`
             });
         }
 
@@ -191,34 +191,34 @@ window.CV_ENGINE = {
         if (impactCount < 5) {
             this.data.suggestions.push({
                 title: "Aumentar Impacto Quantificável",
-                context: "Adicione mais resultados mensuráveis. Ex: 'Aumentei vendas em 20%', 'Reduzi custos em 15K€'."
+                context: "Adiciona mais resultados mensuráveis. Ex: 'Aumentei vendas em 20%', 'Reduzi custos em 15K€'."
             });
         }
 
         if (this.data.competencies.ats < 70) {
             this.data.suggestions.push({
                 title: "Otimizar para Sistemas ATS",
-                context: "Inclua mais keywords relevantes da sua área e certifique-se que os dados de contacto estão visíveis."
+                context: "Inclui mais keywords relevantes da tua área e certifica-te que os dados de contacto estão visíveis."
             });
         }
 
         if (sectionsCount < 5) {
             this.data.suggestions.push({
                 title: "Completar Secções Fundamentais",
-                context: "Adicione secções como: Experiência, Formação, Competências, Certificações e Línguas."
+                context: "Adiciona secções como: Experiência, Formação, Competências, Certificações e Línguas."
             });
         }
 
         if (wordCount < 300) {
             this.data.suggestions.push({
                 title: "Expandir Conteúdo",
-                context: "O CV parece muito resumido. Detalhe as suas responsabilidades e conquistas em cada experiência."
+                context: "O CV parece muito resumido. Detalha as tuas responsabilidades e conquistas em cada experiência."
             });
         }
     },
 
     /**
-     * Atualizar UI com os resultados da análise (MODO TEASER)
+     * Atualizar UI com os resultados da análise (MODO TEASER SIMPLIFICADO)
      */
     updateUI() {
         // Update Maturity Score
@@ -233,38 +233,32 @@ window.CV_ENGINE = {
             window.renderRadarChart(this.data.competencies);
         }
 
-        // Render Lista de Pontos Fortes (MODO TEASER - Esconde detalhes)
+        // MODO TEASER: Mostrar apenas mensagem de bloqueio sem detalhes
         const sList = document.getElementById('strengthsList');
         if (sList) {
-            sList.innerHTML = this.data.strengths.map(s => `
-                <div class="strength-item mb-3">
-                    <h6 class="fw-bold text-dark mb-1">
-                        <i class="fas fa-check-circle text-success me-2"></i>${s.title}
-                    </h6>
-                    <div class="teaser-content">
-                        <p class="small mb-0 text-muted fst-italic">
-                            <i class="fas fa-lock me-1"></i> Análise estratégica detalhada disponível no relatório completo.
-                        </p>
-                    </div>
+            sList.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-lock fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">
+                        <strong>Análise detalhada disponível no relatório completo (1€)</strong>
+                    </p>
+                    <p class="small text-muted">Pontos fortes, sugestões estratégicas e plano de ação</p>
                 </div>
-            `).join('');
+            `;
         }
 
-        // Render Lista de Sugestões (MODO TEASER - Esconde detalhes)
+        // MODO TEASER: Apenas mensagem de bloqueio nas sugestões
         const sugList = document.getElementById('suggestionsList');
         if (sugList) {
-            sugList.innerHTML = this.data.suggestions.map(s => `
-                <div class="suggestion-item mb-3">
-                    <h6 class="fw-bold text-dark mb-1">
-                        <i class="fas fa-arrow-up text-primary me-2"></i>${s.title}
-                    </h6>
-                    <div class="teaser-content">
-                        <p class="small mb-0 text-muted fst-italic">
-                            <i class="fas fa-lock me-1"></i> Recomendações personalizadas e plano de ação bloqueados.
-                        </p>
-                    </div>
+            sugList.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-lock fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">
+                        <strong>Recomendações personalizadas bloqueadas</strong>
+                    </p>
+                    <p class="small text-muted">Desbloqueia o relatório PDF completo por apenas 1€</p>
                 </div>
-            `).join('');
+            `;
         }
     },
 
