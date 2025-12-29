@@ -66,81 +66,60 @@
             --text-light: #6c757d;
         }
 
-        /* Page Header matching People Hub */
-        .page-header {
-            background-color: #f8f9fa;
-            padding: 100px 0 50px;
-            margin-bottom: 50px;
-        }
-
-        .page-header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 1rem;
-        }
-
-        .breadcrumb {
-            background-color: transparent;
-            padding: 0;
-            margin: 0;
-        }
-
-        .breadcrumb-item a {
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        .breadcrumb-item.active {
-            color: #6c757d;
-        }
-
-        /* Hero Founder matching Humanos & Máquinas */
+        /* Hero Founder - Simplified and Lighter */
         .hero-founder {
             background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             color: white;
-            padding: 4rem 0;
-            margin-bottom: 4rem;
-            border-radius: 15px;
+            padding: 100px 0 3rem;
+            margin-bottom: 0;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(191, 154, 51, 0.15);
         }
 
         .hero-founder .section-label {
             text-transform: uppercase;
-            letter-spacing: 4px;
-            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.9);
             font-weight: 600;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             display: block;
+            font-size: 0.85rem;
         }
 
         .hero-founder h2 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             color: white;
         }
 
         .hero-founder p {
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: rgba(255, 255, 255, 0.95);
-            margin-bottom: 2rem;
-            max-width: 800px;
+            margin-bottom: 1.5rem;
+            max-width: 700px;
             margin-left: auto;
             margin-right: auto;
         }
 
         @media (max-width: 992px) {
             .hero-founder h2 {
-                font-size: 2.5rem;
+                font-size: 2rem;
+            }
+
+            .hero-founder {
+                padding: 80px 0 2.5rem;
             }
         }
 
         @media (max-width: 768px) {
             .hero-founder {
                 text-align: center;
+                padding: 60px 0 2rem;
+            }
+
+            .hero-founder h2 {
+                font-size: 1.75rem;
             }
         }
 
@@ -463,15 +442,15 @@
             }
         }
 
-        /* Hero Photo Styles */
+        /* Hero Photo Styles - Reduced Size */
         .hero-photo {
-            width: 400px;
-            height: 400px;
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
             object-fit: cover;
-            border: 6px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            margin-bottom: 1.5rem;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1.25rem;
         }
 
         .hero-founder .hero-content {
@@ -545,17 +524,19 @@
             transform: translateY(-3px);
         }
 
-        /* Hero Stats */
+        /* Hero Stats - Simplified */
         .hero-stats {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 30px;
-            background: rgba(255, 255, 255, 0.1);
+            gap: 25px;
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
-            padding: 25px 40px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px 35px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .stat-item {
@@ -563,53 +544,52 @@
         }
 
         .stat-number {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
             color: #fff;
             line-height: 1;
-            display: inline;
         }
 
         .stat-plus {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #fff;
         }
 
         .stat-label {
             display: block;
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.8);
-            margin-top: 5px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin-top: 6px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .stat-divider {
             width: 1px;
-            height: 50px;
+            height: 40px;
             background: rgba(255, 255, 255, 0.3);
         }
 
         @media (max-width: 768px) {
             .hero-photo {
-                width: 280px;
-                height: 280px;
+                width: 160px;
+                height: 160px;
             }
 
             .hero-stats {
                 flex-direction: column;
-                gap: 20px;
-                padding: 20px 30px;
+                gap: 15px;
+                padding: 18px 25px;
             }
 
             .stat-divider {
-                width: 60px;
+                width: 50px;
                 height: 1px;
             }
 
             .stat-number {
-                font-size: 2rem;
+                font-size: 1.75rem;
             }
         }
 
@@ -1070,55 +1050,43 @@
             </div>
         </div>
     </nav>
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>Sobre o Fundador</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Sobre o Fundador</li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Hero Founder Section (Simplified) -->
     <section class="hero-founder">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-10 text-center hero-content">
-                    <img src="../images/fundador.jpg" alt="Samuel Rolo"
-                        class="hero-photo animate__animated animate__fadeIn">
-                    <div class="hero-badge animate__animated animate__fadeInDown">
-                        <span class="badge-icon"></span>
+                    <img src="../images/fundador.jpg" alt="Samuel Rolo" class="hero-photo">
+                    <div class="hero-badge">
+                        <i class="fab fa-linkedin badge-icon"></i>
                         <span class="badge-text">LinkedIn Top Voice</span>
                     </div>
-                    <p class="section-label animate__animated animate__fadeInDown">Fundador & CEO</p>
-                    <h2 class="animate__animated animate__fadeInUp">Samuel Rolo</h2>
-                    <p class="hero-tagline animate__animated animate__fadeInUp">
+                    <p class="section-label">Fundador & CEO</p>
+                    <h2>Samuel Rolo</h2>
+                    <p class="hero-tagline">
                         <span class="tagline-highlight">Digital HR & Process Excellence Manager</span> |
                         Humanising AI in People & Culture
                     </p>
-                    <div class="hero-social animate__animated animate__fadeInUp">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="social-link"></a>
-                        <a href="mailto:srshare2inspire@gmail.com" class="social-link"></a>
+                    <div class="hero-social">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="social-link">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="mailto:srshare2inspire@gmail.com" class="social-link">
+                            <i class="fas fa-envelope"></i>
+                        </a>
                     </div>
-                    <div class="hero-stats animate__animated animate__fadeInUp" data-aos="fade-up">
+                    <div class="hero-stats">
                         <div class="stat-item">
-                            <span class="stat-number" data-count="14">0</span><span class="stat-plus">+</span>
+                            <div><span class="stat-number">14</span><span class="stat-plus">+</span></div>
                             <span class="stat-label">Anos de Experiência</span>
                         </div>
                         <div class="stat-divider"></div>
                         <div class="stat-item">
-                            <span class="stat-number" data-count="4">0</span>
+                            <div><span class="stat-number">4</span></div>
                             <span class="stat-label">Multinacionais</span>
                         </div>
                         <div class="stat-divider"></div>
                         <div class="stat-item">
-                            <span class="stat-number" data-count="100">0</span><span class="stat-plus">+</span>
+                            <div><span class="stat-number">100</span><span class="stat-plus">+</span></div>
                             <span class="stat-label">Projetos HR</span>
                         </div>
                     </div>
@@ -1127,241 +1095,315 @@
         </div>
     </section>
 
-    <!-- FAVIKON Credentials Section -->
-    <section style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 60px 0;">
+    <!-- Credenciais & Reconhecimento - Grid Layout -->
+    <section style="background: #fff; padding: 50px 0; border-bottom: 1px solid #e9ecef;">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="text-center mb-4">
-                        <h2 style="font-size: 2rem; font-weight: 700; color: #343a40; margin-bottom: 2rem;">Credenciais
-                            & Reconhecimento</h2>
-                    </div>
-
-                    <!-- FAVIKON Card -->
-                    <div class="row g-4 align-items-center">
-                        <div class="col-md-6">
-                            <div
-                                style="background: #fff; border-radius: 20px; padding: 2.5rem; box-shadow: 0 10px 40px rgba(191, 154, 51, 0.1); border-left: 4px solid var(--primary-color);">
-                                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 1.5rem;">
-                                    <div
-                                        style="width: 60px; height: 60px; background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-trophy" style="color: #fff; font-size: 1.8rem;"></i>
-                                    </div>
-                                    <div>
-                                        <h4 style="margin: 0; font-size: 1.3rem; font-weight: 700; color: #191919;">
-                                            FAVIKON Ranking</h4>
-                                        <p style="margin: 0; color: #666; font-size: 0.95rem;">Influencer Analytics</p>
-                                    </div>
-                                </div>
-
-                                <div class="row text-center mb-3">
-                                    <div class="col-4">
-                                        <div
-                                            style="background: rgba(191, 154, 51, 0.1); padding: 15px; border-radius: 12px;">
-                                            <div
-                                                style="font-size: 2rem; font-weight: 700; color: var(--primary-color);">
-                                                Top 1%</div>
-                                            <small style="color: #666; font-size: 0.85rem;">Portugal</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div
-                                            style="background: rgba(191, 154, 51, 0.1); padding: 15px; border-radius: 12px;">
-                                            <div
-                                                style="font-size: 2rem; font-weight: 700; color: var(--primary-color);">
-                                                53.1</div>
-                                            <small style="color: #666; font-size: 0.85rem;">Score</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div
-                                            style="background: rgba(191, 154, 51, 0.1); padding: 15px; border-radius: 12px;">
-                                            <div
-                                                style="font-size: 2rem; font-weight: 700; color: var(--primary-color);">
-                                                8/10</div>
-                                            <small style="color: #666; font-size: 0.85rem;">Storytelling</small>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin-bottom: 0;">
-                                    Classificado entre os melhores criadores de conteúdo em Portugal na categoria de
-                                    desenvolvimento profissional e liderança.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div
-                                style="background: #fff; border-radius: 20px; padding: 2.5rem; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);">
-                                <h5 style="font-weight: 700; margin-bottom: 1.5rem; color: #191919;">
-                                    <i class="fas fa-chart-line me-2" style="color: var(--primary-color);"></i>
-                                    Impacto em Números
-                                </h5>
-                                <ul style="list-style: none; padding: 0; margin: 0;">
-                                    <li style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
-                                        <i class="fab fa-linkedin" style="color: #0077b5; margin-right: 10px;"></i>
-                                        <strong>14K+ seguidores</strong> no LinkedIn
-                                    </li>
-                                    <li style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
-                                        <i class="fas fa-newspaper"
-                                            style="color: var(--primary-color); margin-right: 10px;"></i>
-                                        <strong>7K+ subscritores</strong> da newsletter
-                                    </li>
-                                    <li style="padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
-                                        <i class="fas fa-users"
-                                            style="color: var(--primary-color); margin-right: 10px;"></i>
-                                        <strong>100+ profissionais</strong> com carreira transformada
-                                    </li>
-                                    <li style="padding: 12px 0;">
-                                        <i class="fas fa-globe"
-                                            style="color: var(--primary-color); margin-right: 10px;"></i>
-                                        <strong>Presença internacional</strong> - PT, UK, Suíça
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Borges Lifestyle Section -->
-    <section style="background-color: #fff; padding: 60px 0;">
-        <div class="container">
-            <div class="row align-items-center g-5">
-                <div class="col-lg-6">
-                    <div
-                        style="position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);">
-                        <!-- Placeholder for lifestyle photo -->
-                        <div
-                            style="width: 100%; height: 500px; background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%); display: flex; align-items: center; justify-content: center; position: relative;">
-                            <i class="fas fa-image" style="font-size: 4rem; color: rgba(255, 255, 255, 0.3);"></i>
-                            <div
-                                style="position: absolute; bottom: 20px; left: 20px; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); padding: 15px 25px; border-radius: 12px;">
-                                <p style="margin: 0; color: #fff; font-weight: 600; font-size: 0.9rem;">📸 Lifestyle
-                                    Photo Placeholder</p>
-                                <small style="color: rgba(255, 255, 255, 0.8); font-size: 0.8rem;">Ready for
-                                    user-provided image</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div style="padding-left: 2rem;">
-                        <h2 style="font-size: 2.2rem; font-weight: 700; color: #191919; margin-bottom: 1.5rem;">
-                            Além do Trabalho
-                        </h2>
-                        <p style="font-size: 1.1rem; color: #555; line-height: 1.8; margin-bottom: 1.5rem;">
-                            Quando não estou a ajudar profissionais a transformar as suas carreiras, dedico-me a
-                            explorar a interseção entre tecnologia, cultura e sociedade.
-                        </p>
-                        <div
-                            style="background: #f8f9fa; border-left: 4px solid var(--primary-color); padding: 20px; border-radius: 8px; margin-bottom: 1.5rem;">
-                            <p style="margin: 0; color: #555; line-height: 1.7;">
-                                <strong style="color: var(--primary-color);">Borges</strong> - o meu companheiro de
-                                quatro patas e co-fundador não oficial da Share2Inspire.
-                                As melhores ideias surgem durante os nossos passeios matinais.
-                            </p>
-                        </div>
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <span
-                                style="background: rgba(191, 154, 51, 0.1); color: var(--primary-color); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600;">
-                                <i class="fas fa-podcast me-1"></i> Podcaster
-                            </span>
-                            <span
-                                style="background: rgba(191, 154, 51, 0.1); color: var(--primary-color); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600;">
-                                <i class="fas fa-book me-1"></i> Autor
-                            </span>
-                            <span
-                                style="background: rgba(191, 154, 51, 0.1); color: var(--primary-color); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600;">
-                                <i class="fas fa-paw me-1"></i> Dog Dad
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Social Widgets Section -->
-    <section style="background: #f8f9fa; padding: 60px 0;">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 style="font-size: 2rem; font-weight: 700; color: #191919; margin-bottom: 1rem;">
-                    Conecta-te Comigo
-                </h2>
-                <p style="color: #666; font-size: 1.1rem;">Acompanha as minhas partilhas nas redes sociais e música</p>
+            <div class="text-center mb-4">
+                <h2 style="font-size: 1.75rem; font-weight: 700; color: #343a40; margin-bottom: 1rem;">Credenciais &
+                    Reconhecimento</h2>
             </div>
 
             <div class="row g-4">
-                <!-- Instagram @samuel_rolo Widget -->
-                <div class="col-lg-4">
+                <!-- FAVIKON Card -->
+                <div class="col-md-6">
                     <div
-                        style="background: #fff; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); text-align: center; min-height: 400px;">
+                        style="background: #f8f9fa; border-radius: 12px; padding: 2rem; border-left: 4px solid var(--primary-color); height: 100%;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem;">
+                            <div
+                                style="width: 48px; height: 48px; background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-trophy" style="color: #fff; font-size: 1.4rem;"></i>
+                            </div>
+                            <div>
+                                <h4 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #191919;">FAVIKON
+                                    Ranking</h4>
+                                <p style="margin: 0; color: #666; font-size: 0.85rem;">Influencer Analytics</p>
+                            </div>
+                        </div>
+
+                        <div class="row text-center g-2 mb-3">
+                            <div class="col-4">
+                                <div
+                                    style="background: rgba(191, 154, 51, 0.15); padding: 12px 8px; border-radius: 10px;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">Top
+                                        1%</div>
+                                    <small style="color: #666; font-size: 0.75rem;">Portugal</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div
+                                    style="background: rgba(191, 154, 51, 0.15); padding: 12px 8px; border-radius: 10px;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">53.1
+                                    </div>
+                                    <small style="color: #666; font-size: 0.75rem;">Score</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div
+                                    style="background: rgba(191, 154, 51, 0.15); padding: 12px 8px; border-radius: 10px;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">8/10
+                                    </div>
+                                    <small style="color: #666; font-size: 0.75rem;">Storytelling</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p style="color: #666; font-size: 0.9rem; line-height: 1.6; margin-bottom: 0;">
+                            Classificado entre os melhores criadores de conteúdo em Portugal na categoria de
+                            desenvolvimento profissional.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Impacto em Números -->
+                <div class="col-md-6">
+                    <div style="background: #f8f9fa; border-radius: 12px; padding: 2rem; height: 100%;">
+                        <h5 style="font-weight: 700; margin-bottom: 1.25rem; color: #191919; font-size: 1.1rem;">
+                            <i class="fas fa-chart-line me-2" style="color: var(--primary-color);"></i>
+                            Impacto em Números
+                        </h5>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li style="padding: 10px 0; border-bottom: 1px solid #e9ecef; font-size: 0.9rem;">
+                                <i class="fab fa-linkedin" style="color: #0077b5; margin-right: 8px; width: 18px;"></i>
+                                <strong>14K+ seguidores</strong> no LinkedIn
+                            </li>
+                            <li style="padding: 10px 0; border-bottom: 1px solid #e9ecef; font-size: 0.9rem;">
+                                <i class="fas fa-newspaper"
+                                    style="color: var(--primary-color); margin-right: 8px; width: 18px;"></i>
+                                <strong>7K+ subscritores</strong> da newsletter
+                            </li>
+                            <li style="padding: 10px 0; border-bottom: 1px solid #e9ecef; font-size: 0.9rem;">
+                                <i class="fas fa-users"
+                                    style="color: var(--primary-color); margin-right: 8px; width: 18px;"></i>
+                                <strong>100+ profissionais</strong> com carreira transformada
+                            </li>
+                            <li style="padding: 10px 0; font-size: 0.9rem;">
+                                <i class="fas fa-globe"
+                                    style="color: var(--primary-color); margin-right: 8px; width: 18px;"></i>
+                                <strong>Presença internacional</strong> - PT, UK, Suíça
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Além do Trabalho - Grid Layout -->
+    <section style="background: #f8f9fa; padding: 50px 0;">
+        <div class="container">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-5">
+                    <div
+                        style="border-radius: 12px; overflow: hidden; background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%); height: 350px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-image" style="font-size: 3rem; color: rgba(255, 255, 255, 0.3);"></i>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <h2 style="font-size: 1.75rem; font-weight: 700; color: #191919; margin-bottom: 1rem;">Além do
+                        Trabalho</h2>
+                    <p style="font-size: 1rem; color: #555; line-height: 1.7; margin-bottom: 1.25rem;">
+                        Quando não estou a ajudar profissionais a transformar as suas carreiras, dedico-me a explorar a
+                        interseção entre tecnologia, cultura e sociedade.
+                    </p>
+                    <div
+                        style="background: #fff; border-left: 3px solid var(--primary-color); padding: 15px 18px; border-radius: 8px; margin-bottom: 1.25rem;">
+                        <p style="margin: 0; color: #555; line-height: 1.6; font-size: 0.95rem;">
+                            <strong style="color: var(--primary-color);">Borges</strong> - o meu companheiro de quatro
+                            patas e co-fundador não oficial da Share2Inspire. As melhores ideias surgem durante os
+                            nossos passeios matinais.
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <span
+                            style="background: rgba(191, 154, 51, 0.12); color: var(--primary-color); padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; font-weight: 600;">
+                            <i class="fas fa-podcast me-1"></i> Podcaster
+                        </span>
+                        <span
+                            style="background: rgba(191, 154, 51, 0.12); color: var(--primary-color); padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; font-weight: 600;">
+                            <i class="fas fa-book me-1"></i> Autor
+                        </span>
+                        <span
+                            style="background: rgba(191, 154, 51, 0.12); color: var(--primary-color); padding: 6px 14px; border-radius: 18px; font-size: 0.85rem; font-weight: 600;">
+                            <i class="fas fa-paw me-1"></i> Dog Dad
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Instagram & Spotify - Grid Layout -->
+    <section style="background: #f8f9fa; padding: 50px 0;">
+        <div class="container">
+            <!-- Instagram Widgets -->
+            <div class="text-center mb-4">
+                <h2 style="font-size: 1.75rem; font-weight: 700; color: #343a40; margin-bottom: 0.5rem;">Redes Sociais
+                </h2>
+                <p style="color: #6c757d; font-size: 0.95rem;">Acompanha as minhas partilhas no Instagram</p>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <!-- @samuel_rolo -->
+                <div class="col-lg-4">
+                    <div style="background: #fff; border-radius: 12px; padding: 1.5rem; border: 1px solid #e9ecef;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
+                            <div
+                                style="width: 40px; height: 40px; background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fab fa-instagram" style="color: #fff; font-size: 1.1rem;"></i>
+                            </div>
+                            <div style="text-align: left;">
+                                <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #191919;">
+                                    @samuel_rolo</h5>
+                                <p style="margin: 0; color: #999; font-size: 0.75rem;">Lifestyle & Professional</p>
+                            </div>
+                        </div>
+
+                        <!-- Instagram Grid Preview (3x2) -->
                         <div
-                            style="width: 60px; height: 60px; background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
-                            <i class="fab fa-instagram" style="color: #fff; font-size: 1.8rem;"></i>
+                            style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 1rem;">
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
                         </div>
-                        <h5 style="font-weight: 700; margin-bottom: 0.5rem;">@samuel_rolo</h5>
-                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 1.5rem;">Lifestyle & Professional
-                            Insights</p>
 
-                        <!-- Instagram Feed Placeholder -->
-                        <div style="background: #f8f9fa; border-radius: 12px; padding: 40px 20px; margin-bottom: 1rem;">
-                            <i class="fab fa-instagram" style="font-size: 3rem; color: #ddd;"></i>
-                            <p style="margin-top: 1rem; color: #999; font-size: 0.85rem;">Instagram Feed Widget</p>
-                            <small style="color: #bbb; font-size: 0.75rem;">Integration via Elfsight/SnapWidget</small>
-                        </div>
-
-                        <a href="https://instagram.com/samuel_rolo" target="_blank"
-                            style="display: inline-block; background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); color: #fff; padding: 10px 24px; border-radius: 25px; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
-                            <i class="fab fa-instagram me-2"></i>Seguir
+                        <a href="https://www.instagram.com/samuel_rolo/" target="_blank"
+                            style="display: inline-block; color: #333; font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: color 0.3s ease;"
+                            onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='#333'">
+                            Ver perfil →
                         </a>
                     </div>
                 </div>
 
-                <!-- Instagram @borgesfala Widget -->
+                <!-- @share2inspire_ -->
                 <div class="col-lg-4">
-                    <div
-                        style="background: #fff; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); text-align: center; min-height: 400px;">
+                    <div style="background: #fff; border-radius: 12px; padding: 1.5rem; border: 1px solid #e9ecef;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
+                            <div
+                                style="width: 40px; height: 40px; background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fab fa-instagram" style="color: #fff; font-size: 1.1rem;"></i>
+                            </div>
+                            <div style="text-align: left;">
+                                <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #191919;">
+                                    @share2inspire_</h5>
+                                <p style="margin: 0; color: #999; font-size: 0.75rem;">Conteúdo Profissional</p>
+                            </div>
+                        </div>
+
+                        <!-- Instagram Grid Preview (3x2) -->
                         <div
-                            style="width: 60px; height: 60px; background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
-                            <i class="fab fa-instagram" style="color: #fff; font-size: 1.8rem;"></i>
+                            style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 1rem;">
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
                         </div>
-                        <h5 style="font-weight: 700; margin-bottom: 0.5rem;">@borgesfala</h5>
-                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 1.5rem;">Borges' Adventures</p>
 
-                        <!-- Instagram Feed Placeholder -->
-                        <div style="background: #f8f9fa; border-radius: 12px; padding: 40px 20px; margin-bottom: 1rem;">
-                            <i class="fab fa-instagram" style="font-size: 3rem; color: #ddd;"></i>
-                            <p style="margin-top: 1rem; color: #999; font-size: 0.85rem;">Instagram Feed Widget</p>
-                            <small style="color: #bbb; font-size: 0.75rem;">Integration via Elfsight/SnapWidget</small>
-                        </div>
-
-                        <a href="https://instagram.com/borgesfala" target="_blank"
-                            style="display: inline-block; background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); color: #fff; padding: 10px 24px; border-radius: 25px; text-decoration: none; font-weight: 600; font-size: 0.9rem;">
-                            <i class="fab fa-instagram me-2"></i>Seguir
+                        <a href="https://www.instagram.com/share2inspire_/" target="_blank"
+                            style="display: inline-block; color: #333; font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: color 0.3s ease;"
+                            onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='#333'">
+                            Ver perfil →
                         </a>
                     </div>
                 </div>
 
-                <!-- Spotify Music Widget -->
+                <!-- @borgesfala -->
                 <div class="col-lg-4">
-                    <div
-                        style="background: #fff; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); text-align: center; min-height: 400px;">
-                        <div
-                            style="width: 60px; height: 60px; background: #1DB954; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
-                            <i class="fab fa-spotify" style="color: #fff; font-size: 1.8rem;"></i>
+                    <div style="background: #fff; border-radius: 12px; padding: 1.5rem; border: 1px solid #e9ecef;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
+                            <div
+                                style="width: 40px; height: 40px; background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fab fa-instagram" style="color: #fff; font-size: 1.1rem;"></i>
+                            </div>
+                            <div style="text-align: left;">
+                                <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #191919;">@borgesfala
+                                </h5>
+                                <p style="margin: 0; color: #999; font-size: 0.75rem;">Borges' Adventures</p>
+                            </div>
                         </div>
-                        <h5 style="font-weight: 700; margin-bottom: 0.5rem;">Música Favorita</h5>
-                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 1.5rem;">"Eu fico de pé"</p>
+
+                        <!-- Instagram Grid Preview (3x2) -->
+                        <div
+                            style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 1rem;">
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                            <div
+                                style="aspect-ratio: 1; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); border-radius: 6px;">
+                            </div>
+                        </div>
+
+                        <a href="https://www.instagram.com/borgesfala/" target="_blank"
+                            style="display: inline-block; color: #333; font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: color 0.3s ease;"
+                            onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='#333'">
+                            Ver perfil →
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spotify Music Widget -->
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div
+                        style="background: #fff; border-radius: 12px; padding: 1.5rem; border: 1px solid #e9ecef; text-align: center;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 1rem;">
+                            <div
+                                style="width: 40px; height: 40px; background: #1DB954; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fab fa-spotify" style="color: #fff; font-size: 1.1rem;"></i>
+                            </div>
+                            <div style="text-align: left;">
+                                <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #191919;">Música
+                                    Favorita</h5>
+                                <p style="margin: 0; color: #999; font-size: 0.75rem;">"Eu fico de pé"</p>
+                            </div>
+                        </div>
 
                         <!-- Spotify Embed -->
                         <div style="border-radius: 12px; overflow: hidden;">
                             <iframe style="border-radius:12px"
-                                src="https://open.spotify.com/embed/track/3KkXRkHbMCARz0aVfEt68P?utm_source=generator"
+                                src="https://open.spotify.com/embed/album/249eCjFMuDwHyehkwWPRPn?utm_source=generator"
                                 width="100%" height="352" frameBorder="0" allowfullscreen=""
                                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                                 loading="lazy"></iframe>
@@ -1369,433 +1411,468 @@
                     </div>
                 </div>
             </div>
+
+            <div class="text-center mt-3">
+                <p style="color: #999; font-size: 0.75rem; margin: 0;">
+                    <i class="fas fa-info-circle me-1"></i> Os widgets do Instagram são placeholders. Para integração
+                    real, utilize <a href="https://elfsight.com/instagram-feed-instashow/" target="_blank"
+                        style="color: var(--primary-color); text-decoration: none;">Elfsight</a> ou <a
+                        href="https://snapwidget.com/" target="_blank"
+                        style="color: var(--primary-color); text-decoration: none;">SnapWidget</a>
+                </p>
+            </div>
         </div>
     </section>
 
-    <main>
-        <!-- About Content Section -->
-        <section class="about-content">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-10 mx-auto">
-                        <h2 data-aos="fade-up">A Minha Trajectória</h2>
-                        <!-- Mission Statement -->
-                        <div class="mission-block" data-aos="fade-up">
-                            <div class="mission-icon">
-                            </div>
-                            <div class="mission-content">
-                                <h3>Missão</h3>
-                                <p>Ajudar profissionais a evoluírem as suas carreiras com <strong>clareza</strong>,
-                                    <strong>estratégia</strong> e uma <strong>narrativa de impacto</strong>. O
-                                    verdadeiro diferencial competitivo reside na capacidade de traduzir intenção em
-                                    resultados visíveis e comunicáveis.
-                                </p>
-                            </div>
+    <!-- A Minha Trajectória - Simplified -->
+    <section style="background: #fff; padding: 50px 0;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <h2
+                        style="text-align: center; font-size: 1.75rem; font-weight: 700; color: #343a40; margin-bottom: 2.5rem;">
+                        A Minha Trajectória</h2>
+
+                    <!-- Mission Statement -->
+                    <div
+                        style="display: flex; gap: 20px; background: #f8f9fa; padding: 25px; border-radius: 12px; margin-bottom: 2rem; border-left: 4px solid var(--primary-color); align-items: flex-start;">
+                        <div
+                            style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas fa-compass" style="color: #fff; font-size: 1.3rem;"></i>
                         </div>
-                        <!-- Value Cards -->
-                        <div class="value-cards" data-aos="fade-up">
-                            <div class="value-card">
-                                <div class="value-icon"></div>
-                                <h4>Visão Estratégica</h4>
-                                <p>Transformar a forma como os profissionais se posicionam no mercado através de
+                        <div>
+                            <h3
+                                style="font-size: 1.2rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.5rem; margin-top: 0;">
+                                Missão</h3>
+                            <p style="font-size: 1rem; line-height: 1.7; color: #555; margin-bottom: 0;">Ajudar
+                                profissionais a evoluírem as suas carreiras com <strong>clareza</strong>,
+                                <strong>estratégia</strong> e uma <strong>narrativa de impacto</strong>. O verdadeiro
+                                diferencial competitivo reside na capacidade de traduzir intenção em resultados visíveis
+                                e comunicáveis.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Value Cards - Grid -->
+                    <div class="row g-3 mb-2rem">
+                        <div class="col-md-4">
+                            <div
+                                style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; height: 100%;">
+                                <div
+                                    style="width: 50px; height: 50px; background: rgba(191, 154, 51, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                    <i class="fas fa-lightbulb"
+                                        style="font-size: 1.3rem; color: var(--primary-color);"></i>
+                                </div>
+                                <h4 style="font-size: 1rem; font-weight: 700; color: #343a40; margin-bottom: 0.75rem;">
+                                    Visão Estratégica</h4>
+                                <p style="font-size: 0.9rem; color: #6c757d; line-height: 1.6; margin-bottom: 0;">
+                                    Transformar a forma como os profissionais se posicionam no mercado através de
                                     ferramentas e insights práticos.</p>
                             </div>
-                            <div class="value-card">
-                                <div class="value-icon"></div>
-                                <h4>Excelência Contínua</h4>
-                                <p>A excelência não é um destino, mas um processo de refinamento contínuo da nossa
+                        </div>
+                        <div class="col-md-4">
+                            <div
+                                style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; height: 100%;">
+                                <div
+                                    style="width: 50px; height: 50px; background: rgba(191, 154, 51, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                    <i class="fas fa-chart-line"
+                                        style="font-size: 1.3rem; color: var(--primary-color);"></i>
+                                </div>
+                                <h4 style="font-size: 1rem; font-weight: 700; color: #343a40; margin-bottom: 0.75rem;">
+                                    Excelência Contínua</h4>
+                                <p style="font-size: 0.9rem; color: #6c757d; line-height: 1.6; margin-bottom: 0;">A
+                                    excelência não é um destino, mas um processo de refinamento contínuo da nossa
                                     proposta de valor.</p>
                             </div>
-                            <div class="value-card">
-                                <div class="value-icon"></div>
-                                <h4>Experiência Global</h4>
-                                <p>Mais de 14 anos em gestão de pessoas e processos em organizações como AstraZeneca,
-                                    BNP Paribas, Deloitte e EY.</p>
-                            </div>
                         </div>
-                        <!-- Quote -->
-                        <blockquote class="hero-quote" data-aos="fade-up">
-                            <p>A tua carreira não deve ser um acaso, mas uma construção deliberada de clareza e
-                                autoridade estratégica.</p>
-                            <cite>— Samuel Rolo</cite>
-                        </blockquote>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Experience Slider Section -->
-        <section class="experience-slider-section">
-            <div class="container">
-                <h2 data-aos="fade-up">Percurso Profissional</h2>
-                <div class="swiper experienceSwiper" data-aos="fade-up" data-aos-delay="100">
-                    <div class="swiper-wrapper">
-                        <!-- AstraZeneca -->
-                        <div class="swiper-slide">
-                            <div class="experience-slide">
-                                <img src="../images/logos/astrazeneca_logo_real.svg" alt="AstraZeneca"
-                                    class="company-logo">
-                                <h4>Digital HR & Process Excellence Manager</h4>
-                                <p class="company-name">AstraZeneca</p>
-                                <p class="period">Agosto de 2025 - Presente</p>
-                            </div>
-                        </div>
-                        <!-- Share2Inspire -->
-                        <div class="swiper-slide">
-                            <div class="experience-slide">
-                                <img src="../images/logos/share2inspire_logo.png" alt="Share2Inspire"
-                                    class="company-logo">
-                                <h4>Founder</h4>
-                                <p class="company-name">Share2Inspire</p>
-                                <p class="period">Abril de 2025 - Presente</p>
-                            </div>
-                        </div>
-                        <!-- APG -->
-                        <div class="swiper-slide">
-                            <div class="experience-slide">
-                                <img src="../images/logos/apg_logo.png" alt="APG" class="company-logo">
-                                <h4>Comissão de Gestão de Pessoas no Setor Social</h4>
-                                <p class="company-name">APG - Associação Portuguesa de Gestão das Pessoas</p>
-                                <p class="period">Abril de 2025 - Presente</p>
-                            </div>
-                        </div>
-                        <!-- BNP Paribas -->
-                        <div class="swiper-slide">
-                            <div class="experience-slide">
-                                <img src="../images/logos/bnp_paribas_logo_real.svg" alt="BNP Paribas"
-                                    class="company-logo">
-                                <h4>HR Transformation Leader</h4>
-                                <p class="company-name">BNP Paribas CIB</p>
-                                <p class="period">Janeiro de 2025 - Maio de 2025</p>
-                            </div>
-                        </div>
-                        <!-- Deloitte Senior Manager -->
-                        <div class="swiper-slide">
-                            <div class="experience-slide">
-                                <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
-                                <h4>Senior Manager</h4>
-                                <p class="company-name">Deloitte</p>
-                                <p class="period">Setembro de 2021 - Janeiro de 2025</p>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="experience-slide">
-                                <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
-                                <h4>Manager</h4>
-                                <p class="company-name">Deloitte</p>
-                                <p class="period">Setembro de 2016 - Agosto de 2021</p>
-                            </div>
-                        </div>
-                        <!-- Deloitte Senior Consultant -->
-                        <div class="swiper-slide">
-                            <div class="experience-slide">
-                                <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
-                                <h4>Senior Consultant</h4>
-                                <p class="company-name">Deloitte</p>
-                                <p class="period">Agosto de 2015 - Agosto de 2016</p>
-                            </div>
-                        </div>
-                        <!-- EY -->
-                        <div class="swiper-slide">
-                            <div class="experience-slide">
-                                <img src="../images/logos/ey_logo.png" alt="EY" class="company-logo">
-                                <h4>Senior Consultant</h4>
-                                <p class="company-name">EY</p>
-                                <p class="period">Janeiro de 2015 - Agosto de 2015</p>
-                            </div>
-                        </div>
-                        <!-- Deloitte Consultant -->
-                        <div class="swiper-slide">
-                            <div class="experience-slide">
-                                <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
-                                <h4>Consultant</h4>
-                                <p class="company-name">Deloitte</p>
-                                <p class="period">Setembro de 2013 - Dezembro de 2014</p>
-                            </div>
-                        </div>
-                        <!-- Deloitte Analyst -->
-                        <div class="swiper-slide">
-                            <div class="experience-slide">
-                                <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
-                                <h4>Analyst</h4>
-                                <p class="company-name">Deloitte</p>
-                                <p class="period">Setembro de 2012 - Agosto de 2013</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-pagination"></div>
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
-                </div>
-            </div>
-        </section>
-        <!-- Skills & Certifications Combined Section -->
-        <section class="skills-certs-section" style="padding: 60px 0; background-color: #f8f9fa;">
-            <div class="container">
-                <div class="row g-5">
-                    <!-- Skills Column -->
-                    <div class="col-lg-6" data-aos="fade-up">
-                        <div class="skills-column">
-                            <h3 class="section-subtitle">Competências em Destaque</h3>
-                            <!-- Key Skill Areas with Recommendations -->
-                            <div class="skill-area mb-4">
-                                <div class="skill-area-header d-flex justify-content-between align-items-center mb-2">
-                                    <h5 class="mb-0 fw-bold" style="color: #343a40;">HR Transformation</h5>
-                                    <span class="badge" style="background: rgba(191, 154, 51, 0.1); color: #BF9A33;">8
-                                        recomendações</span>
+                        <div class="col-md-4">
+                            <div
+                                style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; height: 100%;">
+                                <div
+                                    style="width: 50px; height: 50px; background: rgba(191, 154, 51, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                    <i class="fas fa-globe-americas"
+                                        style="font-size: 1.3rem; color: var(--primary-color);"></i>
                                 </div>
-                                <div class="skill-tags-wrapper mb-2">
-                                    <span class="skill-tag">HR Policies Design</span>
-                                    <span class="skill-tag">HR Processes Design</span>
-                                    <span class="skill-tag">HR Policies Standardization</span>
-                                </div>
-                            </div>
-                            <div class="skill-area mb-4">
-                                <div class="skill-area-header d-flex justify-content-between align-items-center mb-2">
-                                    <h5 class="mb-0 fw-bold" style="color: #343a40;">Change Management</h5>
-                                    <span class="badge" style="background: rgba(191, 154, 51, 0.1); color: #BF9A33;">5
-                                        recomendações</span>
-                                </div>
-                                <div class="skill-tags-wrapper mb-2">
-                                    <span class="skill-tag">Tech Adoption</span>
-                                    <span class="skill-tag">New Workplace</span>
-                                    <span class="skill-tag">Culture Change</span>
-                                </div>
-                            </div>
-                            <div class="skill-area mb-4">
-                                <div class="skill-area-header d-flex justify-content-between align-items-center mb-2">
-                                    <h5 class="mb-0 fw-bold" style="color: #343a40;">Future of Work</h5>
-                                    <span class="badge" style="background: rgba(191, 154, 51, 0.1); color: #BF9A33;">5
-                                        recomendações</span>
-                                </div>
-                                <div class="skill-tags-wrapper mb-2">
-                                    <span class="skill-tag">Workplace Transition</span>
-                                    <span class="skill-tag">Digital HR</span>
-                                    <span class="skill-tag">Generative AI</span>
-                                </div>
-                            </div>
-                            <div class="skill-area mb-4">
-                                <div class="skill-area-header d-flex justify-content-between align-items-center mb-2">
-                                    <h5 class="mb-0 fw-bold" style="color: #343a40;">Consulting</h5>
-                                    <span class="badge" style="background: rgba(191, 154, 51, 0.1); color: #BF9A33;">21
-                                        recomendações</span>
-                                </div>
-                                <div class="skill-tags-wrapper mb-2">
-                                    <span class="skill-tag">Strategy</span>
-                                    <span class="skill-tag">Business Transformation</span>
-                                    <span class="skill-tag">Project Management</span>
-                                </div>
-                            </div>
-                            <!-- Additional Skills -->
-                            <div class="skill-tags-wrapper">
-                                <span class="skill-tag">Scrum Master</span>
-                                <span class="skill-tag">Coaching</span>
-                                <span class="skill-tag">Process Excellence</span>
-                                <span class="skill-tag">Leadership</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Certifications Column -->
-                    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-                        <div class="certs-column">
-                            <h3 class="section-subtitle">Certificações</h3>
-                            <div class="cert-list-compact">
-                                <div class="cert-item">
-                                    <div class="cert-icon"></div>
-                                    <div class="cert-info">
-                                        <strong>Thriving in the age of AI - Gold</strong>
-                                        <span>AstraZeneca • 2025</span>
-                                    </div>
-                                </div>
-                                <div class="cert-item">
-                                    <div class="cert-icon"></div>
-                                    <div class="cert-info">
-                                        <strong>Professional Scrum Master™ I (PSM I)</strong>
-                                        <span>Scrum.org • 2022</span>
-                                    </div>
-                                </div>
-                                <div class="cert-item">
-                                    <div class="cert-icon"></div>
-                                    <div class="cert-info">
-                                        <strong>Career Essentials in Generative AI</strong>
-                                        <span>Microsoft & LinkedIn • 2023</span>
-                                    </div>
-                                </div>
-                                <div class="cert-item">
-                                    <div class="cert-icon"></div>
-                                    <div class="cert-info">
-                                        <strong>HRSD Fundamentals</strong>
-                                        <span>ServiceNow</span>
-                                    </div>
-                                </div>
-                                <div class="cert-item">
-                                    <div class="cert-icon"></div>
-                                    <div class="cert-info">
-                                        <strong>Negociação Avançada</strong>
-                                        <span>Nova SBE • 2023</span>
-                                    </div>
-                                </div>
+                                <h4 style="font-size: 1rem; font-weight: 700; color: #343a40; margin-bottom: 0.75rem;">
+                                    Experiência Global</h4>
+                                <p style="font-size: 0.9rem; color: #6c757d; line-height: 1.6; margin-bottom: 0;">Mais
+                                    de 14 anos em gestão de pessoas e processos em organizações como AstraZeneca, BNP
+                                    Paribas, Deloitte e EY.</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
+    <!-- Experience Slider Section - Simplified -->
+    <section style="background: #f8f9fa; padding: 50px 0;">
+        <div class="container">
+            <h2
+                style="text-align: center; font-size: 1.75rem; font-weight: 700; color: #343a40; margin-bottom: 2.5rem;">
+                Percurso Profissional</h2>
+            <div class="swiper experienceSwiper" data-aos="fade-up" data-aos-delay="100">
+                <div class="swiper-wrapper">
+                    <!-- AstraZeneca -->
+                    <div class="swiper-slide">
+                        <div class="experience-slide">
+                            <img src="../images/logos/astrazeneca_logo_real.svg" alt="AstraZeneca" class="company-logo">
+                            <h4>Digital HR & Process Excellence Manager</h4>
+                            <p class="company-name">AstraZeneca</p>
+                            <p class="period">Agosto de 2025 - Presente</p>
+                        </div>
+                    </div>
+                    <!-- Share2Inspire -->
+                    <div class="swiper-slide">
+                        <div class="experience-slide">
+                            <img src="../images/logos/share2inspire_logo.png" alt="Share2Inspire" class="company-logo">
+                            <h4>Founder</h4>
+                            <p class="company-name">Share2Inspire</p>
+                            <p class="period">Abril de 2025 - Presente</p>
+                        </div>
+                    </div>
+                    <!-- APG -->
+                    <div class="swiper-slide">
+                        <div class="experience-slide">
+                            <img src="../images/logos/apg_logo.png" alt="APG" class="company-logo">
+                            <h4>Comissão de Gestão de Pessoas no Setor Social</h4>
+                            <p class="company-name">APG - Associação Portuguesa de Gestão das Pessoas</p>
+                            <p class="period">Abril de 2025 - Presente</p>
+                        </div>
+                    </div>
+                    <!-- BNP Paribas -->
+                    <div class="swiper-slide">
+                        <div class="experience-slide">
+                            <img src="../images/logos/bnp_paribas_logo_real.svg" alt="BNP Paribas" class="company-logo">
+                            <h4>HR Transformation Leader</h4>
+                            <p class="company-name">BNP Paribas CIB</p>
+                            <p class="period">Janeiro de 2025 - Maio de 2025</p>
+                        </div>
+                    </div>
+                    <!-- Deloitte Senior Manager -->
+                    <div class="swiper-slide">
+                        <div class="experience-slide">
+                            <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
+                            <h4>Senior Manager</h4>
+                            <p class="company-name">Deloitte</p>
+                            <p class="period">Setembro de 2021 - Janeiro de 2025</p>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="experience-slide">
+                            <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
+                            <h4>Manager</h4>
+                            <p class="company-name">Deloitte</p>
+                            <p class="period">Setembro de 2016 - Agosto de 2021</p>
+                        </div>
+                    </div>
+                    <!-- Deloitte Senior Consultant -->
+                    <div class="swiper-slide">
+                        <div class="experience-slide">
+                            <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
+                            <h4>Senior Consultant</h4>
+                            <p class="company-name">Deloitte</p>
+                            <p class="period">Agosto de 2015 - Agosto de 2016</p>
+                        </div>
+                    </div>
+                    <!-- EY -->
+                    <div class="swiper-slide">
+                        <div class="experience-slide">
+                            <img src="../images/logos/ey_logo.png" alt="EY" class="company-logo">
+                            <h4>Senior Consultant</h4>
+                            <p class="company-name">EY</p>
+                            <p class="period">Janeiro de 2015 - Agosto de 2015</p>
+                        </div>
+                    </div>
+                    <!-- Deloitte Consultant -->
+                    <div class="swiper-slide">
+                        <div class="experience-slide">
+                            <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
+                            <h4>Consultant</h4>
+                            <p class="company-name">Deloitte</p>
+                            <p class="period">Setembro de 2013 - Dezembro de 2014</p>
+                        </div>
+                    </div>
+                    <!-- Deloitte Analyst -->
+                    <div class="swiper-slide">
+                        <div class="experience-slide">
+                            <img src="../images/logos/deloitte_logo.png" alt="Deloitte" class="company-logo">
+                            <h4>Analyst</h4>
+                            <p class="company-name">Deloitte</p>
+                            <p class="period">Setembro de 2012 - Agosto de 2013</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </div>
+    </section>
+    <!-- Skills & Certifications Combined Section -->
+    <section class="skills-certs-section" style="padding: 60px 0; background-color: #f8f9fa;">
+        <div class="container">
+            <div class="row g-5">
+                <!-- Skills Column -->
+                <div class="col-lg-6" data-aos="fade-up">
+                    <div class="skills-column">
+                        <h3 class="section-subtitle">Competências em Destaque</h3>
+                        <!-- Key Skill Areas with Recommendations -->
+                        <div class="skill-area mb-4">
+                            <div class="skill-area-header d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0 fw-bold" style="color: #343a40;">HR Transformation</h5>
+                                <span class="badge" style="background: rgba(191, 154, 51, 0.1); color: #BF9A33;">8
+                                    recomendações</span>
+                            </div>
+                            <div class="skill-tags-wrapper mb-2">
+                                <span class="skill-tag">HR Policies Design</span>
+                                <span class="skill-tag">HR Processes Design</span>
+                                <span class="skill-tag">HR Policies Standardization</span>
+                            </div>
+                        </div>
+                        <div class="skill-area mb-4">
+                            <div class="skill-area-header d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0 fw-bold" style="color: #343a40;">Change Management</h5>
+                                <span class="badge" style="background: rgba(191, 154, 51, 0.1); color: #BF9A33;">5
+                                    recomendações</span>
+                            </div>
+                            <div class="skill-tags-wrapper mb-2">
+                                <span class="skill-tag">Tech Adoption</span>
+                                <span class="skill-tag">New Workplace</span>
+                                <span class="skill-tag">Culture Change</span>
+                            </div>
+                        </div>
+                        <div class="skill-area mb-4">
+                            <div class="skill-area-header d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0 fw-bold" style="color: #343a40;">Future of Work</h5>
+                                <span class="badge" style="background: rgba(191, 154, 51, 0.1); color: #BF9A33;">5
+                                    recomendações</span>
+                            </div>
+                            <div class="skill-tags-wrapper mb-2">
+                                <span class="skill-tag">Workplace Transition</span>
+                                <span class="skill-tag">Digital HR</span>
+                                <span class="skill-tag">Generative AI</span>
+                            </div>
+                        </div>
+                        <div class="skill-area mb-4">
+                            <div class="skill-area-header d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0 fw-bold" style="color: #343a40;">Consulting</h5>
+                                <span class="badge" style="background: rgba(191, 154, 51, 0.1); color: #BF9A33;">21
+                                    recomendações</span>
+                            </div>
+                            <div class="skill-tags-wrapper mb-2">
+                                <span class="skill-tag">Strategy</span>
+                                <span class="skill-tag">Business Transformation</span>
+                                <span class="skill-tag">Project Management</span>
+                            </div>
+                        </div>
+                        <!-- Additional Skills -->
+                        <div class="skill-tags-wrapper">
+                            <span class="skill-tag">Scrum Master</span>
+                            <span class="skill-tag">Coaching</span>
+                            <span class="skill-tag">Process Excellence</span>
+                            <span class="skill-tag">Leadership</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Certifications Column -->
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="certs-column">
+                        <h3 class="section-subtitle">Certificações</h3>
+                        <div class="cert-list-compact">
+                            <div class="cert-item">
+                                <div class="cert-icon"></div>
+                                <div class="cert-info">
+                                    <strong>Thriving in the age of AI - Gold</strong>
+                                    <span>AstraZeneca • 2025</span>
+                                </div>
+                            </div>
+                            <div class="cert-item">
+                                <div class="cert-icon"></div>
+                                <div class="cert-info">
+                                    <strong>Professional Scrum Master™ I (PSM I)</strong>
+                                    <span>Scrum.org • 2022</span>
+                                </div>
+                            </div>
+                            <div class="cert-item">
+                                <div class="cert-icon"></div>
+                                <div class="cert-info">
+                                    <strong>Career Essentials in Generative AI</strong>
+                                    <span>Microsoft & LinkedIn • 2023</span>
+                                </div>
+                            </div>
+                            <div class="cert-item">
+                                <div class="cert-icon"></div>
+                                <div class="cert-info">
+                                    <strong>HRSD Fundamentals</strong>
+                                    <span>ServiceNow</span>
+                                </div>
+                            </div>
+                            <div class="cert-item">
+                                <div class="cert-icon"></div>
+                                <div class="cert-info">
+                                    <strong>Negociação Avançada</strong>
+                                    <span>Nova SBE • 2023</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <!-- Recommendations Section - Real LinkedIn Testimonials -->
-        <!-- Data source: data/recommendations.json -->
-        <section class="recommendations-section py-5 bg-light">
-            <div class="container">
-                <div class="section-title text-center mb-5">
-                    <h2 class="fw-bold">O que dizem sobre <span class="text-gold">mim</span></h2>
-                    <div class="title-underline mx-auto"></div>
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-lg-10">
-                        <div id="recommendationsCarousel" class="carousel slide" data-bs-ride="carousel"
-                            data-bs-interval="6000">
-                            <div class="carousel-inner">
-                                <!-- Recommendation 1: Hildebrando Sala -->
-                                <div class="carousel-item active">
-                                    <div class="card border-0 shadow-sm p-4 mx-3">
-                                        <div class="d-flex align-items-start gap-3 mb-3">
-                                            <div class="text-gold fs-3"></div>
-                                        </div>
-                                        <p class="mb-4" style="font-size: 0.95rem; line-height: 1.7;">O Samuel é um
-                                            profissional de excelência com quem tive a oportunidade de trabalhar e
-                                            aprender em vários projectos estruturantes. Possui uma notável capacidade de
-                                            integração e aculturação. O Samuel é, sem dúvida, o tipo de consultor que,
-                                            em qualquer geografia, adapta-se, interpreta o contexto e gera soluções
-                                            transformadoras e palpáveis. É um líder e gestor de projectos comprometido,
-                                            com princípios cívicos e morais notáveis.</p>
-                                        <div class="d-flex align-items-center gap-3">
-                                            <img src="../images/recommendations/Hildebrando.png" alt="Hildebrando Sala"
-                                                class="rounded-circle" width="48" height="48"
-                                                style="object-fit: cover;">
-                                            <div>
-                                                <h6 class="fw-bold mb-0">Hildebrando Sala</h6>
-                                                <p class="text-muted small mb-0">Director de Capital Humano</p>
-                                            </div>
-                                        </div>
+    <!-- Recommendations Section - Real LinkedIn Testimonials -->
+    <!-- Data source: data/recommendations.json -->
+    <section class="recommendations-section py-5 bg-light">
+        <div class="container">
+            <div class="section-title text-center mb-5">
+                <h2 class="fw-bold">O que dizem sobre <span class="text-gold">mim</span></h2>
+                <div class="title-underline mx-auto"></div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div id="recommendationsCarousel" class="carousel slide" data-bs-ride="carousel"
+                        data-bs-interval="6000">
+                        <div class="carousel-inner">
+                            <!-- Recommendation 1: Hildebrando Sala -->
+                            <div class="carousel-item active">
+                                <div class="card border-0 shadow-sm p-4 mx-3">
+                                    <div class="d-flex align-items-start gap-3 mb-3">
+                                        <div class="text-gold fs-3"></div>
                                     </div>
-                                </div>
-                                <!-- Recommendation 2: José Subtil -->
-                                <div class="carousel-item">
-                                    <div class="card border-0 shadow-sm p-4 mx-3">
-                                        <div class="d-flex align-items-start gap-3 mb-3">
-                                            <div class="text-gold fs-3"></div>
-                                        </div>
-                                        <p class="mb-4" style="font-size: 0.95rem; line-height: 1.7;">I had the pleasure
-                                            of working with Samuel while he was Senior Consultant and Manager at
-                                            Deloitte, and I can say that he is an exceptional professional. Samuel has a
-                                            combination of technical and interpersonal skills that makes him a natural
-                                            leader. His ability to meet customer needs and his commitment to excellence
-                                            was a key to the projects success. I recommend Samuel without hesitation.
-                                        </p>
-                                        <div class="d-flex align-items-center gap-3">
-                                            <img src="../images/recommendations/Jose.png" alt="José Subtil"
-                                                class="rounded-circle" width="48" height="48"
-                                                style="object-fit: cover;">
-                                            <div>
-                                                <h6 class="fw-bold mb-0">José Subtil</h6>
-                                                <p class="text-muted small mb-0">Banking and Insurance Leader at
-                                                    Timestamp</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Recommendation 3: Ivo Guimarães -->
-                                <div class="carousel-item">
-                                    <div class="card border-0 shadow-sm p-4 mx-3">
-                                        <div class="d-flex align-items-start gap-3 mb-3">
-                                            <div class="text-gold fs-3"></div>
-                                        </div>
-                                        <p class="mb-4" style="font-size: 0.95rem; line-height: 1.7;">O Samuel é além de
-                                            um profissional extremamente disponível e conhecedor da sua área de
-                                            actuação, um ser humano ímpar. Procura congregar as ideias do grupo pra
-                                            encontrar soluções que sejam sempre focadas em resultados. Foi um prazer
-                                            imensurável trabalhar com o Samuel pois mais uma vez tive a certeza que vale
-                                            mais trabalhar com boas pessoas do que com pessoas boas.</p>
-                                        <div class="d-flex align-items-center gap-3">
-                                            <img src="../images/recommendations/Ivo.png" alt="Ivo Guimarães"
-                                                class="rounded-circle" width="48" height="48"
-                                                style="object-fit: cover;">
-                                            <div>
-                                                <h6 class="fw-bold mb-0">Ivo Guimarães</h6>
-                                                <p class="text-muted small mb-0">Gestão de Talento | RH Analítico |
-                                                    Transformação Digital</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Recommendation 4: Marta Oliveira Dias -->
-                                <div class="carousel-item">
-                                    <div class="card border-0 shadow-sm p-4 mx-3">
-                                        <div class="d-flex align-items-start gap-3 mb-3">
-                                            <div class="text-gold fs-3"></div>
-                                        </div>
-                                        <p class="mb-4" style="font-size: 0.95rem; line-height: 1.7;">I had the plesure
-                                            to work with Samuel during my last project at Deloitte. He is a dedicated
-                                            professional that always goes above and beyond to make an impact that
-                                            matters. Samuel does a remarkable job leading his teams while being commited
-                                            and always available to help others. Moreover, he is extremely hard-working,
-                                            determined and always challanges us to do our best. It was an honour
-                                            learning from him!</p>
-                                        <div class="d-flex align-items-center gap-3">
-                                            <img src="../images/recommendations/Marta.png" alt="Marta Oliveira Dias"
-                                                class="rounded-circle" width="48" height="48"
-                                                style="object-fit: cover;">
-                                            <div>
-                                                <h6 class="fw-bold mb-0">Marta Oliveira Dias</h6>
-                                                <p class="text-muted small mb-0">Improvement & Performance Manager
-                                                    @VodafoneZiggo</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Recommendation 5: Tomás Alegria Aguiar -->
-                                <div class="carousel-item">
-                                    <div class="card border-0 shadow-sm p-4 mx-3">
-                                        <div class="d-flex align-items-start gap-3 mb-3">
-                                            <div class="text-gold fs-3"></div>
-                                        </div>
-                                        <p class="mb-4" style="font-size: 0.95rem; line-height: 1.7;">A vasta
-                                            experiência que possui na entrega de projetos de transformação de RH de
-                                            grande complexidade, aliada à sua visão estratégica, liderança e espírito
-                                            colaborativo, garantem não só projetos bem-sucedidos e resultados de
-                                            excelência, mas também o desenvolvimento de todos com quem trabalha. O seu
-                                            profissionalismo e capacidade de gestão de equipa são verdadeiramente
-                                            inspiradores. Considero o Samuel um verdadeiro role model.</p>
-                                        <div class="d-flex align-items-center gap-3">
-                                            <img src="../images/recommendations/tomas_alegria.png"
-                                                alt="Tomás Alegria Aguiar" class="rounded-circle" width="48" height="48"
-                                                style="object-fit: cover;">
-                                            <div>
-                                                <h6 class="fw-bold mb-0">Tomás Alegria Aguiar</h6>
-                                                <p class="text-muted small mb-0">Experienced Senior Consultant | SAP
-                                                    Integration Suite Lead</p>
-                                            </div>
+                                    <p class="mb-4" style="font-size: 0.95rem; line-height: 1.7;">O Samuel é um
+                                        profissional de excelência com quem tive a oportunidade de trabalhar e
+                                        aprender em vários projectos estruturantes. Possui uma notável capacidade de
+                                        integração e aculturação. O Samuel é, sem dúvida, o tipo de consultor que,
+                                        em qualquer geografia, adapta-se, interpreta o contexto e gera soluções
+                                        transformadoras e palpáveis. É um líder e gestor de projectos comprometido,
+                                        com princípios cívicos e morais notáveis.</p>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="../images/recommendations/Hildebrando.png" alt="Hildebrando Sala"
+                                            class="rounded-circle" width="48" height="48" style="object-fit: cover;">
+                                        <div>
+                                            <h6 class="fw-bold mb-0">Hildebrando Sala</h6>
+                                            <p class="text-muted small mb-0">Director de Capital Humano</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <button class="carousel-control-prev" type="button"
-                                data-bs-target="#recommendationsCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"
-                                    style="padding: 15px;"></span>
-                                <span class="visually-hidden">Anterior</span>
-                            </button>
-                            <button class="carousel-control-next" type="button"
-                                data-bs-target="#recommendationsCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"
-                                    style="padding: 15px;"></span>
-                                <span class="visually-hidden">Seguinte</span>
-                            </button>
-                            <!-- Carousel Indicators -->
+                            <!-- Recommendation 2: José Subtil -->
+                            <div class="carousel-item">
+                                <div class="card border-0 shadow-sm p-4 mx-3">
+                                    <div class="d-flex align-items-start gap-3 mb-3">
+                                        <div class="text-gold fs-3"></div>
+                                    </div>
+                                    <p class="mb-4" style="font-size: 0.95rem; line-height: 1.7;">I had the pleasure
+                                        of working with Samuel while he was Senior Consultant and Manager at
+                                        Deloitte, and I can say that he is an exceptional professional. Samuel has a
+                                        combination of technical and interpersonal skills that makes him a natural
+                                        leader. His ability to meet customer needs and his commitment to excellence
+                                        was a key to the projects success. I recommend Samuel without hesitation.
+                                    </p>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="../images/recommendations/Jose.png" alt="José Subtil"
+                                            class="rounded-circle" width="48" height="48" style="object-fit: cover;">
+                                        <div>
+                                            <h6 class="fw-bold mb-0">José Subtil</h6>
+                                            <p class="text-muted small mb-0">Banking and Insurance Leader at
+                                                Timestamp</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Recommendation 3: Ivo Guimarães -->
+                            <div class="carousel-item">
+                                <div class="card border-0 shadow-sm p-4 mx-3">
+                                    <div class="d-flex align-items-start gap-3 mb-3">
+                                        <div class="text-gold fs-3"></div>
+                                    </div>
+                                    <p class="mb-4" style="font-size: 0.95rem; line-height: 1.7;">O Samuel é além de
+                                        um profissional extremamente disponível e conhecedor da sua área de
+                                        actuação, um ser humano ímpar. Procura congregar as ideias do grupo pra
+                                        encontrar soluções que sejam sempre focadas em resultados. Foi um prazer
+                                        imensurável trabalhar com o Samuel pois mais uma vez tive a certeza que vale
+                                        mais trabalhar com boas pessoas do que com pessoas boas.</p>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="../images/recommendations/Ivo.png" alt="Ivo Guimarães"
+                                            class="rounded-circle" width="48" height="48" style="object-fit: cover;">
+                                        <div>
+                                            <h6 class="fw-bold mb-0">Ivo Guimarães</h6>
+                                            <p class="text-muted small mb-0">Gestão de Talento | RH Analítico |
+                                                Transformação Digital</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Recommendation 4: Marta Oliveira Dias -->
+                            <div class="carousel-item">
+                                <div class="card border-0 shadow-sm p-4 mx-3">
+                                    <div class="d-flex align-items-start gap-3 mb-3">
+                                        <div class="text-gold fs-3"></div>
+                                    </div>
+                                    <p class="mb-4" style="font-size: 0.95rem; line-height: 1.7;">I had the plesure
+                                        to work with Samuel during my last project at Deloitte. He is a dedicated
+                                        professional that always goes above and beyond to make an impact that
+                                        matters. Samuel does a remarkable job leading his teams while being commited
+                                        and always available to help others. Moreover, he is extremely hard-working,
+                                        determined and always challanges us to do our best. It was an honour
+                                        learning from him!</p>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="../images/recommendations/Marta.png" alt="Marta Oliveira Dias"
+                                            class="rounded-circle" width="48" height="48" style="object-fit: cover;">
+                                        <div>
+                                            <h6 class="fw-bold mb-0">Marta Oliveira Dias</h6>
+                                            <p class="text-muted small mb-0">Improvement & Performance Manager
+                                                @VodafoneZiggo</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Recommendation 5: Tomás Alegria Aguiar -->
+                            <div class="carousel-item">
+                                <div class="card border-0 shadow-sm p-4 mx-3">
+                                    <div class="d-flex align-items-start gap-3 mb-3">
+                                        <div class="text-gold fs-3"></div>
+                                    </div>
+                                    <p class="mb-4" style="font-size: 0.95rem; line-height: 1.7;">A vasta
+                                        experiência que possui na entrega de projetos de transformação de RH de
+                                        grande complexidade, aliada à sua visão estratégica, liderança e espírito
+                                        colaborativo, garantem não só projetos bem-sucedidos e resultados de
+                                        excelência, mas também o desenvolvimento de todos com quem trabalha. O seu
+                                        profissionalismo e capacidade de gestão de equipa são verdadeiramente
+                                        inspiradores. Considero o Samuel um verdadeiro role model.</p>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="../images/recommendations/tomas_alegria.png"
+                                            alt="Tomás Alegria Aguiar" class="rounded-circle" width="48" height="48"
+                                            style="object-fit: cover;">
+                                        <div>
+                                            <h6 class="fw-bold mb-0">Tomás Alegria Aguiar</h6>
+                                            <p class="text-muted small mb-0">Experienced Senior Consultant | SAP
+                                                Integration Suite Lead</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#recommendationsCarousel"
+                            data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"
+                                style="padding: 15px;"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#recommendationsCarousel"
+                            data-bs-slide="next">
+                            <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"
+                                style="padding: 15px;"></span>
+                            <span class="visually-hidden">Seguinte</span>
+                        </button>
+                        <!-- Carousel Indicators -->
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
     </main>
     <!-- Contact Modal -->
@@ -1921,6 +1998,100 @@
             });
         });
     </script>
+
+    <!-- Footer -->
+    <footer id="contactos" style="background-color: #1A1A1A; color: #fff; padding: 50px 0;">
+        <div class="container">
+            <!-- Main Footer Content -->
+            <div class="row mb-4">
+                <!-- Brand & Description -->
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <img src="../images/logo.png" alt="Share2Inspire" height="35" class="mb-3"
+                        style="filter: brightness(0) invert(1);">
+                    <p class="text-muted small">
+                        Ajudamos profissionais a evoluir a carreira com clareza, estratégia e conhecimento aplicável.
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h6 class="text-uppercase fw-bold mb-3" style="color: #BF9A33;">Links Rápidos</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="../index.html"
+                                class="text-muted text-decoration-none small">Início</a></li>
+                        <li class="mb-2"><a href="sobre.html" class="text-muted text-decoration-none small">Sobre</a>
+                        </li>
+                        <li class="mb-2"><a href="servicos.html"
+                                class="text-muted text-decoration-none small">Serviços</a></li>
+                        <li class="mb-2"><a href="cv-analysis.html" class="text-muted text-decoration-none small">CV
+                                Analyser</a></li>
+                        <li class="mb-2"><a href="loja.html" class="text-muted text-decoration-none small">Loja</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h6 class="text-uppercase fw-bold mb-3" style="color: #BF9A33;">Contacto</h6>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2">
+                            <i class="fas fa-envelope me-2" style="color: #BF9A33;"></i>
+                            srshare2inspire@gmail.com
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-phone me-2" style="color: #BF9A33;"></i>
+                            +351 961 925 050
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Social Links -->
+                <div class="col-lg-2">
+                    <h6 class="text-uppercase fw-bold mb-3" style="color: #BF9A33;">Redes Sociais</h6>
+                    <div class="d-flex gap-2">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-white"
+                            style="width: 36px; height: 36px; background: rgba(191, 154, 51, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s;"
+                            onmouseover="this.style.background='#BF9A33'"
+                            onmouseout="this.style.background='rgba(191, 154, 51, 0.2)'">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="https://www.instagram.com/share2inspire_/" target="_blank" class="text-white"
+                            style="width: 36px; height: 36px; background: rgba(191, 154, 51, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s;"
+                            onmouseover="this.style.background='#BF9A33'"
+                            onmouseout="this.style.background='rgba(191, 154, 51, 0.2)'">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.instagram.com/samuel_rolo/" target="_blank" class="text-white"
+                            style="width: 36px; height: 36px; background: rgba(191, 154, 51, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s;"
+                            onmouseover="this.style.background='#BF9A33'"
+                            onmouseout="this.style.background='rgba(191, 154, 51, 0.2)'">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Copyright & Legal Links -->
+            <div class="border-top border-secondary pt-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        <p class="text-muted small mb-0">© 2025 Share2Inspire. Todos os direitos reservados.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex flex-wrap justify-content-center justify-content-md-end gap-3">
+                            <a href="politica-privacidade.html" class="text-muted text-decoration-none small">Política
+                                de Privacidade</a>
+                            <a href="politica-cookies.html" class="text-muted text-decoration-none small">Política de
+                                Cookies</a>
+                            <a href="tratamento-dados.html" class="text-muted text-decoration-none small">Tratamento de
+                                Dados</a>
+                            <a href="informacao-legal.html" class="text-muted text-decoration-none small">Informação
+                                Legal</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 
 </html>
