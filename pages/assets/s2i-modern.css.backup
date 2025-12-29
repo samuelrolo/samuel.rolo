@@ -1,0 +1,129 @@
+/* 
+ * Share2Inspire - Modern Design System 
+ * Premium/Corporate Style (Gold & Dark)
+ */
+
+:root {
+    --s2i-gold: #BF9A33;
+    --s2i-gold-hover: #a38125;
+    --s2i-dark: #1A1A1A;
+    --s2i-gray-light: #f8f9fa;
+    --s2i-text-muted: #6c757d;
+    --s2i-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --s2i-radius: 12px;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fcfcfc;
+    color: #333;
+}
+
+/* --- Botões Personalizados --- */
+.s2i-btn {
+    padding: 12px 24px;
+    border-radius: 50px;
+    /* Pill shape */
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.s2i-btn-primary {
+    background-color: var(--s2i-gold);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(191, 154, 51, 0.3);
+}
+
+.s2i-btn-primary:hover:not(:disabled) {
+    background-color: var(--s2i-gold-hover);
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+.s2i-btn-primary:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.s2i-btn-outline {
+    background-color: transparent;
+    border-color: var(--s2i-gold);
+    color: var(--s2i-gold);
+}
+
+.s2i-btn-outline:hover {
+    background-color: var(--s2i-gold);
+    color: #fff;
+}
+
+/* --- Cartões e Upload --- */
+.upload-section {
+    position: relative;
+    z-index: 10;
+    margin-top: -60px;
+    /* Efeito de sobreposição ao Hero */
+}
+
+.maturity-score-card {
+    background: #fff;
+    border-radius: var(--s2i-radius);
+    box-shadow: var(--s2i-shadow);
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+/* --- Estilos do Modal de Resultados --- */
+.modal-content {
+    border: none;
+    border-radius: var(--s2i-radius);
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chart-container {
+    position: relative;
+    margin: auto;
+    width: 100%;
+}
+
+/* Listas de Detalhes (Pontos Fortes e Sugestões) */
+.details-list .strength-item,
+.details-list .suggestion-item {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.details-list .strength-item:last-child,
+.details-list .suggestion-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+/* Ícones e Títulos */
+.section-title {
+    font-size: 1.1rem;
+    letter-spacing: -0.5px;
+}
+
+.icon-wrapper i {
+    filter: drop-shadow(0 4px 6px rgba(191, 154, 51, 0.2));
+}
+
+/* Score Display */
+#maturityScore {
+    color: var(--s2i-gold);
+    line-height: 1;
+}

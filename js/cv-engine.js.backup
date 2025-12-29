@@ -38,18 +38,9 @@ window.CV_ENGINE = {
 
             // Processar os dados reais extraídos
             this.runHeuristics(this.data.rawText);
-
-            // Extrair dados expandidos para PDF profissional
-            const expandedData = this.extractExpandedData(this.data.rawText);
-            this.data.personalInfo = {
-                ...this.data.personalInfo,
-                ...expandedData
-            };
-
             this.updateUI();
 
             console.log('[CV_ENGINE] Analysis complete. Score:', this.data.maturity.score);
-            console.log('[CV_ENGINE] Expanded data:', expandedData);
             return true; // Sucesso
         } catch (error) {
             console.error('[CV_ENGINE] Error during analysis:', error);
@@ -169,7 +160,7 @@ window.CV_ENGINE = {
         if (impactCount >= 5) {
             this.data.strengths.push({
                 title: "Vocabulário de Alto Impacto",
-                detail: `Utilizas ${impactCount} verbos de ação que demonstram resultados concretos.`
+                detail: `Utiliza ${impactCount} verbos de ação que demonstram resultados concretos.`
             });
         }
 
@@ -191,181 +182,73 @@ window.CV_ENGINE = {
         if (impactCount < 5) {
             this.data.suggestions.push({
                 title: "Aumentar Impacto Quantificável",
-                context: "Adiciona mais resultados mensuráveis. Ex: 'Aumentei vendas em 20%', 'Reduzi custos em 15K€'."
+                context: "Adicione mais resultados mensuráveis. Ex: 'Aumentei vendas em 20%', 'Reduzi custos em 15K€'."
             });
         }
 
         if (this.data.competencies.ats < 70) {
             this.data.suggestions.push({
                 title: "Otimizar para Sistemas ATS",
-                context: "Inclui mais keywords relevantes da tua área e certifica-te que os dados de contacto estão visíveis."
+                context: "Inclua mais keywords relevantes da sua área e certifique-se que os dados de contacto estão visíveis."
             });
         }
 
         if (sectionsCount < 5) {
             this.data.suggestions.push({
                 title: "Completar Secções Fundamentais",
-                context: "Adiciona secções como: Experiência, Formação, Competências, Certificações e Línguas."
+                context: "Adicione secções como: Experiência, Formação, Competências, Certificações e Línguas."
             });
         }
 
         if (wordCount < 300) {
             this.data.suggestions.push({
                 title: "Expandir Conteúdo",
-                context: "O CV parece muito resumido. Detalha as tuas responsabilidades e conquistas em cada experiência."
+                context: "O CV parece muito resumido. Detalhe as suas responsabilidades e conquistas em cada experiência."
             });
         }
     },
 
     /**
-     * Atualizar UI com os resultados da análise (MODO DIAGNÓSTICO COMPLETO)
+     * Atualizar UI com os resultados da análise
      */
     updateUI() {
-        // BLOCO 1: Retrato Profissional
-        const yearsExp = document.getElementById('yearsExp');
-        const mainArea = document.getElementById('mainArea');
-        const seniorityLevel = document.getElementById('seniorityLevel');
+        // Update Maturity Score
+        const scoreElement = document.getElementById('maturityScore');
+        if (scoreElement) scoreElement.innerText = this.data.maturity.score;
 
-        if (yearsExp) yearsExp.textContent = '3-5 anos';
-        if (mainArea) mainArea.textContent = 'Gestão e Liderança';
-        if (seniorityLevel) seniorityLevel.textContent = this.data.maturity.label || 'Não determinado';
+        const labelElement = document.getElementById('maturityLabel');
+        if (labelElement) labelElement.innerText = this.data.maturity.label;
 
-        // BLOCO 2: Maturidade Profissional
-        const maturityScore = document.getElementById('maturityScore');
-        const maturityLabel = document.getElementById('maturityLabel');
-
-        if (maturityScore) maturityScore.textContent = this.data.maturity.score;
-        if (maturityLabel) maturityLabel.textContent = this.data.maturity.label;
-
-        // BLOCO 4: Competências Detetadas
-        const hardSkillsList = document.getElementById('hardSkillsList');
-        const softSkillsList = document.getElementById('softSkillsList');
-        const languagesList = document.getElementById('languagesList');
-
-        if (hardSkillsList) hardSkillsList.textContent = 'Gestão de Projetos, Análise de Dados, Liderança';
-        if (softSkillsList) softSkillsList.textContent = 'Comunicação, Resolução de Problemas, Trabalho em Equipa';
-        if (languagesList) languagesList.textContent = 'Português (Nativo), Inglês (Fluente)';
-
-        // BLOCO 5: Formação e Atualização
-        const lastEducation = document.getElementById('lastEducation');
-        const updateRhythm = document.getElementById('updateRhythm');
-
-        if (lastEducation) lastEducation.textContent = '2020-2023';
-        if (updateRhythm) updateRhythm.textContent = 'Ativo';
-
-        // BLOCO 6: Estrutura e ATS
-        const atsCompat = document.getElementById('atsCompat');
-        const cvStructure = document.getElementById('cvStructure');
-        const readability = document.getElementById('readability');
-
-        if (atsCompat) {
-            const atsScore = this.data.competencies.ats;
-            atsCompat.textContent = atsScore >= 70 ? 'Boa' : atsScore >= 50 ? 'Média' : 'Baixa';
-        }
-        if (cvStructure) {
-            const structScore = this.data.competencies.structure;
-            cvStructure.textContent = structScore >= 70 ? 'Clara' : structScore >= 50 ? 'Densa' : 'Desalinhada';
-        }
-        if (readability) readability.textContent = 'Adequada';
-
-        // Radar Chart
+        // Update Radar Chart se a função existir
         if (window.renderRadarChart) {
             window.renderRadarChart(this.data.competencies);
         }
-    },
 
-    /**
-     * Extrair dados expandidos para o PDF profissional
-     * Analisa o texto para encontrar idiomas, empresas, datas de formação
-     */
-    extractExpandedData(text) {
-        // Idiomas comuns e seus níveis
-        const languagePatterns = {
-            'inglês': ['fluente', 'avançado', 'intermédio', 'básico', 'nativo'],
-            'espanhol': ['fluente', 'avançado', 'intermédio', 'básico'],
-            'francês': ['fluente', 'avançado', 'intermédio', 'básico'],
-            'alemão': ['fluente', 'avançado', 'intermédio', 'básico'],
-            'português': ['nativo', 'fluente'],
-            'italiano': ['fluente', 'avançado', 'intermédio'],
-            'chinês': ['fluente', 'avançado', 'intermédio', 'básico'],
-        };
-
-        const languages = [];
-        for (const [lang, levels] of Object.entries(languagePatterns)) {
-            if (text.includes(lang)) {
-                let level = 'Não especificado';
-                for (const lvl of levels) {
-                    if (text.includes(lvl)) {
-                        level = lvl.charAt(0).toUpperCase() + lvl.slice(1);
-                        break;
-                    }
-                }
-                languages.push({ name: lang.charAt(0).toUpperCase() + lang.slice(1), level });
-            }
+        // Render Lista de Pontos Fortes
+        const sList = document.getElementById('strengthsList');
+        if (sList) {
+            sList.innerHTML = this.data.strengths.map(s => `
+                <div class="strength-item mb-3">
+                    <h6 class="fw-bold text-dark mb-1">
+                        <i class="fas fa-check-circle text-success me-2"></i>${s.title}
+                    </h6>
+                    <p class="small text-muted mb-0">${s.detail}</p>
+                </div>
+            `).join('');
         }
 
-        // Empresas conhecidas (top companies)
-        const knownCompanies = ['google', 'microsoft', 'amazon', 'deloitte', 'ey', 'pwc', 'kpmg',
-            'accenture', 'mckinsey', 'bcg', 'bain', 'salesforce', 'oracle',
-            'ibm', 'sap', 'cisco', 'meta', 'facebook', 'apple', 'netflix',
-            'astrazeneca', 'bnp paribas', 'hsbc', 'santander', 'citi'];
-        const topCompanies = knownCompanies.filter(company => text.includes(company))
-            .map(c => c.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '))
-            .slice(0, 3); // Max 3 empresas
-
-        // Anos de experiência (heurística simples)
-        const yearMatches = text.match(/(\d{4})\s*-\s*(\d{4}|presente|atual)/gi);
-        let totalYears = 0;
-        if (yearMatches) {
-            yearMatches.forEach(match => {
-                const years = match.match(/\d{4}/g);
-                if (years && years.length === 2) {
-                    totalYears += parseInt(years[1]) - parseInt(years[0]);
-                } else if (years && years.length === 1) {
-                    totalYears += new Date().getFullYear() - parseInt(years[0]);
-                }
-            });
+        // Render Lista de Sugestões
+        const sugList = document.getElementById('suggestionsList');
+        if (sugList) {
+            sugList.innerHTML = this.data.suggestions.map(s => `
+                <div class="suggestion-item mb-3">
+                    <h6 class="fw-bold text-dark mb-1">
+                        <i class="fas fa-arrow-up text-primary me-2"></i>${s.title}
+                    </h6>
+                    <p class="small text-muted mb-0">${s.context}</p>
+                </div>
+            `).join('');
         }
-
-        // Última formação/certificação (procurar por datas recentes)
-        const currentYear = new Date().getFullYear();
-        let lastTraining = null;
-        let trainingGap = 0;
-
-        for (let year = currentYear; year >= currentYear - 10; year--) {
-            if (text.includes(year.toString()) && (text.includes('certificação') ||
-                text.includes('formação') || text.includes('curso'))) {
-                lastTraining = year.toString();
-                trainingGap = currentYear - year;
-                break;
-            }
-        }
-
-        // Análise crítica de gap
-        let criticalAnalysis = '';
-        if (trainingGap >= 4) {
-            criticalAnalysis = `Não realiza formação formal há ${trainingGap} anos. Numa área em constante mudança, isto representa um risco de obsolescência de competências.`;
-        } else if (trainingGap >= 2) {
-            criticalAnalysis = `A última formação foi há ${trainingGap} anos. Recomenda-se atualização contínua para manter competitividade no mercado.`;
-        }
-
-        // Tópicos chave baseados no conteúdo
-        const keyTopics = [];
-        if (text.includes('digital') || text.includes('tecnologia')) keyTopics.push('Transformação Digital');
-        if (text.includes('dados') || text.includes('analytics')) keyTopics.push('Data Analytics');
-        if (text.includes('ia') || text.includes('inteligência artificial')) keyTopics.push('Inteligência Artificial');
-        if (text.includes('liderança') || text.includes('gestão')) keyTopics.push('Liderança e Gestão');
-        if (text.includes('estratégia')) keyTopics.push('Pensamento Estratégico');
-
-        return {
-            languages,
-            top_companies: topCompanies,
-            total_years_exp: Math.max(1, totalYears), // Mínimo 1 ano
-            last_training_date: lastTraining || 'Não detetado',
-            training_gap_years: trainingGap,
-            critical_analysis: criticalAnalysis,
-            main_key_topics: keyTopics.slice(0, 3) // Max 3 tópicos
-        };
     },
 
     /**
