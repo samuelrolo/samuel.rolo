@@ -2437,57 +2437,74 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                         style="opacity: 0.5;"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="padding: 1.5rem 2rem 1.25rem 2rem;">
                     <form id="contactForm">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="name" class="s2i-form-label">Nome *</label>
-                                <input type="text" class="s2i-form-control" id="name" name="name"
-                                    placeholder="O seu nome" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="email" class="s2i-form-label">Email *</label>
-                                <input type="email" class="s2i-form-control" id="email" name="email"
-                                    placeholder="O seu email" required>
-                            </div>
+                        <div class="mb-4">
+                            <label for="name"
+                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Nome</label>
+                            <input type="text" id="name" name="name" placeholder="O teu nome" required
+                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.2s;"
+                                onfocus="this.style.borderColor='#BF9A33'" onblur="this.style.borderColor='#ddd'">
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="phone" class="s2i-form-label">Telefone</label>
-                                <input type="tel" class="s2i-form-control" id="phone" name="phone"
-                                    placeholder="9xxxxxxxx">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="reason" class="s2i-form-label">Motivo *</label>
-                                <select class="s2i-form-control" id="reason" name="reason" required>
-                                    <option value="" selected disabled>Selecione um motivo</option>
-                                    <option value="Informações">Informações</option>
-                                    <option value="Orçamento">Orçamento</option>
-                                    <option value="Dúvida Técnica">Dúvida Técnica</option>
-                                    <option value="Outro">Outro</option>
-                                </select>
-                            </div>
+                        <div class="mb-4">
+                            <label for="email"
+                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Email</label>
+                            <input type="email" id="email" name="email" placeholder="O teu email" required
+                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.2s;"
+                                onfocus="this.style.borderColor='#BF9A33'" onblur="this.style.borderColor='#ddd'">
                         </div>
-                        <div class="mb-3">
-                            <label for="message" class="s2i-form-label">Mensagem *</label>
-                            <textarea class="s2i-form-control" id="message" name="message" rows="4"
-                                placeholder="Como podemos ajudar?" required></textarea>
+                        <div class="mb-4">
+                            <label for="phone"
+                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Telefone
+                                <span style="color: #999;">(opcional)</span></label>
+                            <input type="tel" id="phone" name="phone" placeholder="Opcional"
+                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.2s;"
+                                onfocus="this.style.borderColor='#BF9A33'" onblur="this.style.borderColor='#ddd'">
                         </div>
-                        <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
-                            <label class="form-check-label small text-muted" for="privacy">
-                                Aceito a <a href="pages/politica-privacidade.html" target="_blank"
-                                    class="text-decoration-none s2i-text-gold">Política de Privacidade</a> *
+                        <div class="mb-4">
+                            <label for="reason"
+                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Motivo</label>
+                            <select id="reason" name="reason" required
+                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; background-color: white; transition: border-color 0.2s;"
+                                onfocus="this.style.borderColor='#BF9A33'" onblur="this.style.borderColor='#ddd'">
+                                <option value="" selected disabled>Escolhe o motivo do contacto</option>
+                                <option value="Clareza de carreira">Clareza de carreira</option>
+                                <option value="Revisão de CV">Revisão de CV</option>
+                                <option value="Kickstart Pro">Kickstart Pro</option>
+                                <option value="Outro tema">Outro tema</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="message"
+                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Mensagem</label>
+                            <textarea id="message" name="message" rows="3" placeholder="O que te trouxe até aqui?"
+                                required
+                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; resize: vertical; transition: border-color 0.2s;"
+                                onfocus="this.style.borderColor='#BF9A33'"
+                                onblur="this.style.borderColor='#ddd'"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label
+                                style="display: flex; align-items: center; font-size: 0.875rem; color: #666; cursor: pointer;">
+                                <input type="checkbox" id="privacy" name="privacy" required
+                                    style="margin-right: 0.5rem;">
+                                Li e aceito a <a href="pages/politica-privacidade.html" target="_blank"
+                                    style="color: #BF9A33; text-decoration: none; margin-left: 0.25rem;">Política de
+                                    Privacidade</a>
                             </label>
                         </div>
-                        <div class="alert alert-success d-none" id="contactSuccess">
+                        <div class="alert alert-success d-none" id="contactSuccess"
+                            style="font-size: 0.875rem; padding: 0.75rem; border-radius: 6px;">
                             Mensagem enviada com sucesso!
                         </div>
-                        <div class="alert alert-danger d-none" id="contactError">
+                        <div class="alert alert-danger d-none" id="contactError"
+                            style="font-size: 0.875rem; padding: 0.75rem; border-radius: 6px;">
                             Erro ao enviar mensagem.
                         </div>
-                        <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
-                            Enviar Mensagem
+                        <button type="submit"
+                            style="width: 100%; padding: 0.875rem; background: #BF9A33; color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background 0.2s;"
+                            onmouseover="this.style.background='#a58428'" onmouseout="this.style.background='#BF9A33'">
+                            Enviar mensagem
                         </button>
                     </form>
                 </div>
