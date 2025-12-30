@@ -238,163 +238,65 @@
 
     <!-- Payment Modal for 1€ PDF Report -->
     <div class="modal fade" id="reportPaymentModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="border-radius: 20px; border: none;">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
+            <div class="modal-content" style="border-radius: 16px; border: none;">
                 <div class="modal-header border-0">
                     <div style="text-align: center; width: 100%;">
-                        <h5 class="modal-title fw-bold" style="font-size: 1.5rem; color: #1A1A1A;">Análise Automática de
+                        <h5 class="modal-title fw-bold" style="font-size: 1.3rem; color: #1A1A1A;">Análise Automática de
                             CV</h5>
-                        <p class="text-muted mb-0" style="font-size: 0.95rem;">Diagnóstico rápido baseado em IA</p>
+                        <p class="text-muted mb-0" style="font-size: 0.85rem;">Diagnóstico rápido baseado em IA</p>
                     </div>
                     <button type="button" class="btn-close position-absolute end-0 top-0 m-3"
                         data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body px-4 py-4">
+                <div class="modal-body px-4 py-3">
 
-                    <!-- QUANDO USAR (Educational Context) -->
-                    <div class="service-context mb-4"
-                        style="background: #f8f9fa; border-left: 4px solid #6c757d; padding: 1.25rem; border-radius: 8px;">
-                        <h6
-                            style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #6c757d; margin-bottom: 1rem;">
-                            <i class="fas fa-lightbulb me-2"></i>Quando Usar
-                        </h6>
-                        <ul class="context-list mb-3" style="list-style: none; padding: 0; font-size: 0.9rem;">
-                            <li style="padding-left: 1.5rem; position: relative; margin-bottom: 0.5rem;">
-                                <span style="position: absolute; left: 0; color: #28a745; font-weight: 700;">✓</span>
-                                Acabaste de rever o teu CV e queres uma segunda opinião rápida
-                            </li>
-                            <li style="padding-left: 1.5rem; position: relative; margin-bottom: 0.5rem;">
-                                <span style="position: absolute; left: 0; color: #28a745; font-weight: 700;">✓</span>
-                                Queres perceber como o teu CV "se lê" aos olhos de um recrutador
-                            </li>
-                            <li style="padding-left: 1.5rem; position: relative; margin-bottom: 0.5rem;">
-                                <span style="position: absolute; left: 0; color: #28a745; font-weight: 700;">✓</span>
-                                Precisas de diagnóstico objectivo antes de candidaturas
-                            </li>
-                        </ul>
-                        <div class="context-warning mt-3"
-                            style="background: rgba(220, 53, 69, 0.05); border: 1px dashed #dc3545; padding: 0.75rem; border-radius: 6px;">
-                            <strong style="font-size: 0.85rem; color: #dc3545;">Não é adequado se:</strong>
-                            <ul
-                                style="list-style: none; padding: 0; margin-top: 0.5rem; font-size: 0.85rem; color: #6c757d;">
-                                <li style="padding-left: 1.5rem; position: relative; margin-bottom: 0.25rem;">
-                                    <span style="position: absolute; left: 0; color: #dc3545;">✗</span>
-                                    Procuras revisão humana → usa "Revisão Profissional"
-                                </li>
-                                <li style="padding-left: 1.5rem; position: relative;">
-                                    <span style="position: absolute; left: 0; color: #dc3545;">✗</span>
-                                    Tens dúvidas de estratégia → marca "Kickstart Pro"
-                                </li>
-                            </ul>
+                    <!-- Info Note -->
+                    <div class="mb-3"
+                        style="background: #f8f9fa; border-left: 3px solid #BF9A33; padding: 0.75rem; border-radius: 6px;">
+                        <div style="display: flex; gap: 8px; align-items: start; font-size: 0.85rem; color: #1A1A1A;">
+                            <span style="color: #BF9A33; flex-shrink: 0;">①</span>
+                            <span>Sistema analisa estrutura, keywords e formatação</span>
                         </div>
-                    </div>
-
-                    <!-- O QUE RECEBES (Value Block) -->
-                    <div class="value-block mb-4"
-                        style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-left: 4px solid #BF9A33; border-radius: 12px; padding: 1.5rem;">
-                        <h6
-                            style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #BF9A33; margin-bottom: 1rem;">
-                            <i class="fas fa-gift me-2"></i>O Que Recebes
-                        </h6>
-                        <ul style="list-style: none; padding: 0; margin: 0 0 1rem;">
-                            <li
-                                style="padding-left: 1.5rem; position: relative; margin-bottom: 0.5rem; font-size: 0.95rem; line-height: 1.6;">
-                                <span style="position: absolute; left: 0; color: #28a745; font-weight: 700;">✓</span>
-                                Score de maturidade (0-100) em 6 dimensões
-                            </li>
-                            <li
-                                style="padding-left: 1.5rem; position: relative; margin-bottom: 0.5rem; font-size: 0.95rem; line-height: 1.6;">
-                                <span style="position: absolute; left: 0; color: #28a745; font-weight: 700;">✓</span>
-                                Radar visual comparativo de competências
-                            </li>
-                            <li
-                                style="padding-left: 1.5rem; position: relative; margin-bottom: 0.5rem; font-size: 0.95rem; line-height: 1.6;">
-                                <span style="position: absolute; left: 0; color: #28a745; font-weight: 700;">✓</span>
-                                Sugestões automáticas de melhoria
-                            </li>
-                            <li
-                                style="padding-left: 1.5rem; position: relative; margin-bottom: 0.5rem; font-size: 0.95rem; line-height: 1.6;">
-                                <span style="position: absolute; left: 0; color: #28a745; font-weight: 700;">✓</span>
-                                Checklist de boas práticas
-                            </li>
-                        </ul>
                         <div
-                            style="border-top: 1px solid rgba(191, 154, 51, 0.2); padding-top: 1rem; margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
-                            <span class="badge bg-success">Entrega Imediata</span>
-                            <span style="font-size: 1.75rem; font-weight: 700; color: #BF9A33;">1€</span>
+                            style="display: flex; gap: 8px; align-items: start; font-size: 0.85rem; color: #1A1A1A; margin-top: 0.5rem;">
+                            <span style="color: #BF9A33; flex-shrink: 0;">②</span>
+                            <span>Recebes relatório PDF no email em segundos</span>
                         </div>
-                        <small style="display: block; margin-top: 0.75rem; color: #6c757d; font-size: 0.8rem;">
-                            <i class="fas fa-info-circle me-1"></i>
-                            <strong>Limite:</strong> Diagnóstico gerado por IA, não substitui revisão humana estratégica
-                        </small>
-                    </div>
-
-                    <!-- COMO FUNCIONA (Process) -->
-                    <div class="service-process mb-4"
-                        style="background: rgba(191, 154, 51, 0.05); padding: 1.25rem; border-radius: 8px;">
-                        <h6
-                            style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #BF9A33; margin-bottom: 1rem;">
-                            <i class="fas fa-list-ol me-2"></i>Como Funciona
-                        </h6>
-                        <ol style="counter-reset: step; list-style: none; padding: 0; font-size: 0.9rem;">
-                            <li
-                                style="counter-increment: step; margin-bottom: 0.75rem; display: flex; align-items: start;">
-                                <span
-                                    style="content: counter(step); background: #BF9A33; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; margin-right: 0.75rem; flex-shrink: 0;">1</span>
-                                <span>Preenches os dados e pagas 1€ via MB WAY</span>
-                            </li>
-                            <li
-                                style="counter-increment: step; margin-bottom: 0.75rem; display: flex; align-items: start;">
-                                <span
-                                    style="background: #BF9A33; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; margin-right: 0.75rem; flex-shrink: 0;">2</span>
-                                <span>Sistema analisa estrutura, keywords e formatação</span>
-                            </li>
-                            <li style="counter-increment: step; display: flex; align-items: start;">
-                                <span
-                                    style="background: #BF9A33; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; margin-right: 0.75rem; flex-shrink: 0;">3</span>
-                                <span>Recebes relatório PDF no email em segundos</span>
-                            </li>
-                        </ol>
-                        <small style="display: block; margin-top: 0.75rem; color: #6c757d;">
-                            <i class="fas fa-clock me-1"></i>Tempo total: ~2 minutos
-                        </small>
+                        <small class="d-block mt-2" style="color: #6c757d; font-size: 0.75rem;">⏱ Tempo total: ~2
+                            minutos</small>
                     </div>
 
                     <!-- PAYMENT FORM -->
                     <form id="reportPaymentForm">
                         <div class="mb-3">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.9rem; color: #343a40;">Como
-                                te chamar?</label>
+                            <label class="form-label"
+                                style="font-weight: 500; font-size: 0.9rem; color: #1A1A1A;">Nome</label>
                             <input type="text" class="form-control" id="paymentName" required
-                                placeholder="Ex: João Silva"
-                                style="border: 2px solid #e9ecef; border-radius: 10px; padding: 0.75rem 1rem;">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" style="font-weight: 600; font-size: 0.9rem; color: #343a40;">Email
-                                para receberes o relatório</label>
-                            <input type="email" class="form-control" id="paymentEmail" required
-                                placeholder="joao.silva@email.com"
-                                style="border: 2px solid #e9ecef; border-radius: 10px; padding: 0.75rem 1rem;">
+                                style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
                         </div>
                         <div class="mb-3">
                             <label class="form-label"
-                                style="font-weight: 600; font-size: 0.9rem; color: #343a40;">Telemóvel para
-                                pagamento</label>
+                                style="font-weight: 500; font-size: 0.9rem; color: #1A1A1A;">Email</label>
+                            <input type="email" class="form-control" id="paymentEmail" required
+                                style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"
+                                style="font-weight: 500; font-size: 0.9rem; color: #1A1A1A;">Telemóvel</label>
                             <input type="tel" class="form-control" id="paymentPhone" required placeholder="961925050"
                                 pattern="[0-9]{9}"
-                                style="border: 2px solid #e9ecef; border-radius: 10px; padding: 0.75rem 1rem;">
-                            <small class="form-text"
-                                style="display: block; margin-top: 0.5rem; font-size: 0.85rem; color: #6c757d;">
-                                <i class="fas fa-shield-alt me-1"></i>
+                                style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
+                            <small class="form-text" style="font-size: 0.75rem; color: #6c757d; margin-top: 0.25rem;">
                                 Pagamento seguro via MB WAY. Receberás notificação na app.
                             </small>
                         </div>
 
                         <div id="paymentStatusMsg" class="d-none"></div>
 
-                        <button type="submit" class="btn w-100 mt-3 py-3" id="btnPayReport"
-                            style="background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%); border: none; color: #fff; font-weight: 700; font-size: 1rem; border-radius: 12px;">
-                            <i class="fas fa-lock me-2"></i>Receber Relatório (1€ via MB WAY)
+                        <button type="submit" class="btn w-100 mt-2 py-2" id="btnPayReport"
+                            style="background: #BF9A33; border: none; color: #fff; font-weight: 600; font-size: 0.95rem; border-radius: 6px;">
+                            Receber Relatório (1€ via MB WAY)
                         </button>
                     </form>
 
