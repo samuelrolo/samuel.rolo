@@ -1315,321 +1315,794 @@
         </div>
     </section>
 
-    <!-- Ecossistema Digital - Minimalist Native Widgets -->
-    <section style="background: #f8f9fa; padding: 50px 0;">
-        <div class="container">
-            <!-- Section Header -->
-            <div class="text-center mb-5">
-                <h2 style="font-size: 1.75rem; font-weight: 700; color: #343a40; margin-bottom: 0.5rem;">Ecossistema
-                    Digital</h2>
-                <p style="color: #6c757d; font-size: 0.95rem;">Conversas, ideias e partilhas contínuas</p>
+    <!-- ============================================
+     SECÇÃO: FAVIKON RANKINGS + ECOSSISTEMA DIGITAL
+     ============================================ -->
+
+<!-- Facebook SDK -->
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/pt_PT/sdk.js#xfbml=1&version=v24.0"></script>
+
+<!-- TikTok Embed -->
+<script async src="https://www.tiktok.com/embed.js"></script>
+
+<style>
+/* ========== FAVIKON RANKINGS CAROUSEL ========== */
+.favikon-section {
+    padding: 3rem 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    overflow: hidden;
+}
+
+.favikon-section .section-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #fff;
+}
+
+.favikon-section .section-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.favikon-section .section-header p {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.favikon-carousel-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: 10px 0;
+}
+
+.favikon-carousel {
+    display: flex;
+    gap: 16px;
+    animation: scrollCarousel 40s linear infinite;
+    width: max-content;
+}
+
+.favikon-carousel:hover {
+    animation-play-state: paused;
+}
+
+@keyframes scrollCarousel {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.ranking-card {
+    flex-shrink: 0;
+    width: 280px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: transform 0.3s, background 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.ranking-card:hover {
+    transform: translateY(-4px);
+    background: rgba(255,255,255,0.12);
+    text-decoration: none;
+}
+
+.ranking-number {
+    font-size: 1.8rem;
+    font-weight: 800;
+    min-width: 55px;
+    text-align: center;
+    line-height: 1;
+}
+
+.ranking-number span { font-size: 1rem; font-weight: 600; }
+
+.rank-1 .ranking-number { color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+.rank-2 .ranking-number { color: #C0C0C0; text-shadow: 0 0 10px rgba(192,192,192,0.5); }
+.rank-3 .ranking-number { color: #CD7F32; text-shadow: 0 0 10px rgba(205,127,50,0.5); }
+.rank-4 .ranking-number, .rank-5 .ranking-number { color: #4ECDC4; }
+.rank-other .ranking-number { color: #a0a0a0; }
+
+.ranking-content { flex: 1; min-width: 0; }
+
+.ranking-category {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ranking-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.ranking-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.8);
+}
+
+.ranking-tag i { font-size: 0.65rem; }
+
+.tag-linkedin { background: rgba(10,102,194,0.3); color: #7eb8f7; }
+.tag-tiktok { background: rgba(0,0,0,0.3); color: #ff0050; }
+.tag-instagram { background: rgba(225,48,108,0.3); color: #f77fbe; }
+.tag-youtube { background: rgba(255,0,0,0.3); color: #ff6b6b; }
+.tag-portugal { background: rgba(0,102,51,0.3); color: #5fd068; }
+.tag-worldwide { background: rgba(100,100,255,0.2); color: #a0a0ff; }
+
+.favikon-carousel-wrapper::before,
+.favikon-carousel-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 80px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.favikon-carousel-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, #1a1a2e, transparent);
+}
+
+.favikon-carousel-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, #0f3460, transparent);
+}
+
+.favikon-cta {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.favikon-cta a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.favikon-cta a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+}
+
+/* ========== ECOSSISTEMA DIGITAL ========== */
+.ecossistema-section {
+    padding: 4rem 0;
+    background: #f8f9fa;
+}
+
+.ecossistema-section .section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.ecossistema-section .section-title h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #343a40;
+    margin-bottom: 0.5rem;
+}
+
+.ecossistema-section .section-title p {
+    color: #6c757d;
+    font-size: 0.95rem;
+}
+
+.main-widgets-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 3rem;
+}
+
+@media (max-width: 992px) {
+    .main-widgets-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .main-widgets-row { grid-template-columns: 1fr; }
+    .ranking-card { width: 240px; padding: 0.75rem 1rem; }
+    .ranking-number { font-size: 1.5rem; min-width: 45px; }
+}
+
+.widget-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.widget-header {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.widget-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    padding: 2px;
+    flex-shrink: 0;
+}
+
+.widget-avatar.linkedin { background: #0A66C2; }
+.widget-avatar.facebook { background: #1877F2; }
+.widget-avatar.tiktok { background: #000; }
+
+.widget-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.widget-info h5 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #191919;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.widget-info h5 i.fa-linkedin { color: #0A66C2; }
+.widget-info h5 i.fa-facebook { color: #1877F2; }
+.widget-info h5 i.fa-tiktok { color: #000; }
+
+.widget-info p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.linkedin-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    flex: 1;
+}
+
+.linkedin-grid a {
+    aspect-ratio: 1;
+    overflow: hidden;
+    display: block;
+}
+
+.linkedin-grid a img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.2s;
+}
+
+.linkedin-grid a:hover img { opacity: 0.85; }
+
+.facebook-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    min-height: 350px;
+}
+
+.tiktok-container { flex: 1; padding: 0; }
+.tiktok-container blockquote { margin: 0 !important; }
+
+.widget-footer {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.widget-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-decoration: none;
+    color: #fff !important;
+    transition: opacity 0.3s;
+}
+
+.widget-btn:hover { opacity: 0.9; text-decoration: none; }
+.widget-btn.linkedin { background: #0A66C2; }
+.widget-btn.facebook { background: #1877F2; }
+.widget-btn.tiktok { background: #000; }
+
+.instagram-links-row {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.instagram-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    background: #fff;
+    border-radius: 50px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.instagram-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-decoration: none;
+}
+
+.instagram-link .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    padding: 2px;
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.instagram-link .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.instagram-link .link-info { display: flex; flex-direction: column; }
+.instagram-link .link-info .name { font-size: 0.9rem; font-weight: 600; color: #191919; }
+.instagram-link .link-info .handle { font-size: 0.75rem; color: #6c757d; }
+
+.instagram-link i.fa-instagram {
+    font-size: 1.2rem;
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@media (max-width: 576px) {
+    .instagram-links-row { flex-direction: column; align-items: center; gap: 1rem; }
+    .instagram-link { width: 100%; max-width: 280px; justify-content: center; }
+}
+</style>
+
+<!-- ========== SECÇÃO FAVIKON RANKINGS ========== -->
+<section class="favikon-section">
+    <div class="container">
+        <div class="section-header">
+            <h3>Rankings Favikon</h3>
+            <p>Reconhecimento como criador de conteúdo em Portugal e no Mundo</p>
+        </div>
+    </div>
+    
+    <div class="favikon-carousel-wrapper">
+        <div class="favikon-carousel">
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-1">
+                <div class="ranking-number">1<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Healthy Lifestyle</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-linkedin"><i class="fab fa-linkedin"></i> LinkedIn</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-1">
+                <div class="ranking-number">1<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Fitness for Men</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-linkedin"><i class="fab fa-linkedin"></i> LinkedIn</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-1">
+                <div class="ranking-number">1<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Workplace Well-Being</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-youtube"><i class="fab fa-youtube"></i> YouTube</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-1">
+                <div class="ranking-number">1<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Workplace Well-Being</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-tiktok"><i class="fab fa-tiktok"></i> TikTok</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-1">
+                <div class="ranking-number">1<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Technology & Innovation</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-tiktok"><i class="fab fa-tiktok"></i> TikTok</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-2">
+                <div class="ranking-number">2<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Workplace Well-Being</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-instagram"><i class="fab fa-instagram"></i> Instagram</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-3">
+                <div class="ranking-number">3<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Productivity & Personal Growth</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-linkedin"><i class="fab fa-linkedin"></i> LinkedIn</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-3">
+                <div class="ranking-number">3<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Careers & Office</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-tiktok"><i class="fab fa-tiktok"></i> TikTok</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-4">
+                <div class="ranking-number">4<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Fitness & Personal Growth</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-linkedin"><i class="fab fa-linkedin"></i> LinkedIn</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-5">
+                <div class="ranking-number">5<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">IT & Tech</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-tiktok"><i class="fab fa-tiktok"></i> TikTok</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-other">
+                <div class="ranking-number">134<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Workplace Well-Being</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-tiktok"><i class="fab fa-tiktok"></i> TikTok</span>
+                        <span class="ranking-tag tag-worldwide">🌍 Worldwide</span>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- Duplicados para loop infinito -->
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-1">
+                <div class="ranking-number">1<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Healthy Lifestyle</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-linkedin"><i class="fab fa-linkedin"></i> LinkedIn</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-1">
+                <div class="ranking-number">1<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Fitness for Men</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-linkedin"><i class="fab fa-linkedin"></i> LinkedIn</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-1">
+                <div class="ranking-number">1<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Workplace Well-Being</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-youtube"><i class="fab fa-youtube"></i> YouTube</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-1">
+                <div class="ranking-number">1<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Workplace Well-Being</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-tiktok"><i class="fab fa-tiktok"></i> TikTok</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-1">
+                <div class="ranking-number">1<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Technology & Innovation</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-tiktok"><i class="fab fa-tiktok"></i> TikTok</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-2">
+                <div class="ranking-number">2<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Workplace Well-Being</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-instagram"><i class="fab fa-instagram"></i> Instagram</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-3">
+                <div class="ranking-number">3<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Productivity & Personal Growth</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-linkedin"><i class="fab fa-linkedin"></i> LinkedIn</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-3">
+                <div class="ranking-number">3<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Careers & Office</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-tiktok"><i class="fab fa-tiktok"></i> TikTok</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-4">
+                <div class="ranking-number">4<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Fitness & Personal Growth</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-linkedin"><i class="fab fa-linkedin"></i> LinkedIn</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-5">
+                <div class="ranking-number">5<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">IT & Tech</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-tiktok"><i class="fab fa-tiktok"></i> TikTok</span>
+                        <span class="ranking-tag tag-portugal">🇵🇹 Portugal</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank" class="ranking-card rank-other">
+                <div class="ranking-number">134<span>#</span></div>
+                <div class="ranking-content">
+                    <div class="ranking-category">Workplace Well-Being</div>
+                    <div class="ranking-tags">
+                        <span class="ranking-tag tag-tiktok"><i class="fab fa-tiktok"></i> TikTok</span>
+                        <span class="ranking-tag tag-worldwide">🌍 Worldwide</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="favikon-cta">
+            <a href="https://www.favikon.com/creators/samuel-rolo" target="_blank">
+                Ver todos os rankings <i class="fas fa-external-link-alt"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ========== SECÇÃO ECOSSISTEMA DIGITAL ========== -->
+<section class="ecossistema-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Ecossistema Digital</h2>
+            <p>Conversas, ideias e partilhas contínuas</p>
+        </div>
+
+        <!-- WIDGETS PRINCIPAIS: LinkedIn, Facebook, TikTok -->
+        <div class="main-widgets-row">
+            
+            <!-- LinkedIn Samuel Rolo -->
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="widget-avatar linkedin">
+                        <img src="../images/fundador.jpg" alt="Samuel Rolo">
+                    </div>
+                    <div class="widget-info">
+                        <h5>Samuel Rolo <i class="fab fa-linkedin"></i></h5>
+                        <p>Digital HR & Process Excellence</p>
+                    </div>
+                </div>
+                <div class="linkedin-grid">
+                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><img src="../images/linkedin/samuel-post-1.jpg" alt="Post"></a>
+                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><img src="../images/linkedin/samuel-post-2.jpg" alt="Post"></a>
+                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><img src="../images/linkedin/samuel-post-3.jpg" alt="Post"></a>
+                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><img src="../images/linkedin/samuel-post-4.jpg" alt="Post"></a>
+                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><img src="../images/linkedin/samuel-post-5.jpg" alt="Post"></a>
+                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><img src="../images/linkedin/samuel-post-6.jpg" alt="Post"></a>
+                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><img src="../images/linkedin/samuel-post-7.jpg" alt="Post"></a>
+                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><img src="../images/linkedin/samuel-post-8.jpg" alt="Post"></a>
+                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"><img src="../images/linkedin/samuel-post-9.jpg" alt="Post"></a>
+                </div>
+                <div class="widget-footer">
+                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="widget-btn linkedin">
+                        <i class="fab fa-linkedin me-1"></i> Ver Perfil
+                    </a>
+                </div>
             </div>
 
-            <!-- Responsive Grid Layout (Masonry-style) -->
-            <div class="row g-3">
-                <!-- Instagram: @share2inspire_ -->
-                <div class="col-lg-4 col-md-6">
-                    <div
-                        style="background:#FFF; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08); overflow: hidden; height: 100%; display: flex; flex-direction: column;">
-                        <!-- Header -->
-                        <div style="padding: 1.5rem 1.5rem 0.5rem; display: flex; align-items: center; gap: 12px;">
-                            <div
-                                style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);">
-                                <img src="../images/logo.png"
-                                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 2px solid #fff; background: #fff;">
-                            </div>
-                            <div>
-                                <h5 style="margin: 0; font-size: 1rem; font-weight: 700; color: #191919;">share2inspire_
-                                    <i class="fas fa-check-circle" style="color: #3897f0; font-size: 0.8rem;"></i></h5>
-                                <p style="margin: 0; font-size: 0.8rem; color: #6c757d;">Share2Inspire</p>
-                            </div>
-                        </div>
-
-                        <!-- Stats -->
-                        <div
-                            style="padding: 0 1.5rem 1rem; display: flex; gap: 20px; font-size: 0.85rem; color: #191919;">
-                            <div><strong>1.2k</strong> <span
-                                    style="color:#6c757d; font-size: 0.75rem;">Seguidores</span></div>
-                            <div><strong>342</strong> <span style="color:#6c757d; font-size: 0.75rem;">Seguindo</span>
-                            </div>
-                        </div>
-
-                        <!-- Bio -->
-                        <div style="padding: 0 1.5rem 1rem; font-size: 0.85rem; color: #333; line-height: 1.4;">
-                            Conteúdo estratégico sobre carreira e desenvolvimento profissional.
-                        </div>
-
-                        <!-- Content Grid (Simulated) -->
-                        <div style="display: flex; gap: 2px; margin-bottom: 1rem; padding: 0 2px;">
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-chart-line" style="color: #BF9A33; font-size: 1.2rem;"></i>
-                            </div>
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-quote-right" style="color: #BF9A33; font-size: 1.2rem;"></i>
-                            </div>
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-lightbulb" style="color: #BF9A33; font-size: 1.2rem;"></i>
-                            </div>
-                        </div>
-
-                        <!-- Button -->
-                        <div style="padding: 0 1rem 1rem; margin-top: auto;">
-                            <a href="https://www.instagram.com/share2inspire_/" target="_blank"
-                                style="display: block; width: 100%; text-align: center; background: #FF0050; background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); color: #fff; padding: 0.6rem; border-radius: 4px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: opacity 0.3s;"
-                                onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-                                Seguir
-                            </a>
-                        </div>
+            <!-- Facebook Share2Inspire -->
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="widget-avatar facebook">
+                        <img src="../images/logo.png" alt="Share2Inspire">
+                    </div>
+                    <div class="widget-info">
+                        <h5>Share2Inspire <i class="fab fa-facebook"></i></h5>
+                        <p>Página Oficial</p>
                     </div>
                 </div>
-
-                <!-- Instagram: @samuel_rolo -->
-                <div class="col-lg-4 col-md-6">
-                    <div
-                        style="background:#FFF; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08); overflow: hidden; height: 100%; display: flex; flex-direction: column;">
-                        <div style="padding: 1.5rem 1.5rem 0.5rem; display: flex; align-items: center; gap: 12px;">
-                            <div
-                                style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);">
-                                <img src="../images/fundador.jpg"
-                                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 2px solid #fff;">
-                            </div>
-                            <div>
-                                <h5 style="margin: 0; font-size: 1rem; font-weight: 700; color: #191919;">samuel_rolo
-                                </h5>
-                                <p style="margin: 0; font-size: 0.8rem; color: #6c757d;">Samuel Rolo</p>
-                            </div>
-                        </div>
-
-                        <div
-                            style="padding: 0 1.5rem 1rem; display: flex; gap: 20px; font-size: 0.85rem; color: #191919;">
-                            <div><strong>2.3k</strong> <span
-                                    style="color:#6c757d; font-size: 0.75rem;">Seguidores</span></div>
-                            <div><strong>891</strong> <span style="color:#6c757d; font-size: 0.75rem;">Seguindo</span>
-                            </div>
-                        </div>
-
-                        <div style="padding: 0 1.5rem 1rem; font-size: 0.85rem; color: #333; line-height: 1.4;">
-                            Lifestyle, reflexões pessoais e bastidores da jornada.
-                        </div>
-
-                        <div style="display: flex; gap: 2px; margin-bottom: 1rem; padding: 0 2px;">
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-camera" style="color: #6c757d; font-size: 1.2rem;"></i>
-                            </div>
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-music" style="color: #6c757d; font-size: 1.2rem;"></i>
-                            </div>
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-coffee" style="color: #6c757d; font-size: 1.2rem;"></i>
-                            </div>
-                        </div>
-
-                        <div style="padding: 0 1rem 1rem; margin-top: auto;">
-                            <a href="https://www.instagram.com/samuel_rolo/" target="_blank"
-                                style="display: block; width: 100%; text-align: center; background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); color: #fff; padding: 0.6rem; border-radius: 4px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: opacity 0.3s;"
-                                onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-                                Seguir
-                            </a>
-                        </div>
+                <div class="facebook-container">
+                    <div class="fb-page" 
+                         data-href="https://www.facebook.com/share2inspire" 
+                         data-tabs="timeline" 
+                         data-width="340" 
+                         data-height="320" 
+                         data-small-header="true" 
+                         data-adapt-container-width="true" 
+                         data-hide-cover="true" 
+                         data-show-facepile="false">
+                        <blockquote cite="https://www.facebook.com/share2inspire" class="fb-xfbml-parse-ignore">
+                            <a href="https://www.facebook.com/share2inspire">Share2Inspire</a>
+                        </blockquote>
                     </div>
                 </div>
+            </div>
 
-                <!-- Instagram: @borgesfala -->
-                <div class="col-lg-4 col-md-6">
-                    <div
-                        style="background:#FFF; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08); overflow: hidden; height: 100%; display: flex; flex-direction: column;">
-                        <div style="padding: 1.5rem 1.5rem 0.5rem; display: flex; align-items: center; gap: 12px;">
-                            <div
-                                style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);">
-                                <img src="../images/samuel-borges.jpg"
-                                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 2px solid #fff; object-position: top;">
-                            </div>
-                            <div>
-                                <h5 style="margin: 0; font-size: 1rem; font-weight: 700; color: #191919;">borgesfala
-                                </h5>
-                                <p style="margin: 0; font-size: 0.8rem; color: #6c757d;">A Jornada do Borges</p>
-                            </div>
-                        </div>
-
-                        <div
-                            style="padding: 0 1.5rem 1rem; display: flex; gap: 20px; font-size: 0.85rem; color: #191919;">
-                            <div><strong>540</strong> <span style="color:#6c757d; font-size: 0.75rem;">Seguidores</span>
-                            </div>
-                            <div><strong>52</strong> <span style="color:#6c757d; font-size: 0.75rem;">Seguindo</span>
-                            </div>
-                        </div>
-
-                        <div style="padding: 0 1.5rem 1rem; font-size: 0.85rem; color: #333; line-height: 1.4;">
-                            Aventuras e reflexões do melhor companheiro de 4 patas.
-                        </div>
-
-                        <div style="display: flex; gap: 2px; margin-bottom: 1rem; padding: 0 2px;">
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-paw" style="color: #6c757d; font-size: 1.2rem;"></i>
-                            </div>
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-dog" style="color: #6c757d; font-size: 1.2rem;"></i>
-                            </div>
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-tree" style="color: #6c757d; font-size: 1.2rem;"></i>
-                            </div>
-                        </div>
-
-                        <div style="padding: 0 1rem 1rem; margin-top: auto;">
-                            <a href="https://www.instagram.com/borgesfala/" target="_blank"
-                                style="display: block; width: 100%; text-align: center; background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); color: #fff; padding: 0.6rem; border-radius: 4px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: opacity 0.3s;"
-                                onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-                                Seguir
-                            </a>
-                        </div>
+            <!-- TikTok @samuel.rolog -->
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="widget-avatar tiktok">
+                        <img src="../images/fundador.jpg" alt="samuel.rolog">
+                    </div>
+                    <div class="widget-info">
+                        <h5>samuel.rolog <i class="fab fa-tiktok"></i></h5>
+                        <p>TikTok</p>
                     </div>
                 </div>
-
-                <!-- LinkedIn: Samuel Rolo -->
-                <div class="col-lg-4 col-md-6">
-                    <div
-                        style="background:#FFF; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08); overflow: hidden; height: 100%; display: flex; flex-direction: column;">
-                        <!-- Header -->
-                        <div style="padding: 1.5rem 1.5rem 0.5rem; display: flex; align-items: center; gap: 12px;">
-                            <div
-                                style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: transparent;">
-                                <img src="../images/fundador.jpg"
-                                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 1px solid #e9ecef;">
-                            </div>
-                            <div>
-                                <h5 style="margin: 0; font-size: 1rem; font-weight: 700; color: #191919;">Samuel Rolo <i
-                                        class="fab fa-linkedin"
-                                        style="color: #0077b5; font-size: 0.9rem; margin-left: 4px;"></i></h5>
-                                <p style="margin: 0; font-size: 0.8rem; color: #6c757d;">Perfil Profissional</p>
-                            </div>
-                        </div>
-
-                        <!-- Stats -->
-                        <div
-                            style="padding: 0 1.5rem 1rem; display: flex; gap: 20px; font-size: 0.85rem; color: #191919;">
-                            <div><strong>500+</strong> <span style="color:#6c757d; font-size: 0.75rem;">Conexões</span>
-                            </div>
-                        </div>
-
-                        <!-- Bio -->
-                        <div style="padding: 0 1.5rem 1rem; font-size: 0.85rem; color: #333; line-height: 1.4;">
-                            Founder Share2Inspire | People & Strategy
-                        </div>
-
-                        <!-- Content Grid (Simulated) -->
-                        <div style="display: flex; gap: 2px; margin-bottom: 1rem; padding: 0 2px;">
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: #eef3f8; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-file-alt" style="color: #0077b5; font-size: 1.2rem;"></i>
-                            </div>
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: #eef3f8; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-briefcase" style="color: #0077b5; font-size: 1.2rem;"></i>
-                            </div>
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: #eef3f8; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-award" style="color: #0077b5; font-size: 1.2rem;"></i>
-                            </div>
-                        </div>
-
-                        <!-- Button -->
-                        <div style="padding: 0 1rem 1rem; margin-top: auto;">
-                            <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"
-                                style="display: block; width: 100%; text-align: center; background: #0077b5; color: #fff; padding: 0.6rem; border-radius: 4px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: opacity 0.3s;"
-                                onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-                                Ver Perfil
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- LinkedIn: Share2Inspire -->
-                <div class="col-lg-4 col-md-6">
-                    <div
-                        style="background:#FFF; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08); overflow: hidden; height: 100%; display: flex; flex-direction: column;">
-                        <!-- Header -->
-                        <div style="padding: 1.5rem 1.5rem 0.5rem; display: flex; align-items: center; gap: 12px;">
-                            <div
-                                style="width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: transparent;">
-                                <img src="../images/logo.png"
-                                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 1px solid #e9ecef;">
-                            </div>
-                            <div>
-                                <h5 style="margin: 0; font-size: 1rem; font-weight: 700; color: #191919;">Share2Inspire
-                                    <i class="fab fa-linkedin"
-                                        style="color: #0077b5; font-size: 0.9rem; margin-left: 4px;"></i></h5>
-                                <p style="margin: 0; font-size: 0.8rem; color: #6c757d;">Página da Empresa</p>
-                            </div>
-                        </div>
-
-                        <!-- Stats -->
-                        <div
-                            style="padding: 0 1.5rem 1rem; display: flex; gap: 20px; font-size: 0.85rem; color: #191919;">
-                            <div><strong>1.5k+</strong> <span
-                                    style="color:#6c757d; font-size: 0.75rem;">Seguidores</span></div>
-                        </div>
-
-                        <!-- Bio -->
-                        <div style="padding: 0 1.5rem 1rem; font-size: 0.85rem; color: #333; line-height: 1.4;">
-                            Consultoria, Coaching e Formação.
-                        </div>
-
-                        <!-- Content Grid (Simulated) -->
-                        <div style="display: flex; gap: 2px; margin-bottom: 1rem; padding: 0 2px;">
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: #eef3f8; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-building" style="color: #0077b5; font-size: 1.2rem;"></i>
-                            </div>
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: #eef3f8; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-users" style="color: #0077b5; font-size: 1.2rem;"></i>
-                            </div>
-                            <div
-                                style="flex: 1; aspect-ratio: 1; background: #eef3f8; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-globe" style="color: #0077b5; font-size: 1.2rem;"></i>
-                            </div>
-                        </div>
-
-                        <!-- Button -->
-                        <div style="padding: 0 1rem 1rem; margin-top: auto;">
-                            <a href="https://www.linkedin.com/company/share2inspirept/" target="_blank"
-                                style="display: block; width: 100%; text-align: center; background: #0077b5; color: #fff; padding: 0.6rem; border-radius: 4px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: opacity 0.3s;"
-                                onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-                                Seguir Página
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TikTok: @samuel.rolog -->
-                <div class="col-lg-4 col-md-6">
-                    <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@samuel.rolog"
-                        data-unique-id="samuel.rolog" data-embed-type="creator"
-                        style="max-width: 780px; min-width: 288px; border-radius:3px; box-shadow:0 1px 4px rgba(0,0,0,0.05); margin: 0;">
-                        <section>
-                            <a target="_blank"
-                                href="https://www.tiktok.com/@samuel.rolog?refer=creator_embed">@samuel.rolog</a>
-                        </section>
+                <div class="tiktok-container">
+                    <blockquote class="tiktok-embed" 
+                                cite="https://www.tiktok.com/@samuel.rolog" 
+                                data-unique-id="samuel.rolog" 
+                                data-embed-type="creator" 
+                                style="max-width: 100%; min-width: 288px; margin: 0;">
                     </blockquote>
                 </div>
             </div>
+
         </div>
 
-        <!-- Instagram Embed Script -->
-        <script async src="//www.instagram.com/embed.js"></script>
+        <!-- HIPERLIGAÇÕES INSTAGRAM (discretas) -->
+        <div class="instagram-links-row">
+            
+            <a href="https://www.instagram.com/samuel_rolo/" target="_blank" class="instagram-link">
+                <div class="avatar">
+                    <img src="../images/fundador.jpg" alt="samuel_rolo">
+                </div>
+                <div class="link-info">
+                    <span class="name">Samuel Rolo</span>
+                    <span class="handle">@samuel_rolo</span>
+                </div>
+                <i class="fab fa-instagram"></i>
+            </a>
+            
+            <a href="https://www.instagram.com/share2inspire_/" target="_blank" class="instagram-link">
+                <div class="avatar">
+                    <img src="../images/logo.png" alt="share2inspire_">
+                </div>
+                <div class="link-info">
+                    <span class="name">Share2Inspire</span>
+                    <span class="handle">@share2inspire_</span>
+                </div>
+                <i class="fab fa-instagram"></i>
+            </a>
+            
+            <a href="https://www.instagram.com/borgesfala/" target="_blank" class="instagram-link">
+                <div class="avatar">
+                    <img src="../images/samuel-borges.jpg" alt="borgesfala">
+                </div>
+                <div class="link-info">
+                    <span class="name">A Jornada do Borges</span>
+                    <span class="handle">@borgesfala</span>
+                </div>
+                <i class="fab fa-instagram"></i>
+            </a>
+            
+        </div>
 
-        <!-- TikTok Embed Script -->
-        <script async src="https://www.tiktok.com/embed.js"></script>
-    </section>
+    </div>
+</section>
 
     <!-- A Minha Trajectória - Simplified -->
     <section style="background: #fff; padding: 50px 0;">
