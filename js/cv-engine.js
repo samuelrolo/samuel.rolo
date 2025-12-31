@@ -916,7 +916,7 @@ window.CV_ENGINE = {
     },
 
     /**
-     * Calcular score de maturidade global
+     * Calcular score de maturidade global (escala 0-100)
      */
     calculateMaturityScore() {
         const factors = this.data.spiderFactors;
@@ -936,14 +936,14 @@ window.CV_ENGINE = {
             weightedSum += factors[factor] * weight;
         }
 
-        // Converter para escala 0-5
-        const score = (weightedSum / 20).toFixed(1);
+        // Escala 0-100
+        const score = Math.round(weightedSum);
         this.data.maturity.score = score;
 
-        // Definir label
-        if (score >= 4.0) this.data.maturity.label = 'Especialista';
-        else if (score >= 3.0) this.data.maturity.label = 'Avançado';
-        else if (score >= 2.0) this.data.maturity.label = 'Intermédio';
+        // Definir label baseado na escala 0-100
+        if (score >= 80) this.data.maturity.label = 'Especialista';
+        else if (score >= 60) this.data.maturity.label = 'Avançado';
+        else if (score >= 40) this.data.maturity.label = 'Intermédio';
         else this.data.maturity.label = 'Iniciante';
     },
 
@@ -971,12 +971,20 @@ window.CV_ENGINE = {
         if (mainArea) mainArea.textContent = data.mainArea;
         if (seniorityLevel) seniorityLevel.textContent = data.seniorityLevel;
 
-        // BLOCO 2: Maturidade Profissional
+        // BLOCO 2: Maturidade Profissional (escala 0-100 com barra de progresso)
         const maturityScore = document.getElementById('maturityScore');
         const maturityLabel = document.getElementById('maturityLabel');
+        const maturityProgressBar = document.getElementById('maturityProgressBar');
 
         if (maturityScore) maturityScore.textContent = this.data.maturity.score;
         if (maturityLabel) maturityLabel.textContent = this.data.maturity.label;
+        
+        // Animar barra de progresso da maturidade
+        if (maturityProgressBar) {
+            setTimeout(() => {
+                maturityProgressBar.style.width = this.data.maturity.score + '%';
+            }, 100);
+        }
 
         // BLOCO 4: Competências Detetadas
         const hardSkillsList = document.getElementById('hardSkillsList');
@@ -1159,6 +1167,16 @@ window.CV_ENGINE = {
         
         if (atsSection) {
             atsSection.style.borderColor = atsColor;
+        }
+        
+        // Animar barra de progresso ATS
+        const atsProgressBar = document.getElementById('atsProgressBar');
+        if (atsProgressBar) {
+            // Definir cor baseada no score
+            atsProgressBar.style.background = `linear-gradient(90deg, ${atsColor} 0%, ${atsColor} 100%)`;
+            setTimeout(() => {
+                atsProgressBar.style.width = ats.score + '%';
+            }, 100);
         }
         
         // Atualizar bullets de diagnóstico
