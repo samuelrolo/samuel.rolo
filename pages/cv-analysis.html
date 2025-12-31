@@ -111,9 +111,18 @@
                     <div class="analysis-block mb-4 p-3"
                         style="background: white; border-radius: 8px; text-align: center;">
                         <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.75rem;">
+                            <i class="fas fa-chart-line" style="color: #BF9A33; margin-right: 8px;"></i>
                             Maturidade Profissional</h6>
-                        <div class="display-3 fw-bold mb-2" style="color: #BF9A33;" id="maturityScore">0.0</div>
-                        <div style="font-size: 0.8rem; color: #6c757d; margin-bottom: 0.75rem;">/ 5</div>
+                        <div class="display-3 fw-bold mb-2" style="color: #BF9A33;" id="maturityScore">--</div>
+                        <div style="font-size: 0.8rem; color: #6c757d; margin-bottom: 0.5rem;">/100</div>
+                        
+                        <!-- Barra de Progresso Maturidade -->
+                        <div style="width: 100%; max-width: 300px; margin: 0 auto 0.75rem auto;">
+                            <div style="background: #e9ecef; border-radius: 10px; height: 12px; overflow: hidden;">
+                                <div id="maturityProgressBar" style="background: linear-gradient(90deg, #BF9A33 0%, #d4af37 100%); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease-out;"></div>
+                            </div>
+                        </div>
+                        
                         <div class="badge px-3 py-2 mb-3" style="background: #1A1A1A; color: white; font-size: 0.85rem;"
                             id="maturityLabel">Em Análise</div>
                         <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">O score reflete
@@ -194,6 +203,14 @@
                         <div style="text-align: center; margin-bottom: 1.25rem;">
                             <div id="atsScoreDisplay" style="font-size: 3rem; font-weight: 700; color: #6c757d;">--</div>
                             <div style="font-size: 0.85rem; color: #6c757d;">/100</div>
+                            
+                            <!-- Barra de Progresso ATS -->
+                            <div style="width: 100%; max-width: 300px; margin: 0.75rem auto;">
+                                <div style="background: #e9ecef; border-radius: 10px; height: 12px; overflow: hidden;">
+                                    <div id="atsProgressBar" style="background: linear-gradient(90deg, #6c757d 0%, #6c757d 100%); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease-out, background 0.5s ease;"></div>
+                                </div>
+                            </div>
+                            
                             <div id="atsLevelBadge" class="badge px-3 py-2 mt-2" style="background: #6c757d; color: white; font-size: 0.9rem;">
                                 A calcular...
                             </div>
