@@ -435,7 +435,7 @@
             paymentModal.show();
         }
 
-        // Handle Payment Form Submission
+        // Handle Payment Form Submission - USING IFTHENPAY INTEGRATION
         document.getElementById('reportPaymentForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -464,24 +464,29 @@
             statusMsg.innerHTML = '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i> A iniciar pagamento MB WAY...</div>';
 
             try {
-                // Call backend to initiate payment
-                const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
-                const response = await fetch(`${BACKEND_URL}/api/services/cv-analyzer-payment`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: name,
-                        email: email,
-                        phone: phone,
-                        amount: '1.00',
-                        reportData: window.CV_ENGINE?.data || {}
-                    })
-                });
+                // Use Ifthenpay Integration
+                if (typeof window.ifthenpayIntegration === 'undefined') {
+                    throw new Error('Sistema de pagamento não disponível. Por favor, recarregue a página.');
+                }
 
-                const result = await response.json();
+                // Prepare payment data
+                const orderId = `CV-${Date.now()}`;
+                const paymentData = {
+                    orderId: orderId,
+                    amount: '1.00',
+                    mobileNumber: phone,
+                    customerName: name,
+                    customerEmail: email,
+                    description: 'CV Analyzer - Relatório PDF'
+                };
 
-                if (!response.ok || !result.success) {
-                    throw new Error(result.error || 'Erro ao processar pagamento');
+                console.log('💳 Iniciando pagamento MB WAY:', paymentData);
+
+                // Process MB WAY payment
+                const result = await window.ifthenpayIntegration.processPayment('mbway', paymentData);
+
+                if (!result.success) {
+                    throw new Error(result.message || 'Erro ao processar pagamento');
                 }
 
                 // Payment initiated successfully
@@ -489,13 +494,35 @@
                     <div class="alert alert-success">
                         <i class="fas fa-mobile-alt me-2"></i>
                         <strong>Pedido MB WAY enviado!</strong><br>
-                        <small>Por favor, confirme na sua aplicação MB WAY. Aguardamos confirmação...</small>
+                        <small>Por favor, confirme na sua aplicação MB WAY. O relatório será enviado após confirmação do pagamento.</small>
                     </div>
                 `;
 
-                // Start polling for payment confirmation
-                const orderId = result.order_id || result.orderId;
-                pollPaymentStatus(orderId, name, email, BACKEND_URL);
+                // Store data for report generation
+                window.CV_REPORT_DATA = {
+                    name: name,
+                    email: email,
+                    orderId: orderId,
+                    reportData: window.CV_ENGINE?.data || {}
+                };
+
+                // Show instructions
+                setTimeout(() => {
+                    statusMsg.innerHTML += `
+                        <div class="alert alert-info mt-2">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <small><strong>Próximos passos:</strong><br>
+                            1. Confirme o pagamento de 1€ na sua app MB WAY<br>
+                            2. O relatório será enviado automaticamente para <strong>${email}</strong> após confirmação</small>
+                        </div>
+                    `;
+                }, 2000);
+
+                // Reset button after delay
+                setTimeout(() => {
+                    btnPayReport.disabled = false;
+                    btnPayReport.innerHTML = originalBtnText;
+                }, 5000);
 
             } catch (error) {
                 console.error('Payment Error:', error);
@@ -505,6 +532,7 @@
             }
         });
 
+        /* REMOVED: Polling functions - Backend handles this via Ifthenpay callbacks
         // Poll Payment Status
         async function pollPaymentStatus(orderId, name, email, backendUrl) {
             const statusMsg = document.getElementById('paymentStatusMsg');
@@ -577,6 +605,7 @@
                 })
             });
         }
+        */
     </script>
 </body>
 
