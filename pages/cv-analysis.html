@@ -169,20 +169,53 @@
                         </div>
                     </div>
 
-                    <!-- BLOCO 6: Estrutura e ATS -->
+                    <!-- BLOCO 6: Estrutura Geral -->
                     <div class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px;">
-                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">Estrutura
-                            e Readiness para ATS</h6>
+                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">
+                            <i class="fas fa-file-alt" style="color: #BF9A33; margin-right: 8px;"></i>
+                            Estrutura do Documento</h6>
                         <div style="font-size: 0.875rem; color: #495057; line-height: 1.7;">
-                            <div class="mb-2"><strong>Compatibilidade ATS:</strong> <span id="atsCompat">A
-                                    avaliar...</span></div>
-                            <div class="mb-2"><strong>Estrutura do CV:</strong> <span id="cvStructure">A
+                            <div class="mb-2"><strong>Organização do CV:</strong> <span id="cvStructure">A
                                     verificar...</span></div>
                             <div class="mb-3"><strong>Legibilidade e hierarquia visual:</strong> <span
                                     id="readability">A analisar...</span></div>
-                            <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">Pequenos
-                                ajustes estruturais podem ter impacto significativo na triagem automática.</p>
+                            <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">A estrutura
+                                influencia a primeira impressão e facilidade de leitura.</p>
                         </div>
+                    </div>
+
+                    <!-- BLOCO 7: ANÁLISE ATS ISOLADA (NOVO) -->
+                    <div id="atsDetailedSection" class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px; border: 2px solid #6c757d;">
+                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">
+                            <i class="fas fa-robot" style="color: #BF9A33; margin-right: 8px;"></i>
+                            Análise de Compatibilidade ATS
+                        </h6>
+                        
+                        <div style="text-align: center; margin-bottom: 1.25rem;">
+                            <div id="atsScoreDisplay" style="font-size: 3rem; font-weight: 700; color: #6c757d;">--</div>
+                            <div style="font-size: 0.85rem; color: #6c757d;">/100</div>
+                            <div id="atsLevelBadge" class="badge px-3 py-2 mt-2" style="background: #6c757d; color: white; font-size: 0.9rem;">
+                                A calcular...
+                            </div>
+                        </div>
+
+                        <div id="atsDiagnosticBox" style="background: #f8f9fa; border-radius: 6px; padding: 1rem; margin-bottom: 1rem;">
+                            <div style="font-size: 0.8rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.75rem;">DIAGNÓSTICO</div>
+                            <ul id="atsLevelBullets" style="list-style: none; padding: 0; margin: 0;">
+                                <li style="margin-bottom: 6px; font-size: 0.85rem; color: #495057;">A aguardar análise...</li>
+                            </ul>
+                        </div>
+
+                        <div id="atsTriggersBox" style="margin-top: 1rem;">
+                            <div style="font-size: 0.8rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.75rem;">GATILHOS DA PONTUAÇÃO</div>
+                            <div id="atsTriggersList">
+                                <div style="font-size: 0.85rem; color: #6c757d;">A identificar...</div>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 0.75rem; color: #6c757d; margin: 1rem 0 0 0; font-style: italic; text-align: center;">
+                            ATS (Applicant Tracking System) são sistemas automáticos de triagem de CVs usados por 75% das empresas.
+                        </p>
                     </div>
 
                     <!-- BLOCO VISUAL: Radar Chart -->
@@ -190,9 +223,12 @@
                         <div class="chart-container" style="height: 280px;">
                             <canvas id="radarChart"></canvas>
                         </div>
-                        <p
-                            style="font-size: 0.8rem; color: #6c757d; text-align: center; margin: 0.75rem 0 0 0; font-style: italic;">
-                            Leitura comparativa entre estrutura, impacto, posicionamento, mercado e ATS.</p>
+                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem; text-align: center;">
+                            <i class="fas fa-chart-radar" style="color: #BF9A33; margin-right: 8px;"></i>
+                            Avaliação Global do CV
+                        </h6>
+                        <p style="font-size: 0.8rem; color: #6c757d; text-align: center; margin: 0 0 0.75rem 0; font-style: italic;">
+                            Análise em 6 dimensões: Estrutura, Conteúdo, Impacto, Formação, Experiência e Competências.</p>
                     </div>
 
                     <!-- BLOCO FINAL: Teaser do Relatório -->
@@ -317,7 +353,7 @@
     <!-- Project Scripts -->
     <script src="../js/ifthenpay-integration.js"></script>
     <script src="../js/cv-engine.js"></script>
-    <script src="../js/pdf-generator.js"></script>
+    <script src="../js/pdf-generator-modern.js"></script>
 
     <script>
         const fileInput = document.getElementById('cvFile');
@@ -365,74 +401,8 @@
             btnText.textContent = 'INICIAR ANÁLISE IA';
         });
 
-        // Função Global para desenhar o gráfico (chamada pelo cv-engine.js)
-        window.renderRadarChart = (competencies) => {
-            const ctx = document.getElementById('radarChart').getContext('2d');
-
-            // Destruir gráfico anterior se existir
-            if (window.myRadarChart) window.myRadarChart.destroy();
-
-            window.myRadarChart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['ATS', 'Impacto', 'Estrutura', 'Mercado', 'Posicionamento'],
-                    datasets: [{
-                        label: 'O Teu Perfil',
-                        data: [
-                            competencies.ats,
-                            competencies.impact,
-                            competencies.structure,
-                            competencies.market,
-                            competencies.positioning
-                        ],
-                        backgroundColor: 'rgba(191, 154, 51, 0.25)',
-                        borderColor: '#BF9A33',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#BF9A33',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#BF9A33'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    scales: {
-                        r: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                stepSize: 20,
-                                display: true,
-                                backdropColor: 'transparent'
-                            },
-                            grid: {
-                                color: '#e0e0e0'
-                            },
-                            angleLines: {
-                                color: '#e0e0e0'
-                            },
-                            pointLabels: {
-                                font: {
-                                    size: 12,
-                                    weight: 'bold'
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    return context.label + ': ' + context.parsed.r + '/100';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        };
+        // Nota: A função renderRadarChart está agora definida no cv-engine.js
+        // com os 6 novos fatores: Estrutura, Conteúdo, Impacto, Formação, Experiência, Competências
 
         // Open Payment Modal Function
         function openReportPaymentModal() {
