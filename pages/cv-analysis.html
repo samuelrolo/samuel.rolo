@@ -211,12 +211,44 @@
                     <!-- BLOCO 5: Formação e Atualização -->
                     <div class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px;">
                         <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">
-                            📚 Aprendizagem e Formação</h6>
+                            Aprendizagem e Formação</h6>
                         <div style="font-size: 0.875rem; color: #495057; line-height: 1.7;">
                             <div class="mb-2"><strong>Última formação identificada:</strong> <span id="lastEducation">A
                                     verificar...</span></div>
                             <div class="mb-3"><strong>Ritmo de atualização:</strong> <span id="updateRhythm">A
                                     avaliar...</span></div>
+
+                            <!-- ANÁLISE AI DE RELEVÂNCIA DE FORMAÇÃO -->
+                            <div id="trainingRelevanceSection" class="mt-3 pt-3"
+                                style="border-top: 1px solid #e9ecef; display: none;">
+                                <div
+                                    style="display: inline-block; padding: 4px 12px; border-radius: 4px; background: #d1fae5; color: #059669; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 0.75rem;">
+                                    RELEVÂNCIA PARA A ÁREA
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Score de Alinhamento:</strong>
+                                    <span id="trainingScore" style="color: #059669; font-weight: 600;">--/100</span>
+                                </div>
+                                <div class="mb-3" id="trainingAssessment"
+                                    style="font-size: 0.85rem; color: #6c757d; font-style: italic;">
+                                    Análise AI em processamento...
+                                </div>
+
+                                <div id="alignedCoursesDiv" style="display: none;" class="mb-2">
+                                    <strong style="font-size: 0.85rem;">Formações Relevantes:</strong>
+                                    <ul id="alignedCoursesList"
+                                        style="font-size: 0.825rem; margin: 0.5rem 0; padding-left: 1.2rem;">
+                                    </ul>
+                                </div>
+
+                                <div id="recommendedCoursesDiv" style="display: none;">
+                                    <strong style="font-size: 0.85rem; color: #BF9A33;">Recomendações:</strong>
+                                    <ul id="recommendedCoursesList"
+                                        style="font-size: 0.825rem; margin: 0.5rem 0; padding-left: 1.2rem; color: #6c757d;">
+                                    </ul>
+                                </div>
+                            </div>
+
                             <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">A frequência
                                 formativa influencia diretamente empregabilidade e mobilidade.</p>
                         </div>
