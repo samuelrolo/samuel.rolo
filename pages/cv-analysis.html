@@ -112,17 +112,20 @@
                         style="background: white; border-radius: 8px; text-align: center;">
                         <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.75rem;">
                             <i class="fas fa-chart-line" style="color: #BF9A33; margin-right: 8px;"></i>
-                            Maturidade Profissional</h6>
+                            Maturidade Profissional
+                        </h6>
                         <div class="display-3 fw-bold mb-2" style="color: #BF9A33;" id="maturityScore">--</div>
                         <div style="font-size: 0.8rem; color: #6c757d; margin-bottom: 0.5rem;">/100</div>
-                        
+
                         <!-- Barra de Progresso Maturidade -->
                         <div style="width: 100%; max-width: 300px; margin: 0 auto 0.75rem auto;">
                             <div style="background: #e9ecef; border-radius: 10px; height: 12px; overflow: hidden;">
-                                <div id="maturityProgressBar" style="background: linear-gradient(90deg, #BF9A33 0%, #d4af37 100%); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease-out;"></div>
+                                <div id="maturityProgressBar"
+                                    style="background: linear-gradient(90deg, #BF9A33 0%, #d4af37 100%); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease-out;">
+                                </div>
                             </div>
                         </div>
-                        
+
                         <div class="badge px-3 py-2 mb-3" style="background: #1A1A1A; color: white; font-size: 0.85rem;"
                             id="maturityLabel">Em Análise</div>
                         <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">O score reflete
@@ -182,7 +185,8 @@
                     <div class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px;">
                         <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">
                             <i class="fas fa-file-alt" style="color: #BF9A33; margin-right: 8px;"></i>
-                            Estrutura do Documento</h6>
+                            Estrutura do Documento
+                        </h6>
                         <div style="font-size: 0.875rem; color: #495057; line-height: 1.7;">
                             <div class="mb-2"><strong>Organização do CV:</strong> <span id="cvStructure">A
                                     verificar...</span></div>
@@ -194,44 +198,55 @@
                     </div>
 
                     <!-- BLOCO 7: ANÁLISE ATS ISOLADA (NOVO) -->
-                    <div id="atsDetailedSection" class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px; border: 2px solid #6c757d;">
+                    <div id="atsDetailedSection" class="analysis-block mb-4 p-3"
+                        style="background: white; border-radius: 8px; border: 2px solid #6c757d;">
                         <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">
                             <i class="fas fa-robot" style="color: #BF9A33; margin-right: 8px;"></i>
                             Análise de Compatibilidade ATS
                         </h6>
-                        
+
                         <div style="text-align: center; margin-bottom: 1.25rem;">
-                            <div id="atsScoreDisplay" style="font-size: 3rem; font-weight: 700; color: #6c757d;">--</div>
+                            <div id="atsScoreDisplay" style="font-size: 3rem; font-weight: 700; color: #6c757d;">--
+                            </div>
                             <div style="font-size: 0.85rem; color: #6c757d;">/100</div>
-                            
+
                             <!-- Barra de Progresso ATS -->
                             <div style="width: 100%; max-width: 300px; margin: 0.75rem auto;">
                                 <div style="background: #e9ecef; border-radius: 10px; height: 12px; overflow: hidden;">
-                                    <div id="atsProgressBar" style="background: linear-gradient(90deg, #6c757d 0%, #6c757d 100%); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease-out, background 0.5s ease;"></div>
+                                    <div id="atsProgressBar"
+                                        style="background: linear-gradient(90deg, #6c757d 0%, #6c757d 100%); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease-out, background 0.5s ease;">
+                                    </div>
                                 </div>
                             </div>
-                            
-                            <div id="atsLevelBadge" class="badge px-3 py-2 mt-2" style="background: #6c757d; color: white; font-size: 0.9rem;">
+
+                            <div id="atsLevelBadge" class="badge px-3 py-2 mt-2"
+                                style="background: #6c757d; color: white; font-size: 0.9rem;">
                                 A calcular...
                             </div>
                         </div>
 
-                        <div id="atsDiagnosticBox" style="background: #f8f9fa; border-radius: 6px; padding: 1rem; margin-bottom: 1rem;">
-                            <div style="font-size: 0.8rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.75rem;">DIAGNÓSTICO</div>
+                        <div id="atsDiagnosticBox"
+                            style="background: #f8f9fa; border-radius: 6px; padding: 1rem; margin-bottom: 1rem;">
+                            <div style="font-size: 0.8rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.75rem;">
+                                DIAGNÓSTICO</div>
                             <ul id="atsLevelBullets" style="list-style: none; padding: 0; margin: 0;">
-                                <li style="margin-bottom: 6px; font-size: 0.85rem; color: #495057;">A aguardar análise...</li>
+                                <li style="margin-bottom: 6px; font-size: 0.85rem; color: #495057;">A aguardar
+                                    análise...</li>
                             </ul>
                         </div>
 
                         <div id="atsTriggersBox" style="margin-top: 1rem;">
-                            <div style="font-size: 0.8rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.75rem;">GATILHOS DA PONTUAÇÃO</div>
+                            <div style="font-size: 0.8rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.75rem;">
+                                GATILHOS DA PONTUAÇÃO</div>
                             <div id="atsTriggersList">
                                 <div style="font-size: 0.85rem; color: #6c757d;">A identificar...</div>
                             </div>
                         </div>
 
-                        <p style="font-size: 0.75rem; color: #6c757d; margin: 1rem 0 0 0; font-style: italic; text-align: center;">
-                            ATS (Applicant Tracking System) são sistemas automáticos de triagem de CVs usados por 75% das empresas.
+                        <p
+                            style="font-size: 0.75rem; color: #6c757d; margin: 1rem 0 0 0; font-style: italic; text-align: center;">
+                            ATS (Applicant Tracking System) são sistemas automáticos de triagem de CVs usados por 75%
+                            das empresas.
                         </p>
                     </div>
 
@@ -240,12 +255,15 @@
                         <div class="chart-container" style="height: 280px;">
                             <canvas id="radarChart"></canvas>
                         </div>
-                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem; text-align: center;">
+                        <h6
+                            style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem; text-align: center;">
                             <i class="fas fa-chart-radar" style="color: #BF9A33; margin-right: 8px;"></i>
                             Avaliação Global do CV
                         </h6>
-                        <p style="font-size: 0.8rem; color: #6c757d; text-align: center; margin: 0 0 0.75rem 0; font-style: italic;">
-                            Análise em 6 dimensões: Estrutura, Conteúdo, Impacto, Formação, Experiência e Competências.</p>
+                        <p
+                            style="font-size: 0.8rem; color: #6c757d; text-align: center; margin: 0 0 0.75rem 0; font-style: italic;">
+                            Análise em 6 dimensões: Estrutura, Conteúdo, Impacto, Formação, Experiência e Competências.
+                        </p>
                     </div>
 
                     <!-- BLOCO FINAL: Teaser do Relatório -->
@@ -464,30 +482,35 @@
             statusMsg.innerHTML = '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i> A iniciar pagamento MB WAY...</div>';
 
             try {
-                // Use Ifthenpay Integration
-                if (typeof window.ifthenpayIntegration === 'undefined') {
-                    throw new Error('Sistema de pagamento não disponível. Por favor, recarregue a página.');
-                }
+                // CRITICAL FIX: Call backend endpoint that SAVES analysis data before payment
+                // This is necessary so the webhook can deliver the report after payment confirmation
+                const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+                const orderId = `CVA-${Date.now()}`;
 
-                // Prepare payment data
-                const orderId = `CV-${Date.now()}`;
-                const paymentData = {
-                    orderId: orderId,
-                    amount: '1.00',
-                    mobileNumber: phone,
-                    customerName: name,
-                    customerEmail: email,
-                    description: 'CV Analyzer - Relatório PDF'
+                const requestData = {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    analysis_data: window.CV_ENGINE?.data || {}  // ✅ Send analysis data to backend
                 };
 
-                console.log('💳 Iniciando pagamento MB WAY:', paymentData);
+                console.log('💳 Sending payment request with analysis data to backend...');
 
-                // Process MB WAY payment
-                const result = await window.ifthenpayIntegration.processPayment('mbway', paymentData);
+                const response = await fetch(`${BACKEND_URL}/api/services/request-report-payment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const result = await response.json();
 
                 if (!result.success) {
-                    throw new Error(result.message || 'Erro ao processar pagamento');
+                    throw new Error(result.error || 'Erro ao processar pagamento');
                 }
+
+                console.log('✅ Payment initiated, analysis data saved:', result);
 
                 // Payment initiated successfully
                 statusMsg.innerHTML = `
@@ -497,14 +520,6 @@
                         <small>Por favor, confirme na sua aplicação MB WAY. O relatório será enviado após confirmação do pagamento.</small>
                     </div>
                 `;
-
-                // Store data for report generation
-                window.CV_REPORT_DATA = {
-                    name: name,
-                    email: email,
-                    orderId: orderId,
-                    reportData: window.CV_ENGINE?.data || {}
-                };
 
                 // Show instructions
                 setTimeout(() => {
