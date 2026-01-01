@@ -13,6 +13,29 @@ GENAI_API_KEY = os.environ.get("GEMINI_API_KEY")
 if GENAI_API_KEY:
     genai.configure(api_key=GENAI_API_KEY)
 
+def is_valid_cv(text):
+    """Validate if text content looks like a CV/resume"""
+    if not text or len(text) < 200:
+        return False
+    
+    text_lower = text.lower()
+    
+    # Keywords that typically appear in CVs (Portuguese and English)
+    cv_keywords = [
+        'experience', 'education', 'skills', 'work', 'employment',
+        'universidade', 'licenciatura', 'mestrado', 'doutoramento',
+        'experiência', 'formação', 'competências', 'habilidades',
+        'email', 'telefone', 'phone', 'contact', 'contacto',
+        'curriculum', 'currículo', 'resume', 'cv',
+        'professional', 'profissional', 'career', 'carreira'
+    ]
+    
+    # Count how many CV-related keywords are present
+    keyword_count = sum(1 for keyword in cv_keywords if keyword in text_lower)
+    
+    # Require at least 3 CV-related keywords to consider it a valid CV
+    return keyword_count >= 3
+
 def analyze_text_with_gemini(text):
     if not GENAI_API_KEY:
         return {
@@ -106,6 +129,12 @@ def analyze_cv(request):
 
         if not text.strip():
              return (jsonify({'error': 'Could not extract text from the file.'}), 400, headers)
+
+        # Validate if file is actually a CV
+        if not is_valid_cv(text):
+            return (jsonify({
+                'error': 'O ficheiro carregado não parece ser um CV. Por favor, carregue um currículo válido com informações sobre experiência, formação ou competências.'
+            }), 400, headers)
 
         # Call AI
         analysis_result = analyze_text_with_gemini(text)
