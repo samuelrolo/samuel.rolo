@@ -127,10 +127,14 @@ window.CV_ENGINE = {
             // 4. Calcular maturidade global
             this.calculateMaturityScore();
 
-            // 5. Atualizar UI
+            // 5. INTEGRAÇÃO GEMINI AI: Análise avançada com backend
+            await this.callGeminiBackend(file);
+
+            // 6. Atualizar UI (agora com dados Gemini incluídos)
             this.updateUI();
 
             console.log('[CV_ENGINE] Análise completa:', this.data);
+            console.log('[CV_ENGINE] Análise Gemini:', this.geminiAnalysis);
             return true;
         } catch (error) {
             console.error('[CV_ENGINE] Erro na análise:', error);
@@ -162,6 +166,47 @@ window.CV_ENGINE = {
         const arrayBuffer = await file.arrayBuffer();
         const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
         return result.value;
+    },
+
+    /**
+     * INTEGRAÇÃO GEMINI AI: Chamar backend para análise avançada
+     */
+    async callGeminiBackend(file) {
+        const GEMINI_BACKEND_URL = 'https://europe-west1-share2inspire-beckend.cloudfunctions.net/analyze-cv';
+
+        console.log('[GEMINI] Enviando CV para análise IA...');
+
+        try {
+            // Criar FormData com o ficheiro
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Chamar backend Gemini
+            const response = await fetch(GEMINI_BACKEND_URL, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.warn('[GEMINI] Erro do backend:', errorText);
+                // Fallback: usar análise local se backend falhar
+                this.geminiAnalysis = null;
+                return;
+            }
+
+            const geminiData = await response.json();
+            console.log('[GEMINI] Análise recebida:', geminiData);
+
+            // Guardar dados Gemini para uso no updateUI
+            this.geminiAnalysis = geminiData;
+
+        } catch (error) {
+            console.warn('[GEMINI] Erro ao chamar backend:', error);
+            console.warn('[GEMINI] Usando análise local como fallback');
+            // Fallback: continuar sem dados Gemini
+            this.geminiAnalysis = null;
+        }
     },
 
     /**
