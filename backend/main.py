@@ -42,7 +42,13 @@ def analyze_text_with_gemini(text):
             "score": 0,
             "summary": "API Key not configured.",
             "strengths": ["System error"],
-            "improvements": ["Please configure the GEMINI_API_KEY environment variable."]
+            "improvements": ["Please configure the GEMINI_API_KEY environment variable."],
+            "training_relevance": {
+                "score": 0,
+                "assessment": "API key not configured",
+                "aligned_courses": [],
+                "recommended_courses": []
+            }
         }
 
     try:
@@ -59,6 +65,17 @@ def analyze_text_with_gemini(text):
         - summary: A brief 2-sentence summary of the candidate's profile.
         - strengths: A list of 3 key strengths found in the CV (e.g., "Clear career progression", "Strong technical skills").
         - improvements: A list of 3-4 specific, actionable improvements (e.g., "Quantify achievements in the Sales Manager role", "Add a dedicated Skills section").
+        - training_relevance: An object with:
+          * score: Number 0-100 indicating how relevant the candidate's training/certifications are to their professional area
+          * assessment: Brief 1-2 sentence analysis of training alignment (in Portuguese)
+          * aligned_courses: List of 2-4 courses/certifications that are highly relevant to the candidate's area (if found)
+          * recommended_courses: List of 2-3 suggested courses that would strengthen the profile for this area
+        
+        For training_relevance analysis:
+        - First identify the candidate's main professional area (HR, Tech, Finance, Management, etc.)
+        - Then evaluate if certifications/courses align with that area
+        - Score higher if courses are recent, specialized, and directly applicable
+        - Provide Portuguese names for recommended courses
         
         Do not output markdown code blocks. Output ONLY raw JSON.
         """
