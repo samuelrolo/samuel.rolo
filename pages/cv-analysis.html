@@ -74,7 +74,7 @@
     </section>
 
     <div class="modal fade" id="resultsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header"
                     style="background: linear-gradient(135deg, #1A1A1A 0%, #2d2d2d 100%); border-bottom: none; padding: 1.75rem 2rem 1.25rem 2rem;">
@@ -90,20 +90,73 @@
                 </div>
                 <div class="modal-body p-4" style="background: #f8f9fa;">
 
-                    <!-- BLOCO 1: Retrato Profissional -->
-                    <div class="analysis-block mb-4 p-3"
-                        style="background: white; border-radius: 8px; border-left: 3px solid #BF9A33;">
-                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">Retrato
-                            Profissional</h6>
-                        <div style="font-size: 0.875rem; color: #495057; line-height: 1.7;">
-                            <div class="mb-2"><strong>Anos de experiência identificados:</strong> <span id="yearsExp">A
-                                    calcular...</span></div>
-                            <div class="mb-2"><strong>Área principal de especialização:</strong> <span id="mainArea">A
-                                    identificar...</span></div>
-                            <div class="mb-3"><strong>Nível de senioridade estimado:</strong> <span
-                                    id="seniorityLevel">A avaliar...</span></div>
-                            <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">Esta leitura
-                                resulta da análise do percurso, funções descritas e progressão temporal.</p>
+                    <!-- TOP SECTION: Two Columns -->
+                    <div class="row mb-4">
+                        <!-- LEFT: Retrato Profissional + Leitura do Perfil -->
+                        <div class="col-md-6">
+                            <div class="analysis-block p-3 mb-3"
+                                style="background: white; border-radius: 8px; border-left: 3px solid #BF9A33; height: 100%;">
+                                <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">
+                                    👤 Retrato Profissional</h6>
+                                <div style="font-size: 0.875rem; color: #495057; line-height: 1.7;">
+                                    <div class="mb-2"><strong>Anos de experiência:</strong> <span id="yearsExp">A
+                                            calcular...</span></div>
+                                    <div class="mb-2"><strong>Área principal:</strong> <span id="mainArea">A
+                                            identificar...</span></div>
+                                    <div class="mb-3"><strong>Nível de senioridade:</strong> <span id="seniorityLevel">A
+                                            avaliar...</span></div>
+
+                                    <!-- Leitura do Perfil integrada -->
+                                    <div class="mt-3 pt-3" style="border-top: 1px solid #e9ecef;">
+                                        <div
+                                            style="font-size: 0.85rem; font-weight: 600; color: #6c757d; margin-bottom: 0.5rem;">
+                                            📋 LEITURA DO PERFIL</div>
+                                        <ul
+                                            style="list-style: none; padding: 0; margin: 0; font-size: 0.825rem; color: #495057;">
+                                            <li class="mb-2">• Clareza do papel profissional atual</li>
+                                            <li class="mb-2">• Consistência entre experiência e objetivos</li>
+                                            <li class="mb-2">• Grau de especialização versus generalismo</li>
+                                            <li>• Presença ou ausência de foco estratégico</li>
+                                        </ul>
+                                    </div>
+
+                                    <p
+                                        style="font-size: 0.75rem; color: #6c757d; margin: 0.75rem 0 0 0; font-style: italic;">
+                                        Esta leitura resulta da análise do percurso, funções e progressão temporal.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: Resumo Global AI (Gemini) -->
+                        <div class="col-md-6">
+                            <div class="analysis-block p-3"
+                                style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 8px; border-left: 3px solid #BF9A33; height: 100%;">
+                                <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">
+                                    <i class="fas fa-brain" style="color: #BF9A33; margin-right: 8px;"></i>
+                                    Resumo Global AI
+                                </h6>
+                                <div id="geminiGlobalSummary"
+                                    style="font-size: 0.875rem; color: #495057; line-height: 1.8; min-height: 120px;">
+                                    <p class="text-muted fst-italic">A gerar análise inteligente do CV...</p>
+                                </div>
+
+                                <!-- Pontos Fortes AI -->
+                                <div class="mt-3 pt-3" style="border-top: 1px solid #e9ecef;">
+                                    <div
+                                        style="font-size: 0.85rem; font-weight: 600; color: #28a745; margin-bottom: 0.5rem;">
+                                        ✅ PONTOS FORTES IDENTIFICADOS
+                                    </div>
+                                    <ul id="aiStrengths"
+                                        style="list-style: none; padding: 0; margin: 0; font-size: 0.825rem; color: #495057;">
+                                        <li class="mb-1">• A analisar...</li>
+                                    </ul>
+                                </div>
+
+                                <p
+                                    style="font-size: 0.75rem; color: #6c757d; margin: 0.75rem 0 0 0; font-style: italic;">
+                                    <i class="fas fa-robot"></i> Análise gerada por Gemini AI
+                                </p>
+                            </div>
                         </div>
                     </div>
 
@@ -130,18 +183,6 @@
                             id="maturityLabel">Em Análise</div>
                         <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">O score reflete
                             coerência de percurso, clareza narrativa e alinhamento com o mercado.</p>
-                    </div>
-
-                    <!-- BLOCO 3: Leitura do Perfil -->
-                    <div class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px;">
-                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">Leitura
-                            do Perfil</h6>
-                        <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.875rem; color: #495057;">
-                            <li class="mb-2">• Clareza do papel profissional atual</li>
-                            <li class="mb-2">• Consistência entre experiência e objetivos</li>
-                            <li class="mb-2">• Grau de especialização versus generalismo</li>
-                            <li>• Presença ou ausência de foco estratégico</li>
-                        </ul>
                     </div>
 
                     <!-- BLOCO 4: Competências Identificadas -->
