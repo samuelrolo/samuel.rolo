@@ -1128,6 +1128,41 @@ window.CV_ENGINE = {
             else updateRhythm.textContent = 'Necessita Atualização';
         }
 
+        // INTEGRAÇÃO GEMINI: Training Relevance Analysis
+        if (this.geminiAnalysis && this.geminiAnalysis.training_relevance) {
+            const trainingSection = document.getElementById('trainingRelevanceSection');
+            const trainingScore = document.getElementById('trainingScore');
+            const trainingAssessment = document.getElementById('trainingAssessment');
+            const alignedCoursesDiv = document.getElementById('alignedCoursesDiv');
+            const alignedCoursesList = document.getElementById('alignedCoursesList');
+            const recommendedCoursesDiv = document.getElementById('recommendedCoursesDiv');
+            const recommendedCoursesList = document.getElementById('recommendedCoursesList');
+
+            const tr = this.geminiAnalysis.training_relevance;
+
+            if (trainingSection) trainingSection.style.display = 'block';
+            if (trainingScore) trainingScore.textContent = `${tr.score || 0}/100`;
+            if (trainingAssessment) trainingAssessment.textContent = tr.assessment || 'Análise não disponível';
+
+            // Cursos alinhados
+            if (tr.aligned_courses && tr.aligned_courses.length > 0) {
+                if (alignedCoursesDiv) alignedCoursesDiv.style.display = 'block';
+                if (alignedCoursesList) {
+                    alignedCoursesList.innerHTML = tr.aligned_courses.map(course => `<li>${course}</li>`).join('');
+                }
+            }
+
+            // Cursos recomendados
+            if (tr.recommended_courses && tr.recommended_courses.length > 0) {
+                if (recommendedCoursesDiv) recommendedCoursesDiv.style.display = 'block';
+                if (recommendedCoursesList) {
+                    recommendedCoursesList.innerHTML = tr.recommended_courses.map(course => `<li>${course}</li>`).join('');
+                }
+            }
+
+            console.log('[GEMINI] Training relevance populated:', tr);
+        }
+
         // BLOCO 6: Estrutura e ATS - AGORA COM ANÁLISE ISOLADA
         const atsCompat = document.getElementById('atsCompat');
         const cvStructure = document.getElementById('cvStructure');
