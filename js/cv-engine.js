@@ -49,41 +49,41 @@ window.CV_ENGINE = {
     dictionaries: {
         // Verbos de ação e impacto
         impactVerbs: {
-            pt: ['liderei', 'aumentei', 'crescimento', 'roi', 'kpi', 'budget', 'poupança', 'implementei', 
-                 'estratégia', 'geriu', 'lancei', 'otimizei', 'desenvolvi', 'criei', 'reduzi', 'melhorei',
-                 'coordenei', 'supervisionei', 'negociei', 'alcancei', 'excedi', 'transformei', 'automatizei'],
+            pt: ['liderei', 'aumentei', 'crescimento', 'roi', 'kpi', 'budget', 'poupança', 'implementei',
+                'estratégia', 'geriu', 'lancei', 'otimizei', 'desenvolvi', 'criei', 'reduzi', 'melhorei',
+                'coordenei', 'supervisionei', 'negociei', 'alcancei', 'excedi', 'transformei', 'automatizei'],
             en: ['led', 'increased', 'growth', 'roi', 'kpi', 'budget', 'savings', 'implemented',
-                 'strategy', 'managed', 'launched', 'optimized', 'developed', 'created', 'reduced', 'improved',
-                 'coordinated', 'supervised', 'negotiated', 'achieved', 'exceeded', 'transformed', 'automated',
-                 'driving', 'leading', 'delivering', 'enhancing', 'representing']
+                'strategy', 'managed', 'launched', 'optimized', 'developed', 'created', 'reduced', 'improved',
+                'coordinated', 'supervised', 'negotiated', 'achieved', 'exceeded', 'transformed', 'automated',
+                'driving', 'leading', 'delivering', 'enhancing', 'representing']
         },
         // Secções estruturais
         sections: {
-            pt: ['experiência', 'educação', 'formação', 'contactos', 'resumo', 'skills', 'competências', 
-                 'línguas', 'certificações', 'perfil', 'objetivo', 'sobre mim'],
+            pt: ['experiência', 'educação', 'formação', 'contactos', 'resumo', 'skills', 'competências',
+                'línguas', 'certificações', 'perfil', 'objetivo', 'sobre mim'],
             en: ['experience', 'education', 'training', 'contacts', 'summary', 'skills', 'competencies',
-                 'languages', 'certifications', 'profile', 'objective', 'about me', 'professional experience',
-                 'areas of expertise', 'relevant training']
+                'languages', 'certifications', 'profile', 'objective', 'about me', 'professional experience',
+                'areas of expertise', 'relevant training']
         },
         // Keywords ATS por área
         atsKeywords: {
             hr: ['hr', 'human resources', 'recursos humanos', 'talent', 'recruitment', 'recrutamento',
-                 'performance', 'training', 'formação', 'compensation', 'benefits', 'hris', 'payroll',
-                 'employee', 'workforce', 'organizational', 'change management', 'transformation'],
+                'performance', 'training', 'formação', 'compensation', 'benefits', 'hris', 'payroll',
+                'employee', 'workforce', 'organizational', 'change management', 'transformation'],
             tech: ['software', 'development', 'programming', 'agile', 'scrum', 'devops', 'cloud',
-                   'data', 'analytics', 'machine learning', 'ai', 'python', 'javascript', 'sql'],
+                'data', 'analytics', 'machine learning', 'ai', 'python', 'javascript', 'sql'],
             management: ['project', 'management', 'gestão', 'leadership', 'liderança', 'team', 'equipa',
-                        'strategy', 'estratégia', 'budget', 'planning', 'execution', 'delivery'],
+                'strategy', 'estratégia', 'budget', 'planning', 'execution', 'delivery'],
             consulting: ['consulting', 'consultoria', 'advisory', 'client', 'stakeholder', 'analysis',
-                        'recommendation', 'implementation', 'transformation', 'optimization']
+                'recommendation', 'implementation', 'transformation', 'optimization']
         },
         // Soft skills
         softSkills: {
             pt: ['comunicação', 'liderança', 'trabalho em equipa', 'resolução de problemas', 'criatividade',
-                 'adaptabilidade', 'gestão de tempo', 'negociação', 'pensamento crítico', 'empatia'],
+                'adaptabilidade', 'gestão de tempo', 'negociação', 'pensamento crítico', 'empatia'],
             en: ['communication', 'leadership', 'teamwork', 'problem solving', 'creativity',
-                 'adaptability', 'time management', 'negotiation', 'critical thinking', 'empathy',
-                 'collaboration', 'organizational', 'strategic thinking']
+                'adaptability', 'time management', 'negotiation', 'critical thinking', 'empathy',
+                'collaboration', 'organizational', 'strategic thinking']
         },
         // Níveis de senioridade
         seniorityIndicators: {
@@ -202,11 +202,11 @@ window.CV_ENGINE = {
     extractName(text) {
         // Tentar encontrar nome no início do documento
         const lines = text.split('\n').filter(l => l.trim().length > 0);
-        
+
         // Padrão 1: Nome em MAIÚSCULAS com espaços (ex: S A M U E L  R O L O)
         for (let i = 0; i < Math.min(5, lines.length); i++) {
             const line = lines[i].trim();
-            
+
             // Verificar se é nome com letras separadas por espaços
             if (/^[A-ZÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛÃÕÇ](\s+[A-ZÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛÃÕÇ])+/.test(line)) {
                 // Remover espaços extras e reconstruir nome
@@ -220,12 +220,12 @@ window.CV_ENGINE = {
                     break;
                 }
             }
-            
+
             // Padrão 2: Nome normal (2-5 palavras)
             const words = line.split(/\s+/);
             if (words.length >= 2 && words.length <= 5) {
-                const isName = words.every(w => /^[A-ZÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛÃÕÇ][a-záéíóúàèìòùâêîôûãõç]*$/.test(w) || 
-                                                 /^[A-ZÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛÃÕÇ]+$/.test(w));
+                const isName = words.every(w => /^[A-ZÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛÃÕÇ][a-záéíóúàèìòùâêîôûãõç]*$/.test(w) ||
+                    /^[A-ZÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛÃÕÇ]+$/.test(w));
                 if (isName || line === line.toUpperCase()) {
                     this.data.extractedData.name = words
                         .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
@@ -263,7 +263,7 @@ window.CV_ENGINE = {
             /(?:\+351\s?)?9[1236]\d{7}/,                // Sem espaços: 961925050
             /(?:\(\+351\)\s?)?9[1236]\d\s?\d{3}\s?\d{3}/ // Com parênteses
         ];
-        
+
         for (const pattern of phonePatterns) {
             const phoneMatch = originalText.match(pattern);
             if (phoneMatch) {
@@ -278,7 +278,7 @@ window.CV_ENGINE = {
             /linkedin\.com\/[\w.-]+/i,
             /in\/[\w.-]+(?=\s|$)/i  // Formato curto: in/samuelrolo
         ];
-        
+
         for (const pattern of linkedinPatterns) {
             const linkedinMatch = originalText.match(pattern);
             if (linkedinMatch) {
@@ -298,7 +298,7 @@ window.CV_ENGINE = {
             /portugal/gi,
             /(?:mafra|sintra|cascais|oeiras|almada|amadora|loures|odivelas)/gi
         ];
-        
+
         for (const pattern of locationPatterns) {
             const match = text.match(pattern);
             if (match) {
@@ -313,11 +313,11 @@ window.CV_ENGINE = {
      */
     extractExperiences(text, originalText) {
         const experiences = [];
-        
+
         // Padrões de datas (2020-2024, 01/2020 - 05/2024, etc.)
         const datePattern = /(\d{1,2}\/)?(\d{4})\s*[-–]\s*(\d{1,2}\/)?(\d{4}|presente|atual|current|present)/gi;
         const matches = [...originalText.matchAll(datePattern)];
-        
+
         // Empresas conhecidas
         const knownCompanies = [
             'google', 'microsoft', 'amazon', 'deloitte', 'ey', 'pwc', 'kpmg', 'accenture',
@@ -338,22 +338,22 @@ window.CV_ENGINE = {
         // Calcular anos de experiência
         let totalYears = 0;
         const currentYear = new Date().getFullYear();
-        
+
         matches.forEach(match => {
             const startYear = parseInt(match[2]);
             let endYear = match[4];
-            
-            if (endYear.toLowerCase() === 'presente' || endYear.toLowerCase() === 'atual' || 
+
+            if (endYear.toLowerCase() === 'presente' || endYear.toLowerCase() === 'atual' ||
                 endYear.toLowerCase() === 'current' || endYear.toLowerCase() === 'present') {
                 endYear = currentYear;
             } else {
                 endYear = parseInt(endYear);
             }
-            
+
             if (startYear && endYear && endYear >= startYear) {
                 const years = endYear - startYear;
                 totalYears += years;
-                
+
                 experiences.push({
                     period: `${startYear} - ${endYear === currentYear ? 'Presente' : endYear}`,
                     years: years
@@ -363,7 +363,7 @@ window.CV_ENGINE = {
 
         this.data.extractedData.experiences = experiences;
         this.data.extractedData.yearsExperience = Math.max(1, totalYears);
-        
+
         // Guardar empresas encontradas
         this.data.extractedData.topCompanies = foundCompanies.slice(0, 5);
     },
@@ -373,7 +373,7 @@ window.CV_ENGINE = {
      */
     extractEducation(text, originalText) {
         const education = [];
-        
+
         // Instituições de ensino conhecidas
         const institutions = [
             'nova school of business', 'nova sbe', 'iscte', 'iseg', 'católica', 'católica lisbon',
@@ -433,7 +433,7 @@ window.CV_ENGINE = {
      */
     extractCertifications(text, originalText) {
         const certifications = [];
-        
+
         // Certificações comuns
         const certPatterns = [
             { pattern: /pmp/i, name: 'PMP (Project Management Professional)' },
@@ -522,14 +522,28 @@ window.CV_ENGINE = {
      */
     extractLanguages(text, originalText) {
         const languages = [];
-        
+
         const languagePatterns = [
-            { lang: 'Português', patterns: ['português', 'portuguese', 'native', 'nativo'], levels: ['nativo', 'native', 'fluente', 'fluent'] },
-            { lang: 'Inglês', patterns: ['inglês', 'english'], levels: ['c1', 'c2', 'b2', 'b1', 'fluente', 'fluent', 'advanced', 'avançado', 'upper intermediate', 'intermediate'] },
-            { lang: 'Espanhol', patterns: ['espanhol', 'spanish', 'castellano'], levels: ['fluente', 'avançado', 'intermédio', 'básico'] },
-            { lang: 'Francês', patterns: ['francês', 'french'], levels: ['fluente', 'avançado', 'intermédio', 'básico'] },
-            { lang: 'Alemão', patterns: ['alemão', 'german', 'deutsch'], levels: ['fluente', 'avançado', 'intermédio', 'básico'] },
-            { lang: 'Italiano', patterns: ['italiano', 'italian'], levels: ['fluente', 'avançado', 'intermédio', 'básico'] }
+            { lang: 'Português', patterns: ['português', 'portuguese', 'native', 'nativo'], levels: ['nativo', 'native', 'fluente', 'fluent', 'c2', 'c1'] },
+            { lang: 'Inglês', patterns: ['inglês', 'english'], levels: ['c2', 'c1', 'b2', 'b1', 'a2', 'fluente', 'fluent', 'advanced', 'avançado', 'upper intermediate', 'intermediate', 'básico', 'basic'] },
+            { lang: 'Espanhol', patterns: ['espanhol', 'spanish', 'castellano', 'español'], levels: ['c2', 'c1', 'b2', 'b1', 'a2', 'fluente', 'avançado', 'intermédio', 'básico', 'fluent', 'advanced', 'intermediate', 'basic'] },
+            { lang: 'Francês', patterns: ['francês', 'french', 'français'], levels: ['c2', 'c1', 'b2', 'b1', 'a2', 'fluente', 'avançado', 'intermédio', 'básico', 'fluent', 'advanced', 'intermediate', 'basic'] },
+            { lang: 'Alemão', patterns: ['alemão', 'german', 'deutsch'], levels: ['c2', 'c1', 'b2', 'b1', 'a2', 'fluente', 'avançado', 'intermédio', 'básico', 'fluent', 'advanced', 'intermediate', 'basic'] },
+            { lang: 'Italiano', patterns: ['italiano', 'italian'], levels: ['c2', 'c1', 'b2', 'b1', 'a2', 'fluente', 'avançado', 'intermédio', 'básico'] },
+            { lang: 'Polaco', patterns: ['polaco', 'polish', 'polski'], levels: ['c2', 'c1', 'b2', 'b1', 'a2', 'fluente', 'avançado', 'intermédio', 'básico', 'native', 'nativo'] },
+            { lang: 'Russo', patterns: ['russo', 'russian', 'русский'], levels: ['c2', 'c1', 'b2', 'b1', 'a2', 'fluente', 'avançado', 'intermédio', 'básico', 'native', 'nativo'] },
+            { lang: 'Chinês', patterns: ['chinês', 'chinese', 'mandarin', 'mandarim', '中文'], levels: ['fluente', 'avançado', 'intermédio', 'básico', 'native', 'nativo', 'fluent'] },
+            { lang: 'Japonês', patterns: ['japonês', 'japanese', '日本語'], levels: ['fluente', 'avançado', 'intermédio', 'básico', 'native', 'nativo', 'n1', 'n2', 'n3', 'n4', 'n5'] },
+            { lang: 'Árabe', patterns: ['árabe', 'arabic', 'العربية'], levels: ['fluente', 'avançado', 'intermédio', 'básico', 'native', 'nativo'] },
+            { lang: 'Holandês', patterns: ['holandês', 'dutch', 'nederlands'], levels: ['c2', 'c1', 'b2', 'b1', 'a2', 'fluente', 'avançado', 'intermédio', 'básico'] },
+            { lang: 'Sueco', patterns: ['sueco', 'swedish', 'svenska'], levels: ['c2', 'c1', 'b2', 'b1', 'a2', 'fluente', 'avançado', 'intermédio', 'básico'] },
+            { lang: 'Norueguês', patterns: ['norueguês', 'norwegian', 'norsk'], levels: ['c2', 'c1', 'b2', 'b1', 'a2', 'fluente', 'avançado', 'intermédio', 'básico'] },
+            { lang: 'Dinamarquês', patterns: ['dinamarquês', 'danish', 'dansk'], levels: ['c2', 'c1', 'b2', 'b1', 'a2', 'fluente', 'avançado', 'intermédio', 'básico'] },
+            { lang: 'Coreano', patterns: ['coreano', 'korean', '한국어'], levels: ['fluente', 'avançado', 'intermédio', 'básico', 'native', 'nativo'] },
+            { lang: 'Hindi', patterns: ['hindi', 'हिन्दी'], levels: ['fluente', 'avançado', 'intermédio', 'básico', 'native', 'nativo'] },
+            { lang: 'Romeno', patterns: ['romeno', 'romanian', 'română'], levels: ['c2', 'c1', 'b2', 'b1', 'a2', 'fluente', 'avançado', 'intermédio', 'básico', 'native', 'nativo'] },
+            { lang: 'Checo', patterns: ['checo', 'czech', 'čeština'], levels: ['c2', 'c1', 'b2', 'b1', 'a2', 'fluente', 'avançado', 'intermédio', 'básico'] },
+            { lang: 'Grego', patterns: ['grego', 'greek', 'ελληνικά'], levels: ['c2', 'c1', 'b2', 'b1', 'a2', 'fluente', 'avançado', 'intermédio', 'básico'] }
         ];
 
         for (const langInfo of languagePatterns) {
@@ -641,13 +655,13 @@ window.CV_ENGINE = {
         const allSections = [...this.dictionaries.sections.pt, ...this.dictionaries.sections.en];
         const sectionsFound = allSections.filter(s => text.includes(s)).length;
         estrutura += Math.min(40, sectionsFound * 8); // Até 40 pontos por secções
-        
+
         // Verificar contactos completos
         if (data.contacts.email) estrutura += 15;
         if (data.contacts.phone) estrutura += 15;
         if (data.contacts.linkedin) estrutura += 15;
         if (data.contacts.location) estrutura += 5;
-        
+
         // Tamanho adequado
         const wordCount = text.split(/\s+/).length;
         if (wordCount >= 200 && wordCount <= 800) estrutura += 10;
@@ -657,19 +671,19 @@ window.CV_ENGINE = {
 
         // 2. CONTEÚDO (0-100): Qualidade e relevância
         let conteudo = 0;
-        
+
         // Nome identificado
         if (data.name && data.name !== 'Candidato') conteudo += 15;
-        
+
         // Experiências detalhadas
         conteudo += Math.min(30, data.experiences.length * 10);
-        
+
         // Formação presente
         conteudo += Math.min(20, data.education.length * 10);
-        
+
         // Competências identificadas
         conteudo += Math.min(20, (data.hardSkills.length + data.softSkills.length) * 2);
-        
+
         // Idiomas
         conteudo += Math.min(15, data.languages.length * 5);
 
@@ -677,12 +691,12 @@ window.CV_ENGINE = {
 
         // 3. IMPACTO (0-100): Resultados quantificáveis
         let impacto = 0;
-        
+
         // Verbos de ação
         const allImpactVerbs = [...this.dictionaries.impactVerbs.pt, ...this.dictionaries.impactVerbs.en];
         const impactVerbsFound = allImpactVerbs.filter(v => text.includes(v)).length;
         impacto += Math.min(50, impactVerbsFound * 5);
-        
+
         // Métricas numéricas (%, €, números)
         const metricsPattern = /(\d+%|\d+[\.,]\d+|\d+k|\d+m|\$|€|£|\d+\s*(mil|million|billion))/gi;
         const metricsFound = (text.match(metricsPattern) || []).length;
@@ -692,23 +706,23 @@ window.CV_ENGINE = {
 
         // 4. FORMAÇÃO (0-100): Formação académica e contínua
         let formacao = 0;
-        
+
         // Grau académico
         if (data.education.some(e => e.degree === 'Doutoramento' || e.degree === 'PhD')) formacao += 40;
         else if (data.education.some(e => e.degree === 'Mestrado' || e.degree === 'MBA')) formacao += 35;
         else if (data.education.some(e => e.degree === 'Pós-Graduação')) formacao += 30;
         else if (data.education.some(e => e.degree === 'Licenciatura')) formacao += 25;
         else if (data.education.length > 0) formacao += 20;
-        
+
         // Instituições de prestígio
         const prestigeInst = ['nova', 'católica', 'iscte', 'iseg'];
         if (data.institutions && data.institutions.some(i => prestigeInst.some(p => i.toLowerCase().includes(p)))) {
             formacao += 20;
         }
-        
+
         // Certificações
         formacao += Math.min(30, data.certifications.length * 10);
-        
+
         // Atualização recente (últimos 3 anos)
         const currentYear = new Date().getFullYear();
         if (data.lastEducationYear && (currentYear - data.lastEducationYear) <= 3) {
@@ -719,7 +733,7 @@ window.CV_ENGINE = {
 
         // 5. EXPERIÊNCIA (0-100): Anos e qualidade
         let experiencia = 0;
-        
+
         // Anos de experiência
         const years = data.yearsExperience;
         if (years >= 15) experiencia += 40;
@@ -727,12 +741,12 @@ window.CV_ENGINE = {
         else if (years >= 6) experiencia += 30;
         else if (years >= 3) experiencia += 20;
         else experiencia += 10;
-        
+
         // Empresas de prestígio
         if (data.topCompanies && data.topCompanies.length > 0) {
             experiencia += Math.min(30, data.topCompanies.length * 10);
         }
-        
+
         // Progressão de carreira (múltiplas experiências)
         experiencia += Math.min(30, data.experiences.length * 6);
 
@@ -740,13 +754,13 @@ window.CV_ENGINE = {
 
         // 6. COMPETÊNCIAS (0-100): Hard e soft skills
         let competencias = 0;
-        
+
         // Hard skills
         competencias += Math.min(50, data.hardSkills.length * 7);
-        
+
         // Soft skills
         competencias += Math.min(30, data.softSkills.length * 5);
-        
+
         // Idiomas (além do nativo)
         const additionalLanguages = data.languages.filter(l => l.level !== 'Nativo' && l.level !== 'Native');
         competencias += Math.min(20, additionalLanguages.length * 10);
@@ -765,7 +779,7 @@ window.CV_ENGINE = {
 
         // 1. Formato e estrutura parseável (25 pontos)
         let formatScore = 0;
-        
+
         // Contactos claros
         if (data.contacts.email) {
             formatScore += 8;
@@ -773,19 +787,19 @@ window.CV_ENGINE = {
         } else {
             triggers.push({ positive: false, text: 'Email de contacto não detetado' });
         }
-        
+
         if (data.contacts.phone) {
             formatScore += 7;
             triggers.push({ positive: true, text: 'Número de telefone identificado' });
         } else {
             triggers.push({ positive: false, text: 'Telefone não encontrado no documento' });
         }
-        
+
         // Secções standard
         const standardSections = ['experience', 'education', 'skills', 'experiência', 'formação', 'competências'];
         const sectionsFound = standardSections.filter(s => text.includes(s)).length;
         formatScore += Math.min(10, sectionsFound * 3);
-        
+
         if (sectionsFound >= 3) {
             triggers.push({ positive: true, text: 'Secções principais bem identificadas' });
         } else {
@@ -796,11 +810,11 @@ window.CV_ENGINE = {
 
         // 2. Keywords relevantes (35 pontos)
         let keywordScore = 0;
-        
+
         // Determinar área e verificar keywords
         const area = data.mainArea.toLowerCase();
         let relevantKeywords = [];
-        
+
         if (area.includes('recursos humanos') || area.includes('hr')) {
             relevantKeywords = this.dictionaries.atsKeywords.hr;
         } else if (area.includes('tecnologia')) {
@@ -813,7 +827,7 @@ window.CV_ENGINE = {
 
         const keywordsFound = relevantKeywords.filter(k => text.includes(k)).length;
         keywordScore = Math.min(35, Math.round((keywordsFound / relevantKeywords.length) * 35));
-        
+
         if (keywordsFound >= 8) {
             triggers.push({ positive: true, text: `${keywordsFound} keywords relevantes da área identificadas` });
         } else if (keywordsFound >= 4) {
@@ -829,7 +843,7 @@ window.CV_ENGINE = {
         const allVerbs = [...this.dictionaries.impactVerbs.pt, ...this.dictionaries.impactVerbs.en];
         const verbsFound = allVerbs.filter(v => text.includes(v)).length;
         verbScore = Math.min(20, verbsFound * 2);
-        
+
         if (verbsFound >= 8) {
             triggers.push({ positive: true, text: 'Uso forte de verbos de ação e impacto' });
         } else if (verbsFound >= 4) {
@@ -869,10 +883,10 @@ window.CV_ENGINE = {
 
         // Determinar nível e bullets específicos
         this.data.atsAnalysis.score = Math.min(100, score);
-        
+
         // Classificar nível
         let level, levelBullets;
-        
+
         if (score < 25) {
             level = 'Muito Baixa';
             levelBullets = [
@@ -920,7 +934,7 @@ window.CV_ENGINE = {
      */
     calculateMaturityScore() {
         const factors = this.data.spiderFactors;
-        
+
         // Média ponderada dos fatores
         const weights = {
             estrutura: 0.15,
@@ -978,7 +992,7 @@ window.CV_ENGINE = {
 
         if (maturityScore) maturityScore.textContent = this.data.maturity.score;
         if (maturityLabel) maturityLabel.textContent = this.data.maturity.label;
-        
+
         // Animar barra de progresso da maturidade
         if (maturityProgressBar) {
             setTimeout(() => {
@@ -992,7 +1006,7 @@ window.CV_ENGINE = {
         const languagesList = document.getElementById('languagesList');
 
         if (hardSkillsList) {
-            hardSkillsList.textContent = data.hardSkills.length > 0 
+            hardSkillsList.textContent = data.hardSkills.length > 0
                 ? data.hardSkills.slice(0, 5).join(', ')
                 : 'Não identificadas - adicionar secção de competências';
         }
@@ -1133,7 +1147,7 @@ window.CV_ENGINE = {
                     },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 return `${context.label}: ${context.raw}/100`;
                             }
                         }
@@ -1149,26 +1163,26 @@ window.CV_ENGINE = {
     renderATSSection() {
         const ats = this.data.atsAnalysis;
         const atsColor = this.getATSColor(ats.score);
-        
+
         // Atualizar score e badge
         const scoreDisplay = document.getElementById('atsScoreDisplay');
         const levelBadge = document.getElementById('atsLevelBadge');
         const atsSection = document.getElementById('atsDetailedSection');
-        
+
         if (scoreDisplay) {
             scoreDisplay.textContent = ats.score;
             scoreDisplay.style.color = atsColor;
         }
-        
+
         if (levelBadge) {
             levelBadge.textContent = `Compatibilidade ${ats.level}`;
             levelBadge.style.background = atsColor;
         }
-        
+
         if (atsSection) {
             atsSection.style.borderColor = atsColor;
         }
-        
+
         // Animar barra de progresso ATS
         const atsProgressBar = document.getElementById('atsProgressBar');
         if (atsProgressBar) {
@@ -1178,7 +1192,7 @@ window.CV_ENGINE = {
                 atsProgressBar.style.width = ats.score + '%';
             }, 100);
         }
-        
+
         // Atualizar bullets de diagnóstico
         const bulletsList = document.getElementById('atsLevelBullets');
         if (bulletsList && ats.levelBullets) {
@@ -1188,7 +1202,7 @@ window.CV_ENGINE = {
             });
             bulletsList.innerHTML = bulletsHTML;
         }
-        
+
         // Atualizar gatilhos
         const triggersList = document.getElementById('atsTriggersList');
         if (triggersList && ats.triggers) {
@@ -1219,7 +1233,7 @@ window.CV_ENGINE = {
 };
 
 // Função global para compatibilidade com código existente
-window.renderRadarChart = function(competencies) {
+window.renderRadarChart = function (competencies) {
     if (window.CV_ENGINE) {
         window.CV_ENGINE.renderRadarChart();
     }
