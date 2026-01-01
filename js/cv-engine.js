@@ -1000,6 +1000,36 @@ window.CV_ENGINE = {
             }, 100);
         }
 
+        // NEW: Resumo Global AI e Pontos Fortes (Gemini Backend)
+        // TODO: Integrar com chamada ao backend Gemini quando disponível
+        const geminiSummary = document.getElementById('geminiGlobalSummary');
+        const aiStrengths = document.getElementById('aiStrengths');
+
+        if (geminiSummary && aiStrengths) {
+            // Placeholder até backend Gemini estar integrado
+            // Quando integrado, virá de: const geminiData = await callGeminiBackend(cvText);
+            geminiSummary.innerHTML = `
+                <p style="margin: 0;">Candidato com <strong>${data.yearsExperience} anos de experiência</strong> na área de <strong>${data.mainArea}</strong>, 
+                demonstrando nível de senioridade <strong>${data.seniorityLevel}</strong>. 
+                O CV apresenta estrutura ${factors.estrutura >= 70 ? 'bem organizada' : 'com margem para otimização'} 
+                e ${factors.impacto >= 60 ? 'forte foco em resultados' : 'pode beneficiar de maior ênfase em conquistas quantificáveis'}.</p>
+            `;
+
+            // Pontos Fortes baseados na análise local (até Gemini estar integrado)
+            const strengths = [];
+            if (data.hardSkills.length >= 5) strengths.push('Portfolio diversificado de competências técnicas');
+            if (data.experiences.length >= 3) strengths.push('Progressão de carreira clara e consistente');
+            if (factors.formacao >= 70) strengths.push('Formação académica sólida e atualizada');
+            if (data.languages.length >= 2) strengths.push(`Multilinguismo (${data.languages.length} idiomas)`);
+            if (ats.score >= 75) strengths.push('CV bem otimizado para sistemas ATS');
+
+            if (strengths.length > 0) {
+                aiStrengths.innerHTML = strengths.slice(0, 4).map(s => `<li class="mb-1">• ${s}</li>`).join('');
+            } else {
+                aiStrengths.innerHTML = '<li class="text-muted">A identificar pontos fortes...</li>';
+            }
+        }
+
         // BLOCO 4: Competências Detetadas
         const hardSkillsList = document.getElementById('hardSkillsList');
         const softSkillsList = document.getElementById('softSkillsList');
