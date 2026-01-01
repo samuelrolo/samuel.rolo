@@ -585,6 +585,69 @@
 
                 console.log('✅ Payment initiated, analysis data saved:', result);
 
+                // 🔄 START POLLING: Check payment status and trigger delivery
+                const startPolling = (orderId) => {
+                    let attempts = 0;
+                    const maxAttempts = 30; // 5 minutes (10s intervals)
+
+                    console.log(`🔄 Starting polling for order: ${orderId}`);
+
+                    const pollInterval = setInterval(async () => {
+                        attempts++;
+                        console.log(`🔄 Poll attempt ${attempts}/${maxAttempts} for ${orderId}`);
+
+                        try {
+                            // Check payment status
+                            const statusResponse = await fetch(`${BACKEND_URL}/api/payment/status/${orderId}`);
+                            const statusData = await statusResponse.json();
+
+                            if (statusData.success && statusData.record) {
+                                const record = statusData.record;
+
+                                // If paid and not yet delivered, trigger delivery
+                                if (record.paid && !record.delivered) {
+                                    console.log('✅ Payment confirmed! Triggering delivery...');
+                                    clearInterval(pollInterval);
+
+                                    // Trigger manual delivery
+                                    const deliveryResponse = await fetch(`${BACKEND_URL}/api/services/trigger-delivery/${orderId}`, {
+                                        method: 'POST'
+                                    });
+                                    const deliveryData = await deliveryResponse.json();
+
+                                    if (deliveryData.success) {
+                                        console.log('📧 Report delivered successfully!');
+                                        statusMsg.innerHTML = `
+                                            <div class="alert alert-success">
+                                                <strong>✅ Pagamento confirmado!</strong><br>
+                                                O relatório foi enviado para <strong>${email}</strong>
+                                            </div>
+                                        `;
+                                    }
+                                }
+
+                                // If already delivered, stop polling
+                                if (record.delivered) {
+                                    console.log('📧 Report already delivered');
+                                    clearInterval(pollInterval);
+                                }
+                            }
+
+                            // Stop after max attempts
+                            if (attempts >= maxAttempts) {
+                                console.log('⏱ Polling timeout reached');
+                                clearInterval(pollInterval);
+                            }
+
+                        } catch (error) {
+                            console.warn(`Poll error:`, error);
+                        }
+                    }, 10000); // Poll every 10 seconds
+                };
+
+                // Start polling with the order ID
+                startPolling(result.orderId);
+
                 // Payment initiated successfully
                 statusMsg.innerHTML = `
                     <div class="alert alert-success">
