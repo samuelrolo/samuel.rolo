@@ -1,5 +1,16 @@
 /* CORREÇÃO ESPECÍFICA PARA PROBLEMAS DE MODAL - Share2Inspire Website */
 
+/* Container Width Override - Better Horizontal Space Usage */
+.container {
+    max-width: 1400px !important;
+}
+
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1520px !important;
+    }
+}
+
 body {
     padding-top: 80px !important;
     /* Espaço para a navegação fixa */
