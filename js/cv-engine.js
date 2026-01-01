@@ -1045,6 +1045,37 @@ window.CV_ENGINE = {
             }, 100);
         }
 
+        // NOVO: Animar 4 Barras Verticais Douradas
+        const barEstrutura = document.getElementById('barEstrutura');
+        const barConteudo = document.getElementById('barConteudo');
+        const barFormacao = document.getElementById('barFormacao');
+        const barExperiencia = document.getElementById('barExperiencia');
+        const scoreEstrutura = document.getElementById('scoreEstrutura');
+        const scoreConteudo = document.getElementById('scoreConteudo');
+        const scoreFormacao = document.getElementById('scoreFormacao');
+        const scoreExperiencia = document.getElementById('scoreExperiencia');
+
+        if (barEstrutura && scoreEstrutura) {
+            const estruturaScore = Math.round(factors.estrutura);
+            scoreEstrutura.textContent = estruturaScore;
+            setTimeout(() => { barEstrutura.style.height = estruturaScore + '%'; }, 200);
+        }
+        if (barConteudo && scoreConteudo) {
+            const conteudoScore = Math.round(factors.conteudo);
+            scoreConteudo.textContent = conteudoScore;
+            setTimeout(() => { barConteudo.style.height = conteudoScore + '%'; }, 400);
+        }
+        if (barFormacao && scoreFormacao) {
+            const formacaoScore = Math.round(factors.formacao);
+            scoreFormacao.textContent = formacaoScore;
+            setTimeout(() => { barFormacao.style.height = formacaoScore + '%'; }, 600);
+        }
+        if (barExperiencia && scoreExperiencia) {
+            const experienciaScore = Math.round(factors.experiencia);
+            scoreExperiencia.textContent = experienciaScore;
+            setTimeout(() => { barExperiencia.style.height = experienciaScore + '%'; }, 800);
+        }
+
         // INTEGRAÇÃO GEMINI AI: Resumo Global e Pontos Fortes (REAL DATA)
         const geminiSummary = document.getElementById('geminiGlobalSummary');
         const aiStrengths = document.getElementById('aiStrengths');
