@@ -2684,38 +2684,50 @@
     </section>
 
     </main>
-    <!-- Contact Modal -->
-    <div class="modal fade s2i-modal" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel"
-        aria-hidden="true">
+    <!-- Contact Modal - Modern Design -->
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content"
+                style="border: none; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15);">
+                <div class="modal-header" style="border-bottom: 1px solid #f0f0f0; padding: 32px 40px 24px;">
+                    <h5 class="modal-title" id="contactModalLabel"
+                        style="font-size: 1.5rem; font-weight: 600; color: #2d2d2d; margin: 0;">Entre em Contacto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        style="opacity: 0.5;"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="padding: 32px 40px;">
                     <form id="contactForm">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="name" class="s2i-form-label">Nome *</label>
-                                <input type="text" class="s2i-form-control" id="name" name="name"
-                                    placeholder="O seu nome" required>
+                                <label for="name"
+                                    style="font-size: 0.85rem; font-weight: 500; color: #555; margin-bottom: 8px; display: block;">Nome
+                                    *</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="O seu nome"
+                                    required
+                                    style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 16px; background: #fafafa; font-size: 0.95rem; transition: all 0.3s;">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="email" class="s2i-form-label">Email *</label>
-                                <input type="email" class="s2i-form-control" id="email" name="email"
-                                    placeholder="O seu email" required>
+                                <label for="email"
+                                    style="font-size: 0.85rem; font-weight: 500; color: #555; margin-bottom: 8px; display: block;">Email
+                                    *</label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                    placeholder="O seu email" required
+                                    style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 16px; background: #fafafa; font-size: 0.95rem; transition: all 0.3s;">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="phone" class="s2i-form-label">Telefone</label>
-                                <input type="tel" class="s2i-form-control" id="phone" name="phone"
-                                    placeholder="9xxxxxxxx">
+                                <label for="phone"
+                                    style="font-size: 0.85rem; font-weight: 500; color: #555; margin-bottom: 8px; display: block;">Telefone</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="9xxxxxxxx"
+                                    style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 16px; background: #fafafa; font-size: 0.95rem; transition: all 0.3s;">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="reason" class="s2i-form-label">Motivo *</label>
-                                <select class="s2i-form-control" id="reason" name="reason" required>
+                                <label for="reason"
+                                    style="font-size: 0.85rem; font-weight: 500; color: #555; margin-bottom: 8px; display: block;">Motivo
+                                    *</label>
+                                <select class="form-control" id="reason" name="reason" required
+                                    style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 16px; background: #fafafa; font-size: 0.95rem; transition: all 0.3s;">
                                     <option value="" selected disabled>Selecione um motivo</option>
                                     <option value="Informações">Informações</option>
                                     <option value="Orçamento">Orçamento</option>
@@ -2724,31 +2736,101 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="message" class="s2i-form-label">Mensagem *</label>
-                            <textarea class="s2i-form-control" id="message" name="message" rows="4"
-                                placeholder="Como podemos ajudar?" required></textarea>
+                        <div class="mb-4">
+                            <label for="message"
+                                style="font-size: 0.85rem; font-weight: 500; color: #555; margin-bottom: 8px; display: block;">Mensagem
+                                *</label>
+                            <textarea class="form-control" id="message" name="message" rows="4"
+                                placeholder="Como podemos ajudar?" required
+                                style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 16px; background: #fafafa; font-size: 0.95rem; transition: all 0.3s; resize: vertical;"></textarea>
                         </div>
-                        <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
-                            <label class="form-check-label small text-muted" for="privacy">
-                                Aceito a <a href="politica-privacidade.html" target="_blank"
-                                    class="text-decoration-none s2i-text-gold">Política de Privacidade</a> *
-                            </label>
-                        </div>
-                        <div class="alert alert-success d-none" id="contactSuccess">
-                            Mensagem enviada com sucesso!
-                        </div>
-                        <div class="alert alert-danger d-none" id="contactError">
-                            Erro ao enviar mensagem.
-                        </div>
-                        <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
+                        <div id="contactFormMessage"></div>
+                        <button type="submit" class="btn w-100"
+                            style="background: #BF9A33; color: #fff; border: none; border-radius: 8px; padding: 14px 32px; font-weight: 500; font-size: 1rem; transition: all 0.3s;"
+                            onmouseover="this.style.background='#a58428'" onmouseout="this.style.background='#BF9A33'">
                             Enviar Mensagem
                         </button>
                     </form>
                 </div>
             </div>
         </div>
+    </div>
+
+    <style>
+        /* Modern form focus states */
+        #contactForm .form-control:focus {
+            border-color: #BF9A33 !important;
+            box-shadow: 0 0 0 3px rgba(191, 154, 51, 0.1) !important;
+            background: #fff !important;
+            outline: none;
+        }
+
+        #contactForm .form-control::placeholder {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+    </style>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="contactModalLabel">Entre em Contacto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="contactForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="s2i-form-label">Nome *</label>
+                            <input type="text" class="s2i-form-control" id="name" name="name" placeholder="O seu nome"
+                                required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="s2i-form-label">Email *</label>
+                            <input type="email" class="s2i-form-control" id="email" name="email"
+                                placeholder="O seu email" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="s2i-form-label">Telefone</label>
+                            <input type="tel" class="s2i-form-control" id="phone" name="phone" placeholder="9xxxxxxxx">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="reason" class="s2i-form-label">Motivo *</label>
+                            <select class="s2i-form-control" id="reason" name="reason" required>
+                                <option value="" selected disabled>Selecione um motivo</option>
+                                <option value="Informações">Informações</option>
+                                <option value="Orçamento">Orçamento</option>
+                                <option value="Dúvida Técnica">Dúvida Técnica</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="s2i-form-label">Mensagem *</label>
+                        <textarea class="s2i-form-control" id="message" name="message" rows="4"
+                            placeholder="Como podemos ajudar?" required></textarea>
+                    </div>
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
+                        <label class="form-check-label small text-muted" for="privacy">
+                            Aceito a <a href="politica-privacidade.html" target="_blank"
+                                class="text-decoration-none s2i-text-gold">Política de Privacidade</a> *
+                        </label>
+                    </div>
+                    <div class="alert alert-success d-none" id="contactSuccess">
+                        Mensagem enviada com sucesso!
+                    </div>
+                    <div class="alert alert-danger d-none" id="contactError">
+                        Erro ao enviar mensagem.
+                    </div>
+                    <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
+                        Enviar Mensagem
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
     </div>
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
