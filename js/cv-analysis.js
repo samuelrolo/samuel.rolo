@@ -511,7 +511,12 @@ function setupReportPaymentHandler(candidateName) {
                 const response = await fetch(BACKEND_URL + '/api/services/request-report-payment', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, phone })
+                    body: JSON.stringify({ 
+                        name, 
+                        email, 
+                        phone,
+                        analysis_data: window.currentReportData  // Include analysis data for PDF generation
+                    })
                 });
 
                 const paymentResult = await response.json();
