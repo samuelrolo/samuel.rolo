@@ -1226,8 +1226,7 @@ window.CV_ENGINE = {
             readability.textContent = factors.conteudo >= 70 ? 'Boa' : factors.conteudo >= 50 ? 'Média' : 'A Melhorar';
         }
 
-        // Renderizar Radar Chart com novos fatores
-        this.renderRadarChart();
+        // Radar chart removed - usando apenas barras verticais
 
         // Renderizar secção ATS detalhada (se existir container)
         this.renderATSSection();
@@ -1319,9 +1318,4 @@ window.CV_ENGINE = {
     }
 };
 
-// Função global para compatibilidade com código existente
-window.renderRadarChart = function (competencies) {
-    if (window.CV_ENGINE) {
-        window.CV_ENGINE.renderRadarChart();
-    }
-};
+
