@@ -174,36 +174,52 @@ window.CV_ENGINE = {
     async callGeminiBackend(file) {
         const GEMINI_BACKEND_URL = 'https://europe-west1-share2inspire-beckend.cloudfunctions.net/analyze-cv';
 
-        console.log('[GEMINI] Enviando CV para análise IA...');
+        console.log('[GEMINI] 📤 Enviando CV para análise IA...');
+        console.log('[GEMINI] 📋 Ficheiro:', file.name, '- Tamanho:', Math.round(file.size / 1024), 'KB');
 
         try {
             // Criar FormData com o ficheiro
             const formData = new FormData();
             formData.append('file', file);
 
-            // Chamar backend Gemini
+            // Chamar backend Gemini com timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
             const response = await fetch(GEMINI_BACKEND_URL, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                signal: controller.signal
             });
+
+            clearTimeout(timeoutId);
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.warn('[GEMINI] Erro do backend:', errorText);
+                console.warn('[GEMINI] ⚠️ Erro do backend (HTTP', response.status, '):', errorText);
                 // Fallback: usar análise local se backend falhar
                 this.geminiAnalysis = null;
                 return;
             }
 
             const geminiData = await response.json();
-            console.log('[GEMINI] Análise recebida:', geminiData);
+            console.log('[GEMINI] ✅ Análise recebida com sucesso!');
+            console.log('[GEMINI] 📊 Dados:', {
+                hasSummary: !!geminiData.summary,
+                hasStrengths: !!geminiData.strengths,
+                strengthsCount: geminiData.strengths?.length || 0
+            });
 
             // Guardar dados Gemini para uso no updateUI
             this.geminiAnalysis = geminiData;
 
         } catch (error) {
-            console.warn('[GEMINI] Erro ao chamar backend:', error);
-            console.warn('[GEMINI] Usando análise local como fallback');
+            if (error.name === 'AbortError') {
+                console.warn('[GEMINI] ⏱️ Timeout: Backend demorou mais de 30s');
+            } else {
+                console.warn('[GEMINI] ❌ Erro ao chamar backend:', error.message);
+            }
+            console.warn('[GEMINI] 🔄 Usando análise local como fallback');
             // Fallback: continuar sem dados Gemini
             this.geminiAnalysis = null;
         }
@@ -1226,92 +1242,6 @@ window.CV_ENGINE = {
         if (score >= 50) return '#BF9A33'; // Dourado
         if (score >= 25) return '#f0ad4e'; // Laranja
         return '#dc3545'; // Vermelho
-    },
-
-    /**
-     * Renderizar gráfico radar com os 6 fatores claros
-     */
-    renderRadarChart() {
-        const canvas = document.getElementById('radarChart');
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d');
-        const factors = this.data.spiderFactors;
-
-        // Destruir gráfico anterior se existir
-        if (window.cvRadarChart) {
-            window.cvRadarChart.destroy();
-        }
-
-        window.cvRadarChart = new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: [
-                    'Estrutura',
-                    'Conteúdo',
-                    'Impacto',
-                    'Formação',
-                    'Experiência',
-                    'Competências'
-                ],
-                datasets: [{
-                    label: 'Análise do CV',
-                    data: [
-                        factors.estrutura,
-                        factors.conteudo,
-                        factors.impacto,
-                        factors.formacao,
-                        factors.experiencia,
-                        factors.competencias
-                    ],
-                    backgroundColor: 'rgba(191, 154, 51, 0.2)',
-                    borderColor: '#BF9A33',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#BF9A33',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#BF9A33'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    r: {
-                        beginAtZero: true,
-                        max: 100,
-                        min: 0,
-                        ticks: {
-                            stepSize: 20,
-                            font: { size: 10 },
-                            backdropColor: 'transparent'
-                        },
-                        pointLabels: {
-                            font: { size: 11, weight: '500' },
-                            color: '#1A1A1A'
-                        },
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.1)'
-                        },
-                        angleLines: {
-                            color: 'rgba(0, 0, 0, 0.1)'
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                return `${context.label}: ${context.raw}/100`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
     },
 
     /**
