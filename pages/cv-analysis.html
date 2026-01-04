@@ -773,11 +773,56 @@
                 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
                 const orderId = `CVA-${Date.now()}`;
 
+
+                // Transform CV_ENGINE data to backend expected format
+                const transformedData = window.CV_ENGINE?.data ? {
+                    candidate_profile: {
+                        detected_name: window.CV_ENGINE.data.extractedData?.name || 'Candidato',
+                        detected_role: window.CV_ENGINE.data.extractedData?.currentRole || window.CV_ENGINE.data.extractedData?.mainArea || 'Profissional',
+                        total_years_exp: `Anos de experiência acumulada: ${window.CV_ENGINE.data.extractedData?.yearsExperience || 0}`,
+                        seniority: window.CV_ENGINE.data.extractedData?.seniorityLevel || 'A definir'
+                    },
+                    maturity_and_skills: window.CV_ENGINE.data.extractedData?.hardSkills?.slice(0, 3).map(skill => ({
+                        title: skill,
+                        metric: 'Identificado',
+                        detail: 'Competência técnica presente no CV'
+                    })) || [],
+                    key_strengths: window.CV_ENGINE.data.extractedData?.softSkills?.slice(0, 3).map(skill => ({
+                        title: skill,
+                        metric: 'Forte',
+                        detail: 'Soft skill evidenciada'
+                    })) || [],
+                    evolution_roadmap: {
+                        pdf_details: [{
+                            title: 'Próximos Passos',
+                            context: 'Áreas de desenvolvimento identificadas',
+                            actions: ['Continuar a desenvolver competências técnicas', 'Reforçar experiência na área']
+                        }]
+                    },
+                    strategic_feedback: {
+                        pdf_details: {
+                            market_read: 'CV analisado com sucesso',
+                            what_to_reinforce: window.CV_ENGINE.data.extractedData?.hardSkills?.slice(0, 2).join(', ') || 'Competências identificadas',
+                            what_to_adjust: 'Continuar a desenvolver perfil profissional'
+                        }
+                    },
+                    radar_data: {
+                        ats: window.CV_ENGINE.data.atsAnalysis?.score || 70,
+                        impact: window.CV_ENGINE.data.spiderFactors?.impacto || 65,
+                        structure: window.CV_ENGINE.data.spiderFactors?.estrutura || 70,
+                        market_fit: 60,
+                        readiness: 65
+                    },
+                    final_verdict: {
+                        score: window.CV_ENGINE.data.maturity?.score || 70
+                    }
+                } : {};
+
                 const requestData = {
                     name: name,
                     email: email,
                     phone: phone,
-                    analysis_data: window.CV_ENGINE?.data || {}  // ✅ Send analysis data to backend
+                    analysis_data: transformedData  // ✅ Send transformed data with candidate_profile
                 };
 
                 console.log('💳 Sending payment request with analysis data to backend...');
