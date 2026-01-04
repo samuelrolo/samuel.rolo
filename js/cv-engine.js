@@ -175,7 +175,8 @@ window.CV_ENGINE = {
      * INTEGRAÇÃO GEMINI AI: Chamar backend para análise avançada
      */
     async callGeminiBackend(file) {
-        const GEMINI_BACKEND_URL = 'https://europe-west1-share2inspire-beckend.cloudfunctions.net/analyze-cv';
+        // CORRECTED: Use App Engine endpoint instead of non-existent Cloud Function
+        const GEMINI_BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com/api/analyze-cv';
 
         console.log('[GEMINI] 🔍 CHECKPOINT 1: Iniciando callGeminiBackend');
         console.log('[GEMINI] 📤 Enviando CV para análise IA...');
