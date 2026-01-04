@@ -711,7 +711,36 @@
                         modal.show();
                     }
                 } catch (error) {
-                    alert('Erro ao processar ficheiro: ' + error.message);
+                    // Handle specific validation errors with user-friendly messages
+                    if (error.message === 'INVALID_DOCUMENT_TYPE') {
+                        alert('⚠️ DOCUMENTO INVÁLIDO\n\n' +
+                            'Este parece ser um Cartão de Cidadão ou outro documento oficial, não um CV.\n\n' +
+                            'Por favor, carregue um Curriculum Vitae (CV/Resume) profissional.');
+                    } else if (error.message === 'MISSING_CV_CONTENT') {
+                        const userConfirm = confirm(
+                            '⚠️ NÃO É UM CV / INFORMAÇÃO INSUFICIENTE\n\n' +
+                            'O documento carregado não parece ter a informação necessária para análise.\n\n' +
+                            'Um CV deve incluir:\n' +
+                            '✓ Experiência profissional OU Formação académica\n' +
+                            '✓ Competências/Skills\n\n' +
+                            'Garante que estás a carregar o teu CV e/ou atualiza-o com a informação mínima.\n\n' +
+                            '💬 Precisas de ajuda? Clica OK para ir aos contactos.'
+                        );
+                        if (userConfirm) {
+                            // Scroll to footer contacts section
+                            document.getElementById('contactos')?.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    } else if (error.message === 'DOCUMENT_TOO_SHORT') {
+                        alert('⚠️ DOCUMENTO MUITO CURTO\n\n' +
+                            'O documento não parece ser um CV completo.\n\n' +
+                            'Por favor, carregue um CV mais detalhado com experiência, formação e competências.');
+                    } else if (error.message === 'SUSPICIOUS_DOCUMENT') {
+                        alert('⚠️ DOCUMENTO SUSPEITO\n\n' +
+                            'O documento contém características atípicas de um CV.\n\n' +
+                            'Certifica-te de que estás a carregar um Curriculum Vitae (CV/Resume).');
+                    } else {
+                        alert('Erro ao processar ficheiro: ' + error.message);
+                    }
                     console.error('[CV ANALYSIS] Error:', error);
                 }
             }

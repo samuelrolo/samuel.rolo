@@ -115,22 +115,25 @@ window.CV_ENGINE = {
                 throw new Error('Formato não suportado. Utilize PDF ou DOCX.');
             }
 
-            // 1. Extrair dados estruturados do CV
+            // 1. Validar que é um CV e não outro tipo de documento
+            this.validateDocumentType(this.data.rawText, this.data.originalText);
+
+            // 2. Extrair dados estruturados do CV
             this.extractAllData();
 
-            // 2. Calcular scores dos fatores do spider
+            // 3. Calcular scores dos fatores do spider
             this.calculateSpiderFactors();
 
-            // 3. Calcular análise ATS isolada
+            // 4. Calcular análise ATS isolada
             this.calculateATSAnalysis();
 
-            // 4. Calcular maturidade global
+            // 5. Calcular maturidade global
             this.calculateMaturityScore();
 
-            // 5. INTEGRAÇÃO GEMINI AI: Análise avançada com backend
+            // 6. INTEGRAÇÃO GEMINI AI: Análise avançada com backend
             await this.callGeminiBackend(file);
 
-            // 6. Atualizar UI (agora com dados Gemini incluídos)
+            // 7. Atualizar UI (agora com dados Gemini incluídos)
             this.updateUI();
 
             console.log('[CV_ENGINE] Análise completa:', this.data);
@@ -174,8 +177,10 @@ window.CV_ENGINE = {
     async callGeminiBackend(file) {
         const GEMINI_BACKEND_URL = 'https://europe-west1-share2inspire-beckend.cloudfunctions.net/analyze-cv';
 
+        console.log('[GEMINI] 🔍 CHECKPOINT 1: Iniciando callGeminiBackend');
         console.log('[GEMINI] 📤 Enviando CV para análise IA...');
         console.log('[GEMINI] 📋 Ficheiro:', file.name, '- Tamanho:', Math.round(file.size / 1024), 'KB');
+        console.log('[GEMINI] 🌐 Endpoint:', GEMINI_BACKEND_URL);
 
         try {
             // Criar FormData com o ficheiro
@@ -1315,6 +1320,117 @@ window.CV_ENGINE = {
             spiderFactors: this.data.spiderFactors,
             atsAnalysis: this.data.atsAnalysis
         };
+    },
+
+    /**
+     * Validar tipo de documento para rejeitar cartões de cidadão e outros documentos não-CV
+     */
+    validateDocumentType(text, originalText) {
+        console.log('[CV_ENGINE] 🔍 Validando tipo de documento...');
+
+        // Red flags para documentos não-CV (ID cards, drivers license, passports, etc)
+        const nonCVKeywords = {
+            pt: [
+                'cartão de cidadão', 'número de cidadão', 'cc n.º', 'nif', 'número de identificação fiscal',
+                'carta de condução', 'alvará', 'licença', 'autoridade emissora', 'validade até',
+                'data de nascimento', 'filiação', 'naturalidade', 'altura', 'sexo masculino', 'sexo feminino',
+                'assinatura do titular', 'estado civil', 'país de nascimento'
+            ],
+            en: [
+                'citizen card', 'citizen number', 'national id', 'identity card', 'id card number',
+                'driving license', 'driver\'s license', 'issuing authority', 'valid until', 'expires',
+                'date of birth', 'place of birth', 'nationality', 'marital status', 'height', 'gender',
+                'passport number', 'signature of holder'
+            ]
+        };
+
+        // Green flags para CVs reais
+        const cvKeywords = {
+            pt: [
+                'experiência profissional', 'experiências profissionais', 'percurso profissional',
+                'formação académica', 'formação', 'educação', 'competências', 'habilidades',
+                'curriculum vitae', 'currículo', 'perfil profissional', 'objetivo profissional',
+                'hard skills', 'soft skills', 'certificações', 'idiomas', 'línguas',
+                'projetos', 'voluntariado', 'publicações', 'conquistas'
+            ],
+            en: [
+                'professional experience', 'work experience', 'employment history', 'career summary',
+                'education', 'academic background', 'qualifications', 'skills', 'competencies',
+                'curriculum vitae', 'resume', 'professional profile', 'career objective',
+                'hard skills', 'soft skills', 'certifications', 'languages', 'projects',
+                'volunteer work', 'publications', 'achievements', 'references'
+            ]
+        };
+
+        const lowerText = text;
+        const allNonCVKeywords = [...nonCVKeywords.pt, ...nonCVKeywords.en];
+        const allCVKeywords = [...cvKeywords.pt, ...cvKeywords.en];
+
+        // Contar red flags
+        const nonCVMatches = allNonCVKeywords.filter(k => lowerText.includes(k.toLowerCase()));
+        const nonCVScore = nonCVMatches.length;
+
+        // Contar green flags
+        const cvMatches = allCVKeywords.filter(k => lowerText.includes(k.toLowerCase()));
+        const cvScore = cvMatches.length;
+
+        console.log('[CV_ENGINE] 📊 Validação:', {
+            nonCVScore,
+            cvScore,
+            wordCount,
+            nonCVMatches: nonCVMatches.slice(0, 5),
+            cvMatches: cvMatches.slice(0, 5)
+        });
+
+        // Regra 1: Se tem 3+ red flags, é quase certamente um ID card
+        if (nonCVScore >= 3) {
+            console.error('[CV_ENGINE] ❌ Documento rejeitado: Detetado como cartão de cidadão ou documento oficial');
+            throw new Error('INVALID_DOCUMENT_TYPE');
+        }
+
+        // Regra 2 MELHORADA: Verificar se tem conteúdo mínimo de CV
+        // Um CV DEVE ter pelo menos UMA das seguintes combinações:
+        // - Experiência profissional OU Formação académica
+        // E também:
+        // - Competências/Skills
+
+        const hasExperience = cvMatches.some(m =>
+            m.includes('experiência') || m.includes('experience') ||
+            m.includes('profissional') || m.includes('professional') ||
+            m.includes('employment') || m.includes('work')
+        );
+
+        const hasEducation = cvMatches.some(m =>
+            m.includes('formação') || m.includes('educação') || m.includes('education') ||
+            m.includes('académica') || m.includes('academic')
+        );
+
+        const hasSkills = cvMatches.some(m =>
+            m.includes('competências') || m.includes('skills') ||
+            m.includes('habilidades') || m.includes('competencies')
+        );
+
+        const hasCVCore = (hasExperience || hasEducation) && hasSkills;
+
+        if (!hasCVCore && wordCount >= 100) {
+            console.error('[CV_ENGINE] ❌ Documento rejeitado: Sem estrutura mínima de CV (experiência/formação + competências)');
+            throw new Error('MISSING_CV_CONTENT');
+        }
+
+        // Regra 3: Se é muito curto E não tem green flags
+        if (cvScore === 0 && wordCount < 150) {
+            console.error('[CV_ENGINE] ❌ Documento rejeitado: Demasiado curto e sem indicadores de CV');
+            throw new Error('DOCUMENT_TOO_SHORT');
+        }
+
+        // Regra 4: Se ratio red/green é muito alto, suspeito
+        if (nonCVScore > 0 && cvScore > 0 && (nonCVScore / cvScore) > 2) {
+            console.warn('[CV_ENGINE] ⚠️ Documento suspeito: Muitos indicadores não-CV');
+            throw new Error('SUSPICIOUS_DOCUMENT');
+        }
+
+        console.log('[CV_ENGINE] ✅ Documento validado como CV');
+        return true;
     }
 };
 
