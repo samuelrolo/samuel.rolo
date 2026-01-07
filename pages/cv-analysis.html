@@ -84,398 +84,229 @@
         </div>
     </section>
 
+    <!-- MODAL DE RESULTADOS - Design Clean e Minimalista -->
     <div class="modal fade" id="resultsModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered" style="max-width: 95%;">
-            <div class="modal-content">
-                <div class="modal-header"
-                    style="background: linear-gradient(135deg, #1A1A1A 0%, #2d2d2d 100%); border-bottom: none; padding: 1.75rem 2rem 1.25rem 2rem;">
-                    <div style="width: 100%;">
-                        <h5 class="modal-title text-white"
-                            style="font-weight: 500; font-size: 1.35rem; margin-bottom: 0.5rem;">Análise Inicial do
-                            Perfil</h5>
-                        <p class="text-white" style="font-size: 0.875rem; opacity: 0.85; margin: 0;">Leitura automática
-                            do teu CV, baseada em estrutura, conteúdo e posicionamento.</p>
+        <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered" style="max-width: 900px;">
+            <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden;">
+                
+                <!-- HEADER MINIMALISTA -->
+                <div class="modal-header" style="background: #fff; border-bottom: 1px solid #eee; padding: 1.5rem 2rem;">
+                    <div>
+                        <h5 class="modal-title" style="font-weight: 600; font-size: 1.25rem; color: #1a1a1a; margin: 0;">Análise do Perfil</h5>
+                        <p style="font-size: 0.8rem; color: #888; margin: 0.25rem 0 0 0;">Leitura automática baseada em estrutura e conteúdo</p>
                     </div>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" style="opacity: 0.5;"></button>
                 </div>
-                <div class="modal-body p-4" style="background: #f8f9fa;">
+                
+                <!-- BODY CLEAN -->
+                <div class="modal-body" style="background: #fff; padding: 2rem;">
 
-                    <!-- TOP SECTION: Two Columns -->
-                    <div class="row mb-4">
-                        <!-- LEFT: Retrato Profissional + Leitura do Perfil -->
-                        <div class="col-md-6">
-                            <div class="analysis-block p-3 mb-3"
-                                style="background: white; border-radius: 8px; border-left: 3px solid #BF9A33; height: 100%;">
-                                <h6 style="font-size: 0.9rem; font-weight: 500; color: #333; margin-bottom: 1rem;">
-                                    👤 Retrato Profissional</h6>
-                                <div style="font-size: 0.85rem; font-weight: 400; color: #555; line-height: 1.8;">
-                                    <div class="mb-2"><strong>Anos de experiência:</strong> <span id="yearsExp">A
-                                            calcular...</span></div>
-                                    <div class="mb-2"><strong>Área principal:</strong> <span id="mainArea">A
-                                            identificar...</span></div>
-                                    <div class="mb-3"><strong>Nível de senioridade:</strong> <span id="seniorityLevel">A
-                                            avaliar...</span></div>
-
-                                    <!-- Leitura do Perfil integrada -->
-                                    <div class="mt-3 pt-3" style="border-top: 1px solid #e9ecef;">
-                                        <div
-                                            style="font-size: 0.8rem; font-weight: 500; color: #888; letter-spacing: 0.5px; margin-bottom: 0.5rem;">
-                                            📋 LEITURA DO PERFIL</div>
-                                        <ul
-                                            style="list-style: none; padding: 0; margin: 0; font-size: 0.8rem; font-weight: 400; color: #666;">
-                                            <li class="mb-2">• Clareza do papel profissional atual</li>
-                                            <li class="mb-2">• Consistência entre experiência e objetivos</li>
-                                            <li class="mb-2">• Grau de especialização versus generalismo</li>
-                                            <li>• Presença ou ausência de foco estratégico</li>
-                                        </ul>
-                                    </div>
-
-                                    <p
-                                        style="font-size: 0.75rem; color: #6c757d; margin: 0.75rem 0 0 0; font-style: italic;">
-                                        Esta leitura resulta da análise do percurso, funções e progressão temporal.</p>
-                                </div>
-                            </div>
+                    <!-- SCORE PRINCIPAL -->
+                    <div style="text-align: center; margin-bottom: 2.5rem;">
+                        <div style="font-size: 4rem; font-weight: 700; color: #1a1a1a; line-height: 1;" id="maturityScore">--</div>
+                        <div style="font-size: 0.85rem; color: #999; margin-top: 0.25rem;">Maturidade Profissional</div>
+                        <div style="width: 200px; height: 4px; background: #f0f0f0; border-radius: 2px; margin: 1rem auto 0.5rem;">
+                            <div id="maturityProgressBar" style="height: 100%; background: #1a1a1a; border-radius: 2px; width: 0%; transition: width 1s ease;"></div>
                         </div>
+                        <span id="maturityLabel" style="font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 1px;">Em análise</span>
+                    </div>
 
-                        <!-- RIGHT: Resumo Global AI (Gemini) -->
-                        <div class="col-md-6">
-                            <div class="analysis-block p-3"
-                                style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 8px; border-left: 3px solid #BF9A33; height: 100%;">
-                                <h6 style="font-size: 0.9rem; font-weight: 500; color: #333; margin-bottom: 1rem;">
-                                    <i class="fas fa-brain" style="color: #BF9A33; margin-right: 8px;"></i>
-                                    Resumo Global AI
-                                </h6>
-                                <div id="geminiGlobalSummary"
-                                    style="font-size: 0.85rem; font-weight: 400; color: #555; line-height: 1.8; min-height: 120px;">
-                                    <p class="text-muted fst-italic">A gerar análise inteligente do CV...</p>
-                                </div>
-
-                                <!-- Pontos Fortes AI -->
-                                <div class="mt-3 pt-3" style="border-top: 1px solid #e9ecef;">
-                                    <div
-                                        style="font-size: 0.8rem; font-weight: 500; color: #28a745; letter-spacing: 0.5px; margin-bottom: 0.5rem;">
-                                        ✅ PONTOS FORTES IDENTIFICADOS
-                                    </div>
-                                    <ul id="aiStrengths"
-                                        style="list-style: none; padding: 0; margin: 0; font-size: 0.8rem; font-weight: 400; color: #666;">
-                                        <li class="mb-1">• A analisar...</li>
-                                    </ul>
-                                </div>
-
-                                <p
-                                    style="font-size: 0.75rem; color: #6c757d; margin: 0.75rem 0 0 0; font-style: italic;">
-                                    <i class="fas fa-robot"></i> Análise gerada por Gemini AI
-                                </p>
+                    <!-- PERFIL PROFISSIONAL -->
+                    <div style="margin-bottom: 2rem;">
+                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">Perfil Profissional</h6>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                            <div>
+                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Experiência</div>
+                                <div id="yearsExp" style="font-size: 0.95rem; color: #1a1a1a; font-weight: 500;">A calcular...</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Área Principal</div>
+                                <div id="mainArea" style="font-size: 0.95rem; color: #1a1a1a; font-weight: 500;">A identificar...</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Senioridade</div>
+                                <div id="seniorityLevel" style="font-size: 0.95rem; color: #1a1a1a; font-weight: 500;">A avaliar...</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- BLOCO 2: Maturidade e Posicionamento -->
-                    <div class="analysis-block mb-4 p-3"
-                        style="background: white; border-radius: 8px; text-align: center;">
-                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.75rem;">
-                            <i class="fas fa-chart-line" style="color: #BF9A33; margin-right: 8px;"></i>
-                            Maturidade Profissional
-                        </h6>
-                        <div class="display-3 fw-bold mb-2" style="color: #BF9A33;" id="maturityScore">--</div>
-                        <div style="font-size: 0.8rem; color: #6c757d; margin-bottom: 0.5rem;">/100</div>
+                    <hr style="border: none; border-top: 1px solid #f0f0f0; margin: 1.5rem 0;">
 
-                        <!-- Barra de Progresso Maturidade -->
-                        <div style="width: 100%; max-width: 300px; margin: 0 auto 0.75rem auto;">
-                            <div style="background: #e9ecef; border-radius: 10px; height: 12px; overflow: hidden;">
-                                <div id="maturityProgressBar"
-                                    style="background: linear-gradient(90deg, #BF9A33 0%, #d4af37 100%); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease-out;">
+                    <!-- RESUMO AI -->
+                    <div style="margin-bottom: 2rem;">
+                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">Resumo AI</h6>
+                        <div id="geminiGlobalSummary" style="font-size: 0.9rem; color: #444; line-height: 1.7;">
+                            <p style="margin: 0;">A gerar análise...</p>
+                        </div>
+                    </div>
+
+                    <!-- PONTOS FORTES -->
+                    <div style="margin-bottom: 2rem;">
+                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">Pontos Fortes</h6>
+                        <ul id="aiStrengths" style="list-style: none; padding: 0; margin: 0; font-size: 0.9rem; color: #444;">
+                            <li style="padding: 0.5rem 0; border-bottom: 1px solid #f5f5f5;">A analisar...</li>
+                        </ul>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px solid #f0f0f0; margin: 1.5rem 0;">
+
+                    <!-- COMPETÊNCIAS -->
+                    <div style="margin-bottom: 2rem;">
+                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">Competências</h6>
+                        
+                        <div style="margin-bottom: 1.25rem;">
+                            <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.5rem;">Hard Skills</div>
+                            <div id="hardSkillsList" style="font-size: 0.9rem; color: #1a1a1a;">A identificar...</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 1.25rem;">
+                            <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.5rem;">Soft Skills</div>
+                            <div id="softSkillsList" style="font-size: 0.9rem; color: #1a1a1a;">A identificar...</div>
+                        </div>
+                        
+                        <div>
+                            <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.5rem;">Idiomas</div>
+                            <div id="languagesList" style="font-size: 0.9rem; color: #1a1a1a;">A identificar...</div>
+                        </div>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px solid #f0f0f0; margin: 1.5rem 0;">
+
+                    <!-- MÉTRICAS - Barras Horizontais Minimalistas -->
+                    <div style="margin-bottom: 2rem;">
+                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1.25rem;">Análise Dimensional</h6>
+                        
+                        <div style="display: grid; gap: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span style="font-size: 0.8rem; color: #666; width: 80px;">Estrutura</span>
+                                <div style="flex: 1; height: 6px; background: #f0f0f0; border-radius: 3px;">
+                                    <div id="barEstrutura" style="height: 100%; background: #1a1a1a; border-radius: 3px; width: 0%; transition: width 0.8s ease;"></div>
+                                </div>
+                                <span id="scoreEstrutura" style="font-size: 0.8rem; color: #1a1a1a; font-weight: 600; width: 30px; text-align: right;">--</span>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span style="font-size: 0.8rem; color: #666; width: 80px;">Conteúdo</span>
+                                <div style="flex: 1; height: 6px; background: #f0f0f0; border-radius: 3px;">
+                                    <div id="barConteudo" style="height: 100%; background: #1a1a1a; border-radius: 3px; width: 0%; transition: width 0.8s ease;"></div>
+                                </div>
+                                <span id="scoreConteudo" style="font-size: 0.8rem; color: #1a1a1a; font-weight: 600; width: 30px; text-align: right;">--</span>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span style="font-size: 0.8rem; color: #666; width: 80px;">Formação</span>
+                                <div style="flex: 1; height: 6px; background: #f0f0f0; border-radius: 3px;">
+                                    <div id="barFormacao" style="height: 100%; background: #1a1a1a; border-radius: 3px; width: 0%; transition: width 0.8s ease;"></div>
+                                </div>
+                                <span id="scoreFormacao" style="font-size: 0.8rem; color: #1a1a1a; font-weight: 600; width: 30px; text-align: right;">--</span>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span style="font-size: 0.8rem; color: #666; width: 80px;">Experiência</span>
+                                <div style="flex: 1; height: 6px; background: #f0f0f0; border-radius: 3px;">
+                                    <div id="barExperiencia" style="height: 100%; background: #1a1a1a; border-radius: 3px; width: 0%; transition: width 0.8s ease;"></div>
+                                </div>
+                                <span id="scoreExperiencia" style="font-size: 0.8rem; color: #1a1a1a; font-weight: 600; width: 30px; text-align: right;">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px solid #f0f0f0; margin: 1.5rem 0;">
+
+                    <!-- ATS SCORE -->
+                    <div style="margin-bottom: 2rem;">
+                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">Compatibilidade ATS</h6>
+                        
+                        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1rem;">
+                            <div id="atsScoreDisplay" style="font-size: 2.5rem; font-weight: 700; color: #1a1a1a; line-height: 1;">--</div>
+                            <div>
+                                <div id="atsLevelBadge" style="font-size: 0.8rem; color: #666;">A calcular...</div>
+                                <div style="width: 150px; height: 4px; background: #f0f0f0; border-radius: 2px; margin-top: 0.5rem;">
+                                    <div id="atsProgressBar" style="height: 100%; background: #1a1a1a; border-radius: 2px; width: 0%; transition: width 1s ease;"></div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="badge px-3 py-2 mb-3" style="background: #1A1A1A; color: white; font-size: 0.85rem;"
-                            id="maturityLabel">Em Análise</div>
-                        <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">O score reflete
-                            coerência de percurso, clareza narrativa e alinhamento com o mercado.</p>
-                    </div>
-
-                    <!-- BLOCO 4: Competências Identificadas -->
-                    <div class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px;">
-                        <h6 class="mb-3" style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A;">Competências
-                            Detetadas</h6>
-                        <div class="mb-3">
-                            <div style="font-size: 0.8rem; font-weight: 600; color: #6c757d; margin-bottom: 0.5rem;">
-                                HARD SKILLS</div>
-                            <div id="hardSkillsList" style="font-size: 0.875rem; color: #495057;">A identificar...</div>
-                        </div>
-                        <div class="mb-3">
-                            <div style="font-size: 0.8rem; font-weight: 600; color: #6c757d; margin-bottom: 0.5rem;">
-                                SOFT SKILLS</div>
-                            <div id="softSkillsList" style="font-size: 0.875rem; color: #495057;">A identificar...</div>
-                        </div>
-                        <div class="mb-3">
-                            <div style="font-size: 0.8rem; font-weight: 600; color: #6c757d; margin-bottom: 0.5rem;">
-                                IDIOMAS</div>
-                            <div id="languagesList" style="font-size: 0.875rem; color: #495057;">A identificar...</div>
-                        </div>
-                        <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">A análise baseia-se
-                            apenas no que está explícito no documento.</p>
-                    </div>
-
-                    <!-- BLOCO 3: Resumo Global AI (GEMINI) -->
-                    <div class="analysis-block mb-4 p-3"
-                        style="background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%); border-left: 4px solid #BF9A33; border-radius: 8px;">
-                        <div style="display: flex; align-items: center; margin-bottom: 0.75rem;">
-                            <span
-                                style="background: #BF9A33; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.5px; margin-right: 0.5rem;">
-                                AI INSIGHTS
-                            </span>
-                            <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin: 0;">
-                                Resumo Global AI
-                            </h6>
-                        </div>
-                        <div id="geminiGlobalSummary" style="font-size: 0.875rem; color: #495057; line-height: 1.7;">
-                            <p style="margin: 0;">Análise AI em processamento...</p>
-                        </div>
-
-                        <!-- Pontos Fortes Identificados pela AI -->
-                        <div class="mt-3 pt-3" style="border-top: 1px solid #e9ecef;">
-                            <div
-                                style="display: inline-block; padding: 4px 12px; border-radius: 4px; background: #d1fae5; color: #059669; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 0.75rem;">
-                                PONTOS FORTES IDENTIFICADOS
-                            </div>
-                            <ul id="aiStrengths"
-                                style="font-size: 0.85rem; color: #495057; margin: 0; padding-left: 1.2rem; list-style: none;">
-                                <li class="text-muted">Análise AI em processamento...</li>
+                        
+                        <div id="atsDiagnosticBox" style="background: #fafafa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                            <div style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem;">Diagnóstico</div>
+                            <ul id="atsLevelBullets" style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: #555;">
+                                <li>A aguardar análise...</li>
                             </ul>
                         </div>
-                    </div>
-
-                    <!-- BLOCO 4: Formação e Atualização -->
-                    <div class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px;">
-                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">
-                            Aprendizagem e Formação</h6>
-                        <div style="font-size: 0.875rem; color: #495057; line-height: 1.7;">
-                            <div class="mb-2"><strong>Última formação identificada:</strong> <span id="lastEducation">A
-                                    verificar...</span></div>
-                            <div class="mb-3"><strong>Ritmo de atualização:</strong> <span id="updateRhythm">A
-                                    avaliar...</span></div>
-
-                            <!-- ANÁLISE AI DE RELEVÂNCIA DE FORMAÇÃO -->
-                            <div id="trainingRelevanceSection" class="mt-3 pt-3"
-                                style="border-top: 1px solid #e9ecef; display: none;">
-                                <div
-                                    style="display: inline-block; padding: 4px 12px; border-radius: 4px; background: #d1fae5; color: #059669; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 0.75rem;">
-                                    RELEVÂNCIA PARA A ÁREA
-                                </div>
-                                <div class="mb-2">
-                                    <strong>Score de Alinhamento:</strong>
-                                    <span id="trainingScore" style="color: #059669; font-weight: 600;">--/100</span>
-                                </div>
-                                <div class="mb-3" id="trainingAssessment"
-                                    style="font-size: 0.85rem; color: #6c757d; font-style: italic;">
-                                    Análise AI em processamento...
-                                </div>
-
-                                <div id="alignedCoursesDiv" style="display: none;" class="mb-2">
-                                    <strong style="font-size: 0.85rem;">Formações Relevantes:</strong>
-                                    <ul id="alignedCoursesList"
-                                        style="font-size: 0.825rem; margin: 0.5rem 0; padding-left: 1.2rem;">
-                                    </ul>
-                                </div>
-
-                                <div id="recommendedCoursesDiv" style="display: none;">
-                                    <strong style="font-size: 0.85rem; color: #BF9A33;">Recomendações:</strong>
-                                    <ul id="recommendedCoursesList"
-                                        style="font-size: 0.825rem; margin: 0.5rem 0; padding-left: 1.2rem; color: #6c757d;">
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">A frequência
-                                formativa influencia diretamente empregabilidade e mobilidade.</p>
+                        
+                        <div id="atsTriggersBox">
+                            <div style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem;">Gatilhos</div>
+                            <div id="atsTriggersList" style="font-size: 0.85rem; color: #555;">A identificar...</div>
                         </div>
                     </div>
 
-                    <!-- NOVO: 4 Barras Verticais Douradas -->
-                    <div class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px;">
-                        <h6
-                            style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1.5rem; text-align: center;">
-                            Análise Global do CV
-                        </h6>
-                        <div
-                            style="display: flex; justify-content: space-around; align-items: flex-end; height: 200px; gap: 1rem;">
+                    <hr style="border: none; border-top: 1px solid #f0f0f0; margin: 1.5rem 0;">
 
-                            <!-- Barra 1: Estrutura -->
-                            <div
-                                style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
-                                <div
-                                    style="flex: 1; display: flex; flex-direction: column-reverse; width: 100%; max-width: 60px;">
-                                    <div id="barEstrutura"
-                                        style="background: linear-gradient(180deg, #BF9A33 0%, #D4AF37 100%); width: 100%; border-radius: 8px 8px 0 0; transition: height 0.8s ease; height: 0%;">
-                                    </div>
-                                </div>
-                                <div style="margin-top: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #6c757d;">
-                                    Estrutura</div>
-                                <div id="scoreEstrutura"
-                                    style="font-size: 0.85rem; font-weight: 700; color: #BF9A33; margin-top: 0.25rem;">
-                                    --</div>
+                    <!-- FORMAÇÃO -->
+                    <div style="margin-bottom: 2rem;">
+                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">Formação</h6>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Última formação</div>
+                                <div id="lastEducation" style="font-size: 0.9rem; color: #1a1a1a;">A verificar...</div>
                             </div>
-
-                            <!-- Barra 2: Conteúdo -->
-                            <div
-                                style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
-                                <div
-                                    style="flex: 1; display: flex; flex-direction: column-reverse; width: 100%; max-width: 60px;">
-                                    <div id="barConteudo"
-                                        style="background: linear-gradient(180deg, #BF9A33 0%, #D4AF37 100%); width: 100%; border-radius: 8px 8px 0 0; transition: height 0.8s ease; height: 0%;">
-                                    </div>
-                                </div>
-                                <div style="margin-top: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #6c757d;">
-                                    Conteúdo</div>
-                                <div id="scoreConteudo"
-                                    style="font-size: 0.85rem; font-weight: 700; color: #BF9A33; margin-top: 0.25rem;">
-                                    --</div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Ritmo de atualização</div>
+                                <div id="updateRhythm" style="font-size: 0.9rem; color: #1a1a1a;">A avaliar...</div>
                             </div>
-
-                            <!-- Barra 3: Formação -->
-                            <div
-                                style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
-                                <div
-                                    style="flex: 1; display: flex; flex-direction: column-reverse; width: 100%; max-width: 60px;">
-                                    <div id="barFormacao"
-                                        style="background: linear-gradient(180deg, #BF9A33 0%, #D4AF37 100%); width: 100%; border-radius: 8px 8px 0 0; transition: height 0.8s ease; height: 0%;">
-                                    </div>
-                                </div>
-                                <div style="margin-top: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #6c757d;">
-                                    Formação</div>
-                                <div id="scoreFormacao"
-                                    style="font-size: 0.85rem; font-weight: 700; color: #BF9A33; margin-top: 0.25rem;">
-                                    --</div>
+                        </div>
+                        
+                        <!-- Training Relevance Section (hidden by default) -->
+                        <div id="trainingRelevanceSection" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f0f0f0;">
+                            <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.5rem;">Score de Alinhamento: <span id="trainingScore" style="color: #1a1a1a; font-weight: 600;">--/100</span></div>
+                            <div id="trainingAssessment" style="font-size: 0.85rem; color: #666;">A analisar...</div>
+                            <div id="alignedCoursesDiv" style="display: none; margin-top: 0.75rem;">
+                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Formações Relevantes</div>
+                                <ul id="alignedCoursesList" style="font-size: 0.85rem; margin: 0; padding-left: 1rem; color: #444;"></ul>
                             </div>
-
-                            <!-- Barra 4: Experiência -->
-                            <div
-                                style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
-                                <div
-                                    style="flex: 1; display: flex; flex-direction: column-reverse; width: 100%; max-width: 60px;">
-                                    <div id="barExperiencia"
-                                        style="background: linear-gradient(180deg, #BF9A33 0%, #D4AF37 100%); width: 100%; border-radius: 8px 8px 0 0; transition: height 0.8s ease; height: 0%;">
-                                    </div>
-                                </div>
-                                <div style="margin-top: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #6c757d;">
-                                    Experiência</div>
-                                <div id="scoreExperiencia"
-                                    style="font-size: 0.85rem; font-weight: 700; color: #BF9A33; margin-top: 0.25rem;">
-                                    --</div>
+                            <div id="recommendedCoursesDiv" style="display: none; margin-top: 0.75rem;">
+                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Recomendações</div>
+                                <ul id="recommendedCoursesList" style="font-size: 0.85rem; margin: 0; padding-left: 1rem; color: #666;"></ul>
                             </div>
-
                         </div>
                     </div>
 
-                    <!-- BLOCO 6: Estrutura Geral -->
-                    <div class="analysis-block mb-4 p-3" style="background: white; border-radius: 8px;">
-                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">
-                            <i class="fas fa-file-alt" style="color: #BF9A33; margin-right: 8px;"></i>
-                            Estrutura do Documento
-                        </h6>
-                        <div style="font-size: 0.875rem; color: #495057; line-height: 1.7;">
-                            <div class="mb-2"><strong>Organização do CV:</strong> <span id="cvStructure">A
-                                    verificar...</span></div>
-                            <div class="mb-3"><strong>Legibilidade e hierarquia visual:</strong> <span
-                                    id="readability">A analisar...</span></div>
-                            <p style="font-size: 0.8rem; color: #6c757d; margin: 0; font-style: italic;">A estrutura
-                                influencia a primeira impressão e facilidade de leitura.</p>
+                    <!-- ESTRUTURA DO DOCUMENTO -->
+                    <div style="margin-bottom: 2rem;">
+                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">Estrutura do Documento</h6>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Organização</div>
+                                <div id="cvStructure" style="font-size: 0.9rem; color: #1a1a1a;">A verificar...</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Legibilidade</div>
+                                <div id="readability" style="font-size: 0.9rem; color: #1a1a1a;">A analisar...</div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- BLOCO 7: ANÁLISE ATS ISOLADA (NOVO) -->
-                    <div id="atsDetailedSection" class="analysis-block mb-4 p-3"
-                        style="background: white; border-radius: 8px; border: 2px solid #6c757d;">
-                        <h6 style="font-size: 0.95rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">
-                            <i class="fas fa-robot" style="color: #BF9A33; margin-right: 8px;"></i>
-                            Análise de Compatibilidade ATS
-                        </h6>
+                    <hr style="border: none; border-top: 1px solid #f0f0f0; margin: 1.5rem 0;">
 
-                        <div style="text-align: center; margin-bottom: 1.25rem;">
-                            <div id="atsScoreDisplay" style="font-size: 3rem; font-weight: 700; color: #6c757d;">--
-                            </div>
-                            <div style="font-size: 0.85rem; color: #6c757d;">/100</div>
-
-                            <!-- Barra de Progresso ATS -->
-                            <div style="width: 100%; max-width: 300px; margin: 0.75rem auto;">
-                                <div style="background: #e9ecef; border-radius: 10px; height: 12px; overflow: hidden;">
-                                    <div id="atsProgressBar"
-                                        style="background: linear-gradient(90deg, #6c757d 0%, #6c757d 100%); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease-out, background 0.5s ease;">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="atsLevelBadge" class="badge px-3 py-2 mt-2"
-                                style="background: #6c757d; color: white; font-size: 0.9rem;">
-                                A calcular...
-                            </div>
-                        </div>
-
-                        <div id="atsDiagnosticBox"
-                            style="background: #f8f9fa; border-radius: 6px; padding: 1rem; margin-bottom: 1rem;">
-                            <div style="font-size: 0.8rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.75rem;">
-                                DIAGNÓSTICO</div>
-                            <ul id="atsLevelBullets" style="list-style: none; padding: 0; margin: 0;">
-                                <li style="margin-bottom: 6px; font-size: 0.85rem; color: #495057;">A aguardar
-                                    análise...</li>
-                            </ul>
-                        </div>
-
-                        <div id="atsTriggersBox" style="margin-top: 1rem;">
-                            <div style="font-size: 0.8rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.75rem;">
-                                GATILHOS DA PONTUAÇÃO</div>
-                            <div id="atsTriggersList">
-                                <div style="font-size: 0.85rem; color: #6c757d;">A identificar...</div>
-                            </div>
-                        </div>
-
-                        <p
-                            style="font-size: 0.75rem; color: #6c757d; margin: 1rem 0 0 0; font-style: italic; text-align: center;">
-                            ATS (Applicant Tracking System) são sistemas automáticos de triagem de CVs usados por 75%
-                            das empresas.
-                        </p>
-                    </div>
-
-
-
-                    <!-- BLOCO FINAL: Teaser do Relatório -->
-                    <div class="analysis-block p-4"
-                        style="background: white; border-radius: 8px; border: 2px solid #BF9A33;">
-                        <div style="text-align: center; color: #BF9A33; margin-bottom: 1rem;">
-                            <i class="fas fa-file-alt" style="font-size: 2rem;"></i>
-                        </div>
-                        <h6
-                            style="font-size: 1rem; font-weight: 600; color: #1A1A1A; text-align: center; margin-bottom: 0.75rem;">
-                            O que não está aqui</h6>
-                        <p style="font-size: 0.875rem; color: #495057; text-align: center; margin-bottom: 1rem;">Esta é
-                            uma leitura inicial.<br>O relatório completo aprofunda decisões, riscos e oportunidades
-                            específicas do teu perfil.</p>
-                        <div style="font-size: 0.875rem; color: #495057; margin-bottom: 1.25rem;">
-                            <div style="margin-bottom: 0.5rem;"><strong>Inclui</strong></div>
-                            <ul style="list-style: none; padding-left: 1rem; margin: 0;">
-                                <li class="mb-1">• Diagnóstico detalhado</li>
-                                <li class="mb-1">• Pontos fortes e fragilidades reais</li>
-                                <li class="mb-1">• Recomendações acionáveis</li>
-                                <li>• Plano de evolução personalizado</li>
-                            </ul>
-                        </div>
-                        <div style="text-align: center; margin-bottom: 1.25rem;">
-                            <div style="font-size: 1.75rem; font-weight: 600; color: #BF9A33;">1,00 €</div>
-                            <div style="font-size: 0.85rem; color: #6c757d;">Relatório PDF enviado por email</div>
-                        </div>
+                    <!-- CTA RELATÓRIO COMPLETO -->
+                    <div style="text-align: center; padding: 1.5rem; background: #fafafa; border-radius: 12px;">
+                        <div style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem;">Relatório Completo</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: #1a1a1a; margin-bottom: 0.25rem;">1,00 €</div>
+                        <div style="font-size: 0.8rem; color: #999; margin-bottom: 1rem;">PDF enviado por email</div>
+                        <ul style="list-style: none; padding: 0; margin: 0 0 1rem 0; font-size: 0.8rem; color: #666; text-align: left; max-width: 250px; margin-left: auto; margin-right: auto;">
+                            <li style="padding: 0.25rem 0;">→ Diagnóstico detalhado</li>
+                            <li style="padding: 0.25rem 0;">→ Pontos fortes e fragilidades</li>
+                            <li style="padding: 0.25rem 0;">→ Recomendações acionáveis</li>
+                            <li style="padding: 0.25rem 0;">→ Plano de evolução</li>
+                        </ul>
                     </div>
 
                 </div>
-                <div class="modal-footer bg-white border-top" style="padding: 1.25rem 2rem;">
-                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal"
-                        style="border-radius: 6px;">Fechar</button>
-
-                    <button type="button" class="btn btn-primary px-4" onclick="openReportPaymentModal()"
-                        style="background: linear-gradient(135deg, #BF9A33 0%, #a57b0a 100%); border: none; border-radius: 6px; padding: 0.625rem 1.75rem; font-weight: 600;">
-                        Desbloquear relatório completo
-                    </button>
+                
+                <!-- FOOTER MINIMALISTA -->
+                <div class="modal-footer" style="background: #fff; border-top: 1px solid #eee; padding: 1rem 2rem; justify-content: space-between;">
+                    <button type="button" class="btn" data-bs-dismiss="modal" style="background: transparent; border: 1px solid #ddd; color: #666; border-radius: 8px; padding: 0.5rem 1.25rem; font-size: 0.85rem;">Fechar</button>
+                    <button type="button" class="btn" onclick="openReportPaymentModal()" style="background: #1a1a1a; border: none; color: #fff; border-radius: 8px; padding: 0.5rem 1.5rem; font-size: 0.85rem; font-weight: 500;">Obter Relatório Completo</button>
                 </div>
             </div>
         </div>
