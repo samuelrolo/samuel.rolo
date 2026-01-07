@@ -1297,17 +1297,29 @@ window.CV_ENGINE = {
 
         if (levelBadge) {
             levelBadge.textContent = `Compatibilidade ${ats.level}`;
-            levelBadge.style.background = atsColor;
+            levelBadge.style.color = atsColor;
+            levelBadge.style.background = 'transparent';
         }
 
         if (atsSection) {
             atsSection.style.borderColor = atsColor;
         }
 
-        // Animar barra de progresso ATS
+        // Animar círculo de progresso ATS (SVG)
+        const atsProgressCircle = document.getElementById('atsProgressCircle');
+        if (atsProgressCircle) {
+            // Cálculo: circunferência = 2 * PI * r = 2 * 3.14159 * 60 = 377
+            const circumference = 377;
+            const offset = circumference - (ats.score / 100) * circumference;
+            atsProgressCircle.style.stroke = atsColor;
+            setTimeout(() => {
+                atsProgressCircle.style.strokeDashoffset = offset;
+            }, 100);
+        }
+        
+        // Manter compatibilidade com barra de progresso antiga (se existir)
         const atsProgressBar = document.getElementById('atsProgressBar');
-        if (atsProgressBar) {
-            // Definir cor baseada no score
+        if (atsProgressBar && atsProgressBar.style.display !== 'none') {
             atsProgressBar.style.background = `linear-gradient(90deg, ${atsColor} 0%, ${atsColor} 100%)`;
             setTimeout(() => {
                 atsProgressBar.style.width = ats.score + '%';
