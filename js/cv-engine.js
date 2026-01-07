@@ -176,7 +176,7 @@ window.CV_ENGINE = {
      */
     async callGeminiBackend(file) {
         // CORRECTED: Use App Engine endpoint instead of non-existent Cloud Function
-        const GEMINI_BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com/api/analyze-cv';
+        const GEMINI_BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com/api/services/analyze-cv';
 
         console.log('[GEMINI] 🔍 CHECKPOINT 1: Iniciando callGeminiBackend');
         console.log('[GEMINI] 📤 Enviando CV para análise IA...');
@@ -186,7 +186,7 @@ window.CV_ENGINE = {
         try {
             // Criar FormData com o ficheiro
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append('cv_file', file);
 
             // Chamar backend Gemini com timeout
             const controller = new AbortController();
@@ -208,9 +208,38 @@ window.CV_ENGINE = {
                 return;
             }
 
-            const geminiData = await response.json();
+            const responseData = await response.json();
             console.log('[GEMINI] ✅ Análise recebida com sucesso!');
-            console.log('[GEMINI] 📊 Dados:', {
+            
+            // Extrair report do wrapper de resposta
+            const report = responseData.report || responseData;
+            
+            // Mapear dados para o formato esperado pelo frontend
+            const geminiData = {
+                summary: report.executive_summary?.three_sentences?.join(' ') || '',
+                strengths: [],
+                dimensions: report.dimensions || {},
+                candidate_profile: report.candidate_profile || {},
+                roadmap: report.roadmap || {},
+                final_verdict: report.final_verdict || {},
+                premium_indicators: report.premium_indicators || {}
+            };
+            
+            // Extrair pontos fortes das dimensões com score alto
+            if (report.dimensions) {
+                Object.entries(report.dimensions).forEach(([key, dim]) => {
+                    if (dim && dim.signal && dim.score >= 14) {
+                        geminiData.strengths.push(dim.signal);
+                    }
+                });
+            }
+            
+            // Se não houver strengths das dimensões, usar primeira frase do summary
+            if (geminiData.strengths.length === 0 && report.executive_summary?.three_sentences) {
+                geminiData.strengths.push(report.executive_summary.three_sentences[0]);
+            }
+            
+            console.log('[GEMINI] 📊 Dados mapeados:', {
                 hasSummary: !!geminiData.summary,
                 hasStrengths: !!geminiData.strengths,
                 strengthsCount: geminiData.strengths?.length || 0
