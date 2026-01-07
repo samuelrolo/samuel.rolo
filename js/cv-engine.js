@@ -1364,6 +1364,7 @@ window.CV_ENGINE = {
         };
 
         const lowerText = text;
+        const wordCount = text.split(/\s+/).length;
         const allNonCVKeywords = [...nonCVKeywords.pt, ...nonCVKeywords.en];
         const allCVKeywords = [...cvKeywords.pt, ...cvKeywords.en];
 
