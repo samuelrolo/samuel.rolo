@@ -1109,22 +1109,22 @@ window.CV_ENGINE = {
         if (barEstrutura && scoreEstrutura) {
             const estruturaScore = Math.round(factors.estrutura);
             scoreEstrutura.textContent = estruturaScore;
-            setTimeout(() => { barEstrutura.style.height = estruturaScore + '%'; }, 200);
+            setTimeout(() => { barEstrutura.style.width = estruturaScore + '%'; }, 200);
         }
         if (barConteudo && scoreConteudo) {
             const conteudoScore = Math.round(factors.conteudo);
             scoreConteudo.textContent = conteudoScore;
-            setTimeout(() => { barConteudo.style.height = conteudoScore + '%'; }, 400);
+            setTimeout(() => { barConteudo.style.width = conteudoScore + '%'; }, 400);
         }
         if (barFormacao && scoreFormacao) {
             const formacaoScore = Math.round(factors.formacao);
             scoreFormacao.textContent = formacaoScore;
-            setTimeout(() => { barFormacao.style.height = formacaoScore + '%'; }, 600);
+            setTimeout(() => { barFormacao.style.width = formacaoScore + '%'; }, 600);
         }
         if (barExperiencia && scoreExperiencia) {
             const experienciaScore = Math.round(factors.experiencia);
             scoreExperiencia.textContent = experienciaScore;
-            setTimeout(() => { barExperiencia.style.height = experienciaScore + '%'; }, 800);
+            setTimeout(() => { barExperiencia.style.width = experienciaScore + '%'; }, 800);
         }
 
         // INTEGRAÇÃO GEMINI AI: Resumo Global e Pontos Fortes (REAL DATA)
