@@ -756,6 +756,62 @@
 
                 console.log('✅ Payment initiated, analysis data saved:', result);
 
+                // >>> WHITELIST CHECK: Bypass de pagamento <<<
+                if (result.skipPayment || result.whitelist) {
+                    console.log('[WHITELIST] Email na whitelist - enviando relatório diretamente');
+                    statusMsg.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="fas fa-star me-2"></i>
+                            <strong>Email VIP detetado!</strong><br>
+                            <small>A gerar e enviar relatório...</small>
+                        </div>
+                    `;
+                    
+                    // Enviar relatório diretamente
+                    try {
+                        const deliverFormData = new FormData();
+                        deliverFormData.append('name', name);
+                        deliverFormData.append('email', email);
+                        deliverFormData.append('cv_file', window.currentCVFile);
+                        deliverFormData.append('report', JSON.stringify(window.currentReportData || transformedData));
+                        
+                        const deliverResponse = await fetch(`${BACKEND_URL}/api/services/deliver-report`, {
+                            method: 'POST',
+                            body: deliverFormData
+                        });
+                        
+                        const deliverResult = await deliverResponse.json();
+                        
+                        if (deliverResult.success) {
+                            statusMsg.innerHTML = `
+                                <div class="alert alert-success">
+                                    <i class="fas fa-envelope-open-text me-2"></i>
+                                    <strong>Relatório enviado!</strong><br>
+                                    <small>Verifique o seu email: <strong>${email}</strong></small>
+                                </div>
+                            `;
+                        } else {
+                            throw new Error(deliverResult.error || 'Erro ao enviar relatório');
+                        }
+                    } catch (deliverError) {
+                        console.error('Delivery error:', deliverError);
+                        statusMsg.innerHTML = `
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <small>Relatório será enviado em breve para ${email}</small>
+                            </div>
+                        `;
+                    }
+                    
+                    // Reset button
+                    setTimeout(() => {
+                        btnPayReport.disabled = false;
+                        btnPayReport.innerHTML = originalBtnText;
+                    }, 3000);
+                    
+                    return; // Sair - não fazer polling
+                }
+
                 // 🔄 START POLLING: Check payment status and trigger delivery
                 const startPolling = (orderId) => {
                     let attempts = 0;
