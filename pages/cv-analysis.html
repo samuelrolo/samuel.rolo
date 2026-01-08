@@ -585,6 +585,10 @@
             const file = fileInput.files[0];
 
             if (file) {
+                // >>> GUARDAR FICHEIRO GLOBALMENTE PARA USO POSTERIOR <<<
+                window.currentCVFile = file;
+                console.log('[CV] Ficheiro guardado em window.currentCVFile:', file.name);
+                
                 try {
                     // Chamar o Motor de Análise Real (PDF.js + Mammoth.js + Heuristics)
                     const success = await window.CV_ENGINE.analyzeFile(file);
