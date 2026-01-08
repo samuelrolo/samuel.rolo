@@ -525,6 +525,20 @@ function setupReportPaymentHandler(candidateName) {
                     throw new Error(paymentResult.error || "Falha no pagamento");
                 }
 
+                // >>> WHITELIST CHECK: Bypass de pagamento <<<
+                if (paymentResult.skipPayment || paymentResult.whitelist) {
+                    console.log('[WHITELIST] Email na whitelist - enviando relatório diretamente');
+                    statusDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-star me-2"></i>Email VIP detetado! A gerar relatório...</div>';
+                    
+                    await deliverReport(name, email, window.currentCVFile, window.currentReportData);
+                    
+                    statusDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-envelope-open-text me-2"></i>Relatório enviado para o seu email!</div>';
+                    setTimeout(() => {
+                        bootstrap.Modal.getInstance(document.getElementById('reportPaymentModal')).hide();
+                    }, 4000);
+                    return; // Sair da função - não fazer polling
+                }
+
                 // Payment Initiated - Start Polling
                 const orderId = paymentResult.payment.orderId;
                 statusDiv.innerHTML = `
