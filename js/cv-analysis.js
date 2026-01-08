@@ -239,7 +239,7 @@ btnReportEmail.onclick = async () => {
         alert('Erro ao enviar relatório: ' + error.message);
         // Restore button
         btnReportEmail.disabled = false;
-        btnReportEmail.innerHTML = '\u003ci class="fas fa-file-pdf me-2"\u003e\u003c/i\u003eReceber Relatório por Email (1.00€)';
+        btnReportEmail.innerHTML = '\u003ci class="fas fa-file-pdf me-2"\u003e\u003c/i\u003eReceber Relatório por Email (2.99€)';
     }
 };
 }
@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Report Payment Handler (1€)
+// Report Payment Handler (2,99€)
 function setupReportPaymentHandler(candidateName) {
     // Handler for "Receber por Email" Button
     const btnOpenReportPayment = document.getElementById('btnOpenReportPayment');
