@@ -336,73 +336,76 @@
         </div>
     </div>
 
-    <!-- Payment Modal for 2,99€ PDF Report -->
+    <!-- Payment Modal for 2,99€ PDF Report - MINIMALIST DESIGN -->
     <div class="modal fade" id="reportPaymentModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
-            <div class="modal-content" style="border-radius: 16px; border: none;">
-                <div class="modal-header border-0">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+            <div class="modal-content" style="border-radius: 12px; border: 1px solid #e8e8e8; background: #fff;">
+                <!-- Header -->
+                <div class="modal-header" style="border-bottom: 1px solid #f0f0f0; padding: 1.5rem 1.5rem 1rem; background: #fff;">
                     <div style="text-align: center; width: 100%;">
-                        <h5 class="modal-title" style="font-size: 1.2rem; font-weight: 500; color: #333;">Análise de CV
-                            Inteligente</h5>
-                        <p class="text-muted mb-0" style="font-size: 0.8rem; font-weight: 400;">Relatório detalhado
-                            enviado por email</p>
+                        <h5 class="modal-title" style="font-size: 1.1rem; font-weight: 600; color: #1a1a1a; margin: 0;">Relatório Completo</h5>
+                        <p style="font-size: 0.75rem; color: #999; margin: 0.5rem 0 0 0; text-transform: uppercase; letter-spacing: 0.5px;">Entrega por Email</p>
                     </div>
-                    <button type="button" class="btn-close position-absolute end-0 top-0 m-3"
-                        data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" style="opacity: 0.4; margin: -0.5rem -0.5rem -0.5rem auto;"></button>
                 </div>
-                <div class="modal-body px-4 py-3">
 
-                    <!-- Info Note -->
-                    <div class="mb-3"
-                        style="background: #f8f9fa; border-left: 3px solid #BF9A33; padding: 0.75rem; border-radius: 6px;">
-                        <div
-                            style="display: flex; gap: 8px; align-items: start; font-size: 0.8rem; font-weight: 400; color: #555;">
-                            <span style="color: #BF9A33; flex-shrink: 0;">①</span>
-                            <span>Análise instantânea do teu CV (estrutura + conteúdo)</span>
+                <!-- Body -->
+                <div class="modal-body" style="padding: 1.5rem; background: #fff;">
+
+                    <!-- Info Section - Minimalist -->
+                    <div style="margin-bottom: 1.5rem; padding: 0.75rem; border-left: 2px solid #BF9A33; background: #fafafa;">
+                        <div style="display: flex; gap: 0.75rem; align-items: flex-start; margin-bottom: 0.5rem;">
+                            <span style="color: #BF9A33; font-weight: 600; font-size: 0.8rem; flex-shrink: 0;">✓</span>
+                            <span style="font-size: 0.8rem; color: #666; line-height: 1.4;">Análise detalhada de estrutura e conteúdo do teu CV</span>
                         </div>
-                        <div
-                            style="display: flex; gap: 8px; align-items: start; font-size: 0.8rem; font-weight: 400; color: #555; margin-top: 0.5rem;">
-                            <span style="color: #BF9A33; flex-shrink: 0;">②</span>
-                            <span>Relatório PDF completo enviado para o teu email</span>
+                        <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                            <span style="color: #BF9A33; font-weight: 600; font-size: 0.8rem; flex-shrink: 0;">✓</span>
+                            <span style="font-size: 0.8rem; color: #666; line-height: 1.4;">Relatório PDF enviado imediatamente após confirmação</span>
                         </div>
-                        <small class="d-block mt-2" style="color: #888; font-size: 0.7rem; font-weight: 400;">⏱ Entrega
-                            automática após pagamento</small>
                     </div>
 
-                    <!-- PAYMENT FORM -->
+                    <!-- Payment Form -->
                     <form id="reportPaymentForm">
-                        <div class="mb-3">
-                            <label class="form-label"
-                                style="font-weight: 500; font-size: 0.9rem; color: #1A1A1A;">Nome</label>
-                            <input type="text" class="form-control" id="paymentName" required
-                                style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
+                        <!-- Nome -->
+                        <div style="margin-bottom: 1rem;">
+                            <label style="font-weight: 500; font-size: 0.8rem; color: #1a1a1a; display: block; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px;">Nome</label>
+                            <input type="text" id="paymentName" required
+                                style="width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 0.7rem; font-size: 0.9rem; color: #1a1a1a; background: #fff; box-sizing: border-box;"
+                                placeholder="Seu nome completo">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label"
-                                style="font-weight: 500; font-size: 0.9rem; color: #1A1A1A;">Email</label>
-                            <input type="email" class="form-control" id="paymentEmail" required
-                                style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
+
+                        <!-- Email -->
+                        <div style="margin-bottom: 1rem;">
+                            <label style="font-weight: 500; font-size: 0.8rem; color: #1a1a1a; display: block; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px;">Email</label>
+                            <input type="email" id="paymentEmail" required
+                                style="width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 0.7rem; font-size: 0.9rem; color: #1a1a1a; background: #fff; box-sizing: border-box;"
+                                placeholder="seu.email@exemplo.com">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label"
-                                style="font-weight: 500; font-size: 0.9rem; color: #1A1A1A;">Telemóvel</label>
-                            <input type="tel" class="form-control" id="paymentPhone" required placeholder="961925050"
+
+                        <!-- Telemóvel -->
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="font-weight: 500; font-size: 0.8rem; color: #1a1a1a; display: block; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px;">Telemóvel</label>
+                            <input type="tel" id="paymentPhone" required placeholder="961925050"
                                 pattern="[0-9]{9}"
-                                style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
-                            <small class="form-text"
-                                style="font-size: 0.7rem; font-weight: 400; color: #888; margin-top: 0.25rem;">
-                                🔒 Pagamento seguro MB WAY. Recebes notificação no telemóvel.
-                            </small>
+                                style="width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 0.7rem; font-size: 0.9rem; color: #1a1a1a; background: #fff; box-sizing: border-box;">
+                            <small style="font-size: 0.7rem; color: #999; display: block; margin-top: 0.3rem;">Necessário para confirmar pagamento MB WAY</small>
                         </div>
 
-                        <div id="paymentStatusMsg" class="d-none"></div>
+                        <!-- Status Message -->
+                        <div id="paymentStatusMsg" class="d-none" style="margin-bottom: 1rem;"></div>
 
-                        <button type="submit" class="btn w-100 mt-2 py-2" id="btnPayReport"
-                            style="background: #BF9A33; border: none; color: #fff; font-weight: 600; font-size: 0.95rem; border-radius: 6px;">
-                            Receber Relatório (2,99€ via MB WAY)
+                        <!-- Submit Button -->
+                        <button type="submit" id="btnPayReport"
+                            style="width: 100%; background: #BF9A33; border: none; color: #fff; font-weight: 600; font-size: 0.9rem; padding: 0.8rem; border-radius: 4px; cursor: pointer; transition: background 0.2s;">
+                            Confirmar Pagamento (2,99€)
                         </button>
                     </form>
 
+                </div>
+
+                <!-- Footer -->
+                <div style="border-top: 1px solid #f0f0f0; padding: 0.75rem 1.5rem; background: #fafafa; text-align: center;">
+                    <p style="font-size: 0.7rem; color: #999; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">🔒 Pagamento seguro via MB WAY</p>
                 </div>
             </div>
         </div>
@@ -682,7 +685,7 @@
             btnPayReport.disabled = true;
             btnPayReport.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> A processar...';
             statusMsg.classList.remove('d-none');
-            statusMsg.innerHTML = '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i> A iniciar pagamento MB WAY...</div>';
+            statusMsg.innerHTML = '<div style="background: #f5f5f5; border-left: 2px solid #BF9A33; padding: 0.75rem; border-radius: 4px; font-size: 0.85rem; color: #666;"><i class="fas fa-info-circle me-2" style="color: #BF9A33;"></i>A iniciar pagamento MB WAY...</div>';
 
             try {
                 // CRITICAL FIX: Call backend endpoint that SAVES analysis data before payment
@@ -771,9 +774,9 @@
                     if (!window.currentCVFile) {
                         console.error('[WHITELIST] ERRO: CV file não encontrado!');
                         statusMsg.innerHTML = `
-                            <div class="alert alert-danger">
-                                <i class="fas fa-exclamation-circle me-2"></i>
-                                <strong>Erro:</strong> Ficheiro CV não encontrado. Por favor, faça upload novamente.
+                            <div style="background: #f5f5f5; border-left: 2px solid #999; padding: 0.75rem; border-radius: 4px; font-size: 0.85rem; color: #666;">
+                                <i class="fas fa-exclamation-circle me-2" style="color: #999;"></i>
+                                <strong style="color: #1a1a1a;">Erro:</strong> Ficheiro CV não encontrado. Por favor, faça upload novamente.
                             </div>
                         `;
                         btnPayReport.disabled = false;
@@ -782,9 +785,9 @@
                     }
                     
                     statusMsg.innerHTML = `
-                        <div class="alert alert-success">
-                            <i class="fas fa-star me-2"></i>
-                            <strong>Email VIP detetado!</strong><br>
+                        <div style="background: #f5f5f5; border-left: 2px solid #BF9A33; padding: 0.75rem; border-radius: 4px; font-size: 0.85rem; color: #666;">
+                            <i class="fas fa-star me-2" style="color: #BF9A33;"></i>
+                            <strong style="color: #1a1a1a;">Email VIP detetado!</strong><br>
                             <small>A gerar e enviar relatório...</small>
                         </div>
                     `;
@@ -810,9 +813,9 @@
                         
                         if (deliverResult.success) {
                             statusMsg.innerHTML = `
-                                <div class="alert alert-success">
-                                    <i class="fas fa-envelope-open-text me-2"></i>
-                                    <strong>Relatório enviado!</strong><br>
+                                <div style="background: #f5f5f5; border-left: 2px solid #BF9A33; padding: 0.75rem; border-radius: 4px; font-size: 0.85rem; color: #666;">
+                                    <i class="fas fa-envelope-open-text me-2" style="color: #BF9A33;"></i>
+                                    <strong style="color: #1a1a1a;">Relatório enviado!</strong><br>
                                     <small>Verifique o seu email: <strong>${email}</strong></small>
                                 </div>
                             `;
@@ -822,8 +825,8 @@
                     } catch (deliverError) {
                         console.error('Delivery error:', deliverError);
                         statusMsg.innerHTML = `
-                            <div class="alert alert-warning">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
+                            <div style="background: #f5f5f5; border-left: 2px solid #BF9A33; padding: 0.75rem; border-radius: 4px; font-size: 0.85rem; color: #666;">
+                                <i class="fas fa-exclamation-triangle me-2" style="color: #BF9A33;"></i>
                                 <small>Relatório será enviado em breve para ${email}</small>
                             </div>
                         `;
@@ -903,9 +906,9 @@
 
                 // Payment initiated successfully
                 statusMsg.innerHTML = `
-                    <div class="alert alert-success">
-                        <i class="fas fa-mobile-alt me-2"></i>
-                        <strong>Pedido MB WAY enviado!</strong><br>
+                    <div style="background: #f5f5f5; border-left: 2px solid #BF9A33; padding: 0.75rem; border-radius: 4px; font-size: 0.85rem; color: #666;">
+                        <i class="fas fa-mobile-alt me-2" style="color: #BF9A33;"></i>
+                        <strong style="color: #1a1a1a;">Pedido MB WAY enviado!</strong><br>
                         <small>Por favor, confirme na sua aplicação MB WAY. O relatório será enviado após confirmação do pagamento.</small>
                     </div>
                 `;
@@ -913,9 +916,9 @@
                 // Show instructions
                 setTimeout(() => {
                     statusMsg.innerHTML += `
-                        <div class="alert alert-info mt-2">
-                            <i class="fas fa-info-circle me-2"></i>
-                            <small><strong>Próximos passos:</strong><br>
+                        <div style="background: #fafafa; border-left: 2px solid #999; padding: 0.75rem; border-radius: 4px; font-size: 0.8rem; color: #666; margin-top: 0.75rem;">
+                            <i class="fas fa-info-circle me-2" style="color: #999;"></i>
+                            <small><strong style="color: #1a1a1a;">Próximos passos:</strong><br>
                             1. Confirme o pagamento de 2,99€ na sua app MB WAY<br>
                             2. O relatório será enviado automaticamente para <strong>${email}</strong> após confirmação</small>
                         </div>
@@ -930,11 +933,22 @@
 
             } catch (error) {
                 console.error('Payment Error:', error);
-                statusMsg.innerHTML = `<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i> ${error.message}</div>`;
+                statusMsg.innerHTML = `<div style="background: #f5f5f5; border-left: 2px solid #999; padding: 0.75rem; border-radius: 4px; font-size: 0.85rem; color: #666;"><i class="fas fa-exclamation-triangle me-2" style="color: #999;"></i> ${error.message}</div>`;
                 btnPayReport.disabled = false;
                 btnPayReport.innerHTML = originalBtnText;
             }
         });
+
+        // Add hover effect to submit button
+        const btnPayReportEl = document.getElementById('btnPayReport');
+        if (btnPayReportEl) {
+            btnPayReportEl.addEventListener('mouseover', function() {
+                this.style.background = '#a67a2a';
+            });
+            btnPayReportEl.addEventListener('mouseout', function() {
+                this.style.background = '#BF9A33';
+            });
+        }
 
         /* REMOVED: Polling functions - Backend handles this via Ifthenpay callbacks
         // Poll Payment Status
