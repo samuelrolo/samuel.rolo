@@ -759,6 +759,24 @@
                 // >>> WHITELIST CHECK: Bypass de pagamento <<<
                 if (result.skipPayment || result.whitelist) {
                     console.log('[WHITELIST] Email na whitelist - enviando relatório diretamente');
+                    console.log('[WHITELIST] currentCVFile:', window.currentCVFile);
+                    console.log('[WHITELIST] currentReportData:', window.currentReportData);
+                    console.log('[WHITELIST] transformedData:', transformedData);
+                    
+                    // Verificar se temos o ficheiro CV
+                    if (!window.currentCVFile) {
+                        console.error('[WHITELIST] ERRO: CV file não encontrado!');
+                        statusMsg.innerHTML = `
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <strong>Erro:</strong> Ficheiro CV não encontrado. Por favor, faça upload novamente.
+                            </div>
+                        `;
+                        btnPayReport.disabled = false;
+                        btnPayReport.innerHTML = originalBtnText;
+                        return;
+                    }
+                    
                     statusMsg.innerHTML = `
                         <div class="alert alert-success">
                             <i class="fas fa-star me-2"></i>
@@ -773,7 +791,11 @@
                         deliverFormData.append('name', name);
                         deliverFormData.append('email', email);
                         deliverFormData.append('cv_file', window.currentCVFile);
-                        deliverFormData.append('report', JSON.stringify(window.currentReportData || transformedData));
+                        
+                        // Usar dados da análise disponíveis
+                        const reportData = window.currentReportData || transformedData || {};
+                        console.log('[WHITELIST] Report data a enviar:', reportData);
+                        deliverFormData.append('report', JSON.stringify(reportData));
                         
                         const deliverResponse = await fetch(`${BACKEND_URL}/api/services/deliver-report`, {
                             method: 'POST',
