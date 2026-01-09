@@ -88,44 +88,60 @@
     <div class="modal fade" id="resultsModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered" style="max-width: 900px;">
             <div class="modal-content" style="border: none; border-radius: 16px; overflow: hidden;">
-                
+
                 <!-- HEADER MINIMALISTA -->
-                <div class="modal-header" style="background: #fff; border-bottom: 1px solid #eee; padding: 1.5rem 2rem;">
+                <div class="modal-header"
+                    style="background: #fff; border-bottom: 1px solid #eee; padding: 1.5rem 2rem;">
                     <div>
-                        <h5 class="modal-title" style="font-weight: 600; font-size: 1.25rem; color: #1a1a1a; margin: 0;">Análise do Perfil</h5>
-                        <p style="font-size: 0.8rem; color: #888; margin: 0.25rem 0 0 0;">Leitura automática baseada em estrutura e conteúdo</p>
+                        <h5 class="modal-title"
+                            style="font-weight: 600; font-size: 1.25rem; color: #1a1a1a; margin: 0;">Análise do Perfil
+                        </h5>
+                        <p style="font-size: 0.8rem; color: #888; margin: 0.25rem 0 0 0;">Leitura automática baseada em
+                            estrutura e conteúdo</p>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" style="opacity: 0.5;"></button>
                 </div>
-                
+
                 <!-- BODY CLEAN -->
                 <div class="modal-body" style="background: #fff; padding: 2rem;">
 
                     <!-- SCORE PRINCIPAL -->
                     <div style="text-align: center; margin-bottom: 2.5rem;">
-                        <div style="font-size: 4rem; font-weight: 700; color: #1a1a1a; line-height: 1;" id="maturityScore">--</div>
+                        <div style="font-size: 4rem; font-weight: 700; color: #1a1a1a; line-height: 1;"
+                            id="maturityScore">--</div>
                         <div style="font-size: 0.85rem; color: #999; margin-top: 0.25rem;">Maturidade Profissional</div>
-                        <div style="width: 200px; height: 4px; background: #f0f0f0; border-radius: 2px; margin: 1rem auto 0.5rem;">
-                            <div id="maturityProgressBar" style="height: 100%; background: #1a1a1a; border-radius: 2px; width: 0%; transition: width 1s ease;"></div>
+                        <div
+                            style="width: 200px; height: 4px; background: #f0f0f0; border-radius: 2px; margin: 1rem auto 0.5rem;">
+                            <div id="maturityProgressBar"
+                                style="height: 100%; background: #1a1a1a; border-radius: 2px; width: 0%; transition: width 1s ease;">
+                            </div>
                         </div>
-                        <span id="maturityLabel" style="font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 1px;">Em análise</span>
+                        <span id="maturityLabel"
+                            style="font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 1px;">Em
+                            análise</span>
                     </div>
 
                     <!-- PERFIL PROFISSIONAL -->
                     <div style="margin-bottom: 2rem;">
-                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">Perfil Profissional</h6>
+                        <h6
+                            style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">
+                            Perfil Profissional</h6>
                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
                             <div>
                                 <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Experiência</div>
-                                <div id="yearsExp" style="font-size: 0.95rem; color: #1a1a1a; font-weight: 500;">A calcular...</div>
+                                <div id="yearsExp" style="font-size: 0.95rem; color: #1a1a1a; font-weight: 500;">A
+                                    calcular...</div>
                             </div>
                             <div>
-                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Área Principal</div>
-                                <div id="mainArea" style="font-size: 0.95rem; color: #1a1a1a; font-weight: 500;">A identificar...</div>
+                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Área Principal
+                                </div>
+                                <div id="mainArea" style="font-size: 0.95rem; color: #1a1a1a; font-weight: 500;">A
+                                    identificar...</div>
                             </div>
                             <div>
                                 <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Senioridade</div>
-                                <div id="seniorityLevel" style="font-size: 0.95rem; color: #1a1a1a; font-weight: 500;">A avaliar...</div>
+                                <div id="seniorityLevel" style="font-size: 0.95rem; color: #1a1a1a; font-weight: 500;">A
+                                    avaliar...</div>
                             </div>
                         </div>
                     </div>
@@ -134,7 +150,9 @@
 
                     <!-- RESUMO AI -->
                     <div style="margin-bottom: 2rem;">
-                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">Resumo AI</h6>
+                        <h6
+                            style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">
+                            Resumo AI</h6>
                         <div id="geminiGlobalSummary" style="font-size: 0.9rem; color: #444; line-height: 1.7;">
                             <p style="margin: 0;">A gerar análise...</p>
                         </div>
@@ -142,8 +160,11 @@
 
                     <!-- PONTOS FORTES -->
                     <div style="margin-bottom: 2rem;">
-                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">Pontos Fortes</h6>
-                        <ul id="aiStrengths" style="list-style: none; padding: 0; margin: 0; font-size: 0.9rem; color: #444;">
+                        <h6
+                            style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">
+                            Pontos Fortes</h6>
+                        <ul id="aiStrengths"
+                            style="list-style: none; padding: 0; margin: 0; font-size: 0.9rem; color: #444;">
                             <li style="padding: 0.5rem 0; border-bottom: 1px solid #f5f5f5;">A analisar...</li>
                         </ul>
                     </div>
@@ -152,18 +173,20 @@
 
                     <!-- COMPETÊNCIAS -->
                     <div style="margin-bottom: 2rem;">
-                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">Competências</h6>
-                        
+                        <h6
+                            style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">
+                            Competências</h6>
+
                         <div style="margin-bottom: 1.25rem;">
                             <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.5rem;">Hard Skills</div>
                             <div id="hardSkillsList" style="font-size: 0.9rem; color: #1a1a1a;">A identificar...</div>
                         </div>
-                        
+
                         <div style="margin-bottom: 1.25rem;">
                             <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.5rem;">Soft Skills</div>
                             <div id="softSkillsList" style="font-size: 0.9rem; color: #1a1a1a;">A identificar...</div>
                         </div>
-                        
+
                         <div>
                             <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.5rem;">Idiomas</div>
                             <div id="languagesList" style="font-size: 0.9rem; color: #1a1a1a;">A identificar...</div>
@@ -174,43 +197,65 @@
 
                     <!-- ANÁLISE POR DIMENSÃO - Stacked Bars -->
                     <div style="margin-bottom: 2rem;">
-                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1.5rem;">Análise por Dimensão</h6>
-                        
+                        <h6
+                            style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1.5rem;">
+                            Análise por Dimensão</h6>
+
                         <div style="display: grid; gap: 1rem;">
                             <!-- Estrutura -->
                             <div style="display: flex; align-items: center; gap: 1rem;">
-                                <span style="font-size: 0.85rem; font-weight: 500; color: #1a1a1a; width: 90px;">Estrutura</span>
-                                <div style="flex: 1; height: 8px; background: #e8e8e8; border-radius: 4px; position: relative;">
-                                    <div id="barEstrutura" style="height: 100%; background: linear-gradient(90deg, #BF9A33, #D4AF37); border-radius: 4px; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); position: absolute; top: 0; left: 0;"></div>
+                                <span
+                                    style="font-size: 0.85rem; font-weight: 500; color: #1a1a1a; width: 90px;">Estrutura</span>
+                                <div
+                                    style="flex: 1; height: 8px; background: #e8e8e8; border-radius: 4px; position: relative;">
+                                    <div id="barEstrutura"
+                                        style="height: 100%; background: linear-gradient(90deg, #BF9A33, #D4AF37); border-radius: 4px; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); position: absolute; top: 0; left: 0;">
+                                    </div>
                                 </div>
-                                <span id="scoreEstrutura" style="font-size: 0.85rem; color: #BF9A33; font-weight: 600; width: 35px; text-align: right;">--</span>
+                                <span id="scoreEstrutura"
+                                    style="font-size: 0.85rem; color: #BF9A33; font-weight: 600; width: 35px; text-align: right;">--</span>
                             </div>
-                            
+
                             <!-- Conteúdo -->
                             <div style="display: flex; align-items: center; gap: 1rem;">
-                                <span style="font-size: 0.85rem; font-weight: 500; color: #1a1a1a; width: 90px;">Conteúdo</span>
-                                <div style="flex: 1; height: 8px; background: #e8e8e8; border-radius: 4px; position: relative;">
-                                    <div id="barConteudo" style="height: 100%; background: linear-gradient(90deg, #BF9A33, #D4AF37); border-radius: 4px; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); position: absolute; top: 0; left: 0;"></div>
+                                <span
+                                    style="font-size: 0.85rem; font-weight: 500; color: #1a1a1a; width: 90px;">Conteúdo</span>
+                                <div
+                                    style="flex: 1; height: 8px; background: #e8e8e8; border-radius: 4px; position: relative;">
+                                    <div id="barConteudo"
+                                        style="height: 100%; background: linear-gradient(90deg, #BF9A33, #D4AF37); border-radius: 4px; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); position: absolute; top: 0; left: 0;">
+                                    </div>
                                 </div>
-                                <span id="scoreConteudo" style="font-size: 0.85rem; color: #BF9A33; font-weight: 600; width: 35px; text-align: right;">--</span>
+                                <span id="scoreConteudo"
+                                    style="font-size: 0.85rem; color: #BF9A33; font-weight: 600; width: 35px; text-align: right;">--</span>
                             </div>
-                            
+
                             <!-- Formação -->
                             <div style="display: flex; align-items: center; gap: 1rem;">
-                                <span style="font-size: 0.85rem; font-weight: 500; color: #1a1a1a; width: 90px;">Formação</span>
-                                <div style="flex: 1; height: 8px; background: #e8e8e8; border-radius: 4px; position: relative;">
-                                    <div id="barFormacao" style="height: 100%; background: linear-gradient(90deg, #BF9A33, #D4AF37); border-radius: 4px; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); position: absolute; top: 0; left: 0;"></div>
+                                <span
+                                    style="font-size: 0.85rem; font-weight: 500; color: #1a1a1a; width: 90px;">Formação</span>
+                                <div
+                                    style="flex: 1; height: 8px; background: #e8e8e8; border-radius: 4px; position: relative;">
+                                    <div id="barFormacao"
+                                        style="height: 100%; background: linear-gradient(90deg, #BF9A33, #D4AF37); border-radius: 4px; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); position: absolute; top: 0; left: 0;">
+                                    </div>
                                 </div>
-                                <span id="scoreFormacao" style="font-size: 0.85rem; color: #BF9A33; font-weight: 600; width: 35px; text-align: right;">--</span>
+                                <span id="scoreFormacao"
+                                    style="font-size: 0.85rem; color: #BF9A33; font-weight: 600; width: 35px; text-align: right;">--</span>
                             </div>
-                            
+
                             <!-- Experiência -->
                             <div style="display: flex; align-items: center; gap: 1rem;">
-                                <span style="font-size: 0.85rem; font-weight: 500; color: #1a1a1a; width: 90px;">Experiência</span>
-                                <div style="flex: 1; height: 8px; background: #e8e8e8; border-radius: 4px; position: relative;">
-                                    <div id="barExperiencia" style="height: 100%; background: linear-gradient(90deg, #BF9A33, #D4AF37); border-radius: 4px; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); position: absolute; top: 0; left: 0;"></div>
+                                <span
+                                    style="font-size: 0.85rem; font-weight: 500; color: #1a1a1a; width: 90px;">Experiência</span>
+                                <div
+                                    style="flex: 1; height: 8px; background: #e8e8e8; border-radius: 4px; position: relative;">
+                                    <div id="barExperiencia"
+                                        style="height: 100%; background: linear-gradient(90deg, #BF9A33, #D4AF37); border-radius: 4px; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); position: absolute; top: 0; left: 0;">
+                                    </div>
                                 </div>
-                                <span id="scoreExperiencia" style="font-size: 0.85rem; color: #BF9A33; font-weight: 600; width: 35px; text-align: right;">--</span>
+                                <span id="scoreExperiencia"
+                                    style="font-size: 0.85rem; color: #BF9A33; font-weight: 600; width: 35px; text-align: right;">--</span>
                             </div>
                         </div>
                     </div>
@@ -219,47 +264,61 @@
 
                     <!-- COMPATIBILIDADE ATS - Dashboard Style -->
                     <div style="margin-bottom: 2rem;">
-                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1.5rem; text-align: center;">Compatibilidade ATS</h6>
-                        
+                        <h6
+                            style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1.5rem; text-align: center;">
+                            Compatibilidade ATS</h6>
+
                         <!-- Círculo de Progresso Centrado -->
                         <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 2rem;">
                             <div style="position: relative; width: 140px; height: 140px;">
                                 <!-- SVG Círculo de Progresso -->
                                 <svg width="140" height="140" style="transform: rotate(-90deg);">
                                     <!-- Círculo de fundo -->
-                                    <circle cx="70" cy="70" r="60" fill="none" stroke="#f0f0f0" stroke-width="10"/>
+                                    <circle cx="70" cy="70" r="60" fill="none" stroke="#f0f0f0" stroke-width="10" />
                                     <!-- Círculo de progresso -->
-                                    <circle id="atsProgressCircle" cx="70" cy="70" r="60" fill="none" stroke="#BF9A33" stroke-width="10" 
-                                        stroke-dasharray="377" stroke-dashoffset="377" 
+                                    <circle id="atsProgressCircle" cx="70" cy="70" r="60" fill="none" stroke="#BF9A33"
+                                        stroke-width="10" stroke-dasharray="377" stroke-dashoffset="377"
                                         stroke-linecap="round"
-                                        style="transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);"/>
+                                        style="transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);" />
                                 </svg>
                                 <!-- Score no centro -->
-                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                                    <div id="atsScoreDisplay" style="font-size: 2.5rem; font-weight: 700; color: #1a1a1a; line-height: 1;">--</div>
+                                <div
+                                    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                                    <div id="atsScoreDisplay"
+                                        style="font-size: 2.5rem; font-weight: 700; color: #1a1a1a; line-height: 1;">--
+                                    </div>
                                     <div style="font-size: 0.65rem; color: #999; margin-top: 2px;">de 100</div>
                                 </div>
                             </div>
                             <!-- Label de nível -->
-                            <div id="atsLevelBadge" style="font-size: 0.9rem; font-weight: 500; color: #BF9A33; margin-top: 1rem;">A calcular...</div>
+                            <div id="atsLevelBadge"
+                                style="font-size: 0.9rem; font-weight: 500; color: #BF9A33; margin-top: 1rem;">A
+                                calcular...</div>
                         </div>
-                        
+
                         <!-- Diagnóstico -->
                         <div id="atsDiagnosticBox" style="margin-bottom: 1.25rem;">
-                            <div style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem;">Diagnóstico</div>
-                            <ul id="atsLevelBullets" style="list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem;">
-                                <li style="font-size: 0.85rem; color: #555; padding-left: 1rem; position: relative;"><span style="position: absolute; left: 0; color: #BF9A33;">•</span> A aguardar análise...</li>
+                            <div
+                                style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem;">
+                                Diagnóstico</div>
+                            <ul id="atsLevelBullets"
+                                style="list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem;">
+                                <li style="font-size: 0.85rem; color: #555; padding-left: 1rem; position: relative;">
+                                    <span style="position: absolute; left: 0; color: #BF9A33;">•</span> A aguardar
+                                    análise...</li>
                             </ul>
                         </div>
-                        
+
                         <!-- Gatilhos -->
                         <div id="atsTriggersBox">
-                            <div style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem;">Palavras-chave</div>
+                            <div
+                                style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem;">
+                                Palavras-chave</div>
                             <div id="atsTriggersList" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                                 <span style="font-size: 0.8rem; color: #666;">A identificar...</span>
                             </div>
                         </div>
-                        
+
                         <!-- Barra de progresso escondida para compatibilidade -->
                         <div id="atsProgressBar" style="display: none;"></div>
                     </div>
@@ -268,36 +327,48 @@
 
                     <!-- FORMAÇÃO -->
                     <div style="margin-bottom: 2rem;">
-                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">Formação</h6>
+                        <h6
+                            style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">
+                            Formação</h6>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                             <div>
-                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Última formação</div>
+                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Última formação
+                                </div>
                                 <div id="lastEducation" style="font-size: 0.9rem; color: #1a1a1a;">A verificar...</div>
                             </div>
                             <div>
-                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Ritmo de atualização</div>
+                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Ritmo de
+                                    atualização</div>
                                 <div id="updateRhythm" style="font-size: 0.9rem; color: #1a1a1a;">A avaliar...</div>
                             </div>
                         </div>
-                        
+
                         <!-- Training Relevance Section (hidden by default) -->
-                        <div id="trainingRelevanceSection" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f0f0f0;">
-                            <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.5rem;">Score de Alinhamento: <span id="trainingScore" style="color: #1a1a1a; font-weight: 600;">--/100</span></div>
+                        <div id="trainingRelevanceSection"
+                            style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f0f0f0;">
+                            <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.5rem;">Score de Alinhamento:
+                                <span id="trainingScore" style="color: #1a1a1a; font-weight: 600;">--/100</span></div>
                             <div id="trainingAssessment" style="font-size: 0.85rem; color: #666;">A analisar...</div>
                             <div id="alignedCoursesDiv" style="display: none; margin-top: 0.75rem;">
-                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Formações Relevantes</div>
-                                <ul id="alignedCoursesList" style="font-size: 0.85rem; margin: 0; padding-left: 1rem; color: #444;"></ul>
+                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Formações
+                                    Relevantes</div>
+                                <ul id="alignedCoursesList"
+                                    style="font-size: 0.85rem; margin: 0; padding-left: 1rem; color: #444;"></ul>
                             </div>
                             <div id="recommendedCoursesDiv" style="display: none; margin-top: 0.75rem;">
-                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Recomendações</div>
-                                <ul id="recommendedCoursesList" style="font-size: 0.85rem; margin: 0; padding-left: 1rem; color: #666;"></ul>
+                                <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Recomendações
+                                </div>
+                                <ul id="recommendedCoursesList"
+                                    style="font-size: 0.85rem; margin: 0; padding-left: 1rem; color: #666;"></ul>
                             </div>
                         </div>
                     </div>
 
                     <!-- ESTRUTURA DO DOCUMENTO -->
                     <div style="margin-bottom: 2rem;">
-                        <h6 style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">Estrutura do Documento</h6>
+                        <h6
+                            style="font-size: 0.7rem; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem;">
+                            Estrutura do Documento</h6>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                             <div>
                                 <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.25rem;">Organização</div>
@@ -315,9 +386,11 @@
                     <!-- CTA RELATÓRIO COMPLETO -->
                     <div style="text-align: center; padding: 1.5rem; background: #fafafa; border-radius: 12px;">
                         <div style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem;">Relatório Completo</div>
-                        <div style="font-size: 2rem; font-weight: 700; color: #1a1a1a; margin-bottom: 0.25rem;">2,99 €</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: #1a1a1a; margin-bottom: 0.25rem;">2,99 €
+                        </div>
                         <div style="font-size: 0.8rem; color: #999; margin-bottom: 1rem;">PDF enviado por email</div>
-                        <ul style="list-style: none; padding: 0; margin: 0 0 1rem 0; font-size: 0.8rem; color: #666; text-align: left; max-width: 250px; margin-left: auto; margin-right: auto;">
+                        <ul
+                            style="list-style: none; padding: 0; margin: 0 0 1rem 0; font-size: 0.8rem; color: #666; text-align: left; max-width: 250px; margin-left: auto; margin-right: auto;">
                             <li style="padding: 0.25rem 0;">→ Diagnóstico detalhado</li>
                             <li style="padding: 0.25rem 0;">→ Pontos fortes e fragilidades</li>
                             <li style="padding: 0.25rem 0;">→ Recomendações acionáveis</li>
@@ -326,11 +399,15 @@
                     </div>
 
                 </div>
-                
+
                 <!-- FOOTER MINIMALISTA -->
-                <div class="modal-footer" style="background: #fff; border-top: 1px solid #eee; padding: 1rem 2rem; justify-content: space-between;">
-                    <button type="button" class="btn" data-bs-dismiss="modal" style="background: transparent; border: 1px solid #ddd; color: #666; border-radius: 8px; padding: 0.5rem 1.25rem; font-size: 0.85rem;">Fechar</button>
-                    <button type="button" class="btn" onclick="openReportPaymentModal()" style="background: #1a1a1a; border: none; color: #fff; border-radius: 8px; padding: 0.5rem 1.5rem; font-size: 0.85rem; font-weight: 500;">Obter Relatório Completo</button>
+                <div class="modal-footer"
+                    style="background: #fff; border-top: 1px solid #eee; padding: 1rem 2rem; justify-content: space-between;">
+                    <button type="button" class="btn" data-bs-dismiss="modal"
+                        style="background: transparent; border: 1px solid #ddd; color: #666; border-radius: 8px; padding: 0.5rem 1.25rem; font-size: 0.85rem;">Fechar</button>
+                    <button type="button" class="btn" onclick="openReportPaymentModal()"
+                        style="background: #1a1a1a; border: none; color: #fff; border-radius: 8px; padding: 0.5rem 1.5rem; font-size: 0.85rem; font-weight: 500;">Obter
+                        Relatório Completo</button>
                 </div>
             </div>
         </div>
@@ -341,26 +418,34 @@
         <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
             <div class="modal-content" style="border-radius: 12px; border: 1px solid #e8e8e8; background: #fff;">
                 <!-- Header -->
-                <div class="modal-header" style="border-bottom: 1px solid #f0f0f0; padding: 1.5rem 1.5rem 1rem; background: #fff;">
+                <div class="modal-header"
+                    style="border-bottom: 1px solid #f0f0f0; padding: 1.5rem 1.5rem 1rem; background: #fff;">
                     <div style="text-align: center; width: 100%;">
-                        <h5 class="modal-title" style="font-size: 1.1rem; font-weight: 600; color: #1a1a1a; margin: 0;">Relatório Completo</h5>
-                        <p style="font-size: 0.75rem; color: #999; margin: 0.5rem 0 0 0; text-transform: uppercase; letter-spacing: 0.5px;">Entrega por Email</p>
+                        <h5 class="modal-title" style="font-size: 1.1rem; font-weight: 600; color: #1a1a1a; margin: 0;">
+                            Relatório Completo</h5>
+                        <p
+                            style="font-size: 0.75rem; color: #999; margin: 0.5rem 0 0 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Entrega por Email</p>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" style="opacity: 0.4; margin: -0.5rem -0.5rem -0.5rem auto;"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        style="opacity: 0.4; margin: -0.5rem -0.5rem -0.5rem auto;"></button>
                 </div>
 
                 <!-- Body -->
                 <div class="modal-body" style="padding: 1.5rem; background: #fff;">
 
                     <!-- Info Section - Minimalist -->
-                    <div style="margin-bottom: 1.5rem; padding: 0.75rem; border-left: 2px solid #BF9A33; background: #fafafa;">
+                    <div
+                        style="margin-bottom: 1.5rem; padding: 0.75rem; border-left: 2px solid #BF9A33; background: #fafafa;">
                         <div style="display: flex; gap: 0.75rem; align-items: flex-start; margin-bottom: 0.5rem;">
                             <span style="color: #BF9A33; font-weight: 600; font-size: 0.8rem; flex-shrink: 0;">✓</span>
-                            <span style="font-size: 0.8rem; color: #666; line-height: 1.4;">Análise detalhada de estrutura e conteúdo do teu CV</span>
+                            <span style="font-size: 0.8rem; color: #666; line-height: 1.4;">Análise detalhada de
+                                estrutura e conteúdo do teu CV</span>
                         </div>
                         <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
                             <span style="color: #BF9A33; font-weight: 600; font-size: 0.8rem; flex-shrink: 0;">✓</span>
-                            <span style="font-size: 0.8rem; color: #666; line-height: 1.4;">Relatório PDF enviado imediatamente após confirmação</span>
+                            <span style="font-size: 0.8rem; color: #666; line-height: 1.4;">Relatório PDF enviado
+                                imediatamente após confirmação</span>
                         </div>
                     </div>
 
@@ -368,7 +453,8 @@
                     <form id="reportPaymentForm">
                         <!-- Nome -->
                         <div style="margin-bottom: 1rem;">
-                            <label style="font-weight: 500; font-size: 0.8rem; color: #1a1a1a; display: block; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px;">Nome</label>
+                            <label
+                                style="font-weight: 500; font-size: 0.8rem; color: #1a1a1a; display: block; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px;">Nome</label>
                             <input type="text" id="paymentName" required
                                 style="width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 0.7rem; font-size: 0.9rem; color: #1a1a1a; background: #fff; box-sizing: border-box;"
                                 placeholder="Seu nome completo">
@@ -376,7 +462,8 @@
 
                         <!-- Email -->
                         <div style="margin-bottom: 1rem;">
-                            <label style="font-weight: 500; font-size: 0.8rem; color: #1a1a1a; display: block; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px;">Email</label>
+                            <label
+                                style="font-weight: 500; font-size: 0.8rem; color: #1a1a1a; display: block; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px;">Email</label>
                             <input type="email" id="paymentEmail" required
                                 style="width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 0.7rem; font-size: 0.9rem; color: #1a1a1a; background: #fff; box-sizing: border-box;"
                                 placeholder="seu.email@exemplo.com">
@@ -384,11 +471,13 @@
 
                         <!-- Telemóvel -->
                         <div style="margin-bottom: 1.5rem;">
-                            <label style="font-weight: 500; font-size: 0.8rem; color: #1a1a1a; display: block; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px;">Telemóvel</label>
-                            <input type="tel" id="paymentPhone" required placeholder="961925050"
-                                pattern="[0-9]{9}"
+                            <label
+                                style="font-weight: 500; font-size: 0.8rem; color: #1a1a1a; display: block; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px;">Telemóvel</label>
+                            <input type="tel" id="paymentPhone" required placeholder="912 345 678" pattern="[0-9]{9}"
                                 style="width: 100%; border: 1px solid #ddd; border-radius: 4px; padding: 0.7rem; font-size: 0.9rem; color: #1a1a1a; background: #fff; box-sizing: border-box;">
-                            <small style="font-size: 0.7rem; color: #999; display: block; margin-top: 0.3rem;">Necessário para confirmar pagamento MB WAY</small>
+                            <small
+                                style="font-size: 0.7rem; color: #999; display: block; margin-top: 0.3rem;">Necessário
+                                para confirmar pagamento MB WAY</small>
                         </div>
 
                         <!-- Status Message -->
@@ -404,8 +493,11 @@
                 </div>
 
                 <!-- Footer -->
-                <div style="border-top: 1px solid #f0f0f0; padding: 0.75rem 1.5rem; background: #fafafa; text-align: center;">
-                    <p style="font-size: 0.7rem; color: #999; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">🔒 Pagamento seguro via MB WAY</p>
+                <div
+                    style="border-top: 1px solid #f0f0f0; padding: 0.75rem 1.5rem; background: #fafafa; text-align: center;">
+                    <p
+                        style="font-size: 0.7rem; color: #999; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                        🔒 Pagamento seguro via MB WAY</p>
                 </div>
             </div>
         </div>
@@ -591,7 +683,7 @@
                 // >>> GUARDAR FICHEIRO GLOBALMENTE PARA USO POSTERIOR <<<
                 window.currentCVFile = file;
                 console.log('[CV] Ficheiro guardado em window.currentCVFile:', file.name);
-                
+
                 try {
                     // Chamar o Motor de Análise Real (PDF.js + Mammoth.js + Heuristics)
                     const success = await window.CV_ENGINE.analyzeFile(file);
@@ -769,7 +861,7 @@
                     console.log('[WHITELIST] currentCVFile:', window.currentCVFile);
                     console.log('[WHITELIST] currentReportData:', window.currentReportData);
                     console.log('[WHITELIST] transformedData:', transformedData);
-                    
+
                     // Verificar se temos o ficheiro CV
                     if (!window.currentCVFile) {
                         console.error('[WHITELIST] ERRO: CV file não encontrado!');
@@ -783,7 +875,7 @@
                         btnPayReport.innerHTML = originalBtnText;
                         return;
                     }
-                    
+
                     statusMsg.innerHTML = `
                         <div style="background: #f5f5f5; border-left: 2px solid #BF9A33; padding: 0.75rem; border-radius: 4px; font-size: 0.85rem; color: #666;">
                             <i class="fas fa-star me-2" style="color: #BF9A33;"></i>
@@ -791,26 +883,26 @@
                             <small>A gerar e enviar relatório...</small>
                         </div>
                     `;
-                    
+
                     // Enviar relatório diretamente
                     try {
                         const deliverFormData = new FormData();
                         deliverFormData.append('name', name);
                         deliverFormData.append('email', email);
                         deliverFormData.append('cv_file', window.currentCVFile);
-                        
+
                         // Usar dados da análise disponíveis
                         const reportData = window.currentReportData || transformedData || {};
                         console.log('[WHITELIST] Report data a enviar:', reportData);
                         deliverFormData.append('report', JSON.stringify(reportData));
-                        
+
                         const deliverResponse = await fetch(`${BACKEND_URL}/api/services/deliver-report`, {
                             method: 'POST',
                             body: deliverFormData
                         });
-                        
+
                         const deliverResult = await deliverResponse.json();
-                        
+
                         if (deliverResult.success) {
                             statusMsg.innerHTML = `
                                 <div style="background: #f5f5f5; border-left: 2px solid #BF9A33; padding: 0.75rem; border-radius: 4px; font-size: 0.85rem; color: #666;">
@@ -831,13 +923,13 @@
                             </div>
                         `;
                     }
-                    
+
                     // Reset button
                     setTimeout(() => {
                         btnPayReport.disabled = false;
                         btnPayReport.innerHTML = originalBtnText;
                     }, 3000);
-                    
+
                     return; // Sair - não fazer polling
                 }
 
@@ -943,10 +1035,10 @@
         // Add hover effect to submit button
         const btnPayReportEl = document.getElementById('btnPayReport');
         if (btnPayReportEl) {
-            btnPayReportEl.addEventListener('mouseover', function() {
+            btnPayReportEl.addEventListener('mouseover', function () {
                 this.style.background = '#a67a2a';
             });
-            btnPayReportEl.addEventListener('mouseout', function() {
+            btnPayReportEl.addEventListener('mouseout', function () {
                 this.style.background = '#BF9A33';
             });
         }

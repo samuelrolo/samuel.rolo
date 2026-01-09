@@ -14,17 +14,17 @@ const FALLBACK_CONFIG = {
         contact: "https://share2inspire-beckend.lm.r.appspot.com/api/contact/submit",
         consultoria: "https://share2inspire-beckend.lm.r.appspot.com/api/consultoria/submit"
     },
-    
+
     // Endpoints de fallback (alternativos)
     fallback: {
         // Usar serviços externos como fallback temporário
         email: "https://formspree.io/f/YOUR_FORM_ID", // Substituir por ID real
         contact: "https://getform.io/f/YOUR_FORM_ID", // Substituir por ID real
-        
+
         // Ou usar webhook do Zapier/Make.com
         webhook: "https://hooks.zapier.com/hooks/catch/YOUR_WEBHOOK_ID/"
     },
-    
+
     // Configuração de timeout e retry
     timeout: 10000, // 10 segundos
     maxRetries: 3,
@@ -37,7 +37,7 @@ const FALLBACK_CONFIG = {
 async function submitWithFallback(data, endpointType) {
     const primaryEndpoint = FALLBACK_CONFIG.primary[endpointType];
     const fallbackEndpoint = FALLBACK_CONFIG.fallback[endpointType];
-    
+
     try {
         // Tentar endpoint principal primeiro
         console.log(`Tentando endpoint principal: ${primaryEndpoint}`);
@@ -49,16 +49,16 @@ async function submitWithFallback(data, endpointType) {
             },
             body: JSON.stringify(data)
         }, FALLBACK_CONFIG.timeout);
-        
+
         if (response.ok) {
             return await response.json();
         } else {
             throw new Error(`Endpoint principal falhou: ${response.status}`);
         }
-        
+
     } catch (primaryError) {
         console.warn('Endpoint principal falhou, tentando fallback:', primaryError);
-        
+
         if (fallbackEndpoint) {
             try {
                 console.log(`Tentando endpoint de fallback: ${fallbackEndpoint}`);
@@ -70,7 +70,7 @@ async function submitWithFallback(data, endpointType) {
                     },
                     body: JSON.stringify(data)
                 }, FALLBACK_CONFIG.timeout);
-                
+
                 if (fallbackResponse.ok) {
                     return {
                         success: true,
@@ -82,7 +82,7 @@ async function submitWithFallback(data, endpointType) {
                 console.error('Fallback também falhou:', fallbackError);
             }
         }
-        
+
         // Se tudo falhar, usar email direto
         return handleDirectEmail(data);
     }
@@ -116,12 +116,12 @@ Mensagem: ${data.objectives || data.message || ''}
 Enviado via formulário web Share2Inspire
 Data: ${new Date().toLocaleString('pt-PT')}
     `);
-    
+
     const mailtoLink = `mailto:samuel@share2inspire.pt?subject=${subject}&body=${body}`;
-    
+
     // Abrir cliente de email
     window.location.href = mailtoLink;
-    
+
     return {
         success: true,
         message: 'Redirecionado para cliente de email',
@@ -134,7 +134,7 @@ Data: ${new Date().toLocaleString('pt-PT')}
  */
 const PAYMENT_FALLBACK = {
     // Quando pagamento falha, mostrar instruções manuais
-    showManualPaymentInstructions: function(amount, service) {
+    showManualPaymentInstructions: function (amount, service) {
         return {
             success: false,
             showInstructions: true,
@@ -145,13 +145,13 @@ const PAYMENT_FALLBACK = {
                     amount: amount
                 },
                 mbway: {
-                    phone: "+351 961 925 050",
+                    phone: "",
                     amount: amount
                 },
                 contact: {
                     email: "samuel@share2inspire.pt",
-                    phone: "+351 961 925 050",
-                    whatsapp: "https://wa.me/351961925050"
+                    phone: "",
+                    whatsapp: ""
                 }
             },
             message: `Para completar o pagamento de ${amount}€ para ${service}, use uma das opções acima ou contacte-nos diretamente.`
