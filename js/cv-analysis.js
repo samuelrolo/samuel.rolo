@@ -532,7 +532,7 @@ function setupReportPaymentHandler(candidateName) {
                     
                     await deliverReport(name, email, window.currentCVFile, window.currentReportData);
                     
-                    statusDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-envelope-open-text me-2"></i>Relatório enviado para o seu email!</div>';
+                    statusDiv.innerHTML = '<div class="alert alert-light" style="border: 1px solid #BF9A33; color: #1a1a1a;"><i class="fas fa-envelope-open-text me-2" style="color: #BF9A33;"></i>Relatório enviado para o seu email!</div>';
                     setTimeout(() => {
                         bootstrap.Modal.getInstance(document.getElementById('reportPaymentModal')).hide();
                     }, 4000);
@@ -562,11 +562,11 @@ function setupReportPaymentHandler(candidateName) {
                             clearInterval(pollInterval);
 
                             // Payment Confirmed! Deliver Report
-                            statusDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check me-2"></i>Pagamento confirmado! A gerar relatório...</div>';
+                            statusDiv.innerHTML = '<div class="alert alert-light" style="border: 1px solid #BF9A33; color: #1a1a1a;"><i class="fas fa-check me-2" style="color: #BF9A33;"></i>Pagamento confirmado! A gerar relatório...</div>';
 
                             await deliverReport(name, email, window.currentCVFile, window.currentReportData);
 
-                            statusDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-envelope-open-text me-2"></i>Relatório enviado para o seu email!</div>';
+                            statusDiv.innerHTML = '<div class="alert alert-light" style="border: 1px solid #BF9A33; color: #1a1a1a;"><i class="fas fa-envelope-open-text me-2" style="color: #BF9A33;"></i>Relatório enviado para o seu email!</div>';
                             setTimeout(() => {
                                 bootstrap.Modal.getInstance(document.getElementById('reportPaymentModal')).hide();
                             }, 4000);
