@@ -139,10 +139,10 @@
 }
 
 .btn-close {
-    filter: none !important;
-    opacity: 0.5;
-    transition: opacity 0.2s;
-}
+	    filter: brightness(0) !important;
+	    opacity: 0.8 !important;
+	    transition: opacity 0.2s;
+	}
 
 .btn-close:hover {
     opacity: 1;
