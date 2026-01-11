@@ -94,7 +94,7 @@ window.PDF_GENERATOR = {
         doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(...GRAY);
-        const description = `Esta pontuação reflete o nível de prontidão e impacto do seu perfil no mercado atual, baseado na avaliação das suas competências-chave.`;
+        const description = `Esta pontuação reflete o nível de prontidão e impacto do seu perfil no mercado atual, baseado na avaliação das suas principais destaques.`;
         doc.text(doc.splitTextToSize(description, 120), MARGIN_X + 40, currentY + 15);
 
         currentY += 40;
@@ -185,7 +185,7 @@ window.PDF_GENERATOR = {
         doc.setFontSize(14);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(...GOLD);
-        currentY = addText('DADOS CHAVE DA TRAJETÓRIA', MARGIN_X, currentY, 12, 'bold', GOLD);
+        currentY = addText('PRINCIPAIS DESTAQUES DA TRAJETÓRIA', MARGIN_X, currentY, 12, 'bold', GOLD);
         currentY += 2;
 
         const profile = data.personalInfo || {};
@@ -251,7 +251,7 @@ window.PDF_GENERATOR = {
             doc.setFontSize(14);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(...GOLD);
-            currentY = addText('TÓPICOS CHAVE PARA EVOLUÇÃO', MARGIN_X, currentY, 12, 'bold', GOLD);
+            currentY = addText('PRINCIPAIS DESTAQUES PARA EVOLUÇÃO', MARGIN_X, currentY, 12, 'bold', GOLD);
             currentY += 2;
 
             profile.main_key_topics.forEach(topic => {
