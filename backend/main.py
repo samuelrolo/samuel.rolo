@@ -5,6 +5,7 @@ import google.generativeai as genai
 from pypdf import PdfReader
 from io import BytesIO
 from flask import jsonify
+from datetime import datetime
 
 # Configure Gemini API
 # key should be set in environment variables for security
@@ -12,6 +13,12 @@ GENAI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
 if GENAI_API_KEY:
     genai.configure(api_key=GENAI_API_KEY)
+
+# Supabase Configuration
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://cvlumvgrbuolrnwrtrgz.supabase.co")
+SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM")
+DOMAIN = os.environ.get("DOMAIN", "share2inspire.pt")
+ASSISTANT_EMAIL = os.environ.get("ASSISTANT_EMAIL", "samuel.rolo@share2inspire.pt")
 
 def is_valid_cv(text):
     """Validate if text content looks like a CV/resume"""
@@ -103,6 +110,42 @@ def analyze_text_with_gemini(text):
             "improvements": ["Could not complete AI analysis due to an error."]
         }
 
+def log_analysis_to_supabase(analysis_data, user_email, user_name):
+    """Log CV analysis to Supabase for record keeping"""
+    try:
+        import requests
+        
+        # Prepare the data for logging
+        log_entry = {
+            "user_email": user_email,
+            "user_name": user_name,
+            "analysis_result": analysis_data,
+            "created_at": datetime.utcnow().isoformat(),
+            "domain": DOMAIN
+        }
+        
+        # Try to insert into cv_analysis table
+        headers = {
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": f"Bearer {SUPABASE_ANON_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        response = requests.post(
+            f"{SUPABASE_URL}/rest/v1/cv_analysis",
+            json=log_entry,
+            headers=headers
+        )
+        
+        if response.status_code in [200, 201]:
+            print(f"Analysis logged to Supabase for {user_email}")
+        else:
+            print(f"Warning: Could not log to Supabase: {response.text}")
+            
+    except Exception as e:
+        print(f"Error logging to Supabase: {e}")
+        # Don't fail the main analysis if logging fails
+
 @functions_framework.http
 def analyze_cv(request):
     # Set CORS headers for the preflight request
@@ -132,6 +175,10 @@ def analyze_cv(request):
         return (jsonify({'error': 'No selected file'}), 400, headers)
 
     try:
+        # Get user information
+        user_email = request.form.get('email', 'anonymous@share2inspire.pt')
+        user_name = request.form.get('name', 'Candidato')
+        
         # Read PDF content
         if file.filename.lower().endswith('.pdf'):
             pdf_bytes = BytesIO(file.read())
@@ -156,7 +203,15 @@ def analyze_cv(request):
         # Call AI
         analysis_result = analyze_text_with_gemini(text)
         
-        return (jsonify(analysis_result), 200, headers)
+        # Log to Supabase
+        log_analysis_to_supabase(analysis_result, user_email, user_name)
+        
+        return (jsonify({
+            'success': True,
+            'report': analysis_result,
+            'domain': DOMAIN,
+            'assistant_email': ASSISTANT_EMAIL
+        }), 200, headers)
 
     except Exception as e:
         print(f"Server Error: {e}")
