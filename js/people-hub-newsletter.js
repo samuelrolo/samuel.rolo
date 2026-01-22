@@ -48,8 +48,8 @@ function setupHRReportForm() {
         const data = {
             email: emailInput.value,
             name: 'Utilizador HR Hub',
-            subject: 'Download Relatório HR Trends 2025',
-            message: 'Pedido de download do relatório HR Trends 2025',
+            subject: 'Download Relatório HR Trends 2026',
+            message: 'Pedido de download do relatório HR Trends 2026',
             source: 'hr_hub_report_download',
             timestamp: new Date().toISOString()
         };

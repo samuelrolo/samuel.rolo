@@ -1,81 +1,94 @@
 /* =====================================================================
-   SHARE2INSPIRE - CONSOLIDATED STYLES
-   Unified stylesheet combining:
-   - Design System (s2i-modern.css)
-   - Header/Footer (header-footer.css)
-   - Service-specific styles
+   SHARE2INSPIRE - CONSOLIDATED STYLES (2026 EDITION)
+   Unified minimalist design system for Samuel Rolo AI
    
-   Created: 2025-12-28
-   Purpose: CSS consolidation for improved performance and maintainability
+   Created: 2026-12-28
+   Updated: 2026-01-22 (Minimalist Makeover)
    ===================================================================== */
 
 /* =====================================================================
-   1. CSS VARIABLES & DESIGN TOKENS
+   1. DESIGN TOKENS
    ===================================================================== */
 
 :root {
-    /* Brand Colors */
+    /* Brand Colors - Minimalist Palette */
     --s2i-gold: #BF9A33;
     --s2i-gold-dark: #a38125;
     --s2i-dark: #1A1A1A;
+    --s2i-white: #ffffff;
+    --s2i-bg: #fcfcfc;
     --s2i-gray-light: #f8f9fa;
-    --s2i-text-muted: #6c757d;
+    --s2i-border: #eeeeee;
+    --s2i-text: #333333;
+    --s2i-text-muted: #666666;
 
+    /* Typography */
+    --s2i-font: 'Poppins', sans-serif;
+    
     /* Effects */
-    --s2i-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    --s2i-shadow-strong: 0 15px 40px rgba(0, 0, 0, 0.2);
-    --s2i-radius: 12px;
-
-    /* Transitions */
-    --s2i-transition: all 0.3s ease;
+    --s2i-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    --s2i-shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --s2i-radius: 8px; /* More subtle radius */
+    --s2i-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* =====================================================================
-   2. GLOBAL STYLES
+   2. GLOBAL RESET & BASE
    ===================================================================== */
 
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #fcfcfc;
-    color: #333;
+    font-family: var(--s2i-font);
+    background-color: var(--s2i-bg);
+    color: var(--s2i-text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: var(--s2i-dark);
+    letter-spacing: -0.02em;
+}
+
+a {
+    color: var(--s2i-gold);
+    text-decoration: none;
+    transition: var(--s2i-transition);
+}
+
+a:hover {
+    color: var(--s2i-gold-dark);
 }
 
 /* =====================================================================
-   3. BUTTON SYSTEM
+   3. MINIMALIST UI COMPONENTS
    ===================================================================== */
 
+/* Buttons */
 .s2i-btn {
-    padding: 12px 24px;
-    border-radius: 50px;
-    font-weight: 600;
-    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
     font-size: 0.85rem;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
     transition: var(--s2i-transition);
-    border: 2px solid transparent;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    border: 1px solid transparent;
 }
 
 .s2i-btn-primary {
+    background-color: var(--s2i-dark);
+    color: var(--s2i-gold);
+    border-color: var(--s2i-gold);
+}
+
+.s2i-btn-primary:hover {
     background-color: var(--s2i-gold);
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(191, 154, 51, 0.3);
-}
-
-.s2i-btn-primary:hover:not(:disabled) {
-    background-color: var(--s2i-gold-dark);
-    transform: translateY(-2px);
-    color: #fff;
-}
-
-.s2i-btn-primary:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-    box-shadow: none;
-    opacity: 0.6;
+    color: var(--s2i-dark);
 }
 
 .s2i-btn-outline {
@@ -86,288 +99,126 @@ body {
 
 .s2i-btn-outline:hover {
     background-color: var(--s2i-gold);
-    color: #fff;
+    color: var(--s2i-white);
+}
+
+/* Inputs */
+input, select, textarea {
+    border: 1px solid var(--s2i-border) !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    font-size: 0.9rem !important;
+    transition: var(--s2i-transition) !important;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--s2i-gold) !important;
+    box-shadow: 0 0 0 3px rgba(191, 154, 51, 0.1) !important;
+    outline: none !important;
 }
 
 /* =====================================================================
-   4. HEADER / NAVIGATION
+   4. GLOBAL HEADER (STICKY & MINIMAL)
    ===================================================================== */
 
 .navbar {
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    padding: 1rem 0;
-    z-index: 100;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--s2i-border);
+    padding: 0.75rem 0;
+    transition: var(--s2i-transition);
 }
 
 .navbar-brand img {
-    height: 40px;
-}
-
-.navbar-nav {
-    margin-left: auto;
+    height: 35px;
 }
 
 .navbar-nav .nav-link {
-    color: #333;
-    font-weight: 600;
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-    margin: 0 0.25rem;
-    font-family: 'Poppins', sans-serif;
-    transition: color 0.3s ease;
+    color: var(--s2i-dark);
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.5rem 1.25rem !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.navbar-nav .nav-link:hover {
-    color: var(--s2i-gold);
-}
-
+.navbar-nav .nav-link:hover, 
 .navbar-nav .nav-link.active {
     color: var(--s2i-gold);
-    position: relative;
-}
-
-.navbar-nav .nav-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 1rem;
-    right: 1rem;
-    height: 2px;
-    background-color: var(--s2i-gold);
 }
 
 /* =====================================================================
-   5. FOOTER
+   5. GLOBAL FOOTER (CLEAN & STRUCTURED)
    ===================================================================== */
 
 footer {
-    background-color: #212529;
-    color: #fff;
-    padding: 20px 0;
-    margin-top: 50px;
-    font-family: 'Poppins', sans-serif;
+    background-color: var(--s2i-dark);
+    color: var(--s2i-white);
+    padding: 60px 0 30px;
+    margin-top: 80px;
 }
 
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
+.footer-brand img {
+    height: 40px;
+    margin-bottom: 20px;
 }
 
-.footer-left p {
-    margin: 0;
+.footer-title {
     color: var(--s2i-gold);
-    font-size: 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 25px;
 }
 
-.footer-right {
-    display: flex;
-    gap: 30px;
+.footer-text {
+    color: #999;
+    font-size: 0.9rem;
+    line-height: 1.8;
 }
 
-.footer-contact p {
-    margin: 0 0 5px 0;
-    color: #fff;
-    font-size: 14px;
-}
-
-.footer-contact i {
-    color: var(--s2i-gold);
-    margin-right: 8px;
-}
-
-.footer-social {
-    display: flex;
-    gap: 15px;
-}
-
-.footer-social a {
-    color: var(--s2i-gold);
-    font-size: 20px;
-    transition: color 0.3s;
-    text-decoration: none;
-}
-
-.footer-social a:hover {
-    color: #fff;
-}
-
-.footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 15px;
-}
-
-.footer-links a {
-    color: var(--s2i-gold);
-    font-size: 14px;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.footer-links a:hover {
-    color: #fff;
-    text-decoration: underline;
-}
-
-/* =====================================================================
-   6. CARDS & COMPONENTS
-   ===================================================================== */
-
-.upload-section {
-    position: relative;
-    z-index: 10;
-    margin-top: -60px;
-}
-
-.maturity-score-card {
-    background: #fff;
-    border-radius: var(--s2i-radius);
-    box-shadow: var(--s2i-shadow);
-    transition: transform 0.3s ease;
-    overflow: hidden;
-}
-
-.maturity-score-card:hover {
-    transform: translateY(-5px);
-}
-
-/* =====================================================================
-   7. MODALS
-   ===================================================================== */
-
-.modal-content {
-    border: none;
-    border-radius: var(--s2i-radius);
-    overflow: hidden;
-    box-shadow: var(--s2i-shadow-strong);
-}
-
-.modal-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.chart-container {
-    position: relative;
-    margin: auto;
-    width: 100%;
-}
-
-/* =====================================================================
-   8. LISTS & DETAILS
-   ===================================================================== */
-
-.details-list .strength-item,
-.details-list .suggestion-item {
-    border-bottom: 1px solid #eee;
-    padding-bottom: 12px;
+.footer-link {
+    color: #ccc;
+    font-size: 0.9rem;
+    display: block;
     margin-bottom: 12px;
+    transition: var(--s2i-transition);
 }
 
-.details-list .strength-item:last-child,
-.details-list .suggestion-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
-
-.section-title {
-    font-size: 1.1rem;
-    letter-spacing: -0.5px;
-}
-
-/* =====================================================================
-   9. ICONS & DECORATIVE ELEMENTS
-   ===================================================================== */
-
-.icon-wrapper i {
-    filter: drop-shadow(0 4px 6px rgba(191, 154, 51, 0.2));
-}
-
-#maturityScore {
+.footer-link:hover {
     color: var(--s2i-gold);
-    line-height: 1;
+    transform: translateX(5px);
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 50px;
+    padding-top: 30px;
+    text-align: center;
+}
+
+.footer-copy {
+    color: #666;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
 }
 
 /* =====================================================================
-   10. RESPONSIVE DESIGN
+   6. UTILITIES
    ===================================================================== */
 
-@media (max-width: 768px) {
-
-    /* Footer Responsive */
-    .footer-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 20px;
-    }
-
-    .footer-right {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .footer-social {
-        justify-content: center;
-    }
-
-    .footer-links {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    /* Navigation Responsive */
-    .navbar-nav .nav-link {
-        padding: 0.75rem 1rem;
-    }
-
-    /* Buttons Responsive */
-    .s2i-btn {
-        width: 100%;
-        justify-content: center;
-    }
+.text-gold { color: var(--s2i-gold); }
+.bg-gold { background-color: var(--s2i-gold); }
+.section-padding { padding: 100px 0; }
+.minimal-card {
+    background: var(--s2i-white);
+    border: 1px solid var(--s2i-border);
+    border-radius: var(--s2i-radius);
+    padding: 30px;
+    transition: var(--s2i-transition);
 }
-
-@media (max-width: 576px) {
-    .s2i-btn {
-        padding: 10px 20px;
-        font-size: 0.8rem;
-    }
-}
-
-/* =====================================================================
-   11. UTILITY CLASSES
-   ===================================================================== */
-
-.text-gold {
-    color: var(--s2i-gold);
-}
-
-.bg-gold {
-    background-color: var(--s2i-gold);
-}
-
-.border-gold {
+.minimal-card:hover {
+    box-shadow: var(--s2i-shadow-hover);
     border-color: var(--s2i-gold);
-}
-
-.hover-lift {
-    transition: transform 0.3s ease;
-}
-
-.hover-lift:hover {
-    transform: translateY(-3px);
-}
-
-.shadow-soft {
-    box-shadow: var(--s2i-shadow);
-}
-
-.shadow-strong {
-    box-shadow: var(--s2i-shadow-strong);
 }
