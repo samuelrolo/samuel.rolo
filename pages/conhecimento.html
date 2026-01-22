@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Conhecimento | Samuel Rolo AI (The Mindset Maverick)</title>
-    <meta content="Explora a nova geografia do poder na era digital. Artigos, podcasts e recursos sobre a fusão entre tecnologia e consciência humana." name="description" />
+    <meta content="Artigos, podcasts e recursos sobre a fusão entre tecnologia e consciência humana. Onde o estratégico encontra o humano." name="description" />
     
     <!-- Favicon -->
     <link rel="icon" href="../images/logo.png" type="image/png">
@@ -23,81 +23,150 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
     <style>
+        /* Hero Section */
         .knowledge-hero {
-            background: var(--s2i-dark);
-            color: var(--s2i-white);
-            padding: 120px 0 80px;
+            background: var(--s2i-bg);
+            padding: 120px 0 60px;
             text-align: center;
-            border-bottom: 1px solid var(--s2i-gold);
+            border-bottom: 1px solid var(--s2i-border);
         }
         .knowledge-hero h1 {
-            color: var(--s2i-gold);
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--s2i-dark);
+            margin-bottom: 1rem;
         }
         .knowledge-hero p {
-            max-width: 700px;
+            max-width: 600px;
             margin: 0 auto;
-            font-size: 1.1rem;
-            opacity: 0.8;
+            font-size: 1rem;
+            color: var(--s2i-text-muted);
+            line-height: 1.8;
         }
-        .resource-section {
+        
+        /* Sections */
+        .content-section {
             padding: 80px 0;
         }
-        .resource-card {
-            background: var(--s2i-white);
-            border: 1px solid var(--s2i-border);
-            border-radius: 12px;
-            padding: 30px;
-            height: 100%;
-            transition: var(--s2i-transition);
-            display: flex;
-            flex-direction: column;
-        }
-        .resource-card:hover {
-            border-color: var(--s2i-gold);
-            transform: translateY(-5px);
-            box-shadow: var(--s2i-shadow-hover);
-        }
-        .resource-tag {
-            font-size: 0.7rem;
+        .section-title {
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             color: var(--s2i-gold);
             font-weight: 600;
             margin-bottom: 15px;
-            display: block;
         }
-        .resource-card h3 {
-            font-size: 1.25rem;
-            margin-bottom: 15px;
+        .section-heading {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--s2i-dark);
         }
-        .resource-card p {
+        .section-text {
+            color: var(--s2i-text-muted);
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+        
+        /* Podcast Embed */
+        .podcast-section {
+            background: var(--s2i-white);
+            border: 1px solid var(--s2i-border);
+            border-radius: var(--s2i-radius);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        .spotify-embed {
+            border-radius: 12px;
+            margin-top: 25px;
+        }
+        
+        /* Articles Grid */
+        .article-card {
+            background: var(--s2i-white);
+            border: 1px solid var(--s2i-border);
+            border-radius: var(--s2i-radius);
+            padding: 25px;
+            height: 100%;
+            transition: var(--s2i-transition);
+        }
+        .article-card:hover {
+            border-color: var(--s2i-gold);
+            transform: translateY(-3px);
+            box-shadow: var(--s2i-shadow-hover);
+        }
+        .article-card h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--s2i-dark);
+        }
+        .article-card p {
             font-size: 0.9rem;
             color: var(--s2i-text-muted);
-            flex-grow: 1;
+            margin-bottom: 15px;
         }
-        .podcast-embed {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 40px;
-            border: 1px solid var(--s2i-border);
+        .article-link {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: var(--s2i-gold);
         }
-        .newsletter-box {
+        .article-link:hover {
+            color: var(--s2i-gold-dark);
+        }
+        
+        /* Newsletter Section */
+        .newsletter-section {
+            background: var(--s2i-dark);
+            padding: 60px 40px;
+            border-radius: var(--s2i-radius);
+            text-align: center;
+            margin-top: 60px;
+        }
+        .newsletter-section h2 {
+            color: var(--s2i-gold);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .newsletter-section p {
+            color: #999;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+        .newsletter-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .newsletter-btn {
+            background: transparent;
+            border: 1px solid var(--s2i-gold);
+            color: var(--s2i-gold);
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--s2i-transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .newsletter-btn:hover {
             background: var(--s2i-gold);
             color: var(--s2i-dark);
-            padding: 60px;
-            border-radius: 16px;
-            text-align: center;
-            margin-top: 80px;
         }
-        .newsletter-box h2 {
-            margin-bottom: 20px;
-        }
-        .newsletter-box p {
-            margin-bottom: 30px;
-            opacity: 0.9;
+        .frequency-badge {
+            background: var(--s2i-gold);
+            color: var(--s2i-dark);
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -128,61 +197,77 @@
     <!-- Hero -->
     <header class="knowledge-hero">
         <div class="container">
-            <span class="resource-tag">Insights & Estratégia</span>
+            <span class="section-title">Insights & Estratégia</span>
             <h1>Conhecimento</h1>
-            <p>Onde a tecnologia encontra a consciência humana. Uma curadoria de ideias, artigos e podcasts para navegar na nova geografia do poder digital.</p>
+            <p>Onde a tecnologia encontra a consciência humana. Uma curadoria de ideias, artigos e podcasts para quem procura navegar na transformação do trabalho com propósito.</p>
         </div>
     </header>
 
-    <!-- Resources Grid -->
-    <section class="resource-section">
+    <!-- Main Content -->
+    <section class="content-section">
         <div class="container">
-            <div class="row g-4">
-                <!-- Humans & Machines -->
-                <div class="col-lg-6">
-                    <div class="resource-card">
-                        <span class="resource-tag">Podcast & Artigos</span>
-                        <h3></h3>
-                        <p>Exploramos a interseção entre a inteligência artificial e a essência humana. Como manter a empatia e o pensamento crítico num mundo cada vez mais automatizado.</p>
-                        <div class="podcast-embed">
-                            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/show/2v8Z7Y5X3Z6Z6Z6Z6Z6Z6Z" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            
+            <!-- Podcast Section -->
+            <div class="podcast-section">
+                <span class="section-title">Podcast</span>
+                <h2 class="section-heading">Humanos e Máquinas</h2>
+                <p class="section-text">Exploramos a interseção entre a inteligência artificial e a essência humana. Como manter a empatia e o pensamento crítico num mundo cada vez mais automatizado.</p>
+                
+                <div class="spotify-embed">
+                    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/show/2P09p0F3HIR0jXRdCMPOSe?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                </div>
+            </div>
+            
+            <!-- Articles Section -->
+            <div class="mt-5">
+                <span class="section-title">Artigos & Reflexões</span>
+                <h2 class="section-heading">Leituras Recomendadas</h2>
+                <p class="section-text mb-4">Uma seleção de artigos sobre gestão de pessoas, transformação organizacional e o futuro do trabalho.</p>
+                
+                <div class="row g-4 mt-3">
+                    <div class="col-md-4">
+                        <div class="article-card">
+                            <h4>Mudam os Tempos, Mudam as Avaliações</h4>
+                            <p>Uma reflexão sobre a evolução dos modelos de avaliação de desempenho e o que realmente importa na gestão de talento.</p>
+                            <a href="https://rhmagazine.pt/mudam-os-tempos-mudam-as-avaliacoes/" target="_blank" class="article-link">Ler artigo <i class="fas fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="article-card">
+                            <h4>Frameworks de Liderança</h4>
+                            <p>Ferramentas práticas para líderes que procuram equilibrar resultados com o desenvolvimento das suas equipas.</p>
+                            <a href="#" class="article-link">Em breve <i class="fas fa-clock ms-1"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="article-card">
+                            <h4>O Futuro do Trabalho</h4>
+                            <p>Tendências de mercado e estratégias para profissionais que querem liderar a transformação organizacional.</p>
+                            <a href="#" class="article-link">Em breve <i class="fas fa-clock ms-1"></i></a>
                         </div>
                     </div>
                 </div>
-                <!-- Conhecimento -->
-                <div class="col-lg-6">
-                    <div class="resource-card">
-                        <span class="resource-tag">Recursos RH</span>
-                        <h3>People Innovation Hub</h3>
-                        <p>Ferramentas práticas, tendências de mercado e estratégias de gestão de talento para profissionais que querem liderar a transformação organizacional.</p>
-                        <ul class="list-unstyled mt-4">
-                            <li class="mb-2"><i class="fas fa-check text-gold me-2"></i> Frameworks de Liderança</li>
-                            <li class="mb-2"><i class="fas fa-check text-gold me-2"></i> Guias de Futuro do Trabalho</li>
-                            <li class="mb-2"><i class="fas fa-check text-gold me-2"></i> Estudos de Caso Reais</li>
-                        </ul>
-                        <a href="#" class="s2i-btn s2i-btn-primary mt-auto">Aceder aos Recursos</a>
-                    </div>
+            </div>
+            
+            <!-- Newsletter Section -->
+            <div class="newsletter-section">
+                <h2>The Mindset Maverick</h2>
+                <p>Junta-te a mais de 5.000 profissionais e recebe insights que desafiam o status quo. <span class="frequency-badge">Mensal</span></p>
+                
+                <div class="newsletter-links">
+                    <a href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7384145793324085248" target="_blank" class="newsletter-btn">
+                        <i class="fab fa-linkedin"></i> Newsletter Principal
+                    </a>
+                    <a href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7258968797414342657" target="_blank" class="newsletter-btn">
+                        <i class="fab fa-linkedin"></i> Newsletter Secundária
+                    </a>
                 </div>
             </div>
-
-            <!-- Newsletter -->
-            <div class="newsletter-box">
-                <h2>The Mindset Maverick Newsletter</h2>
-                <p>Junta-te a mais de 5.000 profissionais e recebe semanalmente insights que desafiam o status quo.</p>
-                <form class="row g-2 justify-content-center">
-                    <div class="col-md-4">
-                        <input type="email" class="form-control" placeholder="O teu melhor email" required>
-                    </div>
-                    <div class="col-md-auto">
-                        <button type="submit" class="s2i-btn s2i-btn-primary" style="background: var(--s2i-dark); color: var(--s2i-gold); border: none;">Subscrever</button>
-                    </div>
-                </form>
-            </div>
+            
         </div>
     </section>
 
     <!-- Footer -->
-
     <footer>
         <div class="container">
             <div class="row g-4">
@@ -190,7 +275,7 @@
                     <div class="footer-brand">
                         <img src="../images/logo.png" alt="Samuel Rolo Logo">
                     </div>
-                    <p class="footer-text">Transformando mindsets e carreiras através da fusão entre estratégia corporativa e empatia humana.</p>
+                    <p class="footer-text">A transformar mindsets e carreiras através da fusão entre estratégia corporativa e empatia humana.</p>
                 </div>
                 <div class="col-lg-2 col-md-4">
                     <h5 class="footer-title">Navegação</h5>
@@ -220,7 +305,7 @@
         </div>
     </footer>
 
-<!-- Bootstrap JS -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
