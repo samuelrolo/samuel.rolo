@@ -1,6 +1,6 @@
 # 🚀 Deployment Guide - Share2Inspire Platform Updates
 
-**Data:** 2025-12-28  
+**Data:** 2026-12-28  
 **Versão:** 2.0 - Platform Enhancements
 
 ---

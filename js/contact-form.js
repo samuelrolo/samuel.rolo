@@ -1,6 +1,6 @@
 /**
  * Script para o formulário de contacto - Versão robusta
- * Share2Inspire - Dezembro 2025
+ * Share2Inspire - Dezembro 2026
  * Funciona tanto com modais existentes quanto com modais criados dinamicamente
  */
 

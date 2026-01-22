@@ -409,7 +409,7 @@ Para questões ou sugestões, contactar através do repositório GitHub do proje
 ---
 
 **Versão:** 1.0  
-**Última atualização:** Outubro 2025  
+**Última atualização:** Outubro 2026  
 **Autor:** Manus AI  
 **Projeto:** Share2Inspire.pt
 

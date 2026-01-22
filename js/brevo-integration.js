@@ -1,6 +1,6 @@
 /**
  * Integração Brevo - Share2Inspire
- * VERSÃO CORRIGIDA COM MÚLTIPLOS SERVIÇOS - Julho 2025
+ * VERSÃO CORRIGIDA COM MÚLTIPLOS SERVIÇOS - Julho 2026
  * Suporte para: Kickstart Pro, Consultoria, Coaching, Workshops
  * URLs CORRIGIDAS para funcionar com os novos blueprints
  * E-MAIL CORRIGIDO: srshare2inspire@gmail.com

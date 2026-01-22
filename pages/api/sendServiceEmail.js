@@ -60,7 +60,7 @@ const getEmailHtml = (type, data) => {
             </div>
             <div style="background: #1A1A1A; padding: 20px; text-align: center;">
                 <p style="color: #888; font-size: 12px; margin: 0;">
-                    © 2025 Share2Inspire | Samuel Rolo<br>
+                    © 2026 Share2Inspire | Samuel Rolo<br>
                     <a href="https://share2inspire.pt" style="color: ${goldAccent};">share2inspire.pt</a>
                 </p>
             </div>
@@ -104,7 +104,7 @@ const getEmailHtml = (type, data) => {
             </div>
             <div style="background: #1A1A1A; padding: 20px; text-align: center;">
                 <p style="color: #888; font-size: 12px; margin: 0;">
-                    © 2025 Share2Inspire | Samuel Rolo<br>
+                    © 2026 Share2Inspire | Samuel Rolo<br>
                     <a href="https://share2inspire.pt" style="color: ${goldAccent};">share2inspire.pt</a>
                 </p>
             </div>

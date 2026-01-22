@@ -155,7 +155,7 @@ window.PDF_GENERATOR = {
                 doc.rect(0, 287, pageWidth, 10, 'F');
                 doc.setTextColor(102, 102, 102);
                 doc.setFontSize(8);
-                doc.text('© 2025 Share2Inspire | share2inspire.pt | Análise gerada automaticamente', pageWidth / 2, 293, { align: 'center' });
+                doc.text('© 2026 Share2Inspire | share2inspire.pt | Análise gerada automaticamente', pageWidth / 2, 293, { align: 'center' });
             }
 
             return doc.output('blob');

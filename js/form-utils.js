@@ -1,6 +1,6 @@
 /**
  * Utilitários Centralizados para Formulários - Share2Inspire
- * Versão 1.0 - Junho 2025
+ * Versão 1.0 - Junho 2026
  * 
  * Este ficheiro centraliza todas as funções utilitárias comuns usadas pelos diferentes
  * formulários modais, eliminando redundâncias e facilitando a manutenção.
