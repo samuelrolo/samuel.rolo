@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loja | Share2Inspire | Samuel Rolo</title>
-    <meta name="description" content="Livros e recursos para desenvolvimento pessoal e organizacional. Obras que inspiram e transformam.">
+    <meta name="description" content="Livros de Samuel Rolo sobre desenvolvimento pessoal, gestão da mudança e transformação organizacional.">
     
     <!-- Favicon -->
     <link rel="icon" href="../images/logo.png" type="image/png">
@@ -66,18 +66,17 @@
         /* Books Grid - Horizontal Layout */
         .books-grid {
             display: flex;
-            gap: 30px;
-            overflow-x: auto;
+            gap: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
             padding: 20px 0;
-            scroll-snap-type: x mandatory;
         }
         .book-card {
-            flex: 0 0 220px;
-            scroll-snap-align: start;
+            flex: 0 0 240px;
             background: var(--s2i-white);
             border: 1px solid var(--s2i-border);
             border-radius: var(--s2i-radius);
-            padding: 20px;
+            padding: 25px;
             text-align: center;
             transition: var(--s2i-transition);
         }
@@ -87,33 +86,31 @@
             box-shadow: var(--s2i-shadow-hover);
         }
         .book-cover {
-            width: 140px;
-            height: 200px;
+            width: 160px;
+            height: 230px;
             object-fit: cover;
             border-radius: 6px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .book-card h4 {
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--s2i-dark);
             margin-bottom: 8px;
             line-height: 1.4;
         }
-        .book-card .language {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--s2i-gold);
-            margin-bottom: 12px;
+        .book-card .author {
+            font-size: 0.8rem;
+            color: var(--s2i-text-muted);
+            margin-bottom: 15px;
         }
         .book-btn {
             display: inline-block;
             background: var(--s2i-dark);
             color: var(--s2i-gold);
             border: 1px solid var(--s2i-gold);
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 6px;
             font-size: 0.75rem;
             font-weight: 500;
@@ -127,26 +124,26 @@
             color: var(--s2i-dark);
         }
         
-        /* Featured Book */
+        /* Featured Book - Gestão da Mudança */
         .featured-book {
             background: var(--s2i-white);
             border: 1px solid var(--s2i-border);
             border-radius: var(--s2i-radius);
-            padding: 40px;
+            padding: 50px;
             margin-top: 60px;
         }
         .featured-book .row {
             align-items: center;
         }
         .featured-cover {
-            max-width: 280px;
+            max-width: 300px;
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
         .featured-book h3 {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .featured-book .subtitle {
             color: var(--s2i-gold);
@@ -157,48 +154,107 @@
             color: var(--s2i-text-muted);
             line-height: 1.8;
             font-size: 0.95rem;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
-        .testimonial {
+        
+        /* Review Highlight */
+        .review-highlight {
             background: var(--s2i-bg);
             border-left: 3px solid var(--s2i-gold);
-            padding: 15px 20px;
-            margin: 20px 0;
-            border-radius: 0 6px 6px 0;
+            padding: 25px 30px;
+            margin: 30px 0;
+            border-radius: 0 8px 8px 0;
         }
-        .testimonial p {
+        .review-highlight .quote {
             font-style: italic;
             color: var(--s2i-text);
-            margin-bottom: 8px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
         }
-        .testimonial .author {
+        .review-highlight .source {
             font-size: 0.8rem;
             color: var(--s2i-text-muted);
+        }
+        .review-highlight .source a {
+            color: var(--s2i-gold);
+            text-decoration: none;
+        }
+        .review-highlight .source a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Second Featured Book */
+        .featured-book-alt {
+            background: var(--s2i-dark);
+            border-radius: var(--s2i-radius);
+            padding: 50px;
+            margin-top: 40px;
+            color: var(--s2i-white);
+        }
+        .featured-book-alt .section-title {
+            color: var(--s2i-gold);
+        }
+        .featured-book-alt h3 {
+            color: var(--s2i-white);
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .featured-book-alt .subtitle {
+            color: var(--s2i-gold);
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        .featured-book-alt .description {
+            color: #aaa;
+            line-height: 1.8;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+        }
+        .featured-book-alt .review-highlight {
+            background: rgba(255,255,255,0.05);
+            border-left-color: var(--s2i-gold);
+        }
+        .featured-book-alt .review-highlight .quote {
+            color: #ccc;
+        }
+        .featured-book-alt .review-highlight .source {
+            color: #888;
+        }
+        .featured-book-alt .book-btn {
+            background: var(--s2i-gold);
+            color: var(--s2i-dark);
+            border-color: var(--s2i-gold);
+        }
+        .featured-book-alt .book-btn:hover {
+            background: var(--s2i-white);
+            color: var(--s2i-dark);
         }
         
         /* CTA Section */
         .cta-section {
-            background: var(--s2i-dark);
-            padding: 60px 40px;
+            background: var(--s2i-bg);
+            border: 1px solid var(--s2i-border);
+            padding: 50px 40px;
             border-radius: var(--s2i-radius);
             text-align: center;
             margin-top: 60px;
         }
         .cta-section h2 {
-            color: var(--s2i-gold);
-            font-size: 1.5rem;
+            color: var(--s2i-dark);
+            font-size: 1.4rem;
             margin-bottom: 15px;
         }
         .cta-section p {
-            color: #999;
+            color: var(--s2i-text-muted);
             margin-bottom: 25px;
             font-size: 0.95rem;
         }
         .cta-btn {
             display: inline-block;
-            background: var(--s2i-gold);
-            color: var(--s2i-dark);
+            background: var(--s2i-dark);
+            color: var(--s2i-gold);
             padding: 12px 30px;
             border-radius: 6px;
             font-size: 0.85rem;
@@ -209,27 +265,27 @@
             transition: var(--s2i-transition);
         }
         .cta-btn:hover {
-            background: var(--s2i-white);
+            background: var(--s2i-gold);
             color: var(--s2i-dark);
         }
         
         /* Responsive */
         @media (max-width: 768px) {
             .books-grid {
-                gap: 20px;
+                gap: 25px;
             }
             .book-card {
-                flex: 0 0 180px;
+                flex: 0 0 200px;
             }
             .book-cover {
-                width: 120px;
-                height: 170px;
+                width: 140px;
+                height: 200px;
             }
-            .featured-book {
-                padding: 25px;
+            .featured-book, .featured-book-alt {
+                padding: 30px;
             }
             .featured-cover {
-                max-width: 200px;
+                max-width: 220px;
                 margin-bottom: 30px;
             }
         }
@@ -283,71 +339,78 @@
             <div class="container">
                 
                 <!-- Books Grid - Horizontal -->
-                <span class="section-title">Publicações</span>
-                <h2 class="section-heading">Livros Disponíveis</h2>
+                <div class="text-center">
+                    <span class="section-title">Publicações</span>
+                    <h2 class="section-heading">Livros de Samuel Rolo</h2>
+                </div>
                 
                 <div class="books-grid">
-                    <!-- Book 1 - PT -->
+                    <!-- Book 1 - Gestão da Mudança -->
                     <div class="book-card">
-                        <img src="https://github.com/samuelrolo/samuel.rolo/blob/main/images/livro_portugues.jpg?raw=true" alt="Enquanto Há Vento, Há Sentimento" class="book-cover">
-                        <p class="language">Português</p>
+                        <img src="../images/mudanca.png" alt="Gestão da Mudança" class="book-cover">
+                        <h4>Gestão da Mudança</h4>
+                        <p class="author">Samuel Rolo</p>
+                        <a href="https://www.amazon.com.br/Gest%C3%A3o-Mudan%C3%A7a-Estrat%C3%A9gias-Transforma%C3%A7%C3%A3o-Organizacional/dp/B0F93H7Y92" target="_blank" class="book-btn">Comprar</a>
+                    </div>
+                    
+                    <!-- Book 2 - Enquanto Há Vento -->
+                    <div class="book-card">
+                        <img src="../images/livro_portugues.jpg" alt="Enquanto Há Vento, Há Sentimento" class="book-cover">
                         <h4>Enquanto Há Vento, Há Sentimento</h4>
+                        <p class="author">Samuel Rolo</p>
                         <a href="https://www.amazon.com.br/dp/B0FC2GGSPP" target="_blank" class="book-btn">Comprar</a>
-                    </div>
-                    
-                    <!-- Book 2 - EN -->
-                    <div class="book-card">
-                        <img src="https://github.com/samuelrolo/samuel.rolo/blob/main/images/capa%20EN.jpg?raw=true" alt="While There Is Wind, There Is Feeling" class="book-cover">
-                        <p class="language">English</p>
-                        <h4>While There Is Wind, There Is Feeling</h4>
-                        <a href="https://www.amazon.com/dp/B0FC2GGSPP" target="_blank" class="book-btn">Buy Now</a>
-                    </div>
-                    
-                    <!-- Book 3 - ES -->
-                    <div class="book-card">
-                        <img src="https://github.com/samuelrolo/samuel.rolo/blob/main/images/capa%20ES.jpg?raw=true" alt="Mientras Haya Viento, Hay Sentimiento" class="book-cover">
-                        <p class="language">Español</p>
-                        <h4>Mientras Haya Viento, Hay Sentimiento</h4>
-                        <a href="https://www.amazon.es/dp/B0FC2GGSPP" target="_blank" class="book-btn">Comprar</a>
-                    </div>
-                    
-                    <!-- Book 4 - The 5-Minute Reset -->
-                    <div class="book-card">
-                        <img src="https://github.com/samuelrolo/samuel.rolo/blob/main/images/5min_reset.jpg?raw=true" alt="The 5-Minute Reset" class="book-cover">
-                        <p class="language">English</p>
-                        <h4>The 5-Minute Reset</h4>
-                        <a href="https://www.amazon.com/dp/B0FC2GGSPP" target="_blank" class="book-btn">Buy Now</a>
-                    </div>
-                    
-                    <!-- Book 5 - Reinventing Change Management -->
-                    <div class="book-card">
-                        <img src="https://github.com/samuelrolo/samuel.rolo/blob/main/images/reinventing_change.jpg?raw=true" alt="Reinventing Change Management" class="book-cover">
-                        <p class="language">English</p>
-                        <h4>Reinventing Change Management</h4>
-                        <a href="https://www.amazon.com/dp/B0FC2GGSPP" target="_blank" class="book-btn">Buy Now</a>
                     </div>
                 </div>
                 
-                <!-- Featured Book -->
+                <!-- Featured Book - Gestão da Mudança -->
                 <div class="featured-book">
                     <div class="row">
                         <div class="col-md-4 text-center">
-                            <img src="https://github.com/samuelrolo/samuel.rolo/blob/main/images/livro_portugues.jpg?raw=true" alt="Enquanto Há Vento, Há Sentimento" class="featured-cover">
+                            <img src="../images/mudanca.png" alt="Gestão da Mudança" class="featured-cover">
                         </div>
                         <div class="col-md-8">
                             <span class="section-title">Em Destaque</span>
+                            <h3>Gestão da Mudança</h3>
+                            <p class="subtitle">Estratégias para Impulsionar a Transformação Organizacional</p>
+                            <p class="description">Este livro nasceu a partir de quase 14 anos de experiência em contextos de transformação. Samuel Rolo partilha a sua experiência em projetos de Gestão da Mudança, para inspirar mudanças com propósito, autenticidade e impacto. Combina estratégia corporativa de alto nível com a empatia necessária para liderar pessoas através da incerteza.</p>
+                            
+                            <div class="review-highlight">
+                                <p class="quote">"Um guia prático e humano para quem precisa de liderar transformações organizacionais. Samuel Rolo consegue traduzir anos de experiência em multinacionais em conselhos aplicáveis e genuínos."</p>
+                                <p class="source">— Disponível na <a href="https://www.amazon.com.br/Gest%C3%A3o-Mudan%C3%A7a-Estrat%C3%A9gias-Transforma%C3%A7%C3%A3o-Organizacional/dp/B0F93H7Y92" target="_blank">Amazon</a></p>
+                            </div>
+                            
+                            <a href="https://www.amazon.com.br/Gest%C3%A3o-Mudan%C3%A7a-Estrat%C3%A9gias-Transforma%C3%A7%C3%A3o-Organizacional/dp/B0F93H7Y92" target="_blank" class="book-btn">
+                                <i class="fab fa-amazon me-2"></i> Comprar na Amazon
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Featured Book - Enquanto Há Vento -->
+                <div class="featured-book-alt">
+                    <div class="row">
+                        <div class="col-md-8 order-md-1 order-2">
+                            <span class="section-title">Desenvolvimento Pessoal</span>
                             <h3>Enquanto Há Vento, Há Sentimento</h3>
                             <p class="subtitle">Uma jornada de autodescoberta e esperança</p>
                             <p class="description">Uma obra profundamente tocante que explora as complexidades das emoções humanas e o poder transformador da esperança. Este livro convida-o a uma jornada introspetiva, onde cada página revela novas perspetivas sobre a vida, o amor e a resiliência.</p>
                             
-                            <div class="testimonial">
-                                <p>"Devorei o livro assim que o recebi. Mergulhar nesta história tirou-me o fôlego. Adorei! Quero mais!"</p>
-                                <span class="author">— Cliente Verificado</span>
+                            <div class="review-highlight">
+                                <p class="quote">"Uma verdadeira história de resiliência, com os seus altos e baixos, mas com a certeza de que à margem da felicidade e liberdade não era desejável. Pela escrita de Samuel Rolo podemos deparar-nos com uma história real de alguém que se tenta encontrar em várias fases da sua vida."</p>
+                                <p class="source">— <a href="https://dezanove.pt/enquanto-houver-vento-ha-sentimento-de-samuel-rolo-2442105/" target="_blank">Dezanove</a>, Jéssica Vassalo</p>
+                            </div>
+                            
+                            <div class="review-highlight">
+                                <p class="quote">"Às vezes é preciso sair de tudo o que conhecemos para, finalmente, entrarmos em nós mesmos. O outro, o distante, o que parece estranho, ensina-nos mais sobre quem somos do que os espelhos a que estamos habituados."</p>
+                                <p class="source">— Excerto do livro</p>
                             </div>
                             
                             <a href="https://www.amazon.com.br/dp/B0FC2GGSPP" target="_blank" class="book-btn">
                                 <i class="fab fa-amazon me-2"></i> Comprar na Amazon
                             </a>
+                        </div>
+                        <div class="col-md-4 text-center order-md-2 order-1 mb-4 mb-md-0">
+                            <img src="../images/livro_portugues.jpg" alt="Enquanto Há Vento, Há Sentimento" class="featured-cover">
                         </div>
                     </div>
                 </div>
