@@ -105,6 +105,7 @@
             font-size: 0.9rem;
             color: var(--s2i-text-muted);
             margin-bottom: 15px;
+            line-height: 1.7;
         }
         .article-link {
             font-size: 0.8rem;
@@ -116,38 +117,75 @@
         .article-link:hover {
             color: var(--s2i-gold-dark);
         }
+        .article-source {
+            font-size: 0.7rem;
+            color: var(--s2i-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
         
         /* Newsletter Section */
         .newsletter-section {
             background: var(--s2i-dark);
             padding: 60px 40px;
             border-radius: var(--s2i-radius);
-            text-align: center;
             margin-top: 60px;
         }
         .newsletter-section h2 {
             color: var(--s2i-gold);
             font-size: 1.5rem;
             margin-bottom: 10px;
+            text-align: center;
         }
-        .newsletter-section p {
+        .newsletter-section > p {
             color: #999;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             font-size: 0.95rem;
+            text-align: center;
         }
-        .newsletter-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
+        .newsletter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .newsletter-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--s2i-radius);
+            padding: 30px;
+            text-align: center;
+        }
+        .newsletter-card h3 {
+            color: var(--s2i-white);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        .newsletter-card .frequency {
+            display: inline-block;
+            background: var(--s2i-gold);
+            color: var(--s2i-dark);
+            font-size: 0.65rem;
+            padding: 3px 10px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+        .newsletter-card p {
+            color: #888;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
         }
         .newsletter-btn {
             background: transparent;
             border: 1px solid var(--s2i-gold);
             color: var(--s2i-gold);
-            padding: 12px 25px;
+            padding: 10px 20px;
             border-radius: 6px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 500;
             text-decoration: none;
             transition: var(--s2i-transition);
@@ -159,14 +197,46 @@
             background: var(--s2i-gold);
             color: var(--s2i-dark);
         }
-        .frequency-badge {
+        
+        /* Resources Section */
+        .resources-section {
+            background: var(--s2i-bg);
+            border: 1px solid var(--s2i-border);
+            border-radius: var(--s2i-radius);
+            padding: 40px;
+            margin-top: 40px;
+        }
+        .resource-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--s2i-border);
+        }
+        .resource-item:last-child {
+            border-bottom: none;
+        }
+        .resource-icon {
+            width: 40px;
+            height: 40px;
             background: var(--s2i-gold);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: var(--s2i-dark);
-            font-size: 0.7rem;
-            padding: 3px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+        .resource-info h5 {
+            font-size: 0.95rem;
             font-weight: 600;
+            margin-bottom: 3px;
+            color: var(--s2i-dark);
+        }
+        .resource-info p {
+            font-size: 0.8rem;
+            color: var(--s2i-text-muted);
+            margin: 0;
         }
     </style>
 </head>
@@ -227,6 +297,7 @@
                 <div class="row g-4 mt-3">
                     <div class="col-md-4">
                         <div class="article-card">
+                            <p class="article-source">RH Magazine</p>
                             <h4>Mudam os Tempos, Mudam as Avaliações</h4>
                             <p>Uma reflexão sobre a evolução dos modelos de avaliação de desempenho e o que realmente importa na gestão de talento.</p>
                             <a href="https://rhmagazine.pt/mudam-os-tempos-mudam-as-avaliacoes/" target="_blank" class="article-link">Ler artigo <i class="fas fa-arrow-right ms-1"></i></a>
@@ -234,6 +305,15 @@
                     </div>
                     <div class="col-md-4">
                         <div class="article-card">
+                            <p class="article-source">Dezanove</p>
+                            <h4>Enquanto Houver Vento Há Sentimento</h4>
+                            <p>Review do livro que explora uma história real de autodescoberta, identidade e resiliência através de várias fases da vida.</p>
+                            <a href="https://dezanove.pt/enquanto-houver-vento-ha-sentimento-de-samuel-rolo-2442105/" target="_blank" class="article-link">Ler review <i class="fas fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="article-card">
+                            <p class="article-source">Gestão de Pessoas</p>
                             <h4>Frameworks de Liderança</h4>
                             <p>Ferramentas práticas para líderes que procuram equilibrar resultados com o desenvolvimento das suas equipas.</p>
                             <a href="#" class="article-link">Em breve <i class="fas fa-clock ms-1"></i></a>
@@ -241,26 +321,82 @@
                     </div>
                     <div class="col-md-4">
                         <div class="article-card">
+                            <p class="article-source">Futuro do Trabalho</p>
                             <h4>O Futuro do Trabalho</h4>
                             <p>Tendências de mercado e estratégias para profissionais que querem liderar a transformação organizacional.</p>
+                            <a href="#" class="article-link">Em breve <i class="fas fa-clock ms-1"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="article-card">
+                            <p class="article-source">Estudos de Caso</p>
+                            <h4>Estudos de Caso Reais</h4>
+                            <p>Análises detalhadas de projetos de transformação organizacional em grandes empresas multinacionais.</p>
+                            <a href="#" class="article-link">Em breve <i class="fas fa-clock ms-1"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="article-card">
+                            <p class="article-source">Guias Práticos</p>
+                            <h4>Guias de Futuro do Trabalho</h4>
+                            <p>Recursos práticos para navegar as mudanças do mercado de trabalho com confiança e estratégia.</p>
                             <a href="#" class="article-link">Em breve <i class="fas fa-clock ms-1"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
             
+            <!-- Resources Section (People Innovation Hub) -->
+            <div class="resources-section">
+                <span class="section-title">Recursos RH</span>
+                <h2 class="section-heading">People Innovation Hub</h2>
+                <p class="section-text mb-4">Ferramentas práticas, tendências de mercado e estratégias de gestão de talento para profissionais que querem liderar a transformação organizacional.</p>
+                
+                <div class="resource-item">
+                    <div class="resource-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="resource-info">
+                        <h5>Frameworks de Liderança</h5>
+                        <p>Modelos testados para desenvolver equipas de alto desempenho</p>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-icon"><i class="fas fa-rocket"></i></div>
+                    <div class="resource-info">
+                        <h5>Guias de Futuro do Trabalho</h5>
+                        <p>Tendências e estratégias para navegar a transformação digital</p>
+                    </div>
+                </div>
+                <div class="resource-item">
+                    <div class="resource-icon"><i class="fas fa-briefcase"></i></div>
+                    <div class="resource-info">
+                        <h5>Estudos de Caso Reais</h5>
+                        <p>Análises de projetos de transformação em multinacionais</p>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Newsletter Section -->
             <div class="newsletter-section">
-                <h2>The Mindset Maverick</h2>
-                <p>Junta-te a mais de 5.000 profissionais e recebe insights que desafiam o status quo. <span class="frequency-badge">Mensal</span></p>
+                <h2>Newsletters</h2>
+                <p>Junta-te a mais de 5.000 profissionais e recebe insights que desafiam o status quo.</p>
                 
-                <div class="newsletter-links">
-                    <a href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7384145793324085248" target="_blank" class="newsletter-btn">
-                        <i class="fab fa-linkedin"></i> Newsletter Principal
-                    </a>
-                    <a href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7258968797414342657" target="_blank" class="newsletter-btn">
-                        <i class="fab fa-linkedin"></i> Newsletter Secundária
-                    </a>
+                <div class="newsletter-grid">
+                    <div class="newsletter-card">
+                        <h3>Humanos & Máquinas</h3>
+                        <span class="frequency">Mensal</span>
+                        <p>Reflexões sobre a interseção entre tecnologia e humanidade. Como a IA está a transformar o trabalho e o que isso significa para ti.</p>
+                        <a href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7384145793324085248" target="_blank" class="newsletter-btn">
+                            <i class="fab fa-linkedin"></i> Subscrever
+                        </a>
+                    </div>
+                    <div class="newsletter-card">
+                        <h3>People Innovation Hub</h3>
+                        <span class="frequency">Mensal</span>
+                        <p>Tendências de RH, gestão de talento e transformação organizacional. Insights práticos para líderes de pessoas.</p>
+                        <a href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7258968797414342657" target="_blank" class="newsletter-btn">
+                            <i class="fab fa-linkedin"></i> Subscrever
+                        </a>
+                    </div>
                 </div>
             </div>
             
