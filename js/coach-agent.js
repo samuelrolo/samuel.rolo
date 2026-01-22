@@ -1,54 +1,59 @@
 /**
- * SHARE2INSPIRE - COACH AGENT
- * AI-powered coaching assistant with Supabase integration
+ * SHARE2INSPIRE - SAMUEL ROLO AI
+ * Career Coach Assistant with Gemini Integration
  * 
  * Created: 2026-01-14
- * Purpose: Interactive chat widget for professional coaching
+ * Updated: 2026-01-22 - Ultra Minimalist Design + Gemini Integration
+ * Purpose: Discrete floating widget for career guidance and professional development
  */
 
-class CoachAgent {
+class SamuelRoloAI {
     constructor() {
         this.isOpen = false;
+        this.isExpanded = false;
         this.messages = [];
         this.supabaseUrl = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
         this.supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+        this.edgeFunctionUrl = `${this.supabaseUrl}/functions/v1/hyper-task`;
         this.sessionId = this.generateSessionId();
+        this.conversationContext = [];
         this.init();
     }
 
     generateSessionId() {
-        return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        return 'sr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     }
 
     init() {
         this.injectHTML();
         this.attachEventListeners();
-        this.loadWelcomeMessage();
     }
 
     injectHTML() {
         const html = `
-            <!-- Coach Agent Side Tab -->
-            <div class="coach-agent-tab">
-                <button class="coach-tab-button" id="coachTabButton">
+            <!-- Samuel Rolo AI - Floating Button -->
+            <div class="coach-agent-tab" id="coachAgentTab">
+                <button class="coach-tab-button" id="coachTabButton" aria-label="Abrir assistente de carreira">
                     <div class="coach-tab-pulse"></div>
-                    <div class="coach-tab-icon">🤖</div>
-                    <span>COACH AI</span>
+                    <div class="coach-tab-icon">💬</div>
                 </button>
             </div>
 
-            <!-- Coach Chat Widget -->
-            <div class="coach-chat-widget" id="coachChatWidget">
+            <!-- Samuel Rolo AI - Chat Widget -->
+            <div class="coach-chat-widget" id="coachChatWidget" role="dialog" aria-label="Assistente de Carreira">
                 <!-- Header -->
                 <div class="coach-chat-header">
                     <div class="coach-chat-header-info">
-                        <div class="coach-avatar">S2I</div>
+                        <div class="coach-avatar">SR</div>
                         <div class="coach-header-text">
-                            <h3>Coach AI</h3>
-                            <p>Online • Sempre disponível</p>
+                            <h3>Samuel Rolo AI</h3>
+                            <p>Disponível para ajudar</p>
                         </div>
                     </div>
-                    <button class="coach-close-btn" id="coachCloseBtn">×</button>
+                    <div class="coach-header-actions">
+                        <button class="coach-expand-btn" id="coachExpandBtn" aria-label="Expandir">⤢</button>
+                        <button class="coach-close-btn" id="coachCloseBtn" aria-label="Fechar">×</button>
+                    </div>
                 </div>
 
                 <!-- Messages Area -->
@@ -59,20 +64,20 @@ class CoachAgent {
                 <!-- Input Area -->
                 <div class="coach-chat-input-area">
                     <div class="coach-quick-actions" id="coachQuickActions">
-                        <button class="coach-quick-action" data-action="servicos">📋 Serviços</button>
-                        <button class="coach-quick-action" data-action="coaching">💼 Coaching</button>
-                        <button class="coach-quick-action" data-action="cv">📄 Análise CV</button>
-                        <button class="coach-quick-action" data-action="contacto">📧 Contacto</button>
+                        <button class="coach-quick-action" data-action="carreira">🎯 Carreira</button>
+                        <button class="coach-quick-action" data-action="formacao">📚 Formação</button>
+                        <button class="coach-quick-action" data-action="cv">📄 CV</button>
+                        <button class="coach-quick-action" data-action="transicao">🔄 Transição</button>
                     </div>
                     <div class="coach-input-wrapper">
                         <input 
                             type="text" 
                             class="coach-chat-input" 
                             id="coachChatInput" 
-                            placeholder="Escreva a sua mensagem..."
+                            placeholder="Escreva a sua dúvida..."
                             autocomplete="off"
                         />
-                        <button class="coach-send-btn" id="coachSendBtn">
+                        <button class="coach-send-btn" id="coachSendBtn" aria-label="Enviar">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
@@ -86,15 +91,21 @@ class CoachAgent {
     attachEventListeners() {
         const tabButton = document.getElementById('coachTabButton');
         const closeBtn = document.getElementById('coachCloseBtn');
+        const expandBtn = document.getElementById('coachExpandBtn');
         const sendBtn = document.getElementById('coachSendBtn');
         const input = document.getElementById('coachChatInput');
         const quickActions = document.querySelectorAll('.coach-quick-action');
 
         tabButton.addEventListener('click', () => this.toggleWidget());
         closeBtn.addEventListener('click', () => this.closeWidget());
+        expandBtn.addEventListener('click', () => this.toggleExpand());
         sendBtn.addEventListener('click', () => this.sendMessage());
+        
         input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.sendMessage();
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                this.sendMessage();
+            }
         });
 
         quickActions.forEach(btn => {
@@ -102,6 +113,13 @@ class CoachAgent {
                 const action = e.target.dataset.action;
                 this.handleQuickAction(action);
             });
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isOpen) {
+                this.closeWidget();
+            }
         });
     }
 
@@ -111,7 +129,13 @@ class CoachAgent {
         
         if (this.isOpen) {
             widget.classList.add('active');
-            document.getElementById('coachChatInput').focus();
+            // Load welcome message on first open
+            if (this.messages.length === 0) {
+                this.loadWelcomeMessage();
+            }
+            setTimeout(() => {
+                document.getElementById('coachChatInput').focus();
+            }, 300);
         } else {
             widget.classList.remove('active');
         }
@@ -123,10 +147,34 @@ class CoachAgent {
         this.isOpen = false;
     }
 
+    toggleExpand() {
+        const widget = document.getElementById('coachChatWidget');
+        const expandBtn = document.getElementById('coachExpandBtn');
+        this.isExpanded = !this.isExpanded;
+        
+        if (this.isExpanded) {
+            widget.classList.add('expanded');
+            expandBtn.textContent = '⤡';
+            expandBtn.setAttribute('aria-label', 'Reduzir');
+        } else {
+            widget.classList.remove('expanded');
+            expandBtn.textContent = '⤢';
+            expandBtn.setAttribute('aria-label', 'Expandir');
+        }
+    }
+
     loadWelcomeMessage() {
         const welcomeMsg = {
             type: 'bot',
-            content: `Olá! 👋 Sou o Coach AI da Share2Inspire.\n\nEstou aqui para ajudá-lo com:\n• Informações sobre serviços\n• Agendamento de sessões de coaching\n• Análise de CV\n• Qualquer dúvida sobre desenvolvimento profissional\n\nComo posso ajudá-lo hoje?`,
+            content: `Olá! Sou o **Samuel Rolo AI**, o teu assistente de carreira.
+
+Posso ajudar-te com:
+• Orientação de carreira e decisões profissionais
+• Dúvidas sobre formação e desenvolvimento
+• Análise e melhoria de CV
+• Transições de carreira
+
+**Como posso ajudar-te hoje?**`,
             timestamp: new Date()
         };
         
@@ -151,6 +199,9 @@ class CoachAgent {
         this.renderMessage(userMsg);
         input.value = '';
 
+        // Add to conversation context
+        this.conversationContext.push({ role: 'user', content: message });
+
         // Show typing indicator
         this.showTyping();
 
@@ -168,15 +219,23 @@ class CoachAgent {
             this.messages.push(botMsg);
             this.renderMessage(botMsg);
 
-            // Log conversation to Supabase
-            await this.logConversation(userMsg, botMsg);
+            // Add to conversation context
+            this.conversationContext.push({ role: 'assistant', content: response });
+
+            // Keep only last 10 messages for context
+            if (this.conversationContext.length > 10) {
+                this.conversationContext = this.conversationContext.slice(-10);
+            }
+
+            // Log conversation
+            this.logConversation(userMsg, botMsg);
         } catch (error) {
-            console.error('Error getting AI response:', error);
+            console.error('[SamuelRoloAI] Error:', error);
             this.hideTyping();
             
             const errorMsg = {
                 type: 'bot',
-                content: 'Desculpe, ocorreu um erro. Por favor, tente novamente ou contacte-nos diretamente em samuel.rolo@share2inspire.pt',
+                content: 'Peço desculpa, ocorreu um erro temporário. Por favor, tenta novamente ou contacta-me diretamente em **samuel.rolo@share2inspire.pt**',
                 timestamp: new Date()
             };
             
@@ -185,49 +244,139 @@ class CoachAgent {
     }
 
     async getAIResponse(userMessage) {
-        // Check for common patterns and provide contextual responses
-        const lowerMsg = userMessage.toLowerCase();
+        // Try Gemini first via Supabase Edge Function
+        try {
+            console.log('[SamuelRoloAI] Calling Gemini via Edge Function...');
+            
+            const response = await fetch(this.edgeFunctionUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.supabaseKey}`,
+                    'apikey': this.supabaseKey
+                },
+                body: JSON.stringify({
+                    message: userMessage,
+                    mode: 'career_coach',
+                    context: this.buildContext()
+                })
+            });
 
-        // Serviços
-        if (lowerMsg.includes('serviço') || lowerMsg.includes('servico') || lowerMsg.includes('oferta')) {
-            return `Os nossos principais serviços incluem:\n\n📋 **Consultoria Organizacional**\n• Gestão da mudança\n• Transformação cultural\n• Desenvolvimento de liderança\n\n💼 **Coaching Executivo**\n• Coaching individual\n• Coaching de equipas\n• Desenvolvimento de carreira\n\n📊 **Diagnóstico Organizacional**\n• Avaliação de maturidade\n• Análise de cultura\n• Planos de ação\n\n📄 **Análise de CV**\n• Revisão profissional\n• Sugestões de melhoria\n• Relatório detalhado\n\nQuer saber mais sobre algum serviço específico?`;
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.reply) {
+                    console.log('[SamuelRoloAI] Gemini response received');
+                    return data.reply;
+                }
+            }
+            
+            console.warn('[SamuelRoloAI] Gemini unavailable, using intelligent fallback');
+        } catch (error) {
+            console.warn('[SamuelRoloAI] Edge Function error:', error.message);
         }
 
-        // Coaching
-        if (lowerMsg.includes('coaching') || lowerMsg.includes('sessão') || lowerMsg.includes('sessao')) {
-            return `O nosso serviço de **Coaching Executivo** inclui:\n\n✨ **Sessões Individuais**\n• Duração: 60-90 minutos\n• Formato: Presencial ou online\n• Foco personalizado nos seus objetivos\n\n🎯 **Áreas de Foco**\n• Liderança e gestão\n• Transição de carreira\n• Desenvolvimento de competências\n• Equilíbrio vida-trabalho\n\n📅 **Como Funcionar**\n1. Sessão inicial de diagnóstico\n2. Definição de objetivos\n3. Plano de desenvolvimento\n4. Sessões de acompanhamento\n\nGostaria de agendar uma sessão exploratória gratuita?`;
+        // Intelligent fallback
+        return this.getIntelligentFallback(userMessage);
+    }
+
+    buildContext() {
+        const contextParts = [
+            'Histórico da conversa:',
+            ...this.conversationContext.slice(-6).map(m => 
+                `${m.role === 'user' ? 'Utilizador' : 'Samuel Rolo AI'}: ${m.content.substring(0, 200)}`
+            )
+        ];
+        return contextParts.join('\n');
+    }
+
+    getIntelligentFallback(userMessage) {
+        const msg = userMessage.toLowerCase();
+
+        // Career guidance
+        if (msg.includes('carreira') || msg.includes('profissional') || msg.includes('trabalho') || msg.includes('emprego')) {
+            return `**Sobre orientação de carreira:**
+
+A gestão de carreira é uma jornada contínua, não um destino. Aqui estão algumas reflexões:
+
+1. **Autoconhecimento** - Quais são os teus valores e o que te motiva realmente?
+2. **Mercado** - Onde estão as oportunidades alinhadas com as tuas competências?
+3. **Ação** - Que pequeno passo podes dar esta semana?
+
+Se quiseres uma análise mais profunda, posso ajudar-te a estruturar um plano. Qual é a tua situação atual?`;
         }
 
-        // CV Analysis
-        if (lowerMsg.includes('cv') || lowerMsg.includes('currículo') || lowerMsg.includes('curriculo') || lowerMsg.includes('análise')) {
-            return `O nosso serviço de **Análise de CV** oferece:\n\n📄 **Análise Completa**\n• Revisão estrutural e de conteúdo\n• Avaliação de competências\n• Alinhamento com objetivos profissionais\n\n✅ **O que Recebe**\n• Relatório detalhado em PDF\n• Pontuação de qualidade (0-100)\n• Pontos fortes identificados\n• Sugestões de melhoria específicas\n• Recomendações de formação\n\n💰 **Investimento**\n• Análise básica: Gratuita (online)\n• Relatório completo PDF: 1€\n\nAceda à página de análise de CV para começar: [CV Analysis](/pages/cv-analysis.html)`;
+        // Training/Education
+        if (msg.includes('formação') || msg.includes('curso') || msg.includes('estudar') || msg.includes('aprender') || msg.includes('certificação')) {
+            return `**Sobre formação e desenvolvimento:**
+
+A formação contínua é essencial, mas deve ser estratégica:
+
+• **Identifica gaps** - Que competências te faltam para o próximo passo?
+• **Prioriza** - Nem toda a formação tem o mesmo retorno
+• **Aplica** - Conhecimento sem aplicação é desperdício
+
+Que área específica estás a considerar desenvolver?`;
+        }
+
+        // CV
+        if (msg.includes('cv') || msg.includes('currículo') || msg.includes('curriculo')) {
+            return `**Sobre o teu CV:**
+
+Um bom CV não lista tarefas - conta uma história de impacto.
+
+Dicas rápidas:
+• Usa verbos de ação e resultados quantificáveis
+• Adapta a cada candidatura
+• Mantém-no conciso (2 páginas máximo)
+
+Para uma análise detalhada do teu CV, usa o nosso [CV Analyser](/pages/cv-analysis.html) - é gratuito!`;
+        }
+
+        // Transition
+        if (msg.includes('transição') || msg.includes('mudar') || msg.includes('novo') || msg.includes('diferente')) {
+            return `**Sobre transições de carreira:**
+
+Mudar de carreira é normal e cada vez mais comum. O importante é:
+
+1. **Clareza** - Estás a fugir de algo ou a ir em direção a algo?
+2. **Transferência** - Que competências podes levar contigo?
+3. **Paciência** - Transições levam tempo
+
+Conta-me mais sobre a tua situação. Estás a pensar em mudar de área, de empresa, ou de função?`;
         }
 
         // Contact
-        if (lowerMsg.includes('contacto') || lowerMsg.includes('contato') || lowerMsg.includes('email') || lowerMsg.includes('telefone')) {
-            return `📧 **Contactos Share2Inspire**\n\n**Samuel Rolo**\nConsultor & Coach Executivo\n\n📧 Email: samuel.rolo@share2inspire.pt\n🌐 Website: www.share2inspire.pt\n💼 LinkedIn: /in/samuelrolo\n\n**Horário de Atendimento**\nSegunda a Sexta: 9h00 - 18h00\n\nPrefere que o contactemos? Deixe o seu email e entraremos em contacto brevemente!`;
+        if (msg.includes('contacto') || msg.includes('contato') || msg.includes('email') || msg.includes('falar')) {
+            return `**Contactos:**
+
+📧 **Email:** samuel.rolo@share2inspire.pt
+💼 **LinkedIn:** /in/samuelrolo
+🌐 **Website:** share2inspire.pt
+
+Para sessões de coaching personalizadas, envia-me uma mensagem no LinkedIn ou por email.`;
         }
 
-        // Pricing
-        if (lowerMsg.includes('preço') || lowerMsg.includes('preco') || lowerMsg.includes('valor') || lowerMsg.includes('custo')) {
-            return `💰 **Investimento nos Serviços**\n\n**Coaching Executivo**\n• Sessão exploratória: Gratuita\n• Pacote 3 sessões: Sob consulta\n• Pacote 6 sessões: Sob consulta\n\n**Consultoria Organizacional**\n• Diagnóstico inicial: Sob consulta\n• Projetos customizados\n\n**Análise de CV**\n• Análise online: Gratuita\n• Relatório PDF completo: 1€\n\nPara um orçamento personalizado, contacte-nos em samuel.rolo@share2inspire.pt`;
-        }
+        // Default - encourage conversation
+        return `Obrigado pela tua mensagem!
 
-        // Default response - more intelligent
-        return `Obrigado pela sua mensagem! 😊\n\nPara melhor o ajudar, pode:\n\n• Usar os botões rápidos acima para tópicos específicos\n• Perguntar sobre serviços, coaching, análise de CV ou contactos\n• Visitar o nosso website para mais informações\n\nOu se preferir, posso conectá-lo diretamente com o Samuel Rolo. Qual seria a melhor forma de o ajudar?`;
+Estou aqui para ajudar com questões de **carreira**, **formação**, **CV** ou **transições profissionais**.
+
+Podes usar os botões rápidos acima ou simplesmente descrever a tua situação - quanto mais contexto me deres, melhor te posso ajudar.
+
+**Qual é o teu maior desafio profissional neste momento?**`;
     }
 
     handleQuickAction(action) {
-        const messages = {
-            servicos: 'Gostaria de saber mais sobre os vossos serviços',
-            coaching: 'Tenho interesse em sessões de coaching',
-            cv: 'Quero fazer uma análise do meu CV',
-            contacto: 'Como posso entrar em contacto?'
+        const prompts = {
+            carreira: 'Preciso de orientação sobre a minha carreira',
+            formacao: 'Que formação me recomendas para evoluir profissionalmente?',
+            cv: 'Gostaria de melhorar o meu CV',
+            transicao: 'Estou a pensar em mudar de carreira'
         };
 
         const input = document.getElementById('coachChatInput');
-        input.value = messages[action];
-        this.sendMessage();
+        input.value = prompts[action] || '';
+        input.focus();
     }
 
     renderMessage(message) {
@@ -238,7 +387,7 @@ class CoachAgent {
         
         const avatar = document.createElement('div');
         avatar.className = 'coach-message-avatar';
-        avatar.textContent = message.type === 'bot' ? 'AI' : 'U';
+        avatar.textContent = message.type === 'bot' ? 'SR' : 'Tu';
         
         const content = document.createElement('div');
         content.className = 'coach-message-content';
@@ -252,12 +401,11 @@ class CoachAgent {
     }
 
     formatMessage(text) {
-        // Convert markdown-style formatting to HTML
         return text
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/\n/g, '<br>')
-            .replace(/• /g, '• ')
-            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color: #BF9A33; text-decoration: underline;">$1</a>');
+            .replace(/• /g, '&bull; ')
+            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color: #BF9A33; text-decoration: underline;">$1</a>');
     }
 
     showTyping() {
@@ -269,7 +417,7 @@ class CoachAgent {
         
         const avatar = document.createElement('div');
         avatar.className = 'coach-message-avatar';
-        avatar.textContent = 'AI';
+        avatar.textContent = 'SR';
         
         const typing = document.createElement('div');
         typing.className = 'coach-typing';
@@ -284,9 +432,7 @@ class CoachAgent {
 
     hideTyping() {
         const typingEl = document.getElementById('coachTyping');
-        if (typingEl) {
-            typingEl.remove();
-        }
+        if (typingEl) typingEl.remove();
     }
 
     async logConversation(userMsg, botMsg) {
@@ -296,11 +442,10 @@ class CoachAgent {
                 user_message: userMsg.content,
                 bot_response: botMsg.content,
                 timestamp: new Date().toISOString(),
-                page_url: window.location.href,
-                user_agent: navigator.userAgent
+                page_url: window.location.href
             };
 
-            const response = await fetch(`${this.supabaseUrl}/rest/v1/coach_conversations`, {
+            await fetch(`${this.supabaseUrl}/rest/v1/coach_conversations`, {
                 method: 'POST',
                 headers: {
                     'apikey': this.supabaseKey,
@@ -310,22 +455,21 @@ class CoachAgent {
                 },
                 body: JSON.stringify(logData)
             });
-
-            if (!response.ok) {
-                console.warn('Failed to log conversation to Supabase');
-            }
         } catch (error) {
-            console.error('Error logging conversation:', error);
-            // Don't throw - logging failure shouldn't break the chat
+            // Silent fail - logging shouldn't break the chat
         }
     }
 }
 
-// Initialize Coach Agent when DOM is ready
+// Initialize when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        window.coachAgent = new CoachAgent();
+        window.samuelRoloAI = new SamuelRoloAI();
     });
 } else {
-    window.coachAgent = new CoachAgent();
+    window.samuelRoloAI = new SamuelRoloAI();
 }
+
+// Backwards compatibility
+window.CoachAgent = SamuelRoloAI;
+window.coachAgent = window.samuelRoloAI;
