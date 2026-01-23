@@ -706,11 +706,11 @@
                         metric: 'Forte',
                         detail: 'Soft skill evidenciada'
                     })) || [],
-                    evolution_roadmap: {
+                    evolution_roadmap: window.CV_ENGINE.geminiAnalysis?.roadmap || {
                         pdf_details: [{
-                            title: 'Próximos Passos',
-                            context: 'Áreas de desenvolvimento identificadas',
-                            actions: ['Continuar a desenvolver competências técnicas', 'Reforçar experiência na área']
+                            title: "Próximos Passos",
+                            context: "Áreas de desenvolvimento identificadas",
+                            actions: ["Continuar a desenvolver competências técnicas", "Reforçar experiência na área"]
                         }]
                     },
                     strategic_feedback: {
@@ -727,7 +727,7 @@
                         market_fit: 60,
                         readiness: 65
                     },
-                    final_verdict: {
+                    final_verdict: window.CV_ENGINE.geminiAnalysis?.final_verdict || {
                         score: window.CV_ENGINE.data.maturity?.score || 70
                     }
                 } : {};
