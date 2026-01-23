@@ -251,9 +251,7 @@ Posso ajudar-te com:
             const response = await fetch(this.edgeFunctionUrl, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.supabaseKey}`,
-                    'apikey': this.supabaseKey
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     message: userMessage,
