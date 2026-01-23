@@ -3,7 +3,7 @@
  * Career Coach Assistant with Gemini Integration
  * 
  * Created: 2026-01-14
- * Updated: 2026-01-22 - Ultra Minimalist Design + Gemini Integration
+ * Updated: 2026-01-23 - Real Conversation Logic + Gemini Integration
  * Purpose: Discrete floating widget for career guidance and professional development
  */
 
@@ -27,6 +27,7 @@ class SamuelRoloAI {
     init() {
         this.injectHTML();
         this.attachEventListeners();
+        this.addWelcomeMessage();
     }
 
     injectHTML() {
@@ -35,7 +36,7 @@ class SamuelRoloAI {
             <div class="coach-agent-tab" id="coachAgentTab">
                 <button class="coach-tab-button" id="coachTabButton" aria-label="Abrir assistente de carreira">
                     <div class="coach-tab-pulse"></div>
-                    <div class="coach-tab-icon">💬</div>
+                    <div class="coach-tab-icon">🤖</div>
                 </button>
             </div>
 
@@ -124,46 +125,29 @@ class SamuelRoloAI {
     }
 
     toggleWidget() {
+        this.isOpen ? this.closeWidget() : this.openWidget();
+    }
+
+    openWidget() {
         const widget = document.getElementById('coachChatWidget');
-        this.isOpen = !this.isOpen;
-        
-        if (this.isOpen) {
-            widget.classList.add('active');
-            // Load welcome message on first open
-            if (this.messages.length === 0) {
-                this.loadWelcomeMessage();
-            }
-            setTimeout(() => {
-                document.getElementById('coachChatInput').focus();
-            }, 300);
-        } else {
-            widget.classList.remove('active');
-        }
+        this.isOpen = true;
+        widget.classList.add('active');
+        document.getElementById('coachChatInput').focus();
     }
 
     closeWidget() {
         const widget = document.getElementById('coachChatWidget');
-        widget.classList.remove('active');
         this.isOpen = false;
+        widget.classList.remove('active');
     }
 
     toggleExpand() {
-        const widget = document.getElementById('coachChatWidget');
-        const expandBtn = document.getElementById('coachExpandBtn');
         this.isExpanded = !this.isExpanded;
-        
-        if (this.isExpanded) {
-            widget.classList.add('expanded');
-            expandBtn.textContent = '⤡';
-            expandBtn.setAttribute('aria-label', 'Reduzir');
-        } else {
-            widget.classList.remove('expanded');
-            expandBtn.textContent = '⤢';
-            expandBtn.setAttribute('aria-label', 'Expandir');
-        }
+        const widget = document.getElementById('coachChatWidget');
+        widget.classList.toggle('expanded', this.isExpanded);
     }
 
-    loadWelcomeMessage() {
+    addWelcomeMessage() {
         const welcomeMsg = {
             type: 'bot',
             content: `Olá! Sou o **Samuel Rolo AI**, o teu assistente de carreira.
@@ -174,7 +158,7 @@ Posso ajudar-te com:
 • Análise e melhoria de CV
 • Transições de carreira
 
-**Como posso ajudar-te hoje?**`,
+Como posso ajudar-te hoje?`,
             timestamp: new Date()
         };
         
@@ -246,7 +230,7 @@ Posso ajudar-te com:
     async getAIResponse(userMessage) {
         // Try Gemini first via Supabase Edge Function
         try {
-            console.log('[SamuelRoloAI] Calling Gemini via Edge Function...');
+            console.log('[SamuelRoloAI] 🔄 Calling Gemini via Edge Function...');
             
             const response = await fetch(this.edgeFunctionUrl, {
                 method: 'POST',
@@ -260,21 +244,29 @@ Posso ajudar-te com:
                 })
             });
 
+            console.log('[SamuelRoloAI] Edge Function response status:', response.status);
+
             if (response.ok) {
                 const data = await response.json();
+                console.log('[SamuelRoloAI] Response data:', data);
+                
                 if (data.success && data.reply) {
-                    console.log('[SamuelRoloAI] Gemini response received');
+                    console.log('[SamuelRoloAI] ✅ Gemini response received successfully');
                     return data.reply;
                 }
+            } else {
+                console.warn('[SamuelRoloAI] ⚠️ Edge Function returned status:', response.status);
+                const errorData = await response.json().catch(() => ({}));
+                console.warn('[SamuelRoloAI] Error data:', errorData);
             }
             
-            console.warn('[SamuelRoloAI] Gemini unavailable, using intelligent fallback');
+            console.warn('[SamuelRoloAI] ⚠️ Gemini unavailable, using intelligent fallback');
         } catch (error) {
-            console.warn('[SamuelRoloAI] Edge Function error:', error.message);
+            console.warn('[SamuelRoloAI] ⚠️ Edge Function error:', error.message);
         }
 
-        // Intelligent fallback
-        return this.getIntelligentFallback(userMessage);
+        // Intelligent fallback - contextual and empathetic
+        return this.getContextualResponse(userMessage);
     }
 
     buildContext() {
@@ -287,81 +279,122 @@ Posso ajudar-te com:
         return contextParts.join('\n');
     }
 
-    getIntelligentFallback(userMessage) {
+    getContextualResponse(userMessage) {
         const msg = userMessage.toLowerCase();
 
+        // Detect emotion/urgency
+        const isUrgent = msg.includes('urgente') || msg.includes('rápido') || msg.includes('agora');
+        const isEmotional = msg.includes('medo') || msg.includes('ansiedade') || msg.includes('frustração') || msg.includes('dúvida');
+        const isNegative = msg.includes('não sei') || msg.includes('não consigo') || msg.includes('impossível') || msg.includes('falhar');
+
+        // Emotional support first
+        if (isEmotional || isNegative) {
+            return `Entendo a tua preocupação. Isto que sentes é normal quando estamos numa encruzilhada profissional.
+
+Deixa-me ser direto: **o medo de falhar é o primeiro sinal de que estás a crescer**. Significa que estás a considerar algo que realmente importa.
+
+Agora, vamos focar no que é controlável:
+1. **O que exatamente te preocupa?** (a mudança em si, as competências, a rejeição?)
+2. **Qual é o teu maior ativo neste momento?** (experiência, rede, conhecimento?)
+3. **Qual é um pequeno passo que podes dar esta semana?**
+
+Conta-me mais. Quanto mais contexto me deres, melhor posso ajudar.`;
+        }
+
         // Career guidance
-        if (msg.includes('carreira') || msg.includes('profissional') || msg.includes('trabalho') || msg.includes('emprego')) {
-            return `**Sobre orientação de carreira:**
+        if (msg.includes('carreira') || msg.includes('profissional') || msg.includes('trabalho') || msg.includes('emprego') || msg.includes('procurar')) {
+            return `A tua carreira não é um destino - é uma série de decisões conscientes.
 
-A gestão de carreira é uma jornada contínua, não um destino. Aqui estão algumas reflexões:
+Aqui está o que funciona:
+• **Clareza** - Sabe exatamente o que queres (não apenas o que não queres)
+• **Ação** - Networking, candidaturas, visibilidade. Nada acontece sozinho
+• **Paciência estratégica** - Às vezes o timing é tudo
 
-1. **Autoconhecimento** - Quais são os teus valores e o que te motiva realmente?
-2. **Mercado** - Onde estão as oportunidades alinhadas com as tuas competências?
-3. **Ação** - Que pequeno passo podes dar esta semana?
+Qual é a tua situação atual? Estás:
+- A procurar o primeiro emprego?
+- A mudar de área?
+- A evoluir na tua área?
+- A sair de uma situação difícil?
 
-Se quiseres uma análise mais profunda, posso ajudar-te a estruturar um plano. Qual é a tua situação atual?`;
+Diz-me e estruturamos um plano.`;
         }
 
         // Training/Education
-        if (msg.includes('formação') || msg.includes('curso') || msg.includes('estudar') || msg.includes('aprender') || msg.includes('certificação')) {
-            return `**Sobre formação e desenvolvimento:**
+        if (msg.includes('formação') || msg.includes('curso') || msg.includes('estudar') || msg.includes('aprender') || msg.includes('certificação') || msg.includes('ia')) {
+            return `A formação é investimento, não gasto. Mas tem de ser **estratégica**.
 
-A formação contínua é essencial, mas deve ser estratégica:
+Antes de fazeres qualquer curso, pergunta-te:
+1. **Por quê?** - Qual é o problema que isto resolve?
+2. **Para quem?** - Quem contrata pessoas com esta competência?
+3. **Quanto tempo?** - Vale a pena o investimento de tempo?
 
-• **Identifica gaps** - Que competências te faltam para o próximo passo?
-• **Prioriza** - Nem toda a formação tem o mesmo retorno
-• **Aplica** - Conhecimento sem aplicação é desperdício
+Neste momento, a IA é o grande diferenciador. Mas não é sobre aprender IA - é sobre aprender a **usar IA para fazer melhor o que já fazes**.
 
-Que área específica estás a considerar desenvolver?`;
+Que área específica estás a considerar?`;
         }
 
         // CV
         if (msg.includes('cv') || msg.includes('currículo') || msg.includes('curriculo')) {
-            return `**Sobre o teu CV:**
+            return `O teu CV é a tua primeira impressão. E sabemos que a primeira impressão é tudo.
 
-Um bom CV não lista tarefas - conta uma história de impacto.
+Um CV fraco mata oportunidades antes de começarem. Um CV forte abre portas.
+
+**O teste dos 6 segundos:**
+Um recrutador exausto tem 6 segundos para decidir se te lê ou não. O teu CV passa neste teste?
 
 Dicas rápidas:
-• Usa verbos de ação e resultados quantificáveis
-• Adapta a cada candidatura
-• Mantém-no conciso (2 páginas máximo)
+• **Headline forte** - Não "Engenheiro de Software", mas "Engenheiro de Software | Especialista em Cloud | 5 anos de experiência"
+• **Resultados, não tarefas** - Não "Responsável por...", mas "Aumentei X em Y%"
+• **Adaptação** - Cada CV deve ser feito para a vaga específica
 
-Para uma análise detalhada do teu CV, usa o nosso [CV Analyser](/pages/cv-analysis.html) - é gratuito!`;
+Para uma análise profunda e detalhada, usa o nosso [CV Analyser](/pages/cv-analysis.html) - é gratuito e usa IA para te dar feedback real.`;
         }
 
         // Transition
-        if (msg.includes('transição') || msg.includes('mudar') || msg.includes('novo') || msg.includes('diferente')) {
-            return `**Sobre transições de carreira:**
+        if (msg.includes('transição') || msg.includes('mudar') || msg.includes('novo') || msg.includes('diferente') || msg.includes('mudança')) {
+            return `Mudar de carreira é cada vez mais comum. E é possível. Mas requer estratégia.
 
-Mudar de carreira é normal e cada vez mais comum. O importante é:
+**Primeiro, diagnóstico:**
+1. **Estás a fugir de algo ou a ir em direção a algo?**
+   - Se é fuga, o problema vai-te seguir
+   - Se é atração, tens energia para a mudança
 
-1. **Clareza** - Estás a fugir de algo ou a ir em direção a algo?
-2. **Transferência** - Que competências podes levar contigo?
-3. **Paciência** - Transições levam tempo
+2. **Que competências podes transferir?**
+   - Raramente começamos do zero
+   - Identifica o que já sabes fazer bem
 
-Conta-me mais sobre a tua situação. Estás a pensar em mudar de área, de empresa, ou de função?`;
+3. **Qual é o teu plano de transição?**
+   - Mudança radical? Gradual? Formação primeiro?
+
+A maioria das transições falha não porque a pessoa não consegue, mas porque não tem um plano claro.
+
+Qual é a tua situação? De onde para onde queres ir?`;
         }
 
-        // Contact
-        if (msg.includes('contacto') || msg.includes('contato') || msg.includes('email') || msg.includes('falar')) {
-            return `**Contactos:**
+        // Contact/Direct
+        if (msg.includes('contacto') || msg.includes('contato') || msg.includes('email') || msg.includes('falar') || msg.includes('linkedin') || msg.includes('sessão') || msg.includes('coaching')) {
+            return `Claro! Aqui estão as minhas formas de contacto:
 
 📧 **Email:** samuel.rolo@share2inspire.pt
 💼 **LinkedIn:** /in/samuelrolo
 🌐 **Website:** share2inspire.pt
 
-Para sessões de coaching personalizadas, envia-me uma mensagem no LinkedIn ou por email.`;
+Para **sessões de coaching personalizadas** (mais profundas e estruturadas), envia-me uma mensagem no LinkedIn ou por email. Fazemos uma chamada de diagnóstico e estruturamos um plano à tua medida.
+
+Mas lembra-te: **a maioria das respostas que procuras já estão dentro de ti**. Às vezes só precisas de alguém para te ajudar a vê-las.`;
         }
 
-        // Default - encourage conversation
+        // Default - encourage deeper conversation
         return `Obrigado pela tua mensagem!
 
 Estou aqui para ajudar com questões de **carreira**, **formação**, **CV** ou **transições profissionais**.
 
-Podes usar os botões rápidos acima ou simplesmente descrever a tua situação - quanto mais contexto me deres, melhor te posso ajudar.
+Para que eu possa dar-te a melhor resposta, preciso de mais contexto:
+- **Qual é a tua situação atual?** (empregado, desempregado, em transição?)
+- **Qual é o teu maior desafio neste momento?**
+- **O que já tentaste fazer para resolver isto?**
 
-**Qual é o teu maior desafio profissional neste momento?**`;
+Quanto mais me contares, melhor posso ajudar. 🎯`;
     }
 
     handleQuickAction(action) {
@@ -375,55 +408,42 @@ Podes usar os botões rápidos acima ou simplesmente descrever a tua situação 
         const input = document.getElementById('coachChatInput');
         input.value = prompts[action] || '';
         input.focus();
+        this.sendMessage();
     }
 
     renderMessage(message) {
         const messagesContainer = document.getElementById('coachChatMessages');
-        
         const messageEl = document.createElement('div');
-        messageEl.className = `coach-message ${message.type}`;
+        messageEl.className = `coach-message coach-message-${message.type}`;
         
-        const avatar = document.createElement('div');
-        avatar.className = 'coach-message-avatar';
-        avatar.textContent = message.type === 'bot' ? 'SR' : 'Tu';
-        
-        const content = document.createElement('div');
-        content.className = 'coach-message-content';
-        content.innerHTML = this.formatMessage(message.content);
-        
-        messageEl.appendChild(avatar);
-        messageEl.appendChild(content);
+        // Convert markdown to basic HTML
+        let content = message.content
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/\n/g, '<br>');
+
+        messageEl.innerHTML = `
+            <div class="coach-message-content">
+                ${content}
+            </div>
+        `;
         
         messagesContainer.appendChild(messageEl);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    formatMessage(text) {
-        return text
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\n/g, '<br>')
-            .replace(/• /g, '&bull; ')
-            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color: #BF9A33; text-decoration: underline;">$1</a>');
-    }
-
     showTyping() {
         const messagesContainer = document.getElementById('coachChatMessages');
-        
         const typingEl = document.createElement('div');
-        typingEl.className = 'coach-message bot';
+        typingEl.className = 'coach-message coach-message-typing';
         typingEl.id = 'coachTyping';
-        
-        const avatar = document.createElement('div');
-        avatar.className = 'coach-message-avatar';
-        avatar.textContent = 'SR';
-        
-        const typing = document.createElement('div');
-        typing.className = 'coach-typing';
-        typing.innerHTML = '<span></span><span></span><span></span>';
-        
-        typingEl.appendChild(avatar);
-        typingEl.appendChild(typing);
-        
+        typingEl.innerHTML = `
+            <div class="coach-message-content">
+                <div class="coach-typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        `;
         messagesContainer.appendChild(typingEl);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
@@ -433,41 +453,17 @@ Podes usar os botões rápidos acima ou simplesmente descrever a tua situação 
         if (typingEl) typingEl.remove();
     }
 
-    async logConversation(userMsg, botMsg) {
-        try {
-            const logData = {
-                session_id: this.sessionId,
-                user_message: userMsg.content,
-                bot_response: botMsg.content,
-                timestamp: new Date().toISOString(),
-                page_url: window.location.href
-            };
-
-            await fetch(`${this.supabaseUrl}/rest/v1/coach_conversations`, {
-                method: 'POST',
-                headers: {
-                    'apikey': this.supabaseKey,
-                    'Authorization': `Bearer ${this.supabaseKey}`,
-                    'Content-Type': 'application/json',
-                    'Prefer': 'return=minimal'
-                },
-                body: JSON.stringify(logData)
-            });
-        } catch (error) {
-            // Silent fail - logging shouldn't break the chat
-        }
+    logConversation(userMsg, botMsg) {
+        console.log('[SamuelRoloAI] Conversation logged:', {
+            sessionId: this.sessionId,
+            user: userMsg.content,
+            bot: botMsg.content,
+            timestamp: new Date().toISOString()
+        });
     }
 }
 
-// Initialize when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        window.samuelRoloAI = new SamuelRoloAI();
-    });
-} else {
-    window.samuelRoloAI = new SamuelRoloAI();
-}
-
-// Backwards compatibility
-window.CoachAgent = SamuelRoloAI;
-window.coachAgent = window.samuelRoloAI;
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    new SamuelRoloAI();
+});
