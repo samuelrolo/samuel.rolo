@@ -340,6 +340,7 @@
     transition: all 0.2s ease;
     outline: none;
     background: #fafafa;
+    color: #1A1A1A;
 }
 
 .coach-chat-input:focus {
