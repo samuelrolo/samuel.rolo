@@ -229,22 +229,55 @@ window.CV_ENGINE = {
             
             console.log('[GEMINI] ✅ Análise Gemini recebida com sucesso!');
             
-            // Processar a resposta do Gemini (texto estruturado)
+            // Verificar se a resposta é JSON estruturado ou texto
             const geminiReply = responseData.reply;
+            let geminiData;
             
-            // Extrair informações da resposta
-            const geminiData = {
-                summary: geminiReply,
-                strengths: this.extractStrengthsFromGemini(geminiReply),
-                atsScore: this.extractATSScoreFromGemini(geminiReply),
-                improvements: this.extractImprovementsFromGemini(geminiReply),
-                recommendation: this.extractRecommendationFromGemini(geminiReply)
-            };
+            if (responseData.mode === 'cv_analysis_json' && typeof geminiReply === 'object') {
+                // Resposta JSON estruturada
+                console.log('[GEMINI] 📊 Processando resposta JSON estruturada');
+                geminiData = {
+                    summary: geminiReply.executive_summary?.three_sentences?.join(' ') || '',
+                    strengths: [],
+                    dimensions: geminiReply.dimensions || {},
+                    candidate_profile: geminiReply.candidate_profile || {},
+                    ats_analysis: geminiReply.ats_analysis || {},
+                    roadmap: geminiReply.roadmap || {},
+                    final_verdict: geminiReply.final_verdict || {},
+                    premium_indicators: geminiReply.premium_indicators || {}
+                };
+                
+                // Extrair pontos fortes das dimensões com score alto
+                if (geminiReply.dimensions) {
+                    Object.entries(geminiReply.dimensions).forEach(([key, dim]) => {
+                        if (dim && dim.signal && dim.score >= 14) {
+                            geminiData.strengths.push(dim.signal);
+                        }
+                    });
+                }
+                
+                // Se não houver strengths das dimensões, usar standout_traits
+                if (geminiData.strengths.length === 0 && geminiReply.candidate_profile?.standout_traits) {
+                    geminiData.strengths = geminiReply.candidate_profile.standout_traits.slice(0, 3);
+                }
+                
+            } else {
+                // Resposta texto (fallback)
+                console.log('[GEMINI] 📊 Processando resposta texto (fallback)');
+                geminiData = {
+                    summary: typeof geminiReply === 'string' ? geminiReply : JSON.stringify(geminiReply),
+                    strengths: this.extractStrengthsFromGemini(typeof geminiReply === 'string' ? geminiReply : ''),
+                    atsScore: this.extractATSScoreFromGemini(typeof geminiReply === 'string' ? geminiReply : ''),
+                    improvements: this.extractImprovementsFromGemini(typeof geminiReply === 'string' ? geminiReply : ''),
+                    recommendation: this.extractRecommendationFromGemini(typeof geminiReply === 'string' ? geminiReply : '')
+                };
+            }
             
-            console.log('[GEMINI] 📊 Dados processados:', {
+            console.log('[GEMINI] 📊 Dados finais:', {
                 hasSummary: !!geminiData.summary,
                 strengthsCount: geminiData.strengths?.length || 0,
-                atsScore: geminiData.atsScore
+                hasDimensions: !!geminiData.dimensions,
+                hasATSAnalysis: !!geminiData.ats_analysis
             });
 
             // Guardar dados Gemini para uso no updateUI
