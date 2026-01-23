@@ -175,26 +175,38 @@ window.CV_ENGINE = {
      * INTEGRAÇÃO GEMINI AI: Chamar backend para análise avançada
      */
     async callGeminiBackend(file) {
-        // CORRECTED: Use App Engine endpoint instead of non-existent Cloud Function
-        const GEMINI_BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com/api/services/analyze-cv';
+        // Supabase Edge Function endpoint
+        const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
 
-        console.log('[GEMINI] 🔍 CHECKPOINT 1: Iniciando callGeminiBackend');
+        console.log('[GEMINI] 🔍 Iniciando análise com Gemini via Supabase Edge Function');
         console.log('[GEMINI] 📤 Enviando CV para análise IA...');
         console.log('[GEMINI] 📋 Ficheiro:', file.name, '- Tamanho:', Math.round(file.size / 1024), 'KB');
-        console.log('[GEMINI] 🌐 Endpoint:', GEMINI_BACKEND_URL);
+        console.log('[GEMINI] 🌐 Endpoint:', SUPABASE_EDGE_URL);
 
         try {
-            // Criar FormData com o ficheiro
-            const formData = new FormData();
-            formData.append('cv_file', file);
+            // Preparar o texto do CV para enviar
+            const cvText = this.data.rawText || '';
+            
+            if (!cvText || cvText.length < 100) {
+                console.warn('[GEMINI] ⚠️ Texto do CV muito curto para análise');
+                this.geminiAnalysis = null;
+                return;
+            }
 
-            // Chamar backend Gemini com timeout
+            // Chamar Edge Function com timeout
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+            const timeoutId = setTimeout(() => controller.abort(), 45000); // 45s timeout
 
-            const response = await fetch(GEMINI_BACKEND_URL, {
+            const response = await fetch(SUPABASE_EDGE_URL, {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: cvText.substring(0, 8000), // Limitar tamanho
+                    mode: 'cv_analysis',
+                    context: `Nome do ficheiro: ${file.name}. Dados extraídos localmente: ${JSON.stringify(this.data.extractedData)}`
+                }),
                 signal: controller.signal
             });
 
@@ -203,46 +215,36 @@ window.CV_ENGINE = {
             if (!response.ok) {
                 const errorText = await response.text();
                 console.warn('[GEMINI] ⚠️ Erro do backend (HTTP', response.status, '):', errorText);
-                // Fallback: usar análise local se backend falhar
                 this.geminiAnalysis = null;
                 return;
             }
 
             const responseData = await response.json();
-            console.log('[GEMINI] ✅ Análise recebida com sucesso!');
             
-            // Extrair report do wrapper de resposta
-            const report = responseData.report || responseData;
+            if (!responseData.success || !responseData.reply) {
+                console.warn('[GEMINI] ⚠️ Resposta inválida do Gemini');
+                this.geminiAnalysis = null;
+                return;
+            }
             
-            // Mapear dados para o formato esperado pelo frontend
+            console.log('[GEMINI] ✅ Análise Gemini recebida com sucesso!');
+            
+            // Processar a resposta do Gemini (texto estruturado)
+            const geminiReply = responseData.reply;
+            
+            // Extrair informações da resposta
             const geminiData = {
-                summary: report.executive_summary?.three_sentences?.join(' ') || '',
-                strengths: [],
-                dimensions: report.dimensions || {},
-                candidate_profile: report.candidate_profile || {},
-                roadmap: report.roadmap || {},
-                final_verdict: report.final_verdict || {},
-                premium_indicators: report.premium_indicators || {}
+                summary: geminiReply,
+                strengths: this.extractStrengthsFromGemini(geminiReply),
+                atsScore: this.extractATSScoreFromGemini(geminiReply),
+                improvements: this.extractImprovementsFromGemini(geminiReply),
+                recommendation: this.extractRecommendationFromGemini(geminiReply)
             };
             
-            // Extrair pontos fortes das dimensões com score alto
-            if (report.dimensions) {
-                Object.entries(report.dimensions).forEach(([key, dim]) => {
-                    if (dim && dim.signal && dim.score >= 14) {
-                        geminiData.strengths.push(dim.signal);
-                    }
-                });
-            }
-            
-            // Se não houver strengths das dimensões, usar primeira frase do summary
-            if (geminiData.strengths.length === 0 && report.executive_summary?.three_sentences) {
-                geminiData.strengths.push(report.executive_summary.three_sentences[0]);
-            }
-            
-            console.log('[GEMINI] 📊 Dados mapeados:', {
+            console.log('[GEMINI] 📊 Dados processados:', {
                 hasSummary: !!geminiData.summary,
-                hasStrengths: !!geminiData.strengths,
-                strengthsCount: geminiData.strengths?.length || 0
+                strengthsCount: geminiData.strengths?.length || 0,
+                atsScore: geminiData.atsScore
             });
 
             // Guardar dados Gemini para uso no updateUI
@@ -250,14 +252,61 @@ window.CV_ENGINE = {
 
         } catch (error) {
             if (error.name === 'AbortError') {
-                console.warn('[GEMINI] ⏱️ Timeout: Backend demorou mais de 30s');
+                console.warn('[GEMINI] ⏱️ Timeout: Backend demorou mais de 45s');
             } else {
                 console.warn('[GEMINI] ❌ Erro ao chamar backend:', error.message);
             }
             console.warn('[GEMINI] 🔄 Usando análise local como fallback');
-            // Fallback: continuar sem dados Gemini
             this.geminiAnalysis = null;
         }
+    },
+
+    // Funções auxiliares para extrair dados da resposta Gemini
+    extractStrengthsFromGemini(text) {
+        const strengths = [];
+        const patterns = [
+            /pontos? fortes?[:\s]*([^\n]+)/gi,
+            /\+\s*([^\n]+)/g,
+            /destaques?[:\s]*([^\n]+)/gi
+        ];
+        patterns.forEach(pattern => {
+            const matches = text.match(pattern);
+            if (matches) {
+                matches.slice(0, 3).forEach(m => {
+                    const cleaned = m.replace(/pontos? fortes?[:\s]*/i, '').replace(/destaques?[:\s]*/i, '').replace(/^\+\s*/, '').trim();
+                    if (cleaned.length > 10 && cleaned.length < 200) strengths.push(cleaned);
+                });
+            }
+        });
+        return strengths.slice(0, 3);
+    },
+
+    extractATSScoreFromGemini(text) {
+        const match = text.match(/(?:score|ats|pontuação)[^\d]*(\d{1,3})\s*(?:%|pontos?|de 100)?/i);
+        return match ? parseInt(match[1]) : null;
+    },
+
+    extractImprovementsFromGemini(text) {
+        const improvements = [];
+        const patterns = [
+            /(?:áreas? de )?melhorias?[:\s]*([^\n]+)/gi,
+            /-\s*([^\n]+)/g
+        ];
+        patterns.forEach(pattern => {
+            const matches = text.match(pattern);
+            if (matches) {
+                matches.slice(0, 3).forEach(m => {
+                    const cleaned = m.replace(/(?:áreas? de )?melhorias?[:\s]*/i, '').replace(/^-\s*/, '').trim();
+                    if (cleaned.length > 10 && cleaned.length < 200) improvements.push(cleaned);
+                });
+            }
+        });
+        return improvements.slice(0, 3);
+    },
+
+    extractRecommendationFromGemini(text) {
+        const match = text.match(/recomendação[^:]*:[\s]*([^\n]+)/i);
+        return match ? match[1].trim() : null;
     },
 
     /**
