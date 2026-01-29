@@ -8,6 +8,7 @@
     const style = document.createElement('style');
     style.innerHTML = `
         .feedback-btn {
+            /* Removido - Agora usa .coach-tab-button e .feedback-tab */
             position: fixed;
             bottom: 30px;
             right: 30px;
@@ -86,10 +87,12 @@
 
     // 2. Inject HTML (Button + Modal)
     const container = document.createElement('div');
+    container.className = 'feedback-tab'; // Adicionar a classe feedback-tab
     container.innerHTML = `
         <!-- Floating Button -->
-        <button id="openFeedbackBtn" class="feedback-btn">
-            <i class="fas fa-comment-alt"></i> Feedback
+        <button class="coach-tab-button" id="openFeedbackBtn" aria-label="Enviar Feedback">
+            <div class="coach-tab-pulse"></div>
+            <div class="coach-tab-icon">💬</div>
         </button>
 
         <!-- Modal -->
