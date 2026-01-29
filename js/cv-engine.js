@@ -200,6 +200,7 @@ window.CV_ENGINE = {
             const response = await fetch(SUPABASE_EDGE_URL, {
                 method: 'POST',
                 headers: {
+                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3NzE1MDQsImV4cCI6MjA1MjM0NzUwNH0.FJlZBzX4u1Xj5EvzjlRsYF0bnQ_Dn_LQsRbZEKhGQS0',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
