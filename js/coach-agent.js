@@ -11,6 +11,7 @@ class SamuelRoloAI {
     constructor() {
         this.isOpen = false;
         this.isExpanded = false;
+        this.isMaximized = false;
         this.messages = [];
         this.supabaseUrl = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
         this.supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -52,7 +53,7 @@ class SamuelRoloAI {
                         </div>
                     </div>
                     <div class="coach-header-actions">
-                        <button class="coach-expand-btn" id="coachExpandBtn" aria-label="Expandir">⤢</button>
+                        <button class="coach-maximize-btn" id="coachMaximizeBtn" aria-label="Maximizar">⤢</button>
                         <button class="coach-close-btn" id="coachCloseBtn" aria-label="Fechar">×</button>
                     </div>
                 </div>
@@ -92,14 +93,14 @@ class SamuelRoloAI {
     attachEventListeners() {
         const tabButton = document.getElementById('coachTabButton');
         const closeBtn = document.getElementById('coachCloseBtn');
-        const expandBtn = document.getElementById('coachExpandBtn');
+        const maximizeBtn = document.getElementById('coachMaximizeBtn');
         const sendBtn = document.getElementById('coachSendBtn');
         const input = document.getElementById('coachChatInput');
         const quickActions = document.querySelectorAll('.coach-quick-action');
 
         tabButton.addEventListener('click', () => this.toggleWidget());
         closeBtn.addEventListener('click', () => this.closeWidget());
-        expandBtn.addEventListener('click', () => this.toggleExpand());
+        maximizeBtn.addEventListener('click', () => this.toggleMaximize());
         sendBtn.addEventListener('click', () => this.sendMessage());
         
         input.addEventListener('keypress', (e) => {
@@ -141,10 +142,14 @@ class SamuelRoloAI {
         widget.classList.remove('active');
     }
 
-    toggleExpand() {
-        this.isExpanded = !this.isExpanded;
+    toggleMaximize() {
+        this.isMaximized = !this.isMaximized;
         const widget = document.getElementById('coachChatWidget');
-        widget.classList.toggle('expanded', this.isExpanded);
+        widget.classList.toggle('maximized', this.isMaximized);
+        
+        // Ajustar o ícone do botão
+        const maximizeBtn = document.getElementById('coachMaximizeBtn');
+        maximizeBtn.innerHTML = this.isMaximized ? '⤡' : '⤢';
     }
 
     addWelcomeMessage() {
