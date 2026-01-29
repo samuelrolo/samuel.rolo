@@ -240,7 +240,8 @@ Como posso ajudar-te hoje?`,
             const response = await fetch(this.edgeFunctionUrl, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.supabaseKey}`
                 },
                 body: JSON.stringify({
                     message: userMessage,
