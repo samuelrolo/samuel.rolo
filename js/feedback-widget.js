@@ -82,6 +82,24 @@
             right: 1.5rem;
             top: 1.5rem;
         }
+        
+        /* Corrigir contraste do textarea do feedback */
+        #feedbackWidgetModal .form-control {
+            background-color: #ffffff;
+            color: #1A1A1A;
+            border: 1px solid #e8e8e8;
+        }
+        
+        #feedbackWidgetModal .form-control::placeholder {
+            color: #666;
+        }
+        
+        #feedbackWidgetModal .form-control:focus {
+            background-color: #ffffff;
+            color: #1A1A1A;
+            border-color: #BF9A33;
+            box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25);
+        }
     `;
     document.head.appendChild(style);
 

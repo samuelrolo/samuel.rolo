@@ -358,7 +358,7 @@
     font-family: 'Poppins', sans-serif;
     transition: all 0.2s ease;
     outline: none;
-    background: #fafafa;
+    background: #ffffff; /* Fundo branco para máximo contraste */
     color: #1A1A1A; /* Cor do texto de input preta */
 }
 
@@ -369,7 +369,7 @@
 }
 
 .coach-chat-input::placeholder {
-    color: #999;
+    color: #666; /* Placeholder mais escuro para melhor contraste */
 }
 
 .coach-send-btn {
