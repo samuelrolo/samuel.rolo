@@ -276,7 +276,24 @@ window.CV_ENGINE = {
                     ats_analysis: geminiReply.ats_analysis || {},
                     roadmap: geminiReply.roadmap || {},
                     final_verdict: geminiReply.final_verdict || {},
-                    premium_indicators: geminiReply.premium_indicators || {}
+                    premium_indicators: geminiReply.premium_indicators || {},
+                    // Campos adicionais para o relatório PDF
+                    executive_summary: {
+                        market_positioning: geminiReply.final_verdict?.headline || 'Análise de posicionamento disponível no relatório.',
+                        key_decision_factors: geminiReply.final_verdict?.recommendation || 'Fatores de decisão detalhados no PDF.'
+                    },
+                    dimensional_analysis: geminiReply.dimensions || {},
+                    key_opportunities: {
+                        pdf_details: geminiReply.roadmap?.immediate || []
+                    },
+                    key_strengths: {
+                        pdf_details: geminiReply.candidate_profile?.standout_traits || []
+                    },
+                    evolution_roadmap: geminiReply.roadmap || {},
+                    strategic_feedback: {
+                        noise_detected: geminiReply.premium_indicators?.noise_detected || [],
+                        six_second_test: geminiReply.premium_indicators?.six_second_test || ''
+                    }
                 };
                 
                 // Extrair pontos fortes das dimensões com score alto
