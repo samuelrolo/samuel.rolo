@@ -246,7 +246,7 @@ Como posso ajudar-te hoje?`,
                 body: JSON.stringify({
                     message: userMessage,
                     mode: 'career_coach',
-                    context: this.buildContext()
+                    history: this.conversationContext.slice(-6) // Últimas 6 mensagens
                 })
             });
 
