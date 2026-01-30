@@ -270,7 +270,7 @@
 }
 
 .coach-message.bot .coach-message-content {
-    background: #f5f5f5; /* Fundo cinza claro para mensagens do bot */
+    background: #ffffff; /* Fundo branco para mensagens do bot */
     color: #1A1A1A; /* Texto preto para legibilidade */
     border: 1px solid #e0e0e0;
     border-top-left-radius: 4px;
