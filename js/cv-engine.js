@@ -139,15 +139,17 @@ window.CV_ENGINE = {
             console.log('[CV_ENGINE] Análise completa:', this.data);
             console.log('[CV_ENGINE] Análise Gemini:', this.geminiAnalysis);
             
-            // Armazenar dados completos da análise para o relatório PDF
+            // Armazenar dados completos da análise para o relatório PDF (formato backend)
             window.currentReportData = {
                 candidate_profile: {
-                    name: this.data.extractedData?.name || 'Candidato',
-                    years_experience: this.data.extractedData?.yearsOfExperience || 0,
-                    current_role: this.data.extractedData?.currentRole || 'Não especificado',
-                    seniority: this.data.extractedData?.seniority || 'Não especificado',
-                    sector: this.data.extractedData?.sector || 'Não identificado',
-                    academic_background: this.data.extractedData?.education?.[0]?.degree || 'N/D'
+                    detected_name: this.data.extractedData?.name || 'Candidato',
+                    detected_role: this.data.extractedData?.currentRole || 'Não identificado',
+                    detected_sector: this.data.extractedData?.sector || 'Não identificado',
+                    total_years_exp: this.data.extractedData?.yearsOfExperience || 'N/D',
+                    seniority: this.data.extractedData?.seniority || 'N/D',
+                    education_level: this.data.extractedData?.education?.[0]?.degree || 'N/D',
+                    languages_detected: this.data.extractedData?.languages || [],
+                    key_skills: this.data.extractedData?.skills || []
                 },
                 executive_summary: this.geminiAnalysis?.executive_summary || {},
                 dimensional_analysis: this.geminiAnalysis?.dimensional_analysis || {},
@@ -157,10 +159,11 @@ window.CV_ENGINE = {
                 strategic_feedback: this.geminiAnalysis?.strategic_feedback || {},
                 radar_data: {
                     ats: this.data.atsAnalysis?.score || 0,
-                    impact: this.data.spiderFactors?.impacto || 0,
-                    structure: this.data.spiderFactors?.estrutura || 0,
-                    market_fit: this.data.spiderFactors?.relevancia || 0,
-                    readiness: this.data.maturity?.score || 0
+                    impacto: this.data.spiderFactors?.impacto || 0,
+                    estrutura: this.data.spiderFactors?.estrutura || 0,
+                    conteudo: this.data.spiderFactors?.relevancia || 0,
+                    riscos: 100 - (this.data.maturity?.score || 0), // Invertido
+                    branding: this.data.spiderFactors?.branding || 0
                 },
                 final_verdict: this.geminiAnalysis?.final_verdict || {}
             };
