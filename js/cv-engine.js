@@ -140,34 +140,6 @@ window.CV_ENGINE = {
             console.log('[CV_ENGINE] Análise Gemini:', this.geminiAnalysis);
             
             // Armazenar dados completos da análise para o relatório PDF (formato backend)
-            window.currentReportData = {
-                candidate_profile: {
-                    detected_name: this.data.extractedData?.name || 'Candidato',
-                    detected_role: this.data.extractedData?.currentRole || 'Não identificado',
-                    detected_sector: this.data.extractedData?.sector || 'Não identificado',
-                    total_years_exp: this.data.extractedData?.yearsOfExperience || 'N/D',
-                    seniority: this.data.extractedData?.seniority || 'N/D',
-                    education_level: this.data.extractedData?.education?.[0]?.degree || 'N/D',
-                    languages_detected: this.data.extractedData?.languages || [],
-                    key_skills: this.data.extractedData?.skills || []
-                },
-                executive_summary: this.geminiAnalysis?.executive_summary || {},
-                dimensional_analysis: this.geminiAnalysis?.dimensional_analysis || {},
-                key_opportunities: this.geminiAnalysis?.key_opportunities?.pdf_details || [],
-                key_strengths: this.geminiAnalysis?.key_strengths?.pdf_details || [],
-                evolution_roadmap: this.geminiAnalysis?.evolution_roadmap || {},
-                strategic_feedback: this.geminiAnalysis?.strategic_feedback || {},
-                radar_data: {
-                    ats: this.data.atsAnalysis?.score || 0,
-                    impacto: this.data.spiderFactors?.impacto || 0,
-                    estrutura: this.data.spiderFactors?.estrutura || 0,
-                    conteudo: this.data.spiderFactors?.relevancia || 0,
-                    riscos: 100 - (this.data.maturity?.score || 0), // Invertido
-                    branding: this.data.spiderFactors?.branding || 0
-                },
-                final_verdict: this.geminiAnalysis?.final_verdict || {}
-            };
-            console.log('[CV_ENGINE] ✅ Dados do relatório armazenados em window.currentReportData');
             
             return true;
         } catch (error) {
@@ -205,17 +177,16 @@ window.CV_ENGINE = {
     /**
      * INTEGRAÇÃO GEMINI AI: Chamar backend para análise avançada
      */
+    // Versão simplificada da função callGeminiBackend para cv-engine.js
+    // Esta função substitui a versão atual (linhas 208-330 aproximadamente)
+    
     async callGeminiBackend(file) {
-        // Supabase Edge Function endpoint
         const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
-
+    
         console.log('[GEMINI] 🔍 Iniciando análise com Gemini via Supabase Edge Function');
         console.log('[GEMINI] 📤 Enviando CV para análise IA...');
-        console.log('[GEMINI] 📋 Ficheiro:', file.name, '- Tamanho:', Math.round(file.size / 1024), 'KB');
-        console.log('[GEMINI] 🌐 Endpoint:', SUPABASE_EDGE_URL);
-
+    
         try {
-            // Preparar o texto do CV para enviar
             const cvText = this.data.rawText || '';
             
             if (!cvText || cvText.length < 100) {
@@ -223,11 +194,11 @@ window.CV_ENGINE = {
                 this.geminiAnalysis = null;
                 return;
             }
-
-            // Chamar Edge Function com timeout
+    
+            // Chamar Edge Function
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 45000); // 45s timeout
-
+            const timeoutId = setTimeout(() => controller.abort(), 45000);
+    
             const response = await fetch(SUPABASE_EDGE_URL, {
                 method: 'POST',
                 headers: {
@@ -235,25 +206,24 @@ window.CV_ENGINE = {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    message: cvText.substring(0, 8000), // Limitar tamanho
-                    mode: 'cv_analysis',
-                    context: `Nome do ficheiro: ${file.name}. Dados extraídos localmente: ${JSON.stringify(this.data.extractedData)}`
+                    cv_text: cvText.substring(0, 8000),
+                    mode: 'cv_analysis'
                 }),
                 signal: controller.signal
             });
-
+    
             clearTimeout(timeoutId);
-
+    
             if (!response.ok) {
                 const errorText = await response.text();
                 console.warn('[GEMINI] ⚠️ Erro do backend (HTTP', response.status, '):', errorText);
                 this.geminiAnalysis = null;
                 return;
             }
-
+    
             const responseData = await response.json();
             
-            if (!responseData.success || !responseData.reply) {
+            if (!responseData.analysis) {
                 console.warn('[GEMINI] ⚠️ Resposta inválida do Gemini');
                 this.geminiAnalysis = null;
                 return;
@@ -261,87 +231,42 @@ window.CV_ENGINE = {
             
             console.log('[GEMINI] ✅ Análise Gemini recebida com sucesso!');
             
-            // Verificar se a resposta é JSON estruturado ou texto
-            const geminiReply = responseData.reply;
-            let geminiData;
+            // A Edge Function retorna { analysis: {...} }
+            // Armazenar diretamente sem mapeamentos complexos
+            this.geminiAnalysis = responseData.analysis;
             
-            if (responseData.mode === 'cv_analysis_json' && typeof geminiReply === 'object') {
-                // Resposta JSON estruturada
-                console.log('[GEMINI] 📊 Processando resposta JSON estruturada');
-                geminiData = {
-                    summary: geminiReply.executive_summary?.three_sentences?.join(' ') || '',
-                    strengths: [],
-                    dimensions: geminiReply.dimensions || {},
-                    candidate_profile: geminiReply.candidate_profile || {},
-                    ats_analysis: geminiReply.ats_analysis || {},
-                    roadmap: geminiReply.roadmap || {},
-                    final_verdict: geminiReply.final_verdict || {},
-                    premium_indicators: geminiReply.premium_indicators || {},
-                    // Campos adicionais para o relatório PDF
-                    executive_summary: {
-                        market_positioning: geminiReply.final_verdict?.headline || 'Análise de posicionamento disponível no relatório.',
-                        key_decision_factors: geminiReply.final_verdict?.recommendation || 'Fatores de decisão detalhados no PDF.'
-                    },
-                    dimensional_analysis: geminiReply.dimensions || {},
-                    key_opportunities: {
-                        pdf_details: geminiReply.roadmap?.immediate || []
-                    },
-                    key_strengths: {
-                        pdf_details: geminiReply.candidate_profile?.standout_traits || []
-                    },
-                    evolution_roadmap: geminiReply.roadmap || {},
-                    strategic_feedback: {
-                        noise_detected: geminiReply.premium_indicators?.noise_detected || [],
-                        six_second_test: geminiReply.premium_indicators?.six_second_test || ''
-                    }
-                };
-                
-                // Extrair pontos fortes das dimensões com score alto
-                if (geminiReply.dimensions) {
-                    Object.entries(geminiReply.dimensions).forEach(([key, dim]) => {
-                        if (dim && dim.signal && dim.score >= 14) {
-                            geminiData.strengths.push(dim.signal);
-                        }
-                    });
-                }
-                
-                // Se não houver strengths das dimensões, usar standout_traits
-                if (geminiData.strengths.length === 0 && geminiReply.candidate_profile?.standout_traits) {
-                    geminiData.strengths = geminiReply.candidate_profile.standout_traits.slice(0, 3);
-                }
-                
-            } else {
-                // Resposta texto (fallback)
-                console.log('[GEMINI] 📊 Processando resposta texto (fallback)');
-                geminiData = {
-                    summary: typeof geminiReply === 'string' ? geminiReply : JSON.stringify(geminiReply),
-                    strengths: this.extractStrengthsFromGemini(typeof geminiReply === 'string' ? geminiReply : ''),
-                    atsScore: this.extractATSScoreFromGemini(typeof geminiReply === 'string' ? geminiReply : ''),
-                    improvements: this.extractImprovementsFromGemini(typeof geminiReply === 'string' ? geminiReply : ''),
-                    recommendation: this.extractRecommendationFromGemini(typeof geminiReply === 'string' ? geminiReply : '')
-                };
-            }
+            // Criar sumário para exibição no frontend
+            const summary = `${responseData.analysis.executive_summary.market_positioning} ${responseData.analysis.executive_summary.key_decision_factors}`;
             
-            console.log('[GEMINI] 📊 Dados finais:', {
-                hasSummary: !!geminiData.summary,
-                strengthsCount: geminiData.strengths?.length || 0,
-                hasDimensions: !!geminiData.dimensions,
-                hasATSAnalysis: !!geminiData.ats_analysis
-            });
-
-            // Guardar dados Gemini para uso no updateUI
-            this.geminiAnalysis = geminiData;
-
+            // Armazenar dados para o relatório PDF
+            window.currentReportData = {
+                candidate_profile: {
+                    detected_name: responseData.analysis.candidate_profile.detected_name,
+                    total_years_exp: responseData.analysis.candidate_profile.total_years_exp,
+                    detected_role: responseData.analysis.candidate_profile.detected_role,
+                    detected_sector: responseData.analysis.candidate_profile.detected_sector,
+                    seniority_level: responseData.analysis.candidate_profile.seniority_level,
+                    detected_education: responseData.analysis.candidate_profile.detected_education
+                },
+                executive_summary: responseData.analysis.executive_summary,
+                dimensional_analysis: responseData.analysis.dimensional_analysis,
+                key_strengths: responseData.analysis.key_strengths,
+                key_opportunities: responseData.analysis.key_opportunities,
+                evolution_roadmap: responseData.analysis.evolution_roadmap,
+                strategic_feedback: responseData.analysis.strategic_feedback,
+                final_verdict: responseData.analysis.final_verdict,
+                radar_data: responseData.analysis.radar_data
+            };
+            
+            console.log('[CV_ENGINE] ✅ Dados do relatório armazenados em window.currentReportData');
+            console.log('[CV_ENGINE] 📊 Estrutura:', Object.keys(window.currentReportData));
+    
         } catch (error) {
-            if (error.name === 'AbortError') {
-                console.warn('[GEMINI] ⏱️ Timeout: Backend demorou mais de 45s');
-            } else {
-                console.warn('[GEMINI] ❌ Erro ao chamar backend:', error.message);
-            }
-            console.warn('[GEMINI] 🔄 Usando análise local como fallback');
+            console.error('[GEMINI] ❌ Erro ao chamar Gemini:', error);
             this.geminiAnalysis = null;
         }
     },
+    
 
     // Funções auxiliares para extrair dados da resposta Gemini
     extractStrengthsFromGemini(text) {
