@@ -26,9 +26,9 @@
 .coach-tab-button {
     width: 56px;
     height: 56px;
-    background: #1A1A1A;
+    background: #ffffff;
     color: #BF9A33;
-    border: none;
+    border: 2px solid #BF9A33;
     border-radius: 50%;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -44,7 +44,7 @@
 .coach-tab-button:hover {
     transform: scale(1.08);
     box-shadow: 0 6px 30px rgba(191, 154, 51, 0.25);
-    background: #252525;
+    background: #fffbf0;
 }
 
 .coach-tab-button:active {
@@ -131,8 +131,8 @@
 
 /* ===== CHAT HEADER ===== */
 .coach-chat-header {
-    background: #1A1A1A;
-    color: #ffffff;
+    background: #ffffff;
+    color: #1A1A1A;
     padding: 16px 20px;
     display: flex;
     align-items: center;
@@ -164,14 +164,14 @@
     margin: 0;
     font-size: 14px;
     font-weight: 600;
-    color: #ffffff;
+    color: #1A1A1A;
     letter-spacing: 0.3px;
 }
 
 .coach-header-text p {
     margin: 2px 0 0 0;
     font-size: 11px;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(26, 26, 26, 0.6);
     display: flex;
     align-items: center;
     gap: 4px;
@@ -195,7 +195,7 @@
 .coach-close-btn {
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(26, 26, 26, 0.6);
     font-size: 18px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -207,7 +207,7 @@
 .coach-expand-btn:hover,
 .coach-close-btn:hover {
     color: #BF9A33;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(191, 154, 51, 0.1);
 }
 
 /* ===== CHAT MESSAGES AREA ===== */
@@ -256,8 +256,8 @@
 }
 
 .coach-message.user .coach-message-avatar {
-    background: #1A1A1A;
-    color: #BF9A33;
+    background: #BF9A33;
+    color: #1A1A1A;
 }
 
 .coach-message-content {
