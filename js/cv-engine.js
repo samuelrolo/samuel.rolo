@@ -1266,7 +1266,17 @@ window.CV_ENGINE = {
             // Usar dados reais do Gemini se disponíveis
             if (this.geminiAnalysis && this.geminiAnalysis.summary) {
                 // ✅ DADOS REAIS DO GEMINI BACKEND
-                geminiSummary.innerHTML = `<p style="margin: 0;">${this.geminiAnalysis.summary}</p>`;
+                // Verificar se summary é string ou objeto
+                let summaryText = '';
+                if (typeof this.geminiAnalysis.summary === 'string') {
+                    summaryText = this.geminiAnalysis.summary;
+                } else if (this.geminiAnalysis.executive_summary?.market_positioning) {
+                    summaryText = this.geminiAnalysis.executive_summary.market_positioning;
+                } else if (this.geminiAnalysis.final_verdict?.headline) {
+                    summaryText = this.geminiAnalysis.final_verdict.headline;
+                }
+                
+                geminiSummary.innerHTML = `<p style="margin: 0;">${summaryText || 'Análise AI em processamento...'}</p>`;
 
                 // Pontos Fortes do Gemini
                 if (this.geminiAnalysis.strengths && this.geminiAnalysis.strengths.length > 0) {
