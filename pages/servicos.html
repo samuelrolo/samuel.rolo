@@ -437,6 +437,42 @@
                 padding: 30px;
             }
         }
+        /* Modal Responsivo */
+        @media (max-width: 991px) {
+            .modal-dialog {
+                max-width: 95% !important;
+                margin: 1rem auto;
+            }
+            
+            #kickstartModal .ratio {
+                min-height: 400px !important;
+            }
+            
+            #kickstartModal .col-lg-7,
+            #kickstartModal .col-lg-5 {
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .modal-dialog {
+                max-width: 100% !important;
+                margin: 0.5rem;
+            }
+            
+            #kickstartModal .ratio {
+                min-height: 350px !important;
+            }
+            
+            #kickstartModal .modal-body {
+                padding: 1rem !important;
+            }
+            
+            .modal-title {
+                font-size: 1rem !important;
+            }
+        }
     </style>
     <!-- Coach Agent CSS -->
     <link rel="stylesheet" href="../css/coach-agent.css">
