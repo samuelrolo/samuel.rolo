@@ -1416,41 +1416,47 @@ window.CV_ENGINE = {
 
     /**
      * Validar tipo de documento para rejeitar cartões de cidadão e outros documentos não-CV
+     * VERSÃO 2.1 - Corrigido para evitar falsos positivos com CVs portugueses
      */
     validateDocumentType(text, originalText) {
         console.log('[CV_ENGINE] 🔍 Validando tipo de documento...');
 
-        // Red flags para documentos não-CV (ID cards, drivers license, passports, etc)
+        // Red flags APENAS para documentos de identificação puros (não CVs)
+        // Removidos: data de nascimento, estado civil, carta de condução, sexo, nacionalidade
+        // (são comuns em CVs portugueses)
         const nonCVKeywords = {
             pt: [
-                'cartão de cidadão', 'número de cidadão', 'cc n.º', 'nif', 'número de identificação fiscal',
-                'carta de condução', 'alvará', 'licença', 'autoridade emissora', 'validade até',
-                'data de nascimento', 'filiação', 'naturalidade', 'altura', 'sexo masculino', 'sexo feminino',
-                'assinatura do titular', 'estado civil', 'país de nascimento'
+                'cartão de cidadão', 'número de cidadão', 'cc n.º',
+                'autoridade emissora', 'validade até',
+                'assinatura do titular', 'república portuguesa'
             ],
             en: [
                 'citizen card', 'citizen number', 'national id', 'identity card', 'id card number',
-                'driving license', 'driver\'s license', 'issuing authority', 'valid until', 'expires',
-                'date of birth', 'place of birth', 'nationality', 'marital status', 'height', 'gender',
+                'issuing authority', 'valid until', 'expires',
                 'passport number', 'signature of holder'
             ]
         };
 
-        // Green flags para CVs reais
+        // Green flags para CVs reais (expandido)
         const cvKeywords = {
             pt: [
                 'experiência profissional', 'experiências profissionais', 'percurso profissional',
+                'expriência profissional', // typo comum
                 'formação académica', 'formação', 'educação', 'competências', 'habilidades',
                 'curriculum vitae', 'currículo', 'perfil profissional', 'objetivo profissional',
                 'hard skills', 'soft skills', 'certificações', 'idiomas', 'línguas',
-                'projetos', 'voluntariado', 'publicações', 'conquistas'
+                'projetos', 'voluntariado', 'publicações', 'conquistas',
+                'licenciatura', 'mestrado', 'doutoramento', 'bacharelato',
+                'nutricionista', 'engenheiro', 'gestor', 'consultor', 'analista', // profissões
+                'responsável', 'realização de', 'consultas', 'ementas' // atividades profissionais
             ],
             en: [
                 'professional experience', 'work experience', 'employment history', 'career summary',
                 'education', 'academic background', 'qualifications', 'skills', 'competencies',
                 'curriculum vitae', 'resume', 'professional profile', 'career objective',
                 'hard skills', 'soft skills', 'certifications', 'languages', 'projects',
-                'volunteer work', 'publications', 'achievements', 'references'
+                'volunteer work', 'publications', 'achievements', 'references',
+                'bachelor', 'master', 'degree', 'university'
             ]
         };
 
@@ -1475,18 +1481,20 @@ window.CV_ENGINE = {
             cvMatches: cvMatches.slice(0, 5)
         });
 
-        // Regra 1: Se tem 3+ red flags, é quase certamente um ID card
-        if (nonCVScore >= 3) {
+        // REGRA PRINCIPAL: Se tem indicadores de CV, aceitar mesmo com alguns red flags
+        // CVs portugueses frequentemente incluem dados pessoais
+        if (cvScore >= 2) {
+            console.log('[CV_ENGINE] ✅ Documento validado como CV (tem indicadores suficientes)');
+            return true;
+        }
+
+        // Regra 1: Só rejeitar se tem MUITOS red flags E ZERO green flags
+        if (nonCVScore >= 3 && cvScore === 0) {
             console.error('[CV_ENGINE] ❌ Documento rejeitado: Detetado como cartão de cidadão ou documento oficial');
             throw new Error('INVALID_DOCUMENT_TYPE');
         }
 
-        // Regra 2 MELHORADA: Verificar se tem conteúdo mínimo de CV
-        // Um CV DEVE ter pelo menos UMA das seguintes combinações:
-        // - Experiência profissional OU Formação académica
-        // E também:
-        // - Competências/Skills
-
+        // Regra 2: Verificar conteúdo mínimo apenas se não tem green flags
         const hasExperience = cvMatches.some(m =>
             m.includes('experiência') || m.includes('experience') ||
             m.includes('profissional') || m.includes('professional') ||
@@ -1495,31 +1503,26 @@ window.CV_ENGINE = {
 
         const hasEducation = cvMatches.some(m =>
             m.includes('formação') || m.includes('educação') || m.includes('education') ||
-            m.includes('académica') || m.includes('academic')
+            m.includes('académica') || m.includes('academic') || m.includes('licenciatura') ||
+            m.includes('mestrado') || m.includes('university')
         );
 
-        const hasSkills = cvMatches.some(m =>
-            m.includes('competências') || m.includes('skills') ||
-            m.includes('habilidades') || m.includes('competencies')
-        );
-
-        const hasCVCore = (hasExperience || hasEducation) && hasSkills;
-
-        if (!hasCVCore && wordCount >= 100) {
-            console.error('[CV_ENGINE] ❌ Documento rejeitado: Sem estrutura mínima de CV (experiência/formação + competências)');
-            throw new Error('MISSING_CV_CONTENT');
+        // Se tem experiência OU formação, é provavelmente um CV
+        if (hasExperience || hasEducation) {
+            console.log('[CV_ENGINE] ✅ Documento validado como CV (tem experiência ou formação)');
+            return true;
         }
 
         // Regra 3: Se é muito curto E não tem green flags
-        if (cvScore === 0 && wordCount < 150) {
+        if (cvScore === 0 && wordCount < 100) {
             console.error('[CV_ENGINE] ❌ Documento rejeitado: Demasiado curto e sem indicadores de CV');
             throw new Error('DOCUMENT_TOO_SHORT');
         }
 
-        // Regra 4: Se ratio red/green é muito alto, suspeito
-        if (nonCVScore > 0 && cvScore > 0 && (nonCVScore / cvScore) > 2) {
-            console.warn('[CV_ENGINE] ⚠️ Documento suspeito: Muitos indicadores não-CV');
-            throw new Error('SUSPICIOUS_DOCUMENT');
+        // Por defeito, aceitar documentos longos (provavelmente são CVs)
+        if (wordCount >= 200) {
+            console.log('[CV_ENGINE] ✅ Documento aceite (documento longo, provavelmente CV)');
+            return true;
         }
 
         console.log('[CV_ENGINE] ✅ Documento validado como CV');
