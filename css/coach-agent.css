@@ -3,7 +3,7 @@
    Career Coach Assistant Widget - Ultra Minimalist Design
    
    Created: 2026-01-14
-   Updated: 2026-01-31 (High Contrast - White Background, Dark Text)
+   Updated: 2026-01-31 (HIGH CONTRAST FIX - White BG, Dark Text)
    Purpose: Discrete side tab with expandable chat for career guidance
    ===================================================================== */
 
@@ -84,13 +84,14 @@
 }
 
 /* ===== CHAT WIDGET CONTAINER ===== */
+#coachChatWidget,
 .coach-chat-widget {
     position: fixed;
     right: 20px;
     bottom: 90px;
     width: 380px;
     max-height: 520px;
-    background: #ffffff !important;
+    background-color: #ffffff !important;
     border-radius: 16px;
     box-shadow: 0 10px 50px rgba(0, 0, 0, 0.12);
     z-index: 9998;
@@ -104,6 +105,7 @@
     border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
+#coachChatWidget.active,
 .coach-chat-widget.active {
     opacity: 1;
     visibility: visible;
@@ -111,6 +113,7 @@
 }
 
 /* Expanded mode */
+#coachChatWidget.expanded,
 .coach-chat-widget.expanded {
     width: 480px;
     max-height: 680px;
@@ -119,6 +122,7 @@
 }
 
 /* Maximize Mode */
+#coachChatWidget.maximized,
 .coach-chat-widget.maximized {
     width: 100vw;
     height: 100vh;
@@ -130,8 +134,9 @@
 }
 
 /* ===== CHAT HEADER ===== */
+#coachChatWidget .coach-chat-header,
 .coach-chat-header {
-    background: #ffffff !important;
+    background-color: #ffffff !important;
     color: #1A1A1A !important;
     padding: 16px 20px;
     display: flex;
@@ -161,6 +166,7 @@
     letter-spacing: -0.5px;
 }
 
+#coachChatWidget .coach-header-text h3,
 .coach-header-text h3 {
     margin: 0;
     font-size: 14px;
@@ -169,10 +175,11 @@
     letter-spacing: 0.3px;
 }
 
+#coachChatWidget .coach-header-text p,
 .coach-header-text p {
     margin: 2px 0 0 0;
     font-size: 11px;
-    color: #555555 !important;
+    color: #333333 !important;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -192,12 +199,15 @@
     gap: 8px;
 }
 
+#coachChatWidget .coach-expand-btn,
+#coachChatWidget .coach-maximize-btn,
+#coachChatWidget .coach-close-btn,
 .coach-expand-btn,
 .coach-maximize-btn,
 .coach-close-btn {
     background: transparent;
     border: none;
-    color: #555555 !important;
+    color: #333333 !important;
     font-size: 18px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -214,11 +224,13 @@
 }
 
 /* ===== CHAT MESSAGES AREA ===== */
+#coachChatWidget #coachChatMessages,
+#coachChatMessages,
 .coach-chat-messages {
     flex: 1;
     overflow-y: auto;
     padding: 16px;
-    background: #ffffff !important;
+    background-color: #ffffff !important;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -237,12 +249,14 @@
 }
 
 .coach-message.bot,
-.coach-message.coach-message-bot {
+.coach-message.coach-message-bot,
+.coach-message-bot {
     flex-direction: row;
 }
 
 .coach-message.user,
-.coach-message.coach-message-user {
+.coach-message.coach-message-user,
+.coach-message-user {
     flex-direction: row-reverse;
 }
 
@@ -261,12 +275,14 @@
 }
 
 .coach-message.user .coach-message-avatar,
-.coach-message.coach-message-user .coach-message-avatar {
+.coach-message.coach-message-user .coach-message-avatar,
+.coach-message-user .coach-message-avatar {
     background: #BF9A33;
     color: #1A1A1A !important;
 }
 
 /* ===== MESSAGE CONTENT - HIGH CONTRAST ===== */
+#coachChatWidget .coach-message-content,
 .coach-message-content {
     max-width: 75%;
     padding: 10px 14px;
@@ -274,52 +290,72 @@
     font-size: 13px;
     line-height: 1.5;
     font-family: 'Poppins', sans-serif;
+    background-color: #ffffff !important;
+    color: #1A1A1A !important;
 }
 
 /* Bot messages - White background with dark text */
+#coachChatWidget .coach-message-bot .coach-message-content,
+#coachChatWidget .coach-message.coach-message-bot .coach-message-content,
 .coach-message.bot .coach-message-content,
-.coach-message.coach-message-bot .coach-message-content {
-    background: #ffffff !important;
+.coach-message.coach-message-bot .coach-message-content,
+.coach-message-bot .coach-message-content {
+    background-color: #ffffff !important;
     color: #1A1A1A !important;
     border: 1px solid #d0d0d0;
     border-top-left-radius: 4px;
 }
 
 /* User messages - Gold background with dark text */
+#coachChatWidget .coach-message-user .coach-message-content,
+#coachChatWidget .coach-message.coach-message-user .coach-message-content,
 .coach-message.user .coach-message-content,
-.coach-message.coach-message-user .coach-message-content {
-    background: #BF9A33 !important;
+.coach-message.coach-message-user .coach-message-content,
+.coach-message-user .coach-message-content {
+    background-color: #BF9A33 !important;
     color: #1A1A1A !important;
     border-top-right-radius: 4px;
 }
 
-/* Ensure all text inside messages is dark */
+/* Ensure all text inside messages is DARK - Maximum specificity */
+#coachChatWidget .coach-message-content,
+#coachChatWidget .coach-message-content *,
+#coachChatWidget .coach-message-content p,
+#coachChatWidget .coach-message-content span,
+#coachChatWidget .coach-message-content div,
 .coach-message-content,
-.coach-message-content * {
+.coach-message-content *,
+.coach-message-content p,
+.coach-message-content span,
+.coach-message-content div {
     color: #1A1A1A !important;
 }
 
+#coachChatWidget .coach-message-content strong,
 .coach-message-content strong {
     color: #1A1A1A !important;
     font-weight: 700;
 }
 
+#coachChatWidget .coach-message-content em,
 .coach-message-content em {
     color: #1A1A1A !important;
 }
 
+#coachChatWidget .coach-message-content a,
 .coach-message-content a {
-    color: #BF9A33 !important;
+    color: #8B6914 !important;
     text-decoration: underline;
 }
 
 /* ===== TYPING INDICATOR ===== */
 .coach-typing,
-.coach-typing-indicator {
+.coach-typing-indicator,
+.coach-message-typing .coach-message-content {
     display: flex;
     gap: 4px;
     padding: 10px 14px;
-    background: #f5f5f5 !important;
+    background-color: #f5f5f5 !important;
     border-radius: 12px;
     border-top-left-radius: 4px;
     width: fit-content;
@@ -330,7 +366,7 @@
 .coach-typing-indicator span {
     width: 6px;
     height: 6px;
-    background: #BF9A33 !important;
+    background-color: #BF9A33 !important;
     border-radius: 50%;
     animation: typing 1.2s infinite;
 }
@@ -346,13 +382,15 @@
 }
 
 /* ===== CHAT INPUT AREA ===== */
+#coachChatWidget .coach-chat-input-area,
 .coach-chat-input-area {
     padding: 12px 16px 16px;
-    background: #ffffff !important;
+    background-color: #ffffff !important;
     border-top: 1px solid #e0e0e0;
     flex-shrink: 0;
 }
 
+#coachChatWidget .coach-quick-actions,
 .coach-quick-actions {
     display: flex;
     gap: 6px;
@@ -360,22 +398,24 @@
     flex-wrap: wrap;
 }
 
+#coachChatWidget .coach-quick-action,
 .coach-quick-action {
     padding: 5px 10px;
-    background: #ffffff !important;
+    background-color: #ffffff !important;
     border: 1px solid #d0d0d0;
     border-radius: 16px;
     font-size: 11px;
-    color: #333333 !important;
+    color: #1A1A1A !important;
     cursor: pointer;
     transition: all 0.2s ease;
     font-family: 'Poppins', sans-serif;
 }
 
+#coachChatWidget .coach-quick-action:hover,
 .coach-quick-action:hover {
     border-color: #BF9A33;
     color: #BF9A33 !important;
-    background: rgba(191, 154, 51, 0.05) !important;
+    background-color: rgba(191, 154, 51, 0.05) !important;
 }
 
 .coach-input-wrapper {
@@ -384,6 +424,8 @@
     align-items: center;
 }
 
+#coachChatWidget #coachChatInput,
+#coachChatInput,
 .coach-chat-input {
     flex: 1;
     padding: 12px 16px;
@@ -393,24 +435,30 @@
     font-family: 'Poppins', sans-serif;
     transition: all 0.2s ease;
     outline: none;
-    background: #ffffff !important;
+    background-color: #ffffff !important;
     color: #1A1A1A !important;
 }
 
+#coachChatWidget #coachChatInput:focus,
+#coachChatInput:focus,
 .coach-chat-input:focus {
     border-color: #BF9A33;
-    background: #ffffff !important;
+    background-color: #ffffff !important;
     box-shadow: 0 0 0 3px rgba(191, 154, 51, 0.1);
 }
 
+#coachChatWidget #coachChatInput::placeholder,
+#coachChatInput::placeholder,
 .coach-chat-input::placeholder {
     color: #666666 !important;
 }
 
+#coachChatWidget #coachSendBtn,
+#coachSendBtn,
 .coach-send-btn {
     width: 44px;
     height: 44px;
-    background: #BF9A33 !important;
+    background-color: #BF9A33 !important;
     border: none;
     border-radius: 50%;
     color: #1A1A1A !important;
@@ -423,8 +471,10 @@
     flex-shrink: 0;
 }
 
+#coachChatWidget #coachSendBtn:hover,
+#coachSendBtn:hover,
 .coach-send-btn:hover {
-    background: #1A1A1A !important;
+    background-color: #1A1A1A !important;
     color: #BF9A33 !important;
     transform: scale(1.05);
 }
@@ -453,6 +503,7 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 480px) {
+    #coachChatWidget,
     .coach-chat-widget {
         width: calc(100vw - 40px);
         max-height: calc(100vh - 140px);
@@ -460,6 +511,7 @@
         bottom: 90px;
     }
     
+    #coachChatWidget.expanded,
     .coach-chat-widget.expanded {
         width: calc(100vw - 20px);
         max-height: calc(100vh - 100px);
@@ -467,6 +519,7 @@
         bottom: 80px;
     }
     
+    #coachChatWidget.maximized,
     .coach-chat-widget.maximized {
         width: 100vw;
         height: 100vh;
@@ -490,72 +543,93 @@
 /* ===== FORCE LIGHT MODE - OVERRIDE DARK MODE ===== */
 /* Desativar dark mode para garantir sempre fundo branco e letras escuras */
 @media (prefers-color-scheme: dark) {
+    #coachChatWidget,
     .coach-chat-widget {
-        background: #ffffff !important;
+        background-color: #ffffff !important;
         border-color: #e0e0e0 !important;
     }
     
+    #coachChatWidget .coach-chat-header,
     .coach-chat-header {
-        background: #ffffff !important;
+        background-color: #ffffff !important;
         color: #1A1A1A !important;
     }
     
+    #coachChatWidget .coach-header-text h3,
     .coach-header-text h3 {
         color: #1A1A1A !important;
     }
     
+    #coachChatWidget .coach-header-text p,
     .coach-header-text p {
-        color: #555555 !important;
+        color: #333333 !important;
     }
     
+    #coachChatWidget #coachChatMessages,
+    #coachChatMessages,
     .coach-chat-messages {
-        background: #ffffff !important;
+        background-color: #ffffff !important;
     }
     
-    .coach-message.bot .coach-message-content,
-    .coach-message.coach-message-bot .coach-message-content {
-        background: #ffffff !important;
-        color: #1A1A1A !important;
-        border-color: #d0d0d0 !important;
-    }
-    
-    .coach-message.user .coach-message-content,
-    .coach-message.coach-message-user .coach-message-content {
-        background: #BF9A33 !important;
-        color: #1A1A1A !important;
-    }
-    
+    #coachChatWidget .coach-message-content,
+    #coachChatWidget .coach-message-content *,
     .coach-message-content,
     .coach-message-content * {
         color: #1A1A1A !important;
     }
     
+    #coachChatWidget .coach-message-bot .coach-message-content,
+    .coach-message.bot .coach-message-content,
+    .coach-message.coach-message-bot .coach-message-content,
+    .coach-message-bot .coach-message-content {
+        background-color: #ffffff !important;
+        color: #1A1A1A !important;
+        border-color: #d0d0d0 !important;
+    }
+    
+    #coachChatWidget .coach-message-user .coach-message-content,
+    .coach-message.user .coach-message-content,
+    .coach-message.coach-message-user .coach-message-content,
+    .coach-message-user .coach-message-content {
+        background-color: #BF9A33 !important;
+        color: #1A1A1A !important;
+    }
+    
+    #coachChatWidget .coach-chat-input-area,
     .coach-chat-input-area {
-        background: #ffffff !important;
+        background-color: #ffffff !important;
         border-color: #e0e0e0 !important;
     }
     
+    #coachChatWidget #coachChatInput,
+    #coachChatInput,
     .coach-chat-input {
-        background: #ffffff !important;
+        background-color: #ffffff !important;
         border-color: #d0d0d0 !important;
         color: #1A1A1A !important;
     }
     
+    #coachChatWidget #coachChatInput::placeholder,
+    #coachChatInput::placeholder,
     .coach-chat-input::placeholder {
         color: #666666 !important;
     }
     
+    #coachChatWidget .coach-quick-action,
     .coach-quick-action {
-        background: #ffffff !important;
+        background-color: #ffffff !important;
         border-color: #d0d0d0 !important;
-        color: #333333 !important;
+        color: #1A1A1A !important;
     }
     
+    #coachChatWidget .coach-expand-btn,
+    #coachChatWidget .coach-maximize-btn,
+    #coachChatWidget .coach-close-btn,
     .coach-expand-btn,
     .coach-maximize-btn,
     .coach-close-btn {
-        color: #555555 !important;
+        color: #333333 !important;
     }
 }
 
-/* Updated: 20260131 - Force white background and dark text for maximum contrast */
+/* Updated: 20260131-v2 - Force white background and dark text for maximum contrast with ID selectors */
