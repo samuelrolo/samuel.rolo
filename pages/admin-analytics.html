@@ -59,23 +59,24 @@
         }
         
         .stat-card .icon.gold {
-            background: linear-gradient(135deg, var(--s2i-gold), var(--s2i-gold-light));
+            background: var(--s2i-gold);
             color: white;
         }
         
-        .stat-card .icon.success {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        .stat-card .icon.dark {
+            background: var(--s2i-black);
             color: white;
         }
         
-        .stat-card .icon.info {
-            background: linear-gradient(135deg, #3498db, #5dade2);
-            color: white;
+        .stat-card .icon.light {
+            background: var(--s2i-gray-light);
+            color: var(--s2i-black);
         }
         
-        .stat-card .icon.warning {
-            background: linear-gradient(135deg, #f39c12, #f1c40f);
-            color: white;
+        .stat-card .icon.outline {
+            background: white;
+            border: 2px solid var(--s2i-gold);
+            color: var(--s2i-gold);
         }
         
         .stat-value {
@@ -110,7 +111,7 @@
         }
         
         .badge-paid {
-            background-color: #27ae60;
+            background-color: var(--s2i-gold);
         }
         
         .badge-pending {
@@ -188,7 +189,7 @@
             <div class="col-md-3 col-6">
                 <div class="stat-card">
                     <div class="d-flex align-items-center mb-3">
-                        <div class="icon success">
+                        <div class="icon dark">
                             <i class="fas fa-euro-sign"></i>
                         </div>
                     </div>
@@ -199,7 +200,7 @@
             <div class="col-md-3 col-6">
                 <div class="stat-card">
                     <div class="d-flex align-items-center mb-3">
-                        <div class="icon info">
+                        <div class="icon light">
                             <i class="fas fa-clock"></i>
                         </div>
                     </div>
@@ -210,7 +211,7 @@
             <div class="col-md-3 col-6">
                 <div class="stat-card">
                     <div class="d-flex align-items-center mb-3">
-                        <div class="icon warning">
+                        <div class="icon outline">
                             <i class="fas fa-star"></i>
                         </div>
                     </div>
@@ -224,19 +225,19 @@
         <div class="row g-4 mb-4">
             <div class="col-md-4">
                 <div class="stat-card text-center">
-                    <div class="stat-value text-success" id="paidAnalyses">--</div>
+                    <div class="stat-value" style="color: var(--s2i-gold);" id="paidAnalyses">--</div>
                     <div class="stat-label">Análises Pagas</div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="stat-card text-center">
-                    <div class="stat-value" style="color: var(--s2i-gold);" id="freeAnalyses">--</div>
+                    <div class="stat-value" style="color: var(--s2i-gray);" id="freeAnalyses">--</div>
                     <div class="stat-label">Análises Gratuitas</div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="stat-card text-center">
-                    <div class="stat-value text-info" id="last7days">--</div>
+                    <div class="stat-value" style="color: var(--s2i-black);" id="last7days">--</div>
                     <div class="stat-label">Últimos 7 Dias</div>
                 </div>
             </div>
