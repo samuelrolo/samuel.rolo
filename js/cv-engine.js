@@ -701,20 +701,82 @@ window.CV_ENGINE = {
 
     /**
      * Determinar área principal e nível de senioridade
+     * VERSÃO 2.1 - Expandido com mais áreas profissionais
      */
     determineMainAreaAndSeniority() {
         const text = this.data.rawText;
 
-        // Determinar área principal
+        // Determinar área principal - VERSÃO 3.0 ABRANGENTE
+        // Cobre todas as profissões desde executivos a operadores de loja
         const areas = {
-            'Recursos Humanos': /human resources|recursos humanos|hr |rh |talent|people|employee/gi,
-            'Gestão e Liderança': /management|gestão|leadership|liderança|director|manager/gi,
+            // SAÚDE E BEM-ESTAR
+            'Saúde/Nutrição': /nutricionista|nutrição|nutrition|dietista|dietética|clínica|consultas|ementas|alimentar|alimentação|saúde|health|médico|enfermeiro|fisioterapeuta|psicólogo|terapeuta|farmácia|hospitalar|dentista|veterinário|auxiliar de saúde|técnico de saúde|cuidador|gerontologia|estética|massagista|personal trainer|fitness/gi,
+            
+            // EDUCAÇÃO E FORMAÇÃO
+            'Educação': /professor|docente|formador|ensino|educação|education|teacher|escola|universidade|colégio|pedagógico|didático|educador|infantil|creche|jardim de infância|ama|babá|explicador|tutor/gi,
+            
+            // RETALHO E COMÉRCIO
+            'Retalho/Comércio': /loja|store|retalho|retail|operador|caixa|cashier|vendedor|atendimento ao cliente|customer service|balcão|repositor|stock|armazem|armazém|supermercado|hipermercado|shopping|centro comercial|merchandising|promotor|demonstrador/gi,
+            
+            // HOTELARIA E RESTAURAÇÃO
+            'Hotelaria/Restauração': /hotel|restaurante|bar|café|cozinha|chef|cozinheiro|empregado de mesa|waiter|bartender|barman|recepção|rececionista|housekeeping|limpeza|turismo|tourism|travel|viagens|catering|pastelaria|padaria|copa/gi,
+            
+            // CONSTRUÇÃO E OBRAS
+            'Construção/Obras': /construção|construction|pedreiro|carpinteiro|eletricista|canalizador|pintor|serralheiro|soldador|técnico de manutenção|obras|empreiteiro|arquiteto|topografia|mestre de obras/gi,
+            
+            // INDÚSTRIA E PRODUÇÃO
+            'Indústria/Produção': /fábrica|factory|produção|production|operador de máquinas|linha de montagem|assembly|qualidade|quality|técnico de produção|industrial|manufatura|embalagem|packaging/gi,
+            
+            // TRANSPORTES E LOGÍSTICA
+            'Transportes/Logística': /motorista|driver|transporte|transport|logística|logistics|armazém|warehouse|empilhador|forklift|distribuição|distribution|entregas|delivery|estafeta|courier|táxi|uber|camionista|aviação|marítimo/gi,
+            
+            // ADMINISTRAÇÃO E SECRETÁRIO
+            'Administração': /administrativo|administrative|secretário|secretary|assistente|assistant|recepção|reception|escritório|office|arquivo|data entry|backoffice|front office|atendimento/gi,
+            
+            // SEGURANÇA
+            'Segurança': /segurança|security|vigilante|porteiro|guarda|vigilância|cctv|bombeiro|firefighter|proteção civil/gi,
+            
+            // AGRICULTURA E AMBIENTE
+            'Agricultura/Ambiente': /agricultura|agricultural|farm|quinta|jardineiro|jardinagem|floresta|ambiente|environment|sustentabilidade|sustainability|reciclagem|resíduos|waste|tratamento de águas/gi,
+            
+            // BELEZA E ESTÉTICA
+            'Beleza/Estética': /cabeleireiro|hairdresser|barbeiro|barber|manicure|pedicure|estética|esteticista|maquilhagem|makeup|spa|beauty/gi,
+            
+            // RECURSOS HUMANOS
+            'Recursos Humanos': /human resources|recursos humanos|hr |rh |talent|people|employee|recrutamento|recruitment|payroll|processamento salarial/gi,
+            
+            // GESTÃO E LIDERANÇA
+            'Gestão e Liderança': /management|gestão|leadership|liderança|director|manager|coordenador|supervisor|chefe de equipa|team leader|gerente/gi,
+            
+            // CONSULTORIA
             'Consultoria': /consulting|consultoria|advisory|consultant|consultor/gi,
-            'Tecnologia': /technology|tecnologia|software|developer|engineer|it /gi,
-            'Finanças': /finance|finanças|financial|accounting|contabilidade/gi,
-            'Marketing': /marketing|digital marketing|brand|comunicação/gi,
-            'Vendas': /sales|vendas|comercial|business development/gi,
-            'Operações': /operations|operações|supply chain|logistics/gi
+            
+            // TECNOLOGIA
+            'Tecnologia': /technology|tecnologia|software|developer|engineer|programador|it specialist|data scientist|devops|informática|computer|web|app|sistemas|helpdesk|suporte técnico/gi,
+            
+            // FINANÇAS
+            'Finanças': /finance|finanças|financial|accounting|contabilidade|auditor|controller|banco|bank|seguros|insurance|cobranças|faturação/gi,
+            
+            // MARKETING E COMUNICAÇÃO
+            'Marketing': /marketing|digital marketing|brand|comunicação|publicidade|social media|seo|content|jornalismo|journalist|media|imprensa|relações públicas|pr /gi,
+            
+            // VENDAS E COMERCIAL
+            'Vendas/Comercial': /sales|vendas|comercial|business development|account manager|representação|delegado|angariação|prospeção|negociação/gi,
+            
+            // OPERAÇÕES
+            'Operações': /operations|operações|supply chain|planeamento|planning|compras|procurement|aprovisionamento/gi,
+            
+            // JURÍDICO
+            'Jurídico': /advogado|lawyer|legal|jurídico|direito|law|solicitor|notário|solicitador|paralegal/gi,
+            
+            // ENGENHARIA
+            'Engenharia': /engenheiro|engineering|civil|mecânico|elétrico|químico|industrial|técnico especializado/gi,
+            
+            // DESIGN E CRIATIVO
+            'Design/Criativo': /designer|design|criativo|creative|gráfico|ux|ui|arte|artist|fotógrafo|photographer|vídeo|video|animação|animation|ilustrador/gi,
+            
+            // SERVIÇOS GERAIS
+            'Serviços Gerais': /limpeza|cleaning|manutenção|maintenance|serviços gerais|auxiliar|ajudante|indiferenciado|polivalente/gi
         };
 
         let maxCount = 0;
