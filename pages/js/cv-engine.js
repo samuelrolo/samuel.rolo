@@ -471,9 +471,11 @@ window.CV_ENGINE = {
             }
         }
 
-        // Calcular anos de experiência
-        let totalYears = 0;
+        // Calcular anos de experiência - VERSÃO 2.0
+        // Usa a data mais antiga até hoje (não soma todos os períodos)
         const currentYear = new Date().getFullYear();
+        let earliestYear = currentYear;
+        let latestYear = 0;
 
         matches.forEach(match => {
             const startYear = parseInt(match[2]);
@@ -487,16 +489,20 @@ window.CV_ENGINE = {
             }
 
             if (startYear && endYear && endYear >= startYear) {
-                const years = endYear - startYear;
-                totalYears += years;
+                // Encontrar o ano mais antigo e mais recente
+                if (startYear < earliestYear) earliestYear = startYear;
+                if (endYear > latestYear) latestYear = endYear;
 
                 experiences.push({
                     period: `${startYear} - ${endYear === currentYear ? 'Presente' : endYear}`,
-                    years: years
+                    years: endYear - startYear
                 });
             }
         });
 
+        // Anos de experiência = ano mais recente - ano mais antigo
+        const totalYears = latestYear > 0 ? latestYear - earliestYear : 0;
+        
         this.data.extractedData.experiences = experiences;
         this.data.extractedData.yearsExperience = Math.max(1, totalYears);
 
@@ -793,31 +799,20 @@ window.CV_ENGINE = {
 
         this.data.extractedData.mainArea = mainArea;
 
-        // Determinar senioridade
+        // Determinar senioridade - VERSÃO 2.0
+        // Níveis universais que funcionam para qualquer profissão
         const years = this.data.extractedData.yearsExperience;
-        const seniorityKeywords = this.dictionaries.seniorityIndicators;
 
         let seniority = 'Profissional';
 
-        // Verificar por keywords primeiro
-        for (const [level, keywords] of Object.entries(seniorityKeywords)) {
-            if (keywords.some(k => text.includes(k))) {
-                if (level === 'director') seniority = 'Direção/Executivo';
-                else if (level === 'manager') seniority = 'Gestão';
-                else if (level === 'senior') seniority = 'Sénior';
-                else if (level === 'mid') seniority = 'Intermédio';
-                else if (level === 'junior') seniority = 'Júnior/Iniciante';
-            }
-        }
-
-        // Ajustar por anos de experiência se não houver indicadores claros
-        if (seniority === 'Profissional') {
-            if (years >= 15) seniority = 'Direção/Executivo';
-            else if (years >= 10) seniority = 'Gestão';
-            else if (years >= 6) seniority = 'Sénior';
-            else if (years >= 3) seniority = 'Intermédio';
-            else seniority = 'Júnior/Iniciante';
-        }
+        // Determinar senioridade baseada APENAS em anos de experiência
+        // Níveis genéricos que funcionam para Nutricionistas, Operadores de Loja, Motoristas, etc.
+        if (years >= 15) seniority = 'Especialista Sénior';
+        else if (years >= 10) seniority = 'Profissional Experiente';
+        else if (years >= 6) seniority = 'Profissional Consolidado';
+        else if (years >= 3) seniority = 'Profissional em Desenvolvimento';
+        else if (years >= 1) seniority = 'Profissional Iniciante';
+        else seniority = 'Em Início de Carreira';
 
         this.data.extractedData.seniorityLevel = seniority;
 
