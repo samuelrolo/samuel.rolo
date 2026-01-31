@@ -170,6 +170,28 @@
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
         gtag('config', 'G-8GQ1KM9FQS');
+        
+        // Evento de conversão para Google Ads
+        // Disparado quando o utilizador chega à página de sucesso
+        const urlParams = new URLSearchParams(window.location.search);
+        const transactionId = urlParams.get('orderId') || urlParams.get('ref') || 'UNKNOWN';
+        const value = parseFloat(urlParams.get('value') || urlParams.get('amount') || '0');
+        const currency = urlParams.get('currency') || 'EUR';
+        
+        gtag('event', 'purchase', {
+            transaction_id: transactionId,
+            value: value,
+            currency: currency,
+            items: [{
+                item_id: transactionId,
+                item_name: 'Relatório de Análise de CV',
+                item_category: 'Serviços',
+                price: value,
+                quantity: 1
+            }]
+        });
+        
+        console.log('Conversão registada:', { transactionId, value, currency });
     </script>
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
