@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - CV Analyzer | Share2Inspire</title>
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --s2i-gold: #BF9A33;
+            --s2i-gold-light: #D4B35A;
+            --s2i-black: #1A1A1A;
+            --s2i-gray: #6c757d;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: var(--s2i-black);
+        }
+        
+        .navbar {
+            background-color: var(--s2i-black) !important;
+        }
+        
+        .navbar-brand {
+            color: var(--s2i-gold) !important;
+            font-weight: bold;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .stat-card .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .stat-card .icon.gold {
+            background: linear-gradient(135deg, var(--s2i-gold), var(--s2i-gold-light));
+            color: white;
+        }
+        
+        .stat-card .icon.success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .stat-card .icon.info {
+            background: linear-gradient(135deg, #3498db, #5dade2);
+            color: white;
+        }
+        
+        .stat-card .icon.warning {
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            color: white;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--s2i-black);
+        }
+        
+        .stat-label {
+            color: var(--s2i-gray);
+            font-size: 0.9rem;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .chart-title {
+            font-weight: 600;
+            color: var(--s2i-black);
+            margin-bottom: 1rem;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .badge-paid {
+            background-color: #27ae60;
+        }
+        
+        .badge-pending {
+            background-color: var(--s2i-gold);
+        }
+        
+        .refresh-btn {
+            background-color: var(--s2i-gold);
+            border-color: var(--s2i-gold);
+            color: white;
+        }
+        
+        .refresh-btn:hover {
+            background-color: var(--s2i-gold-light);
+            border-color: var(--s2i-gold-light);
+            color: white;
+        }
+        
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+        
+        .spinner-gold {
+            color: var(--s2i-gold);
+        }
+        
+        @media (max-width: 768px) {
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fas fa-chart-line me-2"></i>Share2Inspire Analytics
+            </a>
+            <button class="btn refresh-btn" onclick="refreshData()">
+                <i class="fas fa-sync-alt me-2"></i>Atualizar
+            </button>
+        </div>
+    </nav>
+    
+    <div class="container py-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="h3 mb-1">Dashboard de Analytics</h1>
+                <p class="text-muted mb-0">CV Analyzer - Estatísticas em Tempo Real</p>
+            </div>
+            <div class="col-auto">
+                <span class="text-muted" id="lastUpdate">Última atualização: --</span>
+            </div>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon gold">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="totalAnalyses">--</div>
+                    <div class="stat-label">Total de Análises</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon success">
+                            <i class="fas fa-euro-sign"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="totalRevenue">--</div>
+                    <div class="stat-label">Receita Total</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon info">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="last24h">--</div>
+                    <div class="stat-label">Últimas 24h</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon warning">
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="avgScore">--</div>
+                    <div class="stat-label">Score Médio</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Secondary Stats -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="stat-card text-center">
+                    <div class="stat-value text-success" id="paidAnalyses">--</div>
+                    <div class="stat-label">Análises Pagas</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card text-center">
+                    <div class="stat-value" style="color: var(--s2i-gold);" id="freeAnalyses">--</div>
+                    <div class="stat-label">Análises Gratuitas</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card text-center">
+                    <div class="stat-value text-info" id="last7days">--</div>
+                    <div class="stat-label">Últimos 7 Dias</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts Row -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+                <div class="chart-container">
+                    <h5 class="chart-title">
+                        <i class="fas fa-chart-bar me-2 text-muted"></i>Análises por Dia
+                    </h5>
+                    <canvas id="dailyChart" height="100"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="chart-container">
+                    <h5 class="chart-title">
+                        <i class="fas fa-chart-pie me-2 text-muted"></i>Por Área Profissional
+                    </h5>
+                    <canvas id="areaChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Analyses Table -->
+        <div class="row">
+            <div class="col-12">
+                <div class="table-container">
+                    <h5 class="chart-title">
+                        <i class="fas fa-history me-2 text-muted"></i>Análises Recentes
+                    </h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Utilizador</th>
+                                    <th>Email</th>
+                                    <th>Área</th>
+                                    <th>Score</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentTable">
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">
+                                        <div class="loading">
+                                            <div class="spinner-border spinner-gold" role="status">
+                                                <span class="visually-hidden">A carregar...</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Configuração da API
+        const API_BASE = 'https://share2inspire-backend-xxxxxx.ew.r.appspot.com'; // Atualizar com URL real
+        const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+        
+        let dailyChart = null;
+        let areaChart = null;
+        
+        // Função para fazer chamadas ao Supabase diretamente
+        async function supabaseQuery(endpoint, options = {}) {
+            const headers = {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+            
+            const response = await fetch(`${SUPABASE_URL}${endpoint}`, {
+                ...options,
+                headers
+            });
+            
+            return response.json();
+        }
+        
+        // Carregar estatísticas resumidas
+        async function loadSummaryStats() {
+            try {
+                const data = await supabaseQuery('/rest/v1/cv_analytics_summary');
+                
+                if (data && data.length > 0) {
+                    const stats = data[0];
+                    document.getElementById('totalAnalyses').textContent = stats.total_analyses || 0;
+                    document.getElementById('paidAnalyses').textContent = stats.paid_analyses || 0;
+                    document.getElementById('freeAnalyses').textContent = stats.free_analyses || 0;
+                    document.getElementById('totalRevenue').textContent = `€${(stats.total_revenue || 0).toFixed(2)}`;
+                    document.getElementById('last24h').textContent = stats.last_24h || 0;
+                    document.getElementById('last7days').textContent = stats.last_7_days || 0;
+                    document.getElementById('avgScore').textContent = stats.avg_score ? `${stats.avg_score}/100` : 'N/A';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+            }
+        }
+        
+        // Carregar dados diários para gráfico
+        async function loadDailyStats() {
+            try {
+                const data = await supabaseQuery('/rest/v1/rpc/get_cv_stats_by_day', {
+                    method: 'POST',
+                    body: JSON.stringify({ days_back: 14 })
+                });
+                
+                if (data && data.length > 0) {
+                    const labels = data.map(d => {
+                        const date = new Date(d.analysis_date);
+                        return date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit' });
+                    }).reverse();
+                    
+                    const totals = data.map(d => d.total_count).reverse();
+                    const paid = data.map(d => d.paid_count).reverse();
+                    
+                    updateDailyChart(labels, totals, paid);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados diários:', error);
+            }
+        }
+        
+        // Carregar dados por área
+        async function loadAreaStats() {
+            try {
+                const data = await supabaseQuery('/rest/v1/rpc/get_cv_stats_by_area', {
+                    method: 'POST',
+                    body: JSON.stringify({})
+                });
+                
+                if (data && data.length > 0) {
+                    const labels = data.slice(0, 6).map(d => d.professional_area);
+                    const values = data.slice(0, 6).map(d => d.total_count);
+                    
+                    updateAreaChart(labels, values);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados por área:', error);
+            }
+        }
+        
+        // Carregar análises recentes
+        async function loadRecentAnalyses() {
+            try {
+                const data = await supabaseQuery('/rest/v1/cv_analysis?select=id,user_email,user_name,score,professional_area,payment_status,created_at&order=created_at.desc&limit=10');
+                
+                const tbody = document.getElementById('recentTable');
+                
+                if (data && data.length > 0) {
+                    tbody.innerHTML = data.map(item => {
+                        const date = new Date(item.created_at);
+                        const dateStr = date.toLocaleDateString('pt-PT') + ' ' + date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+                        const statusBadge = item.payment_status === 'paid' 
+                            ? '<span class="badge badge-paid">Pago</span>'
+                            : '<span class="badge badge-pending">Gratuito</span>';
+                        
+                        return `
+                            <tr>
+                                <td>${dateStr}</td>
+                                <td>${item.user_name || 'Anónimo'}</td>
+                                <td>${item.user_email || '-'}</td>
+                                <td>${item.professional_area || '-'}</td>
+                                <td>${item.score || '-'}</td>
+                                <td>${statusBadge}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Sem análises registadas</td></tr>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar análises recentes:', error);
+            }
+        }
+        
+        // Atualizar gráfico diário
+        function updateDailyChart(labels, totals, paid) {
+            const ctx = document.getElementById('dailyChart').getContext('2d');
+            
+            if (dailyChart) {
+                dailyChart.destroy();
+            }
+            
+            dailyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Total',
+                            data: totals,
+                            backgroundColor: 'rgba(191, 154, 51, 0.7)',
+                            borderColor: '#BF9A33',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Pagas',
+                            data: paid,
+                            backgroundColor: 'rgba(39, 174, 96, 0.7)',
+                            borderColor: '#27ae60',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Atualizar gráfico de áreas
+        function updateAreaChart(labels, values) {
+            const ctx = document.getElementById('areaChart').getContext('2d');
+            
+            if (areaChart) {
+                areaChart.destroy();
+            }
+            
+            const colors = [
+                '#BF9A33', '#27ae60', '#3498db', '#e74c3c', '#9b59b6', '#f39c12'
+            ];
+            
+            areaChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 10
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Atualizar todos os dados
+        async function refreshData() {
+            document.getElementById('lastUpdate').textContent = 'A atualizar...';
+            
+            await Promise.all([
+                loadSummaryStats(),
+                loadDailyStats(),
+                loadAreaStats(),
+                loadRecentAnalyses()
+            ]);
+            
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = 
+                `Última atualização: ${now.toLocaleTimeString('pt-PT')}`;
+        }
+        
+        // Carregar dados ao iniciar
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshData();
+            
+            // Auto-refresh a cada 60 segundos
+            setInterval(refreshData, 60000);
+        });
+    </script>
+</body>
+</html>
