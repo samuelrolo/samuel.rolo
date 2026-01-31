@@ -238,25 +238,9 @@ window.CV_ENGINE = {
             // Criar sumário para exibição no frontend
             const summary = `${responseData.analysis.executive_summary.market_positioning} ${responseData.analysis.executive_summary.key_decision_factors}`;
             
-            // Armazenar dados para o relatório PDF
-            window.currentReportData = {
-                candidate_profile: {
-                    detected_name: responseData.analysis.candidate_profile.detected_name,
-                    total_years_exp: responseData.analysis.candidate_profile.total_years_exp,
-                    detected_role: responseData.analysis.candidate_profile.detected_role,
-                    detected_sector: responseData.analysis.candidate_profile.detected_sector,
-                    seniority_level: responseData.analysis.candidate_profile.seniority_level,
-                    detected_education: responseData.analysis.candidate_profile.detected_education
-                },
-                executive_summary: responseData.analysis.executive_summary,
-                dimensional_analysis: responseData.analysis.dimensional_analysis,
-                key_strengths: responseData.analysis.key_strengths,
-                key_opportunities: responseData.analysis.key_opportunities,
-                evolution_roadmap: responseData.analysis.evolution_roadmap,
-                strategic_feedback: responseData.analysis.strategic_feedback,
-                final_verdict: responseData.analysis.final_verdict,
-                radar_data: responseData.analysis.radar_data
-            };
+            // Armazenar TODOS os dados para o relatório PDF Premium
+            // A Edge Function v3.0 retorna a estrutura completa esperada pelo backend Flask
+            window.currentReportData = responseData.analysis;
             
             console.log('[CV_ENGINE] ✅ Dados do relatório armazenados em window.currentReportData');
             console.log('[CV_ENGINE] 📊 Estrutura:', Object.keys(window.currentReportData));
