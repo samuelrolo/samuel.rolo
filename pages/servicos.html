@@ -895,7 +895,6 @@
                     e.preventDefault();
                     const email = document.getElementById('kickstartEmail').value;
                     const name = document.getElementById('kickstartName').value;
-                    const phone = document.getElementById('kickstartPhone').value;
                     const objectives = document.getElementById('kickstartObjectives').value;
                     const submitBtn = kickstartForm.querySelector('button[type="submit"]');
                     const messageDiv = document.getElementById('kickstartFormMessage');
@@ -906,7 +905,7 @@
                     submitBtn.disabled = true;
                     submitBtn.innerHTML = 'A processar...';
                     try {
-                        const result = await window.EmailFlows.sendKickstartConfirmation(email, name, { phone, objectives });
+                        const result = await window.EmailFlows.sendKickstartConfirmation(email, name, { objectives });
                         if (result.success) {
                             messageDiv.innerHTML = `
                                 <div class="alert alert-success">
