@@ -138,9 +138,12 @@ window.CV_ENGINE = {
 
             console.log('[CV_ENGINE] Análise completa:', this.data);
             console.log('[CV_ENGINE] Análise Gemini:', this.geminiAnalysis);
-            
+
             // Armazenar dados completos da análise para o relatório PDF (formato backend)
-            
+
+            // 8. LOGGING: Registar análise no Supabase (Backend da Dashboard)
+            this.logAnalysisToSupabase();
+
             return true;
         } catch (error) {
             console.error('[CV_ENGINE] Erro na análise:', error);
@@ -179,26 +182,26 @@ window.CV_ENGINE = {
      */
     // Versão simplificada da função callGeminiBackend para cv-engine.js
     // Esta função substitui a versão atual (linhas 208-330 aproximadamente)
-    
+
     async callGeminiBackend(file) {
         const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
-    
+
         console.log('[GEMINI] 🔍 Iniciando análise com Gemini via Supabase Edge Function');
         console.log('[GEMINI] 📤 Enviando CV para análise IA...');
-    
+
         try {
             const cvText = this.data.rawText || '';
-            
+
             if (!cvText || cvText.length < 100) {
                 console.warn('[GEMINI] ⚠️ Texto do CV muito curto para análise');
                 this.geminiAnalysis = null;
                 return;
             }
-    
+
             // Chamar Edge Function
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 45000);
-    
+
             const response = await fetch(SUPABASE_EDGE_URL, {
                 method: 'POST',
                 headers: {
@@ -211,46 +214,97 @@ window.CV_ENGINE = {
                 }),
                 signal: controller.signal
             });
-    
+
             clearTimeout(timeoutId);
-    
+
             if (!response.ok) {
                 const errorText = await response.text();
                 console.warn('[GEMINI] ⚠️ Erro do backend (HTTP', response.status, '):', errorText);
                 this.geminiAnalysis = null;
                 return;
             }
-    
+
             const responseData = await response.json();
-            
+
             if (!responseData.analysis) {
                 console.warn('[GEMINI] ⚠️ Resposta inválida do Gemini');
                 this.geminiAnalysis = null;
                 return;
             }
-            
+
             console.log('[GEMINI] ✅ Análise Gemini recebida com sucesso!');
-            
+
             // A Edge Function retorna { analysis: {...} }
             // Armazenar diretamente sem mapeamentos complexos
             this.geminiAnalysis = responseData.analysis;
-            
+
             // Criar sumário para exibição no frontend
             const summary = `${responseData.analysis.executive_summary.market_positioning} ${responseData.analysis.executive_summary.key_decision_factors}`;
-            
+
             // Armazenar TODOS os dados para o relatório PDF Premium
             // A Edge Function v3.0 retorna a estrutura completa esperada pelo backend Flask
             window.currentReportData = responseData.analysis;
-            
+
             console.log('[CV_ENGINE] ✅ Dados do relatório armazenados em window.currentReportData');
             console.log('[CV_ENGINE] 📊 Estrutura:', Object.keys(window.currentReportData));
-    
+
         } catch (error) {
             console.error('[GEMINI] ❌ Erro ao chamar Gemini:', error);
             this.geminiAnalysis = null;
         }
     },
-    
+
+    /**
+     * REGISTO DE ANALYTICS: Enviar dados para o Supabase (Tabela cv_analysis)
+     * Permite que o Dashboard mostre estatísticas em tempo real
+     */
+    async logAnalysisToSupabase() {
+        try {
+            console.log('[CV_ENGINE] 📊 A registar análise no Supabase...');
+
+            // Usar Credenciais Verificadas
+            const SUPABASE_URL = "https://cvlumvgrbuolrnwrtrgz.supabase.co";
+            const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM";
+
+            const logEntry = {
+                user_email: this.data.extractedData?.contacts?.email || null,
+                user_name: this.data.extractedData?.name || 'Candidato',
+                analysis_result: {
+                    score: this.data.maturity?.score || 0,
+                    spider: this.data.spiderFactors,
+                    main_area: this.data.extractedData?.mainArea
+                },
+                score: this.data.maturity?.score || 0,
+                professional_area: this.data.extractedData?.mainArea || 'Não Identificado',
+                analysis_type: 'free',
+                payment_status: 'pending',
+                domain: 'share2inspire.pt',
+                created_at: new Date().toISOString()
+            };
+
+            // Call Supabase REST API directly (Fire & Forget)
+            fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify(logEntry)
+            }).then(response => {
+                if (response.ok) {
+                    console.log('[CV_ENGINE] ✅ Análise registada com sucesso no Dashboard');
+                } else {
+                    response.text().then(t => console.warn('[CV_ENGINE] ⚠️ Falha ao registar no Supabase:', t));
+                }
+            }).catch(err => console.error('[CV_ENGINE] ❌ Erro de rede ao registar:', err));
+
+        } catch (error) {
+            console.error('[CV_ENGINE] ❌ Erro ao registar analytics:', error);
+        }
+    },
+
 
     // Funções auxiliares para extrair dados da resposta Gemini
     extractStrengthsFromGemini(text) {
@@ -502,7 +556,7 @@ window.CV_ENGINE = {
 
         // Anos de experiência = ano mais recente - ano mais antigo
         const totalYears = latestYear > 0 ? latestYear - earliestYear : 0;
-        
+
         this.data.extractedData.experiences = experiences;
         this.data.extractedData.yearsExperience = Math.max(1, totalYears);
 
@@ -717,70 +771,70 @@ window.CV_ENGINE = {
         const areas = {
             // SAÚDE E BEM-ESTAR
             'Saúde/Nutrição': /nutricionista|nutrição|nutrition|dietista|dietética|clínica|consultas|ementas|alimentar|alimentação|saúde|health|médico|enfermeiro|fisioterapeuta|psicólogo|terapeuta|farmácia|hospitalar|dentista|veterinário|auxiliar de saúde|técnico de saúde|cuidador|gerontologia|estética|massagista|personal trainer|fitness/gi,
-            
+
             // EDUCAÇÃO E FORMAÇÃO
             'Educação': /professor|docente|formador|ensino|educação|education|teacher|escola|universidade|colégio|pedagógico|didático|educador|infantil|creche|jardim de infância|ama|babá|explicador|tutor/gi,
-            
+
             // RETALHO E COMÉRCIO
             'Retalho/Comércio': /loja|store|retalho|retail|operador|caixa|cashier|vendedor|atendimento ao cliente|customer service|balcão|repositor|stock|armazem|armazém|supermercado|hipermercado|shopping|centro comercial|merchandising|promotor|demonstrador/gi,
-            
+
             // HOTELARIA E RESTAURAÇÃO
             'Hotelaria/Restauração': /hotel|restaurante|bar|café|cozinha|chef|cozinheiro|empregado de mesa|waiter|bartender|barman|recepção|rececionista|housekeeping|limpeza|turismo|tourism|travel|viagens|catering|pastelaria|padaria|copa/gi,
-            
+
             // CONSTRUÇÃO E OBRAS
             'Construção/Obras': /construção|construction|pedreiro|carpinteiro|eletricista|canalizador|pintor|serralheiro|soldador|técnico de manutenção|obras|empreiteiro|arquiteto|topografia|mestre de obras/gi,
-            
+
             // INDÚSTRIA E PRODUÇÃO
             'Indústria/Produção': /fábrica|factory|produção|production|operador de máquinas|linha de montagem|assembly|qualidade|quality|técnico de produção|industrial|manufatura|embalagem|packaging/gi,
-            
+
             // TRANSPORTES E LOGÍSTICA
             'Transportes/Logística': /motorista|driver|transporte|transport|logística|logistics|armazém|warehouse|empilhador|forklift|distribuição|distribution|entregas|delivery|estafeta|courier|táxi|uber|camionista|aviação|marítimo/gi,
-            
+
             // ADMINISTRAÇÃO E SECRETÁRIO
             'Administração': /administrativo|administrative|secretário|secretary|assistente|assistant|recepção|reception|escritório|office|arquivo|data entry|backoffice|front office|atendimento/gi,
-            
+
             // SEGURANÇA
             'Segurança': /segurança|security|vigilante|porteiro|guarda|vigilância|cctv|bombeiro|firefighter|proteção civil/gi,
-            
+
             // AGRICULTURA E AMBIENTE
             'Agricultura/Ambiente': /agricultura|agricultural|farm|quinta|jardineiro|jardinagem|floresta|ambiente|environment|sustentabilidade|sustainability|reciclagem|resíduos|waste|tratamento de águas/gi,
-            
+
             // BELEZA E ESTÉTICA
             'Beleza/Estética': /cabeleireiro|hairdresser|barbeiro|barber|manicure|pedicure|estética|esteticista|maquilhagem|makeup|spa|beauty/gi,
-            
+
             // RECURSOS HUMANOS
             'Recursos Humanos': /human resources|recursos humanos|hr |rh |talent|people|employee|recrutamento|recruitment|payroll|processamento salarial/gi,
-            
+
             // GESTÃO E LIDERANÇA
             'Gestão e Liderança': /management|gestão|leadership|liderança|director|manager|coordenador|supervisor|chefe de equipa|team leader|gerente/gi,
-            
+
             // CONSULTORIA
             'Consultoria': /consulting|consultoria|advisory|consultant|consultor/gi,
-            
+
             // TECNOLOGIA
             'Tecnologia': /technology|tecnologia|software|developer|engineer|programador|it specialist|data scientist|devops|informática|computer|web|app|sistemas|helpdesk|suporte técnico/gi,
-            
+
             // FINANÇAS
             'Finanças': /finance|finanças|financial|accounting|contabilidade|auditor|controller|banco|bank|seguros|insurance|cobranças|faturação/gi,
-            
+
             // MARKETING E COMUNICAÇÃO
             'Marketing': /marketing|digital marketing|brand|comunicação|publicidade|social media|seo|content|jornalismo|journalist|media|imprensa|relações públicas|pr /gi,
-            
+
             // VENDAS E COMERCIAL
             'Vendas/Comercial': /sales|vendas|comercial|business development|account manager|representação|delegado|angariação|prospeção|negociação/gi,
-            
+
             // OPERAÇÕES
             'Operações': /operations|operações|supply chain|planeamento|planning|compras|procurement|aprovisionamento/gi,
-            
+
             // JURÍDICO
             'Jurídico': /advogado|lawyer|legal|jurídico|direito|law|solicitor|notário|solicitador|paralegal/gi,
-            
+
             // ENGENHARIA
             'Engenharia': /engenheiro|engineering|civil|mecânico|elétrico|químico|industrial|técnico especializado/gi,
-            
+
             // DESIGN E CRIATIVO
             'Design/Criativo': /designer|design|criativo|creative|gráfico|ux|ui|arte|artist|fotógrafo|photographer|vídeo|video|animação|animation|ilustrador/gi,
-            
+
             // SERVIÇOS GERAIS
             'Serviços Gerais': /limpeza|cleaning|manutenção|maintenance|serviços gerais|auxiliar|ajudante|indiferenciado|polivalente/gi
         };
@@ -1241,7 +1295,7 @@ window.CV_ENGINE = {
                 } else if (this.geminiAnalysis.final_verdict?.headline) {
                     summaryText = this.geminiAnalysis.final_verdict.headline;
                 }
-                
+
                 geminiSummary.innerHTML = `<p style="margin: 0;">${summaryText || 'Análise AI em processamento...'}</p>`;
 
                 // Pontos Fortes do Gemini
@@ -1423,7 +1477,7 @@ window.CV_ENGINE = {
                 atsProgressCircle.style.strokeDashoffset = offset;
             }, 100);
         }
-        
+
         // Manter compatibilidade com barra de progresso antiga (se existir)
         const atsProgressBar = document.getElementById('atsProgressBar');
         if (atsProgressBar && atsProgressBar.style.display !== 'none') {
