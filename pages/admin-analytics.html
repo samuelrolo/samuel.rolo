@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics - CV Analyzer | Share2Inspire</title>
     <meta name="robots" content="noindex, nofollow">
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <style>
         :root {
             --s2i-gold: #BF9A33;
@@ -20,34 +21,34 @@
             --s2i-black: #1A1A1A;
             --s2i-gray: #6c757d;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f9fa;
             color: var(--s2i-black);
         }
-        
+
         .navbar {
             background-color: var(--s2i-black) !important;
         }
-        
+
         .navbar-brand {
             color: var(--s2i-gold) !important;
             font-weight: bold;
         }
-        
+
         .stat-card {
             background: white;
             border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             transition: transform 0.2s;
         }
-        
+
         .stat-card:hover {
             transform: translateY(-2px);
         }
-        
+
         .stat-card .icon {
             width: 50px;
             height: 50px;
@@ -57,90 +58,90 @@
             justify-content: center;
             font-size: 1.5rem;
         }
-        
+
         .stat-card .icon.gold {
             background: var(--s2i-gold);
             color: white;
         }
-        
+
         .stat-card .icon.dark {
             background: var(--s2i-black);
             color: white;
         }
-        
+
         .stat-card .icon.light {
             background: var(--s2i-gray-light);
             color: var(--s2i-black);
         }
-        
+
         .stat-card .icon.outline {
             background: white;
             border: 2px solid var(--s2i-gold);
             color: var(--s2i-gold);
         }
-        
+
         .stat-value {
             font-size: 2rem;
             font-weight: bold;
             color: var(--s2i-black);
         }
-        
+
         .stat-label {
             color: var(--s2i-gray);
             font-size: 0.9rem;
         }
-        
+
         .chart-container {
             background: white;
             border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         }
-        
+
         .chart-title {
             font-weight: 600;
             color: var(--s2i-black);
             margin-bottom: 1rem;
         }
-        
+
         .table-container {
             background: white;
             border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         }
-        
+
         .badge-paid {
             background-color: var(--s2i-gold);
         }
-        
+
         .badge-pending {
             background-color: var(--s2i-gold);
         }
-        
+
         .refresh-btn {
             background-color: var(--s2i-gold);
             border-color: var(--s2i-gold);
             color: white;
         }
-        
+
         .refresh-btn:hover {
             background-color: var(--s2i-gold-light);
             border-color: var(--s2i-gold-light);
             color: white;
         }
-        
+
         .loading {
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 200px;
         }
-        
+
         .spinner-gold {
             color: var(--s2i-gold);
         }
-        
+
         @media (max-width: 768px) {
             .stat-value {
                 font-size: 1.5rem;
@@ -148,6 +149,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-dark">
@@ -160,7 +162,7 @@
             </button>
         </div>
     </nav>
-    
+
     <div class="container py-4">
         <!-- Header -->
         <div class="row mb-4">
@@ -172,7 +174,7 @@
                 <span class="text-muted" id="lastUpdate">Última atualização: --</span>
             </div>
         </div>
-        
+
         <!-- Stats Cards -->
         <div class="row g-4 mb-4">
             <div class="col-md-3 col-6">
@@ -220,7 +222,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Secondary Stats -->
         <div class="row g-4 mb-4">
             <div class="col-md-4">
@@ -242,7 +244,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Charts Row -->
         <div class="row g-4 mb-4">
             <div class="col-lg-8">
@@ -262,7 +264,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Recent Analyses Table -->
         <div class="row">
             <div class="col-12">
@@ -299,29 +301,29 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         // Configuração da API
-        const API_BASE = 'https://share2inspire-backend-1n.r.appspot.com';
-        
+        const API_BASE = 'https://share2inspire-beckend.appspot.com';
+
         let dailyChart = null;
         let areaChart = null;
-        
+
         // Função para fazer chamadas ao Backend
         async function apiFetch(endpoint) {
             const response = await fetch(`${API_BASE}${endpoint}`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return response.json();
         }
-        
+
         // Carregar estatísticas resumidas
         async function loadSummaryStats() {
             try {
                 const response = await apiFetch('/api/analytics/summary');
-                
+
                 if (response.success && response.data) {
                     const stats = response.data;
                     document.getElementById('totalAnalyses').textContent = stats.total_analyses || 0;
@@ -336,62 +338,62 @@
                 console.error('Erro ao carregar estatísticas:', error);
             }
         }
-        
+
         // Carregar dados diários para gráfico
         async function loadDailyStats() {
             try {
                 const response = await apiFetch('/api/analytics/daily');
-                
+
                 if (response.success && response.data) {
                     const data = response.data;
                     const labels = data.map(d => {
                         const date = new Date(d.analysis_date);
                         return date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit' });
                     }).reverse();
-                    
+
                     const totals = data.map(d => d.total_count).reverse();
                     const paid = data.map(d => d.paid_count).reverse();
-                    
+
                     updateDailyChart(labels, totals, paid);
                 }
             } catch (error) {
                 console.error('Erro ao carregar dados diários:', error);
             }
         }
-        
+
         // Carregar dados por área
         async function loadAreaStats() {
             try {
                 const response = await apiFetch('/api/analytics/areas');
-                
+
                 if (response.success && response.data) {
                     const data = response.data;
                     const labels = data.slice(0, 6).map(d => d.professional_area);
                     const values = data.slice(0, 6).map(d => d.total_count);
-                    
+
                     updateAreaChart(labels, values);
                 }
             } catch (error) {
                 console.error('Erro ao carregar dados por área:', error);
             }
         }
-        
+
         // Carregar análises recentes
         async function loadRecentAnalyses() {
             try {
                 const response = await apiFetch('/api/analytics/recent');
-                
+
                 const tbody = document.getElementById('recentTable');
-                
+
                 if (response.success && response.data) {
                     const data = response.data;
                     tbody.innerHTML = data.map(item => {
                         const date = new Date(item.created_at);
                         const dateStr = date.toLocaleDateString('pt-PT') + ' ' + date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
-                        const statusBadge = item.payment_status === 'paid' 
+                        const statusBadge = item.payment_status === 'paid'
                             ? '<span class="badge badge-paid">Pago</span>'
                             : '<span class="badge badge-pending">Gratuito</span>';
-                        
+
                         return `
                             <tr>
                                 <td>${dateStr}</td>
@@ -410,15 +412,15 @@
                 console.error('Erro ao carregar análises recentes:', error);
             }
         }
-        
+
         // Atualizar gráfico diário
         function updateDailyChart(labels, totals, paid) {
             const ctx = document.getElementById('dailyChart').getContext('2d');
-            
+
             if (dailyChart) {
                 dailyChart.destroy();
             }
-            
+
             dailyChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -458,19 +460,19 @@
                 }
             });
         }
-        
+
         // Atualizar gráfico de áreas
         function updateAreaChart(labels, values) {
             const ctx = document.getElementById('areaChart').getContext('2d');
-            
+
             if (areaChart) {
                 areaChart.destroy();
             }
-            
+
             const colors = [
                 '#BF9A33', '#27ae60', '#3498db', '#e74c3c', '#9b59b6', '#f39c12'
             ];
-            
+
             areaChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
@@ -496,30 +498,31 @@
                 }
             });
         }
-        
+
         // Atualizar todos os dados
         async function refreshData() {
             document.getElementById('lastUpdate').textContent = 'A atualizar...';
-            
+
             await Promise.all([
                 loadSummaryStats(),
                 loadDailyStats(),
                 loadAreaStats(),
                 loadRecentAnalyses()
             ]);
-            
+
             const now = new Date();
-            document.getElementById('lastUpdate').textContent = 
+            document.getElementById('lastUpdate').textContent =
                 `Última atualização: ${now.toLocaleTimeString('pt-PT')}`;
         }
-        
+
         // Carregar dados ao iniciar
         document.addEventListener('DOMContentLoaded', () => {
             refreshData();
-            
+
             // Auto-refresh a cada 60 segundos
             setInterval(refreshData, 60000);
         });
     </script>
 </body>
+
 </html>
