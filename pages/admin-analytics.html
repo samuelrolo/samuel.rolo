@@ -305,37 +305,25 @@
     
     <script>
         // Configuração da API
-        const API_BASE = 'https://share2inspire-backend-xxxxxx.ew.r.appspot.com'; // Atualizar com URL real
-        const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+        const API_BASE = 'https://share2inspire-backend-1n.r.appspot.com';
         
         let dailyChart = null;
         let areaChart = null;
         
-        // Função para fazer chamadas ao Supabase diretamente
-        async function supabaseQuery(endpoint, options = {}) {
-            const headers = {
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}`,
-                'Content-Type': 'application/json',
-                ...options.headers
-            };
-            
-            const response = await fetch(`${SUPABASE_URL}${endpoint}`, {
-                ...options,
-                headers
-            });
-            
+        // Função para fazer chamadas ao Backend
+        async function apiFetch(endpoint) {
+            const response = await fetch(`${API_BASE}${endpoint}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return response.json();
         }
         
         // Carregar estatísticas resumidas
         async function loadSummaryStats() {
             try {
-                const data = await supabaseQuery('/rest/v1/cv_analytics_summary');
+                const response = await apiFetch('/api/analytics/summary');
                 
-                if (data && data.length > 0) {
-                    const stats = data[0];
+                if (response.success && response.data) {
+                    const stats = response.data;
                     document.getElementById('totalAnalyses').textContent = stats.total_analyses || 0;
                     document.getElementById('paidAnalyses').textContent = stats.paid_analyses || 0;
                     document.getElementById('freeAnalyses').textContent = stats.free_analyses || 0;
@@ -352,12 +340,10 @@
         // Carregar dados diários para gráfico
         async function loadDailyStats() {
             try {
-                const data = await supabaseQuery('/rest/v1/rpc/get_cv_stats_by_day', {
-                    method: 'POST',
-                    body: JSON.stringify({ days_back: 14 })
-                });
+                const response = await apiFetch('/api/analytics/daily');
                 
-                if (data && data.length > 0) {
+                if (response.success && response.data) {
+                    const data = response.data;
                     const labels = data.map(d => {
                         const date = new Date(d.analysis_date);
                         return date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit' });
@@ -376,12 +362,10 @@
         // Carregar dados por área
         async function loadAreaStats() {
             try {
-                const data = await supabaseQuery('/rest/v1/rpc/get_cv_stats_by_area', {
-                    method: 'POST',
-                    body: JSON.stringify({})
-                });
+                const response = await apiFetch('/api/analytics/areas');
                 
-                if (data && data.length > 0) {
+                if (response.success && response.data) {
+                    const data = response.data;
                     const labels = data.slice(0, 6).map(d => d.professional_area);
                     const values = data.slice(0, 6).map(d => d.total_count);
                     
@@ -395,11 +379,12 @@
         // Carregar análises recentes
         async function loadRecentAnalyses() {
             try {
-                const data = await supabaseQuery('/rest/v1/cv_analysis?select=id,user_email,user_name,score,professional_area,payment_status,created_at&order=created_at.desc&limit=10');
+                const response = await apiFetch('/api/analytics/recent');
                 
                 const tbody = document.getElementById('recentTable');
                 
-                if (data && data.length > 0) {
+                if (response.success && response.data) {
+                    const data = response.data;
                     tbody.innerHTML = data.map(item => {
                         const date = new Date(item.created_at);
                         const dateStr = date.toLocaleDateString('pt-PT') + ' ' + date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
