@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,61 +26,74 @@
             padding: 100px 0 50px;
             margin-bottom: 50px;
         }
+
         .page-header h1 {
             font-size: 2.5rem;
             font-weight: 700;
             color: #333;
             margin-bottom: 1rem;
         }
+
         .breadcrumb {
             background-color: transparent;
             padding: 0;
             margin: 0;
         }
+
         .breadcrumb-item a {
             color: #BF9A33;
             text-decoration: none;
         }
+
         .breadcrumb-item.active {
             color: #6c757d;
         }
+
         .content-section {
             padding: 40px 0;
         }
+
         .content-section h2 {
             font-size: 1.8rem;
             font-weight: 600;
             color: #333;
             margin-bottom: 1rem;
         }
+
         .content-section h3 {
             font-size: 1.4rem;
             font-weight: 600;
             color: #333;
             margin: 1.5rem 0 1rem;
         }
+
         .content-section p {
             margin-bottom: 1rem;
             line-height: 1.6;
         }
+
         .content-section ul {
             margin-bottom: 1rem;
             padding-left: 1.5rem;
         }
+
         .content-section li {
             margin-bottom: 0.5rem;
             line-height: 1.6;
         }
+
         .cookie-table {
             background-color: #f8f9fa;
             border-radius: 8px;
             padding: 1.5rem;
             margin: 1.5rem 0;
         }
+
         .cookie-table table {
             width: 100%;
             margin-bottom: 0;
         }
+
         .cookie-table th {
             background-color: #BF9A33;
             color: #fff;
@@ -87,29 +101,36 @@
             padding: 0.75rem;
             border: none;
         }
+
         .cookie-table td {
             padding: 0.75rem;
             border-top: 1px solid #dee2e6;
         }
+
         .modal-header {
             background-color: #BF9A33;
             color: #fff;
         }
+
         .modal-title {
             font-weight: 600;
         }
+
         .modal-body label {
             font-weight: 500;
             margin-bottom: 0.5rem;
         }
+
         .modal-footer .btn-primary {
             background-color: #BF9A33;
             border-color: #BF9A33;
         }
+
         .modal-footer .btn-primary:hover {
             background-color: #a88629;
             border-color: #a88629;
         }
+
         /* Estilos globais para botões primários */
         .btn-primary {
             background-color: #212529 !important;
@@ -120,6 +141,7 @@
             border-radius: 8px;
             transition: all 0.3s ease;
         }
+
         .btn-primary:hover {
             background-color: #BF9A33 !important;
             border-color: #BF9A33 !important;
@@ -127,23 +149,28 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(191, 154, 51, 0.3);
         }
+
         .btn-primary:focus {
             background-color: #BF9A33 !important;
             border-color: #BF9A33 !important;
             box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25);
         }
+
         /* Media queries para otimização mobile */
         @media (max-width: 768px) {
             .page-header {
                 padding: 80px 0 40px;
                 margin-bottom: 30px;
             }
+
             .page-header h1 {
                 font-size: 2rem;
             }
+
             .content-section {
                 padding: 30px 0;
             }
+
             .cookie-table {
                 padding: 1rem;
                 overflow-x: auto;
@@ -151,7 +178,11 @@
         }
     </style>
     <link rel="stylesheet" href="../css/coach-agent.css">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035"
+        crossorigin="anonymous"></script>
 </head>
+
 <body>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
@@ -161,140 +192,201 @@
         gtag('js', new Date());
         gtag('config', 'G-8GQ1KM9FQS');
     </script>
-    <header class="header">
-        <nav class="navbar navbar-expand-lg sticky-top">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg sticky-top" style="background: #fff; border-bottom: 1px solid #eee;">
         <div class="container">
             <a class="navbar-brand" href="../index.html">
-                <img src="../images/logo.png" alt="Samuel Rolo Logo">
+                <img src="../images/logo.png" alt="Share2Inspire" style="height: 40px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="../index.html">Início</a></li>
-                    <li class="nav-item"><a class="nav-link" href="sobre.html">Sobre</a></li>
-                    <li class="nav-item"><a class="nav-link" href="servicos.html">Serviços</a></li>
-                    <li class="nav-item"><a class="nav-link" href="cv-analysis.html">CV Analyser</a></li>
-                    <li class="nav-item"><a class="nav-link" href="loja.html">Loja</a></li>
-                    <li class="nav-item"><a class="nav-link" href="conhecimento.html">Conhecimento</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.html"
+                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Início</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="sobre.html"
+                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Sobre</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="servicos.html"
+                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Serviços</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="cv-analysis.html"
+                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">CV
+                            Analyser</a></li>
+                    <li class="nav-item"><a class="nav-link" href="loja.html"
+                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Loja</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="conhecimento.html"
+                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Conhecimento</a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
-    </header>
-    <!-- Page Header -->
-    <section class="page-header">
+    <!-- Hero Section -->
+    <section style="background: #fcfcfc; padding: 120px 0 60px; text-align: center; border-bottom: 1px solid #eee;">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>Política de Cookies</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="../index.html">Início</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Política de Cookies</li>
-                        </ol>
-                    </nav>
+            <p
+                style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: #BF9A33; font-weight: 600; margin-bottom: 15px;">
+                Transparência e Segurança</p>
+            <h1 style="font-size: 2.5rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">Política de Cookies
+            </h1>
+            <p style="max-width: 600px; margin: 0 auto; font-size: 1rem; color: #666; line-height: 1.8;">Saiba como
+                utilizamos cookies para melhorar a sua experiência.</p>
+        </div>
+    </section>
+
+    <!-- Conteúdo -->
+    <section style="padding: 80px 0;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div
+                        style="background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 50px; line-height: 1.8; color: #444;">
+
+                        <h2
+                            style="font-size: 1.5rem; font-weight: 600; color: #1A1A1A; margin-bottom: 20px; margin-top: 40px;">
+                            O que são Cookies?</h2>
+                        <p>Os cookies são pequenos ficheiros de texto que são armazenados no seu dispositivo quando
+                            visita um
+                            website. Estes ficheiros permitem que o website reconheça o seu dispositivo e armazene
+                            algumas
+                            informações sobre as suas preferências ou ações passadas.</p>
+
+                        <h3
+                            style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Como utilizamos os Cookies</h3>
+                        <p>A Share2Inspire utiliza cookies para:</p>
+                        <ul style="margin-left: 20px; margin-bottom: 20px;">
+                            <li style="margin-bottom: 15px;">Melhorar a funcionalidade e performance do website</li>
+                            <li style="margin-bottom: 15px;">Analisar como os visitantes utilizam o nosso site</li>
+                            <li style="margin-bottom: 15px;">Personalizar a sua experiência de navegação</li>
+                            <li style="margin-bottom: 15px;">Lembrar as suas preferências e configurações</li>
+                            <li style="margin-bottom: 15px;">Fornecer conteúdo e publicidade relevantes</li>
+                        </ul>
+
+                        <h3
+                            style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Tipos de Cookies que utilizamos</h3>
+                        <div class="cookie-table"
+                            style="background-color: #f8f9fa; border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0;">
+                            <table class="table" style="width: 100%; margin-bottom: 0;">
+                                <thead>
+                                    <tr>
+                                        <th
+                                            style="background-color: #BF9A33; color: #fff; font-weight: 600; padding: 0.75rem; border: none;">
+                                            Tipo de Cookie</th>
+                                        <th
+                                            style="background-color: #BF9A33; color: #fff; font-weight: 600; padding: 0.75rem; border: none;">
+                                            Finalidade</th>
+                                        <th
+                                            style="background-color: #BF9A33; color: #fff; font-weight: 600; padding: 0.75rem; border: none;">
+                                            Duração</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="padding: 0.75rem; border-top: 1px solid #dee2e6;"><strong>Cookies
+                                                Essenciais</strong></td>
+                                        <td style="padding: 0.75rem; border-top: 1px solid #dee2e6;">Necessários para o
+                                            funcionamento básico do website</td>
+                                        <td style="padding: 0.75rem; border-top: 1px solid #dee2e6;">Sessão</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.75rem; border-top: 1px solid #dee2e6;"><strong>Cookies de
+                                                Performance</strong></td>
+                                        <td style="padding: 0.75rem; border-top: 1px solid #dee2e6;">Recolhem
+                                            informações sobre como utiliza o nosso website</td>
+                                        <td style="padding: 0.75rem; border-top: 1px solid #dee2e6;">2 anos</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.75rem; border-top: 1px solid #dee2e6;"><strong>Cookies de
+                                                Funcionalidade</strong></td>
+                                        <td style="padding: 0.75rem; border-top: 1px solid #dee2e6;">Lembram as suas
+                                            preferências e configurações</td>
+                                        <td style="padding: 0.75rem; border-top: 1px solid #dee2e6;">1 ano</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0.75rem; border-top: 1px solid #dee2e6;"><strong>Cookies de
+                                                Marketing</strong></td>
+                                        <td style="padding: 0.75rem; border-top: 1px solid #dee2e6;">Utilizados para
+                                            fornecer publicidade relevante</td>
+                                        <td style="padding: 0.75rem; border-top: 1px solid #dee2e6;">2 anos</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h3
+                            style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Cookies de Terceiros</h3>
+                        <p>O nosso website pode incluir cookies de terceiros, incluindo:</p>
+                        <ul style="margin-left: 20px; margin-bottom: 20px;">
+                            <li style="margin-bottom: 15px;"><strong>Google Analytics:</strong> Para análise de tráfego
+                                e comportamento dos utilizadores</li>
+                            <li style="margin-bottom: 15px;"><strong>Google Tag Manager:</strong> Para gestão de tags de
+                                marketing</li>
+                            <li style="margin-bottom: 15px;"><strong>Redes Sociais:</strong> Para integração com
+                                plataformas sociais (LinkedIn, Instagram)
+                            </li>
+                            <li style="margin-bottom: 15px;"><strong>YouTube:</strong> Para incorporação de vídeos</li>
+                        </ul>
+
+                        <h3
+                            style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Gestão de Cookies</h3>
+                        <p>Pode controlar e/ou eliminar cookies conforme desejar. Pode eliminar todos os cookies que já
+                            estão no
+                            seu computador e pode configurar a maioria dos navegadores para impedir que sejam colocados.
+                        </p>
+                        <p><strong>Como desativar cookies:</strong></p>
+                        <ul style="margin-left: 20px; margin-bottom: 20px;">
+                            <li style="margin-bottom: 15px;"><strong>Chrome:</strong> Definições > Privacidade e
+                                segurança > Cookies e outros dados do site
+                            </li>
+                            <li style="margin-bottom: 15px;"><strong>Firefox:</strong> Opções > Privacidade e Segurança
+                                > Cookies e Dados do Site</li>
+                            <li style="margin-bottom: 15px;"><strong>Safari:</strong> Preferências > Privacidade >
+                                Cookies e dados de websites</li>
+                            <li style="margin-bottom: 15px;"><strong>Edge:</strong> Definições > Cookies e permissões do
+                                site</li>
+                        </ul>
+
+                        <h3
+                            style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Consequências da Desativação</h3>
+                        <p>Se escolher desativar os cookies, algumas funcionalidades do nosso website podem não
+                            funcionar
+                            corretamente, incluindo:</p>
+                        <ul style="margin-left: 20px; margin-bottom: 20px;">
+                            <li style="margin-bottom: 15px;">Preferências de utilizador não serão guardadas</li>
+                            <li style="margin-bottom: 15px;">Algumas páginas podem não carregar corretamente</li>
+                            <li style="margin-bottom: 15px;">A experiência de navegação pode ser menos personalizada
+                            </li>
+                            <li style="margin-bottom: 15px;">Formulários podem não funcionar adequadamente</li>
+                        </ul>
+
+                        <h3
+                            style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Atualizações desta Política</h3>
+                        <p>Esta política de cookies pode ser atualizada periodicamente para refletir mudanças nas nossas
+                            práticas ou por outros motivos operacionais, legais ou regulamentares. Recomendamos que
+                            consulte
+                            esta página regularmente para se manter informado sobre a nossa utilização de cookies.</p>
+
+                        <div
+                            style="background: #f8f9fa; border-left: 4px solid #BF9A33; padding: 20px; margin-top: 40px; border-radius: 6px;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">Esta política é efetiva a partir de
+                                <strong>Outubro de 2026</strong>.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
-    <!-- Conteúdo Principal -->
-    <main class="main-content">
-        <div class="container">
-            <section class="content-section">
-                <h2>O que são Cookies?</h2>
-                <p>Os cookies são pequenos ficheiros de texto que são armazenados no seu dispositivo quando visita um
-                    website. Estes ficheiros permitem que o website reconheça o seu dispositivo e armazene algumas
-                    informações sobre as suas preferências ou ações passadas.</p>
-                <h3>Como utilizamos os Cookies</h3>
-                <p>A Share2Inspire utiliza cookies para:</p>
-                <ul>
-                    <li>Melhorar a funcionalidade e performance do website</li>
-                    <li>Analisar como os visitantes utilizam o nosso site</li>
-                    <li>Personalizar a sua experiência de navegação</li>
-                    <li>Lembrar as suas preferências e configurações</li>
-                    <li>Fornecer conteúdo e publicidade relevantes</li>
-                </ul>
-                <h3>Tipos de Cookies que utilizamos</h3>
-                <div class="cookie-table">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Tipo de Cookie</th>
-                                <th>Finalidade</th>
-                                <th>Duração</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Cookies Essenciais</strong></td>
-                                <td>Necessários para o funcionamento básico do website</td>
-                                <td>Sessão</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Cookies de Performance</strong></td>
-                                <td>Recolhem informações sobre como utiliza o nosso website</td>
-                                <td>2 anos</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Cookies de Funcionalidade</strong></td>
-                                <td>Lembram as suas preferências e configurações</td>
-                                <td>1 ano</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Cookies de Marketing</strong></td>
-                                <td>Utilizados para fornecer publicidade relevante</td>
-                                <td>2 anos</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <h3>Cookies de Terceiros</h3>
-                <p>O nosso website pode incluir cookies de terceiros, incluindo:</p>
-                <ul>
-                    <li><strong>Google Analytics:</strong> Para análise de tráfego e comportamento dos utilizadores</li>
-                    <li><strong>Google Tag Manager:</strong> Para gestão de tags de marketing</li>
-                    <li><strong>Redes Sociais:</strong> Para integração com plataformas sociais (LinkedIn, Instagram)
-                    </li>
-                    <li><strong>YouTube:</strong> Para incorporação de vídeos</li>
-                </ul>
-                <h3>Gestão de Cookies</h3>
-                <p>Pode controlar e/ou eliminar cookies conforme desejar. Pode eliminar todos os cookies que já estão no
-                    seu computador e pode configurar a maioria dos navegadores para impedir que sejam colocados.</p>
-                <p><strong>Como desativar cookies:</strong></p>
-                <ul>
-                    <li><strong>Chrome:</strong> Definições > Privacidade e segurança > Cookies e outros dados do site
-                    </li>
-                    <li><strong>Firefox:</strong> Opções > Privacidade e Segurança > Cookies e Dados do Site</li>
-                    <li><strong>Safari:</strong> Preferências > Privacidade > Cookies e dados de websites</li>
-                    <li><strong>Edge:</strong> Definições > Cookies e permissões do site</li>
-                </ul>
-                <h3>Consequências da Desativação</h3>
-                <p>Se escolher desativar os cookies, algumas funcionalidades do nosso website podem não funcionar
-                    corretamente, incluindo:</p>
-                <ul>
-                    <li>Preferências de utilizador não serão guardadas</li>
-                    <li>Algumas páginas podem não carregar corretamente</li>
-                    <li>A experiência de navegação pode ser menos personalizada</li>
-                    <li>Formulários podem não funcionar adequadamente</li>
-                </ul>
-                <h3>Atualizações desta Política</h3>
-                <p>Esta política de cookies pode ser atualizada periodicamente para refletir mudanças nas nossas
-                    práticas ou por outros motivos operacionais, legais ou regulamentares. Recomendamos que consulte
-                    esta página regularmente para se manter informado sobre a nossa utilização de cookies.</p>
-                <h3>Contactos</h3>
-                <p>Se tiver questões sobre a nossa utilização de cookies, pode contactar-nos através de:</p>
-                <ul>
-                    <li><strong>Email:</strong> srshare2inspire@gmail.com</li>
-                    <li><strong>Telefone:</strong> +351 961 925 050</li>
-                    <li><strong>Formulário de contacto:</strong> <a href="#" data-bs-toggle="modal"
-                            data-bs-target="#contactModal">Clique aqui</a></li>
-                </ul>
-                <p><em>Última atualização: Outubro de 2026</em></p>
-            </section>
-        </div>
-    </main>
     <!-- Contact Modal -->
     <div class="modal fade s2i-modal" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel"
         aria-hidden="true">
@@ -348,13 +440,13 @@
                             </label>
                         </div>
                         <div class="alert alert-success d-none" id="contactSuccess">
-                             Mensagem enviada com sucesso!
+                            Mensagem enviada com sucesso!
                         </div>
                         <div class="alert alert-danger d-none" id="contactError">
-                             Erro ao enviar mensagem.
+                            Erro ao enviar mensagem.
                         </div>
                         <button type="submit" class="s2i-btn s2i-btn-primary s2i-btn-block">
-                             Enviar Mensagem
+                            Enviar Mensagem
                         </button>
                     </form>
                 </div>
@@ -362,44 +454,57 @@
         </div>
     </div>
 
-    <footer>
+    <!-- Footer -->
+    <footer style="background: #1A1A1A; color: #fff; padding: 60px 0 30px;">
         <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="footer-brand">
-                        <img src="../images/logo.png" alt="Samuel Rolo Logo">
-                    </div>
-                    <p class="footer-text">A transformar mindsets e carreiras através da fusão entre estratégia corporativa e empatia humana.</p>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <img src="../images/logo.png" alt="Share2Inspire"
+                        style="height: 40px; margin-bottom: 20px; filter: brightness(0) invert(1);">
+                    <p style="color: #999; font-size: 0.9rem; line-height: 1.8;">Transformar carreiras através de
+                        conhecimento, orientação e tecnologia.</p>
                 </div>
-                <div class="col-lg-2 col-md-4">
-                    <h5 class="footer-title">Navegação</h5>
-                    <a href="../index.html" class="footer-link">Início</a>
-                    <a href="sobre.html" class="footer-link">Sobre</a>
-                    <a href="servicos.html" class="footer-link">Serviços</a>
-                    <a href="conhecimento.html" class="footer-link">Conhecimento</a>
+                <div class="col-md-2 mb-4">
+                    <h6
+                        style="color: #BF9A33; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">
+                        Navegação</h6>
+                    <a href="../index.html"
+                        style="color: #ccc; font-size: 0.9rem; display: block; margin-bottom: 10px;">Início</a>
+                    <a href="sobre.html"
+                        style="color: #ccc; font-size: 0.9rem; display: block; margin-bottom: 10px;">Sobre</a>
+                    <a href="servicos.html"
+                        style="color: #ccc; font-size: 0.9rem; display: block; margin-bottom: 10px;">Serviços</a>
+                    <a href="conhecimento.html"
+                        style="color: #ccc; font-size: 0.9rem; display: block; margin-bottom: 10px;">Conhecimento</a>
                 </div>
-                <div class="col-lg-3 col-md-4">
-                    <h5 class="footer-title">Legal</h5>
-                    <a href="politica-privacidade.html" class="footer-link">Privacidade</a>
-                    <a href="politica-cookies.html" class="footer-link">Cookies</a>
-                    <a href="informacao-legal.html" class="footer-link">Legal</a>
+                <div class="col-md-2 mb-4">
+                    <h6
+                        style="color: #BF9A33; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">
+                        Legal</h6>
+                    <a href="politica-privacidade.html"
+                        style="color: #ccc; font-size: 0.9rem; display: block; margin-bottom: 10px;">Privacidade</a>
+                    <a href="termos-condicoes.html"
+                        style="color: #ccc; font-size: 0.9rem; display: block; margin-bottom: 10px;">Termos</a>
                 </div>
-                <div class="col-lg-3 col-md-4">
-                    <h5 class="footer-title">Contacto</h5>
-                    <p class="footer-text small mb-2"><i class="fas fa-envelope text-gold me-2"></i> samuel.rolo@share2inspire.pt</p>
-                    <div class="d-flex gap-3 mt-3">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-gold"><i class="fab fa-linkedin fa-lg"></i></a>
-                        <a href="https://www.instagram.com/share2inspire_/" target="_blank" class="text-gold"><i class="fab fa-instagram fa-lg"></i></a>
-                    </div>
+                <div class="col-md-4 mb-4">
+                    <h6
+                        style="color: #BF9A33; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">
+                        Contacto</h6>
+                    <p style="color: #999; font-size: 0.9rem; margin-bottom: 10px;"><i class="fas fa-envelope"
+                            style="color: #BF9A33; margin-right: 10px;"></i> info@share2inspire.pt</p>
+                    <p style="color: #999; font-size: 0.9rem; margin-bottom: 10px;"><i class="fas fa-map-marker-alt"
+                            style="color: #BF9A33; margin-right: 10px;"></i> Lisboa, Portugal</p>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p class="footer-copy">&copy; 2026 SHARE2INSPIRE | SAMUEL ROLO. TODOS OS DIREITOS RESERVADOS.</p>
+            <div
+                style="border-top: 1px solid rgba(255, 255, 255, 0.05); margin-top: 40px; padding-top: 30px; text-align: center;">
+                <p style="color: #666; font-size: 0.8rem; margin: 0;">© 2026 Share2Inspire. Todos os direitos
+                    reservados.</p>
             </div>
         </div>
     </footer>
 
-<!-- Bootstrap JS -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Formulário de contacto
@@ -417,4 +522,5 @@
     </script>
     <script src="../js/coach-agent.js"></script>
 </body>
+
 </html>
