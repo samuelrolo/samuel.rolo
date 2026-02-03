@@ -5,10 +5,10 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'AW-17015553005');
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'AW-17015553005');
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,6 +38,9 @@
             color: #BF9A33;
         }
     </style>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035"
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -143,7 +146,7 @@
                 if (result.success) {
                     document.getElementById('paymentFormSection').classList.add('d-none');
                     document.getElementById('successSection').classList.remove('d-none');
-                    
+
                     // Iniciar polling de status do pagamento
                     startPaymentStatusPolling(orderId, amount);
                 } else {
@@ -158,34 +161,34 @@
                 btn.innerHTML = 'Pagar Agora';
             }
         }
-        
+
         // Função de polling para verificar status do pagamento
         let pollingInterval = null;
         let pollingAttempts = 0;
         const MAX_POLLING_ATTEMPTS = 60; // 5 minutos (60 x 5s)
-        
+
         function startPaymentStatusPolling(orderId, amount) {
             console.log('Iniciando polling de status para:', orderId);
-            
+
             pollingInterval = setInterval(async () => {
                 pollingAttempts++;
-                
+
                 if (pollingAttempts > MAX_POLLING_ATTEMPTS) {
                     clearInterval(pollingInterval);
                     console.log('Polling timeout - pagamento não confirmado');
                     return;
                 }
-                
+
                 try {
                     const response = await fetch(`https://share2inspire-backend.lm.r.appspot.com/api/payment/status/${orderId}`);
                     const data = await response.json();
-                    
+
                     console.log(`Polling attempt ${pollingAttempts}:`, data);
-                    
+
                     if (data.paid === true || data.status === 'PAID') {
                         clearInterval(pollingInterval);
                         console.log('Pagamento confirmado! Redirecionando...');
-                        
+
                         // Redirecionar para página de sucesso com parâmetros para evento de conversão
                         window.location.href = `pagamento_sucesso.html?orderId=${orderId}&value=${amount}&currency=EUR`;
                     }

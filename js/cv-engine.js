@@ -269,14 +269,24 @@ window.CV_ENGINE = {
             const logEntry = {
                 user_email: this.data.extractedData?.contacts?.email || null,
                 user_name: this.data.extractedData?.name || 'Candidato',
-                analysis_result: {
+                // FIX: Send full analysis result if available (Gemini), otherwise fallback to simplified
+                analysis_result: this.geminiAnalysis ? {
+                    ...this.geminiAnalysis,
+                    // Ensure spider/radar data is preserved in a structure the dashboard expects
+                    spider: this.data.spiderFactors,
+                    score: this.data.maturity?.score || 0,
+                    main_area: this.data.extractedData?.mainArea
+                } : {
                     score: this.data.maturity?.score || 0,
                     spider: this.data.spiderFactors,
-                    main_area: this.data.extractedData?.mainArea
+                    main_area: this.data.extractedData?.mainArea,
+                    // Add heuristic data to ensure we have something detailed even without Gemini
+                    extracted_data: this.data.extractedData,
+                    ats_analysis: this.data.atsAnalysis
                 },
                 score: this.data.maturity?.score || 0,
                 professional_area: this.data.extractedData?.mainArea || 'Não Identificado',
-                analysis_type: 'free',
+                analysis_type: this.geminiAnalysis ? 'premium_ai' : 'free_heuristic',
                 payment_status: 'pending',
                 domain: 'share2inspire.pt',
                 created_at: new Date().toISOString()
