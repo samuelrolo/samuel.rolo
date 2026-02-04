@@ -68,12 +68,12 @@ window.ifthenpayIntegration.checkHealth()
 ### Teste 3: Backend APIs
 ```bash
 # 1. Testar endpoint Brevo (se backend estiver live)
-curl -X POST https://share2inspire-backend-1n.r.appspot.com/api/services/kickstart-confirm \
+curl -X POST https://share2inspire-beckend.lm.r.appspot.com/api/services/kickstart-confirm \
   -H "Content-Type: application/json" \
   -d '{"name":"Test","email":"test@example.com","phone":"912345678"}'
 
 # 2. Testar endpoint Ifthenpay
-curl https://share2inspire-backend-1n.r.appspot.com/api/payment/health
+curl https://share2inspire-beckend.lm.r.appspot.com/api/payment/health
 
 # Esperado: {"status": "ok"}
 ```

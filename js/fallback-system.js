@@ -9,10 +9,10 @@
 const FALLBACK_CONFIG = {
     // Endpoints principais (atuais)
     primary: {
-        payment: "https://share2inspire-backend-1n.r.appspot.com/api/payment/initiate",
-        email: "https://share2inspire-backend-1n.r.appspot.com/api/email/send",
-        contact: "https://share2inspire-backend-1n.r.appspot.com/api/contact/submit",
-        consultoria: "https://share2inspire-backend-1n.r.appspot.com/api/consultoria/submit"
+        payment: "https://share2inspire-beckend.lm.r.appspot.com/api/payment/initiate",
+        email: "https://share2inspire-beckend.lm.r.appspot.com/api/email/send",
+        contact: "https://share2inspire-beckend.lm.r.appspot.com/api/contact/submit",
+        consultoria: "https://share2inspire-beckend.lm.r.appspot.com/api/consultoria/submit"
     },
 
     // Endpoints de fallback (alternativos)

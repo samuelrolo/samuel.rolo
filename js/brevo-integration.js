@@ -10,12 +10,12 @@
 window.brevoIntegration = {
     // URLs corrigidas do backend
     endpoints: {
-        kickstart: 'https://share2inspire-backend-1n.r.appspot.com/api/services/kickstart-email', // Corrigido para coincidir com services.py
-        consultoria: 'https://share2inspire-backend-1n.r.appspot.com/api/email/consultoria', // AVISO: Não encontrado no backend
-        coaching: 'https://share2inspire-backend-1n.r.appspot.com/api/email/coaching', // AVISO: Não encontrado no backend
-        workshops: 'https://share2inspire-backend-1n.r.appspot.com/api/email/workshops', // AVISO: Não encontrado no backend
-        contact: 'https://share2inspire-backend-1n.r.appspot.com/api/feedback/contact', // Corrigido para coincidir com feedback.py
-        cv_review: 'https://share2inspire-backend-1n.r.appspot.com/api/services/cv-review' // Adicionado explícito
+        kickstart: 'https://share2inspire-beckend.lm.r.appspot.com/api/services/kickstart-email', // Corrigido para coincidir com services.py
+        consultoria: 'https://share2inspire-beckend.lm.r.appspot.com/api/email/consultoria', // AVISO: Não encontrado no backend
+        coaching: 'https://share2inspire-beckend.lm.r.appspot.com/api/email/coaching', // AVISO: Não encontrado no backend
+        workshops: 'https://share2inspire-beckend.lm.r.appspot.com/api/email/workshops', // AVISO: Não encontrado no backend
+        contact: 'https://share2inspire-beckend.lm.r.appspot.com/api/feedback/contact', // Corrigido para coincidir com feedback.py
+        cv_review: 'https://share2inspire-beckend.lm.r.appspot.com/api/services/cv-review' // Adicionado explícito
     },
 
     /**
@@ -266,7 +266,7 @@ window.brevoIntegration = {
 
             // Endpoint específico para CV (ajustar conforme necessário)
             // Se o serviço não existir no objeto endpoints, tentar construir
-            const url = this.endpoints[serviceType] || 'https://share2inspire-backend-1n.r.appspot.com/api/email/cv-review';
+            const url = this.endpoints[serviceType] || 'https://share2inspire-beckend.lm.r.appspot.com/api/email/cv-review';
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -383,7 +383,7 @@ window.brevoIntegration = {
 document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Brevo Integration - Versão Multi-Serviços Corrigida Carregada');
     console.log('📧 Serviços suportados: Kickstart, Consultoria, Coaching, Workshops');
-    console.log('🔗 Backend URL:', 'https://share2inspire-backend-1n.r.appspot.com');
+    console.log('🔗 Backend URL:', 'https://share2inspire-beckend.lm.r.appspot.com');
     console.log('📧 E-mail de contacto: srshare2inspire@gmail.com');
     console.log('✅ CORREÇÃO: Usando name/email em vez de customerName/customerEmail');
 });

@@ -220,7 +220,7 @@ async function submitKickstartToBackend(data) {
     console.log('📤 Enviando dados Kickstart para backend...');
 
     // Usar URL correta do backend
-    const url = 'https://share2inspire-backend-1n.r.appspot.com/api/booking/kickstart'; // Fallback URL
+    const url = 'https://share2inspire-beckend.lm.r.appspot.com/api/booking/kickstart'; // Fallback URL
 
     const response = await fetch(window.formUtils.backendUrls ? window.formUtils.backendUrls.booking : url, {
         method: 'POST',

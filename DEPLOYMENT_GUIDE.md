@@ -204,7 +204,7 @@ Test URL: `[production]/pages/sobre.html`
 
 ```bash
 # POST /api/services/cv-analyzer-payment
-curl -X POST https://share2inspire-backend-1n.r.appspot.com/api/services/cv-analyzer-payment \
+curl -X POST https://share2inspire-beckend.lm.r.appspot.com/api/services/cv-analyzer-payment \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Test User",
@@ -226,7 +226,7 @@ curl -X POST https://share2inspire-backend-1n.r.appspot.com/api/services/cv-anal
 
 ```bash
 # GET /api/payment/status/{orderId}
-curl https://share2inspire-backend-1n.r.appspot.com/api/payment/status/ORDER123
+curl https://share2inspire-beckend.lm.r.appspot.com/api/payment/status/ORDER123
 
 # Expected Response:
 # {
@@ -239,7 +239,7 @@ curl https://share2inspire-backend-1n.r.appspot.com/api/payment/status/ORDER123
 
 ```bash
 # POST /api/services/deliver-cv-report
-curl -X POST https://share2inspire-backend-1n.r.appspot.com/api/services/deliver-cv-report \
+curl -X POST https://share2inspire-beckend.lm.r.appspot.com/api/services/deliver-cv-report \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Test User",
