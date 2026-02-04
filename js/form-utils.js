@@ -130,18 +130,18 @@ window.formUtils = {
      */
     backendUrls: {
         // URL principal do backend
-        base: 'https://share2inspire-beckend.lm.r.appspot.com',
+        base: 'https://share2inspire-backend-1n.r.appspot.com',
 
         // Endpoints específicos
-        booking: 'https://share2inspire-beckend.lm.r.appspot.com/booking',
+        booking: 'https://share2inspire-backend-1n.r.appspot.com/booking',
 
         // Endpoints Brevo
         brevo: {
-            kickstart: 'https://share2inspire-beckend.lm.r.appspot.com/api/services/kickstart-email',
-            consultoria: 'https://share2inspire-beckend.lm.r.appspot.com/email/consultoria',
-            coaching: 'https://share2inspire-beckend.lm.r.appspot.com/email/coaching',
-            workshops: 'https://share2inspire-beckend.lm.r.appspot.com/email/workshops',
-            contact: 'https://share2inspire-beckend.lm.r.appspot.com/email/contact'
+            kickstart: 'https://share2inspire-backend-1n.r.appspot.com/api/services/kickstart-email',
+            consultoria: 'https://share2inspire-backend-1n.r.appspot.com/email/consultoria',
+            coaching: 'https://share2inspire-backend-1n.r.appspot.com/email/coaching',
+            workshops: 'https://share2inspire-backend-1n.r.appspot.com/email/workshops',
+            contact: 'https://share2inspire-backend-1n.r.appspot.com/email/contact'
         }
     }
 };

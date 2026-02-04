@@ -6,11 +6,11 @@
 window.brevoIntegration = {
     // Endpoints do backend (Google Cloud Functions / App Engine)
     endpoints: {
-        kickstart: 'https://share2inspire-beckend.lm.r.appspot.com/api/services/kickstart',
-        consultoria: 'https://share2inspire-beckend.lm.r.appspot.com/api/services/consultoria',
-        coaching: 'https://share2inspire-beckend.lm.r.appspot.com/api/services/coaching',
-        workshops: 'https://share2inspire-beckend.lm.r.appspot.com/api/services/workshops',
-        contact: 'https://share2inspire-beckend.lm.r.appspot.com/api/contact'
+        kickstart: 'https://share2inspire-backend-1n.r.appspot.com/api/services/kickstart',
+        consultoria: 'https://share2inspire-backend-1n.r.appspot.com/api/services/consultoria',
+        coaching: 'https://share2inspire-backend-1n.r.appspot.com/api/services/coaching',
+        workshops: 'https://share2inspire-backend-1n.r.appspot.com/api/services/workshops',
+        contact: 'https://share2inspire-backend-1n.r.appspot.com/api/contact'
     },
 
     /**
@@ -304,7 +304,7 @@ window.brevoIntegration = {
 document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Brevo Integration - Versão Multi-Serviços Carregada');
     console.log('📧 Serviços suportados: Kickstart, Consultoria, Coaching, Workshops');
-    console.log('🔗 Backend URL:', 'https://share2inspire-beckend.lm.r.appspot.com');
+    console.log('🔗 Backend URL:', 'https://share2inspire-backend-1n.r.appspot.com');
     console.log('📧 E-mail de contacto: srshare2inspire@gmail.com');
 });
 
