@@ -6,14 +6,14 @@
 window.ifthenpayIntegration = {
     // URLs do backend Share2Inspire
     endpoints: {
-        mbway: 'https://share2inspire-backend-1n.r.appspot.com/api/payment/mbway',
-        multibanco: 'https://share2inspire-backend-1n.r.appspot.com/api/payment/multibanco',
-        payshop: 'https://share2inspire-backend-1n.r.appspot.com/api/payment/payshop',
-        callback: 'https://share2inspire-backend-1n.r.appspot.com/api/payment/callback',
-        health: 'https://share2inspire-backend-1n.r.appspot.com/api/payment/health'
+        mbway: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/mbway',
+        multibanco: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/multibanco',
+        payshop: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/payshop',
+        callback: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/callback',
+        health: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/health'
     },
 
-    backendUrl: 'https://share2inspire-backend-1n.r.appspot.com',
+    backendUrl: 'https://share2inspire-beckend.lm.r.appspot.com',
 
     /**
      * Processar pagamento conforme método selecionado

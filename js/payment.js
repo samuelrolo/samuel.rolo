@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configuração do sistema de pagamento
     const paymentSystem = {
         // URL do backend CORRIGIDA
-        backendUrl: 'https://share2inspire-backend-1n.r.appspot.com',
+        backendUrl: 'https://share2inspire-beckend.lm.r.appspot.com',
 
         // Inicializar sistema de pagamento
         init: function() {

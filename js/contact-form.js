@@ -168,7 +168,7 @@ async function handleFormSubmit(form) {
   console.log('📝 Dados do formulário:', contactData);
 
   try {
-    const response = await fetch('https://share2inspire-backend-1n.r.appspot.com/api/feedback/contact', {
+    const response = await fetch('https://share2inspire-beckend.lm.r.appspot.com/api/feedback/contact', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
