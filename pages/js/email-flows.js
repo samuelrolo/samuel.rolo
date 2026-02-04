@@ -128,7 +128,7 @@ async function sendKickstartConfirmation(email, name, sessionData = {}) {
         };
 
         // Call NEW backend endpoint - MUST BE ABSOLUTE URL
-        const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+        const BACKEND_URL = 'https://share2inspire-backend-1n.r.appspot.com';
         const response = await fetch(`${BACKEND_URL}/api/services/kickstart-confirm`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

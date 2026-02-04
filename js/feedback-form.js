@@ -172,8 +172,8 @@ function setupFeedbackFormSubmission() {
         // Lista de endpoints a tentar, em ordem de prioridade
         const endpoints = [
             window.formUtils.backendUrls.brevo.contact, // Endpoint principal
-            'https://share2inspire-beckend.lm.r.appspot.com/api/feedback/submit', // Endpoint original
-            'https://share2inspire-beckend.lm.r.appspot.com/api/feedback/contact' // Endpoint alternativo
+            'https://share2inspire-backend-1n.r.appspot.com/api/feedback/submit', // Endpoint original
+            'https://share2inspire-backend-1n.r.appspot.com/api/feedback/contact' // Endpoint alternativo
         ];
 
         // Tentar enviar para cada endpoint até que um funcione

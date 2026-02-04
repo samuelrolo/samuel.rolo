@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('name', name);
 
             // Call Backend API - FREE ANALYSIS
-            const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+            const BACKEND_URL = 'https://share2inspire-backend-1n.r.appspot.com';
             console.log("Calling backend:", BACKEND_URL + '/api/services/analyze-cv');
             const response = await fetch(BACKEND_URL + '/api/services/analyze-cv', {
                 method: 'POST',
@@ -217,7 +217,7 @@ btnReportEmail.onclick = async () => {
         formData.append('email', email);
         formData.append('name', name);
 
-        const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+        const BACKEND_URL = 'https://share2inspire-backend-1n.r.appspot.com';
         const response = await fetch(`${BACKEND_URL}/api/services/deliver-report`, {
             method: 'POST',
             body: formData
@@ -507,7 +507,7 @@ function setupReportPaymentHandler(candidateName) {
 
             try {
                 // Call Backend API to initiate MB WAY payment
-                const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+                const BACKEND_URL = 'https://share2inspire-backend-1n.r.appspot.com';
                 const response = await fetch(BACKEND_URL + '/api/services/request-report-payment', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -595,7 +595,7 @@ function setupReportPaymentHandler(candidateName) {
 }
 
 async function deliverReport(name, email, cvFile, reportData) {
-    const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+    const BACKEND_URL = 'https://share2inspire-backend-1n.r.appspot.com';
     const formData = new FormData();
     formData.append('name', name);
     formData.append('email', email);
