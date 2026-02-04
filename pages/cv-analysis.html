@@ -876,21 +876,24 @@
                     }
                 } : {};
 
-                const requestData = {
-                    name: name,
-                    email: email,
-                    phone: phone,
-                    analysis_data: transformedData  // ✅ Send transformed data with candidate_profile
-                };
+                // Verificar se temos o CV file
+                if (!window.currentCVFile) {
+                    throw new Error('CV file não disponível. Por favor, recarregue o ficheiro.');
+                }
 
-                console.log('💳 Sending payment request with analysis data to backend...');
+                // Use FormData para enviar CV file + analysis data
+                const formData = new FormData();
+                formData.append('name', name);
+                formData.append('email', email);
+                formData.append('phone', phone);
+                formData.append('analysis_data', JSON.stringify(transformedData));
+                formData.append('cv_file', window.currentCVFile);
+
+                console.log('💳 Sending payment request with CV file and analysis data to backend...');
 
                 const response = await fetch(`${BACKEND_URL}/api/services/request-report-payment`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestData)
+                    body: formData  // NO headers - FormData sets boundary automatically
                 });
 
                 const result = await response.json();
@@ -991,8 +994,8 @@
                         console.log(`🔄 Poll attempt ${attempts}/${maxAttempts} for ${orderId}`);
 
                         try {
-                            // Check payment status
-                            const statusResponse = await fetch(`${BACKEND_URL}/api/payment/status/${orderId}`);
+                            // Check payment status (FIXED: usar endpoint correto)
+                            const statusResponse = await fetch(`${BACKEND_URL}/api/payment/check-payment-status?orderId=${orderId}`);
                             const statusData = await statusResponse.json();
 
                             if (statusData.success && statusData.record) {
