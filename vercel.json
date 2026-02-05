@@ -3,6 +3,18 @@
   "name": "share2inspire",
   "cleanUrls": true,
   "trailingSlash": false,
+  "buildCommand": "cd cv-builder && pnpm install && pnpm build",
+  "outputDirectory": ".",
+  "rewrites": [
+    {
+      "source": "/cv-builder/:path*",
+      "destination": "/cv-builder/dist/public/:path*"
+    },
+    {
+      "source": "/cv-builder",
+      "destination": "/cv-builder/dist/public/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
