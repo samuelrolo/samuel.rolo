@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criação de Conteúdos Online | Share2Inspire | Samuel Rolo</title>
+    <meta name="description"
+        content="Criação de websites personalizados, agentes de IA e integração de APIs. Conheça o nosso portfólio de projetos.">
+    <!-- Favicon -->
+    <link rel="icon" href="../images/favicon.png" type="image/png">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Header & Footer Shared CSS -->
+    <link rel="stylesheet" href="../css/consolidated-styles.css">
+    <style>
+        :root {
+            --primary-gold: #BF9A33;
+            --dark-bg: #1A1A1A;
+            --light-bg: #F8F9FA;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .hero-portfolio {
+            padding: 160px 0 100px;
+            background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
+            color: #fff;
+            text-align: center;
+        }
+
+        .hero-portfolio h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .hero-portfolio .lead {
+            font-size: 1.25rem;
+            color: #ddd;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+
+        .hero-portfolio .btn-contact {
+            background: var(--primary-gold);
+            color: #000;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .hero-portfolio .btn-contact:hover {
+            background: #a58428;
+            color: #fff;
+            transform: translateY(-3px);
+        }
+
+        .portfolio-section {
+            padding: 100px 0;
+            background-color: #fff;
+        }
+
+        .project-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .project-header {
+            margin-bottom: 30px;
+        }
+
+        .project-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-bg);
+            margin-bottom: 15px;
+        }
+
+        .project-header p {
+            font-size: 1.1rem;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .project-link {
+            display: inline-block;
+            color: var(--primary-gold);
+            font-weight: 600;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+
+        .project-link:hover {
+            text-decoration: underline;
+        }
+
+        .features-table {
+            margin: 30px 0;
+        }
+
+        .features-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .features-table th {
+            background: var(--light-bg);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-bg);
+            border-bottom: 2px solid var(--primary-gold);
+        }
+
+        .features-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            color: #555;
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .screenshot-item {
+            text-align: center;
+        }
+
+        .screenshot-item h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark-bg);
+            margin-bottom: 15px;
+        }
+
+        .screenshot-item img {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .screenshot-item img:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .screenshots-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-portfolio h1 {
+                font-size: 2rem;
+            }
+
+            .project-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-portfolio">
+        <div class="container">
+            <h1>Portfólio de Projetos</h1>
+            <p class="lead">Conheça alguns dos projetos que desenvolvemos, combinando design, tecnologia e inteligência artificial para criar soluções digitais de impacto.</p>
+            <button class="btn-contact" data-bs-toggle="modal" data-bs-target="# contactModal">Pedir Consulta</button>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section class="portfolio-section">
+        <div class="container">
+            
+            <!-- Projeto 1: Share2Inspire -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h2>1. Share2Inspire - Plataforma de Carreira</h2>
+                    <a href="https://share2inspire.pt" target="_blank" class="project-link">
+                        <i class="fas fa-external-link-alt"></i> Visitar o site
+                    </a>
+                    <p><strong>Share2Inspire</strong> é uma plataforma de desenvolvimento de carreira que oferece serviços de coaching, análise de CV e conteúdos estratégicos para profissionais em transição. O projeto destaca-se pela forte componente tecnológica, incluindo um assistente de carreira baseado em IA que interage com os utilizadores de forma natural e contextualizada.</p>
+                </div>
+
+                <div class="features-table">
+                    <h3 style="font-size: 1.3rem; font-weight: 600; margin-bottom: 20px;">Funcionalidades Implementadas</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Funcionalidade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Inteligência Artificial</strong></td>
+                                <td>Agente de IA (Samuel Rolo AI) para suporte e orientação de carreira.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>E-commerce</strong></td>
+                                <td>Sistema de pagamentos integrado para serviços (Kickstart Pro, Revisão de CV).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Marketing</strong></td>
+                                <td>Gestão de campanhas promocionais e cupões de desconto.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Backend & API</strong></td>
+                                <td>API para envio de emails transacionais (Brevo), gestão de serviços e pagamentos.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Design & UX</strong></td>
+                                <td>Design responsivo, widgets interativos e experiência de utilizador fluida.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="screenshots-grid">
+                    <div class="screenshot-item">
+                        <h4>Desktop</h4>
+                        <img src="../images/portfolio/desktop/share2inspire_desktop.webp" alt="Share2Inspire Desktop">
+                    </div>
+                    <div class="screenshot-item">
+                        <h4>Mobile</h4>
+                        <img src="../images/portfolio/mobile/share2inspire_mobile.png" alt="Share2Inspire Mobile">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projeto 2: Marlene Ruivo -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h2>2. Marlene Ruivo - Nutricionista</h2>
+                    <a href="https://marleneruivo.pt" target="_blank" class="project-link">
+                        <i class="fas fa-external-link-alt"></i> Visitar o site
+                    </a>
+                    <p>O website de <strong>Marlene Ruivo</strong> é uma plataforma profissional para uma nutricionista especializada em saúde intestinal e na dieta FODMAP. O site foi desenhado para ser informativo, credível e para facilitar a marcação de consultas, integrando um assistente de IA especializado.</p>
+                </div>
+
+                <div class="features-table">
+                    <h3 style="font-size: 1.3rem; font-weight: 600; margin-bottom: 20px;">Funcionalidades Implementadas</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Funcionalidade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Inteligência Artificial</strong></td>
+                                <td>Agente de IA especializado (NutriGen) para responder a questões sobre a dieta FODMAP.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Agendamento</strong></td>
+                                <td>Sistema de marcação de consultas online com área de cliente.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Conteúdo</strong></td>
+                                <td>Secções informativas sobre patologias, sintomas e tratamentos.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Credibilidade</strong></td>
+                                <td>Exibição de certificações profissionais e testemunhos de pacientes.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Design & UX</strong></td>
+                                <td>Design limpo e profissional, focado na área da saúde.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="screenshots-grid">
+                    <div class="screenshot-item">
+                        <h4>Desktop</h4>
+                        <img src="../images/portfolio/desktop/marleneruivo_desktop.webp" alt="Marlene Ruivo Desktop">
+                    </div>
+                    <div class="screenshot-item">
+                        <h4>Mobile</h4>
+                        <img src="../images/portfolio/mobile/marleneruivo_mobile.png" alt="Marlene Ruivo Mobile">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projeto 3: Vando & Anita -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h2>3. Vando & Anita - Convite de Casamento</h2>
+                    <a href="https://vandoeanita.pt" target="_blank" class="project-link">
+                        <i class="fas fa-external-link-alt"></i> Visitar o site
+                    </a>
+                    <p><strong>Vando & Anita</strong> é um website de evento (casamento) que funciona como um convite digital interativo. O projeto permite aos convidados confirmar a sua presença através de um formulário de RSVP integrado, obter informações detalhadas sobre o evento e sentir-se parte da celebração desde o primeiro momento.</p>
+                </div>
+
+                <div class="features-table">
+                    <h3 style="font-size: 1.3rem; font-weight: 600; margin-bottom: 20px;">Funcionalidades Implementadas</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Funcionalidade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Gestão de Eventos</strong></td>
+                                <td>Formulário de confirmação de presença (RSVP).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Interatividade</strong></td>
+                                <td>Design elegante e interativo que guia os convidados pela informação do evento.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Informação</strong></td>
+                                <td>Detalhes sobre a data, local e horário da cerimónia e festa.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Navegação</strong></td>
+                                <td>Botão "Como Chegar" com integração de mapas.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Design & UX</strong></td>
+                                <td>Layout de página única (single-page) com design romântico e sofisticado.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="screenshots-grid">
+                    <div class="screenshot-item">
+                        <h4>Desktop</h4>
+                        <img src="../images/portfolio/desktop/vandoeanita_desktop.webp" alt="Vando & Anita Desktop">
+                    </div>
+                    <div class="screenshot-item">
+                        <h4>Mobile</h4>
+                        <img src="../images/portfolio/mobile/vandoeanita_mobile.png" alt="Vando & Anita Mobile">
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Final -->
+            <div class="text-center mt-5">
+                <h3 style="font-size: 2rem; font-weight: 700; margin-bottom: 20px;">Interessado em criar o seu projeto?</h3>
+                <p style="font-size: 1.1rem; color: #555; margin-bottom: 30px;">Entre em contacto connosco para discutir as suas necessidades e receber uma proposta personalizada.</p>
+                <button class="btn-contact" data-bs-toggle="modal" data-bs-target="#contactModal">Pedir Consulta</button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Contact Modal -->
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px; border: none;">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title" id="contactModalLabel" style="font-size: 1.3rem; font-weight: 700; color: #1A1A1A;">
+                        Pedido de Consulta
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="contactForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Nome</label>
+                            <input type="text" class="form-control" id="contactName" name="nome" required
+                                style="border: 1px solid #dee2e6; border-radius: 8px; padding: 0.7rem;">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Email</label>
+                            <input type="email" class="form-control" id="contactEmail" name="email" required
+                                style="border: 1px solid #dee2e6; border-radius: 8px; padding: 0.7rem;">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Assunto</label>
+                            <input type="text" class="form-control" id="contactSubject" name="assunto" required
+                                style="border: 1px solid #dee2e6; border-radius: 8px; padding: 0.7rem;">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Mensagem</label>
+                            <textarea class="form-control" id="contactMessage" name="mensagem" rows="4" required
+                                placeholder="Descreva o seu projeto ou necessidade"
+                                style="border: 1px solid #dee2e6; border-radius: 8px; padding: 0.7rem;"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Anexar Ficheiro <span class="text-muted small">(Opcional)</span></label>
+                            <input type="file" class="form-control" id="contactFile" name="anexo"
+                                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                                style="border: 1px solid #dee2e6; border-radius: 8px; padding: 0.7rem;">
+                            <small class="text-muted">Formatos aceites: PDF, DOC, DOCX, PNG, JPG (máx. 5MB)</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="contactTerms" required>
+                                <label class="form-check-label small text-muted" for="contactTerms">
+                                    Aceito a <a href="politica-privacidade.html" target="_blank" class="text-decoration-none">Política de Privacidade</a>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn w-100" style="background: #BF9A33; color: #000; font-weight: 700; padding: 12px; border-radius: 8px; border: none;">
+                            Enviar Pedido
+                        </button>
+                    </form>
+
+                    <div id="contactSuccess" class="alert alert-success mt-3" style="display: none;">
+                        <i class="fas fa-check-circle"></i> Pedido enviado com sucesso! Entraremos em contacto em breve.
+                    </div>
+
+                    <div id="contactError" class="alert alert-danger mt-3" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i> Erro ao enviar o pedido. Por favor, tente novamente.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Load Header & Footer -->
+    <script>
+        fetch('../templates/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+            });
+
+        fetch('../templates/footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer-placeholder').innerHTML = data;
+            });
+    </script>
+
+    <!-- Contact Form Handler -->
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const submitButton = this.querySelector('button[type="submit"]');
+            const successAlert = document.getElementById('contactSuccess');
+            const errorAlert = document.getElementById('contactError');
+
+            // Disable button and show loading
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A enviar...';
+            successAlert.style.display = 'none';
+            errorAlert.style.display = 'none';
+
+            try {
+                const response = await fetch('https://share2inspire-backend-production.up.railway.app/api/servicos/pedido-consulta', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    successAlert.style.display = 'block';
+                    this.reset();
+                    setTimeout(() => {
+                        bootstrap.Modal.getInstance(document.getElementById('contactModal')).hide();
+                        successAlert.style.display = 'none';
+                    }, 3000);
+                } else {
+                    errorAlert.style.display = 'block';
+                    errorAlert.textContent = result.error || 'Erro ao enviar o pedido. Por favor, tente novamente.';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorAlert.style.display = 'block';
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Enviar Pedido';
+            }
+        });
+    </script>
+</body>
+
+</html>
