@@ -225,3 +225,13 @@
 - [x] Corrigir preview dos templates na página de seleção
 - [x] Ajustar layout da página servicos.html para 2+2 (duas linhas de 2 serviços)
 - [ ] Testar navegação completa
+
+## 🔄 Implementação LinkedIn OAuth Backend
+- [x] Criar endpoint /api/linkedin/callback
+- [x] Implementar troca de código por access token
+- [x] Integrar com LinkedIn API para obter dados do perfil
+- [x] Criar mapeamento de dados LinkedIn → estrutura CV
+- [x] Implementar procedimento tRPC getLinkedInAuthUrl
+- [x] Atualizar UI para usar fluxo OAuth completo
+- [x] Suporte para carregar dados importados no CVEditor
+- [ ] Testar fluxo OAuth end-to-end
