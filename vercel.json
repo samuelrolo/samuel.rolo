@@ -2,5 +2,17 @@
   "version": 2,
   "name": "share2inspire",
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/cv-builder",
+      "destination": "https://cv-builder.share2inspire.pt",
+      "permanent": true
+    },
+    {
+      "source": "/cv-builder/:path*",
+      "destination": "https://cv-builder.share2inspire.pt/:path*",
+      "permanent": true
+    }
+  ]
 }
