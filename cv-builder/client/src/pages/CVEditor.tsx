@@ -276,8 +276,23 @@ export default function CVEditor() {
   const [location] = useLocation();
   const params = new URLSearchParams(location.split('?')[1]);
   const templateId = params.get('template') || 'black-minimalist';
+  const importedDataParam = params.get('data');
   
-  const [resumeData, setResumeData] = useState<ResumeData>(BASE_RESUME_TEMPLATE);
+  // Initialize resume data from imported LinkedIn data if available
+  const [resumeData, setResumeData] = useState<ResumeData>(() => {
+    if (importedDataParam) {
+      try {
+        const decoded = Buffer.from(importedDataParam, 'base64').toString('utf-8');
+        const importedData = JSON.parse(decoded);
+        toast.success("✅ Dados do LinkedIn importados com sucesso!");
+        return importedData;
+      } catch (error) {
+        console.error("Error decoding imported data:", error);
+        toast.error("Erro ao carregar dados importados");
+      }
+    }
+    return BASE_RESUME_TEMPLATE;
+  });
   const [activeTab, setActiveTab] = useState("personal");
   const { exportToPDF } = useExportPDF();
   const { user } = useAuth();

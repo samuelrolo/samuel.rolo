@@ -4,6 +4,9 @@ import * as resumeDb from "../resume-db";
 import { TRPCError } from "@trpc/server";
 import pdf from "pdf-parse";
 
+const LINKEDIN_CLIENT_ID = process.env.LINKEDIN_CLIENT_ID;
+const LINKEDIN_SCOPES = "r_liteprofile r_emailaddress";
+
 export const resumeRouter = router({
   /**
    * Listar todos os currículos do utilizador
@@ -137,14 +140,48 @@ export const resumeRouter = router({
           references: [],
         };
 
-        return extractedData;
-      } catch (error) {
-        console.error("Error parsing LinkedIn PDF:", error);
+      return extractedData;
+    } catch (error) {
+      console.error("Error parsing LinkedIn PDF:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Erro ao processar o PDF. Verifique se o ficheiro é válido.",
+      });
+    }
+  }),
+
+  /**
+   * Obter URL de autorização LinkedIn OAuth
+   */
+  getLinkedInAuthUrl: publicProcedure
+    .input(
+      z.object({
+        redirectUri: z.string(),
+        state: z.string().optional(),
+      })
+    )
+    .query(({ input }) => {
+      if (!LINKEDIN_CLIENT_ID) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Erro ao processar o PDF. Verifique se o ficheiro é válido.",
+          message: "LinkedIn OAuth não configurado",
         });
       }
+
+      const params = new URLSearchParams({
+        response_type: "code",
+        client_id: LINKEDIN_CLIENT_ID,
+        redirect_uri: input.redirectUri,
+        scope: LINKEDIN_SCOPES,
+      });
+
+      if (input.state) {
+        params.append("state", input.state);
+      }
+
+      const authUrl = `https://www.linkedin.com/oauth/v2/authorization?${params.toString()}`;
+
+      return { authUrl };
     }),
 });
 

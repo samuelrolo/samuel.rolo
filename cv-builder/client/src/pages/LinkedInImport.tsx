@@ -27,9 +27,28 @@ export default function LinkedInImport() {
     }
   });
 
-  const handleLinkedInOAuth = () => {
-    toast.info("A funcionalidade OAuth do LinkedIn requer configuração de credenciais. Por favor, contacte o administrador.");
-    // In production: window.location.href = '/api/linkedin/auth';
+  const getLinkedInAuthUrl = trpc.resume.getLinkedInAuthUrl.useQuery(
+    {
+      redirectUri: `${window.location.origin}/api/linkedin/callback`,
+      state: window.location.origin, // Pass origin to redirect back after auth
+    },
+    {
+      enabled: false, // Don't fetch automatically
+    }
+  );
+
+  const handleLinkedInOAuth = async () => {
+    try {
+      const result = await getLinkedInAuthUrl.refetch();
+      if (result.data?.authUrl) {
+        // Redirect to LinkedIn OAuth
+        window.location.href = result.data.authUrl;
+      } else {
+        toast.error("Erro ao obter URL de autorização do LinkedIn");
+      }
+    } catch (error: any) {
+      toast.error("Erro ao iniciar OAuth: " + error.message);
+    }
   };
 
   const handlePDFUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
