@@ -14,5 +14,15 @@
       "destination": "https://cv-builder.share2inspire.pt/:path*",
       "permanent": true
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/cv-analyser",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/cv-analyser/:path*",
+      "destination": "/cv-analyser/index.html"
+    }
   ]
 }
