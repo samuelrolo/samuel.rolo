@@ -21,7 +21,7 @@
       "destination": "/cv-analyser/index.html"
     },
     {
-      "source": "/cv-analyser/:path*",
+      "source": "/cv-analyser/:path(.*)",
       "destination": "/cv-analyser/index.html"
     }
   ]
