@@ -10,6 +10,11 @@
       "permanent": true
     },
     {
+      "source": "/pages/cv-analysis",
+      "destination": "/cv-analyser",
+      "permanent": true
+    },
+    {
       "source": "/cv-builder",
       "destination": "https://cv-builder.share2inspire.pt",
       "permanent": true
