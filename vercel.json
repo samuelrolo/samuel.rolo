@@ -5,6 +5,11 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/pages/cv-analyser",
+      "destination": "/cv-analyser",
+      "permanent": true
+    },
+    {
       "source": "/cv-builder",
       "destination": "https://cv-builder.share2inspire.pt",
       "permanent": true
