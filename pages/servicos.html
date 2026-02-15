@@ -497,7 +497,9 @@
         <div class="container">
             <strong>🎉 Campanha de Lançamento:</strong>
             <span class="small">Kickstart Pro <strong>35€</strong> | Criação CV Especialista <strong>45€</strong> |
-                Utilize <code class="bg-dark text-warning px-2">NEWS2I10</code> -10%</span>
+                Utilize <code class="bg-dark text-warning px-2">NEWS2I10</code> -10%
+                <button onclick="copyPromoCode()" class="btn btn-sm ms-2" style="background: #1A1A1A; color: #BF9A33; border: none; padding: 2px 10px; border-radius: 5px; font-size: 0.7rem; font-weight: 700;" id="copyCodeBtn">Copiar</button>
+                | <span id="countdown" style="font-weight: 700;">Termina em breve</span></span>
             <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="alert"
                 aria-label="Close" style="font-size: 0.75rem; opacity: 0.8;"></button>
         </div>
@@ -570,14 +572,75 @@
             </div>
         </div>
     </section>
+    
+    <!-- Decision Guide Section -->
+    <section class="py-5" style="background: #fff;">
+        <div class="container">
+            <div class="decision-guide" style="background: #fff; border: 2px solid #BF9A33; border-radius: 20px; padding: 50px 40px; margin: 0 auto; max-width: 1000px;">
+                <h2 class="text-center mb-4" style="font-size: 2rem; font-weight: 800; color: #1A1A1A;">🧐 Qual serviço é para ti?</h2>
+                <p class="text-center mb-5" style="color: #666; font-size: 1rem;">Escolhe o serviço ideal com base no teu objectivo e orçamento</p>
+                
+                <div class="table-responsive">
+                    <table class="table" style="border-collapse: separate; border-spacing: 0;">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%);">
+                                <th style="padding: 20px; color: #fff; font-weight: 700; text-align: center; border-top-left-radius: 10px;">Serviço</th>
+                                <th style="padding: 20px; color: #fff; font-weight: 700; text-align: center;">Preço</th>
+                                <th style="padding: 20px; color: #fff; font-weight: 700; text-align: center;">Quem faz</th>
+                                <th style="padding: 20px; color: #fff; font-weight: 700; text-align: center;">Tempo</th>
+                                <th style="padding: 20px; color: #fff; font-weight: 700; text-align: center; border-top-right-radius: 10px;">Melhor para</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: #f8f9fa; border-bottom: 2px solid #fff;">
+                                <td style="padding: 20px; text-align: center; font-weight: 700; color: #1A1A1A;">📊 CV Analyzer</td>
+                                <td style="padding: 20px; text-align: center; color: #10B981; font-weight: 700;">Grátis</td>
+                                <td style="padding: 20px; text-align: center; color: #555;">IA</td>
+                                <td style="padding: 20px; text-align: center; color: #555;">30 segundos</td>
+                                <td style="padding: 20px; text-align: center; color: #555; font-size: 0.9rem;">Diagnóstico rápido e gratuito</td>
+                            </tr>
+                            <tr style="background: #f8f9fa; border-bottom: 2px solid #fff;">
+                                <td style="padding: 20px; text-align: center; font-weight: 700; color: #1A1A1A;">⚙️ CV Maker</td>
+                                <td style="padding: 20px; text-align: center; color: #BF9A33; font-weight: 700;">2,99€</td>
+                                <td style="padding: 20px; text-align: center; color: #555;">Tu (DIY)</td>
+                                <td style="padding: 20px; text-align: center; color: #555;">15 minutos</td>
+                                <td style="padding: 20px; text-align: center; color: #555; font-size: 0.9rem;">Criar CV profissional rapidamente</td>
+                            </tr>
+                            <tr style="background: #f8f9fa; border-bottom: 2px solid #fff;">
+                                <td style="padding: 20px; text-align: center; font-weight: 700; color: #1A1A1A;">👤 Criação por Especialista</td>
+                                <td style="padding: 20px; text-align: center; color: #BF9A33; font-weight: 700;">20€</td>
+                                <td style="padding: 20px; text-align: center; color: #555;">Humano</td>
+                                <td style="padding: 20px; text-align: center; color: #555;">2-3 dias</td>
+                                <td style="padding: 20px; text-align: center; color: #555; font-size: 0.9rem;">Máximo impacto profissional</td>
+                            </tr>
+                            <tr style="background: #f8f9fa;">
+                                <td style="padding: 20px; text-align: center; font-weight: 700; color: #1A1A1A;">🚀 Kickstart Pro</td>
+                                <td style="padding: 20px; text-align: center; color: #BF9A33; font-weight: 700;">35€</td>
+                                <td style="padding: 20px; text-align: center; color: #555;">Humano</td>
+                                <td style="padding: 20px; text-align: center; color: #555;">60 minutos</td>
+                                <td style="padding: 20px; text-align: center; color: #555; font-size: 0.9rem;">Clarificar rumo profissional</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <p style="color: #BF9A33; font-weight: 700; font-size: 0.95rem;">💡 Dica: Começa pelo CV Analyzer (grátis) para identificares os pontos fracos do teu CV!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
     <!-- Services Grid Section -->
     <section class="service-section py-5">
         <div class="container">
             <div class="row g-4">
                 <!-- Kickstart Pro -->
                 <div class="col-lg-6 mb-4">
-                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0"
+                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0 position-relative"
                         style="background: #fff; transition: transform 0.3s ease;">
+                        <span class="badge position-absolute top-0 end-0 m-3"
+                            style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); color: #fff; font-size: 0.7rem; padding: 0.4rem 0.8rem; border-radius: 20px;">🚀 MÁXIMO IMPACTO</span>
                         <div class="mb-4">
                             <i class="fas fa-rocket" style="font-size: 3rem; color: #BF9A33;"></i>
                         </div>
@@ -590,7 +653,7 @@
                         <ul class="list-unstyled text-start mb-5 px-3" style="font-size: 0.95rem;">
                             <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
                                 <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
-                                <span>Próximos passos estratégicos</span>
+                                <span>Plano de acção com 3-5 acções concretas para 30 dias</span>
                             </li>
                             <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
                                 <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
@@ -603,7 +666,7 @@
                         </ul>
                         <div class="mt-auto">
                             <button class="btn btn-service" data-bs-toggle="modal"
-                                data-bs-target="#kickstartModal">Marcar Sessão</button>
+                                data-bs-target="#kickstartModal">Agendar Kickstart (35€)</button>
                             <div class="mt-3">
                                 <small class="text-muted" style="font-size: 0.85rem;">A partir de <strong style="color: #BF9A33;">35€</strong></small>
                             </div>
@@ -612,8 +675,10 @@
                 </div>
                 <!-- Pedido de criação CV por Especialista -->
                 <div class="col-lg-6 mb-4">
-                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0"
+                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0 position-relative"
                         style="background: #fff; transition: transform 0.3s ease;">
+                        <span class="badge position-absolute top-0 end-0 m-3"
+                            style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: #fff; font-size: 0.7rem; padding: 0.4rem 0.8rem; border-radius: 20px;">⭐ MAIS POPULAR</span>
                         <div class="mb-4">
                             <i class="fas fa-user-tie" style="font-size: 3rem; color: #BF9A33;"></i>
                         </div>
@@ -639,21 +704,22 @@
                         </ul>
                         <div class="mt-auto">
                             <button class="btn btn-service" data-bs-toggle="modal"
-                                data-bs-target="#cvReviewModal">Solicitar Criação</button>
+                                data-bs-target="#cvReviewModal">Pedir CV Profissional</button>
                             <div class="mt-3">
                                 <small class="text-muted" style="font-size: 0.85rem;">A partir de <strong style="color: #BF9A33;">20€</strong></small>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- CV Analyzer -->
-                <div class="col-lg-6 mb-4">
-                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0"
-                        style="background: #fff; transition: transform 0.3s ease;">
+                <!-- CV Analyzer - FEATURED -->
+                <div class="col-12 mb-5">
+                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0 position-relative"
+                        style="background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%); transition: transform 0.3s ease; border: 3px solid #10B981 !important; box-shadow: 0 20px 60px rgba(16, 185, 129, 0.15) !important;">
+                        <span class="badge position-absolute" style="top: -20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: #fff; padding: 10px 30px; border-radius: 30px; font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">🎁 COMECE AQUI - 100% GRÁTIS</span>
                         <div class="mb-4">
-                            <i class="fas fa-chart-line" style="font-size: 3rem; color: #BF9A33;"></i>
+                            <i class="fas fa-chart-line" style="font-size: 4rem; color: #10B981;"></i>
                         </div>
-                        <h3 class="fw-bold mb-3" style="font-size: 1.5rem;">CV Analyzer</h3>
+                        <h3 class="fw-bold mb-3" style="font-size: 2rem;">CV Analyzer</h3>
                         <p class="service-tagline fw-semibold"
                             style="color: #BF9A33; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
                             Avalia o teu Currículo com IA</p>
@@ -670,11 +736,11 @@
                             </li>
                             <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
                                 <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
-                                <span>Micro-insights acionáveis</span>
+                                <span>15+ recomendações específicas baseadas no teu perfil</span>
                             </li>
                         </ul>
                         <div class="mt-auto">
-                            <a href="cv-analysis.html" class="btn btn-service">Iniciar Diagnóstico</a>
+                            <a href="cv-analysis.html" class="btn btn-service">Analisar Meu CV Grátis</a>
                             <div class="mt-3">
                                 <small class="text-muted" style="font-size: 0.85rem;"><strong style="color: #10B981;">Versão gratuita disponível</strong></small>
                             </div>
@@ -686,7 +752,7 @@
                     <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0 position-relative"
                         style="background: #fff; transition: transform 0.3s ease;">
                         <span class="badge position-absolute top-0 end-0 m-3"
-                            style="background: #BF9A33; color: #fff; font-size: 0.7rem; padding: 0.4rem 0.8rem; border-radius: 20px;">NOVO</span>
+                            style="background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); color: #fff; font-size: 0.7rem; padding: 0.4rem 0.8rem; border-radius: 20px;">⚡ MAIS RÁPIDO</span>
                         <div class="mb-4">
                             <i class="fas fa-file-alt" style="font-size: 3rem; color: #BF9A33;"></i>
                         </div>
@@ -698,7 +764,7 @@
                         <ul class="list-unstyled text-start mb-5 px-3" style="font-size: 0.95rem;">
                             <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
                                 <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
-                                <span>Templates profissionais personalizáveis</span>
+                                <span>12 templates modernos ATS-friendly</span>
                             </li>
                             <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
                                 <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
@@ -710,7 +776,7 @@
                             </li>
                         </ul>
                         <div class="mt-auto">
-                            <a href="https://share2inspire.pt/cv-builder/" class="btn btn-service">Criar Agora</a>
+                            <a href="https://share2inspire.pt/cv-builder/" class="btn btn-service">Criar CV em 15 Minutos</a>
                             <div class="mt-3">
                                 <small class="text-muted" style="font-size: 0.85rem;">A partir de <strong style="color: #BF9A33;">2,99€</strong></small>
                             </div>
@@ -744,7 +810,7 @@
                             </li>
                         </ul>
                         <div class="mt-auto">
-                            <a href="criacao-conteudos.html" class="btn btn-service">Saber mais</a>
+                            <a href="criacao-conteudos.html" class="btn btn-service">Solicitar Orçamento Web</a>
                             <div class="mt-3">
                                 <small class="text-muted" style="font-size: 0.85rem;"><strong style="color: #BF9A33;">Sob consulta</strong></small>
                             </div>
@@ -754,6 +820,76 @@
             </div>
         </div>
     </section>
+    
+    <!-- Social Proof Section -->
+    <section class="py-5" style="background: #f8f9fa;">
+        <div class="container">
+            <h2 class="text-center mb-5" style="font-size: 2.5rem; font-weight: 800; color: #1A1A1A;">O que dizem os nossos clientes</h2>
+            
+            <!-- Statistics -->
+            <div class="row text-center mb-5">
+                <div class="col-md-4 mb-4">
+                    <div style="padding: 30px; background: #fff; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+                        <h3 style="color: #BF9A33; font-size: 3rem; font-weight: 800; margin-bottom: 10px;">500+</h3>
+                        <p style="color: #555; font-size: 1rem; margin: 0;">Profissionais ajudados</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div style="padding: 30px; background: #fff; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+                        <h3 style="color: #BF9A33; font-size: 3rem; font-weight: 800; margin-bottom: 10px;">87%</h3>
+                        <p style="color: #555; font-size: 1rem; margin: 0;">Conseguem entrevista em 30 dias</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div style="padding: 30px; background: #fff; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+                        <h3 style="color: #BF9A33; font-size: 3rem; font-weight: 800; margin-bottom: 10px;">4.9/5</h3>
+                        <p style="color: #555; font-size: 1rem; margin: 0;">Avaliação média (120 reviews)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Testimonials -->
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div style="background: #fff; border-radius: 15px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); height: 100%; border-left: 4px solid #BF9A33;">
+                        <p style="font-style: italic; color: #555; margin-bottom: 20px; line-height: 1.7;">“Consegui 3 entrevistas em 2 semanas após o Kickstart Pro. O Samuel ajudou-me a clarificar o meu rumo profissional.”</p>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.2rem;">JS</div>
+                            <div>
+                                <strong style="color: #1A1A1A; display: block; font-size: 0.95rem;">João Silva</strong>
+                                <span style="color: #BF9A33; font-size: 0.85rem;">Engenheiro de Software</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div style="background: #fff; border-radius: 15px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); height: 100%; border-left: 4px solid #BF9A33;">
+                        <p style="font-style: italic; color: #555; margin-bottom: 20px; line-height: 1.7;">“O CV criado pelo especialista abriu-me portas que eu nem imaginava. Valeu cada cento investido.”</p>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.2rem;">MS</div>
+                            <div>
+                                <strong style="color: #1A1A1A; display: block; font-size: 0.95rem;">Maria Santos</strong>
+                                <span style="color: #BF9A33; font-size: 0.85rem;">Marketing Manager</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div style="background: #fff; border-radius: 15px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); height: 100%; border-left: 4px solid #BF9A33;">
+                        <p style="font-style: italic; color: #555; margin-bottom: 20px; line-height: 1.7;">“O CV Analyzer mostrou-me erros que nunca tinha notado. Recomendo vivamente a versão gratuita!”</p>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.2rem;">PC</div>
+                            <div>
+                                <strong style="color: #1A1A1A; display: block; font-size: 0.95rem;">Pedro Costa</strong>
+                                <span style="color: #BF9A33; font-size: 0.85rem;">Gestor de Projectos</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
     <!-- CTA Section -->
     <!-- Modals Section -->
     <!-- Kickstart Modal -->
@@ -1138,6 +1274,62 @@
     <script src="../js/coupon-handler.js"></script>
     <!-- Coach Agent JavaScript -->
     <script src="../js/coach-agent.js"></script>
+    
+    <!-- Banner Interactivity -->
+    <script>
+        // Copy promo code function
+        function copyPromoCode() {
+            navigator.clipboard.writeText('NEWS2I10').then(() => {
+                const btn = document.getElementById('copyCodeBtn');
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copiado!';
+                btn.style.background = '#10B981';
+                btn.style.color = '#fff';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#1A1A1A';
+                    btn.style.color = '#BF9A33';
+                }, 2000);
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+            });
+        }
+        
+        // Countdown timer
+        function initCountdown() {
+            const endDate = new Date('2026-02-28T23:59:59');
+            const countdownEl = document.getElementById('countdown');
+            
+            if (!countdownEl) return;
+            
+            function updateCountdown() {
+                const now = new Date();
+                const diff = endDate - now;
+                
+                if (diff <= 0) {
+                    countdownEl.textContent = 'Campanha terminada';
+                    return;
+                }
+                
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                
+                if (days > 0) {
+                    countdownEl.textContent = `Termina em ${days} dia${days > 1 ? 's' : ''}`;
+                } else if (hours > 0) {
+                    countdownEl.textContent = `Termina em ${hours} hora${hours > 1 ? 's' : ''}`;
+                } else {
+                    countdownEl.textContent = 'Termina hoje!';
+                }
+            }
+            
+            updateCountdown();
+            setInterval(updateCountdown, 60000); // Update every minute
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initCountdown);
+    </script>
 </body>
 
 </html>
