@@ -86,7 +86,7 @@
 
         /* Minimalist Overrides for Index */
         .hero-section {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url('images/hero-samuel-color.jpg');
+            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url('images/hero-samuel-blur.jpg');
         }
 
         .hero-content h1 {
@@ -118,7 +118,7 @@
         .hero-section {
             height: 100vh;
             min-height: 600px;
-            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url('images/hero-samuel-color.jpg');
+            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url('images/hero-samuel-blur.jpg');
             background-size: cover;
             background-position: center center;
             background-attachment: fixed;
@@ -176,7 +176,7 @@
             font-size: 1.1rem;
             text-decoration: none;
             transition: all 0.3s ease;
-            border: 2px solid var(--primary-color);
+            border: 1px solid var(--primary-color);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -197,7 +197,7 @@
             font-size: 1.1rem;
             text-decoration: none;
             transition: all 0.3s ease;
-            border: 2px solid #fff;
+            border: 1px solid #fff;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -361,7 +361,7 @@
             width: 70px;
             height: 70px;
             background: #fff;
-            border: 2px solid var(--primary-color);
+            border: 1px solid var(--primary-color);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -405,7 +405,7 @@
 
         .btn-outline-primary {
             background-color: transparent;
-            border: 2px solid #2c3e50;
+            border: 1px solid #2c3e50;
             color: #2c3e50;
             font-weight: 600;
             padding: 0.75rem 2rem;
@@ -523,7 +523,7 @@
 
         .footer-left p {
             margin: 0;
-            color: #BF9A33;
+            color: #C9A961;
         }
 
         .footer-right {
@@ -538,7 +538,7 @@
         }
 
         .footer-contact i {
-            color: #BF9A33;
+            color: #C9A961;
             margin-right: 8px;
         }
 
@@ -548,7 +548,7 @@
         }
 
         .footer-social a {
-            color: #BF9A33;
+            color: #C9A961;
             font-size: 20px;
             transition: color 0.3s;
         }
@@ -567,7 +567,7 @@
         }
 
         .footer-links a {
-            color: #BF9A33;
+            color: #C9A961;
             font-size: 14px;
             text-decoration: none;
             transition: color 0.3s;
@@ -930,7 +930,7 @@
             justify-content: center;
             width: 50px;
             height: 50px;
-            border: 2px solid #e9ecef;
+            border: 1px solid #e9ecef;
             border-radius: 50%;
             background: white;
             color: #6c757d;
@@ -1264,7 +1264,7 @@
             display: block;
             padding: 1rem;
             background: var(--white);
-            border: 2px solid var(--border-color);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
             text-align: center;
             cursor: pointer;
@@ -1334,7 +1334,7 @@
 
         /* Secção de Diagnóstico Moderna - Baseada no indextest.html */
         .diagnostic-section-modern {
-            padding: 8rem 0;
+            padding: 4rem 0;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             position: relative;
         }
@@ -1648,7 +1648,7 @@
         .cookie-consent-text h4 {
             margin: 0 0 5px 0;
             font-size: 16px;
-            color: #BF9A33;
+            color: #C9A961;
         }
 
         .cookie-consent-text p {
@@ -1674,7 +1674,7 @@
         }
 
         .cookie-btn-accept {
-            background-color: #BF9A33;
+            background-color: #C9A961;
             color: #212529;
         }
 
@@ -1694,12 +1694,12 @@
 
         .cookie-btn-settings {
             background-color: transparent;
-            color: #BF9A33;
-            border: 1px solid #BF9A33;
+            color: #C9A961;
+            border: 1px solid #C9A961;
         }
 
         .cookie-btn-settings:hover {
-            background-color: #BF9A33;
+            background-color: #C9A961;
             color: #212529;
         }
 
@@ -1811,7 +1811,7 @@
         }
 
         .cookie-toggle input:checked+.cookie-toggle-slider {
-            background-color: #BF9A33;
+            background-color: #C9A961;
         }
 
         .cookie-toggle input:checked+.cookie-toggle-slider:before {
@@ -1836,7 +1836,7 @@
             position: fixed;
             right: 20px;
             bottom: 20px;
-            background-color: #BF9A33;
+            background-color: #C9A961;
             color: #212529;
             border: none;
             border-radius: 50px;
@@ -1870,7 +1870,7 @@
 
         .star:hover,
         .star.active {
-            color: #BF9A33;
+            color: #C9A961;
         }
 
         @media (max-width: 768px) {
@@ -1899,44 +1899,14 @@
     </style>
     <!-- Coach Agent CSS -->
     <link rel="stylesheet" href="css/coach-agent.css">
+    <link rel="stylesheet" href="css/side-widgets.css">
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035"
         crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <!-- Launch Campaign Banner -->
-    <div class="sticky-top" id="launchBanner"
-        style="z-index: 1040; background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%); color: #1A1A1A; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        <div class="container">
-            <div class="row align-items-center py-2">
-                <div class="col-lg-10 col-md-9 text-center text-md-start">
-                    <h6 class="mb-0 fw-bold d-inline">
-                        🚀 Campanha de Lançamento - Primeiros 30 Dias&nbsp;&nbsp;|&nbsp;&nbsp;
-                    </h6>
-                    <span class="small">
-                        <strong>Kickstart Pro</strong>: <span class="text-decoration-line-through">40€</span> <strong
-                            class="text-dark">30€</strong> (-25%)&nbsp;&nbsp;|&nbsp;&nbsp;
-                        <strong>Revisão CV</strong>: <span class="text-decoration-line-through">25€</span> <strong
-                            class="text-dark">20€</strong> (-20%)&nbsp;&nbsp;|&nbsp;&nbsp;
-                        Cupão <code class="bg-dark text-warning px-2 py-1 rounded"
-                            style="font-size: 0.85rem;">NEWS2I10</code> para <strong>-10% extra</strong>
-                    </span>
-                </div>
-                <div class="col-lg-2 col-md-3 text-center text-md-end mt-2 mt-md-0">
-                    <a href="pages/servicos.html" class="btn btn-sm btn-dark fw-bold px-3 py-1"
-                        style="border-radius: 20px;">
-                        Ver Serviços
-                    </a>
-                    <button class="btn btn-sm btn-link text-dark p-0 ms-2"
-                        onclick="document.getElementById('launchBanner').style.display='none'"
-                        style="text-decoration: none; font-size: 1.2rem;">
-                        ×
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0"
@@ -2001,11 +1971,11 @@
                 <!-- Social Proof Badge -->
                 <div style="display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 1.5rem 0; flex-wrap: wrap;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); padding: 0.5rem 1rem; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.2);">
-                        <i class="fas fa-users" style="color: #BF9A33; font-size: 1.2rem;"></i>
+                        <i class="fas fa-users" style="color: #C9A961; font-size: 1.2rem;"></i>
                         <span style="color: #fff; font-size: 0.9rem; font-weight: 600;">500+ profissionais</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); padding: 0.5rem 1rem; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.2);">
-                        <i class="fas fa-star" style="color: #BF9A33; font-size: 1.2rem;"></i>
+                        <i class="fas fa-star" style="color: #C9A961; font-size: 1.2rem;"></i>
                         <span style="color: #fff; font-size: 0.9rem; font-weight: 600;">4.9/5 ⭐</span>
                     </div>
                 </div>
@@ -2047,7 +2017,7 @@
     <section class="services-preview py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);">
         <div class="container">
             <div class="text-center mb-5">
-                <span class="text-uppercase small fw-bold" style="color: #BF9A33; letter-spacing: 2px;">Os nossos
+                <span class="text-uppercase small fw-bold" style="color: #C9A961; letter-spacing: 2px;">Os nossos
                     serviços</span>
                 <h2 class="mt-3 fw-bold">Apoio profissional</h2>
             </div>
@@ -2057,8 +2027,8 @@
                     <div class="service-preview-card p-4 h-100"
                         style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
                         <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
-                            style="width: 80px; height: 80px; background: #fff; border: 2px solid #BF9A33; border-radius: 50%; box-shadow: 0 2px 8px rgba(191, 154, 51, 0.15);">
-                            <i class="fas fa-compass" style="color: #BF9A33; font-size: 2rem; font-weight: 300;"></i>
+                            style="width: 80px; height: 80px; background: #fff; border: 1px solid #C9A961; border-radius: 50%; box-shadow: 0 2px 8px rgba(191, 154, 51, 0.15);">
+                            <i class="fas fa-compass" style="color: #C9A961; font-size: 2rem; font-weight: 300;"></i>
                         </div>
                         <h4 class="fw-bold mb-3">Kickstart Pro</h4>
                         <p class="text-muted small mb-2" style="line-height: 1.6;">Uma sessão estratégica para parar,
@@ -2068,7 +2038,7 @@
                         <p class="text-muted small" style="line-height: 1.6; font-style: italic;">Indicado para fases de
                             transição, desgaste profissional ou necessidade de reorientação.</p>
                         <a href="pages/servicos.html" class="btn btn-sm px-4 py-2 rounded-pill fw-semibold mt-3"
-                            style="background: #BF9A33; color: #fff;">Agendar Kickstart (30€)</a>
+                            style="background: #C9A961; color: #fff;">Agendar Kickstart (30€)</a>
                     </div>
                 </div>
                 <!-- Revisão de CV -->
@@ -2076,8 +2046,8 @@
                     <div class="service-preview-card p-4 h-100"
                         style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
                         <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
-                            style="width: 80px; height: 80px; background: #fff; border: 2px solid #BF9A33; border-radius: 50%; box-shadow: 0 2px 8px rgba(191, 154, 51, 0.15);">
-                            <i class="far fa-file-alt" style="color: #BF9A33; font-size: 2rem; font-weight: 300;"></i>
+                            style="width: 80px; height: 80px; background: #fff; border: 1px solid #C9A961; border-radius: 50%; box-shadow: 0 2px 8px rgba(191, 154, 51, 0.15);">
+                            <i class="far fa-file-alt" style="color: #C9A961; font-size: 2rem; font-weight: 300;"></i>
                         </div>
                         <h4 class="fw-bold mb-3">Revisão de CV</h4>
                         <p class="text-muted small mb-2" style="line-height: 1.6;">Uma análise estratégica e humana do
@@ -2088,7 +2058,7 @@
                         <p class="text-muted small" style="line-height: 1.6; font-style: italic;">O CV como reflexo
                             claro de quem és e para onde queres ir.</p>
                         <a href="pages/servicos.html" class="btn btn-sm px-4 py-2 rounded-pill fw-semibold mt-3"
-                            style="background: #BF9A33; color: #fff;">Pedir CV Profissional</a>
+                            style="background: #C9A961; color: #fff;">Pedir CV Profissional</a>
                     </div>
                 </div>
                 <!-- CV Analyzer -->
@@ -2096,8 +2066,8 @@
                     <div class="service-preview-card p-4 h-100"
                         style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
                         <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
-                            style="width: 80px; height: 80px; background: #fff; border: 2px solid #BF9A33; border-radius: 50%; box-shadow: 0 2px 8px rgba(191, 154, 51, 0.15);">
-                            <i class="fas fa-chart-line" style="color: #BF9A33; font-size: 2rem; font-weight: 300;"></i>
+                            style="width: 80px; height: 80px; background: #fff; border: 1px solid #C9A961; border-radius: 50%; box-shadow: 0 2px 8px rgba(191, 154, 51, 0.15);">
+                            <i class="fas fa-chart-line" style="color: #C9A961; font-size: 2rem; font-weight: 300;"></i>
                         </div>
                         <h4 class="fw-bold mb-3">CV Analyzer</h4>
                         <p class="text-muted small mb-2" style="line-height: 1.6;">Um diagnóstico inicial apoiado por
@@ -2108,7 +2078,7 @@
                         <p class="text-muted small" style="line-height: 1.6; font-style: italic;">Rápido, informativo e
                             complementar à avaliação humana.</p>
                         <a href="pages/cv-analysis.html" class="btn btn-sm px-4 py-2 rounded-pill fw-semibold mt-3"
-                            style="background: #BF9A33; color: #fff;">Analisar CV Grátis</a>
+                            style="background: #C9A961; color: #fff;">Analisar CV Grátis</a>
                     </div>
                 </div>
             </div>
@@ -2117,7 +2087,7 @@
     <style>
         .service-preview-card:hover {
             transform: translateY(-5px);
-            border-color: #BF9A33 !important;
+            border-color: #C9A961 !important;
             box-shadow: 0 10px 30px rgba(191, 154, 51, 0.15);
         }
 
@@ -2437,14 +2407,14 @@
                                 style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Nome</label>
                             <input type="text" id="name" name="name" placeholder="O teu nome" required
                                 style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#BF9A33'" onblur="this.style.borderColor='#ddd'">
+                                onfocus="this.style.borderColor='#C9A961'" onblur="this.style.borderColor='#ddd'">
                         </div>
                         <div class="mb-4">
                             <label for="email"
                                 style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Email</label>
                             <input type="email" id="email" name="email" placeholder="O teu email" required
                                 style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#BF9A33'" onblur="this.style.borderColor='#ddd'">
+                                onfocus="this.style.borderColor='#C9A961'" onblur="this.style.borderColor='#ddd'">
                         </div>
                         <div class="mb-4">
                             <label for="phone"
@@ -2452,14 +2422,14 @@
                                 <span style="color: #999;">(opcional)</span></label>
                             <input type="tel" id="phone" name="phone" placeholder="Opcional"
                                 style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#BF9A33'" onblur="this.style.borderColor='#ddd'">
+                                onfocus="this.style.borderColor='#C9A961'" onblur="this.style.borderColor='#ddd'">
                         </div>
                         <div class="mb-4">
                             <label for="reason"
                                 style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Motivo</label>
                             <select id="reason" name="reason" required
                                 style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; background-color: white; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#BF9A33'" onblur="this.style.borderColor='#ddd'">
+                                onfocus="this.style.borderColor='#C9A961'" onblur="this.style.borderColor='#ddd'">
                                 <option value="" selected disabled>Escolhe o motivo do contacto</option>
                                 <option value="Clareza de carreira">Clareza de carreira</option>
                                 <option value="Revisão de CV">Revisão de CV</option>
@@ -2473,7 +2443,7 @@
                             <textarea id="message" name="message" rows="3" placeholder="O que te trouxe até aqui?"
                                 required
                                 style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; resize: vertical; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#BF9A33'"
+                                onfocus="this.style.borderColor='#C9A961'"
                                 onblur="this.style.borderColor='#ddd'"></textarea>
                         </div>
                         <div class="mb-4">
@@ -2482,7 +2452,7 @@
                                 <input type="checkbox" id="privacy" name="privacy" required
                                     style="margin-right: 0.5rem;">
                                 Li e aceito a <a href="pages/politica-privacidade.html" target="_blank"
-                                    style="color: #BF9A33; text-decoration: none; margin-left: 0.25rem;">Política de
+                                    style="color: #C9A961; text-decoration: none; margin-left: 0.25rem;">Política de
                                     Privacidade</a>
                             </label>
                         </div>
@@ -2495,8 +2465,8 @@
                             Erro ao enviar mensagem.
                         </div>
                         <button type="submit"
-                            style="width: 100%; padding: 0.875rem; background: #BF9A33; color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background 0.2s;"
-                            onmouseover="this.style.background='#a58428'" onmouseout="this.style.background='#BF9A33'">
+                            style="width: 100%; padding: 0.875rem; background: #C9A961; color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background 0.2s;"
+                            onmouseover="this.style.background='#a58428'" onmouseout="this.style.background='#C9A961'">
                             Enviar mensagem
                         </button>
                     </form>

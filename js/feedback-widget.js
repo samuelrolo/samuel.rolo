@@ -55,7 +55,7 @@
         .star-rating input:checked ~ label,
         .star-rating label:hover,
         .star-rating label:hover ~ label {
-            color: #BF9A33;
+            color: #C9A961;
         }
 
         /* Modal specific overrides if needed */
@@ -97,21 +97,21 @@
         #feedbackWidgetModal .form-control:focus {
             background-color: #ffffff;
             color: #1A1A1A;
-            border-color: #BF9A33;
+            border-color: #C9A961;
             box-shadow: 0 0 0 0.2rem rgba(191, 154, 51, 0.25);
         }
     `;
     document.head.appendChild(style);
 
-    // 2. Inject HTML (Button + Modal)
+    // 2. Inject HTML (Side Tab + Modal)
     const container = document.createElement('div');
-    container.className = 'feedback-tab'; // Adicionar a classe feedback-tab
+    container.className = 'feedback-side-widget';
     container.innerHTML = `
-        <!-- Floating Button -->
-        <button class="coach-tab-button" id="openFeedbackBtn" aria-label="Enviar Feedback">
-            <div class="coach-tab-pulse"></div>
-            <div class="coach-tab-icon">💬</div>
-        </button>
+        <!-- Side Tab -->
+        <div class="feedback-side-tab" id="openFeedbackBtn" role="button" aria-label="Enviar Feedback">
+            <span class="icon">💬</span>
+            <span class="text">Feedback</span>
+        </div>
 
         <!-- Modal -->
         <div class="modal fade" id="feedbackWidgetModal" tabindex="-1" aria-hidden="true">
@@ -141,7 +141,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary fw-bold px-4 shadow-sm" id="submitFeedbackBtn" style="background-color: #BF9A33; border: none; border-radius: 8px;">Enviar Feedback</button>
+                        <button type="button" class="btn btn-primary fw-bold px-4 shadow-sm" id="submitFeedbackBtn" style="background-color: #C9A961; border: none; border-radius: 8px;">Enviar Feedback</button>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,107 @@
+/* =====================================================================
+   SHARE2INSPIRE - SIDE WIDGETS
+   Minimalist rectangular side tabs for Feedback (left) and Career Adviser (right)
+   
+   Created: 2026-02-16
+   Purpose: Fixed side widgets with golden borders and white background
+   ===================================================================== */
+
+/* ===== LEFT WIDGET - FEEDBACK ===== */
+.feedback-side-widget {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9999;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+.feedback-side-tab {
+    background: #ffffff;
+    border: 1px solid #C9A961;
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    padding: 20px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.feedback-side-tab:hover {
+    background: #fffbf0;
+    padding-right: 16px;
+    box-shadow: 2px 0 15px rgba(201, 169, 97, 0.2);
+}
+
+.feedback-side-tab .icon {
+    font-size: 18px;
+    color: #C9A961;
+    writing-mode: horizontal-tb;
+}
+
+.feedback-side-tab .text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1A1A1A;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* ===== RIGHT WIDGET - CAREER ADVISER ===== */
+.career-side-widget {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9999;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+.career-side-tab {
+    background: #ffffff;
+    border: 1px solid #C9A961;
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    padding: 20px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.career-side-tab:hover {
+    background: #fffbf0;
+    padding-left: 16px;
+    box-shadow: -2px 0 15px rgba(201, 169, 97, 0.2);
+}
+
+.career-side-tab .icon {
+    font-size: 18px;
+    color: #C9A961;
+    writing-mode: horizontal-tb;
+}
+
+.career-side-tab .text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1A1A1A;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .feedback-side-widget,
+    .career-side-widget {
+        display: none; /* Hide on mobile to avoid clutter */
+    }
+}
