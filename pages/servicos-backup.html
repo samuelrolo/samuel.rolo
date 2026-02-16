@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serviços | Share2Inspire | Samuel Rolo</title>
+    <meta name="description"
+        content="Ajudamos profissionais a evoluir a carreira com clareza, estratégia e conhecimento aplicável. Análise inteligente, revisão humana e decisões orientadas a mercado.">
+    <!-- Favicon -->
+    <link rel="icon" href="../images/favicon.png" type="image/png">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Header & Footer Shared CSS -->
+    <!-- Consolidated Styles: Design System + Header/Footer -->
+    <link rel="stylesheet" href="../css/consolidated-styles.css">
+    <style>
+        :root {
+            --primary-gold: #BF9A33;
+            --dark-bg: #1A1A1A;
+            --light-bg: #F8F9FA;
+        }
+
+        .hero-services {
+            padding: 160px 0 100px;
+            background-color: var(--light-bg);
+            text-align: center;
+        }
+
+        .hero-services h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--dark-bg);
+            margin-bottom: 20px;
+        }
+
+        .hero-services .lead {
+            font-size: 1.25rem;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            padding: 100px 0;
+            background-color: #fff;
+        }
+
+        .service-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 20px;
+            padding: 40px;
+            height: 100%;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary-gold);
+        }
+
+        .service-card.featured {
+            border: 2px solid var(--primary-gold);
+            position: relative;
+        }
+
+        .service-card.featured::before {
+            content: "Âncora";
+            position: absolute;
+            top: -15px;
+            right: 30px;
+            background: var(--primary-gold);
+            color: #fff;
+            padding: 4px 15px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--primary-gold);
+            margin-bottom: 25px;
+        }
+
+        .service-card h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--dark-bg);
+        }
+
+        .service-card .subheadline {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-gold);
+            margin-bottom: 20px;
+        }
+
+        .service-card .description {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .service-card .meta-info {
+            margin-top: auto;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 20px;
+            height: 100%;
+        }
+
+        .service-card .meta-label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--dark-bg);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .service-card .meta-text {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .service-card .btn-service {
+            margin-top: 30px;
+            width: 100%;
+            padding: 15px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-kickstart {
+            background-color: var(--primary-gold);
+            color: #fff;
+            border: none;
+        }
+
+        .btn-kickstart:hover {
+            background-color: #a58428;
+            color: #fff;
+        }
+
+        .btn-cv-review {
+            background-color: var(--dark-bg);
+            color: #fff;
+            border: none;
+        }
+
+        .btn-cv-review:hover {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .btn-analyzer {
+            background-color: #fff;
+            color: var(--dark-bg);
+            border: 2px solid var(--dark-bg);
+        }
+
+        .btn-analyzer:hover {
+            background-color: var(--dark-bg);
+            color: #fff;
+        }
+
+        /* Human Context Section */
+        .human-context {
+            padding: 100px 0;
+            background-color: var(--light-bg);
+            text-align: center;
+        }
+
+        .human-context h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: var(--dark-bg);
+        }
+
+        .human-context p {
+            font-size: 1.2rem;
+            color: #555;
+            max-width: 700px;
+            margin: 0 auto 50px;
+        }
+
+        .transformation-steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-bg);
+        }
+
+        .step-item i {
+            color: var(--primary-gold);
+        }
+
+        /* Final CTA */
+        .final-cta {
+            padding: 100px 0;
+            background-color: var(--primary-gold);
+            color: #fff;
+            text-align: center;
+        }
+
+        .final-cta h2 {
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .final-cta .btn-outline-white {
+            border: 2px solid #fff;
+            color: #fff;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .final-cta .btn-outline-white:hover {
+            background-color: #fff;
+            color: var(--primary-gold);
+        }
+
+        /* Mural Cards */
+        .mural-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 25px;
+            height: 100%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .mural-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-gold);
+        }
+
+        .mural-card.featured {
+            border: 2px solid var(--primary-gold);
+        }
+
+        .featured-tag {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--primary-gold);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .mural-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .mural-icon i {
+            color: #fff;
+            font-size: 1.3rem;
+        }
+
+        .mural-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary-gold);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .mural-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark-bg);
+            margin-bottom: 8px;
+        }
+
+        .mural-tagline {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .mural-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+            flex-grow: 1;
+        }
+
+        .mural-features li {
+            font-size: 0.8rem;
+            color: #555;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mural-features li i {
+            color: #10B981;
+            font-size: 0.7rem;
+        }
+
+        .mural-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 15px;
+            margin-top: auto;
+        }
+
+        .mural-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-bg);
+        }
+
+        .mural-btn {
+            background: var(--primary-gold);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .mural-btn:hover {
+            background: #a58428;
+            color: #fff;
+        }
+
+        .mural-btn-disabled {
+            background: #e0e0e0;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        /* Uniformized Service Cards */
+        .service-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid #e0e0e0 !important;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            border-color: #BF9A33 !important;
+            box-shadow: 0 12px 35px rgba(191, 154, 51, 0.15);
+        }
+
+        .service-card .btn-service {
+            background: #BF9A33;
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .service-card .btn-service:hover {
+            background: #a58428;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(191, 154, 51, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .hero-services h1 {
+                font-size: 2.2rem;
+            }
+
+            .services-grid {
+                padding: 60px 0;
+            }
+
+            .service-card {
+                padding: 30px;
+            }
+        }
+
+        /* Modal Responsivo */
+        @media (max-width: 991px) {
+            .modal-dialog {
+                max-width: 95% !important;
+                margin: 1rem auto;
+            }
+
+            #kickstartModal .ratio {
+                min-height: 400px !important;
+            }
+
+            #kickstartModal .col-lg-7,
+            #kickstartModal .col-lg-5 {
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .modal-dialog {
+                max-width: 100% !important;
+                margin: 0.5rem;
+            }
+
+            #kickstartModal .ratio {
+                min-height: 350px !important;
+            }
+
+            #kickstartModal .modal-body {
+                padding: 1rem !important;
+            }
+
+            .modal-title {
+                font-size: 1rem !important;
+            }
+        }
+    </style>
+    <!-- Coach Agent CSS -->
+    <link rel="stylesheet" href="../css/coach-agent.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'AW-17015553005');
+    </script>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <!-- Launch Campaign Banner -->
+    <div class="alert alert-dismissible fade show mb-0 text-center"
+        style="background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%); color: #1A1A1A; border: none; border-radius: 0; padding: 0.75rem;">
+        <div class="container">
+            <strong>🎉 Campanha de Lançamento:</strong>
+            <span class="small">Kickstart Pro <strong>35€</strong> | Criação CV Especialista <strong>45€</strong> |
+                Utilize <code class="bg-dark text-warning px-2">NEWS2I10</code> -10%</span>
+            <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="alert"
+                aria-label="Close" style="font-size: 0.75rem; opacity: 0.8;"></button>
+        </div>
+    </div>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-8GQ1KM9FQS');
+    </script>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg sticky-top"
+        style="background: var(--s2i-white, #fff); border-bottom: 1px solid #eee;">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <img src="../images/logo.png" alt="Share2Inspire" style="height: 40px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html"
+                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Início</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="sobre.html"
+                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Sobre</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link active" href="servicos.html"
+                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500; color: #BF9A33;">Serviços</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="cv-analysis.html"
+                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">CV
+                            Analyser</a></li>
+                    <li class="nav-item"><a class="nav-link" href="loja.html"
+                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Loja</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="conhecimento.html"
+                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Conhecimento</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <section style="background: #fcfcfc; padding: 120px 0 60px; text-align: center; border-bottom: 1px solid #eee;">
+        <div class="container">
+            <p
+                style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: #BF9A33; font-weight: 600; margin-bottom: 15px;">
+                Evolução Profissional</p>
+            <h1 style="font-size: 2.5rem; font-weight: 600; color: #1A1A1A; margin-bottom: 1rem;">Serviços</h1>
+            <p style="max-width: 600px; margin: 0 auto; font-size: 1rem; color: #666; line-height: 1.8;">Análise
+                inteligente, revisão humana e decisões orientadas a mercado para profissionais que procuram clareza e
+                estratégia.</p>
+        </div>
+    </section>
+    <!-- Purpose Block -->
+    <section class="purpose-block py-5 bg-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center" style="max-width: 800px; margin: 0 auto;">
+                    <h2 class="h3 fw-bold mb-3">Ajudamos profissionais a entrar no mercado e a evoluir a carreira de
+                        forma estratégica e consciente.</h2>
+                    <p class="text-muted fs-5 mb-0">Análise inteligente, revisão humana e decisões orientadas a mercado.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Services Grid Section -->
+    <section class="service-section py-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Kickstart Pro -->
+                <div class="col-lg-6 mb-4">
+                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0"
+                        style="background: #fff; transition: transform 0.3s ease;">
+                        <div class="mb-4">
+                            <i class="fas fa-rocket" style="font-size: 3rem; color: #BF9A33;"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3" style="font-size: 1.5rem;">Kickstart Pro</h3>
+                        <p class="service-tagline fw-semibold"
+                            style="color: #BF9A33; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
+                            Sessão estratégica de decisão</p>
+                        <p class="text-muted mb-4 px-2" style="font-size: 1rem; line-height: 1.6;">Acompanhamento individual focado em follow up e clarificação de
+                            rumo profissional.</p>
+                        <ul class="list-unstyled text-start mb-5 px-3" style="font-size: 0.95rem;">
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Próximos passos estratégicos</span>
+                            </li>
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Plano de ação implementável</span>
+                            </li>
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Acompanhamento pós-sessão</span>
+                            </li>
+                        </ul>
+                        <div class="mt-auto">
+                            <button class="btn btn-service" data-bs-toggle="modal"
+                                data-bs-target="#kickstartModal">Marcar Sessão</button>
+                            <div class="mt-3">
+                                <small class="text-muted" style="font-size: 0.85rem;">A partir de <strong style="color: #BF9A33;">35€</strong></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pedido de criação CV por Especialista -->
+                <div class="col-lg-6 mb-4">
+                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0"
+                        style="background: #fff; transition: transform 0.3s ease;">
+                        <div class="mb-4">
+                            <i class="fas fa-user-tie" style="font-size: 3rem; color: #BF9A33;"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3" style="font-size: 1.5rem;">Pedido de criação CV por Especialista</h3>
+                        <p class="service-tagline fw-semibold"
+                            style="color: #BF9A33; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
+                            Pede a um profissional para elaborar o teu CV</p>
+                        <p class="text-muted mb-4 px-2" style="font-size: 1rem; line-height: 1.6;">Análise humana e estratégica para garantir o máximo impacto
+                            junto de decisores.</p>
+                        <ul class="list-unstyled text-start mb-5 px-3" style="font-size: 0.95rem;">
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Otimização para leitura humana</span>
+                            </li>
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Feedback escrito estratégico</span>
+                            </li>
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Posicionamento de valor real</span>
+                            </li>
+                        </ul>
+                        <div class="mt-auto">
+                            <button class="btn btn-service" data-bs-toggle="modal"
+                                data-bs-target="#cvReviewModal">Solicitar Criação</button>
+                            <div class="mt-3">
+                                <small class="text-muted" style="font-size: 0.85rem;">A partir de <strong style="color: #BF9A33;">20€</strong></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- CV Analyzer -->
+                <div class="col-lg-6 mb-4">
+                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0"
+                        style="background: #fff; transition: transform 0.3s ease;">
+                        <div class="mb-4">
+                            <i class="fas fa-chart-line" style="font-size: 3rem; color: #BF9A33;"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3" style="font-size: 1.5rem;">CV Analyzer</h3>
+                        <p class="service-tagline fw-semibold"
+                            style="color: #BF9A33; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
+                            Avalia o teu Currículo com IA</p>
+                        <p class="text-muted mb-4 px-2" style="font-size: 1rem; line-height: 1.6;">Diagnóstico inteligente e instantâneo baseado em 6 dimensões
+                            críticas.</p>
+                        <ul class="list-unstyled text-start mb-5 px-3" style="font-size: 0.95rem;">
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Score de maturidade 0-100</span>
+                            </li>
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Relatório PDF "Aprofundado"</span>
+                            </li>
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Micro-insights acionáveis</span>
+                            </li>
+                        </ul>
+                        <div class="mt-auto">
+                            <a href="cv-analysis.html" class="btn btn-service">Iniciar Diagnóstico</a>
+                            <div class="mt-3">
+                                <small class="text-muted" style="font-size: 0.85rem;"><strong style="color: #10B981;">Versão gratuita disponível</strong></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- CV Maker -->
+                <div class="col-lg-6 mb-4">
+                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0 position-relative"
+                        style="background: #fff; transition: transform 0.3s ease;">
+                        <span class="badge position-absolute top-0 end-0 m-3"
+                            style="background: #BF9A33; color: #fff; font-size: 0.7rem; padding: 0.4rem 0.8rem; border-radius: 20px;">NOVO</span>
+                        <div class="mb-4">
+                            <i class="fas fa-file-alt" style="font-size: 3rem; color: #BF9A33;"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3" style="font-size: 1.5rem;">CV Maker</h3>
+                        <p class="service-tagline fw-semibold"
+                            style="color: #BF9A33; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
+                            Cria aqui o teu CV</p>
+                        <p class="text-muted mb-4 px-2" style="font-size: 1rem; line-height: 1.6;">Cria o teu currículo profissional em minutos com ferramentas simples e eficazes.</p>
+                        <ul class="list-unstyled text-start mb-5 px-3" style="font-size: 0.95rem;">
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Templates profissionais personalizáveis</span>
+                            </li>
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Importação automática do LinkedIn</span>
+                            </li>
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Exportação para PDF e Word</span>
+                            </li>
+                        </ul>
+                        <div class="mt-auto">
+                            <a href="https://share2inspire.pt/cv-builder/" class="btn btn-service">Criar Agora</a>
+                            <div class="mt-3">
+                                <small class="text-muted" style="font-size: 0.85rem;">A partir de <strong style="color: #BF9A33;">2,99€</strong></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Criação de Conteúdos Online -->
+                <div class="col-lg-6 mb-4">
+                    <div class="service-card p-5 h-100 d-flex flex-column text-center shadow-lg rounded-4 border-0"
+                        style="background: #fff; transition: transform 0.3s ease;">
+                        <div class="mb-4">
+                            <i class="fas fa-palette" style="font-size: 3rem; color: #BF9A33;"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3" style="font-size: 1.5rem;">Criação de Conteúdos Online</h3>
+                        <p class="service-tagline fw-semibold"
+                            style="color: #BF9A33; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
+                            Websites e assets com inteligência artificial</p>
+                        <p class="text-muted mb-4 px-2" style="font-size: 1rem; line-height: 1.6;">Criação de websites personalizados, agentes de IA e integração de APIs para o teu negócio.</p>
+                        <ul class="list-unstyled text-start mb-5 px-3" style="font-size: 0.95rem;">
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Websites responsivos e modernos</span>
+                            </li>
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Agentes de IA especializados</span>
+                            </li>
+                            <li class="mb-3" style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fas fa-circle" style="color: #BF9A33; font-size: 0.5rem;"></i>
+                                <span>Integração de APIs e pagamentos</span>
+                            </li>
+                        </ul>
+                        <div class="mt-auto">
+                            <a href="criacao-conteudos.html" class="btn btn-service">Saber mais</a>
+                            <div class="mt-3">
+                                <small class="text-muted" style="font-size: 0.85rem;"><strong style="color: #BF9A33;">Sob consulta</strong></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- CTA Section -->
+    <!-- Modals Section -->
+    <!-- Kickstart Modal -->
+    <div class="modal fade s2i-modal" id="kickstartModal" tabindex="-1" aria-labelledby="kickstartModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 900px;">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title" id="kickstartModalLabel"
+                        style="font-size: 1.1rem; font-weight: 500; color: #333;">Marcar Kickstart Pro <span style="color: #BF9A33; font-size: 0.9rem;">(35€)</span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        style="filter: none; opacity: 1;"></button>
+                </div>
+                <div class="modal-body p-4">
+
+                    <div class="row">
+                        <!-- Left: Calendar -->
+                        <div class="col-lg-7">
+                            <h6 class="mb-3" style="font-weight: 500; color: #555; font-size: 0.9rem;">
+                                Escolhe o Horário</h6>
+                            <div class="ratio ratio-1x1" style="min-height: 500px;">
+                                <iframe src="https://calendar.app.google/EtbgccDRzJmDsnMY8"
+                                    style="border: 0; border-radius: 8px;" width="100%" height="100%"
+                                    frameborder="0"></iframe>
+                            </div>
+                            <small class="text-muted d-block mt-2"
+                                style="font-size: 0.75rem; font-weight: 400; color: #888;">
+                                Não consegues ver o calendário?
+                                <a href="https://calendar.app.google/EtbgccDRzJmDsnMY8" target="_blank"
+                                    class="text-decoration-none">Abre aqui</a>
+                            </small>
+                        </div>
+
+                        <!-- Right: Form -->
+                        <div class="col-lg-5 ps-lg-4 mt-4 mt-lg-0">
+
+                            <!-- Info Note -->
+                            <div class="alert alert-light mb-3"
+                                style="border-left: 3px solid #BF9A33; font-size: 0.85rem; padding: 0.75rem;">
+                                <strong>Sessão de 30 minutos</strong> · Plano de acção incluído<br>
+                                <small class="text-muted">Receberás o link de pagamento por email após
+                                    agendamento</small>
+                            </div>
+
+                            <form id="kickstartForm">
+                                <input type="hidden" name="service" value="Kickstart Pro">
+                                <input type="hidden" name="amount" value="35.00">
+
+                                <div class="mb-3">
+                                    <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Nome</label>
+                                    <input type="text" class="form-control" id="kickstartName" name="name" required
+                                        style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Email</label>
+                                    <input type="email" class="form-control" id="kickstartEmail" name="email" required
+                                        style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Contexto
+                                        <span class="text-muted small">(Opcional)</span></label>
+                                    <textarea class="form-control" id="kickstartObjectives" name="objectives" rows="3"
+                                        placeholder="O que gostarias de discutir?"
+                                        style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem; font-size: 0.9rem;"></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="kickstartTerms" required>
+                                        <label class="form-check-label small text-muted" for="kickstartTerms">
+                                            Aceito a <a href="politica-privacidade.html" target="_blank"
+                                                class="text-decoration-none">Política de Privacidade</a>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-dark w-100 py-2 mt-2"
+                                    style="border-radius: 6px; font-size: 0.95rem;">
+                                    Agendar Sessão
+                                </button>
+                                <div id="kickstartFormMessage" class="mt-3 small"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal: Contacto -->
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 720px;">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0 px-4 pt-4">
+                    <h5 class="modal-title" id="contactModalLabel"
+                        style="font-size: 1.1rem; font-weight: 500; color: #333;">Entre em Contacto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="contactForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name"
+                                    class="form-label small fw-bold text-muted text-uppercase">Nome</label>
+                                <input type="text" class="form-control bg-light border-0 py-3 rounded-3" id="name"
+                                    name="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="reason"
+                                    class="form-label small fw-bold text-muted text-uppercase">Motivo</label>
+                                <select class="form-select bg-light border-0 py-3 rounded-3" id="reason" name="reason"
+                                    required>
+                                    <option value="" disabled selected>Selecione um motivo</option>
+                                    <option value="Informações">Informações</option>
+                                    <option value="Orçamento">Orçamento</option>
+                                    <option value="Dúvida Técnica">Dúvida Técnica</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email"
+                                    class="form-label small fw-bold text-muted text-uppercase">Email</label>
+                                <input type="email" class="form-control bg-light border-0 py-3 rounded-3" id="email"
+                                    name="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone"
+                                    class="form-label small fw-bold text-muted text-uppercase">Telefone</label>
+                                <input type="tel" class="form-control bg-light border-0 py-3 rounded-3" id="phone"
+                                    name="phone">
+                            </div>
+                            <div class="col-12">
+                                <label for="message"
+                                    class="form-label small fw-bold text-muted text-uppercase">Mensagem</label>
+                                <textarea class="form-control bg-light border-0 py-3 rounded-3" id="message"
+                                    name="message" rows="4" required></textarea>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold border-0"
+                                    style="background-color: #BF9A33;">
+                                    Enviar Mensagem
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- CV Review Modal -->
+    <div class="modal fade" id="cvReviewModal" tabindex="-1" aria-labelledby="cvReviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 600px;">
+            <div class="modal-content" style="border-radius: 16px; border: none;">
+                <div class="modal-header border-0">
+                    <div style="text-align: center; width: 100%;">
+                        <h5 class="modal-title" style="font-size: 1.1rem; font-weight: 500; color: #333;">Revisão Humana
+                            de CV
+                        </h5>
+                        <p class="text-muted mb-0" style="font-size: 0.8rem; font-weight: 400; color: #888;">Análise
+                            estratégica por especialista</p>
+                    </div>
+                    <button type="button" class="btn-close position-absolute end-0 top-0 m-3"
+                        data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body px-4 py-3">
+
+                    <!-- Info Note -->
+                    <div class="alert alert-light mb-3"
+                        style="border-left: 3px solid #BF9A33; font-size: 0.85rem; padding: 0.75rem;">
+                        <strong style="font-weight: 500;">Análise humana completa</strong> · Feedback escrito + versão
+                        optimizada<br>
+                        <small class="text-muted" style="font-size: 0.75rem; font-weight: 400; color: #888;">Entrega em
+                            até 5 dias úteis</small>
+                    </div>
+
+                    <form id="cvReviewForm">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Nome</label>
+                                <input type="text" class="form-control" id="cvReviewName" required
+                                    style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Email</label>
+                                <input type="email" class="form-control" id="cvReviewEmail" required
+                                    style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">CV (PDF/DOCX)</label>
+                            <input type="file" class="form-control" id="cvReviewFile" accept=".pdf,.docx" required
+                                style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Fotografia <span
+                                    class="text-muted small">(Opcional)</span></label>
+                            <input type="file" class="form-control" id="cvReviewPhoto" accept="image/*"
+                                style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Notas <span
+                                    class="text-muted small">(Opcional)</span></label>
+                            <textarea class="form-control" id="cvReviewInstructions" rows="2"
+                                placeholder="Indique aspetos específicos que gostaria de melhorar..."
+                                style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn w-100 py-3 rounded-pill fw-bold"
+                            style="background-color: #BF9A33; color: #fff;">
+                            Receber Confirmação e Link de Pagamento
+                        </button>
+                    </form>
+                    <div id="cvReviewFormMessage" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer style="background: #1A1A1A; color: #fff; padding: 60px 0 30px;">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <img src="../images/logo.png" alt="Share2Inspire"
+                        style="height: 40px; margin-bottom: 20px; filter: brightness(0) invert(1);">
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.7;">A transformar mindsets
+                        e carreiras através da fusão entre estratégia corporativa e empatia humana.</p>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5
+                        style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; color: #BF9A33;">
+                        Navegação</h5>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="../index.html" style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Início</a>
+                        <a href="sobre.html" style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Sobre</a>
+                        <a href="servicos.html" style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Serviços</a>
+                        <a href="conhecimento.html"
+                            style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Conhecimento</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <h5
+                        style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; color: #BF9A33;">
+                        Legal</h5>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="politica-privacidade.html"
+                            style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Privacidade</a>
+                        <a href="politica-cookies.html"
+                            style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Cookies</a>
+                        <a href="informacao-legal.html"
+                            style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Informação Legal</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <h5
+                        style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; color: #BF9A33;">
+                        Contacto</h5>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-bottom: 15px;">
+                        <i class="fas fa-envelope" style="color: #BF9A33; margin-right: 8px;"></i>
+                        samuel.rolo@share2inspire.pt
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" style="color: #BF9A33;"><i
+                                class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="https://www.instagram.com/share2inspire_/" target="_blank" style="color: #BF9A33;"><i
+                                class="fab fa-instagram fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div
+                style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 40px; padding-top: 25px; text-align: center;">
+                <p
+                    style="color: rgba(255,255,255,0.5); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin: 0;">
+                    © 2026 Share2Inspire | Samuel Rolo. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/ifthenpay-integration.js"></script>
+    <script src="../js/contact-form.js?v=2.0"></script>
+    <script src="../js/brevo-integration.js?v=2.0"></script>
+    <script src="../js/feedback-widget.js?v=2.0"></script>
+    <script src="js/email-flows.js?v=2.0"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Kickstart Pro Form
+            const kickstartForm = document.getElementById('kickstartForm');
+            if (kickstartForm) {
+                kickstartForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    const email = document.getElementById('kickstartEmail').value;
+                    const name = document.getElementById('kickstartName').value;
+                    const objectives = document.getElementById('kickstartObjectives').value;
+                    const submitBtn = kickstartForm.querySelector('button[type="submit"]');
+                    const messageDiv = document.getElementById('kickstartFormMessage');
+                    if (!window.EmailFlows.isValidEmail(email)) {
+                        messageDiv.innerHTML = '<div class="alert alert-danger">Por favor, introduza um email válido.</div>';
+                        return;
+                    }
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = 'A processar...';
+                    try {
+                        const result = await window.EmailFlows.sendKickstartConfirmation(email, name, { objectives });
+                        if (result.success) {
+                            messageDiv.innerHTML = `
+                                <div class="alert alert-success">
+                                    <strong>${result.message}</strong>
+                                </div>`;
+                            kickstartForm.reset();
+                        } else {
+                            messageDiv.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
+                        }
+                    } catch (error) {
+                        messageDiv.innerHTML = `<div class="alert alert-danger">Erro: ${error.message}</div>`;
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = 'Confirmar Pedido (35€)';
+                    }
+                });
+            }
+            // CV Review Form
+            const cvReviewForm = document.getElementById('cvReviewForm');
+            if (cvReviewForm) {
+                cvReviewForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    const email = document.getElementById('cvReviewEmail').value;
+                    const name = document.getElementById('cvReviewName').value;
+                    const instructions = document.getElementById('cvReviewInstructions').value;
+                    const fileInput = document.getElementById('cvReviewFile');
+                    const file = fileInput.files[0];
+                    const photoInput = document.getElementById('cvReviewPhoto');
+                    const photo = photoInput.files ? photoInput.files[0] : null;
+                    const submitBtn = cvReviewForm.querySelector('button[type="submit"]');
+                    const messageDiv = document.getElementById('cvReviewFormMessage');
+                    if (!window.EmailFlows.isValidEmail(email)) {
+                        messageDiv.innerHTML = '<div class="alert alert-danger">Por favor, introduza um email válido.</div>';
+                        return;
+                    }
+                    if (!file) {
+                        messageDiv.innerHTML = '<div class="alert alert-danger">Por favor, carrega o teu CV.</div>';
+                        return;
+                    }
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = 'A processar...';
+                    try {
+                        const result = await window.EmailFlows.sendCVReviewConfirmation(email, file, name, instructions, photo);
+                        if (result.success) {
+                            messageDiv.innerHTML = `
+                                <div class="alert alert-success">
+                                    <strong>${result.message}</strong>
+                                </div>`;
+                            cvReviewForm.reset();
+                        } else {
+                            messageDiv.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
+                        }
+                    } catch (error) {
+                        messageDiv.innerHTML = `<div class="alert alert-danger">Erro: ${error.message}</div>`;
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = 'Receber Confirmação e Link de Pagamento';
+                    }
+                });
+            }
+        });
+
+        // Initialize Bootstrap Tooltips
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+
+    <!-- Coupon System Scripts -->
+    <script src="../js/coupon-system.js"></script>
+    <script src="../js/coupon-handler.js"></script>
+    <!-- Coach Agent JavaScript -->
+    <script src="../js/coach-agent.js"></script>
+</body>
+
+</html>

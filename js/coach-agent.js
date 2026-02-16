@@ -33,12 +33,12 @@ class SamuelRoloAI {
 
     injectHTML() {
         const html = `
-            <!-- Samuel Rolo AI - Floating Button -->
-            <div class="coach-agent-tab" id="coachAgentTab">
-                <button class="coach-tab-button" id="coachTabButton" aria-label="Abrir assistente de carreira">
-                    <div class="coach-tab-pulse"></div>
-                    <div class="coach-tab-icon">🤖</div>
-                </button>
+            <!-- Samuel Rolo AI - Side Tab -->
+            <div class="career-side-widget" id="coachAgentTab">
+                <div class="career-side-tab" id="coachTabButton" role="button" aria-label="Abrir assistente de carreira">
+                    <span class="icon">🤖</span>
+                    <span class="text">Career Adviser</span>
+                </div>
             </div>
 
             <!-- Samuel Rolo AI - Chat Widget -->
