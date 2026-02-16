@@ -7,32 +7,6 @@
     // 1. Inject Styles
     const style = document.createElement('style');
     style.innerHTML = `
-        .feedback-btn {
-            /* Removido - Agora usa .coach-tab-button e .feedback-tab */
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: #BF9A33; /* Golden */
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            text-decoration: none;
-            font-weight: 600;
-            z-index: 9999;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border: none;
-            font-family: 'Poppins', sans-serif;
-        }
-        .feedback-btn:hover {
-            background-color: #a57b0a;
-            transform: translateY(-3px);
-            color: #fff;
-        }
         
         .star-rating {
             display: flex;
