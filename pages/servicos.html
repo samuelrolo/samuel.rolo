@@ -22,6 +22,17 @@
     <!-- Consolidated Styles: Design System + Header/Footer -->
     <link rel="stylesheet" href="../css/consolidated-styles.css">
     <style>
+        /* Hide Vercel Speed Insights widget */
+        iframe[src*="vercel-insights"],
+        iframe[src*="_vercel"],
+        div[id*="vercel-live-feedback-button"],
+        .__vercel-live-feedback-button,
+        #vercel-live-feedback-button {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
         :root {
             --primary-gold: #BF9A33;
             --dark-bg: #1A1A1A;

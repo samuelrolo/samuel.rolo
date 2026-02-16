@@ -26,6 +26,17 @@
         rel="stylesheet" />
 
     <style>
+        /* Hide Vercel Speed Insights widget */
+        iframe[src*="vercel-insights"],
+        iframe[src*="_vercel"],
+        div[id*="vercel-live-feedback-button"],
+        .__vercel-live-feedback-button,
+        #vercel-live-feedback-button {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
         /* Hero Section */
         .knowledge-hero {
             background: var(--s2i-bg);
