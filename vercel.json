@@ -28,11 +28,11 @@
   "rewrites": [
     {
       "source": "/cv-analyser",
-      "destination": "/cv-analyser/index.html"
+      "destination": "/cv-analyser/index"
     },
     {
       "source": "/cv-analyser/(.*)",
-      "destination": "/cv-analyser/index.html"
+      "destination": "/cv-analyser/index"
     }
   ]
 }
