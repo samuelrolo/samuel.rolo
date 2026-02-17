@@ -31,7 +31,19 @@
       "destination": "/cv-analyser/index.html"
     },
     {
-      "source": "/cv-analyser/:path(.*)",
+      "source": "/cv-analyser/results",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/cv-analyser/privacy",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/cv-analyser/terms",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/cv-analyser/:path*",
       "destination": "/cv-analyser/index.html"
     }
   ]
