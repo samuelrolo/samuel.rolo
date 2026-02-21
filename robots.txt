@@ -1,0 +1,14 @@
+# robots.txt for share2inspire.pt
+# Generated: 2026-02-21
+
+User-agent: *
+Allow: /
+Disallow: /pages/admin-analytics
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://www.share2inspire.pt/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
