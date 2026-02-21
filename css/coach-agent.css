@@ -427,14 +427,15 @@
     background: #BF9A33;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 480px) {
+/* ===== RESPONSIVE - TABLET ===== */
+@media (max-width: 768px) {
     #coachChatWidget,
     .coach-chat-widget {
-        width: calc(100vw - 40px);
-        max-height: calc(100vh - 140px);
-        right: 20px;
-        bottom: 90px;
+        width: calc(100vw - 32px);
+        max-height: calc(100vh - 160px);
+        right: 16px;
+        /* Positioned above the FAB button and cookie banner */
+        bottom: 140px;
     }
     
     #coachChatWidget.expanded,
@@ -443,6 +444,25 @@
         max-height: calc(100vh - 100px);
         right: 10px;
         bottom: 80px;
+    }
+}
+
+/* ===== RESPONSIVE - MOBILE ===== */
+@media (max-width: 480px) {
+    #coachChatWidget,
+    .coach-chat-widget {
+        width: calc(100vw - 24px);
+        max-height: calc(100vh - 140px);
+        right: 12px;
+        bottom: 136px;
+    }
+    
+    #coachChatWidget.expanded,
+    .coach-chat-widget.expanded {
+        width: calc(100vw - 16px);
+        max-height: calc(100vh - 80px);
+        right: 8px;
+        bottom: 60px;
     }
     
     #coachChatWidget.maximized,
@@ -456,13 +476,21 @@
         box-shadow: none;
     }
     
-    .coach-tab-button {
-        width: 50px;
-        height: 50px;
+    .coach-chat-header {
+        padding: 12px 16px;
     }
     
-    .coach-tab-icon {
-        font-size: 18px;
+    .coach-chat-input-area {
+        padding: 10px 12px 14px;
+    }
+    
+    .coach-quick-actions {
+        gap: 4px;
+    }
+    
+    .coach-quick-action {
+        padding: 4px 8px;
+        font-size: 10px;
     }
 }
 

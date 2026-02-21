@@ -32,6 +32,9 @@ class SamuelRoloAI {
     }
 
     injectHTML() {
+        // Prevent duplicate injection
+        if (document.getElementById('coachAgentTab')) return;
+        
         const html = `
             <!-- Samuel Rolo AI - Side Tab -->
             <div class="career-side-widget" id="coachAgentTab">
@@ -469,7 +472,10 @@ Quanto mais me contares, melhor posso ajudar. 🎯`;
     }
 }
 
-// Initialize on page load
+// Initialize on page load (with guard to prevent duplicate instances)
 document.addEventListener('DOMContentLoaded', () => {
-    new SamuelRoloAI();
+    if (!window._samuelRoloAIInitialized) {
+        window._samuelRoloAIInitialized = true;
+        window.samuelRoloAI = new SamuelRoloAI();
+    }
 });
