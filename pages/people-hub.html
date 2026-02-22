@@ -30,6 +30,9 @@
     <link rel="stylesheet" href="assets/s2i-modern.css">
     <!-- Header & Footer Shared CSS -->
     <link href="../css/header-footer.css" rel="stylesheet">
+    <!-- Career Adviser Widgets -->
+    <link rel="stylesheet" href="../css/coach-agent.css">
+    <link rel="stylesheet" href="../css/side-widgets.css">
     <style>
         /* Estilos para o footer */
         footer {
@@ -866,6 +869,53 @@ document.getElementById('newsletterSubscriptionForm').addEventListener('submit',
     }
 });
 </script>
+
+    <!-- Podcast & YouTube Section -->
+    <section class="container my-5 py-5">
+        <div class="row g-4">
+            <!-- Podcast Spotify -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-lg h-100" style="background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);">
+                    <div class="card-body p-5 text-white">
+                        <div class="d-flex align-items-center mb-4">
+                            <i class="fab fa-spotify fa-3x me-3"></i>
+                            <div>
+                                <h3 class="fw-bold mb-1">Podcast Humanos e Máquinas</h3>
+                                <p class="mb-0 opacity-75">Disponível no Spotify</p>
+                            </div>
+                        </div>
+                        <p class="mb-4" style="font-size: 1.1rem;">Conversas sobre o futuro do trabalho, inteligência artificial e a transformação digital dos Recursos Humanos.</p>
+                        <a href="https://open.spotify.com/show/2P09p0F3HIR0jXRdCMPOSe?si=Xd5ov1D6RyaKAThGOJS4HA" 
+                           target="_blank" 
+                           class="btn btn-light btn-lg fw-bold">
+                            <i class="fab fa-spotify me-2"></i>Ouvir no Spotify
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Canal YouTube -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-lg h-100" style="background: linear-gradient(135deg, #FF0000 0%, #cc0000 100%);">
+                    <div class="card-body p-5 text-white">
+                        <div class="d-flex align-items-center mb-4">
+                            <i class="fab fa-youtube fa-3x me-3"></i>
+                            <div>
+                                <h3 class="fw-bold mb-1">Canal Share2Inspire</h3>
+                                <p class="mb-0 opacity-75">Vídeos e Webinars</p>
+                            </div>
+                        </div>
+                        <p class="mb-4" style="font-size: 1.1rem;">Conteúdo em vídeo sobre desenvolvimento de carreira, análise de CV, estratégias de recrutamento e muito mais.</p>
+                        <a href="https://www.youtube.com/@share2inspire/videos" 
+                           target="_blank" 
+                           class="btn btn-light btn-lg fw-bold">
+                            <i class="fab fa-youtube me-2"></i>Ver Canal
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     <!-- Featured Article -->
     <div class="container">
         <article class="featured-article">
@@ -1059,5 +1109,7 @@ document.getElementById('newsletterSubscriptionForm').addEventListener('submit',
     <script src="../js/brevo-integration.js"></script>
     <!-- Global Feedback Widget -->
     <script src="../js/feedback-widget.js"></script>
+    <!-- Career Adviser Widget -->
+    <script src="../js/coach-agent.js"></script>
 </body>
 </html>
