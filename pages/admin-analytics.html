@@ -305,6 +305,103 @@
                 </div>
             </div>
         </div>
+
+        <!-- Newsletter Subscribers Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="table-container">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="chart-title mb-0">
+                            <i class="fas fa-envelope me-2 text-muted"></i>Subscritores da Newsletter
+                        </h5>
+                        <div class="btn-group">
+                            <button class="btn btn-sm refresh-btn" onclick="loadNewsletterStats()">
+                                <i class="fas fa-sync-alt me-1"></i>Atualizar
+                            </button>
+                            <button class="btn btn-sm btn-success" onclick="exportSubscribers()">
+                                <i class="fas fa-download me-1"></i>Exportar CSV
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Newsletter Stats Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3 col-6">
+                            <div class="stat-card text-center">
+                                <div class="stat-value" style="color: var(--s2i-gold);" id="totalSubscribers">--</div>
+                                <div class="stat-label">Total Subscritores</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="stat-card text-center">
+                                <div class="stat-value" style="color: #28a745;" id="activeSubscribers">--</div>
+                                <div class="stat-label">Ativos</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="stat-card text-center">
+                                <div class="stat-value" style="color: var(--s2i-gray);" id="unsubscribedCount">--</div>
+                                <div class="stat-label">Cancelados</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="stat-card text-center">
+                                <div class="stat-value" style="color: var(--s2i-black);" id="last30daysSubscribers">--</div>
+                                <div class="stat-label">Últimos 30 Dias</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Filter Tabs -->
+                    <ul class="nav nav-tabs mb-3" id="subscriberTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" 
+                                type="button" role="tab" onclick="filterSubscribers('active')">
+                                Ativos
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" 
+                                type="button" role="tab" onclick="filterSubscribers('all')">
+                                Todos
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="unsubscribed-tab" data-bs-toggle="tab" data-bs-target="#unsubscribed" 
+                                type="button" role="tab" onclick="filterSubscribers('unsubscribed')">
+                                Cancelados
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <!-- Subscribers Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Data de Subscrição</th>
+                                    <th>Origem</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subscribersTable">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">
+                                        <div class="loading">
+                                            <div class="spinner-border spinner-gold" role="status">
+                                                <span class="visually-hidden">A carregar...</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Bootstrap JS -->
@@ -526,6 +623,188 @@
 
             // Auto-refresh a cada 60 segundos
             setInterval(refreshData, 60000);
+        });
+
+        // Newsletter Management Functions
+        let currentSubscriberFilter = 'active';
+        const ADMIN_API_KEY = 'share2inspire-admin-2026'; // TODO: Move to secure env
+
+        // Load newsletter statistics
+        async function loadNewsletterStats() {
+            try {
+                const response = await fetch(`${API_BASE}/api/newsletter/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${ADMIN_API_KEY}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                document.getElementById('totalSubscribers').textContent = data.total_subscribers || 0;
+                document.getElementById('activeSubscribers').textContent = data.active_subscribers || 0;
+                document.getElementById('unsubscribedCount').textContent = data.unsubscribed || 0;
+                document.getElementById('last30daysSubscribers').textContent = data.subscribers_last_30_days || 0;
+                
+                // Load subscribers list
+                await loadSubscribers(currentSubscriberFilter);
+                
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas da newsletter:', error);
+                showNewsletterError('Erro ao carregar estatísticas');
+            }
+        }
+
+        // Load subscribers list
+        async function loadSubscribers(status = 'active') {
+            try {
+                const response = await fetch(`${API_BASE}/api/newsletter/subscribers?status=${status}`, {
+                    headers: {
+                        'Authorization': `Bearer ${ADMIN_API_KEY}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const subscribers = data.subscribers || [];
+                
+                const tableBody = document.getElementById('subscribersTable');
+                
+                if (subscribers.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                                Nenhum subscritor encontrado
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                tableBody.innerHTML = subscribers.map(sub => {
+                    const date = new Date(sub.subscribed_at);
+                    const formattedDate = date.toLocaleDateString('pt-PT', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const statusBadge = sub.status === 'active' 
+                        ? '<span class="badge bg-success">Ativo</span>'
+                        : '<span class="badge bg-secondary">Cancelado</span>';
+                    
+                    const sourceBadge = sub.source === 'people_hub'
+                        ? '<span class="badge bg-primary">People Hub</span>'
+                        : `<span class="badge bg-info">${sub.source}</span>`;
+                    
+                    return `
+                        <tr>
+                            <td>${sub.name || '<em class="text-muted">Sem nome</em>'}</td>
+                            <td>${sub.email}</td>
+                            <td>${formattedDate}</td>
+                            <td>${sourceBadge}</td>
+                            <td>${statusBadge}</td>
+                        </tr>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                console.error('Erro ao carregar subscritores:', error);
+                showNewsletterError('Erro ao carregar lista de subscritores');
+            }
+        }
+
+        // Filter subscribers by status
+        function filterSubscribers(status) {
+            currentSubscriberFilter = status;
+            loadSubscribers(status);
+        }
+
+        // Export subscribers to CSV
+        async function exportSubscribers() {
+            try {
+                const response = await fetch(`${API_BASE}/api/newsletter/subscribers?status=${currentSubscriberFilter}&format=csv`, {
+                    headers: {
+                        'Authorization': `Bearer ${ADMIN_API_KEY}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `newsletter_subscribers_${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                // Show success message
+                showNewsletterSuccess('Ficheiro CSV exportado com sucesso!');
+                
+            } catch (error) {
+                console.error('Erro ao exportar subscritores:', error);
+                showNewsletterError('Erro ao exportar subscritores');
+            }
+        }
+
+        // Show error message
+        function showNewsletterError(message) {
+            const tableBody = document.getElementById('subscribersTable');
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center text-danger py-4">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2 d-block"></i>
+                        ${message}
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Show success message (toast)
+        function showNewsletterSuccess(message) {
+            // Create a simple toast notification
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `
+                <div class="toast show" role="alert">
+                    <div class="toast-header bg-success text-white">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong class="me-auto">Sucesso</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Initialize newsletter stats on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load newsletter stats after a short delay to let CV analytics load first
+            setTimeout(() => {
+                loadNewsletterStats();
+            }, 1000);
         });
     </script>
     <script src="../js/coach-agent.js"></script>
