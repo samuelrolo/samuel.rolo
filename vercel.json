@@ -25,14 +25,14 @@
       "permanent": true
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/cv-analyser",
-      "dest": "/cv-analyser/index.html"
+      "source": "/cv-analyser",
+      "destination": "/cv-analyser/index.html"
     },
     {
-      "src": "/cv-analyser/(.*)",
-      "dest": "/cv-analyser/index.html"
+      "source": "/cv-analyser/:path*",
+      "destination": "/cv-analyser/:path*"
     }
   ]
 }
