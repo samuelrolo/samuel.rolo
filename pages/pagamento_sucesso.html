@@ -195,9 +195,42 @@
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../css/coach-agent.css">
     <link rel="stylesheet" href="../css/side-widgets.css">
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1460148528104687');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1460148528104687&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
 </head>
 
 <body>
+    <!-- Meta Pixel - Evento Purchase -->
+    <script>
+    (function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var value = parseFloat(urlParams.get('value') || urlParams.get('amount') || '2.99');
+        var currency = urlParams.get('currency') || 'EUR';
+        var transactionId = urlParams.get('orderId') || urlParams.get('ref') || '';
+        fbq('track', 'Purchase', {
+            value: value,
+            currency: currency,
+            content_ids: [transactionId || 'cv-report'],
+            content_type: 'product'
+        });
+    })();
+    </script>
+    <!-- End Meta Pixel - Evento Purchase -->
     <!-- Google tag (gtag.js) - Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
     <!-- Google tag (gtag.js) - Ads -->
