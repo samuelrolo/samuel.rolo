@@ -409,10 +409,12 @@
                 supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,analysis_type,payment_status,payment_amount,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc'),
                 supaFetch('vouchers', 'select=*&order=created_at.desc')
             ]);
-            allAnalyses = analyses || [];
-            allVouchers = vouchers || [];
+            allAnalyses = Array.isArray(analyses) ? analyses : [];
+            allVouchers = Array.isArray(vouchers) ? vouchers : [];
         } catch (e) {
             console.error('Erro ao carregar dados:', e);
+            allAnalyses = [];
+            allVouchers = [];
             showToast('Erro ao carregar dados do Supabase', 'danger');
         }
     }
@@ -931,7 +933,13 @@
 
     // ===================== HISTORY TAB =====================
     async function loadEmailHistory() {
-        allEmailHistory = await supaFetch('email_history', 'order=sent_at.desc');
+        try {
+            const history = await supaFetch('email_history', 'order=sent_at.desc');
+            allEmailHistory = Array.isArray(history) ? history : [];
+        } catch (e) {
+            console.error('Erro ao carregar histórico:', e);
+            allEmailHistory = [];
+        }
     }
     
     function filterHistory() {
@@ -956,7 +964,7 @@
         const tbody = document.getElementById('historyTable');
         const count = document.getElementById('historyCount');
         
-        if (data.length === 0) {
+        if (!Array.isArray(data) || data.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Nenhum email enviado ainda</td></tr>';
             count.textContent = '0 emails';
             return;
