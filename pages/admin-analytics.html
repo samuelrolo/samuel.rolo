@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
-
 <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
@@ -12,810 +11,879 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics - CV Analyzer | Share2Inspire</title>
+    <title>Admin Analytics - CV Analyser | Share2Inspire</title>
     <meta name="robots" content="noindex, nofollow">
-
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../css/coach-agent.css">
+    <link rel="stylesheet" href="../css/side-widgets.css">
     <style>
         :root {
             --s2i-gold: #BF9A33;
             --s2i-gold-light: #D4B35A;
             --s2i-black: #1A1A1A;
             --s2i-gray: #6c757d;
+            --s2i-green: #28a745;
+            --s2i-red: #dc3545;
+            --s2i-blue: #3498db;
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-            color: var(--s2i-black);
-        }
-
-        .navbar {
-            background-color: var(--s2i-black) !important;
-        }
-
-        .navbar-brand {
-            color: var(--s2i-gold) !important;
-            font-weight: bold;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .stat-card .icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .stat-card .icon.gold {
-            background: var(--s2i-gold);
-            color: white;
-        }
-
-        .stat-card .icon.dark {
-            background: var(--s2i-black);
-            color: white;
-        }
-
-        .stat-card .icon.light {
-            background: var(--s2i-gray-light);
-            color: var(--s2i-black);
-        }
-
-        .stat-card .icon.outline {
-            background: white;
-            border: 2px solid var(--s2i-gold);
-            color: var(--s2i-gold);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--s2i-black);
-        }
-
-        .stat-label {
-            color: var(--s2i-gray);
-            font-size: 0.9rem;
-        }
-
-        .chart-container {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-        }
-
-        .chart-title {
-            font-weight: 600;
-            color: var(--s2i-black);
-            margin-bottom: 1rem;
-        }
-
-        .table-container {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-        }
-
-        .badge-paid {
-            background-color: var(--s2i-gold);
-        }
-
-        .badge-pending {
-            background-color: var(--s2i-gold);
-        }
-
-        .refresh-btn {
-            background-color: var(--s2i-gold);
-            border-color: var(--s2i-gold);
-            color: white;
-        }
-
-        .refresh-btn:hover {
-            background-color: var(--s2i-gold-light);
-            border-color: var(--s2i-gold-light);
-            color: white;
-        }
-
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 200px;
-        }
-
-        .spinner-gold {
-            color: var(--s2i-gold);
-        }
-
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f5f7; color: var(--s2i-black); }
+        .navbar { background: var(--s2i-black) !important; }
+        .navbar-brand { color: var(--s2i-gold) !important; font-weight: bold; }
+        .stat-card { background: white; border-radius: 12px; padding: 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,.06); transition: transform .2s; }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-value { font-size: 1.75rem; font-weight: 700; }
+        .stat-label { color: var(--s2i-gray); font-size: .85rem; }
+        .card-section { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.06); margin-bottom: 1.5rem; }
+        .section-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 1rem; }
+        .badge-paid { background: var(--s2i-green); }
+        .badge-free { background: var(--s2i-gray); }
+        .badge-voucher { background: var(--s2i-gold); }
+        .badge-career { background: var(--s2i-blue); }
+        .btn-gold { background: var(--s2i-gold); border-color: var(--s2i-gold); color: white; }
+        .btn-gold:hover { background: var(--s2i-gold-light); border-color: var(--s2i-gold-light); color: white; }
+        .btn-nurture { font-size: .75rem; padding: 2px 8px; }
+        .filter-bar { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin-bottom: 1rem; }
+        .filter-bar select, .filter-bar input { font-size: .85rem; }
+        .table th { font-size: .8rem; text-transform: uppercase; color: var(--s2i-gray); font-weight: 600; border-bottom: 2px solid #dee2e6; }
+        .table td { font-size: .85rem; vertical-align: middle; }
+        .spinner-gold { color: var(--s2i-gold); }
+        .tab-btn { cursor: pointer; padding: .5rem 1rem; border: none; background: none; font-weight: 500; color: var(--s2i-gray); border-bottom: 2px solid transparent; }
+        .tab-btn.active { color: var(--s2i-gold); border-bottom-color: var(--s2i-gold); }
+        .toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 9999; }
+        .email-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); z-index: 9998; display: flex; align-items: center; justify-content: center; }
+        .email-modal { background: white; border-radius: 12px; padding: 2rem; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .voucher-row.used { opacity: .6; }
         @media (max-width: 768px) {
-            .stat-value {
-                font-size: 1.5rem;
-            }
+            .stat-value { font-size: 1.3rem; }
+            .filter-bar { flex-direction: column; }
         }
     </style>
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035"
-        crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../css/coach-agent.css">
-    <link rel="stylesheet" href="../css/side-widgets.css">
 </head>
-
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-dark">
-        <div class="container">
+        <div class="container-fluid px-4">
             <a class="navbar-brand" href="../index.html">
-                <i class="fas fa-chart-line me-2"></i>Share2Inspire Analytics
+                <i class="fas fa-chart-line me-2"></i>Share2Inspire Admin
             </a>
-            <button class="btn refresh-btn" onclick="refreshData()">
-                <i class="fas fa-sync-alt me-2"></i>Atualizar
-            </button>
+            <div>
+                <span class="text-muted me-3" id="lastUpdate" style="font-size:.8rem;">--</span>
+                <button class="btn btn-sm btn-gold" onclick="refreshAll()">
+                    <i class="fas fa-sync-alt me-1"></i>Atualizar
+                </button>
+            </div>
         </div>
     </nav>
 
-    <div class="container py-4">
-        <!-- Header -->
-        <div class="row mb-4">
-            <div class="col">
-                <h1 class="h3 mb-1">Dashboard de Analytics</h1>
-                <p class="text-muted mb-0">CV Analyzer - Estatísticas em Tempo Real</p>
-            </div>
-            <div class="col-auto">
-                <span class="text-muted" id="lastUpdate">Última atualização: --</span>
-            </div>
+    <div class="container-fluid px-4 py-3">
+        <!-- Tabs -->
+        <div class="mb-3" style="border-bottom: 1px solid #dee2e6;">
+            <button class="tab-btn active" onclick="switchTab('dashboard',this)">Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('analyses',this)">Análises</button>
+            <button class="tab-btn" onclick="switchTab('vouchers',this)">Vouchers</button>
+            <button class="tab-btn" onclick="switchTab('nurturing',this)">Follow-up</button>
         </div>
 
-        <!-- Stats Cards -->
-        <div class="row g-4 mb-4">
-            <div class="col-md-3 col-6">
-                <div class="stat-card">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="icon gold">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="totalAnalyses">--</div>
-                    <div class="stat-label">Total de Análises</div>
-                </div>
+        <!-- TAB: Dashboard -->
+        <div id="tab-dashboard">
+            <!-- KPI Cards -->
+            <div class="row g-3 mb-3">
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiTotal">--</div><div class="stat-label">Total Análises</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-green)" id="kpiPaid">--</div><div class="stat-label">Análises Pagas</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-gray)" id="kpiFree">--</div><div class="stat-label">Análises Gratuitas</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-gold)" id="kpiRevenue">--</div><div class="stat-label">Receita Total</div></div></div>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="stat-card">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="icon dark">
-                            <i class="fas fa-euro-sign"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="totalRevenue">--</div>
-                    <div class="stat-label">Receita Total</div>
-                </div>
+            <div class="row g-3 mb-3">
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpi24h">--</div><div class="stat-label">Últimas 24h</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpi7d">--</div><div class="stat-label">Últimos 7 Dias</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiAvgScore">--</div><div class="stat-label">Score Médio</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-blue)" id="kpiCareerPaths">--</div><div class="stat-label">Career Paths</div></div></div>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="stat-card">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="icon light">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="last24h">--</div>
-                    <div class="stat-label">Últimas 24h</div>
-                </div>
+            <div class="row g-3 mb-3">
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiUniqueUsers">--</div><div class="stat-label">Utilizadores Únicos</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-green)" id="kpiConvRate">--</div><div class="stat-label">Taxa Conversão</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiVouchersActive">--</div><div class="stat-label">Vouchers Activos</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiVouchersUsed">--</div><div class="stat-label">Vouchers Usados</div></div></div>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="stat-card">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="icon outline">
-                            <i class="fas fa-star"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="avgScore">--</div>
-                    <div class="stat-label">Score Médio</div>
+            <!-- Charts -->
+            <div class="row g-3">
+                <div class="col-lg-8">
+                    <div class="card-section"><div class="section-title"><i class="fas fa-chart-bar me-2 text-muted"></i>Análises por Dia</div><canvas id="dailyChart" height="100"></canvas></div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-section"><div class="section-title"><i class="fas fa-chart-pie me-2 text-muted"></i>Tipo de Análise</div><canvas id="typeChart"></canvas></div>
                 </div>
             </div>
         </div>
 
-        <!-- Secondary Stats -->
-        <div class="row g-4 mb-4">
-            <div class="col-md-4">
-                <div class="stat-card text-center">
-                    <div class="stat-value" style="color: var(--s2i-gold);" id="paidAnalyses">--</div>
-                    <div class="stat-label">Análises Pagas</div>
+        <!-- TAB: Analyses -->
+        <div id="tab-analyses" style="display:none;">
+            <div class="card-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="section-title mb-0"><i class="fas fa-list me-2 text-muted"></i>Todas as Análises</div>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="exportAnalysesCSV()"><i class="fas fa-download me-1"></i>Exportar CSV</button>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-card text-center">
-                    <div class="stat-value" style="color: var(--s2i-gray);" id="freeAnalyses">--</div>
-                    <div class="stat-label">Análises Gratuitas</div>
+                <div class="filter-bar">
+                    <select class="form-select form-select-sm" style="width:auto;" id="filterType" onchange="filterAnalyses()">
+                        <option value="all">Todos os Tipos</option>
+                        <option value="free">Gratuito</option>
+                        <option value="paid">Pago (MB WAY/PayPal)</option>
+                        <option value="voucher">Voucher</option>
+                    </select>
+                    <input type="text" class="form-control form-control-sm" style="width:200px;" placeholder="Pesquisar email..." id="filterEmail" oninput="filterAnalyses()">
+                    <input type="date" class="form-control form-control-sm" style="width:auto;" id="filterDateFrom" onchange="filterAnalyses()">
+                    <span class="text-muted">até</span>
+                    <input type="date" class="form-control form-control-sm" style="width:auto;" id="filterDateTo" onchange="filterAnalyses()">
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-card text-center">
-                    <div class="stat-value" style="color: var(--s2i-black);" id="last7days">--</div>
-                    <div class="stat-label">Últimos 7 Dias</div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead><tr>
+                            <th>Data</th><th>Nome</th><th>Email</th><th>Score</th><th>Tipo</th><th>Career Path</th><th>Acções</th>
+                        </tr></thead>
+                        <tbody id="analysesTable"><tr><td colspan="7" class="text-center py-4"><div class="spinner-border spinner-gold"></div></td></tr></tbody>
+                    </table>
                 </div>
-            </div>
-        </div>
-
-        <!-- Charts Row -->
-        <div class="row g-4 mb-4">
-            <div class="col-lg-8">
-                <div class="chart-container">
-                    <h5 class="chart-title">
-                        <i class="fas fa-chart-bar me-2 text-muted"></i>Análises por Dia
-                    </h5>
-                    <canvas id="dailyChart" height="100"></canvas>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="chart-container">
-                    <h5 class="chart-title">
-                        <i class="fas fa-chart-pie me-2 text-muted"></i>Por Área Profissional
-                    </h5>
-                    <canvas id="areaChart"></canvas>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted" id="analysesCount">--</small>
+                    <nav><ul class="pagination pagination-sm mb-0" id="analysesPagination"></ul></nav>
                 </div>
             </div>
         </div>
 
-        <!-- Recent Analyses Table -->
-        <div class="row">
-            <div class="col-12">
-                <div class="table-container">
-                    <h5 class="chart-title">
-                        <i class="fas fa-history me-2 text-muted"></i>Análises Recentes
-                    </h5>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Data/Hora</th>
-                                    <th>Utilizador</th>
-                                    <th>Email</th>
-                                    <th>Área</th>
-                                    <th>Score</th>
-                                    <th>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recentTable">
-                                <tr>
-                                    <td colspan="6" class="text-center text-muted">
-                                        <div class="loading">
-                                            <div class="spinner-border spinner-gold" role="status">
-                                                <span class="visually-hidden">A carregar...</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        <!-- TAB: Vouchers -->
+        <div id="tab-vouchers" style="display:none;">
+            <div class="card-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="section-title mb-0"><i class="fas fa-ticket-alt me-2 text-muted"></i>Gestão de Vouchers</div>
+                    <button class="btn btn-sm btn-gold" onclick="showCreateVoucherModal()"><i class="fas fa-plus me-1"></i>Criar Vouchers</button>
+                </div>
+                <div class="filter-bar">
+                    <select class="form-select form-select-sm" style="width:auto;" id="filterVoucherStatus" onchange="filterVouchers()">
+                        <option value="all">Todos</option>
+                        <option value="active">Activos</option>
+                        <option value="used">Usados</option>
+                    </select>
+                    <input type="text" class="form-control form-control-sm" style="width:200px;" placeholder="Pesquisar email..." id="filterVoucherEmail" oninput="filterVouchers()">
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead><tr>
+                            <th>Código</th><th>Email</th><th>Plano</th><th>Valor</th><th>Estado</th><th>Criado</th><th>Acções</th>
+                        </tr></thead>
+                        <tbody id="vouchersTable"><tr><td colspan="7" class="text-center py-4"><div class="spinner-border spinner-gold"></div></td></tr></tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <!-- Newsletter Subscribers Section -->
-        <div class="row mt-5">
-            <div class="col-12">
-                <div class="table-container">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="chart-title mb-0">
-                            <i class="fas fa-envelope me-2 text-muted"></i>Subscritores da Newsletter
-                        </h5>
-                        <div class="btn-group">
-                            <button class="btn btn-sm refresh-btn" onclick="loadNewsletterStats()">
-                                <i class="fas fa-sync-alt me-1"></i>Atualizar
-                            </button>
-                            <button class="btn btn-sm btn-success" onclick="exportSubscribers()">
-                                <i class="fas fa-download me-1"></i>Exportar CSV
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Newsletter Stats Cards -->
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-3 col-6">
-                            <div class="stat-card text-center">
-                                <div class="stat-value" style="color: var(--s2i-gold);" id="totalSubscribers">--</div>
-                                <div class="stat-label">Total Subscritores</div>
+        <!-- TAB: Nurturing -->
+        <div id="tab-nurturing" style="display:none;">
+            <div class="card-section">
+                <div class="section-title"><i class="fas fa-paper-plane me-2 text-muted"></i>Follow-up & Nurturing</div>
+                <p class="text-muted mb-3">Envia emails personalizados para segmentos específicos de utilizadores via Brevo.</p>
+                
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="stat-card border" style="cursor:pointer;" onclick="prepareNurturing('upsell')">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-arrow-up text-success me-2"></i>
+                                <strong>Upsell</strong>
                             </div>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <div class="stat-card text-center">
-                                <div class="stat-value" style="color: #28a745;" id="activeSubscribers">--</div>
-                                <div class="stat-label">Ativos</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <div class="stat-card text-center">
-                                <div class="stat-value" style="color: var(--s2i-gray);" id="unsubscribedCount">--</div>
-                                <div class="stat-label">Cancelados</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <div class="stat-card text-center">
-                                <div class="stat-value" style="color: var(--s2i-black);" id="last30daysSubscribers">--</div>
-                                <div class="stat-label">Últimos 30 Dias</div>
-                            </div>
+                            <p class="text-muted mb-1" style="font-size:.8rem;">Utilizadores com análise gratuita que ainda não compraram relatório pago.</p>
+                            <span class="badge bg-success" id="upsellCount">--</span>
                         </div>
                     </div>
-                    
-                    <!-- Filter Tabs -->
-                    <ul class="nav nav-tabs mb-3" id="subscriberTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" 
-                                type="button" role="tab" onclick="filterSubscribers('active')">
-                                Ativos
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" 
-                                type="button" role="tab" onclick="filterSubscribers('all')">
-                                Todos
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="unsubscribed-tab" data-bs-toggle="tab" data-bs-target="#unsubscribed" 
-                                type="button" role="tab" onclick="filterSubscribers('unsubscribed')">
-                                Cancelados
-                            </button>
-                        </li>
-                    </ul>
-                    
-                    <!-- Subscribers Table -->
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Email</th>
-                                    <th>Data de Subscrição</th>
-                                    <th>Origem</th>
-                                    <th>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody id="subscribersTable">
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted">
-                                        <div class="loading">
-                                            <div class="spinner-border spinner-gold" role="status">
-                                                <span class="visually-hidden">A carregar...</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="col-md-4">
+                        <div class="stat-card border" style="cursor:pointer;" onclick="prepareNurturing('feedback')">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-star text-warning me-2"></i>
+                                <strong>Feedback</strong>
+                            </div>
+                            <p class="text-muted mb-1" style="font-size:.8rem;">Utilizadores pagos que ainda não deram rating/feedback.</p>
+                            <span class="badge" style="background:var(--s2i-gold)" id="feedbackCount">--</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card border" style="cursor:pointer;" onclick="prepareNurturing('careerpath')">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-road text-primary me-2"></i>
+                                <strong>Career Path Upsell</strong>
+                            </div>
+                            <p class="text-muted mb-1" style="font-size:.8rem;">Utilizadores pagos que ainda não compraram o Career Path.</p>
+                            <span class="badge bg-primary" id="careerpathCount">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Composer -->
+                <div id="emailComposer" style="display:none;">
+                    <div class="card-section border">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0" id="composerTitle">Compor Email</h6>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="closeComposer()"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label" style="font-size:.85rem;font-weight:600;">Destinatários (<span id="recipientCount">0</span>)</label>
+                            <div id="recipientList" class="border rounded p-2" style="max-height:100px;overflow-y:auto;font-size:.8rem;background:#f8f9fa;">--</div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label" style="font-size:.85rem;font-weight:600;">Assunto</label>
+                            <input type="text" class="form-control form-control-sm" id="emailSubject">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label" style="font-size:.85rem;font-weight:600;">Mensagem (HTML)</label>
+                            <textarea class="form-control" id="emailBody" rows="10" style="font-size:.85rem;font-family:monospace;"></textarea>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-gold" onclick="sendNurturingEmails()"><i class="fas fa-paper-plane me-1"></i>Enviar via Brevo</button>
+                            <button class="btn btn-outline-secondary" onclick="previewEmail()"><i class="fas fa-eye me-1"></i>Pré-visualizar</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Email Modal (for single email send) -->
+    <div id="emailModalOverlay" class="email-modal-overlay" style="display:none;" onclick="if(event.target===this)closeEmailModal()">
+        <div class="email-modal">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Enviar Email</h5>
+                <button class="btn btn-sm btn-outline-secondary" onclick="closeEmailModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="mb-2">
+                <label class="form-label" style="font-size:.85rem;font-weight:600;">Para:</label>
+                <input type="text" class="form-control form-control-sm" id="modalEmailTo" readonly>
+            </div>
+            <div class="mb-2">
+                <label class="form-label" style="font-size:.85rem;font-weight:600;">Template:</label>
+                <select class="form-select form-select-sm" id="modalEmailTemplate" onchange="loadEmailTemplate()">
+                    <option value="upsell">Upsell - Análise Completa</option>
+                    <option value="feedback">Pedir Feedback</option>
+                    <option value="careerpath">Upsell - Career Path</option>
+                    <option value="custom">Personalizado</option>
+                </select>
+            </div>
+            <div class="mb-2">
+                <label class="form-label" style="font-size:.85rem;font-weight:600;">Assunto:</label>
+                <input type="text" class="form-control form-control-sm" id="modalEmailSubject">
+            </div>
+            <div class="mb-2">
+                <label class="form-label" style="font-size:.85rem;font-weight:600;">Mensagem:</label>
+                <textarea class="form-control" id="modalEmailBody" rows="8" style="font-size:.85rem;"></textarea>
+            </div>
+            <button class="btn btn-gold w-100" onclick="sendSingleEmail()"><i class="fas fa-paper-plane me-1"></i>Enviar</button>
+        </div>
+    </div>
+
+    <!-- Create Voucher Modal -->
+    <div id="voucherModalOverlay" class="email-modal-overlay" style="display:none;" onclick="if(event.target===this)closeVoucherModal()">
+        <div class="email-modal">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Criar Vouchers</h5>
+                <button class="btn btn-sm btn-outline-secondary" onclick="closeVoucherModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="mb-2">
+                <label class="form-label" style="font-size:.85rem;font-weight:600;">Email do destinatário:</label>
+                <input type="email" class="form-control form-control-sm" id="voucherEmail" placeholder="email@exemplo.com">
+            </div>
+            <div class="mb-2">
+                <label class="form-label" style="font-size:.85rem;font-weight:600;">Plano:</label>
+                <select class="form-select form-select-sm" id="voucherPlan">
+                    <option value="Essencial|1|2.99">Essencial (1 análise - 2,99€)</option>
+                    <option value="Profissional|6|6.99">Profissional (6 análises - 6,99€)</option>
+                    <option value="Teste|1|0">Teste (1 análise - grátis)</option>
+                </select>
+            </div>
+            <div class="mb-2">
+                <label class="form-label" style="font-size:.85rem;font-weight:600;">Método de pagamento:</label>
+                <select class="form-select form-select-sm" id="voucherPayment">
+                    <option value="mbway">MB WAY</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="manual">Manual</option>
+                    <option value="test">Teste</option>
+                </select>
+            </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="voucherSendEmail" checked>
+                <label class="form-check-label" for="voucherSendEmail" style="font-size:.85rem;">Enviar email com códigos via Brevo</label>
+            </div>
+            <button class="btn btn-gold w-100" onclick="createVouchers()"><i class="fas fa-plus me-1"></i>Criar e Enviar</button>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-        // Configuração da API
-        const API_BASE = 'https://share2inspire-beckend.lm.r.appspot.com';
+    // ===================== CONFIG =====================
+    const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc2NTQ2NzAsImV4cCI6MjA1MzIzMDY3MH0.6-Jq3bYxJxR3cNSMOchFbYkFjKHViZjBpfJJBR-jmKY';
+    const BREVO_KEY = localStorage.getItem('s2i_brevo_key') || '';
+    const BREVO_SENDER = { name: 'Share2Inspire', email: 'srshare2inspire@gmail.com' };
 
-        let dailyChart = null;
-        let areaChart = null;
+    function ensureBrevoKey() {
+        if (BREVO_KEY) return true;
+        const key = prompt('Insere a API Key do Brevo para enviar emails:');
+        if (key) { localStorage.setItem('s2i_brevo_key', key); location.reload(); return true; }
+        showToast('API Key do Brevo necessária para enviar emails', 'danger');
+        return false;
+    }
 
-        // Função para fazer chamadas ao Backend
-        async function apiFetch(endpoint) {
-            const response = await fetch(`${API_BASE}${endpoint}`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return response.json();
-        }
+    let allAnalyses = [];
+    let allVouchers = [];
+    let dailyChart = null;
+    let typeChart = null;
+    let currentPage = 1;
+    const PAGE_SIZE = 20;
 
-        // Carregar estatísticas resumidas
-        async function loadSummaryStats() {
-            try {
-                const response = await apiFetch('/api/analytics/summary');
+    // ===================== SUPABASE HELPERS =====================
+    async function supaFetch(table, query = '') {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        return res.json();
+    }
 
-                if (response.success && response.data) {
-                    const stats = response.data;
-                    document.getElementById('totalAnalyses').textContent = stats.total_analyses || 0;
-                    document.getElementById('paidAnalyses').textContent = stats.paid_analyses || 0;
-                    document.getElementById('freeAnalyses').textContent = stats.free_analyses || 0;
-                    document.getElementById('totalRevenue').textContent = `€${(stats.total_revenue || 0).toFixed(2)}`;
-                    document.getElementById('last24h').textContent = stats.last_24h || 0;
-                    document.getElementById('last7days').textContent = stats.last_7_days || 0;
-                    document.getElementById('avgScore').textContent = stats.avg_score ? `${stats.avg_score}/100` : 'N/A';
-                }
-            } catch (error) {
-                console.error('Erro ao carregar estatísticas:', error);
-            }
-        }
+    async function supaInsert(table, data) {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
+            },
+            body: JSON.stringify(data)
+        });
+        return res.json();
+    }
 
-        // Carregar dados diários para gráfico
-        async function loadDailyStats() {
-            try {
-                const response = await apiFetch('/api/analytics/daily');
-
-                if (response.success && response.data) {
-                    const data = response.data;
-                    const labels = data.map(d => {
-                        const date = new Date(d.analysis_date);
-                        return date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit' });
-                    }).reverse();
-
-                    const totals = data.map(d => d.total_count).reverse();
-                    const paid = data.map(d => d.paid_count).reverse();
-
-                    updateDailyChart(labels, totals, paid);
-                }
-            } catch (error) {
-                console.error('Erro ao carregar dados diários:', error);
-            }
-        }
-
-        // Carregar dados por área
-        async function loadAreaStats() {
-            try {
-                const response = await apiFetch('/api/analytics/areas');
-
-                if (response.success && response.data) {
-                    const data = response.data;
-                    const labels = data.slice(0, 6).map(d => d.professional_area);
-                    const values = data.slice(0, 6).map(d => d.total_count);
-
-                    updateAreaChart(labels, values);
-                }
-            } catch (error) {
-                console.error('Erro ao carregar dados por área:', error);
-            }
-        }
-
-        // Carregar análises recentes
-        async function loadRecentAnalyses() {
-            try {
-                const response = await apiFetch('/api/analytics/recent');
-
-                const tbody = document.getElementById('recentTable');
-
-                if (response.success && response.data) {
-                    const data = response.data;
-                    tbody.innerHTML = data.map(item => {
-                        const date = new Date(item.created_at);
-                        const dateStr = date.toLocaleDateString('pt-PT') + ' ' + date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
-                        const statusBadge = item.payment_status === 'paid'
-                            ? '<span class="badge badge-paid">Pago</span>'
-                            : '<span class="badge badge-pending">Gratuito</span>';
-
-                        return `
-                            <tr>
-                                <td>${dateStr}</td>
-                                <td>${item.user_name || 'Anónimo'}</td>
-                                <td>${item.user_email || '-'}</td>
-                                <td>${item.professional_area || '-'}</td>
-                                <td>${item.score || '-'}</td>
-                                <td>${statusBadge}</td>
-                            </tr>
-                        `;
-                    }).join('');
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Sem análises registadas</td></tr>';
-                }
-            } catch (error) {
-                console.error('Erro ao carregar análises recentes:', error);
-            }
-        }
-
-        // Atualizar gráfico diário
-        function updateDailyChart(labels, totals, paid) {
-            const ctx = document.getElementById('dailyChart').getContext('2d');
-
-            if (dailyChart) {
-                dailyChart.destroy();
-            }
-
-            dailyChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Total',
-                            data: totals,
-                            backgroundColor: 'rgba(191, 154, 51, 0.7)',
-                            borderColor: '#BF9A33',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Pagas',
-                            data: paid,
-                            backgroundColor: 'rgba(39, 174, 96, 0.7)',
-                            borderColor: '#27ae60',
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Atualizar gráfico de áreas
-        function updateAreaChart(labels, values) {
-            const ctx = document.getElementById('areaChart').getContext('2d');
-
-            if (areaChart) {
-                areaChart.destroy();
-            }
-
-            const colors = [
-                '#BF9A33', '#27ae60', '#3498db', '#e74c3c', '#9b59b6', '#f39c12'
-            ];
-
-            areaChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: values,
-                        backgroundColor: colors,
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                boxWidth: 12,
-                                padding: 10
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Atualizar todos os dados
-        async function refreshData() {
-            document.getElementById('lastUpdate').textContent = 'A atualizar...';
-
-            await Promise.all([
-                loadSummaryStats(),
-                loadDailyStats(),
-                loadAreaStats(),
-                loadRecentAnalyses()
+    // ===================== DATA LOADING =====================
+    async function loadAllData() {
+        try {
+            const [analyses, vouchers] = await Promise.all([
+                supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,analysis_type,payment_status,payment_amount,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc'),
+                supaFetch('vouchers', 'select=*&order=created_at.desc')
             ]);
-
-            const now = new Date();
-            document.getElementById('lastUpdate').textContent =
-                `Última atualização: ${now.toLocaleTimeString('pt-PT')}`;
+            allAnalyses = analyses || [];
+            allVouchers = vouchers || [];
+        } catch (e) {
+            console.error('Erro ao carregar dados:', e);
+            showToast('Erro ao carregar dados do Supabase', 'danger');
         }
+    }
 
-        // Carregar dados ao iniciar
-        document.addEventListener('DOMContentLoaded', () => {
-            refreshData();
+    // ===================== DETERMINE ANALYSIS TYPE =====================
+    function getAnalysisType(analysis) {
+        // Check if this email has used vouchers
+        const usedVoucher = allVouchers.find(v =>
+            v.email && analysis.user_email &&
+            v.email.toLowerCase() === analysis.user_email.toLowerCase() &&
+            v.used_analyses > 0
+        );
+        if (analysis.payment_status === 'paid' || analysis.payment_amount > 0) return 'paid';
+        if (usedVoucher) return 'voucher';
+        if (analysis.analysis_type === 'free_heuristic') return 'free';
+        return 'free';
+    }
 
-            // Auto-refresh a cada 60 segundos
-            setInterval(refreshData, 60000);
+    function getTypeBadge(type) {
+        switch(type) {
+            case 'paid': return '<span class="badge badge-paid">Pago</span>';
+            case 'voucher': return '<span class="badge badge-voucher">Voucher</span>';
+            default: return '<span class="badge badge-free">Gratuito</span>';
+        }
+    }
+
+    // ===================== DASHBOARD KPIs =====================
+    function updateDashboard() {
+        const total = allAnalyses.length;
+        const uniqueEmails = new Set(allAnalyses.map(a => a.user_email).filter(e => e && e !== 'anonymous@share2inspire.pt'));
+        const now = new Date();
+        const h24 = allAnalyses.filter(a => (now - new Date(a.created_at)) < 86400000).length;
+        const d7 = allAnalyses.filter(a => (now - new Date(a.created_at)) < 604800000).length;
+        const avgScore = total > 0 ? (allAnalyses.reduce((s,a) => s + (a.score||0), 0) / total).toFixed(1) : 'N/A';
+        const careerPaths = allAnalyses.filter(a => a.career_path_purchased).length;
+
+        // Revenue from vouchers (real money)
+        const voucherEmails = new Set(allVouchers.filter(v => v.amount_paid > 0).map(v => v.email.toLowerCase()));
+        const totalVoucherRevenue = allVouchers.reduce((s,v) => {
+            // Only count unique orders (group by email+created_at)
+            return s;
+        }, 0);
+        // Calculate revenue from unique voucher batches
+        const voucherBatches = {};
+        allVouchers.forEach(v => {
+            const key = v.email + '|' + v.created_at;
+            if (!voucherBatches[key]) voucherBatches[key] = { amount: parseFloat(v.amount_paid) || 0, count: 0 };
+            voucherBatches[key].count++;
+        });
+        const revenue = Object.values(voucherBatches).reduce((s,b) => s + b.amount, 0);
+
+        // Paid analyses = vouchers used + direct paid
+        const paidCount = allVouchers.filter(v => v.used_analyses > 0).length + allAnalyses.filter(a => a.payment_status === 'paid').length;
+        const freeCount = total - paidCount;
+        const convRate = uniqueEmails.size > 0 ? ((voucherEmails.size / uniqueEmails.size) * 100).toFixed(1) : '0';
+
+        const activeVouchers = allVouchers.filter(v => v.is_active && v.used_analyses === 0).length;
+        const usedVouchers = allVouchers.filter(v => v.used_analyses > 0).length;
+
+        document.getElementById('kpiTotal').textContent = total;
+        document.getElementById('kpiPaid').textContent = paidCount;
+        document.getElementById('kpiFree').textContent = freeCount;
+        document.getElementById('kpiRevenue').textContent = `€${revenue.toFixed(2)}`;
+        document.getElementById('kpi24h').textContent = h24;
+        document.getElementById('kpi7d').textContent = d7;
+        document.getElementById('kpiAvgScore').textContent = avgScore !== 'N/A' ? `${avgScore}/100` : 'N/A';
+        document.getElementById('kpiCareerPaths').textContent = careerPaths;
+        document.getElementById('kpiUniqueUsers').textContent = uniqueEmails.size;
+        document.getElementById('kpiConvRate').textContent = `${convRate}%`;
+        document.getElementById('kpiVouchersActive').textContent = activeVouchers;
+        document.getElementById('kpiVouchersUsed').textContent = usedVouchers;
+
+        // Nurturing counts
+        const freeEmails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'free').map(a => a.user_email).filter(e => e && e !== 'anonymous@share2inspire.pt'))];
+        document.getElementById('upsellCount').textContent = freeEmails.length;
+        document.getElementById('feedbackCount').textContent = allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.user_rating).length;
+        document.getElementById('careerpathCount').textContent = allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.career_path_purchased).length;
+
+        updateCharts();
+    }
+
+    // ===================== CHARTS =====================
+    function updateCharts() {
+        // Daily chart - last 14 days
+        const days = {};
+        const now = new Date();
+        for (let i = 13; i >= 0; i--) {
+            const d = new Date(now);
+            d.setDate(d.getDate() - i);
+            const key = d.toISOString().split('T')[0];
+            days[key] = { total: 0, paid: 0 };
+        }
+        allAnalyses.forEach(a => {
+            const key = new Date(a.created_at).toISOString().split('T')[0];
+            if (days[key]) {
+                days[key].total++;
+                if (getAnalysisType(a) !== 'free') days[key].paid++;
+            }
+        });
+        const labels = Object.keys(days).map(d => { const dt = new Date(d); return dt.toLocaleDateString('pt-PT', {day:'2-digit',month:'2-digit'}); });
+        const totals = Object.values(days).map(d => d.total);
+        const paid = Object.values(days).map(d => d.paid);
+
+        if (dailyChart) dailyChart.destroy();
+        dailyChart = new Chart(document.getElementById('dailyChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [
+                    { label: 'Total', data: totals, backgroundColor: 'rgba(191,154,51,.7)', borderColor: '#BF9A33', borderWidth: 1 },
+                    { label: 'Pagas', data: paid, backgroundColor: 'rgba(40,167,69,.7)', borderColor: '#28a745', borderWidth: 1 }
+                ]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
         });
 
-        // Newsletter Management Functions
-        let currentSubscriberFilter = 'active';
-        const ADMIN_API_KEY = 'share2inspire-admin-2026'; // TODO: Move to secure env
+        // Type chart
+        const types = { free: 0, paid: 0, voucher: 0 };
+        allAnalyses.forEach(a => { types[getAnalysisType(a)]++; });
+        if (typeChart) typeChart.destroy();
+        typeChart = new Chart(document.getElementById('typeChart').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Gratuito', 'Pago', 'Voucher'],
+                datasets: [{ data: [types.free, types.paid, types.voucher], backgroundColor: ['#6c757d', '#28a745', '#BF9A33'], borderWidth: 2, borderColor: '#fff' }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } } } }
+        });
+    }
 
-        // Load newsletter statistics
-        async function loadNewsletterStats() {
-            try {
-                const response = await fetch(`${API_BASE}/api/newsletter/stats`, {
-                    headers: {
-                        'Authorization': `Bearer ${ADMIN_API_KEY}`
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                document.getElementById('totalSubscribers').textContent = data.total_subscribers || 0;
-                document.getElementById('activeSubscribers').textContent = data.active_subscribers || 0;
-                document.getElementById('unsubscribedCount').textContent = data.unsubscribed || 0;
-                document.getElementById('last30daysSubscribers').textContent = data.subscribers_last_30_days || 0;
-                
-                // Load subscribers list
-                await loadSubscribers(currentSubscriberFilter);
-                
-            } catch (error) {
-                console.error('Erro ao carregar estatísticas da newsletter:', error);
-                showNewsletterError('Erro ao carregar estatísticas');
-            }
-        }
+    // ===================== ANALYSES TABLE =====================
+    function renderAnalyses() {
+        let filtered = [...allAnalyses];
+        const typeFilter = document.getElementById('filterType').value;
+        const emailFilter = document.getElementById('filterEmail').value.toLowerCase();
+        const dateFrom = document.getElementById('filterDateFrom').value;
+        const dateTo = document.getElementById('filterDateTo').value;
 
-        // Load subscribers list
-        async function loadSubscribers(status = 'active') {
-            try {
-                const response = await fetch(`${API_BASE}/api/newsletter/subscribers?status=${status}`, {
-                    headers: {
-                        'Authorization': `Bearer ${ADMIN_API_KEY}`
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                const subscribers = data.subscribers || [];
-                
-                const tableBody = document.getElementById('subscribersTable');
-                
-                if (subscribers.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="text-center text-muted py-4">
-                                <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
-                                Nenhum subscritor encontrado
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                tableBody.innerHTML = subscribers.map(sub => {
-                    const date = new Date(sub.subscribed_at);
-                    const formattedDate = date.toLocaleDateString('pt-PT', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                    
-                    const statusBadge = sub.status === 'active' 
-                        ? '<span class="badge bg-success">Ativo</span>'
-                        : '<span class="badge bg-secondary">Cancelado</span>';
-                    
-                    const sourceBadge = sub.source === 'people_hub'
-                        ? '<span class="badge bg-primary">People Hub</span>'
-                        : `<span class="badge bg-info">${sub.source}</span>`;
-                    
-                    return `
-                        <tr>
-                            <td>${sub.name || '<em class="text-muted">Sem nome</em>'}</td>
-                            <td>${sub.email}</td>
-                            <td>${formattedDate}</td>
-                            <td>${sourceBadge}</td>
-                            <td>${statusBadge}</td>
-                        </tr>
-                    `;
-                }).join('');
-                
-            } catch (error) {
-                console.error('Erro ao carregar subscritores:', error);
-                showNewsletterError('Erro ao carregar lista de subscritores');
-            }
-        }
+        if (typeFilter !== 'all') filtered = filtered.filter(a => getAnalysisType(a) === typeFilter);
+        if (emailFilter) filtered = filtered.filter(a => a.user_email && a.user_email.toLowerCase().includes(emailFilter));
+        if (dateFrom) filtered = filtered.filter(a => new Date(a.created_at) >= new Date(dateFrom));
+        if (dateTo) filtered = filtered.filter(a => new Date(a.created_at) <= new Date(dateTo + 'T23:59:59'));
 
-        // Filter subscribers by status
-        function filterSubscribers(status) {
-            currentSubscriberFilter = status;
-            loadSubscribers(status);
-        }
+        const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+        if (currentPage > totalPages) currentPage = 1;
+        const start = (currentPage - 1) * PAGE_SIZE;
+        const page = filtered.slice(start, start + PAGE_SIZE);
 
-        // Export subscribers to CSV
-        async function exportSubscribers() {
-            try {
-                const response = await fetch(`${API_BASE}/api/newsletter/subscribers?status=${currentSubscriberFilter}&format=csv`, {
-                    headers: {
-                        'Authorization': `Bearer ${ADMIN_API_KEY}`
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `newsletter_subscribers_${new Date().toISOString().split('T')[0]}.csv`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-                
-                // Show success message
-                showNewsletterSuccess('Ficheiro CSV exportado com sucesso!');
-                
-            } catch (error) {
-                console.error('Erro ao exportar subscritores:', error);
-                showNewsletterError('Erro ao exportar subscritores');
-            }
-        }
-
-        // Show error message
-        function showNewsletterError(message) {
-            const tableBody = document.getElementById('subscribersTable');
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="5" class="text-center text-danger py-4">
-                        <i class="fas fa-exclamation-triangle fa-2x mb-2 d-block"></i>
-                        ${message}
+        const tbody = document.getElementById('analysesTable');
+        if (page.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">Sem resultados</td></tr>';
+        } else {
+            tbody.innerHTML = page.map(a => {
+                const date = new Date(a.created_at);
+                const dateStr = date.toLocaleDateString('pt-PT') + ' ' + date.toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
+                const type = getAnalysisType(a);
+                const cpBadge = a.career_path_purchased ? '<span class="badge badge-career">Sim</span>' : '<span class="text-muted">-</span>';
+                return `<tr>
+                    <td>${dateStr}</td>
+                    <td>${a.user_name || '<em class="text-muted">Anónimo</em>'}</td>
+                    <td>${a.user_email || '-'}</td>
+                    <td><strong>${a.score || '-'}</strong></td>
+                    <td>${getTypeBadge(type)}</td>
+                    <td>${cpBadge}</td>
+                    <td>
+                        ${a.user_email && a.user_email !== 'anonymous@share2inspire.pt' ? `<button class="btn btn-sm btn-outline-secondary btn-nurture" onclick="openEmailModal('${a.user_email}','${a.user_name||''}')"><i class="fas fa-envelope"></i></button>` : ''}
                     </td>
-                </tr>
-            `;
+                </tr>`;
+            }).join('');
         }
 
-        // Show success message (toast)
-        function showNewsletterSuccess(message) {
-            // Create a simple toast notification
-            const toast = document.createElement('div');
-            toast.className = 'position-fixed top-0 end-0 p-3';
-            toast.style.zIndex = '9999';
-            toast.innerHTML = `
-                <div class="toast show" role="alert">
-                    <div class="toast-header bg-success text-white">
-                        <i class="fas fa-check-circle me-2"></i>
-                        <strong class="me-auto">Sucesso</strong>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-                    </div>
-                    <div class="toast-body">
-                        ${message}
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
-        }
+        document.getElementById('analysesCount').textContent = `${filtered.length} análises encontradas`;
 
-        // Initialize newsletter stats on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load newsletter stats after a short delay to let CV analytics load first
-            setTimeout(() => {
-                loadNewsletterStats();
-            }, 1000);
+        // Pagination
+        const pag = document.getElementById('analysesPagination');
+        if (totalPages <= 1) { pag.innerHTML = ''; return; }
+        let pagHtml = '';
+        for (let i = 1; i <= Math.min(totalPages, 10); i++) {
+            pagHtml += `<li class="page-item ${i===currentPage?'active':''}"><a class="page-link" href="#" onclick="currentPage=${i};renderAnalyses();return false;">${i}</a></li>`;
+        }
+        pag.innerHTML = pagHtml;
+    }
+
+    function filterAnalyses() { currentPage = 1; renderAnalyses(); }
+
+    function exportAnalysesCSV() {
+        const csv = ['Data,Nome,Email,Score,Tipo,Career Path'];
+        allAnalyses.forEach(a => {
+            csv.push(`"${new Date(a.created_at).toLocaleString('pt-PT')}","${a.user_name||''}","${a.user_email||''}",${a.score||''},${getAnalysisType(a)},${a.career_path_purchased?'Sim':'Não'}`);
         });
+        downloadCSV(csv.join('\n'), 'cv_analyses_export.csv');
+    }
+
+    // ===================== VOUCHERS TABLE =====================
+    function renderVouchers() {
+        let filtered = [...allVouchers];
+        const statusFilter = document.getElementById('filterVoucherStatus').value;
+        const emailFilter = document.getElementById('filterVoucherEmail').value.toLowerCase();
+
+        if (statusFilter === 'active') filtered = filtered.filter(v => v.is_active && v.used_analyses === 0);
+        if (statusFilter === 'used') filtered = filtered.filter(v => v.used_analyses > 0);
+        if (emailFilter) filtered = filtered.filter(v => v.email.toLowerCase().includes(emailFilter));
+
+        const tbody = document.getElementById('vouchersTable');
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">Sem vouchers</td></tr>';
+        } else {
+            tbody.innerHTML = filtered.map(v => {
+                const date = new Date(v.created_at).toLocaleDateString('pt-PT');
+                const status = v.used_analyses > 0 ? '<span class="badge bg-secondary">Usado</span>' : (v.is_active ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>');
+                const rowClass = v.used_analyses > 0 ? 'voucher-row used' : '';
+                return `<tr class="${rowClass}">
+                    <td><code>${v.code}</code></td>
+                    <td>${v.email}</td>
+                    <td>${v.plan_name}</td>
+                    <td>€${parseFloat(v.amount_paid).toFixed(2)}</td>
+                    <td>${status}</td>
+                    <td>${date}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary btn-nurture" onclick="openEmailModal('${v.email}','')"><i class="fas fa-envelope"></i></button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+    }
+
+    function filterVouchers() { renderVouchers(); }
+
+    // ===================== CREATE VOUCHERS =====================
+    function showCreateVoucherModal() { document.getElementById('voucherModalOverlay').style.display = 'flex'; }
+    function closeVoucherModal() { document.getElementById('voucherModalOverlay').style.display = 'none'; }
+
+    async function createVouchers() {
+        const email = document.getElementById('voucherEmail').value.trim();
+        if (!email) { showToast('Email obrigatório', 'danger'); return; }
+
+        const [planName, countStr, amountStr] = document.getElementById('voucherPlan').value.split('|');
+        const count = parseInt(countStr);
+        const amount = parseFloat(amountStr);
+        const payment = document.getElementById('voucherPayment').value;
+        const sendEmail = document.getElementById('voucherSendEmail').checked;
+
+        // Generate codes
+        const codes = [];
+        for (let i = 0; i < count; i++) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = 'CVA-';
+            for (let j = 0; j < 8; j++) code += chars[Math.floor(Math.random() * chars.length)];
+            codes.push(code);
+        }
+
+        // Insert into Supabase
+        const vouchers = codes.map(code => ({
+            code, email, plan_name: planName, total_analyses: 1, used_analyses: 0,
+            amount_paid: amount, payment_method: payment, is_active: true
+        }));
+
+        try {
+            await supaInsert('vouchers', vouchers);
+            showToast(`${count} voucher(s) criado(s) com sucesso!`, 'success');
+
+            if (sendEmail) {
+                await sendVoucherEmail(email, codes, planName, amount);
+            }
+
+            closeVoucherModal();
+            await loadAllData();
+            renderVouchers();
+            updateDashboard();
+        } catch (e) {
+            console.error('Erro ao criar vouchers:', e);
+            showToast('Erro ao criar vouchers', 'danger');
+        }
+    }
+
+    async function sendVoucherEmail(email, codes, planName, amount) {
+        const codesHtml = codes.map(c => `<div style="background:#f8f5ec;border:1px dashed #BF9A33;border-radius:8px;padding:12px;margin:8px 0;text-align:center;font-family:monospace;font-size:18px;font-weight:bold;color:#1A1A1A;letter-spacing:2px;">${c}</div>`).join('');
+
+        const html = `<div style="max-width:600px;margin:0 auto;font-family:'Segoe UI',Arial,sans-serif;background:#ffffff;">
+            <div style="background:#1A1A1A;padding:24px;text-align:center;">
+                <h1 style="color:#BF9A33;margin:0;font-size:24px;">Share2Inspire</h1>
+                <p style="color:#999;margin:4px 0 0;font-size:14px;">CV Analyser</p>
+            </div>
+            <div style="padding:32px 24px;">
+                <h2 style="color:#1A1A1A;margin:0 0 16px;">Os teus códigos de análise</h2>
+                <p style="color:#555;line-height:1.6;">Obrigado pela tua compra do pacote <strong>${planName}</strong>${amount > 0 ? ` (${amount.toFixed(2)}€)` : ''}! Aqui estão os teus ${codes.length} código(s) de análise:</p>
+                ${codesHtml}
+                <div style="background:#f0f7f0;border-radius:8px;padding:16px;margin:24px 0;">
+                    <h3 style="color:#28a745;margin:0 0 8px;font-size:16px;">Como usar:</h3>
+                    <ol style="color:#555;margin:0;padding-left:20px;line-height:1.8;">
+                        <li>Vai a <a href="https://www.share2inspire.pt/cv-analyser" style="color:#BF9A33;">share2inspire.pt/cv-analyser</a></li>
+                        <li>Faz upload do teu CV</li>
+                        <li>Após a análise gratuita, clica em "Código"</li>
+                        <li>Insere um dos códigos acima</li>
+                        <li>Desfruta do relatório completo!</li>
+                    </ol>
+                </div>
+                <p style="color:#555;line-height:1.6;">Cada código dá direito a <strong>1 análise completa</strong> com relatório PDF detalhado.</p>
+            </div>
+            <div style="background:#f8f9fa;padding:16px 24px;text-align:center;border-top:1px solid #eee;">
+                <p style="color:#999;font-size:12px;margin:0;">Share2Inspire &copy; 2026 | <a href="https://www.share2inspire.pt" style="color:#BF9A33;">share2inspire.pt</a></p>
+            </div>
+        </div>`;
+
+        await sendBrevoEmail(email, `Os teus códigos CV Analyser - Share2Inspire`, html);
+    }
+
+    // ===================== EMAIL FUNCTIONS =====================
+    function openEmailModal(email, name) {
+        document.getElementById('modalEmailTo').value = email;
+        loadEmailTemplate();
+        document.getElementById('emailModalOverlay').style.display = 'flex';
+    }
+    function closeEmailModal() { document.getElementById('emailModalOverlay').style.display = 'none'; }
+
+    function loadEmailTemplate() {
+        const template = document.getElementById('modalEmailTemplate').value;
+        const email = document.getElementById('modalEmailTo').value;
+        const templates = {
+            upsell: {
+                subject: 'O teu CV merece uma análise completa - Share2Inspire',
+                body: `Olá!\n\nVimos que analisaste o teu CV no Share2Inspire CV Analyser. Esperamos que os insights iniciais tenham sido úteis!\n\nSabias que a análise completa inclui:\n- Relatório PDF detalhado com 8+ dimensões\n- Estimativa salarial personalizada\n- Recomendações específicas para o teu perfil\n- Compatibilidade ATS detalhada\n\nPor apenas 2,99€, podes desbloquear todo o potencial da análise.\n\nExperimenta em: https://www.share2inspire.pt/cv-analyser\n\nAbraço,\nEquipa Share2Inspire`
+            },
+            feedback: {
+                subject: 'Como foi a tua experiência? - Share2Inspire CV Analyser',
+                body: `Olá!\n\nObrigado por teres utilizado o Share2Inspire CV Analyser!\n\nGostaríamos muito de saber a tua opinião sobre a análise. O teu feedback ajuda-nos a melhorar continuamente.\n\nPodes avaliar a tua experiência directamente na página de resultados (estrelas no final do relatório).\n\nSe tiveres sugestões ou comentários, responde a este email — lemos tudo!\n\nObrigado,\nEquipa Share2Inspire`
+            },
+            careerpath: {
+                subject: 'Descobre o teu Career Path personalizado - Share2Inspire',
+                body: `Olá!\n\nVimos que já tens a tua análise completa de CV. Parabéns pelo investimento no teu desenvolvimento profissional!\n\nSabias que podes ir mais longe com o Career Path?\n\n- Roadmap personalizado de carreira\n- Estimativa salarial detalhada com valores líquidos\n- Plano de acção a 30/60/90 dias\n- Análise de competências e gaps\n\nDesbloqueia por apenas 5€ na tua página de resultados.\n\nAbraço,\nEquipa Share2Inspire`
+            },
+            custom: { subject: '', body: '' }
+        };
+        const t = templates[template] || templates.custom;
+        document.getElementById('modalEmailSubject').value = t.subject;
+        document.getElementById('modalEmailBody').value = t.body;
+    }
+
+    async function sendSingleEmail() {
+        const to = document.getElementById('modalEmailTo').value;
+        const subject = document.getElementById('modalEmailSubject').value;
+        const body = document.getElementById('modalEmailBody').value;
+        if (!to || !subject || !body) { showToast('Preenche todos os campos', 'danger'); return; }
+
+        const html = body.replace(/\n/g, '<br>');
+        try {
+            await sendBrevoEmail(to, subject, `<div style="max-width:600px;margin:0 auto;font-family:'Segoe UI',Arial,sans-serif;padding:24px;"><div style="background:#1A1A1A;padding:16px;text-align:center;border-radius:8px 8px 0 0;"><h2 style="color:#BF9A33;margin:0;">Share2Inspire</h2></div><div style="padding:24px;background:white;border:1px solid #eee;border-radius:0 0 8px 8px;">${html}</div></div>`);
+            showToast(`Email enviado para ${to}!`, 'success');
+            closeEmailModal();
+        } catch (e) {
+            showToast('Erro ao enviar email', 'danger');
+        }
+    }
+
+    // ===================== NURTURING =====================
+    function prepareNurturing(type) {
+        let recipients = [];
+        let subject = '';
+        let body = '';
+
+        if (type === 'upsell') {
+            const freeEmails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'free' && a.user_email && a.user_email !== 'anonymous@share2inspire.pt').map(a => a.user_email))];
+            recipients = freeEmails;
+            subject = 'O teu CV merece uma análise completa - Share2Inspire';
+            body = `<div style="max-width:600px;margin:0 auto;font-family:'Segoe UI',Arial,sans-serif;">
+<div style="background:#1A1A1A;padding:24px;text-align:center;"><h1 style="color:#BF9A33;margin:0;">Share2Inspire</h1></div>
+<div style="padding:32px 24px;">
+<h2>O teu CV merece mais</h2>
+<p>Vimos que analisaste o teu CV no Share2Inspire CV Analyser. Esperamos que os insights iniciais tenham sido úteis!</p>
+<p>A análise completa inclui:</p>
+<ul><li>Relatório PDF detalhado com 8+ dimensões</li><li>Estimativa salarial personalizada</li><li>Recomendações específicas para o teu perfil</li><li>Compatibilidade ATS detalhada</li></ul>
+<p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/cv-analyser" style="background:#BF9A33;color:white;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:bold;">Analisar CV Agora</a></p>
+</div></div>`;
+        } else if (type === 'feedback') {
+            recipients = [...new Set(allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.user_rating && a.user_email).map(a => a.user_email))];
+            subject = 'Como foi a tua experiência? - Share2Inspire';
+            body = `<div style="max-width:600px;margin:0 auto;font-family:'Segoe UI',Arial,sans-serif;">
+<div style="background:#1A1A1A;padding:24px;text-align:center;"><h1 style="color:#BF9A33;margin:0;">Share2Inspire</h1></div>
+<div style="padding:32px 24px;">
+<h2>A tua opinião é importante</h2>
+<p>Obrigado por teres utilizado o Share2Inspire CV Analyser!</p>
+<p>Gostaríamos de saber como foi a tua experiência. O teu feedback ajuda-nos a melhorar.</p>
+<p>Podes avaliar directamente na página de resultados ou responder a este email.</p>
+</div></div>`;
+        } else if (type === 'careerpath') {
+            recipients = [...new Set(allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.career_path_purchased && a.user_email).map(a => a.user_email))];
+            subject = 'Descobre o teu Career Path - Share2Inspire';
+            body = `<div style="max-width:600px;margin:0 auto;font-family:'Segoe UI',Arial,sans-serif;">
+<div style="background:#1A1A1A;padding:24px;text-align:center;"><h1 style="color:#BF9A33;margin:0;">Share2Inspire</h1></div>
+<div style="padding:32px 24px;">
+<h2>Vai mais longe com o Career Path</h2>
+<p>Já tens a tua análise completa. Agora descobre o próximo passo!</p>
+<p>O Career Path inclui:</p>
+<ul><li>Roadmap personalizado de carreira</li><li>Estimativa salarial com valores líquidos</li><li>Plano de acção a 30/60/90 dias</li></ul>
+<p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/cv-analyser" style="background:#BF9A33;color:white;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:bold;">Desbloquear Career Path</a></p>
+</div></div>`;
+        }
+
+        document.getElementById('emailComposer').style.display = 'block';
+        document.getElementById('composerTitle').textContent = `Compor Email - ${type === 'upsell' ? 'Upsell' : type === 'feedback' ? 'Feedback' : 'Career Path'}`;
+        document.getElementById('recipientCount').textContent = recipients.length;
+        document.getElementById('recipientList').innerHTML = recipients.map(e => `<span class="badge bg-light text-dark me-1 mb-1">${e}</span>`).join('') || '<em class="text-muted">Sem destinatários</em>';
+        document.getElementById('emailSubject').value = subject;
+        document.getElementById('emailBody').value = body;
+
+        // Store recipients
+        window._nurturingRecipients = recipients;
+    }
+
+    function closeComposer() { document.getElementById('emailComposer').style.display = 'none'; }
+
+    function previewEmail() {
+        const html = document.getElementById('emailBody').value;
+        const win = window.open('', '_blank');
+        win.document.write(html);
+        win.document.close();
+    }
+
+    async function sendNurturingEmails() {
+        const recipients = window._nurturingRecipients || [];
+        if (recipients.length === 0) { showToast('Sem destinatários', 'danger'); return; }
+
+        const subject = document.getElementById('emailSubject').value;
+        const html = document.getElementById('emailBody').value;
+
+        if (!confirm(`Enviar email para ${recipients.length} destinatário(s)?`)) return;
+
+        let sent = 0;
+        let errors = 0;
+
+        for (const email of recipients) {
+            try {
+                await sendBrevoEmail(email, subject, html);
+                sent++;
+            } catch (e) {
+                errors++;
+                console.error(`Erro ao enviar para ${email}:`, e);
+            }
+            // Rate limit: max 1 per second
+            await new Promise(r => setTimeout(r, 1000));
+        }
+
+        showToast(`${sent} email(s) enviado(s), ${errors} erro(s)`, errors > 0 ? 'warning' : 'success');
+        closeComposer();
+    }
+
+    // ===================== BREVO API =====================
+    async function sendBrevoEmail(to, subject, htmlContent) {
+        if (!ensureBrevoKey()) throw new Error('No Brevo key');
+        const key = localStorage.getItem('s2i_brevo_key') || BREVO_KEY;
+        const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: { 'api-key': key, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                sender: BREVO_SENDER,
+                to: [{ email: to }],
+                subject: subject,
+                htmlContent: htmlContent
+            })
+        });
+        if (!res.ok) throw new Error(`Brevo error: ${res.status}`);
+        return res.json();
+    }
+
+    // ===================== UTILITIES =====================
+    function switchTab(tab, btn) {
+        document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-' + tab).style.display = 'block';
+        btn.classList.add('active');
+
+        if (tab === 'analyses') renderAnalyses();
+        if (tab === 'vouchers') renderVouchers();
+    }
+
+    function showToast(msg, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type} alert-dismissible fade show`;
+        toast.style.minWidth = '300px';
+        toast.innerHTML = `${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 5000);
+    }
+
+    function downloadCSV(content, filename) {
+        const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = filename;
+        document.body.appendChild(a); a.click();
+        URL.revokeObjectURL(url); a.remove();
+    }
+
+    // ===================== INIT =====================
+    async function refreshAll() {
+        document.getElementById('lastUpdate').textContent = 'A atualizar...';
+        await loadAllData();
+        updateDashboard();
+        renderAnalyses();
+        renderVouchers();
+        document.getElementById('lastUpdate').textContent = `Última atualização: ${new Date().toLocaleTimeString('pt-PT')}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        refreshAll();
+        setInterval(refreshAll, 120000); // Auto-refresh every 2 min
+    });
     </script>
     <script src="../js/coach-agent.js"></script>
 </body>
-
 </html>
