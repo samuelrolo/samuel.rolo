@@ -86,6 +86,7 @@
             <button class="tab-btn" onclick="switchTab('analyses',this)">Análises</button>
             <button class="tab-btn" onclick="switchTab('vouchers',this)">Vouchers</button>
             <button class="tab-btn" onclick="switchTab('nurturing',this)">Follow-up</button>
+            <button class="tab-btn" onclick="switchTab('history',this)">Histórico</button>
         </div>
 
         <!-- TAB: Dashboard -->
@@ -246,6 +247,42 @@
                 </div>
             </div>
         </div>
+
+        <!-- TAB: History -->
+        <div id="tab-history" style="display:none;">
+            <div class="card-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="section-title mb-0"><i class="fas fa-history me-2 text-muted"></i>Histórico de Emails</div>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="exportHistoryCSV()"><i class="fas fa-download me-1"></i>Exportar CSV</button>
+                </div>
+                <div class="filter-bar">
+                    <select class="form-select form-select-sm" style="width:auto;" id="filterHistoryCampaign" onchange="filterHistory()">
+                        <option value="all">Todas as Campanhas</option>
+                        <option value="upsell">Upsell</option>
+                        <option value="feedback">Feedback</option>
+                        <option value="careerpath">Career Path</option>
+                        <option value="voucher">Vouchers</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                    <input type="text" class="form-control form-control-sm" style="width:200px;" placeholder="Pesquisar email..." id="filterHistoryEmail" oninput="filterHistory()">
+                    <input type="date" class="form-control form-control-sm" style="width:auto;" id="filterHistoryDateFrom" onchange="filterHistory()">
+                    <span class="text-muted">até</span>
+                    <input type="date" class="form-control form-control-sm" style="width:auto;" id="filterHistoryDateTo" onchange="filterHistory()">
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead><tr>
+                            <th>Data</th><th>Destinatário</th><th>Assunto</th><th>Campanha</th><th>Estado</th>
+                        </tr></thead>
+                        <tbody id="historyTable"><tr><td colspan="5" class="text-center py-4"><div class="spinner-border spinner-gold"></div></td></tr></tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted" id="historyCount">--</small>
+                    <nav><ul class="pagination pagination-sm mb-0" id="historyPagination"></ul></nav>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Toast Container -->
@@ -337,6 +374,7 @@
 
     let allAnalyses = [];
     let allVouchers = [];
+    let allEmailHistory = [];
     let dailyChart = null;
     let typeChart = null;
     let currentPage = 1;
@@ -822,7 +860,7 @@
     }
 
     // ===================== BREVO API =====================
-    async function sendBrevoEmail(to, subject, htmlContent) {
+    async function sendBrevoEmail(to, subject, htmlContent, campaignType = 'custom') {
         if (!ensureBrevoKey()) throw new Error('No Brevo key');
         const key = localStorage.getItem('s2i_brevo_key') || BREVO_KEY;
         const res = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -835,8 +873,29 @@
                 htmlContent: htmlContent
             })
         });
+        
+        // Log to history
+        const status = res.ok ? 'sent' : 'error';
+        const errorMsg = res.ok ? null : `HTTP ${res.status}`;
+        await logEmailHistory(to, null, subject, campaignType, status, errorMsg);
+        
         if (!res.ok) throw new Error(`Brevo error: ${res.status}`);
         return res.json();
+    }
+    
+    async function logEmailHistory(email, name, subject, campaignType, status = 'sent', errorMsg = null) {
+        try {
+            await supaInsert('email_history', {
+                recipient_email: email,
+                recipient_name: name,
+                subject: subject,
+                campaign_type: campaignType,
+                status: status,
+                error_message: errorMsg
+            });
+        } catch (err) {
+            console.error('Failed to log email history:', err);
+        }
     }
 
     // ===================== UTILITIES =====================
@@ -848,6 +907,7 @@
 
         if (tab === 'analyses') renderAnalyses();
         if (tab === 'vouchers') renderVouchers();
+        if (tab === 'history') renderHistory();
     }
 
     function showToast(msg, type = 'info') {
@@ -869,13 +929,82 @@
         URL.revokeObjectURL(url); a.remove();
     }
 
+    // ===================== HISTORY TAB =====================
+    async function loadEmailHistory() {
+        allEmailHistory = await supaFetch('email_history', 'order=sent_at.desc');
+    }
+    
+    function filterHistory() {
+        const campaign = document.getElementById('filterHistoryCampaign').value;
+        const email = document.getElementById('filterHistoryEmail').value.toLowerCase();
+        const dateFrom = document.getElementById('filterHistoryDateFrom').value;
+        const dateTo = document.getElementById('filterHistoryDateTo').value;
+        
+        let filtered = allEmailHistory.filter(h => {
+            if (campaign !== 'all' && h.campaign_type !== campaign) return false;
+            if (email && !h.recipient_email.toLowerCase().includes(email)) return false;
+            if (dateFrom && new Date(h.sent_at) < new Date(dateFrom)) return false;
+            if (dateTo && new Date(h.sent_at) > new Date(dateTo + 'T23:59:59')) return false;
+            return true;
+        });
+        
+        renderHistory(filtered);
+    }
+    
+    function renderHistory(filtered = null) {
+        const data = filtered || allEmailHistory;
+        const tbody = document.getElementById('historyTable');
+        const count = document.getElementById('historyCount');
+        
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Nenhum email enviado ainda</td></tr>';
+            count.textContent = '0 emails';
+            return;
+        }
+        
+        tbody.innerHTML = data.map(h => {
+            const date = new Date(h.sent_at).toLocaleString('pt-PT');
+            const statusBadge = h.status === 'sent' 
+                ? '<span class="badge bg-success">Enviado</span>'
+                : `<span class="badge bg-danger" title="${h.error_message || ''}">Erro</span>`;
+            const campaignBadge = {
+                'upsell': '<span class="badge badge-paid">Upsell</span>',
+                'feedback': '<span class="badge badge-free">Feedback</span>',
+                'careerpath': '<span class="badge badge-career">Career Path</span>',
+                'voucher': '<span class="badge badge-voucher">Vouchers</span>',
+                'custom': '<span class="badge bg-secondary">Personalizado</span>'
+            }[h.campaign_type] || '<span class="badge bg-secondary">-</span>';
+            
+            return `<tr>
+                <td>${date}</td>
+                <td>${h.recipient_email}${h.recipient_name ? `<br><small class="text-muted">${h.recipient_name}</small>` : ''}</td>
+                <td>${h.subject}</td>
+                <td>${campaignBadge}</td>
+                <td>${statusBadge}</td>
+            </tr>`;
+        }).join('');
+        
+        count.textContent = `${data.length} email(s)`;
+    }
+    
+    function exportHistoryCSV() {
+        const headers = 'Data,Destinatário,Nome,Assunto,Campanha,Estado,Erro\n';
+        const rows = allEmailHistory.map(h => {
+            const date = new Date(h.sent_at).toLocaleString('pt-PT');
+            return `"${date}","${h.recipient_email}","${h.recipient_name || ''}","${h.subject}","${h.campaign_type}","${h.status}","${h.error_message || ''}"`;
+        }).join('\n');
+        downloadCSV(headers + rows, `email_history_${new Date().toISOString().split('T')[0]}.csv`);
+    }
+
     // ===================== INIT =====================
     async function refreshAll() {
         document.getElementById('lastUpdate').textContent = 'A atualizar...';
         await loadAllData();
+        await loadEmailHistory();
         updateDashboard();
         renderAnalyses();
         renderVouchers();
+        renderHistory();
         document.getElementById('lastUpdate').textContent = `Última atualização: ${new Date().toLocaleTimeString('pt-PT')}`;
     }
 
