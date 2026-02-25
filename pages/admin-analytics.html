@@ -196,6 +196,13 @@
                         <option value="active">Activos</option>
                         <option value="used">Usados</option>
                     </select>
+                    <select class="form-select form-select-sm" style="width:auto;" id="filterVoucherType" onchange="filterVouchers()">
+                        <option value="all">Todos os Tipos</option>
+                        <option value="standard">CV Analyser</option>
+                        <option value="career_path">Career Path</option>
+                        <option value="bundle">Bundle (CV + Career Path)</option>
+                        <option value="complete">Completo (legado)</option>
+                    </select>
                     <input type="text" class="form-control form-control-sm" style="width:200px;" placeholder="Pesquisar email..." id="filterVoucherEmail" oninput="filterVouchers()">
                 </div>
                 <div class="table-responsive">
@@ -441,11 +448,22 @@
             <div class="mb-2">
                 <label class="form-label" style="font-size:.85rem;font-weight:600;">Plano:</label>
                 <select class="form-select form-select-sm" id="voucherPlan">
-                    <option value="Essencial|1|2.99|standard|false">Essencial (1 análise - 2,99€)</option>
-                    <option value="Completo|1|6.99|complete|true">Completo (CV + Career Path - 6,99€)</option>
-                    <option value="Profissional|3|6.99|standard|false">Profissional (3 análises - 6,99€)</option>
-                    <option value="Premium|5|9.99|standard|false">Premium (5 análises - 9,99€)</option>
-                    <option value="Teste|1|0|standard|false">Teste (1 análise - grátis)</option>
+                    <optgroup label="CV Analyser">
+                        <option value="Essencial|1|2.99|standard|false">Essencial (1 análise - 2,99€)</option>
+                        <option value="Profissional|3|6.99|standard|false">Profissional (3 análises - 6,99€)</option>
+                        <option value="Premium|5|9.99|standard|false">Premium (5 análises - 9,99€)</option>
+                    </optgroup>
+                    <optgroup label="Career Path">
+                        <option value="Career Path|1|5.00|career_path|false">Career Path (1 análise - 5,00€)</option>
+                        <option value="Career Path Pro|3|12.00|career_path|false">Career Path Pro (3 análises - 12,00€)</option>
+                    </optgroup>
+                    <optgroup label="Bundle (CV + Career Path)">
+                        <option value="Bundle|1|6.99|bundle|true">Bundle Essencial (CV + Career Path - 6,99€)</option>
+                    </optgroup>
+                    <optgroup label="Outros">
+                        <option value="Teste|1|0|standard|false">Teste CV (1 análise - grátis)</option>
+                        <option value="Teste Career Path|1|0|career_path|false">Teste Career Path (grátis)</option>
+                    </optgroup>
                 </select>
             </div>
             <div class="mb-2">
@@ -721,10 +739,12 @@
     function renderVouchers() {
         let filtered = [...allVouchers];
         const statusFilter = document.getElementById('filterVoucherStatus').value;
+        const typeFilter = document.getElementById('filterVoucherType') ? document.getElementById('filterVoucherType').value : 'all';
         const emailFilter = document.getElementById('filterVoucherEmail').value.toLowerCase();
 
         if (statusFilter === 'active') filtered = filtered.filter(v => v.is_active && v.used_analyses === 0);
         if (statusFilter === 'used') filtered = filtered.filter(v => v.used_analyses > 0);
+        if (typeFilter !== 'all') filtered = filtered.filter(v => v.voucher_type === typeFilter);
         if (emailFilter) filtered = filtered.filter(v => v.email.toLowerCase().includes(emailFilter));
 
         const tbody = document.getElementById('vouchersTable');
@@ -735,7 +755,7 @@
                 const date = new Date(v.created_at).toLocaleDateString('pt-PT');
                 const status = v.used_analyses > 0 ? '<span class="badge bg-secondary">Usado</span>' : (v.is_active ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>');
                 const rowClass = v.used_analyses > 0 ? 'voucher-row used' : '';
-                const typeLabel = v.voucher_type === 'complete' ? '<span class="badge bg-warning text-dark">Completo</span>' : v.voucher_type === 'career_path' ? '<span class="badge bg-info">Career Path</span>' : '<span class="badge bg-primary">Standard</span>';
+                const typeLabel = v.voucher_type === 'bundle' ? '<span class="badge bg-warning text-dark">Bundle</span>' : v.voucher_type === 'complete' ? '<span class="badge bg-warning text-dark">Completo</span>' : v.voucher_type === 'career_path' ? '<span class="badge" style="background:#3498db;">Career Path</span>' : '<span class="badge bg-primary">CV Analyser</span>';
                 return `<tr class="${rowClass}">
                     <td><code>${v.code}</code></td>
                     <td>${v.email}</td>
@@ -905,23 +925,24 @@
     <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
   </div>
   <div style="padding:40px 36px;">
-    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;line-height:1.4;">Vai mais longe com o Career Path</h2>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;margin:0 0 24px;">J\u00e1 tens a tua an\u00e1lise completa. Agora descobre o pr\u00f3ximo passo na tua carreira.</p>
+    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;line-height:1.4;">Qual é o teu próximo passo de carreira?</h2>
+    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;margin:0 0 24px;">Já tens a tua análise completa de CV. Agora descobre o teu roadmap de carreira personalizado.</p>
     <div style="background:#faf9f7;border-radius:8px;padding:20px 24px;margin:0 0 28px;">
       <div style="color:#333;font-size:14px;line-height:2.2;">
-        \ud83d\udcca &nbsp; Roadmap personalizado de carreira<br>
-        \ud83d\udcb0 &nbsp; Estimativa salarial com valores l\u00edquidos<br>
-        \ud83d\udcc5 &nbsp; Plano de ac\u00e7\u00e3o a 30/60/90 dias<br>
-        \ud83c\udfaf &nbsp; An\u00e1lise de compet\u00eancias e gaps
+        📊 &nbsp; Próximos 3 cargos recomendados com roadmap<br>
+        🎓 &nbsp; Formações e certificações recomendadas<br>
+        📅 &nbsp; Plano de acção a 30/60/90 dias<br>
+        👥 &nbsp; Estratégia de networking e comunidades<br>
+        🔗 &nbsp; Cruzamento CV vs LinkedIn
       </div>
     </div>
     <div style="text-align:center;margin:32px 0;">
-      <a href="https://www.share2inspire.pt/cv-analyser" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;letter-spacing:.5px;">Desbloquear Career Path</a>
+      <a href="https://www.share2inspire.pt/career-path" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;letter-spacing:.5px;">Descobrir Career Path</a>
     </div>
-    <p style="color:#999;font-size:13px;line-height:1.6;text-align:center;margin:0;">Por apenas 5\u20ac, obt\u00e9m o teu roadmap personalizado.</p>
+    <p style="color:#999;font-size:13px;line-height:1.6;text-align:center;margin:0;">Por apenas 5€, obtém o teu roadmap personalizado. Bundle CV + Career Path por 6,99€ (poupas 1€).</p>
   </div>
   <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
-    <p style="color:#b0b0b0;font-size:11px;margin:0;letter-spacing:.3px;">Share2Inspire \u00a9 2026 &nbsp;\u00b7&nbsp; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
+    <p style="color:#b0b0b0;font-size:11px;margin:0;letter-spacing:.3px;">Share2Inspire © 2026 &nbsp;·&nbsp; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
   </div>
 </div>`
         };
@@ -941,8 +962,8 @@
                 body: `Ol\u00e1!\n\nObrigado por teres utilizado o CV Analyser!\n\nGostar\u00edamos de saber a tua opini\u00e3o. O teu feedback ajuda-nos a melhorar continuamente.\n\nPodes avaliar directamente na p\u00e1gina de resultados ou responder a este email.\n\nObrigado,\nEquipa Share2Inspire`
             },
             careerpath: {
-                subject: 'Descobre o teu Career Path - Share2Inspire',
-                body: `Ol\u00e1!\n\nJ\u00e1 tens a tua an\u00e1lise completa de CV. Parab\u00e9ns!\n\nO Career Path inclui:\n\u2022 Roadmap personalizado de carreira\n\u2022 Estimativa salarial com valores l\u00edquidos\n\u2022 Plano de ac\u00e7\u00e3o a 30/60/90 dias\n\u2022 An\u00e1lise de compet\u00eancias e gaps\n\nDesbloqueia por apenas 5\u20ac na tua p\u00e1gina de resultados.\n\nAbra\u00e7o,\nEquipa Share2Inspire`
+                subject: 'Qual é o teu próximo passo de carreira? - Share2Inspire',
+                body: `Olá!\n\nJá tens a tua análise completa de CV. Parabéns!\n\nO Career Path é o próximo passo. Inclui:\n• Próximos 3 cargos recomendados com roadmap\n• Formações e certificações recomendadas\n• Plano de acção a 30/60/90 dias\n• Estratégia de networking e comunidades\n• Cruzamento CV vs LinkedIn\n\nDisponível em: https://www.share2inspire.pt/career-path\n\nPor apenas 5€. Bundle CV + Career Path por 6,99€ (poupas 1€).\n\nAbraço,\nEquipa Share2Inspire`
             },
             custom: { subject: '', body: '' }
         };
