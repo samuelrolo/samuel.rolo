@@ -33,6 +33,14 @@
     {
       "source": "/cv-analyser/:path*",
       "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/career-path",
+      "destination": "/career-path/index.html"
+    },
+    {
+      "source": "/career-path/:path*",
+      "destination": "/career-path/index.html"
     }
   ]
 }
