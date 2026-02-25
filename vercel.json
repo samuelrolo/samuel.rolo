@@ -25,30 +25,17 @@
       "permanent": true
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/cv-analyser/assets/:file*",
-      "destination": "/cv-analyser/assets/:file*"
+      "src": "/cv-analyser/assets/(.*)",
+      "dest": "/cv-analyser/assets/$1"
     },
     {
-      "source": "/cv-analyser/results",
-      "destination": "/cv-analyser/index.html"
+      "src": "/cv-analyser/(.*)",
+      "dest": "/cv-analyser/index.html"
     },
     {
-      "source": "/cv-analyser/test",
-      "destination": "/cv-analyser/index.html"
-    },
-    {
-      "source": "/cv-analyser/404",
-      "destination": "/cv-analyser/index.html"
-    },
-    {
-      "source": "/cv-analyser/:path*",
-      "destination": "/cv-analyser/index.html"
-    },
-    {
-      "source": "/cv-analyser",
-      "destination": "/cv-analyser/index.html"
+      "handle": "filesystem"
     }
   ]
 }
