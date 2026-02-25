@@ -3,36 +3,36 @@
   "name": "share2inspire",
   "cleanUrls": true,
   "trailingSlash": false,
-  "routes": [
+  "redirects": [
     {
-      "src": "/pages/cv-analyser",
-      "status": 301,
-      "headers": { "Location": "/cv-analyser" }
+      "source": "/pages/cv-analyser",
+      "destination": "/cv-analyser",
+      "permanent": true
     },
     {
-      "src": "/pages/cv-analysis",
-      "status": 301,
-      "headers": { "Location": "/cv-analyser" }
+      "source": "/pages/cv-analysis",
+      "destination": "/cv-analyser",
+      "permanent": true
     },
     {
-      "src": "/cv-builder(.*)",
-      "status": 301,
-      "headers": { "Location": "https://cv-builder.share2inspire.pt$1" }
+      "source": "/cv-builder",
+      "destination": "https://cv-builder.share2inspire.pt",
+      "permanent": true
     },
     {
-      "src": "/cv-analyser/assets/(.*)",
-      "dest": "/cv-analyser/assets/$1"
+      "source": "/cv-builder/:path*",
+      "destination": "https://cv-builder.share2inspire.pt/:path*",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/cv-analyser",
+      "destination": "/cv-analyser/index.html"
     },
     {
-      "src": "/cv-analyser/(.*)",
-      "dest": "/cv-analyser/index.html"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/cv-analyser/:path*",
+      "destination": "/cv-analyser/:path*"
     }
   ]
 }
