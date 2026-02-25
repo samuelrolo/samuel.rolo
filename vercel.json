@@ -3,29 +3,22 @@
   "name": "share2inspire",
   "cleanUrls": true,
   "trailingSlash": false,
-  "redirects": [
-    {
-      "source": "/pages/cv-analyser",
-      "destination": "/cv-analyser",
-      "permanent": true
-    },
-    {
-      "source": "/pages/cv-analysis",
-      "destination": "/cv-analyser",
-      "permanent": true
-    },
-    {
-      "source": "/cv-builder",
-      "destination": "https://cv-builder.share2inspire.pt",
-      "permanent": true
-    },
-    {
-      "source": "/cv-builder/:path*",
-      "destination": "https://cv-builder.share2inspire.pt/:path*",
-      "permanent": true
-    }
-  ],
   "routes": [
+    {
+      "src": "/pages/cv-analyser",
+      "status": 301,
+      "headers": { "Location": "/cv-analyser" }
+    },
+    {
+      "src": "/pages/cv-analysis",
+      "status": 301,
+      "headers": { "Location": "/cv-analyser" }
+    },
+    {
+      "src": "/cv-builder(.*)",
+      "status": 301,
+      "headers": { "Location": "https://cv-builder.share2inspire.pt$1" }
+    },
     {
       "src": "/cv-analyser/assets/(.*)",
       "dest": "/cv-analyser/assets/$1"
@@ -36,6 +29,10 @@
     },
     {
       "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
     }
   ]
 }
