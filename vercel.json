@@ -32,7 +32,7 @@
     },
     {
       "source": "/cv-analyser/:path*",
-      "destination": "/cv-analyser/:path*"
+      "destination": "/cv-analyser/index.html"
     }
   ]
 }
