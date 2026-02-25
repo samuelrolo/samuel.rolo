@@ -2517,85 +2517,91 @@
         </div>
     </div>
     <!-- Contact Modal -->
-    <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true" style="--bs-modal-bg: rgba(0,0,0,0.7);">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
-            <div class="modal-content"
-                style="border: none; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15);">
-                <div class="modal-header" style="border-bottom: 1px solid #e0e0e0; padding: 1.5rem 2rem 1rem 2rem;">
-                    <h5 class="modal-title" style="font-weight: 500; font-size: 1.25rem; color: #1A1A1A;">Entre em
-                        contacto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                        style="opacity: 0.5;"></button>
+    <style>
+        #contactModal .modal-content { border: none; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.12); overflow: hidden; }
+        #contactModal .cm-header { padding: 2rem 2.5rem 0.5rem; text-align: center; }
+        #contactModal .cm-header h5 { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 300; font-size: 1.5rem; letter-spacing: 0.08em; color: #1A1A1A; margin: 0; }
+        #contactModal .cm-header .cm-line { width: 40px; height: 2px; background: #C9A961; margin: 0.75rem auto 0; }
+        #contactModal .cm-body { padding: 1.5rem 2.5rem 2rem; }
+        #contactModal .cm-field { margin-bottom: 1.25rem; }
+        #contactModal .cm-label { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #999; display: block; margin-bottom: 0.4rem; }
+        #contactModal .cm-input,
+        #contactModal .cm-select,
+        #contactModal .cm-textarea { width: 100%; padding: 0.7rem 0.9rem; border: 1px solid #e8e8e8; border-radius: 8px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 0.9rem; color: #333; background: #fafafa; transition: border-color 0.25s, background 0.25s; outline: none; }
+        #contactModal .cm-input:focus,
+        #contactModal .cm-select:focus,
+        #contactModal .cm-textarea:focus { border-color: #C9A961; background: #fff; }
+        #contactModal .cm-textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+        #contactModal .cm-row { display: flex; gap: 1rem; }
+        #contactModal .cm-row .cm-field { flex: 1; }
+        #contactModal .cm-privacy { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 1.5rem; }
+        #contactModal .cm-privacy input[type="checkbox"] { margin-top: 2px; accent-color: #C9A961; }
+        #contactModal .cm-privacy label { font-size: 0.8rem; color: #888; line-height: 1.4; cursor: pointer; }
+        #contactModal .cm-privacy a { color: #C9A961; text-decoration: none; }
+        #contactModal .cm-privacy a:hover { text-decoration: underline; }
+        #contactModal .cm-submit { width: 100%; padding: 0.85rem; background: #1A1A1A; color: #fff; border: none; border-radius: 8px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: background 0.25s; }
+        #contactModal .cm-submit:hover { background: #333; }
+        #contactModal .cm-submit:disabled { background: #999; cursor: not-allowed; }
+        #contactModal .cm-alert { font-size: 0.8rem; padding: 0.7rem 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        #contactModal .cm-alert-success { background: #f0faf0; color: #2d7a2d; border: 1px solid #c8e6c8; }
+        #contactModal .cm-alert-error { background: #fdf0f0; color: #c0392b; border: 1px solid #f0c8c8; }
+        #contactModal .btn-close { position: absolute; top: 1.25rem; right: 1.25rem; opacity: 0.4; z-index: 1; }
+        #contactModal .btn-close:hover { opacity: 0.8; }
+        @media (max-width: 576px) {
+            #contactModal .cm-body { padding: 1.25rem 1.5rem 1.5rem; }
+            #contactModal .cm-header { padding: 1.5rem 1.5rem 0.5rem; }
+            #contactModal .cm-row { flex-direction: column; gap: 0; }
+        }
+    </style>
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+            <div class="modal-content">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                <div class="cm-header">
+                    <h5>Entre em contacto</h5>
+                    <div class="cm-line"></div>
                 </div>
-                <div class="modal-body" style="padding: 1.5rem 2rem 1.25rem 2rem;">
+                <div class="cm-body">
                     <form id="contactForm">
-                        <div class="mb-4">
-                            <label for="name"
-                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Nome</label>
-                            <input type="text" id="name" name="name" placeholder="O teu nome" required
-                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#C9A961'" onblur="this.style.borderColor='#ddd'">
+                        <div class="cm-row">
+                            <div class="cm-field">
+                                <label class="cm-label" for="name">Nome</label>
+                                <input class="cm-input" type="text" id="name" name="name" placeholder="O teu nome" required>
+                            </div>
+                            <div class="cm-field">
+                                <label class="cm-label" for="email">Email</label>
+                                <input class="cm-input" type="email" id="email" name="email" placeholder="O teu email" required>
+                            </div>
                         </div>
-                        <div class="mb-4">
-                            <label for="email"
-                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Email</label>
-                            <input type="email" id="email" name="email" placeholder="O teu email" required
-                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#C9A961'" onblur="this.style.borderColor='#ddd'">
+                        <div class="cm-row">
+                            <div class="cm-field">
+                                <label class="cm-label" for="phone">Telefone <span style="color:#bbb;text-transform:none;letter-spacing:0;">(opcional)</span></label>
+                                <input class="cm-input" type="tel" id="phone" name="phone" placeholder="912 345 678">
+                            </div>
+                            <div class="cm-field">
+                                <label class="cm-label" for="reason">Motivo</label>
+                                <select class="cm-select" id="reason" name="reason" required>
+                                    <option value="" selected disabled>Seleciona</option>
+                                    <option value="Clareza de carreira">Clareza de carreira</option>
+                                    <option value="Revisão de CV">Revisão de CV</option>
+                                    <option value="Kickstart Pro">Kickstart Pro</option>
+                                    <option value="Suporte">Suporte</option>
+                                    <option value="Parceria">Parceria</option>
+                                    <option value="Outro tema">Outro tema</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="mb-4">
-                            <label for="phone"
-                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Telefone
-                                <span style="color: #999;">(opcional)</span></label>
-                            <input type="tel" id="phone" name="phone" placeholder="Opcional"
-                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#C9A961'" onblur="this.style.borderColor='#ddd'">
+                        <div class="cm-field">
+                            <label class="cm-label" for="message">Mensagem</label>
+                            <textarea class="cm-textarea" id="message" name="message" rows="3" placeholder="O que te trouxe até aqui?" required></textarea>
                         </div>
-                        <div class="mb-4">
-                            <label for="reason"
-                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Motivo</label>
-                            <select id="reason" name="reason" required
-                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; background-color: white; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#C9A961'" onblur="this.style.borderColor='#ddd'">
-                                <option value="" selected disabled>Escolhe o motivo do contacto</option>
-                                <option value="Clareza de carreira">Clareza de carreira</option>
-                                <option value="Revisão de CV">Revisão de CV</option>
-                                <option value="Kickstart Pro">Kickstart Pro</option>
-                                <option value="Outro tema">Outro tema</option>
-                            </select>
+                        <div class="cm-privacy">
+                            <input type="checkbox" id="privacy" name="privacy" required>
+                            <label for="privacy">Li e aceito a <a href="pages/politica-privacidade.html" target="_blank">Política de Privacidade</a></label>
                         </div>
-                        <div class="mb-4">
-                            <label for="message"
-                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Mensagem</label>
-                            <textarea id="message" name="message" rows="3" placeholder="O que te trouxe até aqui?"
-                                required
-                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; resize: vertical; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#C9A961'"
-                                onblur="this.style.borderColor='#ddd'"></textarea>
-                        </div>
-                        <div class="mb-4">
-                            <label
-                                style="display: flex; align-items: center; font-size: 0.875rem; color: #666; cursor: pointer;">
-                                <input type="checkbox" id="privacy" name="privacy" required
-                                    style="margin-right: 0.5rem;">
-                                Li e aceito a <a href="pages/politica-privacidade.html" target="_blank"
-                                    style="color: #C9A961; text-decoration: none; margin-left: 0.25rem;">Política de
-                                    Privacidade</a>
-                            </label>
-                        </div>
-                        <div class="alert alert-success d-none" id="contactSuccess"
-                            style="font-size: 0.875rem; padding: 0.75rem; border-radius: 6px;">
-                            Mensagem enviada com sucesso!
-                        </div>
-                        <div class="alert alert-danger d-none" id="contactError"
-                            style="font-size: 0.875rem; padding: 0.75rem; border-radius: 6px;">
-                            Erro ao enviar mensagem.
-                        </div>
-                        <button type="submit"
-                            style="width: 100%; padding: 0.875rem; background: #C9A961; color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background 0.2s;"
-                            onmouseover="this.style.background='#a58428'" onmouseout="this.style.background='#C9A961'">
-                            Enviar mensagem
-                        </button>
+                        <div class="cm-alert cm-alert-success d-none" id="contactSuccess">Mensagem enviada com sucesso!</div>
+                        <div class="cm-alert cm-alert-error d-none" id="contactError">Erro ao enviar mensagem.</div>
+                        <button type="submit" class="cm-submit">Enviar mensagem</button>
                     </form>
                 </div>
             </div>
