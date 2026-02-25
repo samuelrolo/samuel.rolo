@@ -27,12 +27,16 @@
   ],
   "rewrites": [
     {
-      "source": "/cv-analyser",
-      "destination": "/cv-analyser/index.html"
+      "source": "/cv-analyser/assets/:file*",
+      "destination": "/cv-analyser/assets/:file*"
     },
     {
       "source": "/cv-analyser/:path*",
-      "destination": "/cv-analyser/:path*"
+      "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/cv-analyser",
+      "destination": "/cv-analyser/index.html"
     }
   ]
 }
