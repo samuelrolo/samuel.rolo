@@ -31,6 +31,18 @@
       "destination": "/cv-analyser/assets/:file*"
     },
     {
+      "source": "/cv-analyser/results",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/cv-analyser/test",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/cv-analyser/404",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
       "source": "/cv-analyser/:path*",
       "destination": "/cv-analyser/index.html"
     },
