@@ -114,6 +114,7 @@
             <button class="tab-btn" onclick="switchTab('vouchers',this)">Vouchers</button>
             <button class="tab-btn" onclick="switchTab('nurturing',this)">Follow-up</button>
             <button class="tab-btn" onclick="switchTab('history',this)">Histórico</button>
+            <button class="tab-btn" onclick="switchTab('contacts',this)"><i class="fas fa-envelope me-1"></i>Contactos</button>
         </div>
 
         <!-- TAB: Dashboard -->
@@ -321,6 +322,74 @@
                 </div>
             </div>
         </div>
+
+        <!-- TAB: Contacts -->
+        <div id="tab-contacts" style="display:none;">
+            <!-- KPIs -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiContactsTotal">--</div><div class="stat-label">Total Mensagens</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-red)" id="kpiContactsNew">--</div><div class="stat-label">Novas (por ler)</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-gold)" id="kpiContactsRead">--</div><div class="stat-label">Lidas</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-green)" id="kpiContactsReplied">--</div><div class="stat-label">Respondidas</div></div></div>
+            </div>
+            <div class="card-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="section-title mb-0"><i class="fas fa-inbox me-2 text-muted"></i>Mensagens de Contacto</div>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="exportContactsCSV()"><i class="fas fa-download me-1"></i>Exportar CSV</button>
+                </div>
+                <div class="filter-bar">
+                    <select class="form-select form-select-sm" style="width:auto;" id="filterContactStatus" onchange="renderContacts()">
+                        <option value="all">Todos os estados</option>
+                        <option value="novo">Novos</option>
+                        <option value="lido">Lidos</option>
+                        <option value="respondido">Respondidos</option>
+                    </select>
+                    <select class="form-select form-select-sm" style="width:auto;" id="filterContactSubject" onchange="renderContacts()">
+                        <option value="all">Todos os motivos</option>
+                    </select>
+                    <input type="text" class="form-control form-control-sm" style="width:200px;" placeholder="Pesquisar..." id="filterContactSearch" oninput="renderContacts()">
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead><tr>
+                            <th style="width:30px;"></th>
+                            <th>Data</th>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Motivo</th>
+                            <th>Mensagem</th>
+                            <th>Estado</th>
+                            <th>Ações</th>
+                        </tr></thead>
+                        <tbody id="contactsTable"><tr><td colspan="8" class="text-center py-4"><div class="spinner-border spinner-gold"></div></td></tr></tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted" id="contactsCount">--</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Detail Modal -->
+        <div id="contactDetailOverlay" class="email-modal-overlay" style="display:none;" onclick="if(event.target===this)closeContactDetail()">
+            <div class="email-modal" style="max-width:650px;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0" id="contactDetailTitle">Mensagem</h5>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="closeContactDetail()"><i class="fas fa-times"></i></button>
+                </div>
+                <div id="contactDetailBody"></div>
+                <hr>
+                <div class="mb-2">
+                    <label class="form-label" style="font-size:.85rem;font-weight:600;">Notas internas:</label>
+                    <textarea class="form-control form-control-sm" id="contactDetailNotes" rows="2" placeholder="Adicionar notas..."></textarea>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-gold flex-fill" onclick="markContactReplied()"><i class="fas fa-check me-1"></i>Marcar como respondido</button>
+                    <button class="btn btn-sm btn-outline-secondary flex-fill" onclick="saveContactNotes()"><i class="fas fa-save me-1"></i>Guardar notas</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Toast Container -->
@@ -1128,6 +1197,7 @@
         if (tab === 'analyses') renderAnalyses();
         if (tab === 'vouchers') renderVouchers();
         if (tab === 'history') renderHistory();
+        if (tab === 'contacts') loadContacts();
     }
 
     function showToast(msg, type = 'info') {
@@ -1220,6 +1290,191 @@
             return `"${date}","${h.recipient_email}","${h.recipient_name || ''}","${h.subject}","${h.campaign_type}","${h.status}","${h.error_message || ''}"`;
         }).join('\n');
         downloadCSV(headers + rows, `email_history_${new Date().toISOString().split('T')[0]}.csv`);
+    }
+
+    // ===================== CONTACTS =====================
+    let contactsData = [];
+    let currentContactId = null;
+
+    async function loadContacts() {
+        try {
+            const data = await supaFetch('contact_messages', 'select=*&order=created_at.desc');
+            contactsData = data || [];
+            updateContactKPIs();
+            populateContactSubjectFilter();
+            renderContacts();
+        } catch (e) {
+            console.error('Erro ao carregar contactos:', e);
+            document.getElementById('contactsTable').innerHTML = '<tr><td colspan="8" class="text-center text-danger py-3">Erro ao carregar mensagens</td></tr>';
+        }
+    }
+
+    function updateContactKPIs() {
+        const total = contactsData.length;
+        const novo = contactsData.filter(c => c.status === 'novo').length;
+        const lido = contactsData.filter(c => c.status === 'lido').length;
+        const respondido = contactsData.filter(c => c.status === 'respondido').length;
+        document.getElementById('kpiContactsTotal').textContent = total;
+        document.getElementById('kpiContactsNew').textContent = novo;
+        document.getElementById('kpiContactsRead').textContent = lido;
+        document.getElementById('kpiContactsReplied').textContent = respondido;
+    }
+
+    function populateContactSubjectFilter() {
+        const sel = document.getElementById('filterContactSubject');
+        const subjects = [...new Set(contactsData.map(c => c.subject).filter(Boolean))];
+        sel.innerHTML = '<option value="all">Todos os motivos</option>' + subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+
+    function renderContacts() {
+        const statusFilter = document.getElementById('filterContactStatus').value;
+        const subjectFilter = document.getElementById('filterContactSubject').value;
+        const search = document.getElementById('filterContactSearch').value.toLowerCase();
+
+        let filtered = contactsData.filter(c => {
+            if (statusFilter !== 'all' && c.status !== statusFilter) return false;
+            if (subjectFilter !== 'all' && c.subject !== subjectFilter) return false;
+            if (search && !c.name.toLowerCase().includes(search) && !c.email.toLowerCase().includes(search) && !c.message.toLowerCase().includes(search)) return false;
+            return true;
+        });
+
+        const tbody = document.getElementById('contactsTable');
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Nenhuma mensagem encontrada</td></tr>';
+            document.getElementById('contactsCount').textContent = '0 mensagens';
+            return;
+        }
+
+        tbody.innerHTML = filtered.map(c => {
+            const date = new Date(c.created_at);
+            const dateStr = date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: '2-digit' });
+            const timeStr = date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+            const statusBadge = c.status === 'novo' ? '<span class="badge bg-danger">Novo</span>'
+                : c.status === 'lido' ? '<span class="badge" style="background:var(--s2i-gold)">Lido</span>'
+                : '<span class="badge bg-success">Respondido</span>';
+            const msgPreview = c.message.length > 60 ? c.message.substring(0, 60) + '...' : c.message;
+            const isNew = c.status === 'novo';
+            return `<tr style="${isNew ? 'font-weight:600;background:#fffbf0;' : ''}cursor:pointer;" onclick="openContactDetail(${c.id})">
+                <td>${isNew ? '<i class="fas fa-circle" style="color:var(--s2i-red);font-size:8px;"></i>' : ''}</td>
+                <td><small>${dateStr}<br><span class="text-muted">${timeStr}</span></small></td>
+                <td>${c.name}</td>
+                <td><small>${c.email}</small></td>
+                <td><small>${c.subject || '-'}</small></td>
+                <td><small class="text-muted">${msgPreview}</small></td>
+                <td>${statusBadge}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();replyToContact('${c.email}','${c.name}')" title="Responder"><i class="fas fa-reply"></i></button>
+                </td>
+            </tr>`;
+        }).join('');
+
+        document.getElementById('contactsCount').textContent = `${filtered.length} de ${contactsData.length} mensagens`;
+    }
+
+    async function openContactDetail(id) {
+        currentContactId = id;
+        const c = contactsData.find(x => x.id === id);
+        if (!c) return;
+
+        // Mark as read if new
+        if (c.status === 'novo') {
+            try {
+                await supaUpdate('contact_messages', id, { status: 'lido', read_at: new Date().toISOString() });
+                c.status = 'lido';
+                c.read_at = new Date().toISOString();
+                updateContactKPIs();
+                renderContacts();
+            } catch (e) { console.error(e); }
+        }
+
+        const date = new Date(c.created_at);
+        document.getElementById('contactDetailTitle').textContent = `${c.subject || 'Mensagem'} — ${c.name}`;
+        document.getElementById('contactDetailBody').innerHTML = `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;">
+                <div><small class="text-muted d-block">Nome</small><strong>${c.name}</strong></div>
+                <div><small class="text-muted d-block">Email</small><a href="mailto:${c.email}">${c.email}</a></div>
+                <div><small class="text-muted d-block">Telefone</small>${c.phone || 'Não fornecido'}</div>
+                <div><small class="text-muted d-block">Data</small>${date.toLocaleDateString('pt-PT')} ${date.toLocaleTimeString('pt-PT')}</div>
+            </div>
+            <div style="background:#f8f8f8;border-left:3px solid var(--s2i-gold);padding:1rem;border-radius:6px;">
+                <small class="text-muted d-block mb-1">Mensagem</small>
+                <p style="margin:0;white-space:pre-wrap;line-height:1.6;">${c.message}</p>
+            </div>
+        `;
+        document.getElementById('contactDetailNotes').value = c.admin_notes || '';
+        document.getElementById('contactDetailOverlay').style.display = 'flex';
+    }
+
+    function closeContactDetail() {
+        document.getElementById('contactDetailOverlay').style.display = 'none';
+        currentContactId = null;
+    }
+
+    async function markContactReplied() {
+        if (!currentContactId) return;
+        try {
+            const notes = document.getElementById('contactDetailNotes').value;
+            await supaUpdate('contact_messages', currentContactId, { status: 'respondido', replied_at: new Date().toISOString(), admin_notes: notes });
+            const c = contactsData.find(x => x.id === currentContactId);
+            if (c) { c.status = 'respondido'; c.replied_at = new Date().toISOString(); c.admin_notes = notes; }
+            updateContactKPIs();
+            renderContacts();
+            closeContactDetail();
+            showToast('Marcado como respondido', 'success');
+        } catch (e) {
+            showToast('Erro ao atualizar: ' + e.message, 'danger');
+        }
+    }
+
+    async function saveContactNotes() {
+        if (!currentContactId) return;
+        try {
+            const notes = document.getElementById('contactDetailNotes').value;
+            await supaUpdate('contact_messages', currentContactId, { admin_notes: notes });
+            const c = contactsData.find(x => x.id === currentContactId);
+            if (c) c.admin_notes = notes;
+            showToast('Notas guardadas', 'success');
+        } catch (e) {
+            showToast('Erro ao guardar: ' + e.message, 'danger');
+        }
+    }
+
+    async function supaUpdate(table, id, data) {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error(await res.text());
+    }
+
+    function replyToContact(email, name) {
+        // Open email modal pre-filled
+        document.getElementById('emailModalOverlay').style.display = 'flex';
+        document.getElementById('modalEmailTo').value = email;
+        document.getElementById('modalEmailSubject').value = `Re: A sua mensagem - Share2Inspire`;
+        document.getElementById('modalEmailBody').value = `Olá ${name},\n\nObrigado por nos ter contactado.\n\n\n\nCom os melhores cumprimentos,\nShare2Inspire`;
+        document.getElementById('modalEmailTemplate').value = 'custom';
+    }
+
+    function exportContactsCSV() {
+        if (!contactsData.length) return;
+        const headers = ['Data','Nome','Email','Telefone','Motivo','Mensagem','Estado','Notas'];
+        const rows = contactsData.map(c => [
+            new Date(c.created_at).toLocaleDateString('pt-PT'),
+            c.name, c.email, c.phone || '', c.subject || '', c.message.replace(/[\n\r]/g,' '), c.status, (c.admin_notes || '').replace(/[\n\r]/g,' ')
+        ]);
+        const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `contactos_share2inspire_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
     }
 
     // ===================== INIT =====================
