@@ -582,10 +582,6 @@
 
         // Revenue from vouchers (real money)
         const voucherEmails = new Set(allVouchers.filter(v => v.amount_paid > 0).map(v => v.email.toLowerCase()));
-        const totalVoucherRevenue = allVouchers.reduce((s,v) => {
-            // Only count unique orders (group by email+created_at)
-            return s;
-        }, 0);
         // Calculate revenue from unique voucher batches
         const voucherBatches = {};
         allVouchers.forEach(v => {
@@ -593,7 +589,10 @@
             if (!voucherBatches[key]) voucherBatches[key] = { amount: parseFloat(v.amount_paid) || 0, count: 0 };
             voucherBatches[key].count++;
         });
-        const revenue = Object.values(voucherBatches).reduce((s,b) => s + b.amount, 0);
+        const voucherRevenue = Object.values(voucherBatches).reduce((s,b) => s + b.amount, 0);
+        // Revenue from direct payments (payment_amount in cv_analysis)
+        const directRevenue = allAnalyses.reduce((s,a) => s + (parseFloat(a.payment_amount) || 0), 0);
+        const revenue = voucherRevenue + directRevenue;
 
         // Paid analyses = vouchers used + direct paid
         const paidCount = allVouchers.filter(v => v.used_analyses > 0).length + allAnalyses.filter(a => a.payment_status === 'paid').length;
