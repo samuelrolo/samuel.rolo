@@ -1518,9 +1518,65 @@
         document.getElementById('lastUpdate').textContent = `Última atualização: ${new Date().toLocaleTimeString('pt-PT')}`;
     }
 
+    // ── Supabase Realtime: actualização instantânea quando chega nova análise ──
+    function initRealtime() {
+        const wsUrl = SUPABASE_URL.replace('https://', 'wss://') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY + '&vsn=1.0.0';
+        let ws;
+        let reconnectDelay = 3000;
+
+        function connect() {
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                reconnectDelay = 3000;
+                // Subscrever à tabela cv_analysis (INSERT e UPDATE)
+                ws.send(JSON.stringify({
+                    topic: 'realtime:public:cv_analysis',
+                    event: 'phx_join',
+                    payload: { config: { broadcast: { self: true }, presence: { key: '' }, postgres_changes: [{ event: '*', schema: 'public', table: 'cv_analysis' }] } },
+                    ref: '1'
+                }));
+                // Subscrever à tabela vouchers
+                ws.send(JSON.stringify({
+                    topic: 'realtime:public:vouchers',
+                    event: 'phx_join',
+                    payload: { config: { broadcast: { self: true }, presence: { key: '' }, postgres_changes: [{ event: '*', schema: 'public', table: 'vouchers' }] } },
+                    ref: '2'
+                }));
+                document.getElementById('lastUpdate').textContent += ' · 🟢 Live';
+            };
+
+            ws.onmessage = (evt) => {
+                try {
+                    const msg = JSON.parse(evt.data);
+                    if (msg.event === 'postgres_changes' || (msg.payload && msg.payload.data)) {
+                        // Nova análise ou voucher alterado — actualizar silenciosamente
+                        loadAllData().then(() => {
+                            updateDashboard();
+                            renderAnalyses();
+                            renderVouchers();
+                            document.getElementById('lastUpdate').textContent = `Última actualização: ${new Date().toLocaleTimeString('pt-PT')} · 🟢 Live`;
+                        });
+                    }
+                } catch(e) {}
+            };
+
+            ws.onclose = () => {
+                document.getElementById('lastUpdate').textContent = document.getElementById('lastUpdate').textContent.replace(' · 🟢 Live', ' · 🔴 Reconectar...');
+                setTimeout(connect, reconnectDelay);
+                reconnectDelay = Math.min(reconnectDelay * 2, 30000);
+            };
+
+            ws.onerror = () => ws.close();
+        }
+
+        connect();
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         refreshAll();
-        setInterval(refreshAll, 120000); // Auto-refresh every 2 min
+        setInterval(refreshAll, 30000); // Polling de segurança a cada 30s
+        initRealtime();  // Actualizações instantâneas via WebSocket
     });
     </script>
     <script src="../js/coach-agent.js"></script>
