@@ -548,6 +548,8 @@
 
     // ===================== DETERMINE ANALYSIS TYPE =====================
     function getAnalysisType(analysis) {
+        // Career path entries are always paid
+        if (analysis.analysis_type === 'career_path') return 'paid';
         // Check if this email has used vouchers
         const usedVoucher = allVouchers.find(v =>
             v.email && analysis.user_email &&
