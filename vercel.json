@@ -41,6 +41,22 @@
     {
       "source": "/career-path/:path*",
       "destination": "/career-path/index.html"
+    },
+    {
+      "source": "/en/cv-analyser",
+      "destination": "/en/cv-analyser/index.html"
+    },
+    {
+      "source": "/en/cv-analyser/:path*",
+      "destination": "/en/cv-analyser/index.html"
+    },
+    {
+      "source": "/en/career-path",
+      "destination": "/en/career-path/index.html"
+    },
+    {
+      "source": "/en/career-path/:path*",
+      "destination": "/en/career-path/index.html"
     }
   ]
 }
