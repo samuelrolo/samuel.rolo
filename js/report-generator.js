@@ -272,7 +272,7 @@ const ReportGenerator = {
     </section>
 
     <footer>
-        Relatório gerado automaticamente por Share2Inspire AI (Marlene Ruivo Persona).<br>
+        Relatório gerado automaticamente por Share2Inspire AI.<br>
         O conteúdo deste relatório é confidencial e destinado exclusivamente ao candidato.
     </footer>
 </div>
