@@ -591,6 +591,36 @@
                     </div>
                 </div>
 
+                <!-- Dropdown Lado S -->
+                <div class="bio-accordion" style="margin-top: 20px;">
+                    <button class="bio-accordion-header" id="ladoSToggle" aria-expanded="false" aria-controls="ladoSBody">
+                        <div class="header-left">
+                            <i class="fas fa-infinity"></i>
+                            <div>
+                                <h3>Lado S</h3>
+                                <p class="header-subtitle">A dimensão menos visível</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </button>
+                    <div class="bio-accordion-body" id="ladoSBody">
+                        <div class="bio-accordion-content">
+                            <div class="bio-section">
+                                <p>Existe uma dimensão que não aparece nos organogramas.</p>
+                                <p>O Lado S é o espaço onde estratégia encontra introspeção. Onde a disciplina convive com criatividade. Onde a tecnologia não elimina sensibilidade, mas exige ainda mais consciência.</p>
+                                <p>A música é uma forma de pensamento. A escrita é um exercício de clareza. A reflexão é parte do processo estratégico.</p>
+                                <p>Acredito que crescimento profissional começa na clareza interior. Que liderança exige maturidade emocional. E que a verdadeira inovação não nasce apenas de sistemas, mas de pessoas que pensam de forma estruturada e sentem de forma consciente.</p>
+                                <div class="bio-quote">
+                                    "Este é o lado menos visível, mas mais determinante."
+                                </div>
+                            </div>
+                            <div class="bio-section" style="margin-top: 28px;">
+                                <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/artist/67RLB9M6GVnespmKe9mD2V?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Stats -->
                 <div class="stats-section">
                     <div class="stats-grid">
@@ -683,37 +713,39 @@
     <!-- Accordion Animation Script -->
     <script>
         (function () {
-            const toggle = document.getElementById('bioToggle');
-            const body = document.getElementById('bioBody');
+            function initAccordion(toggleId, bodyId) {
+                const toggle = document.getElementById(toggleId);
+                const body = document.getElementById(bodyId);
+                if (!toggle || !body) return;
 
-            toggle.addEventListener('click', function () {
-                const isOpen = toggle.classList.contains('active');
+                toggle.addEventListener('click', function () {
+                    const isOpen = toggle.classList.contains('active');
 
-                if (isOpen) {
-                    // Fechar
-                    body.style.maxHeight = body.scrollHeight + 'px';
-                    // Force reflow
-                    body.offsetHeight;
-                    body.style.maxHeight = '0';
-                    body.classList.remove('open');
-                    toggle.classList.remove('active');
-                    toggle.setAttribute('aria-expanded', 'false');
-                } else {
-                    // Abrir
-                    toggle.classList.add('active');
-                    toggle.setAttribute('aria-expanded', 'true');
-                    body.classList.add('open');
-                    body.style.maxHeight = body.scrollHeight + 'px';
+                    if (isOpen) {
+                        body.style.maxHeight = body.scrollHeight + 'px';
+                        body.offsetHeight; // force reflow
+                        body.style.maxHeight = '0';
+                        body.classList.remove('open');
+                        toggle.classList.remove('active');
+                        toggle.setAttribute('aria-expanded', 'false');
+                    } else {
+                        toggle.classList.add('active');
+                        toggle.setAttribute('aria-expanded', 'true');
+                        body.classList.add('open');
+                        body.style.maxHeight = body.scrollHeight + 'px';
 
-                    // Após a animação, remover max-height fixo para conteúdo dinâmico
-                    body.addEventListener('transitionend', function handler() {
-                        if (toggle.classList.contains('active')) {
-                            body.style.maxHeight = 'none';
-                        }
-                        body.removeEventListener('transitionend', handler);
-                    });
-                }
-            });
+                        body.addEventListener('transitionend', function handler() {
+                            if (toggle.classList.contains('active')) {
+                                body.style.maxHeight = 'none';
+                            }
+                            body.removeEventListener('transitionend', handler);
+                        });
+                    }
+                });
+            }
+
+            initAccordion('bioToggle', 'bioBody');
+            initAccordion('ladoSToggle', 'ladoSBody');
         })();
     </script>
 </body>
