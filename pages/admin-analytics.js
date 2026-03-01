@@ -184,7 +184,7 @@ function getLangBadge(lang) {
 function getProductBadge(analysis) {
     return analysis.analysis_type === 'career_path'
         ? '<span class="badge badge-career">Career Path</span>'
-        : '<span class="badge" style="background:var(--s2i-purple);color:white;">CV Analyser</span>';
+        : '<span class="badge" style="background:var(--purple);color:white;">CV Analyser</span>';
 }
 
 // ===================== DASHBOARD KPIs =====================
@@ -330,10 +330,10 @@ function updateConversionFunnel() {
 
     const maxWidth = 100;
     const funnelData = [
-        { label: 'Total Análises', value: total, color: 'var(--s2i-gray)', pct: 100 },
-        { label: 'Utilizadores Únicos', value: uniqueFree, color: 'var(--s2i-gold)', pct: total > 0 ? (uniqueFree/total*100) : 0 },
-        { label: 'Pagaram', value: paidUsers, color: 'var(--s2i-green)', pct: uniqueFree > 0 ? (paidUsers/uniqueFree*100) : 0 },
-        { label: 'Career Path', value: cpUsers, color: 'var(--s2i-blue)', pct: paidUsers > 0 ? (cpUsers/paidUsers*100) : 0 }
+        { label: 'Total Análises', value: total, color: '#6B7280', pct: 100 },
+        { label: 'Utilizadores Únicos', value: uniqueFree, color: 'var(--gold)', pct: total > 0 ? (uniqueFree/total*100) : 0 },
+        { label: 'Pagaram', value: paidUsers, color: 'var(--green)', pct: uniqueFree > 0 ? (paidUsers/uniqueFree*100) : 0 },
+        { label: 'Career Path', value: cpUsers, color: 'var(--blue)', pct: paidUsers > 0 ? (cpUsers/paidUsers*100) : 0 }
     ];
 
     const container = document.getElementById('conversionFunnel');
@@ -392,7 +392,7 @@ function renderAnalyses() {
                 <td>${getProductBadge(a)}</td>
                 <td>${getLangBadge(lang)}</td>
                 <td>
-                    ${a.user_email && a.user_email !== 'anonymous@share2inspire.pt' ? `<button class="btn btn-sm btn-outline-secondary btn-nurture" onclick="openEmailModal('${a.user_email}','${a.user_name||''}','${lang}')"><i class="fas fa-envelope"></i></button>` : ''}
+                    ${a.user_email && a.user_email !== 'anonymous@share2inspire.pt' ? `<button class="btn btn-sm btn-icon" onclick="openEmailModal('${a.user_email}','${a.user_name||''}','${lang}')"><i class="fas fa-envelope"></i></button>` : ''}
                 </td>
             </tr>`;
         }).join('');
@@ -405,7 +405,7 @@ function renderAnalyses() {
     if (totalPages <= 1) { pag.innerHTML = ''; return; }
     let pagHtml = '';
     for (let i = 1; i <= Math.min(totalPages, 10); i++) {
-        pagHtml += `<li class="page-item ${i===currentPage?'active':''}"><a class="page-link" href="#" onclick="currentPage=${i};renderAnalyses();return false;">${i}</a></li>`;
+        pagHtml += `<button class="page-btn ${i===currentPage?'active':''}" onclick="currentPage=${i};renderAnalyses()">${i}</button>`;
     }
     pag.innerHTML = pagHtml;
 }
@@ -439,11 +439,11 @@ function renderVouchers() {
         tbody.innerHTML = filtered.map(v => {
             const date = new Date(v.created_at).toLocaleDateString('pt-PT');
             const isUsed = (v.used_analyses != null && v.used_analyses > 0) || v.is_active === false;
-            const status = isUsed ? '<span class="badge bg-secondary">Usado</span>' : '<span class="badge bg-success">Activo</span>';
+            const status = isUsed ? '<span class="badge badge-secondary">Usado</span>' : '<span class="badge badge-success">Activo</span>';
             const rowClass = isUsed ? 'voucher-row used' : '';
             const typeLabel = v.voucher_type === 'career_path' 
                 ? '<span class="badge" style="background:#3498db;">Career Path</span>' 
-                : '<span class="badge bg-primary">CV Analyser</span>';
+                : '<span class="badge badge-cv">CV Analyser</span>';
             return `<tr class="${rowClass}">
                 <td><code>${v.code}</code></td>
                 <td>${v.email}</td>
@@ -453,7 +453,7 @@ function renderVouchers() {
                 <td>${status}</td>
                 <td>${date}</td>
                 <td>
-                    <button class="btn btn-sm btn-outline-secondary btn-nurture" onclick="openEmailModal('${v.email}','')"><i class="fas fa-envelope"></i></button>
+                    <button class="btn btn-sm btn-icon" onclick="openEmailModal('${v.email}','')"><i class="fas fa-envelope"></i></button>
                 </td>
             </tr>`;
         }).join('');
@@ -755,7 +755,7 @@ function renderRecipientList() {
         }
 
         html += `<div class="recipient-item${sentClass}" data-email="${email}" data-sent="${isSent}">
-            <input type="checkbox" id="rcpt_${idx}" class="form-check-input" style="margin:0;" ${checked ? 'checked' : ''} onchange="updateSelectedCount()">
+            <input type="checkbox" id="rcpt_${idx}" type="checkbox" style="margin:0;cursor:pointer;accent-color:var(--gold);" ${checked ? 'checked' : ''} onchange="updateSelectedCount()">
             <span style="flex:1;">${email}</span>
             ${badge}
         </div>`;
@@ -915,8 +915,8 @@ function renderHistory(filtered = null) {
     }
     tbody.innerHTML = data.map(h => {
         const date = new Date(h.sent_at).toLocaleString('pt-PT');
-        const statusBadge = h.status === 'sent' ? '<span class="badge bg-success">Enviado</span>' : `<span class="badge bg-danger" title="${h.error_message || ''}">Erro</span>`;
-        const campaignBadge = { 'upsell': '<span class="badge badge-paid">Upsell</span>', 'feedback': '<span class="badge badge-free">Feedback</span>', 'careerpath': '<span class="badge badge-career">Career Path</span>', 'voucher': '<span class="badge badge-voucher">Vouchers</span>', 'custom': '<span class="badge bg-secondary">Personalizado</span>' }[h.campaign_type] || '<span class="badge bg-secondary">-</span>';
+        const statusBadge = h.status === 'sent' ? '<span class="badge badge-success">Enviado</span>' : `<span class="badge badge-danger" title="${h.error_message || ''}">Erro</span>`;
+        const campaignBadge = { 'upsell': '<span class="badge badge-paid">Upsell</span>', 'feedback': '<span class="badge badge-free">Feedback</span>', 'careerpath': '<span class="badge badge-career">Career Path</span>', 'voucher': '<span class="badge badge-voucher">Vouchers</span>', 'custom': '<span class="badge badge-secondary">Personalizado</span>' }[h.campaign_type] || '<span class="badge badge-secondary">-</span>';
         return `<tr><td>${date}</td><td>${h.recipient_email}${h.recipient_name ? `<br><small class="text-muted">${h.recipient_name}</small>` : ''}</td><td>${h.subject}</td><td>${campaignBadge}</td><td>${statusBadge}</td></tr>`;
     }).join('');
     count.textContent = `${data.length} email(s)`;
@@ -979,18 +979,18 @@ function renderContacts() {
         const date = new Date(c.created_at);
         const dateStr = date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: '2-digit' });
         const timeStr = date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
-        const statusBadge = c.status === 'novo' ? '<span class="badge bg-danger">Novo</span>' : c.status === 'lido' ? '<span class="badge" style="background:var(--s2i-gold)">Lido</span>' : '<span class="badge bg-success">Respondido</span>';
+        const statusBadge = c.status === 'novo' ? '<span class="badge badge-danger">Novo</span>' : c.status === 'lido' ? '<span class="badge badge-warning">Lido</span>' : '<span class="badge badge-success">Respondido</span>';
         const msgPreview = c.message.length > 60 ? c.message.substring(0, 60) + '...' : c.message;
         const isNew = c.status === 'novo';
         return `<tr style="${isNew ? 'font-weight:600;background:#fffbf0;' : ''}cursor:pointer;" onclick="openContactDetail(${c.id})">
-            <td>${isNew ? '<i class="fas fa-circle" style="color:var(--s2i-red);font-size:8px;"></i>' : ''}</td>
+            <td>${isNew ? '<i class="fas fa-circle" style="color:var(--red);font-size:8px;"></i>' : ''}</td>
             <td><small>${dateStr}<br><span class="text-muted">${timeStr}</span></small></td>
             <td>${c.name}</td>
             <td><small>${c.email}</small></td>
             <td><small>${c.subject || '-'}</small></td>
             <td><small class="text-muted">${msgPreview}</small></td>
             <td>${statusBadge}</td>
-            <td><button class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();replyToContact('${c.email}','${c.name}')" title="Responder"><i class="fas fa-reply"></i></button></td>
+            <td><button class="btn btn-sm btn-icon" onclick="event.stopPropagation();replyToContact('${c.email}','${c.name}')" title="Responder"><i class="fas fa-reply"></i></button></td>
         </tr>`;
     }).join('');
     document.getElementById('contactsCount').textContent = `${filtered.length} de ${contactsData.length} mensagens`;
@@ -1016,7 +1016,7 @@ async function openContactDetail(id) {
             <div><small class="text-muted d-block">Telefone</small>${c.phone || 'N\u00e3o fornecido'}</div>
             <div><small class="text-muted d-block">Data</small>${date.toLocaleDateString('pt-PT')} ${date.toLocaleTimeString('pt-PT')}</div>
         </div>
-        <div style="background:#f8f8f8;border-left:3px solid var(--s2i-gold);padding:16px;border-radius:0 8px 8px 0;margin-bottom:1rem;">
+        <div style="background:#f8f8f8;border-left:3px solid var(--gold);padding:16px;border-radius:0 8px 8px 0;margin-bottom:1rem;">
             <small class="text-muted d-block mb-1">Mensagem</small>
             <p style="margin:0;white-space:pre-wrap;line-height:1.6;">${c.message}</p>
         </div>`;
@@ -1103,7 +1103,7 @@ function renderHealth() {
         if (!endpoints[l.endpoint_name]) endpoints[l.endpoint_name] = l;
     });
 
-    document.getElementById('endpointStatus').innerHTML = `<div class="table-responsive"><table class="table table-hover">
+    document.getElementById('endpointStatus').innerHTML = `<div class="table-wrap"><table>
         <thead><tr><th>Endpoint</th><th>Estado</th><th>TTFB</th><th>HTTP</th><th>\u00daltimo Check</th></tr></thead>
         <tbody>${Object.values(endpoints).map(e => {
             const dotClass = e.status === 'healthy' ? 'healthy' : e.status === 'warning' ? 'warning' : e.status === 'critical' ? 'critical' : 'down';
@@ -1189,9 +1189,9 @@ function switchTab(tab, btn) {
 function showToast(msg, type = 'info') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
-    toast.className = `alert alert-${type} alert-dismissible fade show`;
-    toast.style.minWidth = '300px';
-    toast.innerHTML = `${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+    const typeMap = { success: 'success', danger: 'danger', info: 'info', warning: 'danger' };
+    toast.className = `toast toast-${typeMap[type] || 'info'}`;
+    toast.innerHTML = `<span>${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;margin-left:12px;font-size:14px;color:inherit;opacity:.6;">&times;</button>`;
     container.appendChild(toast);
     setTimeout(() => toast.remove(), 5000);
 }
