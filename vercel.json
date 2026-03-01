@@ -28,6 +28,22 @@
   ],
   "rewrites": [
     {
+      "source": "/cv-analyser/llms.txt",
+      "destination": "/cv-analyser/llms.txt"
+    },
+    {
+      "source": "/career-path/llms.txt",
+      "destination": "/career-path/llms.txt"
+    },
+    {
+      "source": "/en/cv-analyser/llms.txt",
+      "destination": "/en/cv-analyser/llms.txt"
+    },
+    {
+      "source": "/en/career-path/llms.txt",
+      "destination": "/en/career-path/llms.txt"
+    },
+    {
       "source": "/cv-analyser/(.*)",
       "destination": "/cv-analyser/index.html"
     },
