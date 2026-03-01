@@ -1,0 +1,1256 @@
+// ===================== CONFIG =====================
+const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+const BREVO_KEY = localStorage.getItem('s2i_brevo_key') || '';
+const BREVO_SENDER = { name: 'Share2Inspire', email: 'srshare2inspire@gmail.com' };
+
+// Second Supabase project (S2I Career Advisor) for health logs
+const SUPABASE2_URL = 'https://dnjnsotemnfhfnwmbbvk.supabase.co';
+const SUPABASE2_KEY = ''; // Will use same key pattern or public anon key
+
+function ensureBrevoKey() {
+    if (BREVO_KEY) return true;
+    const key = prompt('Insere a API Key do Brevo para enviar emails:');
+    if (key) { localStorage.setItem('s2i_brevo_key', key); location.reload(); return true; }
+    showToast('API Key do Brevo necessária para enviar emails', 'danger');
+    return false;
+}
+
+let allAnalyses = [];
+let allVouchers = [];
+let allEmailHistory = [];
+let allHealthLogs = [];
+let dailyChart = null;
+let typeChart = null;
+let langChart = null;
+let ttfbChart = null;
+let currentPage = 1;
+let historyPage = 1;
+const PAGE_SIZE = 20;
+let globalLang = 'all';
+let nurturingLang = 'pt';
+
+// ===================== SUPABASE HELPERS =====================
+async function supaFetch(table, query = '') {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    return res.json();
+}
+
+async function supaInsert(table, data) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+        method: 'POST',
+        headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(data)
+    });
+    return res.json();
+}
+
+async function supaUpdate(table, id, data) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error(await res.text());
+}
+
+// ===================== LANGUAGE DETECTION =====================
+function detectLanguage(analysis) {
+    // Heuristic: check professional_area or analysis content for EN indicators
+    const area = (analysis.professional_area || '').toLowerCase();
+    const name = (analysis.user_name || '').toLowerCase();
+    const email = (analysis.user_email || '').toLowerCase();
+    
+    // Check if analysis_type contains language hint
+    if (analysis.analysis_type && analysis.analysis_type.includes('_en')) return 'en';
+    
+    // Check for common English professional areas
+    const enAreas = ['software engineer', 'data scientist', 'project manager', 'marketing', 'developer', 'analyst', 'consultant', 'designer', 'manager'];
+    const ptAreas = ['engenheiro', 'analista', 'gestor', 'programador', 'técnico', 'consultor', 'designer', 'administra'];
+    
+    for (const a of ptAreas) { if (area.includes(a)) return 'pt'; }
+    for (const a of enAreas) { if (area.includes(a)) return 'en'; }
+    
+    // Default: check if email domain suggests PT
+    if (email.endsWith('.pt') || email.endsWith('.br')) return 'pt';
+    if (email.endsWith('.uk') || email.endsWith('.com') || email.endsWith('.io')) return 'en';
+    
+    return 'pt'; // Default to PT
+}
+
+function getProductType(analysis) {
+    if (analysis.analysis_type === 'career_path') return 'career_path';
+    return 'cv';
+}
+
+// ===================== GLOBAL LANGUAGE FILTER =====================
+function setGlobalLang(lang, btn) {
+    globalLang = lang;
+    document.querySelectorAll('#globalLangToggle button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updateDashboard();
+    renderAnalyses();
+}
+
+function setNurturingLang(lang, btn) {
+    nurturingLang = lang;
+    document.querySelectorAll('#nurturingLangToggle button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+function filterByLang(data, lang) {
+    if (!lang || lang === 'all') return data;
+    return data.filter(a => detectLanguage(a) === lang);
+}
+
+// ===================== DATA LOADING =====================
+async function loadAllData() {
+    try {
+        const [analyses, vouchers] = await Promise.all([
+            supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,analysis_type,payment_status,payment_amount,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc'),
+            supaFetch('vouchers', 'select=*&order=created_at.desc')
+        ]);
+        allAnalyses = Array.isArray(analyses) ? analyses : [];
+        allVouchers = Array.isArray(vouchers) ? vouchers : [];
+    } catch (e) {
+        console.error('Erro ao carregar dados:', e);
+        allAnalyses = [];
+        allVouchers = [];
+        showToast('Erro ao carregar dados do Supabase', 'danger');
+    }
+}
+
+async function loadEmailHistory() {
+    try {
+        const history = await supaFetch('email_history', 'order=sent_at.desc');
+        allEmailHistory = Array.isArray(history) ? history : [];
+    } catch (e) {
+        console.error('Erro ao carregar histórico:', e);
+        allEmailHistory = [];
+    }
+}
+
+async function loadHealthLogs() {
+    try {
+        // Health logs are in the same Supabase project
+        const logs = await supaFetch('backend_health_log', 'order=checked_at.desc&limit=500');
+        allHealthLogs = Array.isArray(logs) ? logs : [];
+    } catch (e) {
+        console.error('Erro ao carregar health logs:', e);
+        allHealthLogs = [];
+    }
+}
+
+// ===================== DETERMINE ANALYSIS TYPE =====================
+function getAnalysisType(analysis) {
+    if (analysis.analysis_type === 'career_path') return 'paid';
+    const usedVoucher = allVouchers.find(v =>
+        v.email && analysis.user_email &&
+        v.email.toLowerCase() === analysis.user_email.toLowerCase() &&
+        v.used_analyses > 0
+    );
+    if (analysis.payment_status === 'paid' || analysis.payment_amount > 0) return 'paid';
+    if (usedVoucher) return 'voucher';
+    if (analysis.analysis_type === 'free_heuristic') return 'free';
+    return 'free';
+}
+
+function getTypeBadge(type) {
+    switch(type) {
+        case 'paid': return '<span class="badge badge-paid">Pago</span>';
+        case 'voucher': return '<span class="badge badge-voucher">Voucher</span>';
+        default: return '<span class="badge badge-free">Gratuito</span>';
+    }
+}
+
+function getLangBadge(lang) {
+    return lang === 'en' 
+        ? '<span class="badge badge-en">🇬🇧 EN</span>' 
+        : '<span class="badge badge-pt">🇵🇹 PT</span>';
+}
+
+function getProductBadge(analysis) {
+    return analysis.analysis_type === 'career_path'
+        ? '<span class="badge badge-career">Career Path</span>'
+        : '<span class="badge" style="background:var(--s2i-purple);color:white;">CV Analyser</span>';
+}
+
+// ===================== DASHBOARD KPIs =====================
+function updateDashboard() {
+    const filtered = filterByLang(allAnalyses, globalLang);
+    const total = filtered.length;
+    const uniqueEmails = new Set(filtered.map(a => a.user_email).filter(e => e && e !== 'anonymous@share2inspire.pt'));
+    const now = new Date();
+    const h24 = filtered.filter(a => (now - new Date(a.created_at)) < 86400000).length;
+    const d7 = filtered.filter(a => (now - new Date(a.created_at)) < 604800000).length;
+    const avgScore = total > 0 ? (filtered.reduce((s,a) => s + (a.score||0), 0) / total).toFixed(1) : 'N/A';
+    const careerPaths = filtered.filter(a => a.career_path_purchased || a.analysis_type === 'career_path').length;
+
+    // Revenue calculation
+    const voucherBatches = {};
+    allVouchers.forEach(v => {
+        const key = v.email + '|' + v.created_at;
+        if (!voucherBatches[key]) voucherBatches[key] = { amount: parseFloat(v.amount_paid) || 0, count: 0 };
+        voucherBatches[key].count++;
+    });
+    const voucherRevenue = Object.values(voucherBatches).reduce((s,b) => s + b.amount, 0);
+    const directRevenue = filtered.reduce((s,a) => s + (parseFloat(a.payment_amount) || 0), 0);
+    const revenue = voucherRevenue + directRevenue;
+
+    const paidCount = allVouchers.filter(v => v.used_analyses > 0).length + filtered.filter(a => a.payment_status === 'paid').length;
+    const freeCount = total - paidCount;
+    const voucherEmails = new Set(allVouchers.filter(v => v.amount_paid > 0).map(v => v.email?.toLowerCase()));
+    const convRate = uniqueEmails.size > 0 ? ((voucherEmails.size / uniqueEmails.size) * 100).toFixed(1) : '0';
+
+    const activeVouchers = allVouchers.filter(v => v.is_active === true && (v.used_analyses === 0 || v.used_analyses === null)).length;
+    const usedVouchers = allVouchers.filter(v => (v.used_analyses != null && v.used_analyses > 0) || v.is_active === false).length;
+
+    document.getElementById('kpiTotal').textContent = total;
+    document.getElementById('kpiPaid').textContent = paidCount;
+    document.getElementById('kpiFree').textContent = freeCount;
+    document.getElementById('kpiRevenue').textContent = `€${revenue.toFixed(2)}`;
+    document.getElementById('kpi24h').textContent = h24;
+    document.getElementById('kpi7d').textContent = d7;
+    document.getElementById('kpiAvgScore').textContent = avgScore !== 'N/A' ? `${avgScore}/100` : 'N/A';
+    document.getElementById('kpiCareerPaths').textContent = careerPaths;
+    document.getElementById('kpiUniqueUsers').textContent = uniqueEmails.size;
+    document.getElementById('kpiConvRate').textContent = `${convRate}%`;
+    document.getElementById('kpiVouchersActive').textContent = activeVouchers;
+    document.getElementById('kpiVouchersUsed').textContent = usedVouchers;
+
+    // Revenue breakdown by language
+    const ptAnalyses = allAnalyses.filter(a => detectLanguage(a) === 'pt');
+    const enAnalyses = allAnalyses.filter(a => detectLanguage(a) === 'en');
+    const ptRevenue = ptAnalyses.reduce((s,a) => s + (parseFloat(a.payment_amount) || 0), 0);
+    const enRevenue = enAnalyses.reduce((s,a) => s + (parseFloat(a.payment_amount) || 0), 0);
+    
+    // Revenue by product
+    const cvRevenue = allAnalyses.filter(a => a.analysis_type !== 'career_path').reduce((s,a) => s + (parseFloat(a.payment_amount) || 0), 0);
+    const cpRevenue = allAnalyses.filter(a => a.analysis_type === 'career_path').reduce((s,a) => s + (parseFloat(a.payment_amount) || 0), 0);
+
+    document.getElementById('kpiRevenuePT').textContent = `€${(ptRevenue + voucherRevenue * 0.8).toFixed(2)}`;
+    document.getElementById('kpiRevenueEN').textContent = `$${(enRevenue + voucherRevenue * 0.2).toFixed(2)}`;
+    document.getElementById('kpiRevenueCVA').textContent = `€${(cvRevenue + voucherRevenue).toFixed(2)}`;
+    document.getElementById('kpiRevenueCP').textContent = `€${cpRevenue.toFixed(2)}`;
+
+    // Nurturing counts
+    const freeEmails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'free' && a.user_email && a.user_email !== 'anonymous@share2inspire.pt').map(a => a.user_email))];
+    document.getElementById('upsellCount').textContent = freeEmails.length;
+    document.getElementById('feedbackCount').textContent = allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.user_rating).length;
+    document.getElementById('careerpathCount').textContent = allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.career_path_purchased && a.analysis_type !== 'career_path').length;
+
+    updateCharts();
+    updateConversionFunnel();
+}
+
+// ===================== CHARTS =====================
+function updateCharts() {
+    const filtered = filterByLang(allAnalyses, globalLang);
+    
+    // Daily chart - last 14 days
+    const days = {};
+    const now = new Date();
+    for (let i = 13; i >= 0; i--) {
+        const d = new Date(now);
+        d.setDate(d.getDate() - i);
+        const key = d.toISOString().split('T')[0];
+        days[key] = { total: 0, paid: 0, career: 0 };
+    }
+    filtered.forEach(a => {
+        const key = new Date(a.created_at).toISOString().split('T')[0];
+        if (days[key]) {
+            days[key].total++;
+            if (getAnalysisType(a) !== 'free') days[key].paid++;
+            if (a.analysis_type === 'career_path') days[key].career++;
+        }
+    });
+    const labels = Object.keys(days).map(d => { const dt = new Date(d); return dt.toLocaleDateString('pt-PT', {day:'2-digit',month:'2-digit'}); });
+    const totals = Object.values(days).map(d => d.total);
+    const paid = Object.values(days).map(d => d.paid);
+    const career = Object.values(days).map(d => d.career);
+
+    if (dailyChart) dailyChart.destroy();
+    dailyChart = new Chart(document.getElementById('dailyChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                { label: 'Total', data: totals, backgroundColor: 'rgba(191,154,51,.7)', borderColor: '#BF9A33', borderWidth: 1 },
+                { label: 'Pagas', data: paid, backgroundColor: 'rgba(40,167,69,.7)', borderColor: '#28a745', borderWidth: 1 },
+                { label: 'Career Path', data: career, backgroundColor: 'rgba(52,152,219,.7)', borderColor: '#3498db', borderWidth: 1 }
+            ]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+    });
+
+    // Type chart
+    const types = { free: 0, paid: 0, voucher: 0 };
+    filtered.forEach(a => { types[getAnalysisType(a)]++; });
+    if (typeChart) typeChart.destroy();
+    typeChart = new Chart(document.getElementById('typeChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Gratuito', 'Pago', 'Voucher'],
+            datasets: [{ data: [types.free, types.paid, types.voucher], backgroundColor: ['#6c757d', '#28a745', '#BF9A33'], borderWidth: 2, borderColor: '#fff' }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } } } }
+    });
+
+    // Language chart
+    const ptCount = allAnalyses.filter(a => detectLanguage(a) === 'pt').length;
+    const enCount = allAnalyses.filter(a => detectLanguage(a) === 'en').length;
+    if (langChart) langChart.destroy();
+    langChart = new Chart(document.getElementById('langChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: ['🇵🇹 Português', '🇬🇧 English'],
+            datasets: [{ data: [ptCount, enCount], backgroundColor: ['#016401', '#1d4ed8'], borderWidth: 2, borderColor: '#fff' }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } } } }
+    });
+}
+
+function updateConversionFunnel() {
+    const total = allAnalyses.length;
+    const uniqueFree = new Set(allAnalyses.filter(a => a.user_email && a.user_email !== 'anonymous@share2inspire.pt').map(a => a.user_email)).size;
+    const paidUsers = new Set(allAnalyses.filter(a => getAnalysisType(a) !== 'free' && a.user_email).map(a => a.user_email)).size;
+    const cpUsers = new Set(allAnalyses.filter(a => (a.career_path_purchased || a.analysis_type === 'career_path') && a.user_email).map(a => a.user_email)).size;
+
+    const maxWidth = 100;
+    const funnelData = [
+        { label: 'Total Análises', value: total, color: 'var(--s2i-gray)', pct: 100 },
+        { label: 'Utilizadores Únicos', value: uniqueFree, color: 'var(--s2i-gold)', pct: total > 0 ? (uniqueFree/total*100) : 0 },
+        { label: 'Pagaram', value: paidUsers, color: 'var(--s2i-green)', pct: uniqueFree > 0 ? (paidUsers/uniqueFree*100) : 0 },
+        { label: 'Career Path', value: cpUsers, color: 'var(--s2i-blue)', pct: paidUsers > 0 ? (cpUsers/paidUsers*100) : 0 }
+    ];
+
+    const container = document.getElementById('conversionFunnel');
+    container.innerHTML = funnelData.map((d, i) => {
+        const width = i === 0 ? maxWidth : Math.max(15, (d.value / funnelData[0].value) * maxWidth);
+        return `<div class="mb-2">
+            <div class="d-flex justify-content-between mb-1">
+                <small class="fw-bold">${d.label}</small>
+                <small class="text-muted">${d.value} ${i > 0 ? `(${d.pct.toFixed(1)}%)` : ''}</small>
+            </div>
+            <div class="funnel-bar" style="width:${width}%;background:${d.color};">${d.value}</div>
+        </div>`;
+    }).join('');
+}
+
+// ===================== ANALYSES TABLE =====================
+function renderAnalyses() {
+    let filtered = [...allAnalyses];
+    const typeFilter = document.getElementById('filterType').value;
+    const langFilter = document.getElementById('filterLang').value;
+    const productFilter = document.getElementById('filterProduct').value;
+    const emailFilter = document.getElementById('filterEmail').value.toLowerCase();
+    const dateFrom = document.getElementById('filterDateFrom').value;
+    const dateTo = document.getElementById('filterDateTo').value;
+
+    // Apply global lang filter first
+    filtered = filterByLang(filtered, globalLang);
+    
+    if (typeFilter !== 'all') filtered = filtered.filter(a => getAnalysisType(a) === typeFilter);
+    if (langFilter !== 'all') filtered = filtered.filter(a => detectLanguage(a) === langFilter);
+    if (productFilter !== 'all') filtered = filtered.filter(a => getProductType(a) === productFilter);
+    if (emailFilter) filtered = filtered.filter(a => a.user_email && a.user_email.toLowerCase().includes(emailFilter));
+    if (dateFrom) filtered = filtered.filter(a => new Date(a.created_at) >= new Date(dateFrom));
+    if (dateTo) filtered = filtered.filter(a => new Date(a.created_at) <= new Date(dateTo + 'T23:59:59'));
+
+    const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+    if (currentPage > totalPages) currentPage = 1;
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const page = filtered.slice(start, start + PAGE_SIZE);
+
+    const tbody = document.getElementById('analysesTable');
+    if (page.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Sem resultados</td></tr>';
+    } else {
+        tbody.innerHTML = page.map(a => {
+            const date = new Date(a.created_at);
+            const dateStr = date.toLocaleDateString('pt-PT') + ' ' + date.toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
+            const type = getAnalysisType(a);
+            const lang = detectLanguage(a);
+            return `<tr>
+                <td>${dateStr}</td>
+                <td>${a.user_name || '<em class="text-muted">Anónimo</em>'}</td>
+                <td>${a.user_email || '-'}</td>
+                <td><strong>${a.score || '-'}</strong></td>
+                <td>${getTypeBadge(type)}</td>
+                <td>${getProductBadge(a)}</td>
+                <td>${getLangBadge(lang)}</td>
+                <td>
+                    ${a.user_email && a.user_email !== 'anonymous@share2inspire.pt' ? `<button class="btn btn-sm btn-outline-secondary btn-nurture" onclick="openEmailModal('${a.user_email}','${a.user_name||''}','${lang}')"><i class="fas fa-envelope"></i></button>` : ''}
+                </td>
+            </tr>`;
+        }).join('');
+    }
+
+    document.getElementById('analysesCount').textContent = `${filtered.length} análises encontradas`;
+
+    // Pagination
+    const pag = document.getElementById('analysesPagination');
+    if (totalPages <= 1) { pag.innerHTML = ''; return; }
+    let pagHtml = '';
+    for (let i = 1; i <= Math.min(totalPages, 10); i++) {
+        pagHtml += `<li class="page-item ${i===currentPage?'active':''}"><a class="page-link" href="#" onclick="currentPage=${i};renderAnalyses();return false;">${i}</a></li>`;
+    }
+    pag.innerHTML = pagHtml;
+}
+
+function filterAnalyses() { currentPage = 1; renderAnalyses(); }
+
+function exportAnalysesCSV() {
+    const csv = ['Data,Nome,Email,Score,Tipo,Produto,Idioma'];
+    allAnalyses.forEach(a => {
+        csv.push(`"${new Date(a.created_at).toLocaleString('pt-PT')}","${a.user_name||''}","${a.user_email||''}",${a.score||''},${getAnalysisType(a)},${getProductType(a)},${detectLanguage(a)}`);
+    });
+    downloadCSV(csv.join('\n'), 'cv_analyses_export.csv');
+}
+
+// ===================== VOUCHERS TABLE =====================
+function renderVouchers() {
+    let filtered = [...allVouchers];
+    const statusFilter = document.getElementById('filterVoucherStatus').value;
+    const typeFilter = document.getElementById('filterVoucherType') ? document.getElementById('filterVoucherType').value : 'all';
+    const emailFilter = document.getElementById('filterVoucherEmail').value.toLowerCase();
+
+    if (statusFilter === 'active') filtered = filtered.filter(v => v.is_active === true && (v.used_analyses === 0 || v.used_analyses === null));
+    if (statusFilter === 'used') filtered = filtered.filter(v => (v.used_analyses != null && v.used_analyses > 0) || v.is_active === false);
+    if (typeFilter !== 'all') filtered = filtered.filter(v => v.voucher_type === typeFilter);
+    if (emailFilter) filtered = filtered.filter(v => v.email.toLowerCase().includes(emailFilter));
+
+    const tbody = document.getElementById('vouchersTable');
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Sem vouchers</td></tr>';
+    } else {
+        tbody.innerHTML = filtered.map(v => {
+            const date = new Date(v.created_at).toLocaleDateString('pt-PT');
+            const isUsed = (v.used_analyses != null && v.used_analyses > 0) || v.is_active === false;
+            const status = isUsed ? '<span class="badge bg-secondary">Usado</span>' : '<span class="badge bg-success">Activo</span>';
+            const rowClass = isUsed ? 'voucher-row used' : '';
+            const typeLabel = v.voucher_type === 'career_path' 
+                ? '<span class="badge" style="background:#3498db;">Career Path</span>' 
+                : '<span class="badge bg-primary">CV Analyser</span>';
+            return `<tr class="${rowClass}">
+                <td><code>${v.code}</code></td>
+                <td>${v.email}</td>
+                <td>${v.plan_name}</td>
+                <td>${typeLabel}</td>
+                <td>€${parseFloat(v.amount_paid).toFixed(2)}</td>
+                <td>${status}</td>
+                <td>${date}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-secondary btn-nurture" onclick="openEmailModal('${v.email}','')"><i class="fas fa-envelope"></i></button>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+}
+
+function filterVouchers() { renderVouchers(); }
+
+// ===================== CREATE VOUCHERS =====================
+function showCreateVoucherModal() { document.getElementById('voucherModalOverlay').style.display = 'flex'; }
+function closeVoucherModal() { document.getElementById('voucherModalOverlay').style.display = 'none'; }
+
+async function createVouchers() {
+    const email = document.getElementById('voucherEmail').value.trim();
+    if (!email) { showToast('Email obrigatório', 'danger'); return; }
+
+    const parts = document.getElementById('voucherPlan').value.split('|');
+    const planName = parts[0];
+    const count = parseInt(parts[1]);
+    const amount = parseFloat(parts[2]);
+    const voucherType = parts[3] || 'standard';
+    const includesCareerPath = parts[4] === 'true';
+    const payment = document.getElementById('voucherPayment').value;
+    const sendEmail = document.getElementById('voucherSendEmail').checked;
+
+    const codes = [];
+    for (let i = 0; i < count; i++) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let code = 'CVA-';
+        for (let j = 0; j < 8; j++) code += chars[Math.floor(Math.random() * chars.length)];
+        codes.push(code);
+    }
+
+    const vouchers = codes.map(code => ({
+        code, email, plan_name: planName, total_analyses: 1, used_analyses: 0,
+        amount_paid: amount, payment_method: payment, is_active: true,
+        voucher_type: voucherType, includes_career_path: includesCareerPath
+    }));
+
+    try {
+        await supaInsert('vouchers', vouchers);
+        showToast(`${count} voucher(s) criado(s) com sucesso!`, 'success');
+        if (sendEmail) await sendVoucherEmail(email, codes, planName, amount);
+        closeVoucherModal();
+        await loadAllData();
+        renderVouchers();
+        updateDashboard();
+    } catch (e) {
+        console.error('Erro ao criar vouchers:', e);
+        showToast('Erro ao criar vouchers', 'danger');
+    }
+}
+
+async function sendVoucherEmail(email, codes, planName, amount) {
+    const codesHtml = codes.map(c => `<div style="background:#faf9f7;border:1px solid #e8e4dc;border-radius:8px;padding:16px;margin:10px 0;text-align:center;font-family:'Courier New',monospace;font-size:18px;font-weight:600;color:#1A1A1A;letter-spacing:3px;">${c}</div>`).join('');
+    const html = `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
+  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
+    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
+    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
+    <p style="color:#999;margin:10px 0 0;font-size:13px;letter-spacing:.5px;">CV Analyser</p>
+  </div>
+  <div style="padding:40px 36px;">
+    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;line-height:1.4;">Os teus c\u00f3digos de an\u00e1lise</h2>
+    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;margin:0 0 24px;">Obrigado pela tua compra do pacote <strong>${planName}</strong>${amount > 0 ? ` (${amount.toFixed(2)}\u20ac)` : ''}. Aqui est\u00e3o os teus ${codes.length} c\u00f3digo(s):</p>
+    ${codesHtml}
+    <div style="background:#faf9f7;border-radius:8px;padding:24px;margin:28px 0;">
+      <p style="color:#333;font-size:14px;font-weight:500;margin:0 0 12px;">Como usar:</p>
+      <div style="color:#4a4a4a;font-size:14px;line-height:2.2;">
+        1. Vai a <a href="https://www.share2inspire.pt/cv-analyser" style="color:#BF9A33;text-decoration:none;">share2inspire.pt/cv-analyser</a><br>
+        2. Faz upload do teu CV<br>
+        3. Ap\u00f3s a an\u00e1lise gratuita, clica em \u201cC\u00f3digo\u201d<br>
+        4. Insere um dos c\u00f3digos acima<br>
+        5. Desfruta do relat\u00f3rio completo!
+      </div>
+    </div>
+    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;margin:0;">Cada c\u00f3digo d\u00e1 direito a <strong>1 an\u00e1lise completa</strong> com relat\u00f3rio PDF detalhado.</p>
+  </div>
+  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
+    <p style="color:#b0b0b0;font-size:11px;margin:0;letter-spacing:.3px;">Share2Inspire \u00a9 2026 &nbsp;\u00b7&nbsp; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
+  </div>
+</div>`;
+    await sendBrevoEmail(email, `Os teus c\u00f3digos CV Analyser - Share2Inspire`, html);
+}
+
+// ===================== EMAIL FUNCTIONS =====================
+function openEmailModal(email, name, lang) {
+    document.getElementById('modalEmailTo').value = email;
+    document.getElementById('modalEmailLang').value = lang || 'pt';
+    loadEmailTemplate();
+    document.getElementById('emailModalOverlay').style.display = 'flex';
+}
+function closeEmailModal() { document.getElementById('emailModalOverlay').style.display = 'none'; }
+
+// ===================== EMAIL TEMPLATES (PT & EN) =====================
+function getEmailTemplates() {
+    return {
+        pt: {
+            upsell: {
+                subject: 'O teu CV merece uma an\u00e1lise completa - Share2Inspire',
+                html: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
+  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
+    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
+    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
+  </div>
+  <div style="padding:40px 36px;">
+    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;">O teu CV merece mais</h2>
+    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;">Vimos que analisaste o teu CV no CV Analyser. A an\u00e1lise completa inclui relat\u00f3rio PDF detalhado, estimativa salarial, recomenda\u00e7\u00f5es personalizadas e compatibilidade ATS.</p>
+    <div style="text-align:center;margin:32px 0;">
+      <a href="https://www.share2inspire.pt/cv-analyser" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;">Analisar CV Agora</a>
+    </div>
+    <p style="color:#999;font-size:13px;text-align:center;">Por apenas \u20ac3,99, desbloqueia todo o potencial da an\u00e1lise.</p>
+  </div>
+  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
+    <p style="color:#b0b0b0;font-size:11px;">Share2Inspire \u00a9 2026 &middot; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
+  </div>
+</div>`
+            },
+            feedback: {
+                subject: 'Como foi a tua experi\u00eancia? - Share2Inspire',
+                html: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
+  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
+    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
+    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
+  </div>
+  <div style="padding:40px 36px;">
+    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;">A tua opini\u00e3o \u00e9 importante</h2>
+    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;">Obrigado por teres utilizado o CV Analyser! O teu feedback ajuda-nos a melhorar continuamente.</p>
+    <div style="text-align:center;margin:32px 0;">
+      <a href="https://www.share2inspire.pt/cv-analyser" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;">Avaliar Agora</a>
+    </div>
+  </div>
+  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
+    <p style="color:#b0b0b0;font-size:11px;">Share2Inspire \u00a9 2026 &middot; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
+  </div>
+</div>`
+            },
+            careerpath: {
+                subject: 'Descobre o teu Career Path - Share2Inspire',
+                html: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
+  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
+    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
+    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
+  </div>
+  <div style="padding:40px 36px;">
+    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;">Qual \u00e9 o teu pr\u00f3ximo passo de carreira?</h2>
+    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;">J\u00e1 tens a tua an\u00e1lise de CV. Agora descobre o teu roadmap de carreira personalizado com pr\u00f3ximos cargos, forma\u00e7\u00f5es, plano de ac\u00e7\u00e3o e estrat\u00e9gia de networking.</p>
+    <div style="text-align:center;margin:32px 0;">
+      <a href="https://www.share2inspire.pt/career-path" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;">Descobrir Career Path</a>
+    </div>
+    <p style="color:#999;font-size:13px;text-align:center;">Por apenas \u20ac9,99, obt\u00e9m o teu roadmap personalizado.</p>
+  </div>
+  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
+    <p style="color:#b0b0b0;font-size:11px;">Share2Inspire \u00a9 2026 &middot; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
+  </div>
+</div>`
+            }
+        },
+        en: {
+            upsell: {
+                subject: 'Your CV deserves a full analysis - Share2Inspire',
+                html: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
+  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
+    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
+    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
+  </div>
+  <div style="padding:40px 36px;">
+    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;">Your CV deserves more</h2>
+    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;">We noticed you analysed your CV with CV Analyser. The full analysis includes a detailed PDF report, salary estimation, personalised recommendations, and ATS compatibility.</p>
+    <div style="text-align:center;margin:32px 0;">
+      <a href="https://www.share2inspire.pt/en/cv-analyser" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;">Analyse CV Now</a>
+    </div>
+    <p style="color:#999;font-size:13px;text-align:center;">For just $5.99, unlock the full potential of the analysis.</p>
+  </div>
+  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
+    <p style="color:#b0b0b0;font-size:11px;">Share2Inspire \u00a9 2026 &middot; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
+  </div>
+</div>`
+            },
+            feedback: {
+                subject: 'How was your experience? - Share2Inspire',
+                html: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
+  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
+    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
+    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
+  </div>
+  <div style="padding:40px 36px;">
+    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;">Your opinion matters</h2>
+    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;">Thank you for using CV Analyser! Your feedback helps us continuously improve our service.</p>
+    <div style="text-align:center;margin:32px 0;">
+      <a href="https://www.share2inspire.pt/en/cv-analyser" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;">Rate Now</a>
+    </div>
+  </div>
+  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
+    <p style="color:#b0b0b0;font-size:11px;">Share2Inspire \u00a9 2026 &middot; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
+  </div>
+</div>`
+            },
+            careerpath: {
+                subject: 'Discover your Career Path - Share2Inspire',
+                html: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
+  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
+    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
+    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
+  </div>
+  <div style="padding:40px 36px;">
+    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;">What's your next career move?</h2>
+    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;">You already have your CV analysis. Now discover your personalised career roadmap with next roles, training, action plan, and networking strategy.</p>
+    <div style="text-align:center;margin:32px 0;">
+      <a href="https://www.share2inspire.pt/en/career-path" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;">Discover Career Path</a>
+    </div>
+    <p style="color:#999;font-size:13px;text-align:center;">For just $10.00, get your personalised roadmap.</p>
+  </div>
+  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
+    <p style="color:#b0b0b0;font-size:11px;">Share2Inspire \u00a9 2026 &middot; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
+  </div>
+</div>`
+            }
+        }
+    };
+}
+
+function loadEmailTemplate() {
+    const template = document.getElementById('modalEmailTemplate').value;
+    const lang = document.getElementById('modalEmailLang').value;
+    const templates = getEmailTemplates();
+    const t = templates[lang]?.[template];
+    if (t) {
+        document.getElementById('modalEmailSubject').value = t.subject;
+        document.getElementById('modalEmailBody').value = t.html;
+    } else {
+        document.getElementById('modalEmailSubject').value = '';
+        document.getElementById('modalEmailBody').value = '';
+    }
+}
+
+async function sendSingleEmail() {
+    const to = document.getElementById('modalEmailTo').value;
+    const subject = document.getElementById('modalEmailSubject').value;
+    const body = document.getElementById('modalEmailBody').value;
+    if (!to || !subject || !body) { showToast('Preenche todos os campos', 'danger'); return; }
+
+    const html = body.includes('<div') ? body : `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;"><div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;"><h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1><div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div></div><div style="padding:40px 36px;"><div style="color:#4a4a4a;font-size:15px;line-height:1.8;">${body.replace(/\n/g, '<br>')}</div></div><div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;"><p style="color:#b0b0b0;font-size:11px;">Share2Inspire &copy; 2026 &middot; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p></div></div>`;
+
+    try {
+        await sendBrevoEmail(to, subject, html);
+        showToast(`Email enviado para ${to}!`, 'success');
+        closeEmailModal();
+    } catch (e) {
+        showToast('Erro ao enviar email', 'danger');
+    }
+}
+
+// ===================== NURTURING =====================
+window._nurturingType = '';
+window._allNurturingRecipients = [];
+
+function getEmailSentInfo(email, campaignType) {
+    const history = allEmailHistory.filter(h =>
+        h.recipient_email && h.recipient_email.toLowerCase() === email.toLowerCase() && h.status === 'sent'
+    );
+    const campaignHistory = history.filter(h => h.campaign_type === campaignType);
+    return {
+        sentThisCampaign: campaignHistory.length > 0,
+        lastSentDate: campaignHistory.length > 0 ? new Date(campaignHistory[0].sent_at).toLocaleDateString('pt-PT') : null,
+        sentAnyEmail: history.length > 0,
+        totalSent: history.length,
+        lastAnyDate: history.length > 0 ? new Date(history[0].sent_at).toLocaleDateString('pt-PT') : null
+    };
+}
+
+function renderRecipientList() {
+    const recipients = window._allNurturingRecipients || [];
+    const type = window._nurturingType;
+    const filter = document.getElementById('recipientFilter').value;
+    const search = document.getElementById('recipientSearch').value.toLowerCase();
+    const container = document.getElementById('recipientList');
+
+    if (recipients.length === 0) {
+        container.innerHTML = '<em class="text-muted" style="font-size:.82rem;">Sem destinat\u00e1rios neste segmento.</em>';
+        updateSelectedCount();
+        return;
+    }
+
+    let html = '';
+    recipients.forEach((email, idx) => {
+        const info = getEmailSentInfo(email, type);
+        const isSent = info.sentThisCampaign;
+        if (filter === 'unsent' && isSent) return;
+        if (filter === 'sent' && !isSent) return;
+        if (search && !email.toLowerCase().includes(search)) return;
+
+        const checked = document.querySelector(`#rcpt_${idx}`)?.checked ?? !isSent;
+        const sentClass = isSent ? ' sent' : '';
+        let badge = '';
+        if (isSent) {
+            badge = `<span class="sent-badge campaign-match"><i class="fas fa-check me-1"></i>Enviado ${info.lastSentDate}</span>`;
+        } else if (info.sentAnyEmail) {
+            badge = `<span class="sent-badge"><i class="fas fa-envelope me-1"></i>${info.totalSent} email(s) - \u00faltimo ${info.lastAnyDate}</span>`;
+        }
+
+        html += `<div class="recipient-item${sentClass}" data-email="${email}" data-sent="${isSent}">
+            <input type="checkbox" id="rcpt_${idx}" class="form-check-input" style="margin:0;" ${checked ? 'checked' : ''} onchange="updateSelectedCount()">
+            <span style="flex:1;">${email}</span>
+            ${badge}
+        </div>`;
+    });
+
+    container.innerHTML = html || '<em class="text-muted" style="font-size:.82rem;">Nenhum resultado para este filtro.</em>';
+    updateSelectedCount();
+}
+
+function updateSelectedCount() {
+    const checked = document.querySelectorAll('#recipientList input[type=checkbox]:checked');
+    const total = window._allNurturingRecipients?.length || 0;
+    document.getElementById('selectedCount').textContent = `(${checked.length} de ${total} selecionados)`;
+}
+
+function toggleAllRecipients(selectAll) {
+    document.querySelectorAll('#recipientList input[type=checkbox]').forEach(cb => { cb.checked = selectAll; });
+    updateSelectedCount();
+}
+
+function selectOnlyUnsent() {
+    document.querySelectorAll('#recipientList .recipient-item').forEach(item => {
+        const cb = item.querySelector('input[type=checkbox]');
+        const isSent = item.dataset.sent === 'true';
+        if (cb) cb.checked = !isSent;
+    });
+    updateSelectedCount();
+}
+
+function filterRecipientList() {
+    const states = {};
+    document.querySelectorAll('#recipientList input[type=checkbox]').forEach(cb => { states[cb.id] = cb.checked; });
+    renderRecipientList();
+    Object.keys(states).forEach(id => { const cb = document.getElementById(id); if (cb) cb.checked = states[id]; });
+    updateSelectedCount();
+}
+
+function getSelectedRecipients() {
+    const selected = [];
+    document.querySelectorAll('#recipientList .recipient-item').forEach(item => {
+        const cb = item.querySelector('input[type=checkbox]');
+        if (cb && cb.checked) selected.push(item.dataset.email);
+    });
+    return selected;
+}
+
+function prepareNurturing(type) {
+    let recipients = [];
+    const templates = getEmailTemplates();
+    const lang = nurturingLang;
+    const t = templates[lang]?.[type];
+
+    if (type === 'upsell') {
+        recipients = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'free' && a.user_email && a.user_email !== 'anonymous@share2inspire.pt').map(a => a.user_email))];
+    } else if (type === 'feedback') {
+        recipients = [...new Set(allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.user_rating && a.user_email).map(a => a.user_email))];
+    } else if (type === 'careerpath') {
+        recipients = [...new Set(allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.career_path_purchased && a.analysis_type !== 'career_path' && a.user_email).map(a => a.user_email))];
+    }
+
+    window._nurturingType = type;
+    window._allNurturingRecipients = recipients;
+
+    const langLabel = lang === 'en' ? '🇬🇧' : '🇵🇹';
+    document.getElementById('emailComposer').style.display = 'block';
+    document.getElementById('composerTitle').textContent = `Compor Email ${langLabel} - ${type === 'upsell' ? 'Upsell' : type === 'feedback' ? 'Feedback' : 'Career Path'}`;
+    document.getElementById('emailSubject').value = t?.subject || '';
+    document.getElementById('emailBody').value = t?.html || '';
+    document.getElementById('recipientFilter').value = 'all';
+    document.getElementById('recipientSearch').value = '';
+
+    renderRecipientList();
+}
+
+function closeComposer() { document.getElementById('emailComposer').style.display = 'none'; }
+
+function previewEmail() {
+    const html = document.getElementById('emailBody').value;
+    const win = window.open('', '_blank');
+    win.document.write(html);
+    win.document.close();
+}
+
+async function sendNurturingEmails() {
+    const recipients = getSelectedRecipients();
+    if (recipients.length === 0) { showToast('Seleciona pelo menos um destinat\u00e1rio', 'danger'); return; }
+
+    const subject = document.getElementById('emailSubject').value;
+    const html = document.getElementById('emailBody').value;
+    const type = window._nurturingType || 'custom';
+
+    if (!confirm(`Enviar email para ${recipients.length} destinat\u00e1rio(s)?`)) return;
+
+    let sent = 0, errors = 0;
+    for (const email of recipients) {
+        try {
+            await sendBrevoEmail(email, subject, html, type);
+            sent++;
+            const item = document.querySelector(`#recipientList .recipient-item[data-email="${email}"]`);
+            if (item) { item.classList.add('sent'); const cb = item.querySelector('input[type=checkbox]'); if (cb) cb.checked = false; }
+        } catch (e) { errors++; console.error(`Erro ao enviar para ${email}:`, e); }
+        await new Promise(r => setTimeout(r, 1000));
+    }
+
+    await loadEmailHistory();
+    renderRecipientList();
+    updateSelectedCount();
+    showToast(`${sent} email(s) enviado(s), ${errors} erro(s)`, errors > 0 ? 'warning' : 'success');
+}
+
+// ===================== BREVO API =====================
+async function sendBrevoEmail(to, subject, htmlContent, campaignType = 'custom') {
+    if (!ensureBrevoKey()) throw new Error('No Brevo key');
+    const key = localStorage.getItem('s2i_brevo_key') || BREVO_KEY;
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: { 'api-key': key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sender: BREVO_SENDER, to: [{ email: to }], subject, htmlContent })
+    });
+    const status = res.ok ? 'sent' : 'error';
+    const errorMsg = res.ok ? null : `HTTP ${res.status}`;
+    await logEmailHistory(to, null, subject, campaignType, status, errorMsg);
+    if (!res.ok) throw new Error(`Brevo error: ${res.status}`);
+    return res.json();
+}
+
+async function logEmailHistory(email, name, subject, campaignType, status = 'sent', errorMsg = null) {
+    try {
+        await supaInsert('email_history', { recipient_email: email, recipient_name: name, subject, campaign_type: campaignType, status, error_message: errorMsg });
+    } catch (err) { console.error('Failed to log email history:', err); }
+}
+
+// ===================== HISTORY TAB =====================
+function filterHistory() {
+    const campaign = document.getElementById('filterHistoryCampaign').value;
+    const email = document.getElementById('filterHistoryEmail').value.toLowerCase();
+    const dateFrom = document.getElementById('filterHistoryDateFrom').value;
+    const dateTo = document.getElementById('filterHistoryDateTo').value;
+    let filtered = allEmailHistory.filter(h => {
+        if (campaign !== 'all' && h.campaign_type !== campaign) return false;
+        if (email && !h.recipient_email.toLowerCase().includes(email)) return false;
+        if (dateFrom && new Date(h.sent_at) < new Date(dateFrom)) return false;
+        if (dateTo && new Date(h.sent_at) > new Date(dateTo + 'T23:59:59')) return false;
+        return true;
+    });
+    renderHistory(filtered);
+}
+
+function renderHistory(filtered = null) {
+    const data = filtered || allEmailHistory;
+    const tbody = document.getElementById('historyTable');
+    const count = document.getElementById('historyCount');
+    if (!Array.isArray(data) || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Nenhum email enviado ainda</td></tr>';
+        count.textContent = '0 emails';
+        return;
+    }
+    tbody.innerHTML = data.map(h => {
+        const date = new Date(h.sent_at).toLocaleString('pt-PT');
+        const statusBadge = h.status === 'sent' ? '<span class="badge bg-success">Enviado</span>' : `<span class="badge bg-danger" title="${h.error_message || ''}">Erro</span>`;
+        const campaignBadge = { 'upsell': '<span class="badge badge-paid">Upsell</span>', 'feedback': '<span class="badge badge-free">Feedback</span>', 'careerpath': '<span class="badge badge-career">Career Path</span>', 'voucher': '<span class="badge badge-voucher">Vouchers</span>', 'custom': '<span class="badge bg-secondary">Personalizado</span>' }[h.campaign_type] || '<span class="badge bg-secondary">-</span>';
+        return `<tr><td>${date}</td><td>${h.recipient_email}${h.recipient_name ? `<br><small class="text-muted">${h.recipient_name}</small>` : ''}</td><td>${h.subject}</td><td>${campaignBadge}</td><td>${statusBadge}</td></tr>`;
+    }).join('');
+    count.textContent = `${data.length} email(s)`;
+}
+
+function exportHistoryCSV() {
+    const headers = 'Data,Destinat\u00e1rio,Nome,Assunto,Campanha,Estado,Erro\n';
+    const rows = allEmailHistory.map(h => `"${new Date(h.sent_at).toLocaleString('pt-PT')}","${h.recipient_email}","${h.recipient_name || ''}","${h.subject}","${h.campaign_type}","${h.status}","${h.error_message || ''}"`).join('\n');
+    downloadCSV(headers + rows, `email_history_${new Date().toISOString().split('T')[0]}.csv`);
+}
+
+// ===================== CONTACTS =====================
+let contactsData = [];
+let currentContactId = null;
+
+async function loadContacts() {
+    try {
+        const data = await supaFetch('contact_messages', 'select=*&order=created_at.desc');
+        contactsData = data || [];
+        updateContactKPIs();
+        populateContactSubjectFilter();
+        renderContacts();
+    } catch (e) {
+        console.error('Erro ao carregar contactos:', e);
+        document.getElementById('contactsTable').innerHTML = '<tr><td colspan="8" class="text-center text-danger py-3">Erro ao carregar mensagens</td></tr>';
+    }
+}
+
+function updateContactKPIs() {
+    const total = contactsData.length;
+    document.getElementById('kpiContactsTotal').textContent = total;
+    document.getElementById('kpiContactsNew').textContent = contactsData.filter(c => c.status === 'novo').length;
+    document.getElementById('kpiContactsRead').textContent = contactsData.filter(c => c.status === 'lido').length;
+    document.getElementById('kpiContactsReplied').textContent = contactsData.filter(c => c.status === 'respondido').length;
+}
+
+function populateContactSubjectFilter() {
+    const sel = document.getElementById('filterContactSubject');
+    const subjects = [...new Set(contactsData.map(c => c.subject).filter(Boolean))];
+    sel.innerHTML = '<option value="all">Todos os motivos</option>' + subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+}
+
+function renderContacts() {
+    const statusFilter = document.getElementById('filterContactStatus').value;
+    const subjectFilter = document.getElementById('filterContactSubject').value;
+    const search = document.getElementById('filterContactSearch').value.toLowerCase();
+    let filtered = contactsData.filter(c => {
+        if (statusFilter !== 'all' && c.status !== statusFilter) return false;
+        if (subjectFilter !== 'all' && c.subject !== subjectFilter) return false;
+        if (search && !c.name.toLowerCase().includes(search) && !c.email.toLowerCase().includes(search) && !c.message.toLowerCase().includes(search)) return false;
+        return true;
+    });
+    const tbody = document.getElementById('contactsTable');
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Nenhuma mensagem encontrada</td></tr>';
+        document.getElementById('contactsCount').textContent = '0 mensagens';
+        return;
+    }
+    tbody.innerHTML = filtered.map(c => {
+        const date = new Date(c.created_at);
+        const dateStr = date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: '2-digit' });
+        const timeStr = date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+        const statusBadge = c.status === 'novo' ? '<span class="badge bg-danger">Novo</span>' : c.status === 'lido' ? '<span class="badge" style="background:var(--s2i-gold)">Lido</span>' : '<span class="badge bg-success">Respondido</span>';
+        const msgPreview = c.message.length > 60 ? c.message.substring(0, 60) + '...' : c.message;
+        const isNew = c.status === 'novo';
+        return `<tr style="${isNew ? 'font-weight:600;background:#fffbf0;' : ''}cursor:pointer;" onclick="openContactDetail(${c.id})">
+            <td>${isNew ? '<i class="fas fa-circle" style="color:var(--s2i-red);font-size:8px;"></i>' : ''}</td>
+            <td><small>${dateStr}<br><span class="text-muted">${timeStr}</span></small></td>
+            <td>${c.name}</td>
+            <td><small>${c.email}</small></td>
+            <td><small>${c.subject || '-'}</small></td>
+            <td><small class="text-muted">${msgPreview}</small></td>
+            <td>${statusBadge}</td>
+            <td><button class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();replyToContact('${c.email}','${c.name}')" title="Responder"><i class="fas fa-reply"></i></button></td>
+        </tr>`;
+    }).join('');
+    document.getElementById('contactsCount').textContent = `${filtered.length} de ${contactsData.length} mensagens`;
+}
+
+async function openContactDetail(id) {
+    currentContactId = id;
+    const c = contactsData.find(x => x.id === id);
+    if (!c) return;
+    if (c.status === 'novo') {
+        try {
+            await supaUpdate('contact_messages', id, { status: 'lido', read_at: new Date().toISOString() });
+            c.status = 'lido'; c.read_at = new Date().toISOString();
+            updateContactKPIs(); renderContacts();
+        } catch (e) { console.error(e); }
+    }
+    const date = new Date(c.created_at);
+    document.getElementById('contactDetailTitle').textContent = `${c.subject || 'Mensagem'} \u2014 ${c.name}`;
+    document.getElementById('contactDetailBody').innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;">
+            <div><small class="text-muted d-block">Nome</small><strong>${c.name}</strong></div>
+            <div><small class="text-muted d-block">Email</small><a href="mailto:${c.email}">${c.email}</a></div>
+            <div><small class="text-muted d-block">Telefone</small>${c.phone || 'N\u00e3o fornecido'}</div>
+            <div><small class="text-muted d-block">Data</small>${date.toLocaleDateString('pt-PT')} ${date.toLocaleTimeString('pt-PT')}</div>
+        </div>
+        <div style="background:#f8f8f8;border-left:3px solid var(--s2i-gold);padding:16px;border-radius:0 8px 8px 0;margin-bottom:1rem;">
+            <small class="text-muted d-block mb-1">Mensagem</small>
+            <p style="margin:0;white-space:pre-wrap;line-height:1.6;">${c.message}</p>
+        </div>`;
+    document.getElementById('contactDetailNotes').value = c.admin_notes || '';
+    document.getElementById('contactDetailOverlay').style.display = 'flex';
+}
+
+function closeContactDetail() { document.getElementById('contactDetailOverlay').style.display = 'none'; currentContactId = null; }
+
+async function markContactReplied() {
+    if (!currentContactId) return;
+    try {
+        const notes = document.getElementById('contactDetailNotes').value;
+        await supaUpdate('contact_messages', currentContactId, { status: 'respondido', replied_at: new Date().toISOString(), admin_notes: notes });
+        const c = contactsData.find(x => x.id === currentContactId);
+        if (c) { c.status = 'respondido'; c.replied_at = new Date().toISOString(); c.admin_notes = notes; }
+        updateContactKPIs(); renderContacts(); closeContactDetail();
+        showToast('Marcado como respondido', 'success');
+    } catch (e) { showToast('Erro ao atualizar: ' + e.message, 'danger'); }
+}
+
+async function saveContactNotes() {
+    if (!currentContactId) return;
+    try {
+        const notes = document.getElementById('contactDetailNotes').value;
+        await supaUpdate('contact_messages', currentContactId, { admin_notes: notes });
+        const c = contactsData.find(x => x.id === currentContactId);
+        if (c) c.admin_notes = notes;
+        showToast('Notas guardadas', 'success');
+    } catch (e) { showToast('Erro ao guardar: ' + e.message, 'danger'); }
+}
+
+function replyToContact(email, name) {
+    document.getElementById('emailModalOverlay').style.display = 'flex';
+    document.getElementById('modalEmailTo').value = email;
+    document.getElementById('modalEmailSubject').value = `Re: A sua mensagem - Share2Inspire`;
+    document.getElementById('modalEmailBody').value = `Ol\u00e1 ${name},\n\nObrigado por nos ter contactado.\n\n\n\nCom os melhores cumprimentos,\nShare2Inspire`;
+    document.getElementById('modalEmailTemplate').value = 'custom';
+}
+
+function exportContactsCSV() {
+    if (!contactsData.length) return;
+    const headers = ['Data','Nome','Email','Telefone','Motivo','Mensagem','Estado','Notas'];
+    const rows = contactsData.map(c => [new Date(c.created_at).toLocaleDateString('pt-PT'), c.name, c.email, c.phone || '', c.subject || '', c.message.replace(/[\n\r]/g,' '), c.status, (c.admin_notes || '').replace(/[\n\r]/g,' ')]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `contactos_share2inspire_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+}
+
+// ===================== HEALTH TAB =====================
+function renderHealth() {
+    if (allHealthLogs.length === 0) {
+        document.getElementById('endpointStatus').innerHTML = '<p class="text-muted text-center">Sem dados de monitoriza\u00e7\u00e3o dispon\u00edveis.</p>';
+        return;
+    }
+
+    const now = new Date();
+    const h24 = allHealthLogs.filter(l => (now - new Date(l.checked_at)) < 86400000);
+    const d7 = allHealthLogs.filter(l => (now - new Date(l.checked_at)) < 604800000);
+
+    // Average TTFB (24h)
+    const avgTTFB = h24.length > 0 ? (h24.reduce((s,l) => s + (l.ttfb_seconds || 0), 0) / h24.length).toFixed(2) : 'N/A';
+    document.getElementById('healthAvgTTFB').textContent = avgTTFB !== 'N/A' ? `${avgTTFB}s` : 'N/A';
+
+    // Uptime (7d)
+    const healthyCount = d7.filter(l => l.status === 'healthy').length;
+    const uptime = d7.length > 0 ? ((healthyCount / d7.length) * 100).toFixed(1) : 'N/A';
+    document.getElementById('healthUptime').textContent = uptime !== 'N/A' ? `${uptime}%` : 'N/A';
+
+    // Alerts (7d)
+    const alerts = d7.filter(l => l.status !== 'healthy').length;
+    document.getElementById('healthAlerts').textContent = alerts;
+
+    // Last check
+    const lastCheck = allHealthLogs[0];
+    document.getElementById('healthLastCheck').textContent = lastCheck ? new Date(lastCheck.checked_at).toLocaleTimeString('pt-PT') : '--';
+
+    // Endpoint status - group by endpoint_name, show latest status
+    const endpoints = {};
+    allHealthLogs.forEach(l => {
+        if (!endpoints[l.endpoint_name]) endpoints[l.endpoint_name] = l;
+    });
+
+    document.getElementById('endpointStatus').innerHTML = `<div class="table-responsive"><table class="table table-hover">
+        <thead><tr><th>Endpoint</th><th>Estado</th><th>TTFB</th><th>HTTP</th><th>\u00daltimo Check</th></tr></thead>
+        <tbody>${Object.values(endpoints).map(e => {
+            const dotClass = e.status === 'healthy' ? 'healthy' : e.status === 'warning' ? 'warning' : e.status === 'critical' ? 'critical' : 'down';
+            const statusLabel = e.status === 'healthy' ? 'Saud\u00e1vel' : e.status === 'warning' ? 'Aviso' : e.status === 'critical' ? 'Cr\u00edtico' : 'Em baixo';
+            return `<tr>
+                <td><strong>${e.endpoint_name}</strong><br><small class="text-muted">${e.endpoint_url || ''}</small></td>
+                <td><span class="health-status"><span class="health-dot ${dotClass}"></span>${statusLabel}</span></td>
+                <td>${e.ttfb_seconds ? e.ttfb_seconds.toFixed(3) + 's' : '-'}</td>
+                <td>${e.http_status || '-'}</td>
+                <td>${new Date(e.checked_at).toLocaleString('pt-PT')}</td>
+            </tr>`;
+        }).join('')}</tbody></table></div>`;
+
+    // TTFB chart
+    updateTTFBChart();
+}
+
+function updateTTFBChart() {
+    // Group health logs by hour for the last 24h
+    const now = new Date();
+    const h24 = allHealthLogs.filter(l => (now - new Date(l.checked_at)) < 86400000);
+    
+    // Get unique endpoints
+    const endpointNames = [...new Set(h24.map(l => l.endpoint_name))];
+    const colors = ['#BF9A33', '#28a745', '#3498db', '#dc3545', '#7c3aed'];
+    
+    // Group by hour
+    const hours = {};
+    for (let i = 23; i >= 0; i--) {
+        const d = new Date(now);
+        d.setHours(d.getHours() - i, 0, 0, 0);
+        hours[d.toISOString().slice(0, 13)] = {};
+    }
+    
+    h24.forEach(l => {
+        const hourKey = new Date(l.checked_at).toISOString().slice(0, 13);
+        if (hours[hourKey]) {
+            if (!hours[hourKey][l.endpoint_name]) hours[hourKey][l.endpoint_name] = [];
+            hours[hourKey][l.endpoint_name].push(l.ttfb_seconds || 0);
+        }
+    });
+
+    const labels = Object.keys(hours).map(h => h.slice(11, 13) + ':00');
+    const datasets = endpointNames.slice(0, 5).map((name, i) => ({
+        label: name,
+        data: Object.values(hours).map(h => {
+            const vals = h[name];
+            return vals && vals.length > 0 ? (vals.reduce((a,b) => a+b, 0) / vals.length) : null;
+        }),
+        borderColor: colors[i % colors.length],
+        backgroundColor: colors[i % colors.length] + '20',
+        fill: false,
+        tension: 0.3,
+        spanGaps: true
+    }));
+
+    if (ttfbChart) ttfbChart.destroy();
+    ttfbChart = new Chart(document.getElementById('ttfbChart').getContext('2d'), {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'top' } },
+            scales: { y: { beginAtZero: true, title: { display: true, text: 'TTFB (s)' } } }
+        }
+    });
+}
+
+// ===================== UTILITIES =====================
+function switchTab(tab, btn) {
+    document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + tab).style.display = 'block';
+    btn.classList.add('active');
+
+    if (tab === 'analyses') renderAnalyses();
+    if (tab === 'vouchers') renderVouchers();
+    if (tab === 'history') renderHistory();
+    if (tab === 'contacts') loadContacts();
+    if (tab === 'health') { loadHealthLogs().then(renderHealth); }
+}
+
+function showToast(msg, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type} alert-dismissible fade show`;
+    toast.style.minWidth = '300px';
+    toast.innerHTML = `${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
+}
+
+function downloadCSV(content, filename) {
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    URL.revokeObjectURL(url); a.remove();
+}
+
+// ===================== INIT =====================
+async function refreshAll() {
+    document.getElementById('lastUpdate').textContent = 'A atualizar...';
+    await Promise.all([loadAllData(), loadEmailHistory()]);
+    updateDashboard();
+    renderAnalyses();
+    renderVouchers();
+    renderHistory();
+    document.getElementById('lastUpdate').textContent = `\u00daltima atualiza\u00e7\u00e3o: ${new Date().toLocaleTimeString('pt-PT')}`;
+}
+
+// Supabase Realtime
+function initRealtime() {
+    const wsUrl = SUPABASE_URL.replace('https://', 'wss://') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY + '&vsn=1.0.0';
+    let ws;
+    let reconnectDelay = 3000;
+
+    function connect() {
+        ws = new WebSocket(wsUrl);
+        ws.onopen = () => {
+            reconnectDelay = 3000;
+            ws.send(JSON.stringify({ topic: 'realtime:public:cv_analysis', event: 'phx_join', payload: { config: { broadcast: { self: true }, presence: { key: '' }, postgres_changes: [{ event: '*', schema: 'public', table: 'cv_analysis' }] } }, ref: '1' }));
+            ws.send(JSON.stringify({ topic: 'realtime:public:vouchers', event: 'phx_join', payload: { config: { broadcast: { self: true }, presence: { key: '' }, postgres_changes: [{ event: '*', schema: 'public', table: 'vouchers' }] } }, ref: '2' }));
+            ws.send(JSON.stringify({ topic: 'realtime:public:contact_messages', event: 'phx_join', payload: { config: { broadcast: { self: true }, presence: { key: '' }, postgres_changes: [{ event: '*', schema: 'public', table: 'contact_messages' }] } }, ref: '3' }));
+            document.getElementById('lastUpdate').textContent += ' \u00b7 \ud83d\udfe2 Live';
+        };
+        ws.onmessage = (evt) => {
+            try {
+                const msg = JSON.parse(evt.data);
+                if (msg.event === 'postgres_changes' || (msg.payload && msg.payload.data)) {
+                    loadAllData().then(() => { updateDashboard(); renderAnalyses(); renderVouchers(); document.getElementById('lastUpdate').textContent = `\u00daltima actualiza\u00e7\u00e3o: ${new Date().toLocaleTimeString('pt-PT')} \u00b7 \ud83d\udfe2 Live`; });
+                }
+            } catch(e) {}
+        };
+        ws.onclose = () => {
+            document.getElementById('lastUpdate').textContent = document.getElementById('lastUpdate').textContent.replace(' \u00b7 \ud83d\udfe2 Live', ' \u00b7 \ud83d\udd34 Reconectar...');
+            setTimeout(connect, reconnectDelay);
+            reconnectDelay = Math.min(reconnectDelay * 2, 30000);
+        };
+        ws.onerror = () => ws.close();
+    }
+    connect();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    refreshAll();
+    setInterval(refreshAll, 30000);
+    initRealtime();
+});

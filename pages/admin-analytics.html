@@ -11,15 +11,12 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Analytics - CV Analyser | Share2Inspire</title>
+    <title>Admin Dashboard - Share2Inspire</title>
     <meta name="robots" content="noindex, nofollow">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../css/coach-agent.css">
-    <link rel="stylesheet" href="../css/side-widgets.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
     <style>
         :root {
             --s2i-gold: #BF9A33;
@@ -29,6 +26,7 @@
             --s2i-green: #28a745;
             --s2i-red: #dc3545;
             --s2i-blue: #3498db;
+            --s2i-purple: #7c3aed;
         }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f5f7; color: var(--s2i-black); }
         .navbar { background: var(--s2i-black) !important; }
@@ -43,6 +41,8 @@
         .badge-free { background: var(--s2i-gray); }
         .badge-voucher { background: var(--s2i-gold); }
         .badge-career { background: var(--s2i-blue); }
+        .badge-pt { background: #016401; color: white; }
+        .badge-en { background: #1d4ed8; color: white; }
         .btn-gold { background: var(--s2i-gold); border-color: var(--s2i-gold); color: white; }
         .btn-gold:hover { background: var(--s2i-gold-light); border-color: var(--s2i-gold-light); color: white; }
         .btn-nurture { font-size: .75rem; padding: 2px 8px; }
@@ -51,8 +51,9 @@
         .table th { font-size: .8rem; text-transform: uppercase; color: var(--s2i-gray); font-weight: 600; border-bottom: 2px solid #dee2e6; }
         .table td { font-size: .85rem; vertical-align: middle; }
         .spinner-gold { color: var(--s2i-gold); }
-        .tab-btn { cursor: pointer; padding: .5rem 1rem; border: none; background: none; font-weight: 500; color: var(--s2i-gray); border-bottom: 2px solid transparent; }
+        .tab-btn { cursor: pointer; padding: .5rem 1rem; border: none; background: none; font-weight: 500; color: var(--s2i-gray); border-bottom: 2px solid transparent; transition: all .2s; }
         .tab-btn.active { color: var(--s2i-gold); border-bottom-color: var(--s2i-gold); }
+        .tab-btn:hover { color: var(--s2i-black); }
         .toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 9999; }
         .email-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); z-index: 9998; display: flex; align-items: center; justify-content: center; }
         .email-modal { background: white; border-radius: 12px; padding: 2rem; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
@@ -67,6 +68,17 @@
         .recipient-controls .form-select { font-size: .75rem; width: auto; padding: 2px 24px 2px 8px; height: auto; }
         .recipient-search { font-size: .8rem; padding: 4px 10px; border: 1px solid #dee2e6; border-radius: 6px; width: 200px; }
         .selected-count { font-size: .78rem; color: var(--s2i-gray); }
+        .lang-toggle { display: inline-flex; border-radius: 6px; overflow: hidden; border: 1px solid #dee2e6; }
+        .lang-toggle button { border: none; padding: 4px 12px; font-size: .78rem; font-weight: 600; cursor: pointer; transition: all .2s; }
+        .lang-toggle button.active { background: var(--s2i-gold); color: white; }
+        .lang-toggle button:not(.active) { background: white; color: var(--s2i-gray); }
+        .health-status { display: inline-flex; align-items: center; gap: 4px; font-size: .8rem; font-weight: 500; }
+        .health-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .health-dot.healthy { background: var(--s2i-green); }
+        .health-dot.warning { background: #ffc107; }
+        .health-dot.critical { background: var(--s2i-red); }
+        .health-dot.down { background: #333; }
+        .funnel-bar { height: 36px; border-radius: 6px; display: flex; align-items: center; padding: 0 12px; color: white; font-weight: 600; font-size: .85rem; transition: width .5s ease; }
         @media (max-width: 768px) {
             .stat-value { font-size: 1.3rem; }
             .filter-bar { flex-direction: column; }
@@ -97,8 +109,13 @@
             <a class="navbar-brand" href="../index.html">
                 <i class="fas fa-chart-line me-2"></i>Share2Inspire Admin
             </a>
-            <div>
-                <span class="text-muted me-3" id="lastUpdate" style="font-size:.8rem;">--</span>
+            <div class="d-flex align-items-center gap-3">
+                <div class="lang-toggle" id="globalLangToggle">
+                    <button class="active" onclick="setGlobalLang('all',this)">Todos</button>
+                    <button onclick="setGlobalLang('pt',this)">🇵🇹 PT</button>
+                    <button onclick="setGlobalLang('en',this)">🇬🇧 EN</button>
+                </div>
+                <span class="text-muted me-1" id="lastUpdate" style="font-size:.8rem;">--</span>
                 <button class="btn btn-sm btn-gold" onclick="refreshAll()">
                     <i class="fas fa-sync-alt me-1"></i>Atualizar
                 </button>
@@ -109,42 +126,63 @@
     <div class="container-fluid px-4 py-3">
         <!-- Tabs -->
         <div class="mb-3" style="border-bottom: 1px solid #dee2e6;">
-            <button class="tab-btn active" onclick="switchTab('dashboard',this)">Dashboard</button>
-            <button class="tab-btn" onclick="switchTab('analyses',this)">Análises</button>
-            <button class="tab-btn" onclick="switchTab('vouchers',this)">Vouchers</button>
-            <button class="tab-btn" onclick="switchTab('nurturing',this)">Follow-up</button>
-            <button class="tab-btn" onclick="switchTab('history',this)">Histórico</button>
+            <button class="tab-btn active" onclick="switchTab('dashboard',this)"><i class="fas fa-tachometer-alt me-1"></i>Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('analyses',this)"><i class="fas fa-list me-1"></i>Análises</button>
+            <button class="tab-btn" onclick="switchTab('vouchers',this)"><i class="fas fa-ticket-alt me-1"></i>Vouchers</button>
+            <button class="tab-btn" onclick="switchTab('nurturing',this)"><i class="fas fa-paper-plane me-1"></i>Follow-up</button>
+            <button class="tab-btn" onclick="switchTab('history',this)"><i class="fas fa-history me-1"></i>Histórico</button>
             <button class="tab-btn" onclick="switchTab('contacts',this)"><i class="fas fa-envelope me-1"></i>Contactos</button>
+            <button class="tab-btn" onclick="switchTab('health',this)"><i class="fas fa-heartbeat me-1"></i>Saúde</button>
         </div>
 
         <!-- TAB: Dashboard -->
         <div id="tab-dashboard">
-            <!-- KPI Cards -->
+            <!-- KPI Cards Row 1 -->
             <div class="row g-3 mb-3">
                 <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiTotal">--</div><div class="stat-label">Total Análises</div></div></div>
                 <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-green)" id="kpiPaid">--</div><div class="stat-label">Análises Pagas</div></div></div>
                 <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-gray)" id="kpiFree">--</div><div class="stat-label">Análises Gratuitas</div></div></div>
                 <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-gold)" id="kpiRevenue">--</div><div class="stat-label">Receita Total</div></div></div>
             </div>
+            <!-- KPI Cards Row 2 -->
             <div class="row g-3 mb-3">
                 <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpi24h">--</div><div class="stat-label">Últimas 24h</div></div></div>
                 <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpi7d">--</div><div class="stat-label">Últimos 7 Dias</div></div></div>
                 <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiAvgScore">--</div><div class="stat-label">Score Médio</div></div></div>
                 <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-blue)" id="kpiCareerPaths">--</div><div class="stat-label">Career Paths</div></div></div>
             </div>
+            <!-- KPI Cards Row 3 -->
             <div class="row g-3 mb-3">
                 <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiUniqueUsers">--</div><div class="stat-label">Utilizadores Únicos</div></div></div>
                 <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-green)" id="kpiConvRate">--</div><div class="stat-label">Taxa Conversão</div></div></div>
                 <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiVouchersActive">--</div><div class="stat-label">Vouchers Activos</div></div></div>
                 <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiVouchersUsed">--</div><div class="stat-label">Vouchers Usados</div></div></div>
             </div>
+            <!-- Revenue Breakdown Row -->
+            <div class="row g-3 mb-3">
+                <div class="col-6 col-md-3"><div class="stat-card" style="border-left:3px solid #016401;"><div class="stat-value" style="font-size:1.4rem;" id="kpiRevenuePT">--</div><div class="stat-label">🇵🇹 Receita PT</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card" style="border-left:3px solid #1d4ed8;"><div class="stat-value" style="font-size:1.4rem;" id="kpiRevenueEN">--</div><div class="stat-label">🇬🇧 Receita EN</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card" style="border-left:3px solid var(--s2i-purple);"><div class="stat-value" style="font-size:1.4rem;" id="kpiRevenueCVA">--</div><div class="stat-label">CV Analyser</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card" style="border-left:3px solid var(--s2i-blue);"><div class="stat-value" style="font-size:1.4rem;" id="kpiRevenueCP">--</div><div class="stat-label">Career Path</div></div></div>
+            </div>
             <!-- Charts -->
-            <div class="row g-3">
+            <div class="row g-3 mb-3">
                 <div class="col-lg-8">
                     <div class="card-section"><div class="section-title"><i class="fas fa-chart-bar me-2 text-muted"></i>Análises por Dia</div><canvas id="dailyChart" height="100"></canvas></div>
                 </div>
                 <div class="col-lg-4">
                     <div class="card-section"><div class="section-title"><i class="fas fa-chart-pie me-2 text-muted"></i>Tipo de Análise</div><canvas id="typeChart"></canvas></div>
+                </div>
+            </div>
+            <div class="row g-3 mb-3">
+                <div class="col-lg-6">
+                    <div class="card-section"><div class="section-title"><i class="fas fa-globe me-2 text-muted"></i>Distribuição por Idioma</div><canvas id="langChart"></canvas></div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card-section">
+                        <div class="section-title"><i class="fas fa-filter me-2 text-muted"></i>Funil de Conversão</div>
+                        <div id="conversionFunnel"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -163,6 +201,16 @@
                         <option value="paid">Pago (MB WAY/PayPal)</option>
                         <option value="voucher">Voucher</option>
                     </select>
+                    <select class="form-select form-select-sm" style="width:auto;" id="filterLang" onchange="filterAnalyses()">
+                        <option value="all">Todos os Idiomas</option>
+                        <option value="pt">🇵🇹 Português</option>
+                        <option value="en">🇬🇧 English</option>
+                    </select>
+                    <select class="form-select form-select-sm" style="width:auto;" id="filterProduct" onchange="filterAnalyses()">
+                        <option value="all">Todos os Produtos</option>
+                        <option value="cv">CV Analyser</option>
+                        <option value="career_path">Career Path</option>
+                    </select>
                     <input type="text" class="form-control form-control-sm" style="width:200px;" placeholder="Pesquisar email..." id="filterEmail" oninput="filterAnalyses()">
                     <input type="date" class="form-control form-control-sm" style="width:auto;" id="filterDateFrom" onchange="filterAnalyses()">
                     <span class="text-muted">até</span>
@@ -171,9 +219,9 @@
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead><tr>
-                            <th>Data</th><th>Nome</th><th>Email</th><th>Score</th><th>Tipo</th><th>Career Path</th><th>Acções</th>
+                            <th>Data</th><th>Nome</th><th>Email</th><th>Score</th><th>Tipo</th><th>Produto</th><th>Idioma</th><th>Acções</th>
                         </tr></thead>
-                        <tbody id="analysesTable"><tr><td colspan="7" class="text-center py-4"><div class="spinner-border spinner-gold"></div></td></tr></tbody>
+                        <tbody id="analysesTable"><tr><td colspan="8" class="text-center py-4"><div class="spinner-border spinner-gold"></div></td></tr></tbody>
                     </table>
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
@@ -200,8 +248,6 @@
                         <option value="all">Todos os Tipos</option>
                         <option value="standard">CV Analyser</option>
                         <option value="career_path">Career Path</option>
-                        <option value="bundle">Bundle (CV + Career Path)</option>
-                        <option value="complete">Completo (legado)</option>
                     </select>
                     <input type="text" class="form-control form-control-sm" style="width:200px;" placeholder="Pesquisar email..." id="filterVoucherEmail" oninput="filterVouchers()">
                 </div>
@@ -219,7 +265,13 @@
         <!-- TAB: Nurturing -->
         <div id="tab-nurturing" style="display:none;">
             <div class="card-section">
-                <div class="section-title"><i class="fas fa-paper-plane me-2 text-muted"></i>Follow-up & Nurturing</div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="section-title mb-0"><i class="fas fa-paper-plane me-2 text-muted"></i>Follow-up & Nurturing</div>
+                    <div class="lang-toggle" id="nurturingLangToggle">
+                        <button class="active" onclick="setNurturingLang('pt',this)">🇵🇹 PT</button>
+                        <button onclick="setNurturingLang('en',this)">🇬🇧 EN</button>
+                    </div>
+                </div>
                 <p class="text-muted mb-3">Envia emails personalizados para segmentos específicos de utilizadores via Brevo.</p>
                 
                 <div class="row g-3 mb-4">
@@ -359,14 +411,7 @@
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead><tr>
-                            <th style="width:30px;"></th>
-                            <th>Data</th>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Motivo</th>
-                            <th>Mensagem</th>
-                            <th>Estado</th>
-                            <th>Ações</th>
+                            <th style="width:30px;"></th><th>Data</th><th>Nome</th><th>Email</th><th>Motivo</th><th>Mensagem</th><th>Estado</th><th>Ações</th>
                         </tr></thead>
                         <tbody id="contactsTable"><tr><td colspan="8" class="text-center py-4"><div class="spinner-border spinner-gold"></div></td></tr></tbody>
                     </table>
@@ -374,6 +419,26 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <small class="text-muted" id="contactsCount">--</small>
                 </div>
+            </div>
+        </div>
+
+        <!-- TAB: Health -->
+        <div id="tab-health" style="display:none;">
+            <div class="row g-3 mb-3">
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="healthAvgTTFB">--</div><div class="stat-label">TTFB Médio (24h)</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-green)" id="healthUptime">--</div><div class="stat-label">Uptime (7d)</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-red)" id="healthAlerts">--</div><div class="stat-label">Alertas (7d)</div></div></div>
+                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="healthLastCheck">--</div><div class="stat-label">Último Check</div></div></div>
+            </div>
+            <div class="card-section mb-3">
+                <div class="section-title"><i class="fas fa-server me-2 text-muted"></i>Estado dos Endpoints</div>
+                <div id="endpointStatus">
+                    <div class="text-center py-3"><div class="spinner-border spinner-gold"></div></div>
+                </div>
+            </div>
+            <div class="card-section">
+                <div class="section-title"><i class="fas fa-chart-line me-2 text-muted"></i>TTFB ao Longo do Tempo</div>
+                <canvas id="ttfbChart" height="120"></canvas>
             </div>
         </div>
 
@@ -414,6 +479,13 @@
                 <input type="text" class="form-control form-control-sm" id="modalEmailTo" readonly>
             </div>
             <div class="mb-2">
+                <label class="form-label" style="font-size:.85rem;font-weight:600;">Idioma:</label>
+                <select class="form-select form-select-sm" id="modalEmailLang" onchange="loadEmailTemplate()">
+                    <option value="pt">🇵🇹 Português</option>
+                    <option value="en">🇬🇧 English</option>
+                </select>
+            </div>
+            <div class="mb-2">
                 <label class="form-label" style="font-size:.85rem;font-weight:600;">Template:</label>
                 <select class="form-select form-select-sm" id="modalEmailTemplate" onchange="loadEmailTemplate()">
                     <option value="upsell">Upsell - Análise Completa</option>
@@ -448,19 +520,23 @@
             <div class="mb-2">
                 <label class="form-label" style="font-size:.85rem;font-weight:600;">Plano:</label>
                 <select class="form-select form-select-sm" id="voucherPlan">
-                    <optgroup label="CV Analyser">
-                        <option value="Essencial|1|2.99|standard|false">Essencial (1 análise - 2,99€)</option>
-                        <option value="Profissional|3|6.99|standard|false">Profissional (3 análises - 6,99€)</option>
-                        <option value="Premium|5|9.99|standard|false">Premium (5 análises - 9,99€)</option>
+                    <optgroup label="🇵🇹 CV Analyser (PT)">
+                        <option value="Essencial|1|3.99|standard|false">Essencial (1 análise - €3,99)</option>
+                        <option value="Profissional|3|7.99|standard|false">Profissional (3 análises - €7,99)</option>
+                        <option value="Premium|5|12.99|standard|false">Premium (5 análises - €12,99)</option>
                     </optgroup>
-                    <optgroup label="Career Path">
-                        <option value="Career Path|1|5.00|career_path|false">Career Path (1 análise - 5,00€)</option>
-                        <option value="Career Path Pro|3|12.00|career_path|false">Career Path Pro (3 análises - 12,00€)</option>
+                    <optgroup label="🇬🇧 CV Analyser (EN)">
+                        <option value="Essential|1|5.99|standard|false">Essential (1 analysis - $5.99)</option>
+                        <option value="Professional|3|14.99|standard|false">Professional (3 analyses - $14.99)</option>
+                        <option value="Premium EN|5|24.99|standard|false">Premium (5 analyses - $24.99)</option>
                     </optgroup>
-                    <optgroup label="Bundle (CV + Career Path)">
-                        <option value="Bundle|1|6.99|bundle|true">Bundle Essencial (CV + Career Path - 6,99€)</option>
+                    <optgroup label="🇵🇹 Career Path (PT)">
+                        <option value="Career Path|1|9.99|career_path|false">Career Path (1 análise - €9,99)</option>
                     </optgroup>
-                    <optgroup label="Outros">
+                    <optgroup label="🇬🇧 Career Path (EN)">
+                        <option value="Career Path EN|1|10.00|career_path|false">Career Path (1 analysis - $10.00)</option>
+                    </optgroup>
+                    <optgroup label="Teste">
                         <option value="Teste|1|0|standard|false">Teste CV (1 análise - grátis)</option>
                         <option value="Teste Career Path|1|0|career_path|false">Teste Career Path (grátis)</option>
                     </optgroup>
@@ -484,1103 +560,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-    // ===================== CONFIG =====================
-    const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
-    const BREVO_KEY = localStorage.getItem('s2i_brevo_key') || '';
-    const BREVO_SENDER = { name: 'Share2Inspire', email: 'srshare2inspire@gmail.com' };
-
-    function ensureBrevoKey() {
-        if (BREVO_KEY) return true;
-        const key = prompt('Insere a API Key do Brevo para enviar emails:');
-        if (key) { localStorage.setItem('s2i_brevo_key', key); location.reload(); return true; }
-        showToast('API Key do Brevo necessária para enviar emails', 'danger');
-        return false;
-    }
-
-    let allAnalyses = [];
-    let allVouchers = [];
-    let allEmailHistory = [];
-    let dailyChart = null;
-    let typeChart = null;
-    let currentPage = 1;
-    const PAGE_SIZE = 20;
-
-    // ===================== SUPABASE HELPERS =====================
-    async function supaFetch(table, query = '') {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-        });
-        return res.json();
-    }
-
-    async function supaInsert(table, data) {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
-            method: 'POST',
-            headers: {
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}`,
-                'Content-Type': 'application/json',
-                'Prefer': 'return=representation'
-            },
-            body: JSON.stringify(data)
-        });
-        return res.json();
-    }
-
-    // ===================== DATA LOADING =====================
-    async function loadAllData() {
-        try {
-            const [analyses, vouchers] = await Promise.all([
-                supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,analysis_type,payment_status,payment_amount,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc'),
-                supaFetch('vouchers', 'select=*&order=created_at.desc')
-            ]);
-            allAnalyses = Array.isArray(analyses) ? analyses : [];
-            allVouchers = Array.isArray(vouchers) ? vouchers : [];
-        } catch (e) {
-            console.error('Erro ao carregar dados:', e);
-            allAnalyses = [];
-            allVouchers = [];
-            showToast('Erro ao carregar dados do Supabase', 'danger');
-        }
-    }
-
-    // ===================== DETERMINE ANALYSIS TYPE =====================
-    function getAnalysisType(analysis) {
-        // Career path entries are always paid
-        if (analysis.analysis_type === 'career_path') return 'paid';
-        // Check if this email has used vouchers
-        const usedVoucher = allVouchers.find(v =>
-            v.email && analysis.user_email &&
-            v.email.toLowerCase() === analysis.user_email.toLowerCase() &&
-            v.used_analyses > 0
-        );
-        if (analysis.payment_status === 'paid' || analysis.payment_amount > 0) return 'paid';
-        if (usedVoucher) return 'voucher';
-        if (analysis.analysis_type === 'free_heuristic') return 'free';
-        return 'free';
-    }
-
-    function getTypeBadge(type) {
-        switch(type) {
-            case 'paid': return '<span class="badge badge-paid">Pago</span>';
-            case 'voucher': return '<span class="badge badge-voucher">Voucher</span>';
-            default: return '<span class="badge badge-free">Gratuito</span>';
-        }
-    }
-
-    // ===================== DASHBOARD KPIs =====================
-    function updateDashboard() {
-        const total = allAnalyses.length;
-        const uniqueEmails = new Set(allAnalyses.map(a => a.user_email).filter(e => e && e !== 'anonymous@share2inspire.pt'));
-        const now = new Date();
-        const h24 = allAnalyses.filter(a => (now - new Date(a.created_at)) < 86400000).length;
-        const d7 = allAnalyses.filter(a => (now - new Date(a.created_at)) < 604800000).length;
-        const avgScore = total > 0 ? (allAnalyses.reduce((s,a) => s + (a.score||0), 0) / total).toFixed(1) : 'N/A';
-        const careerPaths = allAnalyses.filter(a => a.career_path_purchased).length;
-
-        // Revenue from vouchers (real money)
-        const voucherEmails = new Set(allVouchers.filter(v => v.amount_paid > 0).map(v => v.email.toLowerCase()));
-        // Calculate revenue from unique voucher batches
-        const voucherBatches = {};
-        allVouchers.forEach(v => {
-            const key = v.email + '|' + v.created_at;
-            if (!voucherBatches[key]) voucherBatches[key] = { amount: parseFloat(v.amount_paid) || 0, count: 0 };
-            voucherBatches[key].count++;
-        });
-        const voucherRevenue = Object.values(voucherBatches).reduce((s,b) => s + b.amount, 0);
-        // Revenue from direct payments (payment_amount in cv_analysis)
-        const directRevenue = allAnalyses.reduce((s,a) => s + (parseFloat(a.payment_amount) || 0), 0);
-        const revenue = voucherRevenue + directRevenue;
-
-        // Paid analyses = vouchers used + direct paid
-        const paidCount = allVouchers.filter(v => v.used_analyses > 0).length + allAnalyses.filter(a => a.payment_status === 'paid').length;
-        const freeCount = total - paidCount;
-        const convRate = uniqueEmails.size > 0 ? ((voucherEmails.size / uniqueEmails.size) * 100).toFixed(1) : '0';
-
-        const activeVouchers = allVouchers.filter(v => v.is_active === true && (v.used_analyses === 0 || v.used_analyses === null)).length;
-        const usedVouchers = allVouchers.filter(v => (v.used_analyses != null && v.used_analyses > 0) || v.is_active === false).length;
-
-        document.getElementById('kpiTotal').textContent = total;
-        document.getElementById('kpiPaid').textContent = paidCount;
-        document.getElementById('kpiFree').textContent = freeCount;
-        document.getElementById('kpiRevenue').textContent = `€${revenue.toFixed(2)}`;
-        document.getElementById('kpi24h').textContent = h24;
-        document.getElementById('kpi7d').textContent = d7;
-        document.getElementById('kpiAvgScore').textContent = avgScore !== 'N/A' ? `${avgScore}/100` : 'N/A';
-        document.getElementById('kpiCareerPaths').textContent = careerPaths;
-        document.getElementById('kpiUniqueUsers').textContent = uniqueEmails.size;
-        document.getElementById('kpiConvRate').textContent = `${convRate}%`;
-        document.getElementById('kpiVouchersActive').textContent = activeVouchers;
-        document.getElementById('kpiVouchersUsed').textContent = usedVouchers;
-
-        // Nurturing counts
-        const freeEmails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'free').map(a => a.user_email).filter(e => e && e !== 'anonymous@share2inspire.pt'))];
-        document.getElementById('upsellCount').textContent = freeEmails.length;
-        document.getElementById('feedbackCount').textContent = allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.user_rating).length;
-        document.getElementById('careerpathCount').textContent = allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.career_path_purchased).length;
-
-        updateCharts();
-    }
-
-    // ===================== CHARTS =====================
-    function updateCharts() {
-        // Daily chart - last 14 days
-        const days = {};
-        const now = new Date();
-        for (let i = 13; i >= 0; i--) {
-            const d = new Date(now);
-            d.setDate(d.getDate() - i);
-            const key = d.toISOString().split('T')[0];
-            days[key] = { total: 0, paid: 0 };
-        }
-        allAnalyses.forEach(a => {
-            const key = new Date(a.created_at).toISOString().split('T')[0];
-            if (days[key]) {
-                days[key].total++;
-                if (getAnalysisType(a) !== 'free') days[key].paid++;
-            }
-        });
-        const labels = Object.keys(days).map(d => { const dt = new Date(d); return dt.toLocaleDateString('pt-PT', {day:'2-digit',month:'2-digit'}); });
-        const totals = Object.values(days).map(d => d.total);
-        const paid = Object.values(days).map(d => d.paid);
-
-        if (dailyChart) dailyChart.destroy();
-        dailyChart = new Chart(document.getElementById('dailyChart').getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels,
-                datasets: [
-                    { label: 'Total', data: totals, backgroundColor: 'rgba(191,154,51,.7)', borderColor: '#BF9A33', borderWidth: 1 },
-                    { label: 'Pagas', data: paid, backgroundColor: 'rgba(40,167,69,.7)', borderColor: '#28a745', borderWidth: 1 }
-                ]
-            },
-            options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
-        });
-
-        // Type chart
-        const types = { free: 0, paid: 0, voucher: 0 };
-        allAnalyses.forEach(a => { types[getAnalysisType(a)]++; });
-        if (typeChart) typeChart.destroy();
-        typeChart = new Chart(document.getElementById('typeChart').getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Gratuito', 'Pago', 'Voucher'],
-                datasets: [{ data: [types.free, types.paid, types.voucher], backgroundColor: ['#6c757d', '#28a745', '#BF9A33'], borderWidth: 2, borderColor: '#fff' }]
-            },
-            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } } } }
-        });
-    }
-
-    // ===================== ANALYSES TABLE =====================
-    function renderAnalyses() {
-        let filtered = [...allAnalyses];
-        const typeFilter = document.getElementById('filterType').value;
-        const emailFilter = document.getElementById('filterEmail').value.toLowerCase();
-        const dateFrom = document.getElementById('filterDateFrom').value;
-        const dateTo = document.getElementById('filterDateTo').value;
-
-        if (typeFilter !== 'all') filtered = filtered.filter(a => getAnalysisType(a) === typeFilter);
-        if (emailFilter) filtered = filtered.filter(a => a.user_email && a.user_email.toLowerCase().includes(emailFilter));
-        if (dateFrom) filtered = filtered.filter(a => new Date(a.created_at) >= new Date(dateFrom));
-        if (dateTo) filtered = filtered.filter(a => new Date(a.created_at) <= new Date(dateTo + 'T23:59:59'));
-
-        const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-        if (currentPage > totalPages) currentPage = 1;
-        const start = (currentPage - 1) * PAGE_SIZE;
-        const page = filtered.slice(start, start + PAGE_SIZE);
-
-        const tbody = document.getElementById('analysesTable');
-        if (page.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">Sem resultados</td></tr>';
-        } else {
-            tbody.innerHTML = page.map(a => {
-                const date = new Date(a.created_at);
-                const dateStr = date.toLocaleDateString('pt-PT') + ' ' + date.toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
-                const type = getAnalysisType(a);
-                const cpBadge = a.career_path_purchased ? '<span class="badge badge-career">Sim</span>' : '<span class="text-muted">-</span>';
-                return `<tr>
-                    <td>${dateStr}</td>
-                    <td>${a.user_name || '<em class="text-muted">Anónimo</em>'}</td>
-                    <td>${a.user_email || '-'}</td>
-                    <td><strong>${a.score || '-'}</strong></td>
-                    <td>${getTypeBadge(type)}</td>
-                    <td>${cpBadge}</td>
-                    <td>
-                        ${a.user_email && a.user_email !== 'anonymous@share2inspire.pt' ? `<button class="btn btn-sm btn-outline-secondary btn-nurture" onclick="openEmailModal('${a.user_email}','${a.user_name||''}')"><i class="fas fa-envelope"></i></button>` : ''}
-                    </td>
-                </tr>`;
-            }).join('');
-        }
-
-        document.getElementById('analysesCount').textContent = `${filtered.length} análises encontradas`;
-
-        // Pagination
-        const pag = document.getElementById('analysesPagination');
-        if (totalPages <= 1) { pag.innerHTML = ''; return; }
-        let pagHtml = '';
-        for (let i = 1; i <= Math.min(totalPages, 10); i++) {
-            pagHtml += `<li class="page-item ${i===currentPage?'active':''}"><a class="page-link" href="#" onclick="currentPage=${i};renderAnalyses();return false;">${i}</a></li>`;
-        }
-        pag.innerHTML = pagHtml;
-    }
-
-    function filterAnalyses() { currentPage = 1; renderAnalyses(); }
-
-    function exportAnalysesCSV() {
-        const csv = ['Data,Nome,Email,Score,Tipo,Career Path'];
-        allAnalyses.forEach(a => {
-            csv.push(`"${new Date(a.created_at).toLocaleString('pt-PT')}","${a.user_name||''}","${a.user_email||''}",${a.score||''},${getAnalysisType(a)},${a.career_path_purchased?'Sim':'Não'}`);
-        });
-        downloadCSV(csv.join('\n'), 'cv_analyses_export.csv');
-    }
-
-    // ===================== VOUCHERS TABLE =====================
-    function renderVouchers() {
-        let filtered = [...allVouchers];
-        const statusFilter = document.getElementById('filterVoucherStatus').value;
-        const typeFilter = document.getElementById('filterVoucherType') ? document.getElementById('filterVoucherType').value : 'all';
-        const emailFilter = document.getElementById('filterVoucherEmail').value.toLowerCase();
-
-        if (statusFilter === 'active') filtered = filtered.filter(v => v.is_active === true && (v.used_analyses === 0 || v.used_analyses === null));
-        if (statusFilter === 'used') filtered = filtered.filter(v => (v.used_analyses != null && v.used_analyses > 0) || v.is_active === false);
-        if (typeFilter !== 'all') filtered = filtered.filter(v => v.voucher_type === typeFilter);
-        if (emailFilter) filtered = filtered.filter(v => v.email.toLowerCase().includes(emailFilter));
-
-        const tbody = document.getElementById('vouchersTable');
-        if (filtered.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Sem vouchers</td></tr>';
-        } else {
-            tbody.innerHTML = filtered.map(v => {
-                const date = new Date(v.created_at).toLocaleDateString('pt-PT');
-                const isUsed = (v.used_analyses != null && v.used_analyses > 0) || v.is_active === false;
-                const status = isUsed ? '<span class="badge bg-secondary">Usado</span>' : '<span class="badge bg-success">Activo</span>';
-                const rowClass = isUsed ? 'voucher-row used' : '';
-                const typeLabel = v.voucher_type === 'bundle' ? '<span class="badge bg-warning text-dark">Bundle</span>' : v.voucher_type === 'complete' ? '<span class="badge bg-warning text-dark">Completo</span>' : v.voucher_type === 'career_path' ? '<span class="badge" style="background:#3498db;">Career Path</span>' : '<span class="badge bg-primary">CV Analyser</span>';
-                return `<tr class="${rowClass}">
-                    <td><code>${v.code}</code></td>
-                    <td>${v.email}</td>
-                    <td>${v.plan_name}</td>
-                    <td>${typeLabel}</td>
-                    <td>€${parseFloat(v.amount_paid).toFixed(2)}</td>
-                    <td>${status}</td>
-                    <td>${date}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-secondary btn-nurture" onclick="openEmailModal('${v.email}','')"><i class="fas fa-envelope"></i></button>
-                    </td>
-                </tr>`;
-            }).join('');
-        }
-    }
-
-    function filterVouchers() { renderVouchers(); }
-
-    // ===================== CREATE VOUCHERS =====================
-    function showCreateVoucherModal() { document.getElementById('voucherModalOverlay').style.display = 'flex'; }
-    function closeVoucherModal() { document.getElementById('voucherModalOverlay').style.display = 'none'; }
-
-    async function createVouchers() {
-        const email = document.getElementById('voucherEmail').value.trim();
-        if (!email) { showToast('Email obrigatório', 'danger'); return; }
-
-        const parts = document.getElementById('voucherPlan').value.split('|');
-        const planName = parts[0];
-        const count = parseInt(parts[1]);
-        const amount = parseFloat(parts[2]);
-        const voucherType = parts[3] || 'standard';
-        const includesCareerPath = parts[4] === 'true';
-        const payment = document.getElementById('voucherPayment').value;
-        const sendEmail = document.getElementById('voucherSendEmail').checked;
-
-        // Generate codes
-        const codes = [];
-        for (let i = 0; i < count; i++) {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let code = 'CVA-';
-            for (let j = 0; j < 8; j++) code += chars[Math.floor(Math.random() * chars.length)];
-            codes.push(code);
-        }
-
-        // Insert into Supabase
-        const vouchers = codes.map(code => ({
-            code, email, plan_name: planName, total_analyses: 1, used_analyses: 0,
-            amount_paid: amount, payment_method: payment, is_active: true,
-            voucher_type: voucherType, includes_career_path: includesCareerPath
-        }));
-
-        try {
-            await supaInsert('vouchers', vouchers);
-            showToast(`${count} voucher(s) criado(s) com sucesso!`, 'success');
-
-            if (sendEmail) {
-                await sendVoucherEmail(email, codes, planName, amount);
-            }
-
-            closeVoucherModal();
-            await loadAllData();
-            renderVouchers();
-            updateDashboard();
-        } catch (e) {
-            console.error('Erro ao criar vouchers:', e);
-            showToast('Erro ao criar vouchers', 'danger');
-        }
-    }
-
-    async function sendVoucherEmail(email, codes, planName, amount) {
-        const codesHtml = codes.map(c => `<div style="background:#faf9f7;border:1px solid #e8e4dc;border-radius:8px;padding:16px;margin:10px 0;text-align:center;font-family:'Courier New',monospace;font-size:18px;font-weight:600;color:#1A1A1A;letter-spacing:3px;">${c}</div>`).join('');
-
-        const html = `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
-  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
-    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
-    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
-    <p style="color:#999;margin:10px 0 0;font-size:13px;letter-spacing:.5px;">CV Analyser</p>
-  </div>
-  <div style="padding:40px 36px;">
-    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;line-height:1.4;">Os teus c\u00f3digos de an\u00e1lise</h2>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;margin:0 0 24px;">Obrigado pela tua compra do pacote <strong>${planName}</strong>${amount > 0 ? ` (${amount.toFixed(2)}\u20ac)` : ''}. Aqui est\u00e3o os teus ${codes.length} c\u00f3digo(s):</p>
-    ${codesHtml}
-    <div style="background:#faf9f7;border-radius:8px;padding:24px;margin:28px 0;">
-      <p style="color:#333;font-size:14px;font-weight:500;margin:0 0 12px;">Como usar:</p>
-      <div style="color:#4a4a4a;font-size:14px;line-height:2.2;">
-        1. Vai a <a href="https://www.share2inspire.pt/cv-analyser" style="color:#BF9A33;text-decoration:none;">share2inspire.pt/cv-analyser</a><br>
-        2. Faz upload do teu CV<br>
-        3. Ap\u00f3s a an\u00e1lise gratuita, clica em \u201cC\u00f3digo\u201d<br>
-        4. Insere um dos c\u00f3digos acima<br>
-        5. Desfruta do relat\u00f3rio completo!
-      </div>
-    </div>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;margin:0;">Cada c\u00f3digo d\u00e1 direito a <strong>1 an\u00e1lise completa</strong> com relat\u00f3rio PDF detalhado.</p>
-  </div>
-  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
-    <p style="color:#b0b0b0;font-size:11px;margin:0;letter-spacing:.3px;">Share2Inspire \u00a9 2026 &nbsp;\u00b7&nbsp; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
-  </div>
-</div>`;
-
-        await sendBrevoEmail(email, `Os teus códigos CV Analyser - Share2Inspire`, html);
-    }
-
-    // ===================== EMAIL FUNCTIONS =====================
-    function openEmailModal(email, name) {
-        document.getElementById('modalEmailTo').value = email;
-        loadEmailTemplate();
-        document.getElementById('emailModalOverlay').style.display = 'flex';
-    }
-    function closeEmailModal() { document.getElementById('emailModalOverlay').style.display = 'none'; }
-
-    // ===================== MODERN EMAIL TEMPLATES =====================
-    function getEmailTemplate(type) {
-        const templates = {
-            upsell: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
-  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
-    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
-    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
-  </div>
-  <div style="padding:40px 36px;">
-    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;line-height:1.4;">O teu CV merece mais</h2>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;margin:0 0 24px;">Vimos que analisaste o teu CV no CV Analyser. Esperamos que os insights iniciais tenham sido \u00fateis!</p>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;margin:0 0 12px;">A an\u00e1lise completa inclui:</p>
-    <div style="background:#faf9f7;border-radius:8px;padding:20px 24px;margin:0 0 28px;">
-      <div style="color:#333;font-size:14px;line-height:2.2;">
-        \u2714\ufe0f &nbsp; Relat\u00f3rio PDF detalhado com 8+ dimens\u00f5es<br>
-        \u2714\ufe0f &nbsp; Estimativa salarial personalizada<br>
-        \u2714\ufe0f &nbsp; Recomenda\u00e7\u00f5es espec\u00edficas para o teu perfil<br>
-        \u2714\ufe0f &nbsp; Compatibilidade ATS detalhada
-      </div>
-    </div>
-    <div style="text-align:center;margin:32px 0;">
-      <a href="https://www.share2inspire.pt/cv-analyser" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;letter-spacing:.5px;">Analisar CV Agora</a>
-    </div>
-    <p style="color:#999;font-size:13px;line-height:1.6;text-align:center;margin:0;">Por apenas 2,99\u20ac, desbloqueia todo o potencial da an\u00e1lise.</p>
-  </div>
-  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
-    <p style="color:#b0b0b0;font-size:11px;margin:0;letter-spacing:.3px;">Share2Inspire \u00a9 2026 &nbsp;\u00b7&nbsp; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
-  </div>
-</div>`,
-
-            feedback: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
-  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
-    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
-    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
-  </div>
-  <div style="padding:40px 36px;">
-    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;line-height:1.4;">A tua opini\u00e3o \u00e9 importante</h2>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;margin:0 0 24px;">Obrigado por teres utilizado o CV Analyser!</p>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;margin:0 0 28px;">Gostar\u00edamos de saber como foi a tua experi\u00eancia. O teu feedback ajuda-nos a melhorar continuamente o servi\u00e7o.</p>
-    <div style="background:#faf9f7;border-radius:8px;padding:20px 24px;margin:0 0 28px;text-align:center;">
-      <p style="color:#333;font-size:14px;margin:0 0 8px;">Avalia a tua experi\u00eancia</p>
-      <p style="font-size:28px;margin:0;letter-spacing:6px;">\u2606\u2606\u2606\u2606\u2606</p>
-    </div>
-    <div style="text-align:center;margin:32px 0;">
-      <a href="https://www.share2inspire.pt/cv-analyser" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;letter-spacing:.5px;">Avaliar Agora</a>
-    </div>
-    <p style="color:#999;font-size:13px;line-height:1.6;text-align:center;margin:0;">Podes tamb\u00e9m responder directamente a este email.</p>
-  </div>
-  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
-    <p style="color:#b0b0b0;font-size:11px;margin:0;letter-spacing:.3px;">Share2Inspire \u00a9 2026 &nbsp;\u00b7&nbsp; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
-  </div>
-</div>`,
-
-            careerpath: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
-  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
-    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
-    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
-  </div>
-  <div style="padding:40px 36px;">
-    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;line-height:1.4;">Qual é o teu próximo passo de carreira?</h2>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;margin:0 0 24px;">Já tens a tua análise completa de CV. Agora descobre o teu roadmap de carreira personalizado.</p>
-    <div style="background:#faf9f7;border-radius:8px;padding:20px 24px;margin:0 0 28px;">
-      <div style="color:#333;font-size:14px;line-height:2.2;">
-        📊 &nbsp; Próximos 3 cargos recomendados com roadmap<br>
-        🎓 &nbsp; Formações e certificações recomendadas<br>
-        📅 &nbsp; Plano de acção a 30/60/90 dias<br>
-        👥 &nbsp; Estratégia de networking e comunidades<br>
-        🔗 &nbsp; Cruzamento CV vs LinkedIn
-      </div>
-    </div>
-    <div style="text-align:center;margin:32px 0;">
-      <a href="https://www.share2inspire.pt/career-path" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;letter-spacing:.5px;">Descobrir Career Path</a>
-    </div>
-    <p style="color:#999;font-size:13px;line-height:1.6;text-align:center;margin:0;">Por apenas 5€, obtém o teu roadmap personalizado. Bundle CV + Career Path por 6,99€ (poupas 1€).</p>
-  </div>
-  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
-    <p style="color:#b0b0b0;font-size:11px;margin:0;letter-spacing:.3px;">Share2Inspire © 2026 &nbsp;·&nbsp; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
-  </div>
-</div>`
-        };
-        return templates[type] || '';
-    }
-
-    function loadEmailTemplate() {
-        const template = document.getElementById('modalEmailTemplate').value;
-        const email = document.getElementById('modalEmailTo').value;
-        const templates = {
-            upsell: {
-                subject: 'O teu CV merece uma an\u00e1lise completa - Share2Inspire',
-                body: `Ol\u00e1!\n\nVimos que analisaste o teu CV no Share2Inspire CV Analyser. Esperamos que os insights iniciais tenham sido \u00fateis!\n\nA an\u00e1lise completa inclui:\n\u2022 Relat\u00f3rio PDF detalhado com 8+ dimens\u00f5es\n\u2022 Estimativa salarial personalizada\n\u2022 Recomenda\u00e7\u00f5es espec\u00edficas para o teu perfil\n\u2022 Compatibilidade ATS detalhada\n\nPor apenas 2,99\u20ac, desbloqueia todo o potencial da an\u00e1lise.\n\nhttps://www.share2inspire.pt/cv-analyser\n\nAbra\u00e7o,\nEquipa Share2Inspire`
-            },
-            feedback: {
-                subject: 'Como foi a tua experi\u00eancia? - Share2Inspire',
-                body: `Ol\u00e1!\n\nObrigado por teres utilizado o CV Analyser!\n\nGostar\u00edamos de saber a tua opini\u00e3o. O teu feedback ajuda-nos a melhorar continuamente.\n\nPodes avaliar directamente na p\u00e1gina de resultados ou responder a este email.\n\nObrigado,\nEquipa Share2Inspire`
-            },
-            careerpath: {
-                subject: 'Qual é o teu próximo passo de carreira? - Share2Inspire',
-                body: `Olá!\n\nJá tens a tua análise completa de CV. Parabéns!\n\nO Career Path é o próximo passo. Inclui:\n• Próximos 3 cargos recomendados com roadmap\n• Formações e certificações recomendadas\n• Plano de acção a 30/60/90 dias\n• Estratégia de networking e comunidades\n• Cruzamento CV vs LinkedIn\n\nDisponível em: https://www.share2inspire.pt/career-path\n\nPor apenas 5€. Bundle CV + Career Path por 6,99€ (poupas 1€).\n\nAbraço,\nEquipa Share2Inspire`
-            },
-            custom: { subject: '', body: '' }
-        };
-        const t = templates[template] || templates.custom;
-        document.getElementById('modalEmailSubject').value = t.subject;
-        document.getElementById('modalEmailBody').value = t.body;
-    }
-
-    async function sendSingleEmail() {
-        const to = document.getElementById('modalEmailTo').value;
-        const subject = document.getElementById('modalEmailSubject').value;
-        const body = document.getElementById('modalEmailBody').value;
-        if (!to || !subject || !body) { showToast('Preenche todos os campos', 'danger'); return; }
-
-        const html = body.replace(/\n/g, '<br>');
-        try {
-            await sendBrevoEmail(to, subject, `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;"><div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;"><h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1><div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div></div><div style="padding:40px 36px;"><div style="color:#4a4a4a;font-size:15px;line-height:1.8;">${html}</div></div><div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;"><p style="color:#b0b0b0;font-size:11px;margin:0;letter-spacing:.3px;">Share2Inspire &copy; 2026 &nbsp;&middot;&nbsp; <a href=\"https://www.share2inspire.pt\" style=\"color:#BF9A33;text-decoration:none;\">share2inspire.pt</a></p></div></div>`);
-            showToast(`Email enviado para ${to}!`, 'success');
-            closeEmailModal();
-        } catch (e) {
-            showToast('Erro ao enviar email', 'danger');
-        }
-    }
-
-    // ===================== NURTURING =====================
-    // Track current nurturing type and all recipients
-    window._nurturingType = '';
-    window._allNurturingRecipients = [];
-
-    function getEmailSentInfo(email, campaignType) {
-        // Check email_history for this recipient and campaign type
-        const history = allEmailHistory.filter(h => 
-            h.recipient_email && h.recipient_email.toLowerCase() === email.toLowerCase() && h.status === 'sent'
-        );
-        const campaignHistory = history.filter(h => h.campaign_type === campaignType);
-        const anyHistory = history.length > 0;
-        return {
-            sentThisCampaign: campaignHistory.length > 0,
-            lastSentDate: campaignHistory.length > 0 ? new Date(campaignHistory[0].sent_at).toLocaleDateString('pt-PT') : null,
-            sentAnyEmail: anyHistory,
-            totalSent: history.length,
-            lastAnyDate: anyHistory ? new Date(history[0].sent_at).toLocaleDateString('pt-PT') : null
-        };
-    }
-
-    function renderRecipientList() {
-        const recipients = window._allNurturingRecipients || [];
-        const type = window._nurturingType;
-        const filter = document.getElementById('recipientFilter').value;
-        const search = document.getElementById('recipientSearch').value.toLowerCase();
-        const container = document.getElementById('recipientList');
-
-        if (recipients.length === 0) {
-            container.innerHTML = '<em class="text-muted" style="font-size:.82rem;">Sem destinatários neste segmento.</em>';
-            updateSelectedCount();
-            return;
-        }
-
-        let html = '';
-        recipients.forEach((email, idx) => {
-            const info = getEmailSentInfo(email, type);
-            const isSent = info.sentThisCampaign;
-
-            // Apply filters
-            if (filter === 'unsent' && isSent) return;
-            if (filter === 'sent' && !isSent) return;
-            if (search && !email.toLowerCase().includes(search)) return;
-
-            const checked = document.querySelector(`#rcpt_${idx}`)?.checked ?? !isSent;
-            const sentClass = isSent ? ' sent' : '';
-            let badge = '';
-            if (isSent) {
-                badge = `<span class="sent-badge campaign-match"><i class="fas fa-check me-1"></i>Enviado ${info.lastSentDate}</span>`;
-            } else if (info.sentAnyEmail) {
-                badge = `<span class="sent-badge"><i class="fas fa-envelope me-1"></i>${info.totalSent} email(s) - último ${info.lastAnyDate}</span>`;
-            }
-
-            html += `<div class="recipient-item${sentClass}" data-email="${email}" data-sent="${isSent}">
-                <input type="checkbox" id="rcpt_${idx}" class="form-check-input" style="margin:0;" ${checked ? 'checked' : ''} onchange="updateSelectedCount()">
-                <span style="flex:1;">${email}</span>
-                ${badge}
-            </div>`;
-        });
-
-        container.innerHTML = html || '<em class="text-muted" style="font-size:.82rem;">Nenhum resultado para este filtro.</em>';
-        updateSelectedCount();
-    }
-
-    function updateSelectedCount() {
-        const checkboxes = document.querySelectorAll('#recipientList input[type=checkbox]');
-        const checked = document.querySelectorAll('#recipientList input[type=checkbox]:checked');
-        const total = window._allNurturingRecipients?.length || 0;
-        document.getElementById('selectedCount').textContent = `(${checked.length} de ${total} selecionados)`;
-    }
-
-    function toggleAllRecipients(selectAll) {
-        document.querySelectorAll('#recipientList input[type=checkbox]').forEach(cb => { cb.checked = selectAll; });
-        updateSelectedCount();
-    }
-
-    function selectOnlyUnsent() {
-        document.querySelectorAll('#recipientList .recipient-item').forEach(item => {
-            const cb = item.querySelector('input[type=checkbox]');
-            const isSent = item.dataset.sent === 'true';
-            if (cb) cb.checked = !isSent;
-        });
-        updateSelectedCount();
-    }
-
-    function filterRecipientList() {
-        // Save current checkbox states
-        const states = {};
-        document.querySelectorAll('#recipientList input[type=checkbox]').forEach(cb => {
-            states[cb.id] = cb.checked;
-        });
-        renderRecipientList();
-        // Restore states for visible items
-        Object.keys(states).forEach(id => {
-            const cb = document.getElementById(id);
-            if (cb) cb.checked = states[id];
-        });
-        updateSelectedCount();
-    }
-
-    function getSelectedRecipients() {
-        const selected = [];
-        document.querySelectorAll('#recipientList .recipient-item').forEach(item => {
-            const cb = item.querySelector('input[type=checkbox]');
-            if (cb && cb.checked) selected.push(item.dataset.email);
-        });
-        return selected;
-    }
-
-    function prepareNurturing(type) {
-        let recipients = [];
-        let subject = '';
-        let body = '';
-
-        if (type === 'upsell') {
-            recipients = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'free' && a.user_email && a.user_email !== 'anonymous@share2inspire.pt').map(a => a.user_email))];
-            subject = 'O teu CV merece uma análise completa - Share2Inspire';
-            body = getEmailTemplate('upsell');
-        } else if (type === 'feedback') {
-            recipients = [...new Set(allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.user_rating && a.user_email).map(a => a.user_email))];
-            subject = 'Como foi a tua experiência? - Share2Inspire';
-            body = getEmailTemplate('feedback');
-        } else if (type === 'careerpath') {
-            recipients = [...new Set(allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.career_path_purchased && a.user_email).map(a => a.user_email))];
-            subject = 'Descobre o teu Career Path - Share2Inspire';
-            body = getEmailTemplate('careerpath');
-        }
-
-        window._nurturingType = type;
-        window._allNurturingRecipients = recipients;
-
-        document.getElementById('emailComposer').style.display = 'block';
-        document.getElementById('composerTitle').textContent = `Compor Email - ${type === 'upsell' ? 'Upsell' : type === 'feedback' ? 'Feedback' : 'Career Path'}`;
-        document.getElementById('emailSubject').value = subject;
-        document.getElementById('emailBody').value = body;
-        document.getElementById('recipientFilter').value = 'all';
-        document.getElementById('recipientSearch').value = '';
-
-        renderRecipientList();
-    }
-
-    function closeComposer() { document.getElementById('emailComposer').style.display = 'none'; }
-
-    function previewEmail() {
-        const html = document.getElementById('emailBody').value;
-        const win = window.open('', '_blank');
-        win.document.write(html);
-        win.document.close();
-    }
-
-    async function sendNurturingEmails() {
-        const recipients = getSelectedRecipients();
-        if (recipients.length === 0) { showToast('Seleciona pelo menos um destinatário', 'danger'); return; }
-
-        const subject = document.getElementById('emailSubject').value;
-        const html = document.getElementById('emailBody').value;
-        const type = window._nurturingType || 'custom';
-
-        if (!confirm(`Enviar email para ${recipients.length} destinatário(s)?`)) return;
-
-        let sent = 0;
-        let errors = 0;
-
-        for (const email of recipients) {
-            try {
-                await sendBrevoEmail(email, subject, html, type);
-                sent++;
-                // Mark as sent visually
-                const item = document.querySelector(`#recipientList .recipient-item[data-email="${email}"]`);
-                if (item) {
-                    item.classList.add('sent');
-                    const cb = item.querySelector('input[type=checkbox]');
-                    if (cb) cb.checked = false;
-                }
-            } catch (e) {
-                errors++;
-                console.error(`Erro ao enviar para ${email}:`, e);
-            }
-            await new Promise(r => setTimeout(r, 1000));
-        }
-
-        // Reload history to update sent badges
-        await loadEmailHistory();
-        renderRecipientList();
-        updateSelectedCount();
-
-        showToast(`${sent} email(s) enviado(s), ${errors} erro(s)`, errors > 0 ? 'warning' : 'success');
-    }
-
-    // ===================== BREVO API =====================
-    async function sendBrevoEmail(to, subject, htmlContent, campaignType = 'custom') {
-        if (!ensureBrevoKey()) throw new Error('No Brevo key');
-        const key = localStorage.getItem('s2i_brevo_key') || BREVO_KEY;
-        const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-            method: 'POST',
-            headers: { 'api-key': key, 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                sender: BREVO_SENDER,
-                to: [{ email: to }],
-                subject: subject,
-                htmlContent: htmlContent
-            })
-        });
-        
-        // Log to history
-        const status = res.ok ? 'sent' : 'error';
-        const errorMsg = res.ok ? null : `HTTP ${res.status}`;
-        await logEmailHistory(to, null, subject, campaignType, status, errorMsg);
-        
-        if (!res.ok) throw new Error(`Brevo error: ${res.status}`);
-        return res.json();
-    }
-    
-    async function logEmailHistory(email, name, subject, campaignType, status = 'sent', errorMsg = null) {
-        try {
-            await supaInsert('email_history', {
-                recipient_email: email,
-                recipient_name: name,
-                subject: subject,
-                campaign_type: campaignType,
-                status: status,
-                error_message: errorMsg
-            });
-        } catch (err) {
-            console.error('Failed to log email history:', err);
-        }
-    }
-
-    // ===================== UTILITIES =====================
-    function switchTab(tab, btn) {
-        document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById('tab-' + tab).style.display = 'block';
-        btn.classList.add('active');
-
-        if (tab === 'analyses') renderAnalyses();
-        if (tab === 'vouchers') renderVouchers();
-        if (tab === 'history') renderHistory();
-        if (tab === 'contacts') loadContacts();
-    }
-
-    function showToast(msg, type = 'info') {
-        const container = document.getElementById('toastContainer');
-        const toast = document.createElement('div');
-        toast.className = `alert alert-${type} alert-dismissible fade show`;
-        toast.style.minWidth = '300px';
-        toast.innerHTML = `${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
-        container.appendChild(toast);
-        setTimeout(() => toast.remove(), 5000);
-    }
-
-    function downloadCSV(content, filename) {
-        const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = filename;
-        document.body.appendChild(a); a.click();
-        URL.revokeObjectURL(url); a.remove();
-    }
-
-    // ===================== HISTORY TAB =====================
-    async function loadEmailHistory() {
-        try {
-            const history = await supaFetch('email_history', 'order=sent_at.desc');
-            allEmailHistory = Array.isArray(history) ? history : [];
-        } catch (e) {
-            console.error('Erro ao carregar histórico:', e);
-            allEmailHistory = [];
-        }
-    }
-    
-    function filterHistory() {
-        const campaign = document.getElementById('filterHistoryCampaign').value;
-        const email = document.getElementById('filterHistoryEmail').value.toLowerCase();
-        const dateFrom = document.getElementById('filterHistoryDateFrom').value;
-        const dateTo = document.getElementById('filterHistoryDateTo').value;
-        
-        let filtered = allEmailHistory.filter(h => {
-            if (campaign !== 'all' && h.campaign_type !== campaign) return false;
-            if (email && !h.recipient_email.toLowerCase().includes(email)) return false;
-            if (dateFrom && new Date(h.sent_at) < new Date(dateFrom)) return false;
-            if (dateTo && new Date(h.sent_at) > new Date(dateTo + 'T23:59:59')) return false;
-            return true;
-        });
-        
-        renderHistory(filtered);
-    }
-    
-    function renderHistory(filtered = null) {
-        const data = filtered || allEmailHistory;
-        const tbody = document.getElementById('historyTable');
-        const count = document.getElementById('historyCount');
-        
-        if (!Array.isArray(data) || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Nenhum email enviado ainda</td></tr>';
-            count.textContent = '0 emails';
-            return;
-        }
-        
-        tbody.innerHTML = data.map(h => {
-            const date = new Date(h.sent_at).toLocaleString('pt-PT');
-            const statusBadge = h.status === 'sent' 
-                ? '<span class="badge bg-success">Enviado</span>'
-                : `<span class="badge bg-danger" title="${h.error_message || ''}">Erro</span>`;
-            const campaignBadge = {
-                'upsell': '<span class="badge badge-paid">Upsell</span>',
-                'feedback': '<span class="badge badge-free">Feedback</span>',
-                'careerpath': '<span class="badge badge-career">Career Path</span>',
-                'voucher': '<span class="badge badge-voucher">Vouchers</span>',
-                'custom': '<span class="badge bg-secondary">Personalizado</span>'
-            }[h.campaign_type] || '<span class="badge bg-secondary">-</span>';
-            
-            return `<tr>
-                <td>${date}</td>
-                <td>${h.recipient_email}${h.recipient_name ? `<br><small class="text-muted">${h.recipient_name}</small>` : ''}</td>
-                <td>${h.subject}</td>
-                <td>${campaignBadge}</td>
-                <td>${statusBadge}</td>
-            </tr>`;
-        }).join('');
-        
-        count.textContent = `${data.length} email(s)`;
-    }
-    
-    function exportHistoryCSV() {
-        const headers = 'Data,Destinatário,Nome,Assunto,Campanha,Estado,Erro\n';
-        const rows = allEmailHistory.map(h => {
-            const date = new Date(h.sent_at).toLocaleString('pt-PT');
-            return `"${date}","${h.recipient_email}","${h.recipient_name || ''}","${h.subject}","${h.campaign_type}","${h.status}","${h.error_message || ''}"`;
-        }).join('\n');
-        downloadCSV(headers + rows, `email_history_${new Date().toISOString().split('T')[0]}.csv`);
-    }
-
-    // ===================== CONTACTS =====================
-    let contactsData = [];
-    let currentContactId = null;
-
-    async function loadContacts() {
-        try {
-            const data = await supaFetch('contact_messages', 'select=*&order=created_at.desc');
-            contactsData = data || [];
-            updateContactKPIs();
-            populateContactSubjectFilter();
-            renderContacts();
-        } catch (e) {
-            console.error('Erro ao carregar contactos:', e);
-            document.getElementById('contactsTable').innerHTML = '<tr><td colspan="8" class="text-center text-danger py-3">Erro ao carregar mensagens</td></tr>';
-        }
-    }
-
-    function updateContactKPIs() {
-        const total = contactsData.length;
-        const novo = contactsData.filter(c => c.status === 'novo').length;
-        const lido = contactsData.filter(c => c.status === 'lido').length;
-        const respondido = contactsData.filter(c => c.status === 'respondido').length;
-        document.getElementById('kpiContactsTotal').textContent = total;
-        document.getElementById('kpiContactsNew').textContent = novo;
-        document.getElementById('kpiContactsRead').textContent = lido;
-        document.getElementById('kpiContactsReplied').textContent = respondido;
-    }
-
-    function populateContactSubjectFilter() {
-        const sel = document.getElementById('filterContactSubject');
-        const subjects = [...new Set(contactsData.map(c => c.subject).filter(Boolean))];
-        sel.innerHTML = '<option value="all">Todos os motivos</option>' + subjects.map(s => `<option value="${s}">${s}</option>`).join('');
-    }
-
-    function renderContacts() {
-        const statusFilter = document.getElementById('filterContactStatus').value;
-        const subjectFilter = document.getElementById('filterContactSubject').value;
-        const search = document.getElementById('filterContactSearch').value.toLowerCase();
-
-        let filtered = contactsData.filter(c => {
-            if (statusFilter !== 'all' && c.status !== statusFilter) return false;
-            if (subjectFilter !== 'all' && c.subject !== subjectFilter) return false;
-            if (search && !c.name.toLowerCase().includes(search) && !c.email.toLowerCase().includes(search) && !c.message.toLowerCase().includes(search)) return false;
-            return true;
-        });
-
-        const tbody = document.getElementById('contactsTable');
-        if (filtered.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Nenhuma mensagem encontrada</td></tr>';
-            document.getElementById('contactsCount').textContent = '0 mensagens';
-            return;
-        }
-
-        tbody.innerHTML = filtered.map(c => {
-            const date = new Date(c.created_at);
-            const dateStr = date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: '2-digit' });
-            const timeStr = date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
-            const statusBadge = c.status === 'novo' ? '<span class="badge bg-danger">Novo</span>'
-                : c.status === 'lido' ? '<span class="badge" style="background:var(--s2i-gold)">Lido</span>'
-                : '<span class="badge bg-success">Respondido</span>';
-            const msgPreview = c.message.length > 60 ? c.message.substring(0, 60) + '...' : c.message;
-            const isNew = c.status === 'novo';
-            return `<tr style="${isNew ? 'font-weight:600;background:#fffbf0;' : ''}cursor:pointer;" onclick="openContactDetail(${c.id})">
-                <td>${isNew ? '<i class="fas fa-circle" style="color:var(--s2i-red);font-size:8px;"></i>' : ''}</td>
-                <td><small>${dateStr}<br><span class="text-muted">${timeStr}</span></small></td>
-                <td>${c.name}</td>
-                <td><small>${c.email}</small></td>
-                <td><small>${c.subject || '-'}</small></td>
-                <td><small class="text-muted">${msgPreview}</small></td>
-                <td>${statusBadge}</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();replyToContact('${c.email}','${c.name}')" title="Responder"><i class="fas fa-reply"></i></button>
-                </td>
-            </tr>`;
-        }).join('');
-
-        document.getElementById('contactsCount').textContent = `${filtered.length} de ${contactsData.length} mensagens`;
-    }
-
-    async function openContactDetail(id) {
-        currentContactId = id;
-        const c = contactsData.find(x => x.id === id);
-        if (!c) return;
-
-        // Mark as read if new
-        if (c.status === 'novo') {
-            try {
-                await supaUpdate('contact_messages', id, { status: 'lido', read_at: new Date().toISOString() });
-                c.status = 'lido';
-                c.read_at = new Date().toISOString();
-                updateContactKPIs();
-                renderContacts();
-            } catch (e) { console.error(e); }
-        }
-
-        const date = new Date(c.created_at);
-        document.getElementById('contactDetailTitle').textContent = `${c.subject || 'Mensagem'} — ${c.name}`;
-        document.getElementById('contactDetailBody').innerHTML = `
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;">
-                <div><small class="text-muted d-block">Nome</small><strong>${c.name}</strong></div>
-                <div><small class="text-muted d-block">Email</small><a href="mailto:${c.email}">${c.email}</a></div>
-                <div><small class="text-muted d-block">Telefone</small>${c.phone || 'Não fornecido'}</div>
-                <div><small class="text-muted d-block">Data</small>${date.toLocaleDateString('pt-PT')} ${date.toLocaleTimeString('pt-PT')}</div>
-            </div>
-            <div style="background:#f8f8f8;border-left:3px solid var(--s2i-gold);padding:1rem;border-radius:6px;">
-                <small class="text-muted d-block mb-1">Mensagem</small>
-                <p style="margin:0;white-space:pre-wrap;line-height:1.6;">${c.message}</p>
-            </div>
-        `;
-        document.getElementById('contactDetailNotes').value = c.admin_notes || '';
-        document.getElementById('contactDetailOverlay').style.display = 'flex';
-    }
-
-    function closeContactDetail() {
-        document.getElementById('contactDetailOverlay').style.display = 'none';
-        currentContactId = null;
-    }
-
-    async function markContactReplied() {
-        if (!currentContactId) return;
-        try {
-            const notes = document.getElementById('contactDetailNotes').value;
-            await supaUpdate('contact_messages', currentContactId, { status: 'respondido', replied_at: new Date().toISOString(), admin_notes: notes });
-            const c = contactsData.find(x => x.id === currentContactId);
-            if (c) { c.status = 'respondido'; c.replied_at = new Date().toISOString(); c.admin_notes = notes; }
-            updateContactKPIs();
-            renderContacts();
-            closeContactDetail();
-            showToast('Marcado como respondido', 'success');
-        } catch (e) {
-            showToast('Erro ao atualizar: ' + e.message, 'danger');
-        }
-    }
-
-    async function saveContactNotes() {
-        if (!currentContactId) return;
-        try {
-            const notes = document.getElementById('contactDetailNotes').value;
-            await supaUpdate('contact_messages', currentContactId, { admin_notes: notes });
-            const c = contactsData.find(x => x.id === currentContactId);
-            if (c) c.admin_notes = notes;
-            showToast('Notas guardadas', 'success');
-        } catch (e) {
-            showToast('Erro ao guardar: ' + e.message, 'danger');
-        }
-    }
-
-    async function supaUpdate(table, id, data) {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
-            method: 'PATCH',
-            headers: {
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}`,
-                'Content-Type': 'application/json',
-                'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify(data)
-        });
-        if (!res.ok) throw new Error(await res.text());
-    }
-
-    function replyToContact(email, name) {
-        // Open email modal pre-filled
-        document.getElementById('emailModalOverlay').style.display = 'flex';
-        document.getElementById('modalEmailTo').value = email;
-        document.getElementById('modalEmailSubject').value = `Re: A sua mensagem - Share2Inspire`;
-        document.getElementById('modalEmailBody').value = `Olá ${name},\n\nObrigado por nos ter contactado.\n\n\n\nCom os melhores cumprimentos,\nShare2Inspire`;
-        document.getElementById('modalEmailTemplate').value = 'custom';
-    }
-
-    function exportContactsCSV() {
-        if (!contactsData.length) return;
-        const headers = ['Data','Nome','Email','Telefone','Motivo','Mensagem','Estado','Notas'];
-        const rows = contactsData.map(c => [
-            new Date(c.created_at).toLocaleDateString('pt-PT'),
-            c.name, c.email, c.phone || '', c.subject || '', c.message.replace(/[\n\r]/g,' '), c.status, (c.admin_notes || '').replace(/[\n\r]/g,' ')
-        ]);
-        const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `contactos_share2inspire_${new Date().toISOString().slice(0,10)}.csv`;
-        a.click();
-    }
-
-    // ===================== INIT =====================
-    async function refreshAll() {
-        document.getElementById('lastUpdate').textContent = 'A atualizar...';
-        await loadAllData();
-        await loadEmailHistory();
-        updateDashboard();
-        renderAnalyses();
-        renderVouchers();
-        renderHistory();
-        document.getElementById('lastUpdate').textContent = `Última atualização: ${new Date().toLocaleTimeString('pt-PT')}`;
-    }
-
-    // ── Supabase Realtime: actualização instantânea quando chega nova análise ──
-    function initRealtime() {
-        const wsUrl = SUPABASE_URL.replace('https://', 'wss://') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY + '&vsn=1.0.0';
-        let ws;
-        let reconnectDelay = 3000;
-
-        function connect() {
-            ws = new WebSocket(wsUrl);
-
-            ws.onopen = () => {
-                reconnectDelay = 3000;
-                // Subscrever à tabela cv_analysis (INSERT e UPDATE)
-                ws.send(JSON.stringify({
-                    topic: 'realtime:public:cv_analysis',
-                    event: 'phx_join',
-                    payload: { config: { broadcast: { self: true }, presence: { key: '' }, postgres_changes: [{ event: '*', schema: 'public', table: 'cv_analysis' }] } },
-                    ref: '1'
-                }));
-                // Subscrever à tabela vouchers
-                ws.send(JSON.stringify({
-                    topic: 'realtime:public:vouchers',
-                    event: 'phx_join',
-                    payload: { config: { broadcast: { self: true }, presence: { key: '' }, postgres_changes: [{ event: '*', schema: 'public', table: 'vouchers' }] } },
-                    ref: '2'
-                }));
-                document.getElementById('lastUpdate').textContent += ' · 🟢 Live';
-            };
-
-            ws.onmessage = (evt) => {
-                try {
-                    const msg = JSON.parse(evt.data);
-                    if (msg.event === 'postgres_changes' || (msg.payload && msg.payload.data)) {
-                        // Nova análise ou voucher alterado — actualizar silenciosamente
-                        loadAllData().then(() => {
-                            updateDashboard();
-                            renderAnalyses();
-                            renderVouchers();
-                            document.getElementById('lastUpdate').textContent = `Última actualização: ${new Date().toLocaleTimeString('pt-PT')} · 🟢 Live`;
-                        });
-                    }
-                } catch(e) {}
-            };
-
-            ws.onclose = () => {
-                document.getElementById('lastUpdate').textContent = document.getElementById('lastUpdate').textContent.replace(' · 🟢 Live', ' · 🔴 Reconectar...');
-                setTimeout(connect, reconnectDelay);
-                reconnectDelay = Math.min(reconnectDelay * 2, 30000);
-            };
-
-            ws.onerror = () => ws.close();
-        }
-
-        connect();
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        refreshAll();
-        setInterval(refreshAll, 30000); // Polling de segurança a cada 30s
-        initRealtime();  // Actualizações instantâneas via WebSocket
-    });
-    </script>
-    <script src="../js/coach-agent.js"></script>
+    <script src="admin-analytics.js"></script>
 </body>
 </html>
