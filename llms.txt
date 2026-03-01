@@ -1,0 +1,36 @@
+# Share2Inspire
+
+> Share2Inspire is a Portuguese AI-powered career development platform founded by Samuel Rolo. It offers two main tools: **CV Analyser** (AI-powered CV/resume analysis with ATS scoring, recruiter perception, salary estimation, and improvement plans) and **Career Path** (personalised career roadmap with skills gap analysis, training recommendations, and networking strategy). Available in Portuguese and English.
+
+Share2Inspire helps professionals at any career stage — from recent graduates to senior executives — understand their market positioning, improve their CVs, and plan their career development with data-driven insights.
+
+## Products
+
+- [CV Analyser (PT)](https://www.share2inspire.pt/cv-analyser/): AI-powered CV analysis tool. Upload your CV and receive an ATS compatibility score, recruiter perception analysis across 4 quadrants (Technical Skills, Professional Experience, Education, Soft Skills), salary estimation for your country/region, automation risk assessment, before/after improvement suggestions, and a 30-day action plan. Prices start at €3.99 for the Essential plan and €6.99 for the Complete plan.
+- [CV Analyser (EN)](https://www.share2inspire.pt/en/cv-analyser/): English version of the CV Analyser with the same features, priced at $3.99 (Essential) and $6.99 (Complete).
+- [Career Path (PT)](https://www.share2inspire.pt/career-path/): AI-powered personalised career roadmap. Upload your CV and optionally your LinkedIn profile URL. Receive a complete career plan including: next 3 recommended roles, skills gap analysis, CV vs LinkedIn cross-analysis, recommended training and certifications, networking strategy, visibility exercises, and concrete 30/60/90-day action plans. Price: €9.99 per analysis.
+- [Career Path (EN)](https://www.share2inspire.pt/en/career-path/): English version of Career Path. Price: $10.00 per analysis.
+
+## About
+
+- [Homepage](https://www.share2inspire.pt/): Main website with overview of all services, consulting, coaching, and AI tools.
+- [About Samuel Rolo](https://www.share2inspire.pt/pages/sobre): Founder profile — 12+ years in HR transformation, former Senior Manager at Deloitte, HR Transformation Leader at BNP Paribas CIB, experience at Galp. Fluent in Portuguese, English, French, and Spanish.
+- [Services](https://www.share2inspire.pt/pages/servicos): Full range of consulting and coaching services including organisational transformation, change management, leadership development, and AI-powered career tools.
+- [Knowledge Base](https://www.share2inspire.pt/pages/conhecimento): Articles and insights on career development, HR transformation, leadership, and the future of work.
+
+## Key Facts
+
+- Founded in Portugal by Samuel Rolo
+- AI-powered analysis using advanced language models
+- Available in Portuguese (PT) and English (EN)
+- Accepts payments via MB WAY, Multibanco, PayPal, Stripe (credit/debit cards), and Payshop
+- Data privacy compliant — CV data is processed but not stored permanently
+- Website: https://www.share2inspire.pt
+- LinkedIn: https://www.linkedin.com/in/samuelrolo/
+
+## Optional
+
+- [Privacy Policy](https://www.share2inspire.pt/pages/politica-privacidade): Data protection and privacy information.
+- [Cookie Policy](https://www.share2inspire.pt/pages/politica-cookies): Cookie usage details.
+- [Legal Information](https://www.share2inspire.pt/pages/informacao-legal): Legal and regulatory information.
+- [Contact](https://www.share2inspire.pt/pages/contactos): Contact information and enquiry form.

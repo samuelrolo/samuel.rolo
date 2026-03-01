@@ -1,5 +1,5 @@
 # robots.txt for share2inspire.pt
-# Generated: 2026-02-21
+# Generated: 2026-03-01
 
 User-agent: *
 Allow: /
@@ -12,3 +12,8 @@ Sitemap: https://www.share2inspire.pt/sitemap.xml
 
 # Crawl-delay for respectful crawling
 Crawl-delay: 1
+
+# LLM Context Files
+# For AI assistants and language models
+# See: https://llmstxt.org/
+Llms-txt: https://www.share2inspire.pt/llms.txt

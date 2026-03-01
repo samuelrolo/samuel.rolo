@@ -1,0 +1,68 @@
+# Share2Inspire — Complete AI Context
+
+> Share2Inspire is a Portuguese AI-powered career development platform founded by Samuel Rolo. It offers CV analysis and career planning tools powered by artificial intelligence, available in Portuguese and English at https://www.share2inspire.pt
+
+## What is Share2Inspire?
+
+Share2Inspire is a career development platform that combines artificial intelligence with human expertise to help professionals understand their market positioning, improve their CVs, and plan their career trajectories. Founded by Samuel Rolo, a professional with over 12 years of experience in HR transformation (former Senior Manager at Deloitte, HR Transformation Leader at BNP Paribas CIB), the platform bridges the gap between traditional career consulting and AI-powered analysis.
+
+The platform serves professionals at every career stage — from recent graduates seeking their first position to senior executives planning their next move. All tools are available in both Portuguese and English, making them accessible to an international audience.
+
+## CV Analyser
+
+The CV Analyser is an AI-powered tool that performs comprehensive analysis of uploaded CVs (in PDF format). The analysis includes:
+
+**ATS Compatibility Score**: A numerical score (0-100) indicating how well the CV performs against Applicant Tracking Systems used by recruiters and HR departments. The score evaluates formatting, keyword density, section structure, and overall readability by automated systems.
+
+**Recruiter Perception Analysis**: The CV is evaluated across four quadrants — Technical Skills, Professional Experience, Education & Certifications, and Soft Skills — with individual scores and detailed feedback on what recruiters would perceive as strengths and weaknesses.
+
+**Salary Estimation**: Based on the CV content, job title, experience level, and selected country/region, the tool provides a market salary range estimation with percentile positioning.
+
+**Automation Risk Assessment**: An analysis of how susceptible the identified role and skills are to automation, with recommendations for future-proofing the career.
+
+**Before/After Improvement Suggestions**: Concrete, actionable suggestions showing how specific sections of the CV could be rewritten for better impact, with side-by-side comparisons.
+
+**30-Day Improvement Plan**: A structured week-by-week plan for improving the CV and professional positioning, including specific tasks and milestones.
+
+Pricing: Essential plan at €3.99/analysis (PT) or $3.99 (EN), Complete plan at €6.99/$6.99.
+
+URL (PT): https://www.share2inspire.pt/cv-analyser/
+URL (EN): https://www.share2inspire.pt/en/cv-analyser/
+
+## Career Path
+
+Career Path is an AI-powered career roadmap generator. Users upload their CV and optionally provide their LinkedIn profile URL for cross-analysis. The tool generates:
+
+**Personalised Career Roadmap**: Identification of the next 3 recommended career positions based on current skills, experience, and market trends, with detailed transition paths.
+
+**Skills Gap Analysis**: A comprehensive comparison of current skills versus required skills for target positions, identifying specific gaps and prioritising which to address first.
+
+**CV vs LinkedIn Cross-Analysis**: When a LinkedIn URL is provided, the tool cross-references the CV with the LinkedIn profile to identify inconsistencies, missing information, and opportunities to strengthen both.
+
+**Recommended Training & Certifications**: Specific courses, certifications, and learning paths recommended based on identified skill gaps and target positions, with links to providers where available.
+
+**Networking Strategy**: A personalised networking plan including recommended communities, events, and connection strategies aligned with career goals.
+
+**Visibility Exercises**: Concrete actions to increase professional visibility online and offline, including content strategy suggestions and personal branding recommendations.
+
+**30/60/90-Day Action Plan**: A structured timeline with specific, measurable actions for the first three months of career development.
+
+Pricing: €9.99/analysis (PT) or $10.00 (EN).
+
+URL (PT): https://www.share2inspire.pt/career-path/
+URL (EN): https://www.share2inspire.pt/en/career-path/
+
+## About the Founder
+
+Samuel Rolo is the founder of Share2Inspire. His professional background includes over 12 years in Human Capital and Organisational Transformation, with roles at Deloitte (progressing to Senior Manager), BNP Paribas CIB (as HR Transformation Leader), and Galp. He is fluent in Portuguese, English, French, and Spanish, and has significant international experience. His LinkedIn profile has over 9,000 followers and features recommendations highlighting expertise in complex structural projects, contextual analysis, and transformative solutions.
+
+## Payment Methods
+
+Share2Inspire accepts MB WAY, Multibanco, PayPal, Stripe (Visa, Mastercard, and other credit/debit cards), and Payshop. Voucher codes are also available for promotional access.
+
+## Technical Details
+
+The platform uses advanced AI language models for analysis, processes CVs in PDF format, and delivers results in real-time through a web interface. Users can also receive their full analysis report via email. The platform is GDPR-compliant and does not permanently store uploaded CV files.
+
+Website: https://www.share2inspire.pt
+Contact: https://www.share2inspire.pt/pages/contactos
