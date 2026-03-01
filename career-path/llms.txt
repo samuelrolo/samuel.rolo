@@ -1,0 +1,30 @@
+# Career Path — Share2Inspire
+
+> O Career Path é uma ferramenta de planeamento de carreira com inteligência artificial, desenvolvida pela Share2Inspire em Portugal. Gera um roadmap de carreira personalizado com análise de lacunas de competências, cruzamento CV vs LinkedIn, formações recomendadas, estratégia de networking e plano de acção a 30, 60 e 90 dias.
+
+O Career Path destina-se a profissionais que pretendem planear a sua evolução de carreira com dados concretos. O utilizador faz upload do CV e, opcionalmente, partilha o URL do perfil LinkedIn para uma análise cruzada mais completa.
+
+## Funcionalidades
+
+- [Roadmap de Carreira Personalizado](https://www.share2inspire.pt/career-path/): Identificação dos próximos 3 cargos recomendados com base nas competências actuais, experiência e tendências de mercado.
+- [Análise de Lacunas de Competências](https://www.share2inspire.pt/career-path/): Comparação detalhada entre competências actuais e competências necessárias para os cargos-alvo.
+- [Cruzamento CV vs LinkedIn](https://www.share2inspire.pt/career-path/): Análise cruzada entre o CV e o perfil LinkedIn para identificar inconsistências e oportunidades.
+- [Formações e Certificações Recomendadas](https://www.share2inspire.pt/career-path/): Cursos e certificações específicos recomendados com base nas lacunas identificadas.
+- [Estratégia de Networking](https://www.share2inspire.pt/career-path/): Plano de networking personalizado com comunidades, eventos e estratégias de conexão.
+- [Exercícios de Visibilidade](https://www.share2inspire.pt/career-path/): Acções concretas para aumentar a visibilidade profissional online e offline.
+- [Plano de Acção 30/60/90 Dias](https://www.share2inspire.pt/career-path/): Cronograma estruturado com acções específicas e mensuráveis.
+
+## Preço
+
+- €9,99 por análise — pagamento único, sem subscrição
+
+## Informação
+
+- [Página Principal](https://www.share2inspire.pt/career-path/): Career Path em Português
+- [Versão Inglesa](https://www.share2inspire.pt/en/career-path/): Career Path em Inglês
+- [Share2Inspire](https://www.share2inspire.pt/): Website principal
+- [Fundador — Samuel Rolo](https://www.linkedin.com/in/samuelrolo/): Mais de 12 anos em transformação de RH, ex-Senior Manager na Deloitte
+
+## Pagamentos
+
+Aceita MB WAY, Multibanco, PayPal, Stripe (Visa, Mastercard), Payshop e códigos de voucher.
