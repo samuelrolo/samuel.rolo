@@ -13,75 +13,187 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Share2Inspire</title>
     <meta name="robots" content="noindex, nofollow">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="icon" type="image/x-icon" href="../favicon.ico">
     <style>
         :root {
-            --s2i-gold: #BF9A33;
-            --s2i-gold-light: #D4B35A;
-            --s2i-black: #1A1A1A;
-            --s2i-gray: #6c757d;
-            --s2i-green: #28a745;
-            --s2i-red: #dc3545;
-            --s2i-blue: #3498db;
-            --s2i-purple: #7c3aed;
+            --gold: #C9A961;
+            --gold-light: #D4B96E;
+            --gold-bg: #FBF8F1;
+            --text: #1A1A2E;
+            --text-secondary: #6B7280;
+            --text-muted: #9CA3AF;
+            --bg: #FAFAFA;
+            --card: #FFFFFF;
+            --border: #F0F0F0;
+            --green: #10B981;
+            --green-bg: #ECFDF5;
+            --red: #EF4444;
+            --red-bg: #FEF2F2;
+            --blue: #3B82F6;
+            --blue-bg: #EFF6FF;
+            --purple: #8B5CF6;
+            --purple-bg: #F5F3FF;
+            --orange: #F59E0B;
+            --orange-bg: #FFFBEB;
+            --radius: 10px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.02);
         }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f5f7; color: var(--s2i-black); }
-        .navbar { background: var(--s2i-black) !important; }
-        .navbar-brand { color: var(--s2i-gold) !important; font-weight: bold; }
-        .stat-card { background: white; border-radius: 12px; padding: 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,.06); transition: transform .2s; }
-        .stat-card:hover { transform: translateY(-2px); }
-        .stat-value { font-size: 1.75rem; font-weight: 700; }
-        .stat-label { color: var(--s2i-gray); font-size: .85rem; }
-        .card-section { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.06); margin-bottom: 1.5rem; }
-        .section-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 1rem; }
-        .badge-paid { background: var(--s2i-green); }
-        .badge-free { background: var(--s2i-gray); }
-        .badge-voucher { background: var(--s2i-gold); }
-        .badge-career { background: var(--s2i-blue); }
-        .badge-pt { background: #016401; color: white; }
-        .badge-en { background: #1d4ed8; color: white; }
-        .btn-gold { background: var(--s2i-gold); border-color: var(--s2i-gold); color: white; }
-        .btn-gold:hover { background: var(--s2i-gold-light); border-color: var(--s2i-gold-light); color: white; }
-        .btn-nurture { font-size: .75rem; padding: 2px 8px; }
-        .filter-bar { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin-bottom: 1rem; }
-        .filter-bar select, .filter-bar input { font-size: .85rem; }
-        .table th { font-size: .8rem; text-transform: uppercase; color: var(--s2i-gray); font-weight: 600; border-bottom: 2px solid #dee2e6; }
-        .table td { font-size: .85rem; vertical-align: middle; }
-        .spinner-gold { color: var(--s2i-gold); }
-        .tab-btn { cursor: pointer; padding: .5rem 1rem; border: none; background: none; font-weight: 500; color: var(--s2i-gray); border-bottom: 2px solid transparent; transition: all .2s; }
-        .tab-btn.active { color: var(--s2i-gold); border-bottom-color: var(--s2i-gold); }
-        .tab-btn:hover { color: var(--s2i-black); }
-        .toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 9999; }
-        .email-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.5); z-index: 9998; display: flex; align-items: center; justify-content: center; }
-        .email-modal { background: white; border-radius: 12px; padding: 2rem; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
-        .voucher-row.used { opacity: .6; }
-        .recipient-item { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; transition: background .15s; font-size: .82rem; }
-        .recipient-item:hover { background: #f0f0f0; }
-        .recipient-item.sent { opacity: .55; }
-        .recipient-item .sent-badge { font-size: .65rem; padding: 1px 6px; background: #e8f5e9; color: #2e7d32; border-radius: 4px; white-space: nowrap; }
-        .recipient-item .sent-badge.campaign-match { background: #fff3e0; color: #e65100; }
-        .recipient-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
-        .recipient-controls .btn { font-size: .75rem; padding: 2px 10px; }
-        .recipient-controls .form-select { font-size: .75rem; width: auto; padding: 2px 24px 2px 8px; height: auto; }
-        .recipient-search { font-size: .8rem; padding: 4px 10px; border: 1px solid #dee2e6; border-radius: 6px; width: 200px; }
-        .selected-count { font-size: .78rem; color: var(--s2i-gray); }
-        .lang-toggle { display: inline-flex; border-radius: 6px; overflow: hidden; border: 1px solid #dee2e6; }
-        .lang-toggle button { border: none; padding: 4px 12px; font-size: .78rem; font-weight: 600; cursor: pointer; transition: all .2s; }
-        .lang-toggle button.active { background: var(--s2i-gold); color: white; }
-        .lang-toggle button:not(.active) { background: white; color: var(--s2i-gray); }
-        .health-status { display: inline-flex; align-items: center; gap: 4px; font-size: .8rem; font-weight: 500; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+
+        /* ─── Header ─── */
+        .header { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+        .header-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; color: var(--text); text-decoration: none; }
+        .header-brand img { height: 28px; }
+        .header-brand span { color: var(--gold); }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .lang-toggle { display: inline-flex; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+        .lang-toggle button { border: none; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; background: var(--card); color: var(--text-secondary); }
+        .lang-toggle button.active { background: var(--gold); color: white; }
+        .btn-refresh { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all .15s; }
+        .btn-refresh:hover { border-color: var(--gold); color: var(--gold); }
+        .last-update { font-size: 11px; color: var(--text-muted); }
+
+        /* ─── Navigation Tabs ─── */
+        .nav-tabs-bar { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; gap: 0; overflow-x: auto; }
+        .nav-tab { padding: 12px 16px; font-size: 13px; font-weight: 500; color: var(--text-secondary); border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+        .nav-tab:hover { color: var(--text); }
+        .nav-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+        .nav-tab i { font-size: 12px; }
+
+        /* ─── Layout ─── */
+        .main { padding: 20px 24px; max-width: 1400px; margin: 0 auto; }
+
+        /* ─── KPI Cards ─── */
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+        .kpi-card { background: var(--card); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); border: 1px solid var(--border); transition: transform .15s, box-shadow .15s; }
+        .kpi-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 6px; }
+        .kpi-value { font-size: 24px; font-weight: 700; line-height: 1.1; }
+        .kpi-value.green { color: var(--green); }
+        .kpi-value.gold { color: var(--gold); }
+        .kpi-value.blue { color: var(--blue); }
+        .kpi-value.purple { color: var(--purple); }
+        .kpi-value.red { color: var(--red); }
+        .kpi-accent { border-left: 3px solid var(--border); }
+        .kpi-accent.pt { border-left-color: #016401; }
+        .kpi-accent.en { border-left-color: #1d4ed8; }
+        .kpi-accent.cva { border-left-color: var(--purple); }
+        .kpi-accent.cp { border-left-color: var(--blue); }
+
+        /* ─── Cards / Sections ─── */
+        .card-section { background: var(--card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 16px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .card-title { font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+        .card-title i { color: var(--text-muted); font-size: 13px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .grid-8-4 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+        /* ─── Buttons ─── */
+        .btn { border: none; border-radius: 6px; padding: 6px 14px; font-size: 12px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all .15s; }
+        .btn-gold { background: var(--gold); color: white; }
+        .btn-gold:hover { background: var(--gold-light); }
+        .btn-outline { background: none; border: 1px solid var(--border); color: var(--text-secondary); }
+        .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+        .btn-sm { padding: 4px 10px; font-size: 11px; }
+        .btn-success-soft { background: var(--green-bg); color: var(--green); }
+        .btn-danger-soft { background: var(--red-bg); color: var(--red); }
+
+        /* ─── Filter Bar ─── */
+        .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+        .filter-bar select, .filter-bar input { font-size: 12px; padding: 5px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--text); outline: none; transition: border-color .15s; }
+        .filter-bar select:focus, .filter-bar input:focus { border-color: var(--gold); }
+
+        /* ─── Tables ─── */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        table th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap; }
+        table td { font-size: 13px; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        table tr:hover { background: #FAFAFA; }
+        table tr:last-child td { border-bottom: none; }
+
+        /* ─── Badges ─── */
+        .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+        .badge-green { background: var(--green-bg); color: var(--green); }
+        .badge-gray { background: #F3F4F6; color: var(--text-secondary); }
+        .badge-gold { background: var(--gold-bg); color: #A17F2E; }
+        .badge-blue { background: var(--blue-bg); color: var(--blue); }
+        .badge-red { background: var(--red-bg); color: var(--red); }
+        .badge-purple { background: var(--purple-bg); color: var(--purple); }
+        .badge-pt { background: #E8F5E9; color: #016401; }
+        .badge-en { background: #E3F2FD; color: #1d4ed8; }
+
+        /* ─── Pagination ─── */
+        .pagination { display: flex; gap: 4px; list-style: none; padding: 0; margin: 0; }
+        .pagination li { }
+        .pagination a, .pagination span { display: block; padding: 4px 10px; font-size: 12px; border-radius: 4px; text-decoration: none; color: var(--text-secondary); border: 1px solid var(--border); cursor: pointer; }
+        .pagination .active span { background: var(--gold); color: white; border-color: var(--gold); }
+
+        /* ─── Funnel ─── */
+        .funnel-bar { height: 32px; border-radius: 6px; display: flex; align-items: center; padding: 0 12px; color: white; font-weight: 600; font-size: 12px; transition: width .5s ease; margin-bottom: 6px; }
+
+        /* ─── Toast ─── */
+        .toast-container { position: fixed; top: 16px; right: 16px; z-index: 9999; }
+        .toast { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; box-shadow: var(--shadow-md); margin-bottom: 8px; font-size: 13px; display: flex; align-items: center; gap: 8px; animation: slideIn .3s ease; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* ─── Modal ─── */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.4); z-index: 9998; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+        .modal-box { background: var(--card); border-radius: 12px; padding: 24px; max-width: 600px; width: 92%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.12); }
+        .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .modal-close { background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 18px; padding: 4px; }
+        .modal-close:hover { color: var(--text); }
+
+        /* ─── Form ─── */
+        .form-group { margin-bottom: 12px; }
+        .form-label { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 4px; display: block; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--text); outline: none; font-family: inherit; transition: border-color .15s; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); }
+        .form-textarea { resize: vertical; min-height: 120px; }
+        .form-check { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+
+        /* ─── Nurturing Cards ─── */
+        .nurture-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; cursor: pointer; transition: all .15s; }
+        .nurture-card:hover { border-color: var(--gold); box-shadow: var(--shadow-md); }
+        .nurture-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+        .nurture-card p { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+
+        /* ─── Health ─── */
         .health-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-        .health-dot.healthy { background: var(--s2i-green); }
-        .health-dot.warning { background: #ffc107; }
-        .health-dot.critical { background: var(--s2i-red); }
+        .health-dot.healthy { background: var(--green); }
+        .health-dot.warning { background: var(--orange); }
+        .health-dot.critical { background: var(--red); }
         .health-dot.down { background: #333; }
-        .funnel-bar { height: 36px; border-radius: 6px; display: flex; align-items: center; padding: 0 12px; color: white; font-weight: 600; font-size: .85rem; transition: width .5s ease; }
+
+        /* ─── Recipient List ─── */
+        .recipient-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 4px; font-size: 12px; transition: background .1s; }
+        .recipient-item:hover { background: #F9F9F9; }
+        .recipient-item.sent { opacity: .5; }
+        .sent-badge { font-size: 10px; padding: 1px 6px; border-radius: 3px; white-space: nowrap; }
+        .sent-badge.done { background: var(--green-bg); color: var(--green); }
+        .sent-badge.campaign-match { background: var(--orange-bg); color: #D97706; }
+
+        /* ─── Voucher Row ─── */
+        .voucher-row.used { opacity: .55; }
+
+        /* ─── Spinner ─── */
+        .spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner-center { display: flex; justify-content: center; padding: 40px 0; }
+
+        /* ─── Responsive ─── */
         @media (max-width: 768px) {
-            .stat-value { font-size: 1.3rem; }
-            .filter-bar { flex-direction: column; }
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .grid-2, .grid-8-4 { grid-template-columns: 1fr; }
+            .main { padding: 12px 12px; }
+            .header { padding: 0 12px; }
+            .nav-tabs-bar { padding: 0 12px; }
+            .kpi-value { font-size: 20px; }
         }
     </style>
     <!-- Meta Pixel Code -->
@@ -97,92 +209,76 @@
     fbq('init', '1460148528104687');
     fbq('track', 'PageView');
     </script>
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1460148528104687&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Meta Pixel Code -->
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1460148528104687&ev=PageView&noscript=1" /></noscript>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-dark">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand" href="../index.html">
-                <i class="fas fa-chart-line me-2"></i>Share2Inspire Admin
-            </a>
-            <div class="d-flex align-items-center gap-3">
-                <div class="lang-toggle" id="globalLangToggle">
-                    <button class="active" onclick="setGlobalLang('all',this)">Todos</button>
-                    <button onclick="setGlobalLang('pt',this)">🇵🇹 PT</button>
-                    <button onclick="setGlobalLang('en',this)">🇬🇧 EN</button>
-                </div>
-                <span class="text-muted me-1" id="lastUpdate" style="font-size:.8rem;">--</span>
-                <button class="btn btn-sm btn-gold" onclick="refreshAll()">
-                    <i class="fas fa-sync-alt me-1"></i>Atualizar
-                </button>
+    <!-- Header -->
+    <header class="header">
+        <a class="header-brand" href="../index.html">
+            <i class="fas fa-chart-line" style="color:var(--gold);"></i>
+            <span>Share2Inspire</span> Admin
+        </a>
+        <div class="header-actions">
+            <div class="lang-toggle" id="globalLangToggle">
+                <button class="active" onclick="setGlobalLang('all',this)">Todos</button>
+                <button onclick="setGlobalLang('pt',this)">PT</button>
+                <button onclick="setGlobalLang('en',this)">EN</button>
             </div>
+            <span class="last-update" id="lastUpdate"></span>
+            <button class="btn-refresh" onclick="refreshAll()">
+                <i class="fas fa-sync-alt"></i> Atualizar
+            </button>
         </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-tabs-bar">
+        <button class="nav-tab active" onclick="switchTab('dashboard',this)"><i class="fas fa-tachometer-alt"></i> Dashboard</button>
+        <button class="nav-tab" onclick="switchTab('analyses',this)"><i class="fas fa-list"></i> Análises</button>
+        <button class="nav-tab" onclick="switchTab('vouchers',this)"><i class="fas fa-ticket-alt"></i> Vouchers</button>
+        <button class="nav-tab" onclick="switchTab('nurturing',this)"><i class="fas fa-paper-plane"></i> Follow-up</button>
+        <button class="nav-tab" onclick="switchTab('history',this)"><i class="fas fa-history"></i> Histórico</button>
+        <button class="nav-tab" onclick="switchTab('contacts',this)"><i class="fas fa-envelope"></i> Contactos</button>
+        <button class="nav-tab" onclick="switchTab('health',this)"><i class="fas fa-heartbeat"></i> Saúde</button>
     </nav>
 
-    <div class="container-fluid px-4 py-3">
-        <!-- Tabs -->
-        <div class="mb-3" style="border-bottom: 1px solid #dee2e6;">
-            <button class="tab-btn active" onclick="switchTab('dashboard',this)"><i class="fas fa-tachometer-alt me-1"></i>Dashboard</button>
-            <button class="tab-btn" onclick="switchTab('analyses',this)"><i class="fas fa-list me-1"></i>Análises</button>
-            <button class="tab-btn" onclick="switchTab('vouchers',this)"><i class="fas fa-ticket-alt me-1"></i>Vouchers</button>
-            <button class="tab-btn" onclick="switchTab('nurturing',this)"><i class="fas fa-paper-plane me-1"></i>Follow-up</button>
-            <button class="tab-btn" onclick="switchTab('history',this)"><i class="fas fa-history me-1"></i>Histórico</button>
-            <button class="tab-btn" onclick="switchTab('contacts',this)"><i class="fas fa-envelope me-1"></i>Contactos</button>
-            <button class="tab-btn" onclick="switchTab('health',this)"><i class="fas fa-heartbeat me-1"></i>Saúde</button>
-        </div>
-
+    <div class="main">
         <!-- TAB: Dashboard -->
         <div id="tab-dashboard">
-            <!-- KPI Cards Row 1 -->
-            <div class="row g-3 mb-3">
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiTotal">--</div><div class="stat-label">Total Análises</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-green)" id="kpiPaid">--</div><div class="stat-label">Análises Pagas</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-gray)" id="kpiFree">--</div><div class="stat-label">Análises Gratuitas</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-gold)" id="kpiRevenue">--</div><div class="stat-label">Receita Total</div></div></div>
+            <div class="kpi-grid">
+                <div class="kpi-card"><div class="kpi-label">Total Análises</div><div class="kpi-value" id="kpiTotal">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Análises Pagas</div><div class="kpi-value green" id="kpiPaid">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Análises Gratuitas</div><div class="kpi-value" id="kpiFree">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Receita Total</div><div class="kpi-value gold" id="kpiRevenue">--</div></div>
             </div>
-            <!-- KPI Cards Row 2 -->
-            <div class="row g-3 mb-3">
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpi24h">--</div><div class="stat-label">Últimas 24h</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpi7d">--</div><div class="stat-label">Últimos 7 Dias</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiAvgScore">--</div><div class="stat-label">Score Médio</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-blue)" id="kpiCareerPaths">--</div><div class="stat-label">Career Paths</div></div></div>
+            <div class="kpi-grid">
+                <div class="kpi-card"><div class="kpi-label">Últimas 24h</div><div class="kpi-value" id="kpi24h">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Últimos 7 Dias</div><div class="kpi-value" id="kpi7d">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Score Médio</div><div class="kpi-value" id="kpiAvgScore">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Career Paths</div><div class="kpi-value blue" id="kpiCareerPaths">--</div></div>
             </div>
-            <!-- KPI Cards Row 3 -->
-            <div class="row g-3 mb-3">
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiUniqueUsers">--</div><div class="stat-label">Utilizadores Únicos</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-green)" id="kpiConvRate">--</div><div class="stat-label">Taxa Conversão</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiVouchersActive">--</div><div class="stat-label">Vouchers Activos</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiVouchersUsed">--</div><div class="stat-label">Vouchers Usados</div></div></div>
+            <div class="kpi-grid">
+                <div class="kpi-card"><div class="kpi-label">Utilizadores Únicos</div><div class="kpi-value" id="kpiUniqueUsers">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Taxa Conversão</div><div class="kpi-value green" id="kpiConvRate">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Receita Média</div><div class="kpi-value gold" id="kpiAvgRevenue">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Vouchers Usados</div><div class="kpi-value" id="kpiVouchersUsed">--</div></div>
             </div>
-            <!-- Revenue Breakdown Row -->
-            <div class="row g-3 mb-3">
-                <div class="col-6 col-md-3"><div class="stat-card" style="border-left:3px solid #016401;"><div class="stat-value" style="font-size:1.4rem;" id="kpiRevenuePT">--</div><div class="stat-label">🇵🇹 Receita PT</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card" style="border-left:3px solid #1d4ed8;"><div class="stat-value" style="font-size:1.4rem;" id="kpiRevenueEN">--</div><div class="stat-label">🇬🇧 Receita EN</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card" style="border-left:3px solid var(--s2i-purple);"><div class="stat-value" style="font-size:1.4rem;" id="kpiRevenueCVA">--</div><div class="stat-label">CV Analyser</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card" style="border-left:3px solid var(--s2i-blue);"><div class="stat-value" style="font-size:1.4rem;" id="kpiRevenueCP">--</div><div class="stat-label">Career Path</div></div></div>
+            <div class="kpi-grid">
+                <div class="kpi-card kpi-accent pt"><div class="kpi-label">Receita PT</div><div class="kpi-value" style="font-size:18px;" id="kpiRevenuePT">--</div></div>
+                <div class="kpi-card kpi-accent en"><div class="kpi-label">Receita EN</div><div class="kpi-value" style="font-size:18px;" id="kpiRevenueEN">--</div></div>
+                <div class="kpi-card kpi-accent cva"><div class="kpi-label">CV Analyser</div><div class="kpi-value" style="font-size:18px;" id="kpiRevenueCVA">--</div></div>
+                <div class="kpi-card kpi-accent cp"><div class="kpi-label">Career Path</div><div class="kpi-value" style="font-size:18px;" id="kpiRevenueCP">--</div></div>
             </div>
             <!-- Charts -->
-            <div class="row g-3 mb-3">
-                <div class="col-lg-8">
-                    <div class="card-section"><div class="section-title"><i class="fas fa-chart-bar me-2 text-muted"></i>Análises por Dia</div><canvas id="dailyChart" height="100"></canvas></div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card-section"><div class="section-title"><i class="fas fa-chart-pie me-2 text-muted"></i>Tipo de Análise</div><canvas id="typeChart"></canvas></div>
-                </div>
+            <div class="grid-8-4">
+                <div class="card-section"><div class="card-title"><i class="fas fa-chart-bar"></i> Análises por Dia</div><canvas id="dailyChart" height="100" style="margin-top:12px;"></canvas></div>
+                <div class="card-section"><div class="card-title"><i class="fas fa-chart-pie"></i> Tipo de Análise</div><canvas id="typeChart" style="margin-top:12px;"></canvas></div>
             </div>
-            <div class="row g-3 mb-3">
-                <div class="col-lg-6">
-                    <div class="card-section"><div class="section-title"><i class="fas fa-globe me-2 text-muted"></i>Distribuição por Idioma</div><canvas id="langChart"></canvas></div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="card-section">
-                        <div class="section-title"><i class="fas fa-filter me-2 text-muted"></i>Funil de Conversão</div>
-                        <div id="conversionFunnel"></div>
-                    </div>
+            <div class="grid-2">
+                <div class="card-section"><div class="card-title"><i class="fas fa-globe"></i> Distribuição por Idioma</div><canvas id="langChart" style="margin-top:12px;"></canvas></div>
+                <div class="card-section">
+                    <div class="card-title"><i class="fas fa-filter"></i> Funil de Conversão</div>
+                    <div id="conversionFunnel" style="margin-top:12px;"></div>
                 </div>
             </div>
         </div>
@@ -190,43 +286,43 @@
         <!-- TAB: Analyses -->
         <div id="tab-analyses" style="display:none;">
             <div class="card-section">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="section-title mb-0"><i class="fas fa-list me-2 text-muted"></i>Todas as Análises</div>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="exportAnalysesCSV()"><i class="fas fa-download me-1"></i>Exportar CSV</button>
+                <div class="card-header">
+                    <div class="card-title"><i class="fas fa-list"></i> Todas as Análises</div>
+                    <button class="btn btn-outline" onclick="exportAnalysesCSV()"><i class="fas fa-download"></i> Exportar CSV</button>
                 </div>
                 <div class="filter-bar">
-                    <select class="form-select form-select-sm" style="width:auto;" id="filterType" onchange="filterAnalyses()">
+                    <select id="filterType" onchange="filterAnalyses()">
                         <option value="all">Todos os Tipos</option>
                         <option value="free">Gratuito</option>
-                        <option value="paid">Pago (MB WAY/PayPal)</option>
+                        <option value="paid">Pago</option>
                         <option value="voucher">Voucher</option>
                     </select>
-                    <select class="form-select form-select-sm" style="width:auto;" id="filterLang" onchange="filterAnalyses()">
+                    <select id="filterLang" onchange="filterAnalyses()">
                         <option value="all">Todos os Idiomas</option>
-                        <option value="pt">🇵🇹 Português</option>
-                        <option value="en">🇬🇧 English</option>
+                        <option value="pt">Português</option>
+                        <option value="en">English</option>
                     </select>
-                    <select class="form-select form-select-sm" style="width:auto;" id="filterProduct" onchange="filterAnalyses()">
+                    <select id="filterProduct" onchange="filterAnalyses()">
                         <option value="all">Todos os Produtos</option>
                         <option value="cv">CV Analyser</option>
                         <option value="career_path">Career Path</option>
                     </select>
-                    <input type="text" class="form-control form-control-sm" style="width:200px;" placeholder="Pesquisar email..." id="filterEmail" oninput="filterAnalyses()">
-                    <input type="date" class="form-control form-control-sm" style="width:auto;" id="filterDateFrom" onchange="filterAnalyses()">
-                    <span class="text-muted">até</span>
-                    <input type="date" class="form-control form-control-sm" style="width:auto;" id="filterDateTo" onchange="filterAnalyses()">
+                    <input type="text" placeholder="Pesquisar email..." id="filterEmail" oninput="filterAnalyses()">
+                    <input type="date" id="filterDateFrom" onchange="filterAnalyses()">
+                    <span style="color:var(--text-muted);font-size:12px;">até</span>
+                    <input type="date" id="filterDateTo" onchange="filterAnalyses()">
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover">
+                <div class="table-wrap">
+                    <table>
                         <thead><tr>
                             <th>Data</th><th>Nome</th><th>Email</th><th>Score</th><th>Tipo</th><th>Produto</th><th>Idioma</th><th>Acções</th>
                         </tr></thead>
-                        <tbody id="analysesTable"><tr><td colspan="8" class="text-center py-4"><div class="spinner-border spinner-gold"></div></td></tr></tbody>
+                        <tbody id="analysesTable"><tr><td colspan="8"><div class="spinner-center"><div class="spinner"></div></div></td></tr></tbody>
                     </table>
                 </div>
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted" id="analysesCount">--</small>
-                    <nav><ul class="pagination pagination-sm mb-0" id="analysesPagination"></ul></nav>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+                    <small style="color:var(--text-muted);" id="analysesCount">--</small>
+                    <nav><ul class="pagination" id="analysesPagination"></ul></nav>
                 </div>
             </div>
         </div>
@@ -234,29 +330,29 @@
         <!-- TAB: Vouchers -->
         <div id="tab-vouchers" style="display:none;">
             <div class="card-section">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="section-title mb-0"><i class="fas fa-ticket-alt me-2 text-muted"></i>Gestão de Vouchers</div>
-                    <button class="btn btn-sm btn-gold" onclick="showCreateVoucherModal()"><i class="fas fa-plus me-1"></i>Criar Vouchers</button>
+                <div class="card-header">
+                    <div class="card-title"><i class="fas fa-ticket-alt"></i> Gestão de Vouchers</div>
+                    <button class="btn btn-gold" onclick="showCreateVoucherModal()"><i class="fas fa-plus"></i> Criar Vouchers</button>
                 </div>
                 <div class="filter-bar">
-                    <select class="form-select form-select-sm" style="width:auto;" id="filterVoucherStatus" onchange="filterVouchers()">
+                    <select id="filterVoucherStatus" onchange="filterVouchers()">
                         <option value="all">Todos</option>
                         <option value="active">Activos</option>
                         <option value="used">Usados</option>
                     </select>
-                    <select class="form-select form-select-sm" style="width:auto;" id="filterVoucherType" onchange="filterVouchers()">
+                    <select id="filterVoucherType" onchange="filterVouchers()">
                         <option value="all">Todos os Tipos</option>
                         <option value="standard">CV Analyser</option>
                         <option value="career_path">Career Path</option>
                     </select>
-                    <input type="text" class="form-control form-control-sm" style="width:200px;" placeholder="Pesquisar email..." id="filterVoucherEmail" oninput="filterVouchers()">
+                    <input type="text" placeholder="Pesquisar email..." id="filterVoucherEmail" oninput="filterVouchers()">
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover">
+                <div class="table-wrap">
+                    <table>
                         <thead><tr>
                             <th>Código</th><th>Email</th><th>Plano</th><th>Tipo</th><th>Valor</th><th>Estado</th><th>Criado</th><th>Acções</th>
                         </tr></thead>
-                        <tbody id="vouchersTable"><tr><td colspan="8" class="text-center py-4"><div class="spinner-border spinner-gold"></div></td></tr></tbody>
+                        <tbody id="vouchersTable"><tr><td colspan="8"><div class="spinner-center"><div class="spinner"></div></div></td></tr></tbody>
                     </table>
                 </div>
             </div>
@@ -265,81 +361,66 @@
         <!-- TAB: Nurturing -->
         <div id="tab-nurturing" style="display:none;">
             <div class="card-section">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="section-title mb-0"><i class="fas fa-paper-plane me-2 text-muted"></i>Follow-up & Nurturing</div>
+                <div class="card-header">
+                    <div class="card-title"><i class="fas fa-paper-plane"></i> Follow-up & Nurturing</div>
                     <div class="lang-toggle" id="nurturingLangToggle">
-                        <button class="active" onclick="setNurturingLang('pt',this)">🇵🇹 PT</button>
-                        <button onclick="setNurturingLang('en',this)">🇬🇧 EN</button>
+                        <button class="active" onclick="setNurturingLang('pt',this)">PT</button>
+                        <button onclick="setNurturingLang('en',this)">EN</button>
                     </div>
                 </div>
-                <p class="text-muted mb-3">Envia emails personalizados para segmentos específicos de utilizadores via Brevo.</p>
+                <p style="color:var(--text-secondary);font-size:13px;margin-bottom:16px;">Envia emails personalizados para segmentos específicos de utilizadores via Brevo.</p>
                 
-                <div class="row g-3 mb-4">
-                    <div class="col-md-4">
-                        <div class="stat-card border" style="cursor:pointer;" onclick="prepareNurturing('upsell')">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-arrow-up text-success me-2"></i>
-                                <strong>Upsell</strong>
-                            </div>
-                            <p class="text-muted mb-1" style="font-size:.8rem;">Utilizadores com análise gratuita que ainda não compraram relatório pago.</p>
-                            <span class="badge bg-success" id="upsellCount">--</span>
-                        </div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+                    <div class="nurture-card" onclick="prepareNurturing('upsell')">
+                        <h4><i class="fas fa-arrow-up" style="color:var(--green);"></i> Upsell</h4>
+                        <p>Utilizadores com análise gratuita que ainda não compraram relatório pago.</p>
+                        <span class="badge badge-green" id="upsellCount">--</span>
                     </div>
-                    <div class="col-md-4">
-                        <div class="stat-card border" style="cursor:pointer;" onclick="prepareNurturing('feedback')">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-star text-warning me-2"></i>
-                                <strong>Feedback</strong>
-                            </div>
-                            <p class="text-muted mb-1" style="font-size:.8rem;">Utilizadores pagos que ainda não deram rating/feedback.</p>
-                            <span class="badge" style="background:var(--s2i-gold)" id="feedbackCount">--</span>
-                        </div>
+                    <div class="nurture-card" onclick="prepareNurturing('feedback')">
+                        <h4><i class="fas fa-star" style="color:var(--gold);"></i> Feedback</h4>
+                        <p>Utilizadores pagos que ainda não deram rating/feedback.</p>
+                        <span class="badge badge-gold" id="feedbackCount">--</span>
                     </div>
-                    <div class="col-md-4">
-                        <div class="stat-card border" style="cursor:pointer;" onclick="prepareNurturing('careerpath')">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-road text-primary me-2"></i>
-                                <strong>Career Path Upsell</strong>
-                            </div>
-                            <p class="text-muted mb-1" style="font-size:.8rem;">Utilizadores pagos que ainda não compraram o Career Path.</p>
-                            <span class="badge bg-primary" id="careerpathCount">--</span>
-                        </div>
+                    <div class="nurture-card" onclick="prepareNurturing('careerpath')">
+                        <h4><i class="fas fa-road" style="color:var(--blue);"></i> Career Path Upsell</h4>
+                        <p>Utilizadores pagos que ainda não compraram o Career Path.</p>
+                        <span class="badge badge-blue" id="careerpathCount">--</span>
                     </div>
                 </div>
 
                 <!-- Email Composer -->
                 <div id="emailComposer" style="display:none;">
-                    <div class="card-section border">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h6 class="mb-0" id="composerTitle">Compor Email</h6>
-                            <button class="btn btn-sm btn-outline-secondary" onclick="closeComposer()"><i class="fas fa-times"></i></button>
+                    <div class="card-section" style="border:1px solid var(--gold);border-radius:var(--radius);">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+                            <h4 style="font-size:14px;font-weight:600;" id="composerTitle">Compor Email</h4>
+                            <button class="modal-close" onclick="closeComposer()"><i class="fas fa-times"></i></button>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label" style="font-size:.85rem;font-weight:600;">Destinatários <span class="selected-count" id="selectedCount">(0 de 0 selecionados)</span></label>
-                            <div class="recipient-controls">
-                                <button class="btn btn-outline-secondary" onclick="toggleAllRecipients(true)"><i class="fas fa-check-double me-1"></i>Todos</button>
-                                <button class="btn btn-outline-secondary" onclick="toggleAllRecipients(false)"><i class="fas fa-times me-1"></i>Nenhum</button>
-                                <button class="btn btn-outline-success" onclick="selectOnlyUnsent()" title="Selecionar apenas quem ainda não recebeu este tipo de email"><i class="fas fa-filter me-1"></i>Só não enviados</button>
-                                <select class="form-select" id="recipientFilter" onchange="filterRecipientList()">
+                        <div class="form-group">
+                            <label class="form-label">Destinatários <span style="color:var(--text-muted);font-weight:400;" id="selectedCount">(0 de 0 selecionados)</span></label>
+                            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+                                <button class="btn btn-outline btn-sm" onclick="toggleAllRecipients(true)"><i class="fas fa-check-double"></i> Todos</button>
+                                <button class="btn btn-outline btn-sm" onclick="toggleAllRecipients(false)"><i class="fas fa-times"></i> Nenhum</button>
+                                <button class="btn btn-success-soft btn-sm" onclick="selectOnlyUnsent()" title="Selecionar apenas não enviados"><i class="fas fa-filter"></i> Não enviados</button>
+                                <select class="form-select" style="width:auto;padding:3px 8px;font-size:11px;" id="recipientFilter" onchange="filterRecipientList()">
                                     <option value="all">Todos</option>
                                     <option value="unsent">Não enviados</option>
                                     <option value="sent">Já enviados</option>
                                 </select>
-                                <input type="text" class="recipient-search" id="recipientSearch" placeholder="Pesquisar email..." oninput="filterRecipientList()">
+                                <input type="text" class="form-input" style="width:180px;padding:3px 8px;font-size:11px;" id="recipientSearch" placeholder="Pesquisar email..." oninput="filterRecipientList()">
                             </div>
-                            <div id="recipientList" class="border rounded p-2" style="max-height:220px;overflow-y:auto;background:#fafafa;">--</div>
+                            <div id="recipientList" style="max-height:200px;overflow-y:auto;background:#FAFAFA;border:1px solid var(--border);border-radius:6px;padding:6px;">--</div>
                         </div>
-                        <div class="mb-2">
-                            <label class="form-label" style="font-size:.85rem;font-weight:600;">Assunto</label>
-                            <input type="text" class="form-control form-control-sm" id="emailSubject">
+                        <div class="form-group">
+                            <label class="form-label">Assunto</label>
+                            <input type="text" class="form-input" id="emailSubject">
                         </div>
-                        <div class="mb-2">
-                            <label class="form-label" style="font-size:.85rem;font-weight:600;">Mensagem (HTML)</label>
-                            <textarea class="form-control" id="emailBody" rows="10" style="font-size:.85rem;font-family:monospace;"></textarea>
+                        <div class="form-group">
+                            <label class="form-label">Mensagem (HTML)</label>
+                            <textarea class="form-textarea" id="emailBody" style="font-family:monospace;font-size:12px;min-height:200px;"></textarea>
                         </div>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-gold" onclick="sendNurturingEmails()"><i class="fas fa-paper-plane me-1"></i>Enviar via Brevo</button>
-                            <button class="btn btn-outline-secondary" onclick="previewEmail()"><i class="fas fa-eye me-1"></i>Pré-visualizar</button>
+                        <div style="display:flex;gap:8px;">
+                            <button class="btn btn-gold" onclick="sendNurturingEmails()"><i class="fas fa-paper-plane"></i> Enviar via Brevo</button>
+                            <button class="btn btn-outline" onclick="previewEmail()"><i class="fas fa-eye"></i> Pré-visualizar</button>
                         </div>
                     </div>
                 </div>
@@ -349,12 +430,12 @@
         <!-- TAB: History -->
         <div id="tab-history" style="display:none;">
             <div class="card-section">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="section-title mb-0"><i class="fas fa-history me-2 text-muted"></i>Histórico de Emails</div>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="exportHistoryCSV()"><i class="fas fa-download me-1"></i>Exportar CSV</button>
+                <div class="card-header">
+                    <div class="card-title"><i class="fas fa-history"></i> Histórico de Emails</div>
+                    <button class="btn btn-outline" onclick="exportHistoryCSV()"><i class="fas fa-download"></i> Exportar CSV</button>
                 </div>
                 <div class="filter-bar">
-                    <select class="form-select form-select-sm" style="width:auto;" id="filterHistoryCampaign" onchange="filterHistory()">
+                    <select id="filterHistoryCampaign" onchange="filterHistory()">
                         <option value="all">Todas as Campanhas</option>
                         <option value="upsell">Upsell</option>
                         <option value="feedback">Feedback</option>
@@ -362,204 +443,207 @@
                         <option value="voucher">Vouchers</option>
                         <option value="custom">Personalizado</option>
                     </select>
-                    <input type="text" class="form-control form-control-sm" style="width:200px;" placeholder="Pesquisar email..." id="filterHistoryEmail" oninput="filterHistory()">
-                    <input type="date" class="form-control form-control-sm" style="width:auto;" id="filterHistoryDateFrom" onchange="filterHistory()">
-                    <span class="text-muted">até</span>
-                    <input type="date" class="form-control form-control-sm" style="width:auto;" id="filterHistoryDateTo" onchange="filterHistory()">
+                    <input type="text" placeholder="Pesquisar email..." id="filterHistoryEmail" oninput="filterHistory()">
+                    <input type="date" id="filterHistoryDateFrom" onchange="filterHistory()">
+                    <span style="color:var(--text-muted);font-size:12px;">até</span>
+                    <input type="date" id="filterHistoryDateTo" onchange="filterHistory()">
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover">
+                <div class="table-wrap">
+                    <table>
                         <thead><tr>
                             <th>Data</th><th>Destinatário</th><th>Assunto</th><th>Campanha</th><th>Estado</th>
                         </tr></thead>
-                        <tbody id="historyTable"><tr><td colspan="5" class="text-center py-4"><div class="spinner-border spinner-gold"></div></td></tr></tbody>
+                        <tbody id="historyTable"><tr><td colspan="5"><div class="spinner-center"><div class="spinner"></div></div></td></tr></tbody>
                     </table>
                 </div>
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted" id="historyCount">--</small>
-                    <nav><ul class="pagination pagination-sm mb-0" id="historyPagination"></ul></nav>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+                    <small style="color:var(--text-muted);" id="historyCount">--</small>
+                    <nav><ul class="pagination" id="historyPagination"></ul></nav>
                 </div>
             </div>
         </div>
 
         <!-- TAB: Contacts -->
         <div id="tab-contacts" style="display:none;">
-            <!-- KPIs -->
-            <div class="row g-3 mb-4">
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="kpiContactsTotal">--</div><div class="stat-label">Total Mensagens</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-red)" id="kpiContactsNew">--</div><div class="stat-label">Novas (por ler)</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-gold)" id="kpiContactsRead">--</div><div class="stat-label">Lidas</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-green)" id="kpiContactsReplied">--</div><div class="stat-label">Respondidas</div></div></div>
+            <div class="kpi-grid">
+                <div class="kpi-card"><div class="kpi-label">Total Mensagens</div><div class="kpi-value" id="kpiContactsTotal">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Novas (por ler)</div><div class="kpi-value red" id="kpiContactsNew">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Lidas</div><div class="kpi-value gold" id="kpiContactsRead">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Respondidas</div><div class="kpi-value green" id="kpiContactsReplied">--</div></div>
             </div>
             <div class="card-section">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="section-title mb-0"><i class="fas fa-inbox me-2 text-muted"></i>Mensagens de Contacto</div>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="exportContactsCSV()"><i class="fas fa-download me-1"></i>Exportar CSV</button>
+                <div class="card-header">
+                    <div class="card-title"><i class="fas fa-inbox"></i> Mensagens de Contacto</div>
+                    <button class="btn btn-outline" onclick="exportContactsCSV()"><i class="fas fa-download"></i> Exportar CSV</button>
                 </div>
                 <div class="filter-bar">
-                    <select class="form-select form-select-sm" style="width:auto;" id="filterContactStatus" onchange="renderContacts()">
+                    <select id="filterContactStatus" onchange="renderContacts()">
                         <option value="all">Todos os estados</option>
                         <option value="novo">Novos</option>
                         <option value="lido">Lidos</option>
                         <option value="respondido">Respondidos</option>
                     </select>
-                    <select class="form-select form-select-sm" style="width:auto;" id="filterContactSubject" onchange="renderContacts()">
+                    <select id="filterContactSubject" onchange="renderContacts()">
                         <option value="all">Todos os motivos</option>
                     </select>
-                    <input type="text" class="form-control form-control-sm" style="width:200px;" placeholder="Pesquisar..." id="filterContactSearch" oninput="renderContacts()">
+                    <input type="text" placeholder="Pesquisar..." id="filterContactSearch" oninput="renderContacts()">
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover">
+                <div class="table-wrap">
+                    <table>
                         <thead><tr>
                             <th style="width:30px;"></th><th>Data</th><th>Nome</th><th>Email</th><th>Motivo</th><th>Mensagem</th><th>Estado</th><th>Ações</th>
                         </tr></thead>
-                        <tbody id="contactsTable"><tr><td colspan="8" class="text-center py-4"><div class="spinner-border spinner-gold"></div></td></tr></tbody>
+                        <tbody id="contactsTable"><tr><td colspan="8"><div class="spinner-center"><div class="spinner"></div></div></td></tr></tbody>
                     </table>
                 </div>
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted" id="contactsCount">--</small>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+                    <small style="color:var(--text-muted);" id="contactsCount">--</small>
                 </div>
             </div>
         </div>
 
         <!-- TAB: Health -->
         <div id="tab-health" style="display:none;">
-            <div class="row g-3 mb-3">
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="healthAvgTTFB">--</div><div class="stat-label">TTFB Médio (24h)</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-green)" id="healthUptime">--</div><div class="stat-label">Uptime (7d)</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" style="color:var(--s2i-red)" id="healthAlerts">--</div><div class="stat-label">Alertas (7d)</div></div></div>
-                <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-value" id="healthLastCheck">--</div><div class="stat-label">Último Check</div></div></div>
+            <div class="kpi-grid">
+                <div class="kpi-card"><div class="kpi-label">TTFB Médio (24h)</div><div class="kpi-value" id="healthAvgTTFB">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Uptime (7d)</div><div class="kpi-value green" id="healthUptime">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Alertas (7d)</div><div class="kpi-value red" id="healthAlerts">--</div></div>
+                <div class="kpi-card"><div class="kpi-label">Último Check</div><div class="kpi-value" id="healthLastCheck">--</div></div>
             </div>
-            <div class="card-section mb-3">
-                <div class="section-title"><i class="fas fa-server me-2 text-muted"></i>Estado dos Endpoints</div>
-                <div id="endpointStatus">
-                    <div class="text-center py-3"><div class="spinner-border spinner-gold"></div></div>
+            <div class="card-section" style="margin-bottom:16px;">
+                <div class="card-title"><i class="fas fa-server"></i> Estado dos Endpoints</div>
+                <div id="endpointStatus" style="margin-top:12px;">
+                    <div class="spinner-center"><div class="spinner"></div></div>
                 </div>
             </div>
             <div class="card-section">
-                <div class="section-title"><i class="fas fa-chart-line me-2 text-muted"></i>TTFB ao Longo do Tempo</div>
-                <canvas id="ttfbChart" height="120"></canvas>
+                <div class="card-title"><i class="fas fa-chart-line"></i> TTFB ao Longo do Tempo</div>
+                <canvas id="ttfbChart" height="120" style="margin-top:12px;"></canvas>
             </div>
         </div>
+    </div>
 
-        <!-- Contact Detail Modal -->
-        <div id="contactDetailOverlay" class="email-modal-overlay" style="display:none;" onclick="if(event.target===this)closeContactDetail()">
-            <div class="email-modal" style="max-width:650px;">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0" id="contactDetailTitle">Mensagem</h5>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="closeContactDetail()"><i class="fas fa-times"></i></button>
-                </div>
-                <div id="contactDetailBody"></div>
-                <hr>
-                <div class="mb-2">
-                    <label class="form-label" style="font-size:.85rem;font-weight:600;">Notas internas:</label>
-                    <textarea class="form-control form-control-sm" id="contactDetailNotes" rows="2" placeholder="Adicionar notas..."></textarea>
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-gold flex-fill" onclick="markContactReplied()"><i class="fas fa-check me-1"></i>Marcar como respondido</button>
-                    <button class="btn btn-sm btn-outline-secondary flex-fill" onclick="saveContactNotes()"><i class="fas fa-save me-1"></i>Guardar notas</button>
-                </div>
+    <!-- Contact Detail Modal -->
+    <div id="contactDetailOverlay" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeContactDetail()">
+        <div class="modal-box" style="max-width:650px;">
+            <div class="modal-title">
+                <span id="contactDetailTitle">Mensagem</span>
+                <button class="modal-close" onclick="closeContactDetail()"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="contactDetailBody"></div>
+            <hr style="border:none;border-top:1px solid var(--border);margin:16px 0;">
+            <div class="form-group">
+                <label class="form-label">Notas internas:</label>
+                <textarea class="form-textarea" id="contactDetailNotes" style="min-height:60px;" placeholder="Adicionar notas..."></textarea>
+            </div>
+            <div style="display:flex;gap:8px;">
+                <button class="btn btn-gold" style="flex:1;" onclick="markContactReplied()"><i class="fas fa-check"></i> Marcar como respondido</button>
+                <button class="btn btn-outline" style="flex:1;" onclick="saveContactNotes()"><i class="fas fa-save"></i> Guardar notas</button>
             </div>
         </div>
-
     </div>
 
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Email Modal (for single email send) -->
-    <div id="emailModalOverlay" class="email-modal-overlay" style="display:none;" onclick="if(event.target===this)closeEmailModal()">
-        <div class="email-modal">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="mb-0">Enviar Email</h5>
-                <button class="btn btn-sm btn-outline-secondary" onclick="closeEmailModal()"><i class="fas fa-times"></i></button>
+    <!-- Email Modal (single send) -->
+    <div id="emailModalOverlay" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeEmailModal()">
+        <div class="modal-box">
+            <div class="modal-title">
+                <span>Enviar Email</span>
+                <button class="modal-close" onclick="closeEmailModal()"><i class="fas fa-times"></i></button>
             </div>
-            <div class="mb-2">
-                <label class="form-label" style="font-size:.85rem;font-weight:600;">Para:</label>
-                <input type="text" class="form-control form-control-sm" id="modalEmailTo" readonly>
+            <div class="form-group">
+                <label class="form-label">Para:</label>
+                <input type="text" class="form-input" id="modalEmailTo" readonly style="background:#F9F9F9;">
             </div>
-            <div class="mb-2">
-                <label class="form-label" style="font-size:.85rem;font-weight:600;">Idioma:</label>
-                <select class="form-select form-select-sm" id="modalEmailLang" onchange="loadEmailTemplate()">
-                    <option value="pt">🇵🇹 Português</option>
-                    <option value="en">🇬🇧 English</option>
+            <div class="form-group">
+                <label class="form-label">Idioma:</label>
+                <select class="form-select" id="modalEmailLang" onchange="loadEmailTemplate()">
+                    <option value="pt">Português</option>
+                    <option value="en">English</option>
                 </select>
             </div>
-            <div class="mb-2">
-                <label class="form-label" style="font-size:.85rem;font-weight:600;">Template:</label>
-                <select class="form-select form-select-sm" id="modalEmailTemplate" onchange="loadEmailTemplate()">
+            <div class="form-group">
+                <label class="form-label">Template:</label>
+                <select class="form-select" id="modalEmailTemplate" onchange="loadEmailTemplate()">
                     <option value="upsell">Upsell - Análise Completa</option>
                     <option value="feedback">Pedir Feedback</option>
                     <option value="careerpath">Upsell - Career Path</option>
                     <option value="custom">Personalizado</option>
                 </select>
             </div>
-            <div class="mb-2">
-                <label class="form-label" style="font-size:.85rem;font-weight:600;">Assunto:</label>
-                <input type="text" class="form-control form-control-sm" id="modalEmailSubject">
+            <div class="form-group">
+                <label class="form-label">Assunto:</label>
+                <input type="text" class="form-input" id="modalEmailSubject">
             </div>
-            <div class="mb-2">
-                <label class="form-label" style="font-size:.85rem;font-weight:600;">Mensagem:</label>
-                <textarea class="form-control" id="modalEmailBody" rows="8" style="font-size:.85rem;"></textarea>
+            <div class="form-group">
+                <label class="form-label">Mensagem:</label>
+                <textarea class="form-textarea" id="modalEmailBody"></textarea>
             </div>
-            <button class="btn btn-gold w-100" onclick="sendSingleEmail()"><i class="fas fa-paper-plane me-1"></i>Enviar</button>
+            <button class="btn btn-gold" style="width:100%;" onclick="sendSingleEmail()"><i class="fas fa-paper-plane"></i> Enviar</button>
         </div>
     </div>
 
     <!-- Create Voucher Modal -->
-    <div id="voucherModalOverlay" class="email-modal-overlay" style="display:none;" onclick="if(event.target===this)closeVoucherModal()">
-        <div class="email-modal">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="mb-0">Criar Vouchers</h5>
-                <button class="btn btn-sm btn-outline-secondary" onclick="closeVoucherModal()"><i class="fas fa-times"></i></button>
+    <div id="voucherModalOverlay" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeVoucherModal()">
+        <div class="modal-box">
+            <div class="modal-title">
+                <span>Criar Vouchers</span>
+                <button class="modal-close" onclick="closeVoucherModal()"><i class="fas fa-times"></i></button>
             </div>
-            <div class="mb-2">
-                <label class="form-label" style="font-size:.85rem;font-weight:600;">Email do destinatário:</label>
-                <input type="email" class="form-control form-control-sm" id="voucherEmail" placeholder="email@exemplo.com">
+            <div class="form-group">
+                <label class="form-label">Email do destinatário:</label>
+                <input type="email" class="form-input" id="voucherEmail" placeholder="email@exemplo.com">
             </div>
-            <div class="mb-2">
-                <label class="form-label" style="font-size:.85rem;font-weight:600;">Plano:</label>
-                <select class="form-select form-select-sm" id="voucherPlan">
-                    <optgroup label="🇵🇹 CV Analyser (PT)">
+            <div class="form-group">
+                <label class="form-label">Plano:</label>
+                <select class="form-select" id="voucherPlan">
+                    <optgroup label="CV Analyser (PT)">
                         <option value="Essencial|1|3.99|standard|false">Essencial (1 análise - €3,99)</option>
                         <option value="Profissional|3|7.99|standard|false">Profissional (3 análises - €7,99)</option>
                         <option value="Premium|5|12.99|standard|false">Premium (5 análises - €12,99)</option>
                     </optgroup>
-                    <optgroup label="🇬🇧 CV Analyser (EN)">
+                    <optgroup label="CV Analyser (EN)">
                         <option value="Essential|1|5.99|standard|false">Essential (1 analysis - $5.99)</option>
                         <option value="Professional|3|14.99|standard|false">Professional (3 analyses - $14.99)</option>
                         <option value="Premium EN|5|24.99|standard|false">Premium (5 analyses - $24.99)</option>
                     </optgroup>
-                    <optgroup label="🇵🇹 Career Path (PT)">
+                    <optgroup label="Career Path (PT)">
                         <option value="Career Path|1|9.99|career_path|false">Career Path (1 análise - €9,99)</option>
                     </optgroup>
-                    <optgroup label="🇬🇧 Career Path (EN)">
+                    <optgroup label="Career Path (EN)">
                         <option value="Career Path EN|1|10.00|career_path|false">Career Path (1 analysis - $10.00)</option>
                     </optgroup>
+                    <optgroup label="Bundles">
+                        <option value="Bundle|1|6.99|standard|true">Bundle CV + Career Path (€6,99)</option>
+                        <option value="Bundle Compensação|1|0|standard|true">Bundle Compensação (grátis)</option>
+                    </optgroup>
                     <optgroup label="Teste">
-                        <option value="Teste|1|0|standard|false">Teste CV (1 análise - grátis)</option>
+                        <option value="Teste|1|0|standard|false">Teste CV (grátis)</option>
                         <option value="Teste Career Path|1|0|career_path|false">Teste Career Path (grátis)</option>
                     </optgroup>
                 </select>
             </div>
-            <div class="mb-2">
-                <label class="form-label" style="font-size:.85rem;font-weight:600;">Método de pagamento:</label>
-                <select class="form-select form-select-sm" id="voucherPayment">
+            <div class="form-group">
+                <label class="form-label">Método de pagamento:</label>
+                <select class="form-select" id="voucherPayment">
                     <option value="mbway">MB WAY</option>
                     <option value="paypal">PayPal</option>
+                    <option value="stripe">Stripe</option>
                     <option value="manual">Manual</option>
+                    <option value="linkedin">LinkedIn</option>
                     <option value="test">Teste</option>
                 </select>
             </div>
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="voucherSendEmail" checked>
-                <label class="form-check-label" for="voucherSendEmail" style="font-size:.85rem;">Enviar email com códigos via Brevo</label>
+            <div class="form-check" style="margin-bottom:16px;">
+                <input type="checkbox" id="voucherSendEmail" checked>
+                <label for="voucherSendEmail">Enviar email com códigos via Brevo</label>
             </div>
-            <button class="btn btn-gold w-100" onclick="createVouchers()"><i class="fas fa-plus me-1"></i>Criar e Enviar</button>
+            <button class="btn btn-gold" style="width:100%;" onclick="createVouchers()"><i class="fas fa-plus"></i> Criar e Enviar</button>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="admin-analytics.js"></script>
 </body>
 </html>
