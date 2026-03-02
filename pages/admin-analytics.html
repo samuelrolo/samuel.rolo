@@ -387,7 +387,7 @@
             <div class="card">
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>Data</th><th>Nome</th><th>Email</th><th>Score</th><th>Tipo</th><th>Produto</th><th>Idioma</th><th></th></tr></thead>
+                        <thead><tr><th>Data</th><th>Nome</th><th>Email</th><th>Score</th><th>Tipo</th><th>Origem</th><th>Produto</th><th>Idioma</th><th></th></tr></thead>
                         <tbody id="analysesTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
                     </table>
                 </div>
@@ -437,47 +437,62 @@
                 <div class="segment-card" onclick="prepareNurturing('upsell')">
                     <div class="segment-count" id="upsellCount">--</div>
                     <div class="segment-label">Upsell — Análise Completa</div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Utilizadores com análise gratuita</div>
                 </div>
                 <div class="segment-card" onclick="prepareNurturing('feedback')">
                     <div class="segment-count" id="feedbackCount">--</div>
                     <div class="segment-label">Pedir Feedback</div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Utilizadores pagos sem rating</div>
                 </div>
                 <div class="segment-card" onclick="prepareNurturing('careerpath')">
                     <div class="segment-count" id="careerpathCount">--</div>
                     <div class="segment-label">Upsell — Career Path</div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Pagos sem Career Path</div>
                 </div>
             </div>
 
-            <div class="card" id="nurturingPanel" style="display:none;">
+            <div class="card" id="emailComposer" style="display:none;">
                 <div class="card-header">
-                    <div class="card-title"><i class="fas fa-users"></i> Destinatários <span style="font-weight:400;color:var(--text-muted);font-size:12px;" id="selectedCount"></span></div>
+                    <div class="card-title"><i class="fas fa-envelope"></i> <span id="composerTitle">Compor Email</span></div>
                     <div style="display:flex;gap:8px;">
-                        <select class="form-select" id="recipientFilter" onchange="filterRecipientList()" style="font-size:12px;">
-                            <option value="all">Todos</option>
-                            <option value="unsent">Não enviados</option>
-                            <option value="sent">Já enviados</option>
-                        </select>
-                        <input class="form-input" type="text" id="recipientSearch" placeholder="Pesquisar..." oninput="filterRecipientList()" style="width:150px;font-size:12px;">
+                        <button class="btn btn-outline btn-sm" onclick="previewEmail()"><i class="fas fa-eye"></i> Pré-visualizar</button>
+                        <button class="btn btn-outline btn-sm" onclick="closeComposer()"><i class="fas fa-times"></i> Fechar</button>
                     </div>
                 </div>
                 <div class="card-body" style="padding:0;">
+                    <!-- Recipients section -->
+                    <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <i class="fas fa-users" style="color:var(--gold);"></i>
+                            <span style="font-size:13px;font-weight:500;">Destinatários</span>
+                            <span style="font-weight:400;color:var(--text-muted);font-size:12px;" id="selectedCount"></span>
+                        </div>
+                        <div style="display:flex;gap:8px;">
+                            <select class="form-select" id="recipientFilter" onchange="filterRecipientList()" style="font-size:12px;">
+                                <option value="all">Todos</option>
+                                <option value="unsent">Não enviados</option>
+                                <option value="sent">Já enviados</option>
+                            </select>
+                            <input class="form-input" type="text" id="recipientSearch" placeholder="Pesquisar..." oninput="filterRecipientList()" style="width:150px;font-size:12px;">
+                        </div>
+                    </div>
                     <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;">
                         <button class="btn btn-outline btn-sm" onclick="toggleAllRecipients(true)">Selecionar todos</button>
                         <button class="btn btn-outline btn-sm" onclick="toggleAllRecipients(false)">Desmarcar todos</button>
                         <button class="btn btn-outline btn-sm" onclick="selectOnlyUnsent()">Só não enviados</button>
                     </div>
-                    <div id="recipientList" style="max-height:300px;overflow-y:auto;"></div>
+                    <div id="recipientList" style="max-height:250px;overflow-y:auto;"></div>
                 </div>
                 <div style="padding:16px 20px;border-top:1px solid var(--border);">
                     <div class="form-group">
                         <label class="form-label">Assunto:</label>
-                        <input class="form-input" type="text" id="nurturingSubject" style="width:100%;">
+                        <input class="form-input" type="text" id="emailSubject" style="width:100%;">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Pré-visualização do email:</label>
-                        <div id="nurturingPreview" style="border:1px solid var(--border);border-radius:6px;padding:16px;max-height:200px;overflow-y:auto;font-size:12px;color:var(--text-muted);"></div>
+                        <label class="form-label">Corpo do email (HTML):</label>
+                        <textarea class="form-textarea" id="emailBody" style="min-height:200px;font-family:'Courier New',monospace;font-size:12px;"></textarea>
                     </div>
-                    <button class="btn btn-gold" onclick="sendNurturingCampaign()" style="width:100%;"><i class="fas fa-paper-plane"></i> Enviar Campanha</button>
+                    <button class="btn btn-gold" onclick="sendNurturingEmails()" style="width:100%;"><i class="fas fa-paper-plane"></i> Enviar Campanha</button>
                 </div>
             </div>
         </div>

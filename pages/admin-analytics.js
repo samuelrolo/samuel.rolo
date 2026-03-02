@@ -119,7 +119,7 @@ function filterByLang(data, lang) {
 async function loadAllData() {
     try {
         const [analyses, vouchers] = await Promise.all([
-            supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,analysis_type,payment_status,payment_amount,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc'),
+            supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,analysis_type,payment_status,payment_amount,payment_method,transaction_id,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc'),
             supaFetch('vouchers', 'select=*&order=created_at.desc')
         ]);
         allAnalyses = Array.isArray(analyses) ? analyses : [];
@@ -185,6 +185,33 @@ function getProductBadge(analysis) {
     return analysis.analysis_type === 'career_path'
         ? '<span class="badge badge-career">Career Path</span>'
         : '<span class="badge" style="background:var(--purple);color:white;">CV Analyser</span>';
+}
+
+function getPaymentOrigin(analysis) {
+    if (analysis.payment_method) return analysis.payment_method;
+    const type = getAnalysisType(analysis);
+    if (type === 'voucher') return 'voucher';
+    if (type === 'free') return 'free';
+    const tid = analysis.transaction_id || '';
+    if (tid.startsWith('pi_') || tid.startsWith('cs_')) return 'stripe';
+    if (tid.startsWith('PAYID-') || tid.toLowerCase().includes('paypal')) return 'paypal';
+    const matchedVoucher = allVouchers.find(v => v.email && analysis.user_email && v.email.toLowerCase() === analysis.user_email.toLowerCase() && v.used_analyses > 0);
+    if (matchedVoucher && matchedVoucher.payment_method) return matchedVoucher.payment_method;
+    if (analysis.payment_status === 'paid') return 'stripe';
+    return 'unknown';
+}
+
+function getPaymentOriginBadge(analysis) {
+    const origin = getPaymentOrigin(analysis);
+    const map = {
+        'stripe': '<span class="badge" style="background:#635bff;color:white;">Stripe</span>',
+        'paypal': '<span class="badge" style="background:#003087;color:white;">PayPal</span>',
+        'mbway': '<span class="badge" style="background:#e4002b;color:white;">MBWay</span>',
+        'voucher': '<span class="badge badge-voucher">Voucher</span>',
+        'free': '<span class="badge badge-free">Gratuito</span>',
+        'unknown': '<span class="badge" style="background:var(--bg-muted);color:var(--text-muted);">-</span>'
+    };
+    return map[origin] || map['unknown'];
 }
 
 // ===================== DASHBOARD KPIs =====================
@@ -376,7 +403,7 @@ function renderAnalyses() {
 
     const tbody = document.getElementById('analysesTable');
     if (page.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Sem resultados</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">Sem resultados</td></tr>';
     } else {
         tbody.innerHTML = page.map(a => {
             const date = new Date(a.created_at);
@@ -389,6 +416,7 @@ function renderAnalyses() {
                 <td>${a.user_email || '-'}</td>
                 <td><strong>${a.score || '-'}</strong></td>
                 <td>${getTypeBadge(type)}</td>
+                <td>${getPaymentOriginBadge(a)}</td>
                 <td>${getProductBadge(a)}</td>
                 <td>${getLangBadge(lang)}</td>
                 <td>
@@ -413,9 +441,9 @@ function renderAnalyses() {
 function filterAnalyses() { currentPage = 1; renderAnalyses(); }
 
 function exportAnalysesCSV() {
-    const csv = ['Data,Nome,Email,Score,Tipo,Produto,Idioma'];
+    const csv = ['Data,Nome,Email,Score,Tipo,Origem,Produto,Idioma'];
     allAnalyses.forEach(a => {
-        csv.push(`"${new Date(a.created_at).toLocaleString('pt-PT')}","${a.user_name||''}","${a.user_email||''}",${a.score||''},${getAnalysisType(a)},${getProductType(a)},${detectLanguage(a)}`);
+        csv.push(`"${new Date(a.created_at).toLocaleString('pt-PT')}","${a.user_name||''}","${a.user_email||''}",${a.score||''},${getAnalysisType(a)},${getPaymentOrigin(a)},${getProductType(a)},${detectLanguage(a)}`);
     });
     downloadCSV(csv.join('\n'), 'cv_analyses_export.csv');
 }
