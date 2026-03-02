@@ -44,6 +44,10 @@
       "destination": "/en/career-path/llms.txt"
     },
     {
+      "source": "/en/pages/about",
+      "destination": "/en/pages/about/index.html"
+    },
+    {
       "source": "/cv-analyser/(.*)",
       "destination": "/cv-analyser/index.html"
     },
