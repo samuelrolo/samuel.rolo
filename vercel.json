@@ -16,6 +16,11 @@
       "permanent": true
     },
     {
+      "source": "/pages/services",
+      "destination": "/en/pages/services",
+      "permanent": false
+    },
+    {
       "source": "/cv-builder",
       "destination": "https://cv-builder.share2inspire.pt",
       "permanent": true
