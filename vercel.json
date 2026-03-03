@@ -48,6 +48,14 @@
       "destination": "/en/pages/about/index.html"
     },
     {
+      "source": "/en/pages/home",
+      "destination": "/en/pages/home/index.html"
+    },
+    {
+      "source": "/en/pages/services",
+      "destination": "/en/pages/services/index.html"
+    },
+    {
       "source": "/cv-analyser/(.*)",
       "destination": "/cv-analyser/index.html"
     },
