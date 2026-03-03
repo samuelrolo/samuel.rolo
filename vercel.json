@@ -61,6 +61,10 @@
       "destination": "/en/pages/services/index.html"
     },
     {
+      "source": "/en/pages/privacy-policy",
+      "destination": "/en/pages/privacy-policy/index.html"
+    },
+    {
       "source": "/cv-analyser/(.*)",
       "destination": "/cv-analyser/index.html"
     },
