@@ -311,7 +311,7 @@
             <div class="grid-2" style="margin-bottom:20px;">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title"><i class="fas fa-chart-bar"></i> Análises por Dia (14 dias)</div>
+                        <div class="card-title"><i class="fas fa-chart-bar"></i> Vendas por Produto (14 dias)</div>
                     </div>
                     <div class="card-body">
                         <canvas id="dailyChart" height="180"></canvas>
@@ -329,8 +329,15 @@
 
             <div class="grid-2">
                 <div class="card">
-                    <div class="card-header">
-                        <div class="card-title"><i class="fas fa-chart-pie"></i> Tipo de Análise</div>
+                    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                        <div class="card-title" style="margin:0;"><i class="fas fa-chart-pie"></i> Tipo de Análise</div>
+                        <select class="form-select" id="chartDateFilter" onchange="updateCharts()" style="width:auto;min-width:130px;font-size:12px;padding:4px 8px;">
+                            <option value="all">Todo o período</option>
+                            <option value="7">Últimos 7 dias</option>
+                            <option value="14" selected>Últimos 14 dias</option>
+                            <option value="30">Últimos 30 dias</option>
+                            <option value="90">Últimos 90 dias</option>
+                        </select>
                     </div>
                     <div class="card-body" style="max-width:280px;margin:0 auto;">
                         <canvas id="typeChart" height="200"></canvas>

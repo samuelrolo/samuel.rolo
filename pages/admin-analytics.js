@@ -283,30 +283,43 @@ function updateDashboard() {
 }
 
 // ===================== CHARTS =====================
+function getChartDateDays() {
+    const sel = document.getElementById('chartDateFilter');
+    if (!sel) return null;
+    const val = sel.value;
+    return val === 'all' ? null : parseInt(val);
+}
+
+function filterByDateDays(data, days) {
+    if (!days) return data;
+    const cutoff = Date.now() - days * 86400000;
+    return data.filter(a => new Date(a.created_at).getTime() >= cutoff);
+}
+
 function updateCharts() {
-    const filtered = filterByLang(allAnalyses, globalLang);
+    const langFiltered = filterByLang(allAnalyses, globalLang);
+    const chartDays = getChartDateDays();
+    const dateFiltered = filterByDateDays(langFiltered, chartDays);
     
-    // Daily chart - last 14 days
+    // Daily chart - last 14 days - STACKED by product with paid/free breakdown
     const days = {};
     const now = new Date();
     for (let i = 13; i >= 0; i--) {
         const d = new Date(now);
         d.setDate(d.getDate() - i);
         const key = d.toISOString().split('T')[0];
-        days[key] = { total: 0, paid: 0, career: 0 };
+        days[key] = { cv_free: 0, cv_paid: 0, cp_free: 0, cp_paid: 0 };
     }
-    filtered.forEach(a => {
+    langFiltered.forEach(a => {
         const key = new Date(a.created_at).toISOString().split('T')[0];
         if (days[key]) {
-            days[key].total++;
-            if (getAnalysisType(a) !== 'free') days[key].paid++;
-            if (a.analysis_type === 'career_path') days[key].career++;
+            const isCP = a.analysis_type === 'career_path';
+            const isPaid = getAnalysisType(a) !== 'free';
+            if (isCP) { isPaid ? days[key].cp_paid++ : days[key].cp_free++; }
+            else { isPaid ? days[key].cv_paid++ : days[key].cv_free++; }
         }
     });
     const labels = Object.keys(days).map(d => { const dt = new Date(d); return dt.toLocaleDateString('pt-PT', {day:'2-digit',month:'2-digit'}); });
-    const totals = Object.values(days).map(d => d.total);
-    const paid = Object.values(days).map(d => d.paid);
-    const career = Object.values(days).map(d => d.career);
 
     if (dailyChart) dailyChart.destroy();
     dailyChart = new Chart(document.getElementById('dailyChart').getContext('2d'), {
@@ -314,17 +327,30 @@ function updateCharts() {
         data: {
             labels,
             datasets: [
-                { label: 'Total', data: totals, backgroundColor: 'rgba(191,154,51,.7)', borderColor: '#BF9A33', borderWidth: 1 },
-                { label: 'Pagas', data: paid, backgroundColor: 'rgba(40,167,69,.7)', borderColor: '#28a745', borderWidth: 1 },
-                { label: 'Career Path', data: career, backgroundColor: 'rgba(52,152,219,.7)', borderColor: '#3498db', borderWidth: 1 }
+                { label: 'CV Analyser (Gratuito)', data: Object.values(days).map(d => d.cv_free), backgroundColor: 'rgba(124,58,237,.35)', borderColor: '#7C3AED', borderWidth: 1, stack: 'cv' },
+                { label: 'CV Analyser (Pago)', data: Object.values(days).map(d => d.cv_paid), backgroundColor: 'rgba(124,58,237,.85)', borderColor: '#7C3AED', borderWidth: 1, stack: 'cv' },
+                { label: 'Career Path (Gratuito)', data: Object.values(days).map(d => d.cp_free), backgroundColor: 'rgba(59,130,246,.35)', borderColor: '#3B82F6', borderWidth: 1, stack: 'cp' },
+                { label: 'Career Path (Pago)', data: Object.values(days).map(d => d.cp_paid), backgroundColor: 'rgba(59,130,246,.85)', borderColor: '#3B82F6', borderWidth: 1, stack: 'cp' }
             ]
         },
-        options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 8, font: { size: 11 } } },
+                tooltip: { callbacks: { afterBody: function(items) {
+                    const idx = items[0].dataIndex;
+                    const d = Object.values(days)[idx];
+                    const cvTotal = d.cv_free + d.cv_paid;
+                    const cpTotal = d.cp_free + d.cp_paid;
+                    return `\nCV Total: ${cvTotal}  |  CP Total: ${cpTotal}`;
+                } } }
+            },
+            scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
     });
 
-    // Type chart
+    // Type chart - filtered by date
     const types = { free: 0, paid: 0, voucher: 0 };
-    filtered.forEach(a => { types[getAnalysisType(a)]++; });
+    dateFiltered.forEach(a => { types[getAnalysisType(a)]++; });
     if (typeChart) typeChart.destroy();
     typeChart = new Chart(document.getElementById('typeChart').getContext('2d'), {
         type: 'doughnut',
@@ -335,9 +361,9 @@ function updateCharts() {
         options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } } } }
     });
 
-    // Language chart
-    const ptCount = allAnalyses.filter(a => detectLanguage(a) === 'pt').length;
-    const enCount = allAnalyses.filter(a => detectLanguage(a) === 'en').length;
+    // Language chart - filtered by date
+    const ptCount = dateFiltered.filter(a => detectLanguage(a) === 'pt').length;
+    const enCount = dateFiltered.filter(a => detectLanguage(a) === 'en').length;
     if (langChart) langChart.destroy();
     langChart = new Chart(document.getElementById('langChart').getContext('2d'), {
         type: 'doughnut',
