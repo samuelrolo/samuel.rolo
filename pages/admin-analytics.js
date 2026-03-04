@@ -1239,6 +1239,7 @@ function switchTab(tab, btn) {
     if (tab === 'contacts') loadContacts();
     if (tab === 'health') { loadHealthLogs().then(renderHealth); }
     if (tab === 'ebook') { loadEbookDownloads(); }
+    if (tab === 'jobsearch') { loadJobSearchData(); }
 }
 
 function showToast(msg, type = 'info') {
@@ -1371,6 +1372,220 @@ function exportEbookCSV() {
         return `${date},${d.email || ''},${d.name || ''},${d.source || ''},${d.status || ''}`;
     });
     downloadCSV(header + '\n' + rows.join('\n'), 'ebook_downloads_' + new Date().toISOString().slice(0,10) + '.csv');
+    showToast('CSV exportado com sucesso', 'success');
+}
+
+// ===================== JOB SEARCH TRACKING =====================
+let allJobSearchData = [];
+let jobChartTopRoles = null;
+let jobChartSeniority = null;
+let jobChartTopSkills = null;
+let jobChartKeywordGaps = null;
+let jobChartDaily = null;
+let jobChartLanguage = null;
+
+async function loadJobSearchData() {
+    try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/job_search_tracking?select=*&order=created_at.desc&limit=5000`, {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        if (!res.ok) throw new Error('Fetch failed');
+        allJobSearchData = await res.json();
+        renderJobSearchKPIs();
+        renderJobSearchCharts();
+        renderJobSearchTable();
+        populateJobFilters();
+    } catch (e) {
+        console.error('Error loading job search data:', e);
+        showToast('Erro ao carregar dados de cargos', 'danger');
+    }
+}
+
+function renderJobSearchKPIs() {
+    const data = allJobSearchData;
+    const withJob = data.filter(d => d.job_title && d.job_title !== 'N/A');
+    const noJob = data.filter(d => !d.job_title || d.job_title === 'N/A');
+    const uniqueRoles = new Set(data.map(d => (d.detected_role || '').toLowerCase()).filter(r => r && r !== 'n/a'));
+    const now = new Date();
+    const week = data.filter(d => (now - new Date(d.created_at)) < 7 * 86400000);
+
+    document.getElementById('kpiJobTotal').textContent = data.length;
+    document.getElementById('kpiJobWithJob').textContent = withJob.length;
+    document.getElementById('kpiJobNoJob').textContent = noJob.length;
+    document.getElementById('kpiJobUniqueRoles').textContent = uniqueRoles.size;
+    document.getElementById('kpiJob7d').textContent = week.length;
+}
+
+function renderJobSearchCharts() {
+    const data = allJobSearchData;
+
+    // Top 10 Roles
+    const roleCounts = {};
+    data.forEach(d => {
+        const role = d.detected_role || 'N/A';
+        if (role !== 'N/A') roleCounts[role] = (roleCounts[role] || 0) + 1;
+    });
+    const topRoles = Object.entries(roleCounts).sort((a,b) => b[1]-a[1]).slice(0, 10);
+    if (jobChartTopRoles) jobChartTopRoles.destroy();
+    jobChartTopRoles = new Chart(document.getElementById('chartTopRoles'), {
+        type: 'bar',
+        data: {
+            labels: topRoles.map(r => r[0].length > 25 ? r[0].substring(0,25)+'...' : r[0]),
+            datasets: [{ label: 'Pesquisas', data: topRoles.map(r => r[1]), backgroundColor: '#C9A961', borderRadius: 6 }]
+        },
+        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
+    });
+
+    // Seniority Distribution
+    const senCounts = {};
+    data.forEach(d => { const s = d.seniority || 'N/A'; senCounts[s] = (senCounts[s] || 0) + 1; });
+    if (jobChartSeniority) jobChartSeniority.destroy();
+    jobChartSeniority = new Chart(document.getElementById('chartSeniority'), {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(senCounts),
+            datasets: [{ data: Object.values(senCounts), backgroundColor: ['#C9A961','#3B82F6','#10B981','#7C3AED','#F59E0B','#EF4444','#6B7280'] }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'right' } } }
+    });
+
+    // Top Skills
+    const skillCounts = {};
+    data.forEach(d => {
+        const skills = Array.isArray(d.key_skills) ? d.key_skills : [];
+        skills.forEach(s => { if (s) skillCounts[s] = (skillCounts[s] || 0) + 1; });
+    });
+    const topSkills = Object.entries(skillCounts).sort((a,b) => b[1]-a[1]).slice(0, 10);
+    if (jobChartTopSkills) jobChartTopSkills.destroy();
+    jobChartTopSkills = new Chart(document.getElementById('chartTopSkills'), {
+        type: 'bar',
+        data: {
+            labels: topSkills.map(s => s[0].length > 25 ? s[0].substring(0,25)+'...' : s[0]),
+            datasets: [{ label: 'Candidatos', data: topSkills.map(s => s[1]), backgroundColor: '#3B82F6', borderRadius: 6 }]
+        },
+        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
+    });
+
+    // Top Keyword Gaps
+    const gapCounts = {};
+    data.forEach(d => {
+        const gaps = Array.isArray(d.keyword_gaps) ? d.keyword_gaps : [];
+        gaps.forEach(g => { if (g) gapCounts[g] = (gapCounts[g] || 0) + 1; });
+    });
+    const topGaps = Object.entries(gapCounts).sort((a,b) => b[1]-a[1]).slice(0, 10);
+    if (jobChartKeywordGaps) jobChartKeywordGaps.destroy();
+    jobChartKeywordGaps = new Chart(document.getElementById('chartKeywordGaps'), {
+        type: 'bar',
+        data: {
+            labels: topGaps.map(g => g[0].length > 25 ? g[0].substring(0,25)+'...' : g[0]),
+            datasets: [{ label: 'Gaps', data: topGaps.map(g => g[1]), backgroundColor: '#EF4444', borderRadius: 6 }]
+        },
+        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
+    });
+
+    // Daily searches (last 30 days)
+    const dailyCounts = {};
+    const now = new Date();
+    for (let i = 29; i >= 0; i--) {
+        const d = new Date(now); d.setDate(d.getDate() - i);
+        dailyCounts[d.toISOString().slice(0,10)] = 0;
+    }
+    data.forEach(d => {
+        const day = new Date(d.created_at).toISOString().slice(0,10);
+        if (dailyCounts[day] !== undefined) dailyCounts[day]++;
+    });
+    if (jobChartDaily) jobChartDaily.destroy();
+    jobChartDaily = new Chart(document.getElementById('chartJobDaily'), {
+        type: 'line',
+        data: {
+            labels: Object.keys(dailyCounts).map(d => d.slice(5)),
+            datasets: [{ label: 'Pesquisas', data: Object.values(dailyCounts), borderColor: '#C9A961', backgroundColor: 'rgba(201,169,97,0.1)', fill: true, tension: 0.3 }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+    });
+
+    // Language distribution
+    const langCounts = {};
+    data.forEach(d => { const l = (d.language || 'pt').toUpperCase(); langCounts[l] = (langCounts[l] || 0) + 1; });
+    if (jobChartLanguage) jobChartLanguage.destroy();
+    jobChartLanguage = new Chart(document.getElementById('chartJobLanguage'), {
+        type: 'pie',
+        data: {
+            labels: Object.keys(langCounts),
+            datasets: [{ data: Object.values(langCounts), backgroundColor: ['#C9A961','#3B82F6','#10B981','#7C3AED'] }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'right' } } }
+    });
+}
+
+function populateJobFilters() {
+    const senSet = new Set(allJobSearchData.map(d => d.seniority || 'N/A'));
+    const sel = document.getElementById('filterJobSeniority');
+    sel.innerHTML = '<option value="all">Todas</option>';
+    [...senSet].sort().forEach(s => {
+        sel.innerHTML += `<option value="${s}">${s}</option>`;
+    });
+}
+
+function renderJobSearchTable() {
+    const senFilter = document.getElementById('filterJobSeniority').value;
+    const periodFilter = document.getElementById('filterJobPeriod').value;
+    const typeFilter = document.getElementById('filterJobType').value;
+    const searchFilter = (document.getElementById('filterJobSearch').value || '').toLowerCase();
+    const now = new Date();
+
+    let filtered = allJobSearchData.filter(d => {
+        if (senFilter !== 'all' && d.seniority !== senFilter) return false;
+        if (periodFilter !== 'all') {
+            const days = periodFilter === '7d' ? 7 : periodFilter === '30d' ? 30 : 90;
+            if ((now - new Date(d.created_at)) > days * 86400000) return false;
+        }
+        if (typeFilter === 'with_job' && (!d.job_title || d.job_title === 'N/A')) return false;
+        if (typeFilter === 'no_job' && d.job_title && d.job_title !== 'N/A') return false;
+        if (searchFilter) {
+            const text = `${d.candidate_name} ${d.detected_role} ${d.job_title}`.toLowerCase();
+            if (!text.includes(searchFilter)) return false;
+        }
+        return true;
+    });
+
+    document.getElementById('jobSearchCount').textContent = `${filtered.length} registos`;
+
+    const tbody = document.getElementById('jobSearchTable');
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Sem dados</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.slice(0, 100).map(d => {
+        const date = new Date(d.created_at).toLocaleDateString('pt-PT', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+        const skills = Array.isArray(d.key_skills) ? d.key_skills.slice(0,3).join(', ') : '';
+        const gaps = Array.isArray(d.keyword_gaps) ? d.keyword_gaps.slice(0,3).join(', ') : '';
+        const jobTitle = d.job_title && d.job_title !== 'N/A' ? `<span style="color:var(--green);">${d.job_title}</span>` : '<span style="color:var(--text-muted);">—</span>';
+        const atsScore = d.ats_compatibility_score ? `<span style="font-weight:600;color:${d.ats_compatibility_score >= 70 ? 'var(--green)' : d.ats_compatibility_score >= 40 ? 'var(--orange)' : 'var(--red)'}">${d.ats_compatibility_score}%</span>` : '—';
+        return `<tr>
+            <td style="white-space:nowrap;font-size:12px;">${date}</td>
+            <td>${d.candidate_name || 'N/A'}</td>
+            <td><strong>${d.detected_role || 'N/A'}</strong></td>
+            <td><span class="badge" style="background:var(--gold-bg);color:var(--gold);font-size:11px;padding:2px 8px;border-radius:4px;">${d.seniority || 'N/A'}</span></td>
+            <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;">${skills || '—'}</td>
+            <td>${jobTitle}</td>
+            <td>${atsScore}</td>
+            <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;color:var(--red);">${gaps || '—'}</td>
+        </tr>`;
+    }).join('');
+}
+
+function exportJobSearchCSV() {
+    if (!allJobSearchData.length) { showToast('Sem dados para exportar', 'danger'); return; }
+    const header = 'Data,Nome,Cargo Detetado,Senioridade,Anos Exp,Skills,Idioma,Vaga,ATS Score,Keyword Gaps,Overall Fit';
+    const rows = allJobSearchData.map(d => {
+        const date = new Date(d.created_at).toISOString().slice(0,19);
+        const skills = Array.isArray(d.key_skills) ? d.key_skills.join(';') : '';
+        const gaps = Array.isArray(d.keyword_gaps) ? d.keyword_gaps.join(';') : '';
+        return `${date},"${d.candidate_name || ''}","${d.detected_role || ''}",${d.seniority || ''},${d.years_experience || ''},"${skills}",${d.language || ''},"${d.job_title || ''}",${d.ats_compatibility_score || ''},"${gaps}","${d.overall_fit || ''}"`;
+    });
+    downloadCSV(header + '\n' + rows.join('\n'), 'job_search_tracking_' + new Date().toISOString().slice(0,10) + '.csv');
     showToast('CSV exportado com sucesso', 'success');
 }
 

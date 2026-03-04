@@ -246,6 +246,7 @@
         <button class="tab-btn" onclick="switchTab('contacts',this)"><i class="fas fa-inbox"></i> Contactos</button>
         <button class="tab-btn" onclick="switchTab('health',this)"><i class="fas fa-heartbeat"></i> Saúde</button>
         <button class="tab-btn" onclick="switchTab('ebook',this)"><i class="fas fa-book"></i> E-book</button>
+        <button class="tab-btn" onclick="switchTab('jobsearch',this)"><i class="fas fa-briefcase"></i> Cargos</button>
     </nav>
 
     <main class="main">
@@ -672,6 +673,105 @@
                     <table>
                         <thead><tr><th>Data</th><th>E-mail</th><th>Nome</th><th>Source</th><th>Estado</th></tr></thead>
                         <tbody id="ebookTable"><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Search Tracking Dashboard -->
+        <div id="tab-jobsearch" style="display:none;">
+            <div class="section-header">
+                <h2>Cargos Procurados</h2>
+                <p>Análise dos cargos mais procurados e perfil dos candidatos</p>
+            </div>
+
+            <div class="kpi-row" style="grid-template-columns: repeat(5, 1fr); margin-bottom:16px;">
+                <div class="kpi-card">
+                    <div class="kpi-label">Total Pesquisas</div>
+                    <div class="kpi-value gold" style="font-size:22px;" id="kpiJobTotal">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Com Vaga</div>
+                    <div class="kpi-value" style="font-size:22px;color:var(--green);" id="kpiJobWithJob">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Sem Vaga</div>
+                    <div class="kpi-value" style="font-size:22px;color:var(--blue);" id="kpiJobNoJob">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Cargos Únicos</div>
+                    <div class="kpi-value" style="font-size:22px;color:var(--purple);" id="kpiJobUniqueRoles">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Últimos 7 dias</div>
+                    <div class="kpi-value" style="font-size:22px;color:var(--orange);" id="kpiJob7d">--</div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                <div class="card" style="padding:20px;">
+                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Top 10 Cargos Mais Procurados</h3>
+                    <canvas id="chartTopRoles" height="250"></canvas>
+                </div>
+                <div class="card" style="padding:20px;">
+                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Distribuição por Senioridade</h3>
+                    <canvas id="chartSeniority" height="250"></canvas>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                <div class="card" style="padding:20px;">
+                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Top Skills Procuradas</h3>
+                    <canvas id="chartTopSkills" height="250"></canvas>
+                </div>
+                <div class="card" style="padding:20px;">
+                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Top Keyword Gaps (Vagas)</h3>
+                    <canvas id="chartKeywordGaps" height="250"></canvas>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                <div class="card" style="padding:20px;">
+                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Pesquisas por Dia</h3>
+                    <canvas id="chartJobDaily" height="200"></canvas>
+                </div>
+                <div class="card" style="padding:20px;">
+                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Idioma das Pesquisas</h3>
+                    <canvas id="chartJobLanguage" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Filters and Table -->
+            <div class="filter-bar">
+                <label>Senioridade</label>
+                <select class="form-select" id="filterJobSeniority" onchange="renderJobSearchTable()">
+                    <option value="all">Todas</option>
+                </select>
+                <label>Período</label>
+                <select class="form-select" id="filterJobPeriod" onchange="renderJobSearchTable()">
+                    <option value="all">Todos</option>
+                    <option value="7d">Últimos 7 dias</option>
+                    <option value="30d">Últimos 30 dias</option>
+                    <option value="90d">Últimos 90 dias</option>
+                </select>
+                <label>Tipo</label>
+                <select class="form-select" id="filterJobType" onchange="renderJobSearchTable()">
+                    <option value="all">Todos</option>
+                    <option value="with_job">Com Vaga</option>
+                    <option value="no_job">Sem Vaga</option>
+                </select>
+                <input class="form-input" type="text" id="filterJobSearch" placeholder="Pesquisar cargo ou nome..." oninput="renderJobSearchTable()" style="width:200px;">
+                <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+                    <span style="font-size:12px;color:var(--text-muted);" id="jobSearchCount">--</span>
+                    <button class="btn btn-outline btn-sm" onclick="exportJobSearchCSV()"><i class="fas fa-download"></i> CSV</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Data</th><th>Nome</th><th>Cargo Detetado</th><th>Senioridade</th><th>Skills</th><th>Vaga</th><th>ATS Score</th><th>Keyword Gaps</th></tr></thead>
+                        <tbody id="jobSearchTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
                     </table>
                 </div>
             </div>
