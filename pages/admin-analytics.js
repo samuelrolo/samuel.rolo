@@ -1406,6 +1406,8 @@ function renderJobSearchKPIs() {
     const withJob = data.filter(d => d.job_title && d.job_title !== 'N/A');
     const noJob = data.filter(d => !d.job_title || d.job_title === 'N/A');
     const uniqueRoles = new Set(data.map(d => (d.detected_role || '').toLowerCase()).filter(r => r && r !== 'n/a'));
+    const uniqueNormalized = new Set(data.map(d => (d.normalized_role || '').toLowerCase()).filter(r => r));
+    const uniqueSectors = new Set(data.map(d => (d.sector || '').toLowerCase()).filter(r => r));
     const now = new Date();
     const week = data.filter(d => (now - new Date(d.created_at)) < 7 * 86400000);
 
@@ -1414,27 +1416,49 @@ function renderJobSearchKPIs() {
     document.getElementById('kpiJobNoJob').textContent = noJob.length;
     document.getElementById('kpiJobUniqueRoles').textContent = uniqueRoles.size;
     document.getElementById('kpiJob7d').textContent = week.length;
+    if (document.getElementById('kpiJobNormRoles')) document.getElementById('kpiJobNormRoles').textContent = uniqueNormalized.size;
+    if (document.getElementById('kpiJobSectors')) document.getElementById('kpiJobSectors').textContent = uniqueSectors.size;
 }
 
 function renderJobSearchCharts() {
     const data = allJobSearchData;
 
-    // Top 10 Roles
-    const roleCounts = {};
+    // Top 10 Normalized Roles (uses normalized_role if available, falls back to detected_role)
+    const normRoleCounts = {};
     data.forEach(d => {
-        const role = d.detected_role || 'N/A';
-        if (role !== 'N/A') roleCounts[role] = (roleCounts[role] || 0) + 1;
+        const role = d.normalized_role || d.detected_role || 'N/A';
+        if (role !== 'N/A') normRoleCounts[role] = (normRoleCounts[role] || 0) + 1;
     });
-    const topRoles = Object.entries(roleCounts).sort((a,b) => b[1]-a[1]).slice(0, 10);
+    const topNormRoles = Object.entries(normRoleCounts).sort((a,b) => b[1]-a[1]).slice(0, 10);
     if (jobChartTopRoles) jobChartTopRoles.destroy();
     jobChartTopRoles = new Chart(document.getElementById('chartTopRoles'), {
         type: 'bar',
         data: {
-            labels: topRoles.map(r => r[0].length > 25 ? r[0].substring(0,25)+'...' : r[0]),
-            datasets: [{ label: 'Pesquisas', data: topRoles.map(r => r[1]), backgroundColor: '#C9A961', borderRadius: 6 }]
+            labels: topNormRoles.map(r => r[0].length > 25 ? r[0].substring(0,25)+'...' : r[0]),
+            datasets: [{ label: 'Pesquisas', data: topNormRoles.map(r => r[1]), backgroundColor: '#C9A961', borderRadius: 6 }]
         },
         options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
     });
+
+    // Top Sectors chart
+    const sectorCounts = {};
+    data.forEach(d => {
+        const sector = d.sector || '';
+        if (sector) sectorCounts[sector] = (sectorCounts[sector] || 0) + 1;
+    });
+    const topSectors = Object.entries(sectorCounts).sort((a,b) => b[1]-a[1]).slice(0, 8);
+    if (window.jobChartSectors) window.jobChartSectors.destroy();
+    const sectorCanvas = document.getElementById('chartSectors');
+    if (sectorCanvas && topSectors.length > 0) {
+        window.jobChartSectors = new Chart(sectorCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: topSectors.map(s => s[0]),
+                datasets: [{ data: topSectors.map(s => s[1]), backgroundColor: ['#C9A961','#3B82F6','#10B981','#7C3AED','#F59E0B','#EF4444','#6B7280','#EC4899'] }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'right' } } }
+        });
+    }
 
     // Seniority Distribution
     const senCounts = {};
@@ -1566,7 +1590,7 @@ function renderJobSearchTable() {
         return `<tr>
             <td style="white-space:nowrap;font-size:12px;">${date}</td>
             <td>${d.candidate_name || 'N/A'}</td>
-            <td><strong>${d.detected_role || 'N/A'}</strong></td>
+            <td><strong>${d.detected_role || 'N/A'}</strong>${d.normalized_role ? `<br><span style="font-size:10px;color:var(--gold);">${d.normalized_role}</span>` : ''}${d.sector ? `<br><span style="font-size:10px;color:var(--purple);">${d.sector}</span>` : ''}</td>
             <td><span class="badge" style="background:var(--gold-bg);color:var(--gold);font-size:11px;padding:2px 8px;border-radius:4px;">${d.seniority || 'N/A'}</span></td>
             <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;">${skills || '—'}</td>
             <td>${jobTitle}</td>
@@ -1578,12 +1602,13 @@ function renderJobSearchTable() {
 
 function exportJobSearchCSV() {
     if (!allJobSearchData.length) { showToast('Sem dados para exportar', 'danger'); return; }
-    const header = 'Data,Nome,Cargo Detetado,Senioridade,Anos Exp,Skills,Idioma,Vaga,ATS Score,Keyword Gaps,Overall Fit';
+    const header = 'Data,Nome,Cargo Detetado,Cargo Normalizado,Setor,Keywords,Senioridade,Anos Exp,Skills,Idioma,Vaga,ATS Score,Keyword Gaps,Overall Fit';
     const rows = allJobSearchData.map(d => {
         const date = new Date(d.created_at).toISOString().slice(0,19);
         const skills = Array.isArray(d.key_skills) ? d.key_skills.join(';') : '';
         const gaps = Array.isArray(d.keyword_gaps) ? d.keyword_gaps.join(';') : '';
-        return `${date},"${d.candidate_name || ''}","${d.detected_role || ''}",${d.seniority || ''},${d.years_experience || ''},"${skills}",${d.language || ''},"${d.job_title || ''}",${d.ats_compatibility_score || ''},"${gaps}","${d.overall_fit || ''}"`;
+        const roleKw = Array.isArray(d.role_keywords) ? d.role_keywords.join(';') : '';
+        return `${date},"${d.candidate_name || ''}","${d.detected_role || ''}","${d.normalized_role || ''}","${d.sector || ''}","${roleKw}",${d.seniority || ''},${d.years_experience || ''},"${skills}",${d.language || ''},"${d.job_title || ''}",${d.ats_compatibility_score || ''},"${gaps}","${d.overall_fit || ''}"`;  
     });
     downloadCSV(header + '\n' + rows.join('\n'), 'job_search_tracking_' + new Date().toISOString().slice(0,10) + '.csv');
     showToast('CSV exportado com sucesso', 'success');

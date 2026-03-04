@@ -706,6 +706,14 @@
                     <div class="kpi-label">Últimos 7 dias</div>
                     <div class="kpi-value" style="font-size:22px;color:var(--orange);" id="kpiJob7d">--</div>
                 </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Cargos Normalizados</div>
+                    <div class="kpi-value" style="font-size:22px;color:var(--green);" id="kpiJobNormRoles">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Setores</div>
+                    <div class="kpi-value" style="font-size:22px;color:#EC4899;" id="kpiJobSectors">--</div>
+                </div>
             </div>
 
             <!-- Charts Row -->
@@ -717,6 +725,13 @@
                 <div class="card" style="padding:20px;">
                     <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Distribuição por Senioridade</h3>
                     <canvas id="chartSeniority" height="250"></canvas>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                <div class="card" style="padding:20px;">
+                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Distribuição por Setor</h3>
+                    <canvas id="chartSectors" height="250"></canvas>
                 </div>
             </div>
 
