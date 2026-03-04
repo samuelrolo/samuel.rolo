@@ -320,7 +320,7 @@
                     <li class="nav-item"><a class="nav-link" href="../../../pages/conhecimento.html"
                             style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Knowledge</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="../../../pages/contactos.html"
+                    <li class="nav-item"><a class="nav-link" href="/en/pages/contact/"
                             style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Contacts</a>
                     </li>
                     <li class="nav-item dropdown">
@@ -414,43 +414,6 @@
                     </div>
                 </div>
 
-                <!-- CV by Specialist -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="svc-minimal">
-                        <p class="svc-tag">Human review</p>
-                        <h3>CV by Specialist</h3>
-                        <p class="svc-subtitle">Ask a professional</p>
-                        <p class="svc-desc">Human and strategic analysis to ensure maximum impact with recruiters.</p>
-                        <ul class="svc-features">
-                            <li>Optimization for human reading</li>
-                            <li>Strategic written feedback</li>
-                            <li>Real value positioning</li>
-                        </ul>
-                        <div class="svc-footer">
-                            <span class="svc-price">From <strong>$25</strong></span>
-                            <button class="svc-btn" data-bs-toggle="modal" data-bs-target="#cvReviewModal" style="cursor:pointer;">Request</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CV Maker -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="svc-minimal">
-                        <p class="svc-tag">Tool</p>
-                        <h3>CV Maker</h3>
-                        <p class="svc-subtitle">Build your CV here</p>
-                        <p class="svc-desc">Create your professional CV in minutes with simple and effective tools.</p>
-                        <ul class="svc-features">
-                            <li>12 modern ATS-friendly templates</li>
-                            <li>Automatic LinkedIn import</li>
-                            <li>Export to PDF and Word</li>
-                        </ul>
-                        <div class="svc-footer">
-                            <span class="svc-price">From <strong>$2.99</strong></span>
-                            <a href="https://share2inspire.pt/cv-builder/" class="svc-btn">Create CV</a>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -591,63 +554,6 @@
         </div>
     </div>
 
-    <!-- CV Review Modal -->
-    <div class="modal fade" id="cvReviewModal" tabindex="-1" aria-labelledby="cvReviewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 600px;">
-            <div class="modal-content" style="border-radius: 16px; border: none;">
-                <div class="modal-header border-0">
-                    <div style="text-align: center; width: 100%;">
-                        <h5 class="modal-title" style="font-size: 1.1rem; font-weight: 500; color: #333;">Human CV Review</h5>
-                        <p class="text-muted mb-0" style="font-size: 0.8rem;">Strategic analysis by specialist</p>
-                    </div>
-                    <button type="button" class="btn-close position-absolute end-0 top-0 m-3" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body px-4 py-3">
-                    <div class="alert alert-light mb-3"
-                        style="border-left: 3px solid #C9A961; font-size: 0.85rem; padding: 0.75rem;">
-                        <strong style="font-weight: 500;">Complete human analysis</strong> &middot; Written feedback + optimized version<br>
-                        <small class="text-muted" style="font-size: 0.75rem;">Delivery within 5 business days</small>
-                    </div>
-                    <form id="cvReviewForm">
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Name</label>
-                                <input type="text" class="form-control" id="cvReviewName" required
-                                    style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Email</label>
-                                <input type="email" class="form-control" id="cvReviewEmail" required
-                                    style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">CV (PDF/DOCX)</label>
-                            <input type="file" class="form-control" id="cvReviewFile" accept=".pdf,.docx" required
-                                style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Photo <span class="text-muted small">(Optional)</span></label>
-                            <input type="file" class="form-control" id="cvReviewPhoto" accept="image/*"
-                                style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" style="font-weight: 500; font-size: 0.9rem;">Notes <span class="text-muted small">(Optional)</span></label>
-                            <textarea class="form-control" id="cvReviewInstructions" rows="2"
-                                placeholder="Indicate specific aspects you would like to improve..."
-                                style="border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem;"></textarea>
-                        </div>
-                        <button type="submit" class="btn w-100 py-3 rounded-pill fw-bold"
-                            style="background-color: #C9A961; color: #fff;">
-                            Receive Confirmation and Payment Link
-                        </button>
-                    </form>
-                    <div id="cvReviewFormMessage" class="mt-3"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Footer -->
     <footer style="background: var(--s2i-dark); color: var(--s2i-white); padding: 60px 0 30px;">
         <div class="container">
@@ -681,7 +587,7 @@
                         Contact</h5>
                     <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-bottom: 15px;">
                         <i class="fas fa-envelope" style="color: var(--s2i-gold); margin-right: 8px;"></i>
-                        samuel.rolo@share2inspire.pt
+                        srshare2inspire@gmail.com
                     </p>
                     <div class="d-flex gap-3">
                         <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" style="color: var(--s2i-gold);"><i class="fab fa-linkedin fa-lg"></i></a>
@@ -744,46 +650,7 @@
                 });
             }
 
-            // CV Review Form
-            const cvReviewForm = document.getElementById('cvReviewForm');
-            if (cvReviewForm) {
-                cvReviewForm.addEventListener('submit', async function (e) {
-                    e.preventDefault();
-                    const email = document.getElementById('cvReviewEmail').value;
-                    const name = document.getElementById('cvReviewName').value;
-                    const instructions = document.getElementById('cvReviewInstructions').value;
-                    const fileInput = document.getElementById('cvReviewFile');
-                    const file = fileInput.files[0];
-                    const photoInput = document.getElementById('cvReviewPhoto');
-                    const photo = photoInput.files ? photoInput.files[0] : null;
-                    const submitBtn = cvReviewForm.querySelector('button[type="submit"]');
-                    const messageDiv = document.getElementById('cvReviewFormMessage');
-                    if (!window.EmailFlows || !window.EmailFlows.isValidEmail(email)) {
-                        messageDiv.innerHTML = '<div class="alert alert-danger">Please enter a valid email.</div>';
-                        return;
-                    }
-                    if (!file) {
-                        messageDiv.innerHTML = '<div class="alert alert-danger">Please upload your CV.</div>';
-                        return;
-                    }
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = 'Processing...';
-                    try {
-                        const result = await window.EmailFlows.sendCVReviewConfirmation(email, file, name, instructions, photo);
-                        if (result.success) {
-                            messageDiv.innerHTML = `<div class="alert alert-success"><strong>${result.message}</strong></div>`;
-                            cvReviewForm.reset();
-                        } else {
-                            messageDiv.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
-                        }
-                    } catch (error) {
-                        messageDiv.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
-                    } finally {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = 'Receive Confirmation and Payment Link';
-                    }
-                });
-            }
+
         });
     </script>
 </body>
