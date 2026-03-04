@@ -84,10 +84,10 @@
   "inLanguage": "pt-PT"
 }
 </script>
-    <title>CV Analyser — Análise de CV com IA | Share2Inspire</title><script type="module" crossorigin src="/cv-analyser/assets/index-DPtcqR59.js"></script>
+    <title>CV Analyser — Análise de CV com IA | Share2Inspire</title><script type="module" crossorigin src="/cv-analyser/assets/index-C1da5yjG.js"></script>
     <link rel="modulepreload" crossorigin href="/cv-analyser/assets/vendor-radix-DCmNHa0D.js">
-    <link rel="modulepreload" crossorigin href="/cv-analyser/assets/vendor-pdf-BFP0l5Dn.js">
-    <link rel="stylesheet" crossorigin href="/cv-analyser/assets/index-DhP9WCFZ.css">
+    <link rel="modulepreload" crossorigin href="/cv-analyser/assets/vendor-pdf-QxCHwSML.js">
+    <link rel="stylesheet" crossorigin href="/cv-analyser/assets/index-Dp4FbCjt.css">
     <style id="ft-inline-css">
       /* Free teaser v6 inline: hide all children from 3rd onwards in main container */
       #root [class*="max-w-4xl"][class*="space-y-6"] > *:nth-child(n+3):not(:last-child),
@@ -168,80 +168,6 @@ Error generating stack: `+l.message+`
 
     <div id="root"></div>
     <!-- Umami analytics disabled - configure VITE_ANALYTICS_ENDPOINT in .env to enable -->
-      <script>
-      (function(){
-        var PAID=false;
-        try{PAID=sessionStorage.getItem('isPaid')==='true';}catch(e){}
-        if(PAID){
-          var s=document.getElementById('ft-inline-css');
-          if(s)s.remove();
-          return;
-        }
-        function tryInject(){
-          var c=document.querySelector('#root [class*="max-w-4xl"][class*="space-y-6"]')
-            ||document.querySelector('#root [class*="max-w-4xl"][class*="space-y-8"]');
-          if(!c)return;
-          if(document.getElementById('ft-cta'))return;
-          var data=null;
-          try{data=JSON.parse(sessionStorage.getItem('cvAnalysis'));}catch(e){}
-          var ats=data&&data.ats_score?data.ats_score.rejection_probability+'%':'N/A';
-          var profile=data&&data.recruiter_perception?data.recruiter_perception.perceived_profile:'Profissional';
-          var level=data&&data.recruiter_perception?data.recruiter_perception.perceived_level:'';
-          var mainFactor=data&&data.ats_score&&data.ats_score.main_issues&&data.ats_score.main_issues[0]?data.ats_score.main_issues[0]:'';
-          var score=data&&data.overall_score?data.overall_score:0;
-          var bench=data&&data.benchmark_average?data.benchmark_average:69;
-          var above=score>=bench;
-          // Badge
-          var badge=document.createElement('div');
-          badge.id='ft-badge';
-          badge.style.cssText='text-align:center;margin:12px auto;';
-          badge.innerHTML='<span style="display:inline-block;padding:6px 18px;border-radius:20px;font-size:13px;font-weight:600;border:1.5px solid '+(above?'#16a34a':'#dc2626')+';color:'+(above?'#16a34a':'#dc2626')+';background:'+(above?'rgba(22,163,74,0.06)':'rgba(220,38,38,0.06)')+'">'+(above?'\u2191 Acima':'\u2193 Abaixo')+' do benchmark do mercado ('+score+' vs '+bench+')</span>';
-          c.parentNode.insertBefore(badge,c.nextSibling);
-          // CTA
-          var cta=document.createElement('div');
-          cta.id='ft-cta';
-          cta.style.cssText='max-width:700px;margin:0 auto;padding:28px 24px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;text-align:center;';
-          cta.innerHTML='<div style="letter-spacing:2px;font-size:11px;color:#c9a961;font-weight:700;margin-bottom:4px;">INSIGHTS R\u00c1PIDOS</div>'
-            +'<div style="text-align:left;margin:16px 0;">' 
-            +'<div class="ft-row" style="padding:8px 12px;border-radius:8px;margin-bottom:4px;">\u2705 Taxa de rejei\u00e7\u00e3o ATS: <strong>'+ats+'</strong></div>'
-            +'<div class="ft-row" style="padding:8px 12px;border-radius:8px;margin-bottom:4px;">\ud83d\udc64 Perfil percebido: <strong>'+profile+(level?' \u00b7 '+level:'')+'</strong></div>'
-            +(mainFactor?'<div class="ft-row" style="padding:8px 12px;border-radius:8px;">\ud83c\udfaf Factor principal: <strong>'+mainFactor+'</strong></div>':'')
-            +'</div>'
-            +'<div style="margin:20px 0 8px;font-size:13px;color:#6b7280;">A an\u00e1lise completa inclui:</div>'
-            +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;text-align:left;font-size:13px;color:#374151;margin-bottom:20px;">'
-            +'<span>\u2713 Scores por quadrante</span><span>\u2713 Estimativa salarial</span>'
-            +'<span>\u2713 Factores detalhados</span><span>\u2713 Curva normal</span>'
-            +'<span>\u2713 Compatibilidade ATS</span><span>\u2713 Risco de automa\u00e7\u00e3o</span>'
-            +'<span>\u2713 Percep\u00e7\u00e3o do recrutador</span><span>\u2713 Plano de ac\u00e7\u00e3o 30 dias</span>'
-            +'</div>'
-            +'<div style="font-size:14px;font-weight:700;color:#1a1a2e;">Desbloqueia tudo por</div>'
-            +'<div style="font-size:36px;font-weight:800;color:#c9a961;margin:4px 0 2px;">\u20ac3,99</div>'
-            +'<div style="font-size:12px;color:#9ca3af;margin-bottom:16px;">Pagamento \u00fanico \u00b7 Sem subscri\u00e7\u00e3o</div>'
-            +'<button id="ft-buy" style="background:#c9a961;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;">Desbloquear An\u00e1lise Completa</button>'
-            +'<div style="font-size:11px;color:#9ca3af;margin-top:8px;">Pagamento seguro via Stripe / MB WAY / PayPal</div>';
-          badge.parentNode.insertBefore(cta,badge.nextSibling);
-          // Buy button click
-          var btn=document.getElementById('ft-buy');
-          if(btn)btn.onclick=function(){
-            var all=document.querySelectorAll('button');
-            for(var i=0;i<all.length;i++){
-              var t=(all[i].textContent||'').trim().toLowerCase();
-              if((t.indexOf('desbloquear')>=0||t.indexOf('unlock')>=0)&&all[i]!==btn){all[i].click();return;}
-            }
-          };
-        }
-        // Watch for payment
-        try{
-          var origSet=sessionStorage.setItem.bind(sessionStorage);
-          sessionStorage.setItem=function(k,v){origSet(k,v);if(k==='isPaid'&&v==='true'){var s=document.getElementById('ft-inline-css');if(s)s.remove();var b=document.getElementById('ft-badge');if(b)b.remove();var c=document.getElementById('ft-cta');if(c)c.remove();}};
-        }catch(e){}
-        // Init
-        if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',tryInject);}else{tryInject();}
-        var obs=new MutationObserver(function(){if(document.getElementById('ft-cta'))return;try{if(sessionStorage.getItem('isPaid')==='true')return;}catch(e){}tryInject();});
-        obs.observe(document.body||document.documentElement,{childList:true,subtree:true});
-        setTimeout(function(){obs.disconnect();},60000);
-      })();
-      </script>
   </body>
 
 </html>
