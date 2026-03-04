@@ -1,11 +1,15 @@
 /**
- * free-teaser.js v3 — CV Analyser Free Teaser (PT)
+ * free-teaser.js v4 — CV Analyser Free Teaser (PT)
  * 
- * Aggressive strategy: For FREE users, show ONLY the overall score gauge.
- * Everything else (quadrants, factors, ATS, salary, curva normal, etc.)
- * gets completely hidden with a heavy blur + opaque gradient.
+ * Strategy: For FREE users, show ONLY:
+ *   - Status bar + Score gauge (children 0-1)
+ *   - Benchmark badge
+ *   - CTA card (light design, matching page style)
  * 
- * Version: 3.0
+ * Everything else is completely hidden (display:none), no blur rectangle.
+ * CTA uses light background to match the page — no dark/light contrast.
+ * 
+ * Version: 4.0
  */
 (function () {
   'use strict';
@@ -19,7 +23,7 @@
 
   function waitAndApply() {
     if (isPaidUser()) return;
-    if (document.getElementById('ft-v3')) return;
+    if (document.getElementById('ft-v4')) return;
 
     const root = document.getElementById('root');
     if (!root || root.innerHTML.length < 1000) {
@@ -27,7 +31,6 @@
       return;
     }
 
-    // Find main content: div with max-w-4xl and space-y
     const mc = root.querySelector('[class*="max-w-4xl"][class*="space-y"]');
     if (!mc) {
       if (++attempts < MAX) setTimeout(waitAndApply, 400);
@@ -35,7 +38,6 @@
     }
 
     const kids = Array.from(mc.children);
-    // Need at least 4 children: status bar, score gauge, quadrants, factors...
     if (kids.length < 4) {
       if (++attempts < MAX) setTimeout(waitAndApply, 400);
       return;
@@ -45,103 +47,62 @@
   }
 
   function apply(mc, kids) {
-    // Mark applied
     const m = document.createElement('div');
-    m.id = 'ft-v3';
+    m.id = 'ft-v4';
     m.style.display = 'none';
     document.body.appendChild(m);
 
-    // ── STRATEGY ──
-    // Child 0: Status bar ("Relatório Gratuito") → KEEP
-    // Child 1: Score gauge with overall score → KEEP  
-    // Child 2+: Everything else → HIDE AGGRESSIVELY
-    //
-    // The score gauge (child 1) shows the overall score number.
-    // We also want to show a benchmark comparison text.
-    // Everything from child 2 onwards gets wrapped in a tiny blur zone.
-
     const KEEP = 2;
 
-    // Inject aggressive styles
     const style = document.createElement('style');
-    style.id = 'ft-v3-styles';
+    style.id = 'ft-v4-styles';
     style.textContent = `
-      #ft-v3-blur > * {
-        filter: blur(20px) saturate(0.3) !important;
-        user-select: none !important;
-        -webkit-user-select: none !important;
-        pointer-events: none !important;
+      .ft-hidden-section {
+        display: none !important;
       }
-      #ft-v3-blur {
-        position: relative;
-        overflow: hidden;
-        max-height: 180px;
-        pointer-events: none;
-      }
-      #ft-v3-overlay {
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        z-index: 50;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        background: linear-gradient(to bottom,
-          rgba(249,250,251,0.3) 0%,
-          rgba(249,250,251,0.7) 20%,
-          rgba(249,250,251,0.95) 50%,
-          rgba(249,250,251,1) 70%
-        );
-      }
-      #ft-v3-cta {
-        animation: ftSlide 0.5s ease-out;
+      #ft-v4-cta {
+        animation: ftSlide 0.4s ease-out;
+        margin-top: 0 !important;
       }
       @keyframes ftSlide {
-        from { opacity: 0; transform: translateY(15px); }
+        from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
+      }
+      #ft-v4-cta .ft-insight-row:hover {
+        background: rgba(201,169,97,0.08);
       }
     `;
     document.head.appendChild(style);
 
-    // Collect sections to hide
-    const toHide = [];
+    // Completely hide everything from child KEEP onwards
     for (let i = KEEP; i < kids.length; i++) {
-      toHide.push(kids[i]);
+      kids[i].classList.add('ft-hidden-section');
+      kids[i].setAttribute('data-ft-hidden', '1');
     }
 
-    // Create blur wrapper
-    const blur = document.createElement('div');
-    blur.id = 'ft-v3-blur';
-    mc.insertBefore(blur, toHide[0]);
-    toHide.forEach(el => blur.appendChild(el));
-
-    // Add overlay
-    const ov = document.createElement('div');
-    ov.id = 'ft-v3-overlay';
-    blur.appendChild(ov);
-
-    // Also hide any existing React CTA/LockedSection overlays that might peek through
-    mc.querySelectorAll('[class*="backdrop-blur"]').forEach(el => {
-      if (!el.closest('#ft-v3-blur')) return;
-      el.style.display = 'none';
-    });
+    // Remove spacing from main container to avoid gaps
+    mc.style.gap = '0';
 
     // Extract insights
     const ins = getInsights();
 
-    // Build benchmark badge under the score
+    // Build benchmark badge right after score
     const badge = buildBadge(ins);
     if (badge) {
-      // Insert after the score gauge (child 1)
-      mc.insertBefore(badge, blur);
+      if (kids[KEEP]) {
+        mc.insertBefore(badge, kids[KEEP]);
+      } else {
+        mc.appendChild(badge);
+      }
     }
 
-    // Build CTA
+    // Build CTA — light design matching the page
     const cta = buildCTA(ins);
     mc.appendChild(cta);
 
-    // Wire buy button
     setTimeout(wireBuyBtn, 300);
 
-    console.log('[FT-v3] Applied. Kept', KEEP, 'sections, hid', toHide.length);
+    console.log('[FT-v4] Applied. Kept', KEEP, ', hidden', kids.length - KEEP);
   }
 
   function getInsights() {
@@ -153,7 +114,6 @@
       r.role = d.perceivedRole || d.perceived_role || null;
       r.seniority = d.perceivedSeniority || d.perceived_seniority || null;
       r.topFactor = d.atsTopFactor || d.ats_top_factor || null;
-      // Find benchmark from quadrants
       if (d.quadrants && d.quadrants.length > 0) {
         const avgBench = d.quadrants.reduce((s, q) => s + (q.benchmark || 0), 0) / d.quadrants.length;
         r.benchmark = Math.round(avgBench);
@@ -170,7 +130,8 @@
   function buildBadge(ins) {
     if (!ins.above || !ins.score) return null;
     const div = document.createElement('div');
-    div.style.cssText = 'text-align:center;padding:8px 0;';
+    div.setAttribute('data-ft-badge', '1');
+    div.style.cssText = 'text-align:center;padding:12px 0 16px;';
 
     const color = ins.above === 'acima' ? '#22c55e' : ins.above === 'na média' ? '#eab308' : '#ef4444';
     const arrow = ins.above === 'acima' ? '↑' : ins.above === 'na média' ? '→' : '↓';
@@ -179,9 +140,9 @@
     const benchText = ins.benchmark ? ` (${ins.score} vs ${ins.benchmark})` : '';
 
     div.innerHTML = `
-      <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 20px;background:${color}15;border:1px solid ${color}30;border-radius:24px;">
-        <span style="font-size:16px;">${arrow}</span>
-        <span style="color:${color};font-size:14px;font-weight:600;">${label}${benchText}</span>
+      <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 20px;background:${color}12;border:1px solid ${color}25;border-radius:24px;">
+        <span style="font-size:15px;">${arrow}</span>
+        <span style="color:${color};font-size:13px;font-weight:600;">${label}${benchText}</span>
       </div>
     `;
     return div;
@@ -189,9 +150,8 @@
 
   function buildCTA(ins) {
     const card = document.createElement('div');
-    card.id = 'ft-v3-cta';
+    card.id = 'ft-v4-cta';
 
-    // Build 2-3 insight teasers
     let teasers = '';
     if (ins.atsRate !== null) {
       const pct = parseInt(ins.atsRate);
@@ -207,17 +167,16 @@
     }
 
     card.innerHTML = `
-      <div style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);border:2px solid #C9A961;border-radius:16px;padding:32px 24px;text-align:center;box-shadow:0 8px 32px rgba(201,169,97,0.15);margin-top:8px;">
-        <p style="color:#C9A961;font-size:11px;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin:0 0 16px;">O teu CV foi analisado</p>
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:28px 24px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
         
         ${teasers ? `
-          <p style="color:#888;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin:0 0 10px;font-weight:600;">Insights rápidos</p>
-          <div style="display:flex;flex-direction:column;gap:6px;margin:0 0 24px;">${teasers}</div>
+          <p style="color:#6b7280;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin:0 0 10px;font-weight:600;">Insights rápidos</p>
+          <div style="display:flex;flex-direction:column;gap:6px;margin:0 0 20px;">${teasers}</div>
         ` : ''}
 
-        <div style="border-top:1px solid rgba(201,169,97,0.2);padding-top:24px;">
-          <p style="color:#aaa;font-size:12px;margin:0 0 4px;">A análise completa inclui:</p>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;max-width:340px;margin:0 auto 20px;text-align:left;">
+        <div style="border-top:1px solid #e5e7eb;padding-top:20px;">
+          <p style="color:#6b7280;font-size:11px;margin:0 0 8px;">A análise completa inclui:</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;max-width:340px;margin:0 auto 16px;text-align:left;">
             ${feat('Scores por quadrante')}
             ${feat('Estimativa salarial')}
             ${feat('Factores detalhados')}
@@ -228,14 +187,14 @@
             ${feat('Plano de acção 30 dias')}
           </div>
           
-          <p style="color:#fff;font-size:22px;font-weight:800;margin:0 0 4px;">Desbloqueia tudo por</p>
-          <p style="color:#C9A961;font-size:44px;font-weight:900;margin:0 0 4px;line-height:1;">€3,99</p>
-          <p style="color:#777;font-size:11px;margin:0 0 20px;">Pagamento único · Sem subscrição</p>
+          <p style="color:#111827;font-size:18px;font-weight:700;margin:0 0 2px;">Desbloqueia tudo por</p>
+          <p style="color:#C9A961;font-size:36px;font-weight:900;margin:0 0 2px;line-height:1.1;">€3,99</p>
+          <p style="color:#9ca3af;font-size:11px;margin:0 0 16px;">Pagamento único · Sem subscrição</p>
           
-          <button id="ft-v3-buy" style="background:linear-gradient(135deg,#C9A961,#A88B4E);color:#fff;border:none;padding:14px 0;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(201,169,97,0.4);width:100%;max-width:320px;pointer-events:auto;transition:transform 0.2s;">
+          <button id="ft-v4-buy" style="background:linear-gradient(135deg,#C9A961,#A88B4E);color:#fff;border:none;padding:12px 0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(201,169,97,0.3);width:100%;max-width:300px;transition:transform 0.2s,box-shadow 0.2s;">
             Desbloquear Análise Completa
           </button>
-          <p style="color:#555;font-size:10px;margin:12px 0 0;">Pagamento seguro via Stripe / MB WAY / PayPal</p>
+          <p style="color:#9ca3af;font-size:10px;margin:10px 0 0;">Pagamento seguro via Stripe / MB WAY / PayPal</p>
         </div>
       </div>
     `;
@@ -243,52 +202,35 @@
   }
 
   function teaser(icon, html) {
-    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid #C9A961;">
-      <span style="font-size:16px;">${icon}</span>
-      <span style="color:#d0d0d0;font-size:13px;text-align:left;">${html}</span>
+    return `<div class="ft-insight-row" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:#f9fafb;border-radius:8px;border-left:3px solid #C9A961;transition:background 0.2s;">
+      <span style="font-size:15px;">${icon}</span>
+      <span style="color:#374151;font-size:13px;text-align:left;">${html}</span>
     </div>`;
   }
 
   function feat(t) {
-    return `<div style="display:flex;align-items:center;gap:6px;color:#999;font-size:11px;padding:2px 0;">
-      <span style="color:#C9A961;font-size:12px;">✓</span> ${t}
+    return `<div style="display:flex;align-items:center;gap:5px;color:#6b7280;font-size:11px;padding:1px 0;">
+      <span style="color:#C9A961;font-size:11px;">✓</span> ${t}
     </div>`;
   }
 
   function wireBuyBtn() {
-    const btn = document.getElementById('ft-v3-buy');
+    const btn = document.getElementById('ft-v4-buy');
     if (!btn) return;
-    btn.onmouseenter = () => btn.style.transform = 'scale(1.03)';
-    btn.onmouseleave = () => btn.style.transform = 'scale(1)';
+    btn.onmouseenter = () => { btn.style.transform = 'scale(1.02)'; btn.style.boxShadow = '0 4px 15px rgba(201,169,97,0.4)'; };
+    btn.onmouseleave = () => { btn.style.transform = 'scale(1)'; btn.style.boxShadow = '0 2px 8px rgba(201,169,97,0.3)'; };
     btn.onclick = () => {
-      // Find the React "Desbloquear Análise Completa" button in the header
       const headerBtns = document.querySelectorAll('button, a');
       for (const b of headerBtns) {
         const t = (b.textContent || '').trim().toLowerCase();
         if (t.includes('desbloquear análise completa') || t.includes('unlock')) {
-          b.click();
-          return;
+          if (b !== btn) { b.click(); return; }
         }
       }
-      // Try the blur zone
-      const zone = document.getElementById('ft-v3-blur');
-      if (zone) {
-        zone.style.pointerEvents = 'auto';
-        const btns = zone.querySelectorAll('button');
-        for (const b of btns) {
-          const t = (b.textContent || '').toLowerCase();
-          if (t.includes('desbloquear') || t.includes('unlock') || t.includes('escolher') || t.includes('pagar')) {
-            b.click();
-            return;
-          }
-        }
-      }
-      // Last resort: scroll to top where the header CTA is
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
   }
 
-  // ── Payment detection ──
   function watchPayment() {
     const p = new URLSearchParams(window.location.search);
     if (p.get('payment') === 'success') { removeTeaser(); return; }
@@ -300,34 +242,25 @@
   }
 
   function removeTeaser() {
-    const zone = document.getElementById('ft-v3-blur');
-    const cta = document.getElementById('ft-v3-cta');
-    const sty = document.getElementById('ft-v3-styles');
-    const mk = document.getElementById('ft-v3');
-    if (zone) {
-      const p = zone.parentNode;
-      // Move children back, skip overlay
-      while (zone.firstChild) {
-        if (zone.firstChild.id === 'ft-v3-overlay') {
-          zone.removeChild(zone.firstChild);
-        } else {
-          const c = zone.firstChild;
-          if (c.style) { c.style.filter = ''; c.style.pointerEvents = ''; c.style.userSelect = ''; }
-          p.insertBefore(c, zone);
-        }
-      }
-      p.removeChild(zone);
-    }
-    // Remove badge
+    // Unhide all hidden sections
+    document.querySelectorAll('[data-ft-hidden]').forEach(el => {
+      el.classList.remove('ft-hidden-section');
+      el.removeAttribute('data-ft-hidden');
+    });
+    const mc = document.querySelector('[class*="max-w-4xl"][class*="space-y"]');
+    if (mc) mc.style.gap = '';
+
     const badge = document.querySelector('[data-ft-badge]');
     if (badge) badge.remove();
+    const cta = document.getElementById('ft-v4-cta');
     if (cta) cta.remove();
+    const sty = document.getElementById('ft-v4-styles');
     if (sty) sty.remove();
+    const mk = document.getElementById('ft-v4');
     if (mk) mk.remove();
-    console.log('[FT-v3] Payment detected — teaser removed.');
+    console.log('[FT-v4] Payment detected — teaser removed.');
   }
 
-  // ── Init ──
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => { watchPayment(); waitAndApply(); });
   } else {
@@ -335,9 +268,8 @@
     waitAndApply();
   }
 
-  // MutationObserver for SPA
   const obs = new MutationObserver(() => {
-    if (document.getElementById('ft-v3')) return;
+    if (document.getElementById('ft-v4')) return;
     if (isPaidUser()) return;
     waitAndApply();
   });

@@ -1,10 +1,15 @@
 /**
- * free-teaser.js v3 — CV Analyser Free Teaser (EN)
+ * free-teaser.js v4 — CV Analyser Free Teaser (EN)
  * 
- * Aggressive strategy: For FREE users, show ONLY the overall score gauge.
- * Everything else gets completely hidden with heavy blur + opaque gradient.
+ * Strategy: For FREE users, show ONLY:
+ *   - Status bar + Score gauge (children 0-1)
+ *   - Benchmark badge
+ *   - CTA card (light design, matching page style)
  * 
- * Version: 3.0
+ * Everything else is completely hidden (display:none), no blur rectangle.
+ * CTA uses light background to match the page — no dark/light contrast.
+ * 
+ * Version: 4.0
  */
 (function () {
   'use strict';
@@ -18,7 +23,7 @@
 
   function waitAndApply() {
     if (isPaidUser()) return;
-    if (document.getElementById('ft-v3')) return;
+    if (document.getElementById('ft-v4')) return;
 
     const root = document.getElementById('root');
     if (!root || root.innerHTML.length < 1000) {
@@ -43,74 +48,48 @@
 
   function apply(mc, kids) {
     const m = document.createElement('div');
-    m.id = 'ft-v3';
+    m.id = 'ft-v4';
     m.style.display = 'none';
     document.body.appendChild(m);
 
     const KEEP = 2;
 
     const style = document.createElement('style');
-    style.id = 'ft-v3-styles';
+    style.id = 'ft-v4-styles';
     style.textContent = `
-      #ft-v3-blur > * {
-        filter: blur(20px) saturate(0.3) !important;
-        user-select: none !important;
-        -webkit-user-select: none !important;
-        pointer-events: none !important;
+      .ft-hidden-section {
+        display: none !important;
       }
-      #ft-v3-blur {
-        position: relative;
-        overflow: hidden;
-        max-height: 180px;
-        pointer-events: none;
-      }
-      #ft-v3-overlay {
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        z-index: 50;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        background: linear-gradient(to bottom,
-          rgba(249,250,251,0.3) 0%,
-          rgba(249,250,251,0.7) 20%,
-          rgba(249,250,251,0.95) 50%,
-          rgba(249,250,251,1) 70%
-        );
-      }
-      #ft-v3-cta {
-        animation: ftSlide 0.5s ease-out;
+      #ft-v4-cta {
+        animation: ftSlide 0.4s ease-out;
+        margin-top: 0 !important;
       }
       @keyframes ftSlide {
-        from { opacity: 0; transform: translateY(15px); }
+        from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
+      }
+      #ft-v4-cta .ft-insight-row:hover {
+        background: rgba(201,169,97,0.08);
       }
     `;
     document.head.appendChild(style);
 
-    const toHide = [];
     for (let i = KEEP; i < kids.length; i++) {
-      toHide.push(kids[i]);
+      kids[i].classList.add('ft-hidden-section');
+      kids[i].setAttribute('data-ft-hidden', '1');
     }
 
-    const blur = document.createElement('div');
-    blur.id = 'ft-v3-blur';
-    mc.insertBefore(blur, toHide[0]);
-    toHide.forEach(el => blur.appendChild(el));
-
-    const ov = document.createElement('div');
-    ov.id = 'ft-v3-overlay';
-    blur.appendChild(ov);
-
-    mc.querySelectorAll('[class*="backdrop-blur"]').forEach(el => {
-      if (!el.closest('#ft-v3-blur')) return;
-      el.style.display = 'none';
-    });
+    mc.style.gap = '0';
 
     const ins = getInsights();
 
     const badge = buildBadge(ins);
     if (badge) {
-      mc.insertBefore(badge, blur);
+      if (kids[KEEP]) {
+        mc.insertBefore(badge, kids[KEEP]);
+      } else {
+        mc.appendChild(badge);
+      }
     }
 
     const cta = buildCTA(ins);
@@ -118,7 +97,7 @@
 
     setTimeout(wireBuyBtn, 300);
 
-    console.log('[FT-v3-EN] Applied. Kept', KEEP, 'sections, hid', toHide.length);
+    console.log('[FT-v4-EN] Applied. Kept', KEEP, ', hidden', kids.length - KEEP);
   }
 
   function getInsights() {
@@ -146,8 +125,8 @@
   function buildBadge(ins) {
     if (!ins.above || !ins.score) return null;
     const div = document.createElement('div');
-    div.style.cssText = 'text-align:center;padding:8px 0;';
     div.setAttribute('data-ft-badge', '1');
+    div.style.cssText = 'text-align:center;padding:12px 0 16px;';
 
     const color = ins.above === 'above' ? '#22c55e' : ins.above === 'average' ? '#eab308' : '#ef4444';
     const arrow = ins.above === 'above' ? '↑' : ins.above === 'average' ? '→' : '↓';
@@ -156,9 +135,9 @@
     const benchText = ins.benchmark ? ` (${ins.score} vs ${ins.benchmark})` : '';
 
     div.innerHTML = `
-      <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 20px;background:${color}15;border:1px solid ${color}30;border-radius:24px;">
-        <span style="font-size:16px;">${arrow}</span>
-        <span style="color:${color};font-size:14px;font-weight:600;">${label}${benchText}</span>
+      <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 20px;background:${color}12;border:1px solid ${color}25;border-radius:24px;">
+        <span style="font-size:15px;">${arrow}</span>
+        <span style="color:${color};font-size:13px;font-weight:600;">${label}${benchText}</span>
       </div>
     `;
     return div;
@@ -166,7 +145,7 @@
 
   function buildCTA(ins) {
     const card = document.createElement('div');
-    card.id = 'ft-v3-cta';
+    card.id = 'ft-v4-cta';
 
     let teasers = '';
     if (ins.atsRate !== null) {
@@ -183,17 +162,16 @@
     }
 
     card.innerHTML = `
-      <div style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);border:2px solid #C9A961;border-radius:16px;padding:32px 24px;text-align:center;box-shadow:0 8px 32px rgba(201,169,97,0.15);margin-top:8px;">
-        <p style="color:#C9A961;font-size:11px;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin:0 0 16px;">Your CV has been analysed</p>
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:28px 24px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
         
         ${teasers ? `
-          <p style="color:#888;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin:0 0 10px;font-weight:600;">Quick insights</p>
-          <div style="display:flex;flex-direction:column;gap:6px;margin:0 0 24px;">${teasers}</div>
+          <p style="color:#6b7280;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin:0 0 10px;font-weight:600;">Quick insights</p>
+          <div style="display:flex;flex-direction:column;gap:6px;margin:0 0 20px;">${teasers}</div>
         ` : ''}
 
-        <div style="border-top:1px solid rgba(201,169,97,0.2);padding-top:24px;">
-          <p style="color:#aaa;font-size:12px;margin:0 0 4px;">The full analysis includes:</p>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;max-width:340px;margin:0 auto 20px;text-align:left;">
+        <div style="border-top:1px solid #e5e7eb;padding-top:20px;">
+          <p style="color:#6b7280;font-size:11px;margin:0 0 8px;">The full analysis includes:</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;max-width:340px;margin:0 auto 16px;text-align:left;">
             ${feat('Scores by quadrant')}
             ${feat('Salary estimate')}
             ${feat('Detailed factors')}
@@ -204,14 +182,14 @@
             ${feat('30-day action plan')}
           </div>
           
-          <p style="color:#fff;font-size:22px;font-weight:800;margin:0 0 4px;">Unlock everything for</p>
-          <p style="color:#C9A961;font-size:44px;font-weight:900;margin:0 0 4px;line-height:1;">$5</p>
-          <p style="color:#777;font-size:11px;margin:0 0 20px;">One-time payment · No subscription</p>
+          <p style="color:#111827;font-size:18px;font-weight:700;margin:0 0 2px;">Unlock everything for</p>
+          <p style="color:#C9A961;font-size:36px;font-weight:900;margin:0 0 2px;line-height:1.1;">$5</p>
+          <p style="color:#9ca3af;font-size:11px;margin:0 0 16px;">One-time payment · No subscription</p>
           
-          <button id="ft-v3-buy" style="background:linear-gradient(135deg,#C9A961,#A88B4E);color:#fff;border:none;padding:14px 0;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(201,169,97,0.4);width:100%;max-width:320px;pointer-events:auto;transition:transform 0.2s;">
+          <button id="ft-v4-buy" style="background:linear-gradient(135deg,#C9A961,#A88B4E);color:#fff;border:none;padding:12px 0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(201,169,97,0.3);width:100%;max-width:300px;transition:transform 0.2s,box-shadow 0.2s;">
             Unlock Full Analysis
           </button>
-          <p style="color:#555;font-size:10px;margin:12px 0 0;">Secure payment via Stripe / PayPal</p>
+          <p style="color:#9ca3af;font-size:10px;margin:10px 0 0;">Secure payment via Stripe / PayPal</p>
         </div>
       </div>
     `;
@@ -219,42 +197,29 @@
   }
 
   function teaser(icon, html) {
-    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid #C9A961;">
-      <span style="font-size:16px;">${icon}</span>
-      <span style="color:#d0d0d0;font-size:13px;text-align:left;">${html}</span>
+    return `<div class="ft-insight-row" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:#f9fafb;border-radius:8px;border-left:3px solid #C9A961;transition:background 0.2s;">
+      <span style="font-size:15px;">${icon}</span>
+      <span style="color:#374151;font-size:13px;text-align:left;">${html}</span>
     </div>`;
   }
 
   function feat(t) {
-    return `<div style="display:flex;align-items:center;gap:6px;color:#999;font-size:11px;padding:2px 0;">
-      <span style="color:#C9A961;font-size:12px;">✓</span> ${t}
+    return `<div style="display:flex;align-items:center;gap:5px;color:#6b7280;font-size:11px;padding:1px 0;">
+      <span style="color:#C9A961;font-size:11px;">✓</span> ${t}
     </div>`;
   }
 
   function wireBuyBtn() {
-    const btn = document.getElementById('ft-v3-buy');
+    const btn = document.getElementById('ft-v4-buy');
     if (!btn) return;
-    btn.onmouseenter = () => btn.style.transform = 'scale(1.03)';
-    btn.onmouseleave = () => btn.style.transform = 'scale(1)';
+    btn.onmouseenter = () => { btn.style.transform = 'scale(1.02)'; btn.style.boxShadow = '0 4px 15px rgba(201,169,97,0.4)'; };
+    btn.onmouseleave = () => { btn.style.transform = 'scale(1)'; btn.style.boxShadow = '0 2px 8px rgba(201,169,97,0.3)'; };
     btn.onclick = () => {
       const headerBtns = document.querySelectorAll('button, a');
       for (const b of headerBtns) {
         const t = (b.textContent || '').trim().toLowerCase();
         if (t.includes('unlock full analysis') || t.includes('unlock')) {
-          b.click();
-          return;
-        }
-      }
-      const zone = document.getElementById('ft-v3-blur');
-      if (zone) {
-        zone.style.pointerEvents = 'auto';
-        const btns = zone.querySelectorAll('button');
-        for (const b of btns) {
-          const t = (b.textContent || '').toLowerCase();
-          if (t.includes('unlock') || t.includes('choose') || t.includes('pay') || t.includes('buy')) {
-            b.click();
-            return;
-          }
+          if (b !== btn) { b.click(); return; }
         }
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -272,29 +237,22 @@
   }
 
   function removeTeaser() {
-    const zone = document.getElementById('ft-v3-blur');
-    const cta = document.getElementById('ft-v3-cta');
-    const sty = document.getElementById('ft-v3-styles');
-    const mk = document.getElementById('ft-v3');
-    if (zone) {
-      const p = zone.parentNode;
-      while (zone.firstChild) {
-        if (zone.firstChild.id === 'ft-v3-overlay') {
-          zone.removeChild(zone.firstChild);
-        } else {
-          const c = zone.firstChild;
-          if (c.style) { c.style.filter = ''; c.style.pointerEvents = ''; c.style.userSelect = ''; }
-          p.insertBefore(c, zone);
-        }
-      }
-      p.removeChild(zone);
-    }
+    document.querySelectorAll('[data-ft-hidden]').forEach(el => {
+      el.classList.remove('ft-hidden-section');
+      el.removeAttribute('data-ft-hidden');
+    });
+    const mc = document.querySelector('[class*="max-w-4xl"][class*="space-y"]');
+    if (mc) mc.style.gap = '';
+
     const badge = document.querySelector('[data-ft-badge]');
     if (badge) badge.remove();
+    const cta = document.getElementById('ft-v4-cta');
     if (cta) cta.remove();
+    const sty = document.getElementById('ft-v4-styles');
     if (sty) sty.remove();
+    const mk = document.getElementById('ft-v4');
     if (mk) mk.remove();
-    console.log('[FT-v3-EN] Payment detected — teaser removed.');
+    console.log('[FT-v4-EN] Payment detected — teaser removed.');
   }
 
   if (document.readyState === 'loading') {
@@ -305,7 +263,7 @@
   }
 
   const obs = new MutationObserver(() => {
-    if (document.getElementById('ft-v3')) return;
+    if (document.getElementById('ft-v4')) return;
     if (isPaidUser()) return;
     waitAndApply();
   });
