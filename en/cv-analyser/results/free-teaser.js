@@ -1,15 +1,10 @@
 /**
- * free-teaser.js — CV Analyser Free Teaser Restriction (EN)
+ * free-teaser.js v3 — CV Analyser Free Teaser (EN)
  * 
- * Strategy: For FREE users (isPaid !== "true"), show ONLY:
- *   - Overall score (gauge + number)
- *   - Above/below benchmark indicator
- *   - 2-3 quick insights
+ * Aggressive strategy: For FREE users, show ONLY the overall score gauge.
+ * Everything else gets completely hidden with heavy blur + opaque gradient.
  * 
- * Everything else gets hidden with a blur overlay + CTA.
- * 
- * Version: 2.0
- * Language: EN (English)
+ * Version: 3.0
  */
 (function () {
   'use strict';
@@ -19,211 +14,256 @@
   }
 
   let attempts = 0;
-  const MAX_ATTEMPTS = 120;
+  const MAX = 150;
 
   function waitAndApply() {
     if (isPaidUser()) return;
-    if (document.getElementById('free-teaser-applied')) return;
+    if (document.getElementById('ft-v3')) return;
 
     const root = document.getElementById('root');
     if (!root || root.innerHTML.length < 1000) {
-      if (++attempts < MAX_ATTEMPTS) setTimeout(waitAndApply, 500);
+      if (++attempts < MAX) setTimeout(waitAndApply, 400);
       return;
     }
 
-    const mainContent = root.querySelector('[class*="max-w-4xl"][class*="space-y-6"], [class*="max-w-4xl"][class*="space-y-8"]');
-    if (!mainContent) {
-      if (++attempts < MAX_ATTEMPTS) setTimeout(waitAndApply, 500);
+    const mc = root.querySelector('[class*="max-w-4xl"][class*="space-y"]');
+    if (!mc) {
+      if (++attempts < MAX) setTimeout(waitAndApply, 400);
       return;
     }
 
-    const children = Array.from(mainContent.children);
-    if (children.length < 4) {
-      if (++attempts < MAX_ATTEMPTS) setTimeout(waitAndApply, 500);
+    const kids = Array.from(mc.children);
+    if (kids.length < 4) {
+      if (++attempts < MAX) setTimeout(waitAndApply, 400);
       return;
     }
 
-    applyTeaser(mainContent, children);
+    apply(mc, kids);
   }
 
-  function applyTeaser(mainContent, children) {
-    const marker = document.createElement('div');
-    marker.id = 'free-teaser-applied';
-    marker.style.display = 'none';
-    document.body.appendChild(marker);
+  function apply(mc, kids) {
+    const m = document.createElement('div');
+    m.id = 'ft-v3';
+    m.style.display = 'none';
+    document.body.appendChild(m);
 
-    console.log('[FREE-TEASER-EN] Found', children.length, 'children. Applying teaser...');
-
-    const KEEP_COUNT = 2;
-    const sectionsToBlur = [];
-
-    children.forEach((child, idx) => {
-      if (idx < KEEP_COUNT) return;
-      sectionsToBlur.push(child);
-    });
-
-    if (sectionsToBlur.length === 0) return;
-
-    const blurWrapper = document.createElement('div');
-    blurWrapper.id = 'free-teaser-blur-zone';
-    blurWrapper.style.cssText = 'position:relative;overflow:hidden;max-height:350px;pointer-events:none;';
-
-    mainContent.insertBefore(blurWrapper, sectionsToBlur[0]);
-    sectionsToBlur.forEach(s => blurWrapper.appendChild(s));
-
-    const overlay = document.createElement('div');
-    overlay.style.cssText = `
-      position:absolute; top:0; left:0; right:0; bottom:0; z-index:50;
-      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-      background:linear-gradient(to bottom,
-        rgba(255,255,255,0.05) 0%,
-        rgba(255,255,255,0.4) 25%,
-        rgba(255,255,255,0.8) 55%,
-        rgba(255,255,255,1) 85%
-      );
-    `;
-    blurWrapper.appendChild(overlay);
+    const KEEP = 2;
 
     const style = document.createElement('style');
-    style.id = 'free-teaser-styles';
+    style.id = 'ft-v3-styles';
     style.textContent = `
-      #free-teaser-blur-zone > *:not([style*="position:absolute"]) {
-        filter: blur(5px) !important;
+      #ft-v3-blur > * {
+        filter: blur(20px) saturate(0.3) !important;
         user-select: none !important;
         -webkit-user-select: none !important;
+        pointer-events: none !important;
       }
-      #free-teaser-cta { animation: ft-fade 0.6s ease-out; }
-      @keyframes ft-fade { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+      #ft-v3-blur {
+        position: relative;
+        overflow: hidden;
+        max-height: 180px;
+        pointer-events: none;
+      }
+      #ft-v3-overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: 50;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        background: linear-gradient(to bottom,
+          rgba(249,250,251,0.3) 0%,
+          rgba(249,250,251,0.7) 20%,
+          rgba(249,250,251,0.95) 50%,
+          rgba(249,250,251,1) 70%
+        );
+      }
+      #ft-v3-cta {
+        animation: ftSlide 0.5s ease-out;
+      }
+      @keyframes ftSlide {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
     `;
     document.head.appendChild(style);
 
-    const insights = extractInsights();
-    const cta = buildCTA(insights);
-    mainContent.appendChild(cta);
+    const toHide = [];
+    for (let i = KEEP; i < kids.length; i++) {
+      toHide.push(kids[i]);
+    }
 
-    console.log('[FREE-TEASER-EN] Teaser applied. Kept', KEEP_COUNT, 'sections, blurred', sectionsToBlur.length);
+    const blur = document.createElement('div');
+    blur.id = 'ft-v3-blur';
+    mc.insertBefore(blur, toHide[0]);
+    toHide.forEach(el => blur.appendChild(el));
+
+    const ov = document.createElement('div');
+    ov.id = 'ft-v3-overlay';
+    blur.appendChild(ov);
+
+    mc.querySelectorAll('[class*="backdrop-blur"]').forEach(el => {
+      if (!el.closest('#ft-v3-blur')) return;
+      el.style.display = 'none';
+    });
+
+    const ins = getInsights();
+
+    const badge = buildBadge(ins);
+    if (badge) {
+      mc.insertBefore(badge, blur);
+    }
+
+    const cta = buildCTA(ins);
+    mc.appendChild(cta);
+
+    setTimeout(wireBuyBtn, 300);
+
+    console.log('[FT-v3-EN] Applied. Kept', KEEP, 'sections, hid', toHide.length);
   }
 
-  function extractInsights() {
-    const insights = { score: null, benchmark: null, rejectionRate: null, perceivedRole: null, seniority: null, topFactor: null };
+  function getInsights() {
+    const r = { score: null, benchmark: null, above: null, atsRate: null, role: null, seniority: null, topFactor: null };
     try {
-      const raw = sessionStorage.getItem('cvAnalysis');
-      if (!raw) return insights;
-      const data = JSON.parse(raw);
-      insights.score = data.overallScore || data.overall_score || null;
-      insights.rejectionRate = data.atsRejectionRate || data.ats_rejection_rate || null;
-      insights.perceivedRole = data.perceivedRole || data.perceived_role || null;
-      insights.seniority = data.perceivedSeniority || data.perceived_seniority || null;
-      insights.topFactor = data.atsTopFactor || data.ats_top_factor || null;
-      if (insights.score !== null) {
-        const s = parseInt(insights.score);
-        insights.benchmark = s >= 75 ? 'above' : s >= 50 ? 'average' : 'below';
+      const d = JSON.parse(sessionStorage.getItem('cvAnalysis') || '{}');
+      r.score = d.overallScore || d.overall_score || null;
+      r.atsRate = d.atsRejectionRate || d.ats_rejection_rate || null;
+      r.role = d.perceivedRole || d.perceived_role || null;
+      r.seniority = d.perceivedSeniority || d.perceived_seniority || null;
+      r.topFactor = d.atsTopFactor || d.ats_top_factor || null;
+      if (d.quadrants && d.quadrants.length > 0) {
+        const avgBench = d.quadrants.reduce((s, q) => s + (q.benchmark || 0), 0) / d.quadrants.length;
+        r.benchmark = Math.round(avgBench);
+      }
+      if (r.score) {
+        const s = parseInt(r.score);
+        r.above = r.benchmark ? (s > r.benchmark ? 'above' : s === r.benchmark ? 'average' : 'below') :
+                  (s >= 75 ? 'above' : s >= 50 ? 'average' : 'below');
       }
     } catch (e) { /* silent */ }
-    return insights;
+    return r;
+  }
+
+  function buildBadge(ins) {
+    if (!ins.above || !ins.score) return null;
+    const div = document.createElement('div');
+    div.style.cssText = 'text-align:center;padding:8px 0;';
+    div.setAttribute('data-ft-badge', '1');
+
+    const color = ins.above === 'above' ? '#22c55e' : ins.above === 'average' ? '#eab308' : '#ef4444';
+    const arrow = ins.above === 'above' ? '↑' : ins.above === 'average' ? '→' : '↓';
+    const label = ins.above === 'above' ? 'Above market benchmark' :
+                  ins.above === 'average' ? 'At market average' : 'Below market benchmark';
+    const benchText = ins.benchmark ? ` (${ins.score} vs ${ins.benchmark})` : '';
+
+    div.innerHTML = `
+      <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 20px;background:${color}15;border:1px solid ${color}30;border-radius:24px;">
+        <span style="font-size:16px;">${arrow}</span>
+        <span style="color:${color};font-size:14px;font-weight:600;">${label}${benchText}</span>
+      </div>
+    `;
+    return div;
   }
 
   function buildCTA(ins) {
     const card = document.createElement('div');
-    card.id = 'free-teaser-cta';
+    card.id = 'ft-v3-cta';
 
-    let items = '';
-    if (ins.rejectionRate) {
-      const icon = parseInt(ins.rejectionRate) > 50 ? '⚠️' : '✓';
-      items += insightRow(icon, `ATS rejection rate: <strong style="color:#C9A961;">${ins.rejectionRate}%</strong>`);
+    let teasers = '';
+    if (ins.atsRate !== null) {
+      const pct = parseInt(ins.atsRate);
+      const icon = pct > 50 ? '⚠️' : '✅';
+      teasers += teaser(icon, `ATS rejection rate: <strong>${ins.atsRate}%</strong>`);
     }
-    if (ins.perceivedRole) {
-      const extra = ins.seniority ? ` (${ins.seniority})` : '';
-      items += insightRow('👤', `Perceived profile: <strong style="color:#C9A961;">${ins.perceivedRole}${extra}</strong>`);
+    if (ins.role) {
+      const extra = ins.seniority ? ` · ${ins.seniority}` : '';
+      teasers += teaser('👤', `Perceived profile: <strong>${ins.role}${extra}</strong>`);
     }
     if (ins.topFactor) {
-      items += insightRow('🎯', `Top factor: <strong style="color:#C9A961;">${ins.topFactor}</strong>`);
-    }
-
-    let badge = '';
-    if (ins.benchmark && ins.score) {
-      const color = ins.benchmark === 'above' ? '#22c55e' : ins.benchmark === 'average' ? '#eab308' : '#ef4444';
-      const label = ins.benchmark === 'above' ? 'Above benchmark' : ins.benchmark === 'average' ? 'At market average' : 'Below benchmark';
-      badge = `<div style="display:inline-flex;align-items:center;gap:6px;padding:6px 16px;background:${color}20;border:1px solid ${color}40;border-radius:20px;margin-bottom:16px;">
-        <span style="width:8px;height:8px;border-radius:50%;background:${color};display:inline-block;"></span>
-        <span style="color:${color};font-size:13px;font-weight:600;">${label}</span>
-      </div>`;
+      teasers += teaser('🎯', `Top factor: <strong>${ins.topFactor}</strong>`);
     }
 
     card.innerHTML = `
-      <div style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);border:2px solid #C9A961;border-radius:1rem;padding:2rem 1.5rem;text-align:center;box-shadow:0 8px 32px rgba(201,169,97,0.15);">
-        ${badge}
-        ${items ? `
-          <p style="color:#999;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:600;">Quick insights from your CV</p>
-          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">${items}</div>
+      <div style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);border:2px solid #C9A961;border-radius:16px;padding:32px 24px;text-align:center;box-shadow:0 8px 32px rgba(201,169,97,0.15);margin-top:8px;">
+        <p style="color:#C9A961;font-size:11px;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin:0 0 16px;">Your CV has been analysed</p>
+        
+        ${teasers ? `
+          <p style="color:#888;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin:0 0 10px;font-weight:600;">Quick insights</p>
+          <div style="display:flex;flex-direction:column;gap:6px;margin:0 0 24px;">${teasers}</div>
         ` : ''}
-        <div style="border-top:1px solid rgba(201,169,97,0.3);padding-top:20px;">
-          <p style="color:#C9A961;font-size:11px;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:8px;">Full analysis available</p>
-          <p style="color:#fff;font-size:20px;font-weight:800;margin-bottom:4px;">Unlock everything for just</p>
-          <p style="color:#C9A961;font-size:40px;font-weight:900;margin-bottom:8px;">$5</p>
-          <p style="color:#aaa;font-size:12px;margin-bottom:20px;">One-time payment · No subscription · Instant access</p>
-          <div style="display:flex;flex-direction:column;gap:5px;max-width:300px;margin:0 auto 20px;">
-            ${featureRow('Detailed salary estimate')}
-            ${featureRow('Normal curve positioning')}
-            ${featureRow('Automation risk profile')}
-            ${featureRow('Deep recruiter analysis')}
-            ${featureRow('15+ personalized recommendations')}
-            ${featureRow('30-day action plan')}
+
+        <div style="border-top:1px solid rgba(201,169,97,0.2);padding-top:24px;">
+          <p style="color:#aaa;font-size:12px;margin:0 0 4px;">The full analysis includes:</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;max-width:340px;margin:0 auto 20px;text-align:left;">
+            ${feat('Scores by quadrant')}
+            ${feat('Salary estimate')}
+            ${feat('Detailed factors')}
+            ${feat('Normal curve')}
+            ${feat('ATS compatibility')}
+            ${feat('Automation risk')}
+            ${feat('Recruiter perception')}
+            ${feat('30-day action plan')}
           </div>
-          <button id="free-teaser-buy-btn" style="background:linear-gradient(135deg,#C9A961,#A88B4E);color:#fff;border:none;padding:14px 48px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(201,169,97,0.4);width:100%;max-width:320px;pointer-events:auto;">
+          
+          <p style="color:#fff;font-size:22px;font-weight:800;margin:0 0 4px;">Unlock everything for</p>
+          <p style="color:#C9A961;font-size:44px;font-weight:900;margin:0 0 4px;line-height:1;">$5</p>
+          <p style="color:#777;font-size:11px;margin:0 0 20px;">One-time payment · No subscription</p>
+          
+          <button id="ft-v3-buy" style="background:linear-gradient(135deg,#C9A961,#A88B4E);color:#fff;border:none;padding:14px 0;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(201,169,97,0.4);width:100%;max-width:320px;pointer-events:auto;transition:transform 0.2s;">
             Unlock Full Analysis
           </button>
-          <p style="color:#666;font-size:11px;margin-top:12px;">🔒 Secure payment via Stripe / PayPal</p>
+          <p style="color:#555;font-size:10px;margin:12px 0 0;">Secure payment via Stripe / PayPal</p>
         </div>
       </div>
     `;
-
-    setTimeout(() => {
-      const btn = document.getElementById('free-teaser-buy-btn');
-      if (btn) {
-        btn.addEventListener('click', () => {
-          const blurZone = document.getElementById('free-teaser-blur-zone');
-          if (blurZone) {
-            blurZone.style.pointerEvents = 'auto';
-            const buttons = blurZone.querySelectorAll('button');
-            for (const b of buttons) {
-              const t = (b.textContent || '').toLowerCase();
-              if (t.includes('unlock') || t.includes('choose') || t.includes('buy') || t.includes('pay') || t.includes('stripe')) {
-                b.click();
-                return;
-              }
-            }
-          }
-          document.querySelectorAll('button').forEach(b => {
-            const t = (b.textContent || '').toLowerCase();
-            if (t.includes('stripe') || t.includes('paypal')) {
-              b.scrollIntoView({ behavior: 'smooth' });
-              setTimeout(() => b.click(), 500);
-            }
-          });
-        });
-      }
-    }, 200);
-
     return card;
   }
 
-  function insightRow(icon, html) {
-    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(255,255,255,0.05);border-radius:8px;border-left:3px solid #C9A961;">
-      <span style="font-size:18px;">${icon}</span>
-      <span style="color:#e0e0e0;font-size:14px;text-align:left;">${html}</span>
+  function teaser(icon, html) {
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid #C9A961;">
+      <span style="font-size:16px;">${icon}</span>
+      <span style="color:#d0d0d0;font-size:13px;text-align:left;">${html}</span>
     </div>`;
   }
 
-  function featureRow(text) {
-    return `<div style="display:flex;align-items:center;gap:8px;color:#ccc;font-size:13px;">
-      <span style="color:#C9A961;">✓</span> ${text}
+  function feat(t) {
+    return `<div style="display:flex;align-items:center;gap:6px;color:#999;font-size:11px;padding:2px 0;">
+      <span style="color:#C9A961;font-size:12px;">✓</span> ${t}
     </div>`;
   }
 
-  function watchForPayment() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('payment') === 'success') { removeTeaser(); return; }
+  function wireBuyBtn() {
+    const btn = document.getElementById('ft-v3-buy');
+    if (!btn) return;
+    btn.onmouseenter = () => btn.style.transform = 'scale(1.03)';
+    btn.onmouseleave = () => btn.style.transform = 'scale(1)';
+    btn.onclick = () => {
+      const headerBtns = document.querySelectorAll('button, a');
+      for (const b of headerBtns) {
+        const t = (b.textContent || '').trim().toLowerCase();
+        if (t.includes('unlock full analysis') || t.includes('unlock')) {
+          b.click();
+          return;
+        }
+      }
+      const zone = document.getElementById('ft-v3-blur');
+      if (zone) {
+        zone.style.pointerEvents = 'auto';
+        const btns = zone.querySelectorAll('button');
+        for (const b of btns) {
+          const t = (b.textContent || '').toLowerCase();
+          if (t.includes('unlock') || t.includes('choose') || t.includes('pay') || t.includes('buy')) {
+            b.click();
+            return;
+          }
+        }
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+  }
+
+  function watchPayment() {
+    const p = new URLSearchParams(window.location.search);
+    if (p.get('payment') === 'success') { removeTeaser(); return; }
     const orig = sessionStorage.setItem;
     sessionStorage.setItem = function (k, v) {
       orig.call(this, k, v);
@@ -232,40 +272,40 @@
   }
 
   function removeTeaser() {
-    const zone = document.getElementById('free-teaser-blur-zone');
-    const cta = document.getElementById('free-teaser-cta');
-    const styles = document.getElementById('free-teaser-styles');
-    const marker = document.getElementById('free-teaser-applied');
+    const zone = document.getElementById('ft-v3-blur');
+    const cta = document.getElementById('ft-v3-cta');
+    const sty = document.getElementById('ft-v3-styles');
+    const mk = document.getElementById('ft-v3');
     if (zone) {
-      const parent = zone.parentNode;
+      const p = zone.parentNode;
       while (zone.firstChild) {
-        if (zone.firstChild.nodeType === 1 && zone.firstChild.style && zone.firstChild.style.position === 'absolute') {
+        if (zone.firstChild.id === 'ft-v3-overlay') {
           zone.removeChild(zone.firstChild);
         } else {
-          const child = zone.firstChild;
-          child.style && (child.style.filter = '');
-          child.style && (child.style.pointerEvents = '');
-          child.style && (child.style.userSelect = '');
-          parent.insertBefore(child, zone);
+          const c = zone.firstChild;
+          if (c.style) { c.style.filter = ''; c.style.pointerEvents = ''; c.style.userSelect = ''; }
+          p.insertBefore(c, zone);
         }
       }
-      parent.removeChild(zone);
+      p.removeChild(zone);
     }
+    const badge = document.querySelector('[data-ft-badge]');
+    if (badge) badge.remove();
     if (cta) cta.remove();
-    if (styles) styles.remove();
-    if (marker) marker.remove();
-    console.log('[FREE-TEASER-EN] Payment detected — teaser removed.');
+    if (sty) sty.remove();
+    if (mk) mk.remove();
+    console.log('[FT-v3-EN] Payment detected — teaser removed.');
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => { watchForPayment(); waitAndApply(); });
+    document.addEventListener('DOMContentLoaded', () => { watchPayment(); waitAndApply(); });
   } else {
-    watchForPayment();
+    watchPayment();
     waitAndApply();
   }
 
   const obs = new MutationObserver(() => {
-    if (document.getElementById('free-teaser-applied')) return;
+    if (document.getElementById('ft-v3')) return;
     if (isPaidUser()) return;
     waitAndApply();
   });
