@@ -33,12 +33,10 @@
     
     <!-- Favicon -->
     <link rel="icon" href="images/logo.png" type="image/png">
-    <!-- Google Consent Mode v2 - DEVE SER CARREGADO ANTES DE QUALQUER SCRIPT DO GOOGLE -->
+    <!-- Google Consent Mode v2 -->
     <script>
-        // Configuração inicial do Google Consent Mode v2
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
-        // Definir estado padrão de consentimento (negado por padrão)
         gtag('consent', 'default', {
             'ad_storage': 'denied',
             'ad_user_data': 'denied',
@@ -58,7 +56,7 @@
         gtag('js', new Date());
         gtag('config', 'AW-17015553005');
     </script>
-    <!-- Google Tag Manager (substitua GTM-XXXXXXX pelo seu ID real) -->
+    <!-- Google Tag Manager -->
     <script>(function (w, d, s, l, i) {
             w[l] = w[l] || []; w[l].push({
                 'gtm.start':
@@ -67,21 +65,15 @@
                 j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
                     'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'dataLayer', 'GTM-XXXXXXX');</script>
-    <!-- End Google Tag Manager -->
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <!-- Chart.js para gráficos -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- CSS Externo -->
-    <link rel="stylesheet" href="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/css/style.css">
     <link rel="stylesheet" href="css/style.css?v=fix_mobile">
     <link rel="stylesheet" href="css/diagnostic.css">
-    <!-- Consolidated Styles: Design System + Header/Footer -->
     <link rel="stylesheet" href="css/consolidated-styles.css">
     <style>
         /* Hide Vercel Speed Insights widget */
@@ -92,615 +84,336 @@
         #vercel-live-feedback-button {
             display: none !important;
             visibility: hidden !important;
-            opacity: 0 !important;
-            pointer-events: none !important;
         }
 
-        :root {
-            --primary-color: #bf9a33;
-            /* Dourado principal */
-            --secondary-color: #333333;
-            /* Cinza escuro */
-            --accent-color: #a57b0a;
-            /* Dourado suave */
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-            --text-color: #333333;
-            --text-light: #6c757d;
-            --border-color: #dee2e6;
-            --success-color: #28a745;
-            --error-color: #dc3545;
-            --warning-color: #fece43;
-            /* Dourado claro (mesmo tom do logo) */
-            --info-color: #17a2b8;
-            --transition: all 0.3s ease;
-            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            --border-radius: 5px;
-        }
+        /* ============================================
+           HOMEPAGE REDESIGN — MINIMALISTA SUBLIME
+           Serenidade. Modernidade. Sofisticação.
+           ============================================ */
 
-        /* Minimalist Overrides for Index */
-        .hero-section {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url('images/hero-samuel-blur.jpg');
-        }
-
-        .hero-content h1 {
-            font-size: 3rem;
-            letter-spacing: -1px;
-        }
-
-        .btn-hero-primary {
-            background: var(--s2i-gold);
-            color: var(--s2i-dark);
-            padding: 12px 30px;
-            border-radius: 6px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-hero-secondary {
-            background: transparent;
-            color: #fff;
-            padding: 12px 30px;
-            border-radius: 6px;
-            border: 1px solid #fff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Hero Section - V2.0 Conversion Focus */
-        .hero-section {
+        /* --- Hero --- */
+        .hero-minimal {
             height: 100vh;
             min-height: 600px;
-            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), url('images/hero-samuel-blur.jpg');
+            background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.5)), url('images/hero-samuel-blur.jpg');
             background-size: cover;
-            background-position: center center;
+            background-position: center;
             background-attachment: fixed;
-            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
+            text-align: center;
+            color: #fff;
             position: relative;
-            margin: 0;
-            padding: 0;
         }
 
-        .hero-content {
-            text-align: center;
-            max-width: 1000px;
+        .hero-minimal::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            background: linear-gradient(transparent, var(--s2i-bg));
+        }
+
+        .hero-inner {
+            max-width: 700px;
             padding: 2rem;
             z-index: 2;
         }
 
-        .hero-content h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
+        .hero-inner h1 {
+            font-size: 3rem;
+            font-weight: 300;
             color: #fff;
+            line-height: 1.25;
+            letter-spacing: -0.5px;
             margin-bottom: 1.5rem;
-            line-height: 1.2;
-            /* text-shadow removed to fix mobile ghost text */
         }
 
-        .hero-content .highlight {
-            color: var(--primary-color);
+        .hero-inner h1 strong {
+            font-weight: 700;
+            color: #C9A961;
         }
 
-        .hero-subtitle {
-            font-size: 1.4rem;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.95);
+        .hero-inner p {
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.7;
             margin-bottom: 2.5rem;
-            line-height: 1.6;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
-        .hero-ctas {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn-hero-primary {
-            background: var(--primary-color);
-            color: var(--dark-color);
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: 1px solid var(--primary-color);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-hero-primary:hover {
-            background: transparent;
-            color: var(--primary-color);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(191, 154, 51, 0.4);
-        }
-
-        .btn-hero-secondary {
+        .hero-cta {
+            display: inline-block;
+            padding: 14px 40px;
             background: transparent;
             color: #fff;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: 1px solid #fff;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            text-decoration: none;
+            transition: all 0.4s ease;
         }
 
-        .btn-hero-secondary:hover {
+        .hero-cta:hover {
             background: #fff;
-            color: var(--dark-color);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+            color: #1A1A1A;
+            border-color: #fff;
         }
 
-        /* Intro Section */
-        .intro-section {
-            padding: 6rem 0;
-            background-color: #fff;
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            animation: float 2.5s ease-in-out infinite;
         }
 
-        .intro-section h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            text-align: center;
+        .scroll-hint span {
+            display: block;
+            width: 1px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.4);
+            margin: 0 auto;
         }
 
-        .intro-section .proposito-gold {
-            color: var(--primary-color);
+        @keyframes float {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
         }
 
-        .intro-section .share2inspire-highlight {
-            color: var(--primary-color);
-            font-weight: 700;
+        /* --- Secções Gerais --- */
+        .section-serene {
+            padding: 120px 0;
         }
 
-        .intro-section .lead {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            color: var(--text-color);
+        .section-serene h2 {
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: -0.3px;
+            color: #1A1A1A;
+            margin-bottom: 0;
         }
 
-        .intro-section p {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-            color: var(--text-light);
+        .section-serene h2 strong {
+            font-weight: 600;
         }
 
-        .text-column {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        .gold-line {
+            width: 40px;
+            height: 2px;
+            background: #C9A961;
+            margin: 1.5rem auto;
         }
 
-        .text-column p {
-            margin-bottom: 1.5rem;
-        }
-
-        /* O Que Nos Move Section - Estilo Moderno */
-        .what-moves-us-section {
-            background-color: var(--dark-color);
-            color: #fff;
-            padding: 8rem 0;
-        }
-
-        .what-moves-us-section .section-header h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: #fff;
-        }
-
-        .what-moves-us-section .move-gold {
-            color: var(--primary-color);
-        }
-
-        .what-moves-us-section .section-subtitle {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.8);
+        .section-text {
+            font-size: 1rem;
+            font-weight: 300;
+            color: #555;
+            line-height: 1.9;
             max-width: 600px;
-            margin: 0 auto 4rem;
-            line-height: 1.6;
+            margin: 0 auto;
         }
 
-        .values-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-            margin-bottom: 5rem;
+        .section-text strong {
+            font-weight: 500;
+            color: #333;
         }
 
-        .value-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 3rem 2rem;
+        /* --- Propósito --- */
+        .proposito-section {
+            background: #fff;
             text-align: center;
-            transition: all 0.3s ease;
+        }
+
+        /* --- E-book --- */
+        .ebook-section {
+            background: #1A1A1A;
+            text-align: center;
             position: relative;
             overflow: hidden;
         }
 
-        .value-card::before {
+        .ebook-section::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            transform: scaleX(0);
-            transition: all 0.3s ease;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 40%, rgba(201, 169, 97, 0.04) 0%, transparent 50%);
+            pointer-events: none;
         }
 
-        .value-card:hover {
-            border-color: var(--primary-color);
-        }
-
-        .value-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(191, 154, 51, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
-            font-size: 2rem;
-            color: var(--primary-color);
-        }
-
-        .value-title {
-            font-size: 1.4rem;
-            font-weight: 600;
+        .ebook-section h2 {
             color: #fff;
-            margin-bottom: 1.5rem;
         }
 
-        .value-description {
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.6;
-            font-size: 1rem;
+        .ebook-section h2 strong {
+            color: #C9A961;
         }
 
-        .core-values-section {
-            margin-top: 4rem;
-            padding-top: 4rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        .ebook-section .gold-line {
+            margin: 1.5rem auto;
         }
 
-        .core-values-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+        .ebook-section .section-text {
+            color: rgba(255, 255, 255, 0.6);
         }
 
-        .core-value-item {
-            text-align: center;
-            padding: 2rem 1rem;
-        }
-
-        .core-value-icon {
-            width: 70px;
-            height: 70px;
-            background: #fff;
-            border: 1px solid var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 1.8rem;
-            color: var(--primary-color);
-            box-shadow: 0 2px 8px rgba(191, 154, 51, 0.15);
-        }
-
-        .core-value-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .core-value-description {
-            font-size: 0.95rem;
-            line-height: 1.5;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        /* Estilos globais para botões - Paleta Minimalista */
-        .btn-primary {
-            background-color: var(--dark-color);
-            border-color: var(--dark-color);
-            color: white;
-            font-weight: 600;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            color: var(--dark-color);
-        }
-
-        .btn-outline-primary {
-            background-color: transparent;
-            border: 1px solid #2c3e50;
-            color: #2c3e50;
-            font-weight: 600;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-        }
-
-        .btn-outline-primary:hover {
-            background-color: #2c3e50;
-            border-color: #2c3e50;
-            color: white;
-        }
-
-        .btn-secondary {
-            background-color: #f5f5f5;
-            border-color: #f5f5f5;
-            color: var(--dark-color);
-            font-weight: 600;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-        }
-
-        .btn-secondary:hover {
-            background-color: #e0e0e0;
-            border-color: #e0e0e0;
-            color: var(--dark-color);
-        }
-
-        /* Estilo        /* Proposta de Valor Section */
-        .value-proposition-section {
-            padding: 6rem 0;
-            background-color: #f8f9fa;
-        }
-
-        .value-proposition-section h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 4rem;
-            text-align: center;
-        }
-
-        .value-proposition-section .valor-gold {
-            color: var(--primary-color);
-        }
-
-        .video-container-clean {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .video-player-clean {
+        .ebook-cover {
+            max-width: 240px;
             width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
-
-        .value-proposition-text {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .consultoria-box {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            border: 1px solid #dee2e6;
-            height: 100%;
-        }
-
-        /* Estilos para os botões de ação */
-        .action-buttons-section {
-            background-color: var(--primary-color);
-            padding: 2rem 0;
-        }
-
-        .action-button {
+            margin: 0 auto 2.5rem;
             display: block;
-            background-color: #111;
-            color: #fff;
-            text-align: center;
-            padding: 1rem;
-            border-radius: 5px;
+            border-radius: 4px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .ebook-authors {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        .ebook-cta {
+            display: inline-block;
+            padding: 14px 40px;
+            background: #C9A961;
+            color: #1A1A1A;
+            font-size: 0.8rem;
             font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
             text-decoration: none;
-            transition: var(--transition);
+            transition: all 0.4s ease;
+            border: none;
+        }
+
+        .ebook-cta:hover {
+            background: #fff;
+            color: #1A1A1A;
+            transform: translateY(-2px);
+        }
+
+        /* --- Serviços --- */
+        .servicos-section {
+            background: var(--s2i-bg);
+            text-align: center;
+        }
+
+        .servico-item {
+            padding: 2rem 0;
+            text-align: left;
+        }
+
+        .servico-item h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.2px;
+        }
+
+        .servico-item p {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: #777;
+            line-height: 1.7;
             margin-bottom: 1rem;
         }
 
-        .action-button:hover {
-            background-color: #000;
-            color: var(--primary-color);
-        }
-
-        /* Estilos para o footer */
-        footer {
-            background-color: #212529;
-            color: #fff;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .footer-left p {
-            margin: 0;
+        .servico-link {
+            font-size: 0.75rem;
+            font-weight: 500;
             color: #C9A961;
-        }
-
-        .footer-right {
-            display: flex;
-            gap: 30px;
-        }
-
-        .footer-contact p {
-            margin: 0;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-
-        .footer-contact i {
-            color: #C9A961;
-            margin-right: 8px;
-        }
-
-        .footer-social {
-            display: flex;
-            gap: 15px;
-        }
-
-        .footer-social a {
-            color: #C9A961;
-            font-size: 20px;
-            transition: color 0.3s;
-        }
-
-        .footer-social a:hover {
-            color: #fff;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 15px;
-        }
-
-        .footer-links a {
-            color: #C9A961;
-            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
             text-decoration: none;
-            transition: color 0.3s;
+            transition: all 0.3s ease;
         }
 
-        .footer-links a:hover {
-            color: #fff;
-            text-decoration: underline;
+        .servico-link:hover {
+            color: #1A1A1A;
         }
 
-        /* Responsividade */
-        @media (max-width: 992px) {
-            .hero-content h1 {
-                font-size: 3.5rem;
-                letter-spacing: 6px;
-            }
-
-            .hero-content h2 {
-                font-size: 2.8rem;
-                letter-spacing: 4px;
-            }
-
-            .intro-section h2,
-            .what-moves-us-section h2,
-            .value-proposition-section h2 {
-                font-size: 2rem;
-            }
-
-            .feature-box {
-                flex-direction: column;
-            }
-
-            .feature-title-box {
-                width: 100%;
-                margin-right: 0;
-                margin-bottom: 1rem;
-            }
-
-            .value-item {
-                flex: 0 0 calc(50% - 2rem);
-            }
-
-            .footer-container {
-                flex-direction: column;
-                text-align: center;
-                gap: 20px;
-            }
-
-            .diagnostic-features {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .diagnostic-card {
-                padding: 3rem 2rem;
-            }
-
-            .diagnostic-title {
-                font-size: 2rem;
-            }
+        .servico-link i {
+            font-size: 0.6rem;
+            margin-left: 6px;
+            transition: transform 0.3s ease;
         }
 
-        .footer-right {
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
+        .servico-link:hover i {
+            transform: translateX(4px);
         }
 
+        .servico-divider {
+            width: 100%;
+            height: 1px;
+            background: #eee;
+        }
+
+        /* --- Valores --- */
+        .valores-section {
+            background: #fff;
+            text-align: center;
+        }
+
+        .valor-item {
+            padding: 2.5rem 1rem;
+        }
+
+        .valor-word {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #C9A961;
+            margin-bottom: 0.75rem;
+        }
+
+        .valor-desc {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: #888;
+            line-height: 1.6;
+        }
+
+        /* --- Responsive --- */
         @media (max-width: 768px) {
-            .hero-section {
-                padding: 6rem 0;
-            }
-
-            .hero-content h1 {
-                font-size: 2.5rem;
-                letter-spacing: 4px;
-            }
-
-            .hero-content h2 {
+            .hero-inner h1 {
                 font-size: 2rem;
-                letter-spacing: 3px;
             }
 
-            .value-item {
-                flex: 0 0 100%;
+            .hero-inner p {
+                font-size: 1rem;
             }
 
-            .footer-social {
-                justify-content: center;
+            .section-serene {
+                padding: 80px 0;
             }
 
-            .footer-links {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
+            .section-serene h2 {
+                font-size: 1.6rem;
+            }
+
+            .hero-minimal {
+                background-attachment: scroll;
+            }
+
+            .servico-item {
+                text-align: center;
             }
         }
 
-        /* Banner de Consentimento de Cookies */
+        /* --- Cookie Banner (keep) --- */
         .cookie-consent-banner {
             position: fixed;
             bottom: 0;
@@ -713,961 +426,7 @@
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
         }
 
-        /* Modal Styles - Moderno e Elegante */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-        }
-
-        .modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* SOLUÇÃO SIMPLES E DIRETA PARA O MODAL */
-        .modal-content {
-            background: white !important;
-            border-radius: 16px !important;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
-            width: 90% !important;
-            max-width: 700px !important;
-            height: 80vh !important;
-            position: relative !important;
-            overflow: hidden !important;
-        }
-
-        /* Header do Modal */
-        .modal-header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
-            color: white !important;
-            padding: 1.5rem 2rem !important;
-            text-align: center !important;
-            border-radius: 16px 16px 0 0 !important;
-            height: 100px !important;
-            box-sizing: border-box !important;
-        }
-
-        /* Corpo do Modal - SCROLL GARANTIDO */
-        .modal-body {
-            padding: 20px !important;
-            height: calc(80vh - 160px) !important;
-            overflow-y: scroll !important;
-            background: white !important;
-            box-sizing: border-box !important;
-        }
-
-        /* Navegação do Modal - FIXA NA BASE */
-        .modal-navigation {
-            background: white !important;
-            padding: 15px 20px !important;
-            border-top: 1px solid #e9ecef !important;
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            border-radius: 0 0 16px 16px !important;
-            height: 60px !important;
-            box-sizing: border-box !important;
-            position: absolute !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-        }
-
-        /* Barra de scroll visível */
-        .modal-body::-webkit-scrollbar {
-            width: 12px !important;
-        }
-
-        .modal-body::-webkit-scrollbar-track {
-            background: #f1f1f1 !important;
-            border-radius: 6px !important;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb {
-            background: #bf9a33 !important;
-            border-radius: 6px !important;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb:hover {
-            background: #a57b0a !important;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px) scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .modal-header p {
-            margin: 0.5rem 0 0 0;
-            opacity: 0.9;
-            font-size: 1rem;
-        }
-
-        .close {
-            position: absolute;
-            top: 1rem;
-            right: 1.5rem;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .close:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(90deg);
-        }
-
-        /* Progress Bar Moderna */
-        .progress-container {
-            padding: 1.5rem 2rem 0;
-            background: white;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 1rem;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #bf9a33, #d4af37);
-            border-radius: 10px;
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% {
-                transform: translateX(-100%);
-            }
-
-            100% {
-                transform: translateX(100%);
-            }
-        }
-
-        .progress-text {
-            text-align: center;
-            color: #6c757d;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        /* Corpo do Modal */
-        .modal-body {
-            padding: 20px;
-            height: 480px;
-            overflow-y: auto;
-            background: white;
-        }
-
-        /* Cartão de Pergunta Moderno - FORÇAR ALTURA MÍNIMA */
-        .question-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
-            border-radius: 16px !important;
-            padding: 2rem !important;
-            border-left: 4px solid #d4af37 !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
-            margin-bottom: 2rem !important;
-            min-height: 250px !important;
-            transition: all 0.3s ease !important;
-        }
-
-        .question-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-        }
-
-        .question-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
-        }
-
-        /* Rating Buttons Modernos */
-        .rating-container {
-            display: flex;
-            gap: 0.75rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .rating-option {
-            position: relative;
-        }
-
-        .rating-option input[type="radio"] {
-            display: none;
-        }
-
-        .rating-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border: 1px solid #e9ecef;
-            border-radius: 50%;
-            background: white;
-            color: #6c757d;
-            font-weight: 600;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .rating-label::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: linear-gradient(135deg, #bf9a33, #d4af37);
-            border-radius: 50%;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translate(-50%, -50%);
-            z-index: 1;
-        }
-
-        .rating-label span {
-            position: relative;
-            z-index: 2;
-            transition: color 0.3s ease;
-        }
-
-        .rating-option input[type="radio"]:checked+.rating-label {
-            border-color: #bf9a33;
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .rating-option input[type="radio"]:checked+.rating-label::before {
-            width: 100%;
-            height: 100%;
-        }
-
-        .rating-label:hover {
-            border-color: #bf9a33;
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(191, 154, 51, 0.3);
-        }
-
-        /* Seção de Níveis de Maturidade - FORÇAR ALTURA */
-        .maturity-levels {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
-            border-radius: 16px !important;
-            padding: 2rem !important;
-            margin-top: 2rem !important;
-            border: 1px solid #e9ecef !important;
-            min-height: 400px !important;
-        }
-
-        .maturity-levels h3 {
-            color: #2c3e50;
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .maturity-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .maturity-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .maturity-number {
-            background: linear-gradient(135deg, #bf9a33, #d4af37);
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-
-        .maturity-text {
-            color: #495057;
-            line-height: 1.5;
-            font-size: 0.95rem;
-        }
-
-        /* Navegação do Modal */
-        .modal-navigation {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            padding: 15px 20px;
-            border-top: 1px solid #e9ecef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn-nav {
-            padding: 0.75rem 2rem;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-nav-secondary {
-            background: #e9ecef;
-            color: #6c757d;
-        }
-
-        .btn-nav-secondary:hover {
-            background: #dee2e6;
-            transform: translateY(-1px);
-        }
-
-        .btn-nav-primary {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            color: white;
-        }
-
-        .btn-nav-primary:hover {
-            background: linear-gradient(135deg, #34495e, #2c3e50);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(44, 62, 80, 0.3);
-        }
-
-        .btn-nav:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .modal-content {
-                width: 95%;
-                margin: 1rem;
-            }
-
-            .modal-header {
-                padding: 1.5rem;
-            }
-
-            .modal-body {
-                padding: 1.5rem;
-            }
-
-            .question-card {
-                padding: 1.5rem;
-            }
-
-            .rating-container {
-                gap: 0.5rem;
-            }
-
-            .rating-label {
-                width: 45px;
-                height: 45px;
-                font-size: 1rem;
-            }
-
-            .modal-navigation {
-                padding: 1rem 1.5rem;
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .btn-nav {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        .modal-xl {
-            max-width: 95%;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 700px;
-            height: 600px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            padding: 1.5rem 2rem;
-            text-align: center;
-            border-radius: 16px 16px 0 0;
-            flex-shrink: 0;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--dark-color);
-        }
-
-        .btn-close {
-            background: var(--light-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            opacity: 1;
-        }
-
-        .modal-body {
-            padding: 20px;
-            overflow-y: auto;
-            background: white;
-            flex: 1;
-            min-height: 0;
-            max-height: calc(90vh - 140px);
-        }
-
-        /* Estilos para melhorar a visibilidade do scroll */
-        .modal-body::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .modal-body::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb {
-            background: #bf9a33;
-            border-radius: 4px;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb:hover {
-            background: #a57b0a;
-        }
-
-        /* Progress Bar - Estilo Moderno */
-        .progress-clean {
-            background: var(--light-color);
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 3rem;
-        }
-
-        .progress-clean-bar {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            height: 100%;
-            transition: width 0.4s ease;
-            border-radius: 3px;
-        }
-
-        /* Question Cards - Estilo Moderno */
-        .dimension-card-clean {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 3rem;
-            margin-bottom: 2rem;
-        }
-
-        .dimension-title-clean {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 2.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--light-color);
-        }
-
-        .question-item-clean {
-            margin-bottom: 2.5rem;
-            padding: 2rem;
-            background: var(--light-color);
-            border-radius: 12px;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .question-text-clean {
-            font-weight: 500;
-            color: var(--dark-color);
-            margin-bottom: 1.5rem;
-            font-size: 1.05rem;
-        }
-
-        .rating-container-clean {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1rem;
-        }
-
-        .rating-option-clean {
-            position: relative;
-        }
-
-        .rating-option-clean input[type="radio"] {
-            display: none;
-        }
-
-        .rating-option-clean label {
-            display: block;
-            padding: 1rem;
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        .rating-option-clean label:hover {
-            border-color: var(--primary-color);
-            background: rgba(191, 154, 51, 0.05);
-        }
-
-        .rating-option-clean input[type="radio"]:checked+label {
-            background: var(--primary-color);
-            color: var(--white);
-            border-color: var(--primary-color);
-            transform: scale(1.05);
-        }
-
-        /* Navigation Buttons - Estilo Moderno */
-        .navigation-clean {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .btn-nav-clean {
-            padding: 1rem 2.5rem;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            font-size: 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-nav-primary-clean {
-            background: var(--dark-color);
-            color: var(--white);
-        }
-
-        .btn-nav-primary-clean:hover {
-            background: var(--primary-color);
-            color: var(--dark-color);
-            transform: translateY(-2px);
-        }
-
-        .btn-nav-secondary-clean {
-            background: var(--light-color);
-            color: var(--text-color);
-        }
-
-        .btn-nav-secondary-clean:hover {
-            background: var(--border-color);
-        }
-
-        .btn-nav-clean:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Secção de Diagnóstico Moderna - Baseada no indextest.html */
-        .diagnostic-section-modern {
-            padding: 4rem 0;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            position: relative;
-        }
-
-        .section-header-modern {
-            text-align: center;
-            margin-bottom: 5rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .diagnostic-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: var(--white);
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .section-title-modern {
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 2rem;
-            line-height: 1.1;
-        }
-
-        .title-highlight {
-            color: var(--primary-color);
-        }
-
-        .section-subtitle-modern {
-            font-size: 1.3rem;
-            color: var(--text-light);
-            margin-bottom: 3rem;
-            line-height: 1.6;
-        }
-
-        .features-grid-modern {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-            margin-bottom: 4rem;
-        }
-
-        .feature-card-modern {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 3rem 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card-modern::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            transform: scaleX(0);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card-modern:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-            border-color: var(--primary-color);
-        }
-
-        .feature-card-modern:hover::before {
-            transform: scaleX(1);
-        }
-
-        .feature-icon-modern {
-            width: 80px;
-            height: 80px;
-            background: var(--light-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
-            font-size: 2rem;
-            color: var(--primary-color);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card-modern:hover .feature-icon-modern {
-            background: var(--primary-color);
-            color: var(--white);
-            transform: scale(1.1);
-        }
-
-        .feature-title-modern {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 1rem;
-        }
-
-        .feature-description-modern {
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-
-        .cta-container-modern {
-            text-align: center;
-            margin-top: 4rem;
-        }
-
-        .hero-cta-modern {
-            background: #000000;
-            color: #ffffff;
-            padding: 1.5rem 3.5rem;
-            border: 3px solid #000000;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .hero-cta-modern:hover {
-            background: #ffffff;
-            color: #000000;
-            border-color: #000000;
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .cta-note-modern {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .diagnostic-section {
-            padding: 6rem 0;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            position: relative;
-        }
-
-        .diagnostic-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23bf9a33" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            pointer-events: none;
-        }
-
-        .diagnostic-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 4rem 3rem;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .diagnostic-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-        }
-
-        .diagnostic-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
-            box-shadow: 0 10px 30px rgba(191, 154, 51, 0.3);
-        }
-
-        .diagnostic-icon i {
-            font-size: 2.5rem;
-            color: #fff;
-        }
-
-        .diagnostic-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--dark-color);
-        }
-
-        .highlight-gold {
-            color: var(--primary-color);
-            position: relative;
-        }
-
-        .diagnostic-description {
-            font-size: 1.2rem;
-            line-height: 1.8;
-            color: var(--text-light);
-            margin-bottom: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .diagnostic-features {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 3rem;
-            flex-wrap: wrap;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-
-        .feature-item i {
-            color: var(--primary-color);
-            font-size: 1.1rem;
-        }
-
-        .btn-diagnostic-modern {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: #fff;
-            border: none;
-            padding: 1.2rem 3rem;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            text-transform: uppercase;
-            box-shadow: 0 8px 25px rgba(191, 154, 51, 0.3);
-        }
-
-        .btn-diagnostic-modern::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn-diagnostic-modern:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(191, 154, 51, 0.4);
-        }
-
-        .btn-diagnostic-modern:hover::before {
-            left: 100%;
-        }
-
-        .btn-diagnostic-modern i {
-            margin-right: 0.5rem;
-        }
-
-        .cookie-consent-banner.show {
-            transform: translateY(0);
-        }
+        .cookie-consent-banner.show { transform: translateY(0); }
 
         .cookie-consent-content {
             max-width: 1200px;
@@ -1679,337 +438,98 @@
             gap: 15px;
         }
 
-        .cookie-consent-text h4 {
-            margin: 0 0 5px 0;
-            font-size: 16px;
-            color: #C9A961;
+        .cookie-consent-text h4 { margin: 0 0 5px 0; font-size: 16px; color: #C9A961; }
+        .cookie-consent-text p { margin: 0; font-size: 14px; line-height: 1.4; }
+
+        .cookie-consent-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .cookie-btn { padding: 8px 16px; border: none; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .cookie-btn-accept { background-color: #C9A961; color: #212529; }
+        .cookie-btn-accept:hover { background-color: #a57b0a; }
+        .cookie-btn-decline { background-color: transparent; color: white; border: 1px solid #6c757d; }
+        .cookie-btn-decline:hover { background-color: #6c757d; }
+        .cookie-btn-settings { background-color: transparent; color: #C9A961; border: 1px solid #C9A961; }
+        .cookie-btn-settings:hover { background-color: #C9A961; color: #212529; }
+
+        /* Cookie Preferences Modal */
+        .cookie-preferences-modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); }
+        .cookie-preferences-content { background-color: white; margin: 5% auto; padding: 0; border-radius: 8px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; }
+        .cookie-preferences-header { padding: 20px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center; }
+        .cookie-preferences-header h3 { margin: 0; color: #212529; }
+        .cookie-preferences-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d; }
+        .cookie-preferences-body { padding: 20px; }
+        .cookie-category { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+        .cookie-category:last-child { border-bottom: none; }
+        .cookie-category-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .cookie-category h4 { margin: 0; color: #212529; }
+        .cookie-toggle { position: relative; display: inline-block; width: 50px; height: 24px; }
+        .cookie-toggle input { opacity: 0; width: 0; height: 0; }
+        .cookie-toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+        .cookie-toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        .cookie-toggle input:checked+.cookie-toggle-slider { background-color: #C9A961; }
+        .cookie-toggle input:checked+.cookie-toggle-slider:before { transform: translateX(26px); }
+        .cookie-toggle.disabled { opacity: 0.6; pointer-events: none; }
+        .cookie-preferences-footer { padding: 20px; border-top: 1px solid #dee2e6; display: flex; justify-content: flex-end; gap: 10px; }
+
+        /* Contact Modal */
+        #contactModal .modal-content { border: none; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.12); overflow: hidden; }
+        #contactModal .cm-header { padding: 2rem 2.5rem 0.5rem; text-align: center; }
+        #contactModal .cm-header h5 { font-family: 'Poppins', sans-serif; font-weight: 300; font-size: 1.5rem; letter-spacing: 0.08em; color: #1A1A1A; margin: 0; }
+        #contactModal .cm-header .cm-line { width: 40px; height: 2px; background: #C9A961; margin: 0.75rem auto 0; }
+        #contactModal .cm-body { padding: 1.5rem 2.5rem 2rem; }
+        #contactModal .cm-field { margin-bottom: 1.25rem; }
+        #contactModal .cm-label { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #999; display: block; margin-bottom: 0.4rem; }
+        #contactModal .cm-input,
+        #contactModal .cm-select,
+        #contactModal .cm-textarea { width: 100%; padding: 0.7rem 0.9rem; border: 1px solid #e8e8e8; border-radius: 8px; font-size: 0.9rem; color: #333; background: #fafafa; transition: border-color 0.25s, background 0.25s; outline: none; }
+        #contactModal .cm-input:focus,
+        #contactModal .cm-select:focus,
+        #contactModal .cm-textarea:focus { border-color: #C9A961; background: #fff; }
+        #contactModal .cm-textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+        #contactModal .cm-row { display: flex; gap: 1rem; }
+        #contactModal .cm-row .cm-field { flex: 1; }
+        #contactModal .cm-privacy { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 1.5rem; }
+        #contactModal .cm-privacy input[type="checkbox"] { margin-top: 2px; accent-color: #C9A961; }
+        #contactModal .cm-privacy label { font-size: 0.8rem; color: #888; line-height: 1.4; cursor: pointer; }
+        #contactModal .cm-privacy a { color: #C9A961; text-decoration: none; }
+        #contactModal .cm-privacy a:hover { text-decoration: underline; }
+        #contactModal .cm-submit { width: 100%; padding: 0.85rem; background: #1A1A1A; color: #fff; border: none; border-radius: 8px; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: background 0.25s; }
+        #contactModal .cm-submit:hover { background: #333; }
+        #contactModal .cm-submit:disabled { background: #999; cursor: not-allowed; }
+        #contactModal .cm-alert { font-size: 0.8rem; padding: 0.7rem 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        #contactModal .cm-alert-success { background: #f0faf0; color: #2d7a2d; border: 1px solid #c8e6c8; }
+        #contactModal .cm-alert-error { background: #fdf0f0; color: #c0392b; border: 1px solid #f0c8c8; }
+        #contactModal .btn-close { position: absolute; top: 1.25rem; right: 1.25rem; opacity: 0.4; z-index: 1; }
+        #contactModal .btn-close:hover { opacity: 0.8; }
+        @media (max-width: 576px) {
+            #contactModal .cm-body { padding: 1.25rem 1.5rem 1.5rem; }
+            #contactModal .cm-header { padding: 1.5rem 1.5rem 0.5rem; }
+            #contactModal .cm-row { flex-direction: column; gap: 0; }
         }
 
-        .cookie-consent-text p {
-            margin: 0;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .cookie-consent-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .cookie-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .cookie-btn-accept {
-            background-color: #C9A961;
-            color: #212529;
-        }
-
-        .cookie-btn-accept:hover {
-            background-color: #a57b0a;
-        }
-
-        .cookie-btn-decline {
-            background-color: transparent;
-            color: white;
-            border: 1px solid #6c757d;
-        }
-
-        .cookie-btn-decline:hover {
-            background-color: #6c757d;
-        }
-
-        .cookie-btn-settings {
-            background-color: transparent;
-            color: #C9A961;
-            border: 1px solid #C9A961;
-        }
-
-        .cookie-btn-settings:hover {
-            background-color: #C9A961;
-            color: #212529;
-        }
-
-        /* Modal de Preferências de Cookies */
-        .cookie-preferences-modal {
-            display: none;
-            position: fixed;
-            z-index: 10000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .cookie-preferences-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 0;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .cookie-preferences-header {
-            padding: 20px;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .cookie-preferences-header h3 {
-            margin: 0;
-            color: #212529;
-        }
-
-        .cookie-preferences-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #6c757d;
-        }
-
-        .cookie-preferences-body {
-            padding: 20px;
-        }
-
-        .cookie-category {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .cookie-category:last-child {
-            border-bottom: none;
-        }
-
-        .cookie-category-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .cookie-category h4 {
-            margin: 0;
-            color: #212529;
-        }
-
-        .cookie-toggle {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-
-        .cookie-toggle input {
+        /* Fade-in animation */
+        .fade-up {
             opacity: 0;
-            width: 0;
-            height: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
         }
 
-        .cookie-toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-
-        .cookie-toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        .cookie-toggle input:checked+.cookie-toggle-slider {
-            background-color: #C9A961;
-        }
-
-        .cookie-toggle input:checked+.cookie-toggle-slider:before {
-            transform: translateX(26px);
-        }
-
-        .cookie-toggle.disabled {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        .cookie-preferences-footer {
-            padding: 20px;
-            border-top: 1px solid #dee2e6;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        /* Botão de Feedback */
-        .feedback-btn {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            background-color: #C9A961;
-            color: #212529;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 20px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .feedback-btn:hover {
-            background-color: #a57b0a;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Estilos para o formulário de feedback */
-        .rating {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-
-        .star {
-            font-size: 24px;
-            cursor: pointer;
-            color: #ddd;
-            transition: color 0.2s;
-        }
-
-        .star:hover,
-        .star.active {
-            color: #C9A961;
-        }
-
-        @media (max-width: 768px) {
-            .cookie-consent-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .cookie-consent-buttons {
-                justify-content: center;
-                width: 100%;
-            }
-
-            .cookie-preferences-content {
-                width: 95%;
-                margin: 2% auto;
-            }
-
-            .feedback-btn {
-                right: 15px;
-                bottom: 15px;
-                padding: 10px 16px;
-                font-size: 14px;
-            }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
-    <!-- Coach Agent CSS -->
-    <link rel="stylesheet" href="css/coach-agent.css">
-    <link rel="stylesheet" href="css/side-widgets.css">
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035"
-        crossorigin="anonymous"></script>
-    
-    <!-- JSON-LD Structured Data -->
+
+    <!-- Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "ProfessionalService",
-      "name": "Share2Inspire",
-      "description": "Consultoria de carreira e transformação profissional. Acompanhamento estratégico e humano para profissionais em momentos de dúvida, transição ou reorientação.",
+      "name": "Share2Inspire - Samuel Rolo",
       "url": "https://www.share2inspire.pt",
-      "logo": "https://www.share2inspire.pt/images/logo.png",
-      "image": "https://www.share2inspire.pt/images/og-image.png",
-      "founder": {
-        "@type": "Person",
-        "name": "Samuel Rolo",
-        "jobTitle": "Consultor de Carreira e Coach",
-        "url": "https://www.linkedin.com/in/samuelrolo"
-      },
-      "address": {
-        "@type": "PostalAddress",
-        "addressCountry": "PT",
-        "addressLocality": "Portugal"
-      },
-      "sameAs": [
-        "https://www.linkedin.com/in/samuelrolo",
-        "https://www.instagram.com/samuel_rolo"
-      ],
-      "areaServed": {
-        "@type": "Country",
-        "name": "Portugal"
-      },
-      "priceRange": "€€",
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "ratingCount": "120",
-        "bestRating": "5",
-        "worstRating": "1"
-      },
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Serviços de Carreira",
-        "itemListElement": [
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "CV Analyzer",
-              "description": "Análise inteligente de CV com IA e relatório detalhado",
-              "url": "https://www.share2inspire.pt/cv-analyser"
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Kickstart Pro",
-              "description": "Sessão estratégica de decisão e acompanhamento individual",
-              "price": "35",
-              "priceCurrency": "EUR"
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Criação CV por Especialista",
-              "description": "Análise humana e estratégica para garantir o máximo impacto",
-              "price": "20",
-              "priceCurrency": "EUR"
-            }
-          }
-        ]
-      }
+      "description": "Consultoria de carreira e transformação profissional",
+      "founder": { "@type": "Person", "name": "Samuel Rolo" },
+      "areaServed": "PT"
     }
     </script>
     <!-- Meta Pixel Code -->
@@ -2033,12 +553,11 @@
 
 <body>
 
-
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0"
             style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-    <!-- Header e Navegação -->
+
+    <!-- Header -->
     <header class="header">
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
@@ -2051,31 +570,14 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="index.html">Início</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/sobre.html">Sobre</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/servicos.html">Serviços</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/cv-analysis.html">CV Analyser</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="career-path">Career Path</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/loja.html">Loja</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/conhecimento.html">Conhecimento</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="modal"
-                                data-bs-target="#contactModal">Contactos</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link active" href="index.html">Início</a></li>
+                        <li class="nav-item"><a class="nav-link" href="pages/sobre.html">Sobre</a></li>
+                        <li class="nav-item"><a class="nav-link" href="pages/servicos.html">Serviços</a></li>
+                        <li class="nav-item"><a class="nav-link" href="pages/cv-analysis.html">CV Analyser</a></li>
+                        <li class="nav-item"><a class="nav-link" href="career-path">Career Path</a></li>
+                        <li class="nav-item"><a class="nav-link" href="pages/loja.html">Loja</a></li>
+                        <li class="nav-item"><a class="nav-link" href="pages/conhecimento.html">Conhecimento</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactModal">Contactos</a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
                                 style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">
@@ -2090,377 +592,145 @@
             </div>
         </nav>
     </header>
-    <!-- Hero Section - V2.0 -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Clareza para decidir o que vem a seguir na <span class="highlight">tua carreira</span></h1>
-                <p class="hero-subtitle">Acompanhamento estratégico e humano para profissionais em momentos de dúvida,
-                    transição ou reorientação.</p>
-                <p class="hero-signature" style="font-size: 1rem; margin-top: 1.5rem; opacity: 0.9;">
-                    <strong>Samuel Rolo</strong><br>
-                    Autor e mentor em carreira e transformação profissional.
-                </p>
-                <p class="hero-context"
-                    style="font-size: 0.95rem; margin-top: 1rem; opacity: 0.85; max-width: 700px; margin-left: auto; margin-right: auto;">
-                    Da análise do teu percurso à definição consciente dos próximos passos, com contexto, critério e
-                    intenção.
-                </p>
-                <!-- Social Proof Badge -->
-                <div style="display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 1.5rem 0; flex-wrap: wrap;">
-                    <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); padding: 0.5rem 1rem; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.2);">
-                        <i class="fas fa-users" style="color: #C9A961; font-size: 1.2rem;"></i>
-                        <span style="color: #fff; font-size: 0.9rem; font-weight: 600;">500+ profissionais</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); padding: 0.5rem 1rem; border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.2);">
-                        <i class="fas fa-star" style="color: #C9A961; font-size: 1.2rem;"></i>
-                        <span style="color: #fff; font-size: 0.9rem; font-weight: 600;">4.9/5 ⭐</span>
-                    </div>
-                </div>
-                <div class="hero-ctas">
-                    <a href="pages/servicos.html" class="btn-hero-primary">Agendar Kickstart (30€)</a>
-                    <a href="pages/cv-analysis.html" class="btn-hero-secondary">Analisar CV Grátis</a>
-                </div>
-            </div>
+
+    <!-- ============================
+         HERO — Uma mensagem. Espaço.
+         ============================ -->
+    <section class="hero-minimal">
+        <div class="hero-inner">
+            <h1>Clareza para decidir<br>o que vem <strong>a seguir</strong></h1>
+            <p>Acompanhamento estratégico e humano para profissionais<br>em momentos de dúvida, transição ou reorientação.</p>
+            <a href="pages/servicos.html" class="hero-cta">Explorar serviços</a>
         </div>
-        <div class="scroll-down">
-            <div class="arrow"></div>
-        </div>
+        <div class="scroll-hint"><span></span></div>
     </section>
-    <!-- Intro Section -->
-    <section class="intro-section" id="intro">
+
+    <!-- ============================
+         PROPÓSITO — Uma ideia central.
+         ============================ -->
+    <section class="section-serene proposito-section fade-up">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-8 text-center">
-                    <h2>O nosso <span class="proposito-gold">propósito</span></h2>
-                    <p class="lead" style="margin-bottom: 1.5rem;">Ajudamos profissionais a ganhar clareza quando o
-                        caminho deixa de ser óbvio.</p>
-                    <p style="text-align: left; line-height: 1.8;">
-                        Trabalhamos a carreira como um processo de leitura e decisão. Olhamos para o que já foi feito,
-                        para o contexto atual e para as opções reais que fazem sentido a seguir.
+                <div class="col-lg-7 text-center">
+                    <h2>O nosso <strong>propósito</strong></h2>
+                    <div class="gold-line"></div>
+                    <p class="section-text">
+                        Trabalhamos a carreira como um processo de leitura e decisão. Olhamos para o que já foi feito, para o contexto atual e para as opções reais que fazem sentido a seguir.
                     </p>
-                    <p style="text-align: left; line-height: 1.8;">
-                        Não acreditamos em fórmulas rápidas nem em discursos motivacionais vazios. Acreditamos em
-                        pensamento crítico, análise estratégica e acompanhamento humano, para escolhas mais conscientes
-                        e sustentáveis.
-                    </p>
-                    <p style="text-align: left; line-height: 1.8; font-weight: 600;">
-                        Aqui, crescer não é acelerar sem pensar. É saber para onde se vai e porquê.
+                    <p class="section-text" style="margin-top: 1.5rem;">
+                        <strong>Crescer não é acelerar sem pensar. É saber para onde se vai e porquê.</strong>
                     </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- E-book Destaque Section -->
-    <section class="ebook-highlight-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 60px 0; position: relative; overflow: hidden;">
-        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 30% 50%, rgba(201, 169, 97, 0.08) 0%, transparent 60%); pointer-events: none;"></div>
-        <div class="container" style="position: relative; z-index: 2;">
-            <div class="row align-items-center g-4">
-                <div class="col-lg-5 text-center">
-                    <img src="images/ebook-capa.png" alt="E-book Energia para Liderar" style="max-width: 280px; width: 100%; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
-                </div>
-                <div class="col-lg-7">
-                    <span style="display: inline-block; background: linear-gradient(135deg, #C9A961, #d4af37); color: #1a1a2e; font-size: 0.7rem; padding: 5px 14px; border-radius: 20px; text-transform: uppercase; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 15px;"><i class="fas fa-gift" style="margin-right: 6px;"></i>E-book Gratuito</span>
-                    <h2 style="color: #fff; font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; line-height: 1.3;">Energia para Liderar</h2>
-                    <p style="color: #C9A961; font-size: 1.05rem; font-style: italic; margin-bottom: 15px; font-weight: 500;">O Guia Pr&aacute;tico de Performance Mental e F&iacute;sica</p>
-                    <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem; line-height: 1.7; margin-bottom: 8px;">Um guia completo sobre as quatro dimens&otilde;es da energia &mdash; f&iacute;sica, mental, emocional e espiritual &mdash; para quem lidera e quer manter a performance de forma sustent&aacute;vel.</p>
-                    <p style="color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-bottom: 20px;"><i class="fas fa-pen-fancy" style="color: #C9A961; margin-right: 6px;"></i>Por <strong style="color: #fff;">Samuel Rolo</strong> &amp; <strong style="color: #fff;">Marlene Ruivo</strong></p>
-                    <a href="pages/conhecimento.html#ebook-download" class="btn px-4 py-2 fw-semibold" style="background: linear-gradient(135deg, #C9A961, #d4af37); color: #1a1a2e; border: none; border-radius: 8px; font-size: 0.9rem; text-decoration: none; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(201,169,97,0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                        <i class="fas fa-download" style="margin-right: 8px;"></i>Descarregar Gr&aacute;tis
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services Preview Section -->
-    <section class="services-preview py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);">
-        <div class="container">
-            <div class="text-center mb-5">
-                <span class="text-uppercase small fw-bold" style="color: #C9A961; letter-spacing: 2px;">Os nossos
-                    serviços</span>
-                <h2 class="mt-3 fw-bold">Apoio profissional</h2>
-            </div>
-            <div class="row g-4 justify-content-center">
-                <!-- Kickstart Pro -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-preview-card p-4 h-100"
-                        style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
-                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
-                            style="width: 80px; height: 80px; background: #fff; border: 1px solid #C9A961; border-radius: 50%; box-shadow: 0 2px 8px rgba(191, 154, 51, 0.15);">
-                            <i class="fas fa-compass" style="color: #C9A961; font-size: 2rem; font-weight: 300;"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">Kickstart Pro</h4>
-                        <p class="text-muted small mb-2" style="line-height: 1.6;">Uma sessão estratégica para parar,
-                            pensar e recentrar.</p>
-                        <p class="text-muted small mb-3" style="line-height: 1.6;">Exploramos o teu momento
-                            profissional, clarificamos opções e definimos próximos passos com critério e realismo.</p>
-                        <p class="text-muted small" style="line-height: 1.6; font-style: italic;">Indicado para fases de
-                            transição, desgaste profissional ou necessidade de reorientação.</p>
-                        <a href="pages/servicos.html" class="btn btn-sm px-4 py-2 rounded-pill fw-semibold mt-3"
-                            style="background: #C9A961; color: #fff;">Agendar Kickstart (30€)</a>
-                    </div>
-                </div>
-                <!-- Revisão de CV -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-preview-card p-4 h-100"
-                        style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
-                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
-                            style="width: 80px; height: 80px; background: #fff; border: 1px solid #C9A961; border-radius: 50%; box-shadow: 0 2px 8px rgba(191, 154, 51, 0.15);">
-                            <i class="far fa-file-alt" style="color: #C9A961; font-size: 2rem; font-weight: 300;"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">Revisão de CV</h4>
-                        <p class="text-muted small mb-2" style="line-height: 1.6;">Uma análise estratégica e humana do
-                            teu CV.</p>
-                        <p class="text-muted small mb-3" style="line-height: 1.6;">Mais do que rever um documento,
-                            trabalhamos o posicionamento, a narrativa e a coerência entre o teu percurso e os teus
-                            objetivos profissionais.</p>
-                        <p class="text-muted small" style="line-height: 1.6; font-style: italic;">O CV como reflexo
-                            claro de quem és e para onde queres ir.</p>
-                        <a href="pages/servicos.html" class="btn btn-sm px-4 py-2 rounded-pill fw-semibold mt-3"
-                            style="background: #C9A961; color: #fff;">Pedir CV Profissional</a>
-                    </div>
-                </div>
-                <!-- CV Analyzer -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-preview-card p-4 h-100"
-                        style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
-                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
-                            style="width: 80px; height: 80px; background: #fff; border: 1px solid #C9A961; border-radius: 50%; box-shadow: 0 2px 8px rgba(191, 154, 51, 0.15);">
-                            <i class="fas fa-chart-line" style="color: #C9A961; font-size: 2rem; font-weight: 300;"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">CV Analyzer</h4>
-                        <p class="text-muted small mb-2" style="line-height: 1.6;">Um diagnóstico inicial apoiado por
-                            tecnologia.</p>
-                        <p class="text-muted small mb-3" style="line-height: 1.6;">Permite identificar padrões, lacunas
-                            e oportunidades de melhoria, servindo como ponto de partida para uma análise mais
-                            aprofundada e consciente.</p>
-                        <p class="text-muted small" style="line-height: 1.6; font-style: italic;">Rápido, informativo e
-                            complementar à avaliação humana.</p>
-                        <div class="d-flex gap-2 mt-3">
-                            <a href="cv-analyser" class="btn btn-sm px-4 py-2 rounded-pill fw-semibold"
-                                style="background: #C9A961; color: #fff; flex: 1;">🇵🇹 Analisar CV</a>
-                            <a href="en/cv-analyser" class="btn btn-sm px-3 py-2 rounded-pill fw-semibold"
-                                style="background: transparent; color: #C9A961; border: 1.5px solid #C9A961;">🇬🇧 English</a>
-                        </div>
-                    </div>
-                </div>
-                <!-- Career Path -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-preview-card p-4 h-100"
-                        style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
-                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
-                            style="width: 80px; height: 80px; background: #fff; border: 1px solid #C9A961; border-radius: 50%; box-shadow: 0 2px 8px rgba(191, 154, 51, 0.15);">
-                            <i class="fas fa-route" style="color: #C9A961; font-size: 2rem; font-weight: 300;"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">Career Path</h4>
-                        <p class="text-muted small mb-2" style="line-height: 1.6;">O teu plano de carreira personalizado com IA.</p>
-                        <p class="text-muted small mb-3" style="line-height: 1.6;">Cruzamos o teu CV com o LinkedIn para criar um roadmap estratégico com os próximos passos concretos para chegares onde queres.</p>
-                        <p class="text-muted small" style="line-height: 1.6; font-style: italic;">Roadmap completo por apenas €9,99. Pagamento único.</p>
-                        <div class="d-flex gap-2 mt-3">
-                            <a href="career-path" class="btn btn-sm px-4 py-2 rounded-pill fw-semibold"
-                                style="background: #C9A961; color: #fff; flex: 1;">🇵🇹 Career Path</a>
-                            <a href="en/career-path" class="btn btn-sm px-3 py-2 rounded-pill fw-semibold"
-                                style="background: transparent; color: #C9A961; border: 1.5px solid #C9A961;">🇬🇧 English</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <style>
-        .service-preview-card:hover {
-            transform: translateY(-5px);
-            border-color: #C9A961 !important;
-            box-shadow: 0 10px 30px rgba(191, 154, 51, 0.15);
-        }
-
-        .service-preview-card:hover .btn {
-            background: #a58428 !important;
-        }
-    </style>
-    <!-- O Que Nos Move Section -->
-    <section class="what-moves-us-section" id="o-que-nos-move">
+    <!-- ============================
+         E-BOOK — Lead magnet limpo.
+         ============================ -->
+    <section class="section-serene ebook-section fade-up">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="section-header text-center mb-5">
-                        <h2>O que nos <span class="move-gold">move</span></h2>
-                    </div>
-                    <div class="core-values-section">
-                        <div class="core-values-grid">
-                            <div class="core-value-item">
-                                <div class="core-value-icon">
-                                    <i class="far fa-heart" style="font-weight: 300;"></i>
-                                </div>
-                                <h4 class="core-value-title">HUMANIDADE</h4>
-                                <p class="core-value-description">Pessoas primeiro. Decisões conscientes, não
-                                    automáticas.</p>
-                            </div>
-                            <div class="core-value-item">
-                                <div class="core-value-icon">
-                                    <i class="far fa-handshake" style="font-weight: 300;"></i>
-                                </div>
-                                <h4 class="core-value-title">CONFIANÇA</h4>
-                                <p class="core-value-description">Relações baseadas em transparência, não em promessas.
-                                </p>
-                            </div>
-                            <div class="core-value-item">
-                                <div class="core-value-icon">
-                                    <i class="fas fa-chart-line" style="font-weight: 300;"></i>
-                                </div>
-                                <h4 class="core-value-title">IMPACTO</h4>
-                                <p class="core-value-description">Resultados tangíveis. Mudanças que se sentem, não
-                                    apenas se dizem.</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-lg-6 text-center">
+                    <img src="images/ebook-capa.png" alt="E-book Energia para Liderar" class="ebook-cover">
+                    <h2>Energia para <strong>Liderar</strong></h2>
+                    <div class="gold-line"></div>
+                    <p class="section-text">
+                        O guia prático de performance mental e física para quem lidera e quer manter a energia de forma sustentável.
+                    </p>
+                    <p class="ebook-authors">Samuel Rolo &bull; Marlene Ruivo</p>
+                    <a href="pages/conhecimento.html#ebook-download" class="ebook-cta">Descarregar grátis</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Secção de Diagnóstico de Maturidade de RH -->
-    <!-- Secção de Diagnóstico Moderna -->
-    <!-- 
-    SECÇÃO AUTONOMIZADA (OCULTA DA HOMEPAGE)
-    Para reativar, descomentar este bloco.
-    
-    <section class="diagnostic-section-modern" id="diagnostico">
+    <!-- ============================
+         SERVIÇOS — Texto limpo, sem caixas.
+         ============================ -->
+    <section class="section-serene servicos-section fade-up">
         <div class="container">
-            <div class="section-header-modern">
-                <div class="diagnostic-badge">
-                    Avaliação Profissional
-                </div>
-                <h2 class="section-title-modern">
-                    Diagnóstico de<br>
-                    <span class="title-highlight">Maturidade de RH</span>
-                </h2>
-                <p class="section-subtitle-modern">
-                    Avalie o nível de maturidade dos processos de Recursos Humanos da sua organização através de um
-                    questionário especializado baseado em 10 dimensões fundamentais.
-                </p>
-            </div>
-            <div class="features-grid-modern">
-                <div class="feature-card-modern">
-                    <div class="feature-icon-modern">
-                    </div>
-                    <h3 class="feature-title-modern">Avaliação em 8 dimensões críticas</h3>
-                    <p class="feature-description-modern">
-                        Análise completa de processos fundamentais desde alinhamento estratégico até compliance e ESG.
-                    </p>
-                </div>
-                <div class="feature-card-modern">
-                    <div class="feature-icon-modern">
-                    </div>
-                    <h3 class="feature-title-modern">Relatório personalizado instantâneo</h3>
-                    <p class="feature-description-modern">
-                        Compare os seus resultados com benchmarks do mercado e identifique oportunidades de melhoria.
-                    </p>
-                </div>
-                <div class="feature-card-modern">
-                    <div class="feature-icon-modern">
-                    </div>
-                    <h3 class="feature-title-modern">Recomendações práticas de melhoria</h3>
-                    <p class="feature-description-modern">
-                        Receba insights personalizados e um plano de ação claro para evoluir a maturidade dos seus
-                        processos.
-                    </p>
+            <div class="row justify-content-center">
+                <div class="col-lg-7 text-center">
+                    <h2>O que <strong>fazemos</strong></h2>
+                    <div class="gold-line"></div>
                 </div>
             </div>
-            <div class="cta-container-modern">
-                <button class="hero-cta-modern" data-bs-toggle="modal" data-bs-target="#diagnosticModalClean">
-                    Iniciar Avaliação Gratuita
-                </button>
-                <p class="cta-note-modern">
-                    Demora apenas 5-10 minutos • Resultados imediatos
-                </p>
+            <div class="row justify-content-center" style="margin-top: 3rem;">
+                <div class="col-lg-8">
+
+                    <div class="servico-item fade-up">
+                        <h3>Kickstart Pro</h3>
+                        <p>Uma sessão estratégica para parar, pensar e recentrar. Exploramos o momento profissional, clarificamos opções e definimos próximos passos com critério.</p>
+                        <a href="pages/servicos.html" class="servico-link">Agendar sessão <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="servico-divider"></div>
+
+                    <div class="servico-item fade-up">
+                        <h3>Revisão de CV</h3>
+                        <p>Análise estratégica e humana do percurso profissional. Trabalhamos o posicionamento, a narrativa e a coerência entre o percurso e os objetivos.</p>
+                        <a href="pages/servicos.html" class="servico-link">Pedir revisão <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="servico-divider"></div>
+
+                    <div class="servico-item fade-up">
+                        <h3>CV Analyzer</h3>
+                        <p>Diagnóstico inicial apoiado por tecnologia. Identifica padrões, lacunas e oportunidades de melhoria como ponto de partida para uma análise mais consciente.</p>
+                        <a href="cv-analyser" class="servico-link">Analisar grátis <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="servico-divider"></div>
+
+                    <div class="servico-item fade-up">
+                        <h3>Career Path</h3>
+                        <p>Plano de carreira personalizado com IA. Cruzamos o CV com o LinkedIn para criar um roadmap estratégico com os próximos passos concretos.</p>
+                        <a href="career-path" class="servico-link">Criar roadmap <i class="fas fa-arrow-right"></i></a>
+                    </div>
+
+                </div>
             </div>
         </div>
     </section>
 
-    <div class="modal fade modal-clean" id="diagnosticModalClean" tabindex="-1"
-        aria-labelledby="diagnosticModalCleanLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="diagnosticModalCleanLabel">Diagnóstico de Maturidade de RH</h5>
-                    <p class="modal-subtitle">Avalie o nível de desenvolvimento dos seus processos de Recursos Humanos
-                    </p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- ============================
+         VALORES — Tipografia como elemento visual.
+         ============================ -->
+    <section class="section-serene valores-section fade-up">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7 text-center">
+                    <h2>O que nos <strong>move</strong></h2>
+                    <div class="gold-line"></div>
                 </div>
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressBarClean" style="width: 12.5%"></div>
-                    </div>
-                    <div class="progress-text">
-                        <span id="currentQuestionClean">1</span> de <span id="totalQuestionsClean">8</span> perguntas
-                    </div>
-                </div>
-                <div class="modal-body">
-                    <div id="surveyContentClean">
-                    </div>
-                    <div class="maturity-levels">
-                        <h3>Níveis de Maturidade</h3>
-                        <div class="maturity-item">
-                            <div class="maturity-number">1</div>
-                            <div class="maturity-text">Práticas reactivas, sem ligação explícita à estratégia.</div>
-                        </div>
-                        <div class="maturity-item">
-                            <div class="maturity-number">2</div>
-                            <div class="maturity-text">Algum alinhamento e análises pontuais de lacunas; uso limitado de
-                                dados.</div>
-                        </div>
-                        <div class="maturity-item">
-                            <div class="maturity-number">3</div>
-                            <div class="maturity-text">Alinhamento consistente; planeamento baseado em dados básicos e
-                                cenários anuais.</div>
-                        </div>
-                        <div class="maturity-item">
-                            <div class="maturity-number">4</div>
-                            <div class="maturity-text">RH lidera o planeamento estratégico de pessoas, usando dados
-                                avançados e projecções a médio prazo.</div>
-                        </div>
-                        <div class="maturity-item">
-                            <div class="maturity-number">5</div>
-                            <div class="maturity-text">Planeamento de força de trabalho em tempo real, preditivo,
-                                reconhecido como benchmark no sector.</div>
-                        </div>
+            </div>
+            <div class="row justify-content-center" style="margin-top: 2rem;">
+                <div class="col-6 col-md-3">
+                    <div class="valor-item">
+                        <div class="valor-word">Humanidade</div>
+                        <p class="valor-desc">Pessoas primeiro. Decisões conscientes.</p>
                     </div>
                 </div>
-                <div class="modal-navigation">
-                    <button type="button" class="btn-nav btn-nav-secondary" id="prevBtnClean"
-                        onclick="previousDimensionClean()" disabled>
-                        Anterior
-                    </button>
-                    <button type="button" class="btn-nav btn-nav-primary" id="nextBtnClean"
-                        onclick="nextDimensionClean()">
-                        Próxima
-                    </button>
+                <div class="col-6 col-md-3">
+                    <div class="valor-item">
+                        <div class="valor-word">Confiança</div>
+                        <p class="valor-desc">Transparência, não promessas.</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="valor-item">
+                        <div class="valor-word">Clareza</div>
+                        <p class="valor-desc">Pensamento crítico e direção.</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="valor-item">
+                        <div class="valor-word">Impacto</div>
+                        <p class="valor-desc">Mudanças que se sentem.</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="modal fade modal-clean" id="resultsModalClean" tabindex="-1" aria-labelledby="resultsModalCleanLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="resultsModalCleanLabel">
-                        Resultados do Diagnóstico
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="resultsContentClean">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    -->
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -2469,8 +739,7 @@
                     <div class="footer-brand">
                         <img src="images/logo.png" alt="Samuel Rolo Logo">
                     </div>
-                    <p class="footer-text">A transformar mindsets e carreiras através da fusão entre estratégia
-                        corporativa e empatia humana.</p>
+                    <p class="footer-text">A transformar mindsets e carreiras através da fusão entre estratégia corporativa e empatia humana.</p>
                 </div>
                 <div class="col-lg-2 col-md-4">
                     <h5 class="footer-title">Navegação</h5>
@@ -2487,13 +756,10 @@
                 </div>
                 <div class="col-lg-3 col-md-4">
                     <h5 class="footer-title">Contacto</h5>
-                    <p class="footer-text small mb-2"><i class="fas fa-envelope text-gold me-2"></i>
-                        samuel.rolo@share2inspire.pt</p>
+                    <p class="footer-text small mb-2"><i class="fas fa-envelope text-gold me-2"></i>samuel.rolo@share2inspire.pt</p>
                     <div class="d-flex gap-3 mt-3">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-gold"><i
-                                class="fab fa-linkedin fa-lg"></i></a>
-                        <a href="https://www.instagram.com/share2inspire_/" target="_blank" class="text-gold"><i
-                                class="fab fa-instagram fa-lg"></i></a>
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-gold"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="https://www.instagram.com/share2inspire_/" target="_blank" class="text-gold"><i class="fab fa-instagram fa-lg"></i></a>
                     </div>
                 </div>
             </div>
@@ -2502,22 +768,22 @@
             </div>
         </div>
     </footer>
+
     <!-- Cookie Consent Banner -->
     <div id="cookieConsentBanner" class="cookie-consent-banner">
         <div class="cookie-consent-content">
             <div class="cookie-consent-text">
                 <h4>Utilizamos cookies</h4>
-                <p>Este site utiliza cookies para melhorar a tua experiência. Ao continuar a navegar, concordas com a
-                    nossa utilização de cookies.</p>
+                <p>Este site utiliza cookies para melhorar a experiência. Ao continuar a navegar, concorda com a nossa utilização de cookies.</p>
             </div>
             <div class="cookie-consent-buttons">
                 <button class="cookie-btn cookie-btn-accept" onclick="acceptAllCookies()">Aceitar Todos</button>
-                <button class="cookie-btn cookie-btn-decline" onclick="declineAllCookies()">Recusar Não
-                    Essenciais</button>
+                <button class="cookie-btn cookie-btn-decline" onclick="declineAllCookies()">Recusar Não Essenciais</button>
                 <button class="cookie-btn cookie-btn-settings" onclick="openCookieSettings()">Preferências</button>
             </div>
         </div>
     </div>
+
     <!-- Cookie Preferences Modal -->
     <div id="cookiePreferencesModal" class="cookie-preferences-modal">
         <div class="cookie-preferences-content">
@@ -2534,7 +800,7 @@
                             <span class="cookie-toggle-slider"></span>
                         </label>
                     </div>
-                    <p>Estes cookies são essenciais para o funcionamento do site e não podem ser desativados.</p>
+                    <p>Essenciais para o funcionamento do site.</p>
                 </div>
                 <div class="cookie-category">
                     <div class="cookie-category-header">
@@ -2544,8 +810,7 @@
                             <span class="cookie-toggle-slider"></span>
                         </label>
                     </div>
-                    <p>Ajudam-nos a entender como os visitantes interagem com o site, permitindo melhorar a experiência.
-                    </p>
+                    <p>Ajudam-nos a entender como os visitantes interagem com o site.</p>
                 </div>
                 <div class="cookie-category">
                     <div class="cookie-category-header">
@@ -2555,8 +820,7 @@
                             <span class="cookie-toggle-slider"></span>
                         </label>
                     </div>
-                    <p>Utilizados para rastrear visitantes em websites. A intenção é exibir anúncios relevantes e
-                        envolventes.</p>
+                    <p>Utilizados para exibir anúncios relevantes.</p>
                 </div>
                 <div class="cookie-category">
                     <div class="cookie-category-header">
@@ -2566,7 +830,7 @@
                             <span class="cookie-toggle-slider"></span>
                         </label>
                     </div>
-                    <p>Permitem oferecer funcionalidades e conteúdos personalizados com base nas suas preferências.</p>
+                    <p>Permitem conteúdos personalizados com base nas preferências.</p>
                 </div>
             </div>
             <div class="cookie-preferences-footer">
@@ -2575,43 +839,8 @@
             </div>
         </div>
     </div>
+
     <!-- Contact Modal -->
-    <style>
-        #contactModal .modal-content { border: none; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.12); overflow: hidden; }
-        #contactModal .cm-header { padding: 2rem 2.5rem 0.5rem; text-align: center; }
-        #contactModal .cm-header h5 { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 300; font-size: 1.5rem; letter-spacing: 0.08em; color: #1A1A1A; margin: 0; }
-        #contactModal .cm-header .cm-line { width: 40px; height: 2px; background: #C9A961; margin: 0.75rem auto 0; }
-        #contactModal .cm-body { padding: 1.5rem 2.5rem 2rem; }
-        #contactModal .cm-field { margin-bottom: 1.25rem; }
-        #contactModal .cm-label { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #999; display: block; margin-bottom: 0.4rem; }
-        #contactModal .cm-input,
-        #contactModal .cm-select,
-        #contactModal .cm-textarea { width: 100%; padding: 0.7rem 0.9rem; border: 1px solid #e8e8e8; border-radius: 8px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 0.9rem; color: #333; background: #fafafa; transition: border-color 0.25s, background 0.25s; outline: none; }
-        #contactModal .cm-input:focus,
-        #contactModal .cm-select:focus,
-        #contactModal .cm-textarea:focus { border-color: #C9A961; background: #fff; }
-        #contactModal .cm-textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
-        #contactModal .cm-row { display: flex; gap: 1rem; }
-        #contactModal .cm-row .cm-field { flex: 1; }
-        #contactModal .cm-privacy { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 1.5rem; }
-        #contactModal .cm-privacy input[type="checkbox"] { margin-top: 2px; accent-color: #C9A961; }
-        #contactModal .cm-privacy label { font-size: 0.8rem; color: #888; line-height: 1.4; cursor: pointer; }
-        #contactModal .cm-privacy a { color: #C9A961; text-decoration: none; }
-        #contactModal .cm-privacy a:hover { text-decoration: underline; }
-        #contactModal .cm-submit { width: 100%; padding: 0.85rem; background: #1A1A1A; color: #fff; border: none; border-radius: 8px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: background 0.25s; }
-        #contactModal .cm-submit:hover { background: #333; }
-        #contactModal .cm-submit:disabled { background: #999; cursor: not-allowed; }
-        #contactModal .cm-alert { font-size: 0.8rem; padding: 0.7rem 1rem; border-radius: 8px; margin-bottom: 1rem; }
-        #contactModal .cm-alert-success { background: #f0faf0; color: #2d7a2d; border: 1px solid #c8e6c8; }
-        #contactModal .cm-alert-error { background: #fdf0f0; color: #c0392b; border: 1px solid #f0c8c8; }
-        #contactModal .btn-close { position: absolute; top: 1.25rem; right: 1.25rem; opacity: 0.4; z-index: 1; }
-        #contactModal .btn-close:hover { opacity: 0.8; }
-        @media (max-width: 576px) {
-            #contactModal .cm-body { padding: 1.25rem 1.5rem 1.5rem; }
-            #contactModal .cm-header { padding: 1.5rem 1.5rem 0.5rem; }
-            #contactModal .cm-row { flex-direction: column; gap: 0; }
-        }
-    </style>
     <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
             <div class="modal-content">
@@ -2625,11 +854,11 @@
                         <div class="cm-row">
                             <div class="cm-field">
                                 <label class="cm-label" for="name">Nome</label>
-                                <input class="cm-input" type="text" id="name" name="name" placeholder="O teu nome" required>
+                                <input class="cm-input" type="text" id="name" name="name" placeholder="O seu nome" required>
                             </div>
                             <div class="cm-field">
                                 <label class="cm-label" for="email">Email</label>
-                                <input class="cm-input" type="email" id="email" name="email" placeholder="O teu email" required>
+                                <input class="cm-input" type="email" id="email" name="email" placeholder="O seu email" required>
                             </div>
                         </div>
                         <div class="cm-row">
@@ -2640,7 +869,7 @@
                             <div class="cm-field">
                                 <label class="cm-label" for="reason">Motivo</label>
                                 <select class="cm-select" id="reason" name="reason" required>
-                                    <option value="" selected disabled>Seleciona</option>
+                                    <option value="" selected disabled>Selecionar</option>
                                     <option value="Clareza de carreira">Clareza de carreira</option>
                                     <option value="Revisão de CV">Revisão de CV</option>
                                     <option value="Kickstart Pro">Kickstart Pro</option>
@@ -2652,7 +881,7 @@
                         </div>
                         <div class="cm-field">
                             <label class="cm-label" for="message">Mensagem</label>
-                            <textarea class="cm-textarea" id="message" name="message" rows="3" placeholder="O que te trouxe até aqui?" required></textarea>
+                            <textarea class="cm-textarea" id="message" name="message" rows="3" placeholder="O que o trouxe até aqui?" required></textarea>
                         </div>
                         <div class="cm-privacy">
                             <input type="checkbox" id="privacy" name="privacy" required>
@@ -2666,6 +895,7 @@
             </div>
         </div>
     </div>
+
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Formulários -->
@@ -2679,6 +909,24 @@
     <script src="js/cookie-consent.js"></script>
     <!-- Coach Agent JavaScript -->
     <script src="js/coach-agent.js"></script>
+
+    <!-- Fade-in on scroll -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll('.fade-up').forEach(function (el) {
+                observer.observe(el);
+            });
+        });
+    </script>
+
 </body>
 
 </html>
