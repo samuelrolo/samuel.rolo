@@ -4,283 +4,425 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Conhecimento | Samuel Rolo AI (The Mindset Maverick)</title>
-    <meta
-        content="Artigos, podcasts e recursos sobre a fusão entre tecnologia e consciência humana. Onde o estratégico encontra o humano."
-        name="description" />
+    <title>Conhecimento | Share2Inspire</title>
+    <meta content="Artigos, podcasts e recursos sobre a fusão entre tecnologia e consciência humana." name="description" />
 
     <!-- Favicon -->
     <link rel="icon" href="../images/logo.png" type="image/png">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-    <!-- Consolidated Styles -->
-    <link href="../css/consolidated-styles.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet" />
-
-    <style>
-        /* Hide Vercel Speed Insights widget */
-        iframe[src*="vercel-insights"],
-        iframe[src*="_vercel"],
-        div[id*="vercel-live-feedback-button"],
-        .__vercel-live-feedback-button,
-        #vercel-live-feedback-button {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            pointer-events: none !important;
-        }
-        /* Hero Section */
-        .knowledge-hero {
-            background: var(--s2i-bg);
-            padding: 120px 0 60px;
-            text-align: center;
-            border-bottom: 1px solid var(--s2i-border);
-        }
-
-        .knowledge-hero h1 {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: var(--s2i-dark);
-            margin-bottom: 1rem;
-        }
-
-        .knowledge-hero p {
-            max-width: 600px;
-            margin: 0 auto;
-            font-size: 1rem;
-            color: var(--s2i-text-muted);
-            line-height: 1.8;
-        }
-
-        /* Sections */
-        .content-section {
-            padding: 80px 0;
-        }
-
-        .section-title {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--s2i-gold);
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .section-heading {
-            font-size: 1.75rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: var(--s2i-dark);
-        }
-
-        .section-text {
-            color: var(--s2i-text-muted);
-            line-height: 1.8;
-            font-size: 0.95rem;
-        }
-
-        /* Podcast Embed */
-        .podcast-section {
-            background: var(--s2i-white);
-            border: 1px solid var(--s2i-border);
-            border-radius: var(--s2i-radius);
-            padding: 40px;
-            margin-bottom: 40px;
-        }
-
-        .spotify-embed {
-            border-radius: 12px;
-            margin-top: 25px;
-        }
-
-        /* Articles Grid */
-        .article-card {
-            background: var(--s2i-white);
-            border: 1px solid var(--s2i-border);
-            border-radius: var(--s2i-radius);
-            padding: 25px;
-            height: 100%;
-            transition: var(--s2i-transition);
-        }
-
-        .article-card:hover {
-            border-color: var(--s2i-gold);
-            transform: translateY(-3px);
-            box-shadow: var(--s2i-shadow-hover);
-        }
-
-        .article-card h4 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--s2i-dark);
-        }
-
-        .article-card p {
-            font-size: 0.9rem;
-            color: var(--s2i-text-muted);
-            margin-bottom: 15px;
-            line-height: 1.7;
-        }
-
-        .article-link {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-            color: var(--s2i-gold);
-        }
-
-        .article-link:hover {
-            color: var(--s2i-gold-dark);
-        }
-
-        .article-source {
-            font-size: 0.7rem;
-            color: var(--s2i-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-        }
-
-        /* Newsletter Section */
-        .newsletter-section {
-            background: var(--s2i-dark);
-            padding: 60px 40px;
-            border-radius: var(--s2i-radius);
-            margin-top: 60px;
-        }
-
-        .newsletter-section h2 {
-            color: var(--s2i-gold);
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .newsletter-section>p {
-            color: #999;
-            margin-bottom: 40px;
-            font-size: 0.95rem;
-            text-align: center;
-        }
-
-        .newsletter-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-        }
-
-        .newsletter-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--s2i-radius);
-            padding: 30px;
-            text-align: center;
-        }
-
-        .newsletter-card h3 {
-            color: var(--s2i-white);
-            font-size: 1.1rem;
-            margin-bottom: 8px;
-        }
-
-        .newsletter-card .frequency {
-            display: inline-block;
-            background: var(--s2i-gold);
-            color: var(--s2i-dark);
-            font-size: 0.65rem;
-            padding: 3px 10px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-        }
-
-        .newsletter-card p {
-            color: #888;
-            font-size: 0.85rem;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .newsletter-btn {
-            background: transparent;
-            border: 1px solid var(--s2i-gold);
-            color: var(--s2i-gold);
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: var(--s2i-transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .newsletter-btn:hover {
-            background: var(--s2i-gold);
-            color: var(--s2i-dark);
-        }
-
-        /* Resources Section */
-        .resources-section {
-            background: var(--s2i-bg);
-            border: 1px solid var(--s2i-border);
-            border-radius: var(--s2i-radius);
-            padding: 40px;
-            margin-top: 40px;
-        }
-
-        .resource-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--s2i-border);
-        }
-
-        .resource-item:last-child {
-            border-bottom: none;
-        }
-
-        .resource-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--s2i-gold);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--s2i-dark);
-            flex-shrink: 0;
-        }
-
-        .resource-info h5 {
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 3px;
-            color: var(--s2i-dark);
-        }
-
-        .resource-info p {
-            font-size: 0.8rem;
-            color: var(--s2i-text-muted);
-            margin: 0;
-        }
-    </style>
+    <!-- Consolidated Styles -->
+    <link href="../css/consolidated-styles.css" rel="stylesheet" />
     <link rel="stylesheet" href="../css/coach-agent.css">
     <link rel="stylesheet" href="../css/side-widgets.css">
+
+    <style>
+        /* ── Reset & Base ── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #fff;
+            color: #1a1a2e;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Hide Vercel widget ── */
+        iframe[src*="vercel-insights"], iframe[src*="_vercel"],
+        div[id*="vercel-live-feedback-button"], .__vercel-live-feedback-button,
+        #vercel-live-feedback-button {
+            display: none !important; visibility: hidden !important;
+            opacity: 0 !important; pointer-events: none !important;
+        }
+
+        /* ── Navigation ── */
+        .nav-bar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+        .nav-inner {
+            max-width: 1100px; margin: 0 auto;
+            padding: 0 2rem;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 70px;
+        }
+        .nav-logo img { height: 36px; }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            font-size: 0.75rem; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: #1a1a2e; text-decoration: none;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover, .nav-links a.active { color: #C9A961; }
+
+        /* Language dropdown */
+        .lang-switch {
+            font-size: 0.75rem; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: #1a1a2e; text-decoration: none;
+            cursor: pointer; position: relative;
+        }
+        .lang-switch:hover { color: #C9A961; }
+
+        /* Mobile menu */
+        .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+        .nav-toggle span { display: block; width: 22px; height: 2px; background: #1a1a2e; margin: 5px 0; transition: 0.3s; }
+
+        @media (max-width: 768px) {
+            .nav-toggle { display: block; }
+            .nav-links {
+                display: none; position: absolute; top: 70px; left: 0; right: 0;
+                background: #fff; flex-direction: column;
+                padding: 2rem; gap: 1.5rem;
+                border-bottom: 1px solid rgba(0,0,0,0.04);
+            }
+            .nav-links.open { display: flex; }
+        }
+
+        /* ── Hero ── */
+        .hero {
+            min-height: 50vh;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center;
+            padding: 140px 2rem 80px;
+            background: #fff;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 300; line-height: 1.2;
+            color: #1a1a2e; margin-bottom: 1.5rem;
+        }
+        .hero h1 strong { font-weight: 600; }
+        .hero p {
+            font-size: 1rem; font-weight: 300;
+            color: #666; max-width: 550px; margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* ── Sections ── */
+        .section { padding: 80px 2rem; max-width: 1100px; margin: 0 auto; }
+        .section-dark { background: #1a1a2e; padding: 80px 2rem; }
+        .section-dark .section-inner { max-width: 1100px; margin: 0 auto; }
+        .section-light { background: #fafaf8; padding: 80px 2rem; }
+        .section-light .section-inner { max-width: 1100px; margin: 0 auto; }
+
+        .section-label {
+            font-size: 0.65rem; text-transform: uppercase;
+            letter-spacing: 3px; color: #C9A961;
+            font-weight: 600; margin-bottom: 1rem;
+        }
+        .section-title {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            font-weight: 300; margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        .section-title strong { font-weight: 600; }
+        .section-desc {
+            font-size: 0.95rem; color: #666;
+            line-height: 1.8; max-width: 600px;
+        }
+
+        .divider {
+            width: 40px; height: 2px;
+            background: #C9A961;
+            margin: 1.5rem 0;
+        }
+
+        /* ── E-book Section ── */
+        .ebook-section {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 4rem; align-items: center;
+        }
+        .ebook-cover { text-align: center; }
+        .ebook-cover img {
+            max-width: 320px; width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+        }
+        .ebook-info { color: #fff; }
+        .ebook-info .badge-free {
+            display: inline-block;
+            font-size: 0.6rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px;
+            color: #C9A961; margin-bottom: 1rem;
+        }
+        .ebook-info h2 {
+            font-size: 1.8rem; font-weight: 300;
+            color: #fff; margin-bottom: 0.5rem;
+        }
+        .ebook-info h2 strong { font-weight: 600; }
+        .ebook-info .subtitle {
+            font-size: 0.9rem; color: #C9A961;
+            font-style: italic; margin-bottom: 1rem;
+        }
+        .ebook-info .desc {
+            font-size: 0.85rem; color: rgba(255,255,255,0.6);
+            line-height: 1.8; margin-bottom: 0.5rem;
+        }
+        .ebook-info .authors {
+            font-size: 0.75rem; color: rgba(255,255,255,0.4);
+            margin-bottom: 2rem;
+        }
+        .ebook-info .authors strong { color: #fff; }
+
+        /* E-book form */
+        .ebook-form { display: flex; flex-direction: column; gap: 0.8rem; max-width: 400px; }
+        .ebook-form input[type="email"] {
+            padding: 12px 16px;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 6px; font-size: 0.85rem;
+            background: rgba(255,255,255,0.06);
+            color: #fff; outline: none;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.3s;
+        }
+        .ebook-form input[type="email"]:focus { border-color: #C9A961; }
+        .ebook-form input[type="email"]::placeholder { color: rgba(255,255,255,0.3); }
+        .ebook-form label {
+            display: flex; align-items: flex-start; gap: 0.6rem;
+            cursor: pointer;
+        }
+        .ebook-form label input[type="checkbox"] {
+            margin-top: 3px; accent-color: #C9A961; min-width: 16px;
+        }
+        .ebook-form label span {
+            font-size: 0.68rem; color: rgba(255,255,255,0.4); line-height: 1.5;
+        }
+        .ebook-form label span a { color: #C9A961; text-decoration: underline; }
+        .ebook-form button {
+            padding: 12px 24px;
+            background: #C9A961; color: #1a1a2e;
+            border: none; border-radius: 6px;
+            font-size: 0.8rem; font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; transition: all 0.3s;
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        }
+        .ebook-form button:hover { background: #d4af37; transform: translateY(-1px); }
+
+        .ebook-success {
+            display: none; max-width: 400px;
+            text-align: center; padding: 2rem 0;
+        }
+        .ebook-success .check { font-size: 2.5rem; color: #C9A961; margin-bottom: 1rem; }
+        .ebook-success p { color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-bottom: 1rem; }
+        .ebook-success a {
+            color: #C9A961; font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 1px;
+            text-decoration: none; font-weight: 600;
+        }
+        .ebook-success a:hover { text-decoration: underline; }
+
+        .ebook-msg {
+            display: none; margin-top: 0.5rem;
+            padding: 8px 12px; border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .ebook-section { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
+            .ebook-form { margin: 0 auto; }
+            .ebook-success { margin: 0 auto; }
+        }
+
+        /* ── Podcast ── */
+        .podcast-embed {
+            border-radius: 12px; margin-top: 2rem;
+            overflow: hidden;
+        }
+
+        /* ── Article items ── */
+        .article-item {
+            padding: 2rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        .article-item:last-child { border-bottom: none; }
+        .article-item .source {
+            font-size: 0.6rem; text-transform: uppercase;
+            letter-spacing: 2px; color: #C9A961;
+            font-weight: 600; margin-bottom: 0.5rem;
+        }
+        .article-item h3 {
+            font-size: 1.1rem; font-weight: 500;
+            color: #1a1a2e; margin-bottom: 0.5rem;
+        }
+        .article-item p {
+            font-size: 0.85rem; color: #666;
+            line-height: 1.7; margin-bottom: 0.8rem;
+            max-width: 700px;
+        }
+        .article-item a {
+            font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 1.5px; font-weight: 600;
+            color: #C9A961; text-decoration: none;
+        }
+        .article-item a:hover { color: #1a1a2e; }
+
+        /* ── Exclusive articles ── */
+        .exclusive-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+        .exclusive-item .tag {
+            font-size: 0.55rem; text-transform: uppercase;
+            letter-spacing: 2px; color: #C9A961;
+            font-weight: 700; margin-bottom: 0.8rem;
+        }
+        .exclusive-item h3 {
+            font-size: 1.05rem; font-weight: 500;
+            color: #1a1a2e; margin-bottom: 0.8rem;
+            line-height: 1.4;
+        }
+        .exclusive-item blockquote {
+            font-size: 0.85rem; font-style: italic;
+            color: #666; line-height: 1.7;
+            border-left: 2px solid #C9A961;
+            padding-left: 1rem; margin: 0 0 1rem 0;
+        }
+        .exclusive-item .meta {
+            font-size: 0.7rem; color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .exclusive-grid { grid-template-columns: 1fr; gap: 2rem; }
+        }
+
+        /* ── Newsletter ── */
+        .newsletter-box { text-align: center; max-width: 550px; margin: 0 auto; }
+        .newsletter-box h2 {
+            font-size: 1.5rem; font-weight: 300;
+            color: #fff; margin-bottom: 0.5rem;
+        }
+        .newsletter-box h2 strong { font-weight: 600; }
+        .newsletter-box .sub-desc {
+            font-size: 0.85rem; color: rgba(255,255,255,0.5);
+            margin-bottom: 2rem; line-height: 1.7;
+        }
+        .newsletter-form {
+            display: flex; gap: 0.5rem;
+            justify-content: center; flex-wrap: wrap;
+        }
+        .newsletter-form input {
+            padding: 12px 16px;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 6px; font-size: 0.85rem;
+            background: rgba(255,255,255,0.06);
+            color: #fff; outline: none;
+            font-family: 'Poppins', sans-serif;
+            min-width: 160px; transition: border-color 0.3s;
+        }
+        .newsletter-form input:focus { border-color: #C9A961; }
+        .newsletter-form input::placeholder { color: rgba(255,255,255,0.3); }
+        .newsletter-form button {
+            padding: 12px 24px;
+            background: #C9A961; color: #1a1a2e;
+            border: none; border-radius: 6px;
+            font-size: 0.75rem; font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .newsletter-form button:hover { background: #d4af37; }
+        .newsletter-note {
+            font-size: 0.65rem; color: rgba(255,255,255,0.3);
+            margin-top: 1rem;
+        }
+        .newsletter-msg {
+            display: none; margin-top: 1rem;
+            padding: 8px 12px; border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        /* LinkedIn newsletter link */
+        .linkedin-cta {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            margin-top: 1.5rem;
+            font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 1.5px; font-weight: 600;
+            color: rgba(255,255,255,0.4); text-decoration: none;
+            transition: color 0.3s;
+        }
+        .linkedin-cta:hover { color: #C9A961; }
+
+        /* ── Multimedia ── */
+        .media-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+        .media-item h3 {
+            font-size: 1.1rem; font-weight: 500;
+            color: #1a1a2e; margin-bottom: 0.5rem;
+        }
+        .media-item p {
+            font-size: 0.85rem; color: #666;
+            line-height: 1.7; margin-bottom: 1rem;
+        }
+        .media-item a {
+            font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 1.5px; font-weight: 600;
+            color: #C9A961; text-decoration: none;
+        }
+        .media-item a:hover { color: #1a1a2e; }
+
+        @media (max-width: 768px) {
+            .media-grid { grid-template-columns: 1fr; gap: 2rem; }
+        }
+
+        /* ── Footer ── */
+        .footer {
+            background: #1a1a2e; padding: 60px 2rem 30px;
+        }
+        .footer-inner {
+            max-width: 1100px; margin: 0 auto;
+            display: flex; justify-content: space-between;
+            flex-wrap: wrap; gap: 2rem;
+        }
+        .footer-col h4 {
+            font-size: 0.65rem; text-transform: uppercase;
+            letter-spacing: 2px; color: #C9A961;
+            font-weight: 600; margin-bottom: 1rem;
+        }
+        .footer-col a {
+            display: block; font-size: 0.8rem;
+            color: rgba(255,255,255,0.5); text-decoration: none;
+            margin-bottom: 0.5rem; transition: color 0.3s;
+        }
+        .footer-col a:hover { color: #C9A961; }
+        .footer-col p {
+            font-size: 0.8rem; color: rgba(255,255,255,0.5);
+            line-height: 1.7;
+        }
+        .footer-bottom {
+            max-width: 1100px; margin: 3rem auto 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            text-align: center;
+        }
+        .footer-bottom p {
+            font-size: 0.65rem; color: rgba(255,255,255,0.3);
+            text-transform: uppercase; letter-spacing: 1.5px;
+        }
+
+        /* ── Fade-in animation ── */
+        .fade-in {
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+    </style>
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
     <script>
@@ -290,8 +432,7 @@
         gtag('config', 'AW-17015553005');
     </script>
     <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035"
-        crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035" crossorigin="anonymous"></script>
     <!-- Meta Pixel Code -->
     <script>
     !function(f,b,e,v,n,t,s)
@@ -308,425 +449,219 @@
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1460148528104687&ev=PageView&noscript=1"
     /></noscript>
-    <!-- End Meta Pixel Code -->
 </head>
 
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg sticky-top"
-        style="background: var(--s2i-white); border-bottom: 1px solid var(--s2i-border);">
-        <div class="container">
-            <a class="navbar-brand" href="../index.html">
-                <img src="../images/logo.png" alt="Share2Inspire" style="height: 40px;">
+
+    <!-- ── Navigation ── -->
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-logo">
+                <img src="../images/logo.png" alt="Share2Inspire">
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+                <span></span><span></span><span></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="../index.html"
-                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Início</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="sobre.html"
-                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Sobre</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="servicos.html"
-                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Serviços</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="cv-analysis.html"
-                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">CV Analyser</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="/career-path"
-                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Career Path</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="loja.html"
-                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Loja</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link active" href="conhecimento.html"
-                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500; color: var(--s2i-gold);">Conhecimento</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="contactos.html"
-                            style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">Contactos</a>
-                    </li>
-                </ul>
+            <div class="nav-links">
+                <a href="../index.html">Início</a>
+                <a href="sobre.html">Sobre</a>
+                <a href="servicos.html">Serviços</a>
+                <a href="cv-analysis.html">CV Analyser</a>
+                <a href="/career-path">Career Path</a>
+                <a href="loja.html">Loja</a>
+                <a href="conhecimento.html" class="active">Conhecimento</a>
+                <a href="contactos.html">Contactos</a>
+                <a href="../en/pages/home/" class="lang-switch">EN</a>
             </div>
         </div>
     </nav>
 
-    <!-- Hero -->
-    <header class="knowledge-hero">
-        <div class="container">
-            <span class="section-title">Insights & Estratégia</span>
-            <h1>Conhecimento</h1>
-            <p>Onde a tecnologia encontra a consciência humana. Uma curadoria de ideias, artigos e podcasts para quem
-                procura navegar na transformação do trabalho com propósito.</p>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <section class="content-section">
-        <div class="container">
-
-            <!-- E-book Download Section -->
-            <div id="ebook-download" class="ebook-download-section" style="margin-top: 60px; margin-bottom: 40px;">
-                <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-radius: var(--s2i-radius); overflow: hidden; position: relative;">
-                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 50%, rgba(201, 169, 97, 0.06) 0%, transparent 60%); pointer-events: none;"></div>
-                    <div style="padding: 50px 40px; position: relative; z-index: 2;">
-                        <div class="row align-items-center g-4">
-                            <div class="col-lg-5 text-center">
-                                <img src="../images/ebook-capa.png" alt="E-book Energia para Liderar" style="max-width: 300px; width: 100%; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
-                            </div>
-                            <div class="col-lg-7">
-                                <span style="display: inline-block; background: linear-gradient(135deg, #C9A961, #d4af37); color: #1a1a2e; font-size: 0.65rem; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 12px;"><i class="fas fa-gift" style="margin-right: 5px;"></i>E-book Gratuito</span>
-                                <h2 style="color: #fff; font-size: 1.6rem; font-weight: 700; margin-bottom: 8px; line-height: 1.3;">Energia para Liderar</h2>
-                                <p style="color: #C9A961; font-size: 0.95rem; font-style: italic; margin-bottom: 12px; font-weight: 500;">O Guia Pr&aacute;tico de Performance Mental e F&iacute;sica</p>
-                                <p style="color: rgba(255,255,255,0.75); font-size: 0.85rem; line-height: 1.7; margin-bottom: 6px;">Um guia completo sobre as quatro dimens&otilde;es da energia &mdash; f&iacute;sica, mental, emocional e espiritual &mdash; para quem lidera e quer manter a performance de forma sustent&aacute;vel.</p>
-                                <p style="color: rgba(255,255,255,0.5); font-size: 0.75rem; margin-bottom: 20px;"><i class="fas fa-pen-fancy" style="color: #C9A961; margin-right: 5px;"></i>Por <strong style="color: #fff;">Samuel Rolo</strong> &amp; <strong style="color: #fff;">Marlene Ruivo</strong></p>
-
-                                <!-- Download Form -->
-                                <div id="ebookFormContainer">
-                                    <form id="ebookDownloadForm" style="display: flex; flex-direction: column; gap: 12px; max-width: 420px;">
-                                        <input type="email" id="ebookEmail" placeholder="O seu e-mail profissional" required style="padding: 12px 16px; border: 1px solid rgba(201,169,97,0.3); border-radius: 8px; font-size: 0.85rem; background: rgba(255,255,255,0.08); color: #fff; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderColor='#C9A961'" onblur="this.style.borderColor='rgba(201,169,97,0.3)'">
-                                        <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
-                                            <input type="checkbox" id="ebookRgpd" required style="margin-top: 3px; accent-color: #C9A961; min-width: 16px;">
-                                            <span style="color: rgba(255,255,255,0.6); font-size: 0.72rem; line-height: 1.5;">Li e aceito a <a href="politica-privacidade.html" target="_blank" style="color: #C9A961; text-decoration: underline;">Pol&iacute;tica de Privacidade</a>. Autorizo o tratamento dos meus dados para receber este conte&uacute;do e comunica&ccedil;&otilde;es relacionadas, nos termos do RGPD.</span>
-                                        </label>
-                                        <button type="submit" id="ebookSubmitBtn" style="background: linear-gradient(135deg, #C9A961, #d4af37); color: #1a1a2e; border: none; padding: 12px 24px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(201,169,97,0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                                            <i class="fas fa-download"></i> Descarregar E-book
-                                        </button>
-                                    </form>
-                                    <div id="ebookMessage" style="display: none; margin-top: 12px; padding: 10px 16px; border-radius: 8px; font-size: 0.85rem;"></div>
-                                </div>
-
-                                <!-- Success State (hidden by default) -->
-                                <div id="ebookSuccess" style="display: none; max-width: 420px;">
-                                    <div style="background: rgba(40, 167, 69, 0.15); border: 1px solid rgba(40, 167, 69, 0.3); border-radius: 8px; padding: 20px; text-align: center;">
-                                        <i class="fas fa-check-circle" style="color: #28a745; font-size: 2rem; margin-bottom: 10px;"></i>
-                                        <p style="color: #fff; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px;">Registo efetuado com sucesso!</p>
-                                        <p style="color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-bottom: 15px;">O download ir&aacute; iniciar automaticamente.</p>
-                                        <a href="assets/ebooks/Energia_para_Liderar_Ebook.pdf" download id="ebookDirectLink" class="btn" style="background: linear-gradient(135deg, #C9A961, #d4af37); color: #1a1a2e; border: none; padding: 10px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; text-decoration: none;">
-                                            <i class="fas fa-download" style="margin-right: 6px;"></i>Descarregar novamente
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Podcast Section -->
-            <div class="podcast-section">
-                <span class="section-title">Podcast</span>
-                <h2 class="section-heading">Humanos e Máquinas</h2>
-                <p class="section-text">Exploramos a interseção entre a inteligência artificial e a essência humana.
-                    Como manter a empatia e o pensamento crítico num mundo cada vez mais automatizado.</p>
-
-                <div class="spotify-embed">
-                    <iframe style="border-radius:12px"
-                        src="https://open.spotify.com/embed/show/2P09p0F3HIR0jXRdCMPOSe?utm_source=generator&theme=0"
-                        width="100%" height="352" frameBorder="0" allowfullscreen=""
-                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                        loading="lazy"></iframe>
-                </div>
-            </div>
-
-            <!-- Articles Section -->
-            <div class="mt-5">
-                <span class="section-title">Artigos & Reflexões</span>
-                <h2 class="section-heading">Leituras Recomendadas</h2>
-                <p class="section-text mb-4">Uma seleção de artigos sobre gestão de pessoas, transformação
-                    organizacional e o futuro do trabalho.</p>
-
-                <div class="row g-4 mt-3">
-                    <div class="col-md-4">
-                        <div class="article-card">
-                            <p class="article-source">RH Magazine</p>
-                            <h4>Mudam os Tempos, Mudam as Avaliações</h4>
-                            <p>Uma reflexão sobre a evolução dos modelos de avaliação de desempenho e o que realmente
-                                importa na gestão de talento.</p>
-                            <a href="https://rhmagazine.pt/mudam-os-tempos-mudam-as-avaliacoes/" target="_blank"
-                                class="article-link">Ler artigo <i class="fas fa-arrow-right ms-1"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="article-card">
-                            <p class="article-source">Dezanove</p>
-                            <h4>Enquanto Houver Vento Há Sentimento</h4>
-                            <p>Review do livro que explora uma história real de autodescoberta, identidade e resiliência
-                                através de várias fases da vida.</p>
-                            <a href="https://dezanove.pt/enquanto-houver-vento-ha-sentimento-de-samuel-rolo-2442105/"
-                                target="_blank" class="article-link">Ler review <i
-                                    class="fas fa-arrow-right ms-1"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="article-card">
-                            <p class="article-source">Gestão de Pessoas</p>
-                            <h4>Frameworks de Liderança</h4>
-                            <p>Ferramentas práticas para líderes que procuram equilibrar resultados com o
-                                desenvolvimento das suas equipas.</p>
-                            <a href="#" class="article-link">Em breve <i class="fas fa-clock ms-1"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="article-card">
-                            <p class="article-source">Futuro do Trabalho</p>
-                            <h4>O Futuro do Trabalho</h4>
-                            <p>Tendências de mercado e estratégias para profissionais que querem liderar a transformação
-                                organizacional.</p>
-                            <a href="#" class="article-link">Em breve <i class="fas fa-clock ms-1"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="article-card">
-                            <p class="article-source">Estudos de Caso</p>
-                            <h4>Estudos de Caso Reais</h4>
-                            <p>Análises detalhadas de projetos de transformação organizacional em grandes empresas
-                                multinacionais.</p>
-                            <a href="#" class="article-link">Em breve <i class="fas fa-clock ms-1"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="article-card">
-                            <p class="article-source">Guias Práticos</p>
-                            <h4>Guias de Futuro do Trabalho</h4>
-                            <p>Recursos práticos para navegar as mudanças do mercado de trabalho com confiança e
-                                estratégia.</p>
-                            <a href="#" class="article-link">Em breve <i class="fas fa-clock ms-1"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Resources Section (People Innovation Hub) -->
-            <div class="resources-section">
-                <span class="section-title">Recursos RH</span>
-                <h2 class="section-heading">People Innovation Hub</h2>
-                <p class="section-text mb-4">Ferramentas práticas, tendências de mercado e estratégias de gestão de
-                    talento para profissionais que querem liderar a transformação organizacional.</p>
-
-                <div class="resource-item">
-                    <div class="resource-icon"><i class="fas fa-chart-line"></i></div>
-                    <div class="resource-info">
-                        <h5>Frameworks de Liderança</h5>
-                        <p>Modelos testados para desenvolver equipas de alto desempenho</p>
-                    </div>
-                </div>
-                <div class="resource-item">
-                    <div class="resource-icon"><i class="fas fa-rocket"></i></div>
-                    <div class="resource-info">
-                        <h5>Guias de Futuro do Trabalho</h5>
-                        <p>Tendências e estratégias para navegar a transformação digital</p>
-                    </div>
-                </div>
-                <div class="resource-item">
-                    <div class="resource-icon"><i class="fas fa-briefcase"></i></div>
-                    <div class="resource-info">
-                        <h5>Estudos de Caso Reais</h5>
-                        <p>Análises de projetos de transformação em multinacionais</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Newsletter Section -->
-            <div class="newsletter-section">
-                <h2>Newsletter</h2>
-                <p>Junta-te a mais de 5.000 profissionais e recebe insights que desafiam o status quo.</p>
-
-                <div class="newsletter-grid" style="display: flex; justify-content: center;">
-                    <div class="newsletter-card" style="max-width: 500px;">
-                        <h3>The Mindset Maverick</h3>
-                        <span class="frequency">Mensal</span>
-                        <p>Reflexões sobre a interseção entre tecnologia, estratégia e humanidade. Insights práticos
-                            para líderes que desafiam o status quo.</p>
-                        <a href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7384145793324085248"
-                            target="_blank" class="newsletter-btn">
-                            <i class="fab fa-linkedin"></i> Subscrever no LinkedIn
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Exclusive Articles Section (from People Hub) -->
-            <div class="mt-5">
-                <span class="section-title">Conteúdo Exclusivo</span>
-                <h2 class="section-heading">Artigos Exclusivos</h2>
-                <p class="section-text mb-4">Conteúdo aprofundado sobre empregabilidade e estratégia de carreira no mercado português.</p>
-
-                <div class="row g-4 mt-3">
-                    <!-- Article 1: Guia Essencial ATS -->
-                    <div class="col-lg-6">
-                        <div class="article-card" style="border-left: 4px solid var(--s2i-gold);">
-                            <span style="display: inline-block; background: #dc3545; color: white; font-size: 0.7rem; padding: 3px 10px; border-radius: 4px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 12px;">Exclusivo Subscritores</span>
-                            <h4>Guia Essencial: O ATS como Guardião Digital da sua Carreira</h4>
-                            <div style="background: var(--s2i-bg); padding: 1rem; border-radius: 8px; margin-bottom: 15px;">
-                                <p class="article-source" style="margin-bottom: 8px;">Principais Tópicos:</p>
-                                <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: var(--s2i-dark);">
-                                    <li style="margin-bottom: 6px;"><i class="fas fa-check-circle" style="color: #28a745; margin-right: 8px;"></i>A Realidade Invisível do Recrutamento Moderno</li>
-                                    <li style="margin-bottom: 6px;"><i class="fas fa-check-circle" style="color: #28a745; margin-right: 8px;"></i>Os 5 Critérios de Filtragem: Por que razão o Algoritmo Rejeita?</li>
-                                    <li style="margin-bottom: 6px;"><i class="fas fa-check-circle" style="color: #28a745; margin-right: 8px;"></i>Análise por Quadrantes: A Anatomia de um CV Compatível</li>
-                                    <li style="margin-bottom: 6px;"><i class="fas fa-check-circle" style="color: #28a745; margin-right: 8px;"></i>Do Diagnóstico à Ação: Estratégias de Otimização</li>
-                                    <li style="margin-bottom: 6px;"><i class="fas fa-check-circle" style="color: #28a745; margin-right: 8px;"></i>A Vantagem Competitiva da Literacia Algorítmica</li>
-                                </ul>
-                            </div>
-                            <blockquote style="border-left: 4px solid var(--s2i-gold); background: #fffbf0; padding: 1rem; border-radius: 8px; margin-bottom: 15px;">
-                                <p style="font-style: italic; color: #495057; font-weight: 500; font-size: 0.9rem; margin: 0;">"O currículo deixou de ser apenas uma narrativa de carreira. No ecossistema digital, ele é um objeto técnico — um conjunto de dados que precisa de ser estruturado para ser interpretado com sucesso por algoritmos de extração."</p>
-                            </blockquote>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <small style="color: var(--s2i-text-muted);"><i class="far fa-clock" style="margin-right: 4px;"></i>Leitura: 12 min</small>
-                                <span style="display: inline-block; background: var(--s2i-gold); color: var(--s2i-dark); font-size: 0.65rem; padding: 3px 10px; border-radius: 4px; text-transform: uppercase; font-weight: 600;">Literacia Algorítmica</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Article 2: 5 Lições Cruciais -->
-                    <div class="col-lg-6">
-                        <div class="article-card" style="border-left: 4px solid var(--s2i-gold);">
-                            <span style="display: inline-block; background: #dc3545; color: white; font-size: 0.7rem; padding: 3px 10px; border-radius: 4px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 12px;">Exclusivo Subscritores</span>
-                            <h4>O Teu Currículo Não é o Que Tu Pensas: 5 Lições Cruciais sobre a Empregabilidade Algorítmica em 2026</h4>
-                            <div style="background: var(--s2i-bg); padding: 1rem; border-radius: 8px; margin-bottom: 15px;">
-                                <p class="article-source" style="margin-bottom: 8px;">Principais Tópicos:</p>
-                                <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: var(--s2i-dark);">
-                                    <li style="margin-bottom: 6px;"><i class="fas fa-check-circle" style="color: #28a745; margin-right: 8px;"></i>O Filtro Invisível do Recrutamento</li>
-                                    <li style="margin-bottom: 6px;"><i class="fas fa-check-circle" style="color: #28a745; margin-right: 8px;"></i>O Teu Primeiro Recrutador Não Respira (O Muro dos ATS)</li>
-                                    <li style="margin-bottom: 6px;"><i class="fas fa-check-circle" style="color: #28a745; margin-right: 8px;"></i>Do Talento à Arquitetura Informacional</li>
-                                    <li style="margin-bottom: 6px;"><i class="fas fa-check-circle" style="color: #28a745; margin-right: 8px;"></i>O Teu Valor não é Subjetivo, é Estatístico</li>
-                                    <li style="margin-bottom: 6px;"><i class="fas fa-check-circle" style="color: #28a745; margin-right: 8px;"></i>Acabar com a "Cegueira Salarial" em Portugal</li>
-                                </ul>
-                            </div>
-                            <blockquote style="border-left: 4px solid var(--s2i-gold); background: #fffbf0; padding: 1rem; border-radius: 8px; margin-bottom: 15px;">
-                                <p style="font-style: italic; color: #495057; font-weight: 500; font-size: 0.9rem; margin: 0;">"O currículo já não é lido primeiro por pessoas. É processado. A empregabilidade moderna exige que passes da 'perceção' para os dados acionáveis."</p>
-                            </blockquote>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <small style="color: var(--s2i-text-muted);"><i class="far fa-clock" style="margin-right: 4px;"></i>Leitura: 10 min</small>
-                                <span style="display: inline-block; background: var(--s2i-gold); color: var(--s2i-dark); font-size: 0.65rem; padding: 3px 10px; border-radius: 4px; text-transform: uppercase; font-weight: 600;">Empregabilidade 2026</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Newsletter Subscription Form -->
-                <div class="row mt-5">
-                    <div class="col-lg-8 mx-auto">
-                        <div style="background: linear-gradient(135deg, #BF9A33 0%, #d4af37 100%); border-radius: var(--s2i-radius); padding: 3rem; text-align: center; color: white;">
-                            <h3 style="font-weight: 700; margin-bottom: 1rem;">Receba Artigos Exclusivos Diretamente no Seu Email</h3>
-                            <p style="margin-bottom: 1.5rem; opacity: 0.9;">Subscreva a newsletter e tenha acesso a conteúdo aprofundado sobre empregabilidade, estratégia de carreira e análise de CV.</p>
-                            <form id="newsletterSubscriptionForm" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                                <input type="text" id="subscriberName" placeholder="O seu nome" required style="padding: 10px 15px; border: none; border-radius: 6px; font-size: 0.9rem; min-width: 180px;">
-                                <input type="email" id="subscriberEmail" placeholder="O seu email" required style="padding: 10px 15px; border: none; border-radius: 6px; font-size: 0.9rem; min-width: 180px;">
-                                <button type="submit" style="padding: 10px 25px; background: var(--s2i-dark); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;"><i class="fas fa-paper-plane" style="margin-right: 6px;"></i>Subscrever</button>
-                            </form>
-                            <div id="subscriptionMessage" style="display: none; margin-top: 15px;"></div>
-                            <small style="display: block; margin-top: 15px; opacity: 0.75;"><i class="fas fa-lock" style="margin-right: 4px;"></i>Os seus dados estão protegidos. Pode cancelar a subscrição a qualquer momento.</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Podcast & YouTube Cards -->
-            <div class="mt-5">
-                <span class="section-title">Multimédia</span>
-                <h2 class="section-heading">Podcast & Canal YouTube</h2>
-                <p class="section-text mb-4">Conteúdo em áudio e vídeo sobre o futuro do trabalho, inteligência artificial e desenvolvimento de carreira.</p>
-
-                <div class="row g-4 mt-3">
-                    <!-- Podcast Spotify -->
-                    <div class="col-lg-6">
-                        <div style="background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%); border-radius: var(--s2i-radius); padding: 2.5rem; color: white; height: 100%;">
-                            <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-                                <i class="fab fa-spotify fa-3x" style="margin-right: 15px;"></i>
-                                <div>
-                                    <h3 style="font-weight: 700; margin-bottom: 4px; font-size: 1.3rem;">Podcast Humanos e Máquinas</h3>
-                                    <p style="margin: 0; opacity: 0.8; font-size: 0.9rem;">Disponível no Spotify</p>
-                                </div>
-                            </div>
-                            <p style="font-size: 1rem; margin-bottom: 1.5rem;">Conversas sobre o futuro do trabalho, inteligência artificial e a transformação digital dos Recursos Humanos.</p>
-                            <a href="https://open.spotify.com/show/2P09p0F3HIR0jXRdCMPOSe?si=Xd5ov1D6RyaKAThGOJS4HA" target="_blank" style="display: inline-block; background: white; color: #1DB954; padding: 12px 25px; border-radius: 6px; font-weight: 700; text-decoration: none;"><i class="fab fa-spotify" style="margin-right: 8px;"></i>Ouvir no Spotify</a>
-                        </div>
-                    </div>
-
-                    <!-- Canal YouTube -->
-                    <div class="col-lg-6">
-                        <div style="background: linear-gradient(135deg, #FF0000 0%, #cc0000 100%); border-radius: var(--s2i-radius); padding: 2.5rem; color: white; height: 100%;">
-                            <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-                                <i class="fab fa-youtube fa-3x" style="margin-right: 15px;"></i>
-                                <div>
-                                    <h3 style="font-weight: 700; margin-bottom: 4px; font-size: 1.3rem;">Canal Share2Inspire</h3>
-                                    <p style="margin: 0; opacity: 0.8; font-size: 0.9rem;">Vídeos e Webinars</p>
-                                </div>
-                            </div>
-                            <p style="font-size: 1rem; margin-bottom: 1.5rem;">Conteúdo em vídeo sobre desenvolvimento de carreira, análise de CV, estratégias de recrutamento e muito mais.</p>
-                            <a href="https://www.youtube.com/@share2inspire/videos" target="_blank" style="display: inline-block; background: white; color: #FF0000; padding: 12px 25px; border-radius: 6px; font-weight: 700; text-decoration: none;"><i class="fab fa-youtube" style="margin-right: 8px;"></i>Ver Canal</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+    <!-- ── Hero ── -->
+    <section class="hero">
+        <div>
+            <h1>Onde o estratégico<br>encontra o <strong>humano</strong></h1>
+            <p>Uma curadoria de ideias, artigos e podcasts para quem procura navegar na transformação do trabalho com propósito.</p>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer style="background: var(--s2i-dark); color: var(--s2i-white); padding: 60px 0 30px;">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <img src="../images/logo.png" alt="Share2Inspire"
-                        style="height: 40px; margin-bottom: 20px; filter: brightness(0) invert(1);">
-                    <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.7;">A transformar mindsets
-                        e carreiras através da fusão entre estratégia corporativa e empatia humana.</p>
+    <!-- ── E-book Download ── -->
+    <div class="section-dark" id="ebook-download">
+        <div class="section-inner">
+            <div class="ebook-section fade-in">
+                <div class="ebook-cover">
+                    <img src="../images/ebook-capa.png" alt="E-book Energia para Liderar">
                 </div>
-                <div class="col-lg-2 col-md-4">
-                    <h5
-                        style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; color: var(--s2i-gold);">
-                        Navegação</h5>
-                    <div class="d-flex flex-column gap-2">
-                        <a href="../index.html" style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Início</a>
-                        <a href="sobre.html" style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Sobre</a>
-                        <a href="servicos.html" style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Serviços</a>
-                        <a href="conhecimento.html"
-                            style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Conhecimento</a>
+                <div class="ebook-info">
+                    <span class="badge-free">E-book gratuito</span>
+                    <h2>Energia para <strong>Liderar</strong></h2>
+                    <p class="subtitle">O Guia Prático de Performance Mental e Física</p>
+                    <p class="desc">Um guia sobre as quatro dimensões da energia — física, mental, emocional e espiritual — para quem lidera e quer manter a performance de forma sustentável.</p>
+                    <p class="authors">Por <strong>Samuel Rolo</strong> &amp; <strong>Marlene Ruivo</strong></p>
+
+                    <div id="ebookFormContainer">
+                        <form id="ebookDownloadForm" class="ebook-form">
+                            <input type="email" id="ebookEmail" placeholder="O seu e-mail" required>
+                            <label>
+                                <input type="checkbox" id="ebookRgpd" required>
+                                <span>Li e aceito a <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a>. Autorizo o tratamento dos meus dados nos termos do RGPD.</span>
+                            </label>
+                            <button type="submit" id="ebookSubmitBtn">
+                                Descarregar e-book
+                            </button>
+                        </form>
+                        <div id="ebookMessage" class="ebook-msg"></div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-4">
-                    <h5
-                        style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; color: var(--s2i-gold);">
-                        Legal</h5>
-                    <div class="d-flex flex-column gap-2">
-                        <a href="politica-privacidade.html"
-                            style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Privacidade</a>
-                        <a href="politica-cookies.html"
-                            style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Cookies</a>
-                        <a href="informacao-legal.html"
-                            style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">Informação Legal</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4">
-                    <h5
-                        style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; color: var(--s2i-gold);">
-                        Contacto</h5>
-                    <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-bottom: 15px;">
-                        <i class="fas fa-envelope" style="color: var(--s2i-gold); margin-right: 8px;"></i>
-                        samuel.rolo@share2inspire.pt
-                    </p>
-                    <div class="d-flex gap-3">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank"
-                            style="color: var(--s2i-gold);"><i class="fab fa-linkedin fa-lg"></i></a>
-                        <a href="https://www.instagram.com/share2inspire_/" target="_blank"
-                            style="color: var(--s2i-gold);"><i class="fab fa-instagram fa-lg"></i></a>
+
+                    <div id="ebookSuccess" class="ebook-success">
+                        <div class="check">&#10003;</div>
+                        <p>Registo efetuado. O download irá iniciar automaticamente.</p>
+                        <a href="assets/ebooks/Energia_para_Liderar_Ebook.pdf" download id="ebookDirectLink">Descarregar novamente &rarr;</a>
                     </div>
                 </div>
             </div>
-            <div
-                style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 40px; padding-top: 25px; text-align: center;">
-                <p
-                    style="color: rgba(255,255,255,0.5); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin: 0;">
-                    &copy; 2026 Share2Inspire | Samuel Rolo. Todos os direitos reservados.</p>
+        </div>
+    </div>
+
+    <!-- ── Podcast ── -->
+    <div class="section fade-in">
+        <span class="section-label">Podcast</span>
+        <h2 class="section-title">Humanos e <strong>Máquinas</strong></h2>
+        <p class="section-desc">A interseção entre a inteligência artificial e a essência humana. Como manter a empatia e o pensamento crítico num mundo cada vez mais automatizado.</p>
+
+        <div class="podcast-embed">
+            <iframe style="border-radius:12px"
+                src="https://open.spotify.com/embed/show/2P09p0F3HIR0jXRdCMPOSe?utm_source=generator&theme=0"
+                width="100%" height="352" frameBorder="0" allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"></iframe>
+        </div>
+    </div>
+
+    <!-- ── Artigos ── -->
+    <div class="section-light">
+        <div class="section-inner fade-in">
+            <span class="section-label">Artigos</span>
+            <h2 class="section-title">Leituras <strong>recomendadas</strong></h2>
+            <div class="divider"></div>
+
+            <div class="article-item">
+                <p class="source">RH Magazine</p>
+                <h3>Mudam os Tempos, Mudam as Avaliações</h3>
+                <p>Uma reflexão sobre a evolução dos modelos de avaliação de desempenho e o que realmente importa na gestão de talento.</p>
+                <a href="https://rhmagazine.pt/mudam-os-tempos-mudam-as-avaliacoes/" target="_blank">Ler artigo &rarr;</a>
             </div>
+
+            <div class="article-item">
+                <p class="source">Dezanove</p>
+                <h3>Enquanto Houver Vento Há Sentimento</h3>
+                <p>Review do livro que explora uma história real de autodescoberta, identidade e resiliência através de várias fases da vida.</p>
+                <a href="https://dezanove.pt/enquanto-houver-vento-ha-sentimento-de-samuel-rolo-2442105/" target="_blank">Ler review &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Conteúdo Exclusivo ── -->
+    <div class="section fade-in">
+        <span class="section-label">Exclusivo</span>
+        <h2 class="section-title">Artigos para <strong>subscritores</strong></h2>
+        <div class="divider"></div>
+
+        <div class="exclusive-grid" style="margin-top: 2rem;">
+            <div class="exclusive-item">
+                <p class="tag">Literacia Algorítmica</p>
+                <h3>Guia Essencial: O ATS como Guardião Digital da Carreira</h3>
+                <blockquote>"O currículo deixou de ser apenas uma narrativa de carreira. No ecossistema digital, ele é um objeto técnico — um conjunto de dados que precisa de ser estruturado para ser interpretado com sucesso por algoritmos de extração."</blockquote>
+                <p class="meta">Leitura: 12 min</p>
+            </div>
+
+            <div class="exclusive-item">
+                <p class="tag">Empregabilidade 2026</p>
+                <h3>O Currículo Não é o Que Parece: 5 Lições sobre Empregabilidade Algorítmica</h3>
+                <blockquote>"O currículo já não é lido primeiro por pessoas. É processado. A empregabilidade moderna exige a passagem da perceção para os dados acionáveis."</blockquote>
+                <p class="meta">Leitura: 10 min</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Newsletter ── -->
+    <div class="section-dark">
+        <div class="section-inner fade-in">
+            <div class="newsletter-box">
+                <h2>The Mindset <strong>Maverick</strong></h2>
+                <p class="sub-desc">Reflexões sobre a interseção entre tecnologia, estratégia e humanidade. Insights práticos para quem desafia o status quo.</p>
+
+                <form id="newsletterSubscriptionForm" class="newsletter-form">
+                    <input type="text" id="subscriberName" placeholder="Nome" required>
+                    <input type="email" id="subscriberEmail" placeholder="E-mail" required>
+                    <button type="submit">Subscrever</button>
+                </form>
+                <div id="subscriptionMessage" class="newsletter-msg"></div>
+                <p class="newsletter-note">Os dados estão protegidos. Cancelamento a qualquer momento.</p>
+
+                <a href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7384145793324085248" target="_blank" class="linkedin-cta">
+                    <i class="fab fa-linkedin"></i> Também no LinkedIn &rarr;
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Multimédia ── -->
+    <div class="section fade-in">
+        <span class="section-label">Multimédia</span>
+        <h2 class="section-title">Podcast &amp; <strong>Vídeo</strong></h2>
+        <div class="divider"></div>
+
+        <div class="media-grid" style="margin-top: 2rem;">
+            <div class="media-item">
+                <h3>Podcast Humanos e Máquinas</h3>
+                <p>Conversas sobre o futuro do trabalho, inteligência artificial e a transformação digital dos Recursos Humanos.</p>
+                <a href="https://open.spotify.com/show/2P09p0F3HIR0jXRdCMPOSe" target="_blank">Ouvir no Spotify &rarr;</a>
+            </div>
+            <div class="media-item">
+                <h3>Canal Share2Inspire</h3>
+                <p>Conteúdo em vídeo sobre desenvolvimento de carreira, análise de CV, estratégias de recrutamento e muito mais.</p>
+                <a href="https://www.youtube.com/@share2inspire/videos" target="_blank">Ver canal &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <a href="../index.html"><img src="../images/logo.png" alt="Share2Inspire" style="height: 32px; filter: brightness(0) invert(1); margin-bottom: 1rem;"></a>
+                <p>A transformar mindsets e carreiras<br>através da fusão entre estratégia e empatia.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navegação</h4>
+                <a href="../index.html">Início</a>
+                <a href="sobre.html">Sobre</a>
+                <a href="servicos.html">Serviços</a>
+                <a href="conhecimento.html">Conhecimento</a>
+            </div>
+            <div class="footer-col">
+                <h4>Informação Legal</h4>
+                <a href="politica-privacidade.html">Privacidade</a>
+                <a href="politica-cookies.html">Cookies</a>
+                <a href="informacao-legal.html">Informação Legal</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <p>samuel.rolo@share2inspire.pt</p>
+                <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" style="color: #C9A961;"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://www.instagram.com/share2inspire_/" target="_blank" style="color: #C9A961;"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Share2Inspire | Samuel Rolo. Todos os direitos reservados.</p>
         </div>
     </footer>
 
-    <!-- Newsletter Form Script -->
+    <!-- ── Scripts ── -->
+
+    <!-- Newsletter Form -->
     <script>
     document.getElementById('newsletterSubscriptionForm').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -735,7 +670,7 @@
         const messageDiv = document.getElementById('subscriptionMessage');
         const submitBtn = e.target.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:6px;"></i>A processar...';
+        submitBtn.textContent = 'A processar...';
         try {
             const response = await fetch('https://share2inspire-beckend.lm.r.appspot.com/api/newsletter/subscribe', {
                 method: 'POST',
@@ -744,75 +679,60 @@
             });
             const data = await response.json();
             if (response.ok) {
-                messageDiv.style.cssText = 'display:block; background:rgba(255,255,255,0.2); color:white; padding:10px; border-radius:6px; margin-top:15px;';
-                messageDiv.innerHTML = '<i class="fas fa-check-circle" style="margin-right:6px;"></i>' + data.message;
+                messageDiv.style.cssText = 'display:block; background:rgba(201,169,97,0.15); color:#C9A961; padding:10px 16px; border-radius:6px; margin-top:1rem; font-size:0.8rem;';
+                messageDiv.textContent = data.message || 'Subscrição efetuada com sucesso.';
                 e.target.reset();
                 setTimeout(() => { messageDiv.style.display = 'none'; }, 5000);
             } else {
                 throw new Error(data.error || 'Erro ao processar subscrição');
             }
         } catch (error) {
-            messageDiv.style.cssText = 'display:block; background:rgba(220,53,69,0.8); color:white; padding:10px; border-radius:6px; margin-top:15px;';
-            messageDiv.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right:6px;"></i>' + error.message;
+            messageDiv.style.cssText = 'display:block; background:rgba(220,53,69,0.15); color:#ff6b6b; padding:10px 16px; border-radius:6px; margin-top:1rem; font-size:0.8rem;';
+            messageDiv.textContent = error.message;
         } finally {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane" style="margin-right:6px;"></i>Subscrever';
+            submitBtn.textContent = 'Subscrever';
         }
     });
     </script>
 
-    <!-- E-book Download Form Script -->
+    <!-- E-book Download Form -->
     <script>
     document.getElementById('ebookDownloadForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        
         const email = document.getElementById('ebookEmail').value.trim().toLowerCase();
         const rgpdCheck = document.getElementById('ebookRgpd').checked;
         const messageDiv = document.getElementById('ebookMessage');
         const submitBtn = document.getElementById('ebookSubmitBtn');
         const formContainer = document.getElementById('ebookFormContainer');
         const successDiv = document.getElementById('ebookSuccess');
-        
-        // Validate RGPD
+
         if (!rgpdCheck) {
-            messageDiv.style.cssText = 'display:block; background:rgba(220,53,69,0.2); border:1px solid rgba(220,53,69,0.4); color:#ff6b6b; padding:10px 16px; border-radius:8px; font-size:0.85rem; margin-top:12px;';
-            messageDiv.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right:6px;"></i>Deve aceitar a Pol\u00edtica de Privacidade para continuar.';
+            messageDiv.style.cssText = 'display:block; background:rgba(220,53,69,0.15); color:#ff6b6b; padding:8px 12px; border-radius:6px; font-size:0.8rem; margin-top:0.5rem;';
+            messageDiv.textContent = 'Deve aceitar a Política de Privacidade para continuar.';
             return;
         }
-        
-        // Validate email
         if (!email || !email.includes('@') || !email.split('@')[1].includes('.')) {
-            messageDiv.style.cssText = 'display:block; background:rgba(220,53,69,0.2); border:1px solid rgba(220,53,69,0.4); color:#ff6b6b; padding:10px 16px; border-radius:8px; font-size:0.85rem; margin-top:12px;';
-            messageDiv.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right:6px;"></i>Por favor, introduza um e-mail v\u00e1lido.';
+            messageDiv.style.cssText = 'display:block; background:rgba(220,53,69,0.15); color:#ff6b6b; padding:8px 12px; border-radius:6px; font-size:0.8rem; margin-top:0.5rem;';
+            messageDiv.textContent = 'Por favor, introduza um e-mail válido.';
             return;
         }
-        
-        // Disable button and show loading
+
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A processar...';
+        submitBtn.textContent = 'A processar...';
         messageDiv.style.display = 'none';
-        
+
         try {
-            // Register email in the database via the existing newsletter API
             const response = await fetch('https://share2inspire-beckend.lm.r.appspot.com/api/newsletter/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: '',
-                    email: email,
-                    source: 'ebook_energia_liderar'
-                })
+                body: JSON.stringify({ name: '', email: email, source: 'ebook_energia_liderar' })
             });
-            
             const data = await response.json();
-            
-            // Even if already subscribed (409), allow download
+
             if (response.ok || response.status === 409) {
-                // Show success and trigger download
                 formContainer.style.display = 'none';
                 successDiv.style.display = 'block';
-                
-                // Auto-trigger download
                 setTimeout(function() {
                     var link = document.createElement('a');
                     link.href = 'assets/ebooks/Energia_para_Liderar_Ebook.pdf';
@@ -821,30 +741,24 @@
                     link.click();
                     document.body.removeChild(link);
                 }, 500);
-                
-                // Track event
                 if (typeof fbq !== 'undefined') {
                     fbq('track', 'Lead', { content_name: 'ebook_energia_liderar' });
                 }
                 if (typeof gtag !== 'undefined') {
-                    gtag('event', 'generate_lead', {
-                        event_category: 'ebook',
-                        event_label: 'energia_para_liderar'
-                    });
+                    gtag('event', 'generate_lead', { event_category: 'ebook', event_label: 'energia_para_liderar' });
                 }
             } else {
                 throw new Error(data.error || 'Erro ao processar o registo.');
             }
         } catch (error) {
-            messageDiv.style.cssText = 'display:block; background:rgba(220,53,69,0.2); border:1px solid rgba(220,53,69,0.4); color:#ff6b6b; padding:10px 16px; border-radius:8px; font-size:0.85rem; margin-top:12px;';
-            messageDiv.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right:6px;"></i>' + error.message;
+            messageDiv.style.cssText = 'display:block; background:rgba(220,53,69,0.15); color:#ff6b6b; padding:8px 12px; border-radius:6px; font-size:0.8rem; margin-top:0.5rem;';
+            messageDiv.textContent = error.message;
         } finally {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-download"></i> Descarregar E-book';
+            submitBtn.textContent = 'Descarregar e-book';
         }
     });
-    
-    // Smooth scroll to ebook section if hash is present
+
     if (window.location.hash === '#ebook-download') {
         setTimeout(function() {
             document.getElementById('ebook-download').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -852,8 +766,18 @@
     }
     </script>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Fade-in observer -->
+    <script>
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    </script>
+
     <script src="../js/coach-agent.js"></script>
     <script src="../js/hub-widget.js"></script>
 </body>
