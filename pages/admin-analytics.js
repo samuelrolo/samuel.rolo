@@ -1238,6 +1238,7 @@ function switchTab(tab, btn) {
     if (tab === 'history') renderHistory();
     if (tab === 'contacts') loadContacts();
     if (tab === 'health') { loadHealthLogs().then(renderHealth); }
+    if (tab === 'ebook') { loadEbookDownloads(); }
 }
 
 function showToast(msg, type = 'info') {
@@ -1301,6 +1302,76 @@ function initRealtime() {
         ws.onerror = () => ws.close();
     }
     connect();
+}
+
+// ===================== E-BOOK DOWNLOADS =====================
+let allEbookDownloads = [];
+
+async function loadEbookDownloads() {
+    try {
+        const data = await supaFetch('newsletter_subscribers', 'select=*&or=(source.eq.ebook_energia_liderar,source.eq.conhecimento)&order=subscribed_at.desc');
+        allEbookDownloads = data || [];
+        renderEbookDownloads();
+    } catch(e) {
+        console.error('Erro ao carregar e-book downloads:', e);
+        document.getElementById('ebookTable').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--red);">Erro ao carregar dados</td></tr>';
+    }
+}
+
+function renderEbookDownloads() {
+    const sourceFilter = document.getElementById('filterEbookSource').value;
+    const periodFilter = document.getElementById('filterEbookPeriod').value;
+    const search = document.getElementById('filterEbookSearch').value.toLowerCase().trim();
+    const now = new Date();
+    const h24 = new Date(now - 24*60*60*1000);
+    const d7 = new Date(now - 7*24*60*60*1000);
+    const d30 = new Date(now - 30*24*60*60*1000);
+    const d90 = new Date(now - 90*24*60*60*1000);
+
+    // KPIs
+    const total = allEbookDownloads.length;
+    const last24h = allEbookDownloads.filter(d => new Date(d.subscribed_at) >= h24).length;
+    const last7d = allEbookDownloads.filter(d => new Date(d.subscribed_at) >= d7).length;
+    const last30d = allEbookDownloads.filter(d => new Date(d.subscribed_at) >= d30).length;
+    document.getElementById('kpiEbookTotal').textContent = total;
+    document.getElementById('kpiEbook24h').textContent = last24h;
+    document.getElementById('kpiEbook7d').textContent = last7d;
+    document.getElementById('kpiEbook30d').textContent = last30d;
+
+    // Filter
+    let filtered = [...allEbookDownloads];
+    if (sourceFilter !== 'all') filtered = filtered.filter(d => d.source === sourceFilter);
+    if (periodFilter === '7d') filtered = filtered.filter(d => new Date(d.subscribed_at) >= d7);
+    else if (periodFilter === '30d') filtered = filtered.filter(d => new Date(d.subscribed_at) >= d30);
+    else if (periodFilter === '90d') filtered = filtered.filter(d => new Date(d.subscribed_at) >= d90);
+    if (search) filtered = filtered.filter(d => (d.email || '').toLowerCase().includes(search) || (d.name || '').toLowerCase().includes(search));
+
+    document.getElementById('ebookCount').textContent = filtered.length + ' registo' + (filtered.length !== 1 ? 's' : '');
+
+    const tbody = document.getElementById('ebookTable');
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Sem registos</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(d => {
+        const date = new Date(d.subscribed_at);
+        const dateStr = date.toLocaleDateString('pt-PT') + ' ' + date.toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
+        const sourceLabel = d.source === 'ebook_energia_liderar' ? '<span style="color:var(--gold);font-weight:500;">E-book</span>' : '<span style="color:var(--blue);">Conhecimento</span>';
+        const statusBadge = d.status === 'active' ? '<span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;background:rgba(16,185,129,0.1);color:var(--green);">Ativo</span>' : '<span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;background:rgba(239,68,68,0.1);color:var(--red);">' + (d.status || 'N/A') + '</span>';
+        return `<tr><td style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${dateStr}</td><td style="font-weight:500;">${d.email || '-'}</td><td>${d.name || '-'}</td><td>${sourceLabel}</td><td>${statusBadge}</td></tr>`;
+    }).join('');
+}
+
+function exportEbookCSV() {
+    if (!allEbookDownloads.length) return showToast('Sem dados para exportar', 'info');
+    const header = 'Data,Email,Nome,Source,Estado';
+    const rows = allEbookDownloads.map(d => {
+        const date = new Date(d.subscribed_at).toISOString();
+        return `${date},${d.email || ''},${d.name || ''},${d.source || ''},${d.status || ''}`;
+    });
+    downloadCSV(header + '\n' + rows.join('\n'), 'ebook_downloads_' + new Date().toISOString().slice(0,10) + '.csv');
+    showToast('CSV exportado com sucesso', 'success');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
