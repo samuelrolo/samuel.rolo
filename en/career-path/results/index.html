@@ -2,15 +2,27 @@
 <html lang="en">
 
   <head>
-<!-- Google tag (gtag.js) - GA4 -->
+<!-- Google Ads Conversion - only fires on payment success -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-8GQ1KM9FQS');
+  // Only fire conversion event when payment=success is in URL
+  (function(){
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      gtag('event', 'purchase', {
+        transaction_id: params.get('session_id') || '',
+        value: 10.00,
+        currency: 'USD',
+        items: [{ item_name: 'Career Path - Career Plan', price: 10.00 }]
+      });
+    }
+  })();
 </script>
-    <meta charset="UTF-8" />
+<meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
