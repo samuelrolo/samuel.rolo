@@ -247,6 +247,7 @@
         <button class="tab-btn" onclick="switchTab('health',this)"><i class="fas fa-heartbeat"></i> Saúde</button>
         <button class="tab-btn" onclick="switchTab('ebook',this)"><i class="fas fa-book"></i> E-book</button>
         <button class="tab-btn" onclick="switchTab('jobsearch',this)"><i class="fas fa-briefcase"></i> Cargos</button>
+        <button class="tab-btn" onclick="switchTab('careerenergy',this)"><i class="fas fa-bolt"></i> Career Energy</button>
     </nav>
 
     <main class="main">
@@ -787,6 +788,114 @@
                     <table>
                         <thead><tr><th>Data</th><th>Nome</th><th>Cargo Detetado</th><th>Senioridade</th><th>Skills</th><th>Vaga</th><th>ATS Score</th><th>Keyword Gaps</th></tr></thead>
                         <tbody id="jobSearchTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== CAREER ENERGY ==================== -->
+        <div id="tab-careerenergy" style="display:none;">
+            <div class="section-header">
+                <h2>Career Energy Score</h2>
+                <p>Diagnósticos realizados e comparação com o World Happiness Report</p>
+            </div>
+
+            <div class="kpi-row" style="grid-template-columns: repeat(6, 1fr); margin-bottom:16px;">
+                <div class="kpi-card">
+                    <div class="kpi-label">Total Diagnósticos</div>
+                    <div class="kpi-value gold" style="font-size:22px;" id="kpiCETotal">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Score Médio</div>
+                    <div class="kpi-value" style="font-size:22px;color:var(--green);" id="kpiCEAvgScore">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Últimos 7 dias</div>
+                    <div class="kpi-value" style="font-size:22px;color:var(--blue);" id="kpiCE7d">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Países</div>
+                    <div class="kpi-value" style="font-size:22px;color:var(--purple);" id="kpiCECountries">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Partilhas LinkedIn</div>
+                    <div class="kpi-value" style="font-size:22px;color:var(--orange);" id="kpiCEShares">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Acima Média País</div>
+                    <div class="kpi-value" style="font-size:22px;color:var(--green);" id="kpiCEAboveAvg">--</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                <div class="card" style="padding:20px;">
+                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Distribuição por Nível</h3>
+                    <canvas id="chartCELevels" height="250"></canvas>
+                </div>
+                <div class="card" style="padding:20px;">
+                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Scores por Dimensão (Média)</h3>
+                    <canvas id="chartCEDimensions" height="250"></canvas>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                <div class="card" style="padding:20px;">
+                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Diagnósticos por Dia</h3>
+                    <canvas id="chartCEDaily" height="200"></canvas>
+                </div>
+                <div class="card" style="padding:20px;">
+                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Top Países</h3>
+                    <canvas id="chartCECountries" height="200"></canvas>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                <div class="card" style="padding:20px;">
+                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Score vs Happiness Index do País</h3>
+                    <canvas id="chartCEvsHappiness" height="250"></canvas>
+                </div>
+                <div class="card" style="padding:20px;">
+                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Idioma</h3>
+                    <canvas id="chartCELanguage" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Filters and Table -->
+            <div class="filter-bar">
+                <label>Nível</label>
+                <select class="form-select" id="filterCELevel" onchange="renderCETable()">
+                    <option value="all">Todos</option>
+                    <option value="Alta Performance">Alta Performance</option>
+                    <option value="Energia Forte">Energia Forte</option>
+                    <option value="Energia Estável">Energia Estável</option>
+                    <option value="A Construir Energia">A Construir Energia</option>
+                    <option value="A Calibrar">A Calibrar</option>
+                    <option value="Energia Crítica">Energia Crítica</option>
+                    <option value="Necessita Re-energizar">Necessita Re-energizar</option>
+                </select>
+                <label>Período</label>
+                <select class="form-select" id="filterCEPeriod" onchange="renderCETable()">
+                    <option value="all">Todos</option>
+                    <option value="7d">Últimos 7 dias</option>
+                    <option value="30d">Últimos 30 dias</option>
+                    <option value="90d">Últimos 90 dias</option>
+                </select>
+                <label>País</label>
+                <select class="form-select" id="filterCECountry" onchange="renderCETable()">
+                    <option value="all">Todos</option>
+                </select>
+                <input class="form-input" type="text" id="filterCESearch" placeholder="Pesquisar nome ou função..." oninput="renderCETable()" style="width:200px;">
+                <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+                    <span style="font-size:12px;color:var(--text-muted);" id="ceResultCount">--</span>
+                    <button class="btn btn-outline btn-sm" onclick="exportCECSV()"><i class="fas fa-download"></i> CSV</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Data</th><th>Nome</th><th>Função</th><th>País</th><th>Score</th><th>Nível</th><th>Percentil</th><th>Energia</th><th>Clareza</th><th>Posição</th><th>Propósito</th><th>Happiness</th><th>Diff</th></tr></thead>
+                        <tbody id="ceResultsTable"><tr><td colspan="13" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
                     </table>
                 </div>
             </div>

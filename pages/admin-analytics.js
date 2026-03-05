@@ -1240,6 +1240,7 @@ function switchTab(tab, btn) {
     if (tab === 'health') { loadHealthLogs().then(renderHealth); }
     if (tab === 'ebook') { loadEbookDownloads(); }
     if (tab === 'jobsearch') { loadJobSearchData(); }
+    if (tab === 'careerenergy') { loadCareerEnergyData(); }
 }
 
 function showToast(msg, type = 'info') {
@@ -1611,6 +1612,215 @@ function exportJobSearchCSV() {
         return `${date},"${d.candidate_name || ''}","${d.detected_role || ''}","${d.normalized_role || ''}","${d.sector || ''}","${roleKw}",${d.seniority || ''},${d.years_experience || ''},"${skills}",${d.language || ''},"${d.job_title || ''}",${d.ats_compatibility_score || ''},"${gaps}","${d.overall_fit || ''}"`;  
     });
     downloadCSV(header + '\n' + rows.join('\n'), 'job_search_tracking_' + new Date().toISOString().slice(0,10) + '.csv');
+    showToast('CSV exportado com sucesso', 'success');
+}
+
+// ===================== CAREER ENERGY =====================
+let allCEData = [];
+let ceChartLevels, ceChartDimensions, ceChartDaily, ceChartCountries, ceChartHappiness, ceChartLanguage;
+
+async function loadCareerEnergyData() {
+    try {
+        allCEData = await supaFetch('career_energy_results', 'select=*&order=created_at.desc');
+        renderCEDashboard();
+        populateCEFilters();
+        renderCETable();
+    } catch(e) {
+        console.error('CE load error:', e);
+        showToast('Erro ao carregar Career Energy', 'danger');
+    }
+}
+
+function renderCEDashboard() {
+    const data = allCEData;
+    const now = new Date();
+    const d7 = data.filter(d => (now - new Date(d.created_at)) < 7 * 86400000);
+    const countries = new Set(data.filter(d => d.country_name).map(d => d.country_name));
+    const shares = data.filter(d => d.shared_linkedin);
+    const aboveAvg = data.filter(d => d.country_diff !== null && d.country_diff > 0);
+    const avgScore = data.length ? Math.round(data.reduce((a, d) => a + d.total_score, 0) / data.length) : 0;
+
+    document.getElementById('kpiCETotal').textContent = data.length;
+    document.getElementById('kpiCEAvgScore').textContent = avgScore + '/100';
+    document.getElementById('kpiCE7d').textContent = d7.length;
+    document.getElementById('kpiCECountries').textContent = countries.size;
+    document.getElementById('kpiCEShares').textContent = shares.length;
+    document.getElementById('kpiCEAboveAvg').textContent = data.length ? Math.round(aboveAvg.length / data.filter(d => d.country_diff !== null).length * 100) + '%' : '--';
+
+    // Level distribution chart
+    const levelCounts = {};
+    data.forEach(d => { levelCounts[d.level_label] = (levelCounts[d.level_label] || 0) + 1; });
+    const levelOrder = ['Necessita Re-energizar','Energia Cr\u00edtica','A Calibrar','A Construir Energia','Energia Est\u00e1vel','Energia Forte','Alta Performance',
+        'Needs Re-energizing','Critical Energy','Calibrating','Building Energy','Steady Energy','Strong Energy','High Performance'];
+    const sortedLevels = Object.entries(levelCounts).sort((a,b) => {
+        const ia = levelOrder.indexOf(a[0]), ib = levelOrder.indexOf(b[0]);
+        return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    });
+    if (ceChartLevels) ceChartLevels.destroy();
+    ceChartLevels = new Chart(document.getElementById('chartCELevels'), {
+        type: 'bar',
+        data: {
+            labels: sortedLevels.map(l => l[0]),
+            datasets: [{ label: 'Diagn\u00f3sticos', data: sortedLevels.map(l => l[1]), backgroundColor: ['#EF4444','#F59E0B','#F59E0B','#3B82F6','#10B981','#10B981','#C9A961','#EF4444','#F59E0B','#F59E0B','#3B82F6','#10B981','#10B981','#C9A961'], borderRadius: 6 }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+    });
+
+    // Dimensions average chart
+    const avgEnergy = data.length ? Math.round(data.reduce((a,d) => a + (d.dim_energy||0), 0) / data.length) : 0;
+    const avgClarity = data.length ? Math.round(data.reduce((a,d) => a + (d.dim_clarity||0), 0) / data.length) : 0;
+    const avgPositioning = data.length ? Math.round(data.reduce((a,d) => a + (d.dim_positioning||0), 0) / data.length) : 0;
+    const avgPurpose = data.length ? Math.round(data.reduce((a,d) => a + (d.dim_purpose||0), 0) / data.length) : 0;
+    if (ceChartDimensions) ceChartDimensions.destroy();
+    ceChartDimensions = new Chart(document.getElementById('chartCEDimensions'), {
+        type: 'radar',
+        data: {
+            labels: ['Energia Profissional', 'Clareza Mental', 'Posicionamento', 'Prop\u00f3sito'],
+            datasets: [{ label: 'M\u00e9dia', data: [avgEnergy, avgClarity, avgPositioning, avgPurpose], backgroundColor: 'rgba(201,169,97,0.2)', borderColor: '#C9A961', pointBackgroundColor: '#C9A961' }]
+        },
+        options: { responsive: true, scales: { r: { beginAtZero: true, max: 100 } }, plugins: { legend: { display: false } } }
+    });
+
+    // Daily chart (last 30 days)
+    const dailyCounts = {};
+    for (let i = 29; i >= 0; i--) {
+        const d = new Date(now); d.setDate(d.getDate() - i);
+        dailyCounts[d.toISOString().slice(0,10)] = 0;
+    }
+    data.forEach(d => {
+        const day = new Date(d.created_at).toISOString().slice(0,10);
+        if (dailyCounts[day] !== undefined) dailyCounts[day]++;
+    });
+    if (ceChartDaily) ceChartDaily.destroy();
+    ceChartDaily = new Chart(document.getElementById('chartCEDaily'), {
+        type: 'line',
+        data: {
+            labels: Object.keys(dailyCounts).map(d => d.slice(5)),
+            datasets: [{ label: 'Diagn\u00f3sticos', data: Object.values(dailyCounts), borderColor: '#C9A961', backgroundColor: 'rgba(201,169,97,0.1)', fill: true, tension: 0.3 }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+    });
+
+    // Top countries chart
+    const countryCounts = {};
+    data.forEach(d => { if (d.country_name) countryCounts[d.country_name] = (countryCounts[d.country_name] || 0) + 1; });
+    const topCountries = Object.entries(countryCounts).sort((a,b) => b[1]-a[1]).slice(0, 10);
+    if (ceChartCountries) ceChartCountries.destroy();
+    ceChartCountries = new Chart(document.getElementById('chartCECountries'), {
+        type: 'bar',
+        data: {
+            labels: topCountries.map(c => c[0]),
+            datasets: [{ label: 'Diagn\u00f3sticos', data: topCountries.map(c => c[1]), backgroundColor: '#3B82F6', borderRadius: 6 }]
+        },
+        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
+    });
+
+    // Score vs Happiness scatter
+    const scatterData = data.filter(d => d.country_happiness_score).map(d => ({ x: d.country_happiness_score, y: d.total_score }));
+    if (ceChartHappiness) ceChartHappiness.destroy();
+    ceChartHappiness = new Chart(document.getElementById('chartCEvsHappiness'), {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Score vs Happiness',
+                data: scatterData,
+                backgroundColor: 'rgba(201,169,97,0.6)',
+                borderColor: '#C9A961',
+                pointRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { title: { display: true, text: 'Happiness Index (WHR 2025)' }, min: 0, max: 100 },
+                y: { title: { display: true, text: 'Career Energy Score' }, min: 0, max: 100 }
+            }
+        }
+    });
+
+    // Language chart
+    const langCounts = {};
+    data.forEach(d => { const l = (d.language || 'pt').toUpperCase(); langCounts[l] = (langCounts[l] || 0) + 1; });
+    if (ceChartLanguage) ceChartLanguage.destroy();
+    ceChartLanguage = new Chart(document.getElementById('chartCELanguage'), {
+        type: 'pie',
+        data: {
+            labels: Object.keys(langCounts),
+            datasets: [{ data: Object.values(langCounts), backgroundColor: ['#C9A961','#3B82F6','#10B981'] }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'right' } } }
+    });
+}
+
+function populateCEFilters() {
+    const countrySet = new Set(allCEData.filter(d => d.country_name).map(d => d.country_name));
+    const sel = document.getElementById('filterCECountry');
+    sel.innerHTML = '<option value="all">Todos</option>';
+    [...countrySet].sort().forEach(c => {
+        sel.innerHTML += `<option value="${c}">${c}</option>`;
+    });
+}
+
+function renderCETable() {
+    const levelFilter = document.getElementById('filterCELevel').value;
+    const periodFilter = document.getElementById('filterCEPeriod').value;
+    const countryFilter = document.getElementById('filterCECountry').value;
+    const searchFilter = (document.getElementById('filterCESearch').value || '').toLowerCase();
+    const now = new Date();
+
+    let filtered = allCEData.filter(d => {
+        if (levelFilter !== 'all' && d.level_label !== levelFilter) return false;
+        if (periodFilter !== 'all') {
+            const days = periodFilter === '7d' ? 7 : periodFilter === '30d' ? 30 : 90;
+            if ((now - new Date(d.created_at)) > days * 86400000) return false;
+        }
+        if (countryFilter !== 'all' && d.country_name !== countryFilter) return false;
+        if (searchFilter) {
+            const text = `${d.name || ''} ${d.role || ''}`.toLowerCase();
+            if (!text.includes(searchFilter)) return false;
+        }
+        return true;
+    });
+
+    document.getElementById('ceResultCount').textContent = `${filtered.length} registos`;
+
+    const tbody = document.getElementById('ceResultsTable');
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="13" style="text-align:center;padding:40px;color:var(--text-muted);">Sem dados</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.slice(0, 100).map(d => {
+        const date = new Date(d.created_at).toLocaleDateString('pt-PT', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+        const scoreColor = d.total_score >= 71 ? 'var(--green)' : d.total_score >= 41 ? 'var(--orange)' : 'var(--red)';
+        const diffText = d.country_diff !== null ? (d.country_diff > 0 ? `<span style="color:var(--green);">+${d.country_diff}</span>` : d.country_diff < 0 ? `<span style="color:var(--red);">${d.country_diff}</span>` : '<span>0</span>') : '\u2014';
+        return `<tr>
+            <td style="white-space:nowrap;font-size:12px;">${date}</td>
+            <td>${d.name || '\u2014'}</td>
+            <td>${d.role || '\u2014'}</td>
+            <td>${d.country_name || '\u2014'}</td>
+            <td style="font-weight:700;color:${scoreColor};">${d.total_score}</td>
+            <td><span class="badge" style="background:var(--gold-bg);color:var(--gold);font-size:11px;padding:2px 8px;border-radius:4px;">${d.level_label}</span></td>
+            <td style="font-size:12px;">${d.percentile || '\u2014'}</td>
+            <td style="font-size:12px;">${d.dim_energy || 0}</td>
+            <td style="font-size:12px;">${d.dim_clarity || 0}</td>
+            <td style="font-size:12px;">${d.dim_positioning || 0}</td>
+            <td style="font-size:12px;">${d.dim_purpose || 0}</td>
+            <td style="font-size:12px;">${d.country_happiness_score || '\u2014'}</td>
+            <td>${diffText}</td>
+        </tr>`;
+    }).join('');
+}
+
+function exportCECSV() {
+    if (!allCEData.length) { showToast('Sem dados para exportar', 'danger'); return; }
+    const header = 'Data,Nome,Fun\u00e7\u00e3o,Experi\u00eancia,Pa\u00eds,Score,N\u00edvel,Percentil,Energia,Clareza,Posicionamento,Prop\u00f3sito,Happiness Score,Diff,Score Projetado,N\u00edvel Projetado,Idioma,LinkedIn';
+    const rows = allCEData.map(d => {
+        const date = new Date(d.created_at).toISOString().slice(0,19);
+        return `${date},"${d.name || ''}","${d.role || ''}","${d.experience || ''}","${d.country_name || ''}",${d.total_score},"${d.level_label}","${d.percentile || ''}",${d.dim_energy||0},${d.dim_clarity||0},${d.dim_positioning||0},${d.dim_purpose||0},${d.country_happiness_score||''},${d.country_diff||''},${d.projected_score||''},"${d.projected_level||''}",${d.language||''},${d.shared_linkedin||false}`;
+    });
+    downloadCSV(header + '\n' + rows.join('\n'), 'career_energy_results_' + new Date().toISOString().slice(0,10) + '.csv');
     showToast('CSV exportado com sucesso', 'success');
 }
 

@@ -1549,6 +1549,46 @@
             }
 
             window._ceData = { score: totalScore, level: level, dimScores: dimScores, profile: profileData, percentile: percentile };
+
+            // Save to Supabase
+            (function saveCEResult() {
+                var SUPA_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+                var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+                var countryCode = profileData.country;
+                var ch = countryCode && countryHappiness[countryCode] ? countryHappiness[countryCode] : null;
+                var payload = {
+                    name: profileData.name || null,
+                    role: profileData.role || null,
+                    experience: profileData.experience || null,
+                    country: countryCode || null,
+                    country_name: ch ? ch.name : null,
+                    total_score: totalScore,
+                    level_label: level.label,
+                    percentile: percentile,
+                    dim_energy: dimScores[0],
+                    dim_clarity: dimScores[1],
+                    dim_positioning: dimScores[2],
+                    dim_purpose: dimScores[3],
+                    country_happiness_score: ch ? ch.score : null,
+                    country_diff: ch ? (totalScore - ch.score) : null,
+                    projected_score: projectedScore || null,
+                    projected_level: projectedLevel ? projectedLevel.label : null,
+                    language: 'pt',
+                    user_agent: navigator.userAgent
+                };
+                fetch(SUPA_URL + '/rest/v1/career_energy_results', {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPA_KEY,
+                        'Authorization': 'Bearer ' + SUPA_KEY,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(payload)
+                }).then(function(r) { return r.json(); }).then(function(d) {
+                    console.log('CE result saved:', d);
+                }).catch(function(e) { console.warn('CE save error:', e); });
+            })();
         }
 
         function animateValue(el, start, end, duration) {
