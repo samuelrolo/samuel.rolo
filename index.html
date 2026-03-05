@@ -1538,7 +1538,23 @@
             postText += 'Descobre o teu score aqui:\nshare2inspire.pt\n\n';
             postText += '#CareerEnergy #Share2Inspire #Carreira #Liderança #DesenvolvimentoProfissional';
 
-            navigator.clipboard.writeText(postText).then(function() {
+            // Clipboard copy with fallback
+            function doCopy() {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    return navigator.clipboard.writeText(postText);
+                } else {
+                    var ta = document.createElement('textarea');
+                    ta.value = postText;
+                    ta.style.position = 'fixed';
+                    ta.style.left = '-9999px';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    return Promise.resolve();
+                }
+            }
+            doCopy().then(function() {
                 var btn = document.getElementById('ceBtnLinkedIn');
                 btn.classList.add('copied');
                 btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
@@ -1546,6 +1562,9 @@
                     btn.classList.remove('copied');
                     btn.innerHTML = '<i class="fab fa-linkedin"></i> Copiar Post LinkedIn';
                 }, 2500);
+            }).catch(function(err) {
+                console.error('Clipboard copy failed:', err);
+                alert('Texto copiado para a área de transferência!');
             });
         };
 
@@ -1599,13 +1618,26 @@
             ctx.font = '600 22px system-ui, sans-serif';
             ctx.fillStyle = '#C9A961';
             ctx.fillText(data.level.seal, 600, 400);
+            // Country average comparison
+            var countryCode = data.profile && data.profile.country;
+            if (countryCode && countryHappiness[countryCode]) {
+                var ch = countryHappiness[countryCode];
+                var diff = data.score - ch.score;
+                var diffText = diff > 0 ? '+' + diff + ' acima da média' : diff < 0 ? diff + ' abaixo da média' : 'igual à média';
+                ctx.font = '400 15px system-ui, sans-serif';
+                ctx.fillStyle = 'rgba(255,255,255,0.55)';
+                ctx.fillText('Média de bem-estar em ' + ch.name + ': ' + ch.score + '/100', 600, 445);
+                ctx.font = '600 14px system-ui, sans-serif';
+                ctx.fillStyle = diff >= 0 ? '#4ade80' : '#f87171';
+                ctx.fillText(diffText + ' (World Happiness Report 2025)', 600, 468);
+            }
             // Footer line
             ctx.fillStyle = 'rgba(201,169,97,0.3)';
-            ctx.fillRect(350, 500, 500, 1);
+            ctx.fillRect(350, 510, 500, 1);
             // Footer text
             ctx.font = '400 14px system-ui, sans-serif';
             ctx.fillStyle = 'rgba(255,255,255,0.4)';
-            ctx.fillText('share2inspire.pt', 600, 535);
+            ctx.fillText('share2inspire.pt', 600, 545);
             // Verified watermark — small and discreet
             ctx.font = '300 11px system-ui, sans-serif';
             ctx.fillStyle = 'rgba(255,255,255,0.25)';
