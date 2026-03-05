@@ -616,6 +616,15 @@
         .ce-score-value small { font-size: 0.8rem; color: #888; font-weight: 400; }
         .ce-score-title { font-size: 1.2rem; font-weight: 600; color: #1a2332; margin-bottom: 0.3rem; }
         .ce-score-level { font-size: 0.85rem; color: #C9A961; font-weight: 500; letter-spacing: 1px; }
+        .ce-country-compare { margin-top: 1rem; padding: 0.8rem 1rem; background: #faf7f0; border: 1px solid #f0ebe0; border-radius: 10px; text-align: center; }
+        .ce-country-compare p { margin: 0; font-size: 0.78rem; color: #666; line-height: 1.5; }
+        .ce-country-compare .ce-country-score { font-weight: 700; color: #C9A961; }
+        .ce-country-compare .ce-country-diff { font-weight: 600; }
+        .ce-country-compare .ce-country-diff.above { color: #28a745; }
+        .ce-country-compare .ce-country-diff.below { color: #c0392b; }
+        .ce-country-compare .ce-country-diff.equal { color: #C9A961; }
+        .ce-btn-linkedin.copied { background: #28a745; }
+        .ce-btn-linkedin.copied:hover { background: #218838; }
         /* Dimensions */
         .ce-dimensions { display: flex; flex-direction: column; gap: 0.8rem; margin: 1.5rem 0; text-align: left; }
         .ce-dim {
@@ -647,7 +656,7 @@
             text-decoration: none; color: #1a2332; transition: all 0.2s ease; text-align: center;
         }
         .ce-cta-card:hover { border-color: #C9A961; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-        .ce-cta-icon { font-size: 1.3rem; display: block; margin-bottom: 0.4rem; }
+        .ce-cta-icon { font-size: 1.3rem; display: block; margin-bottom: 0.4rem; color: #C9A961; }
         .ce-cta-card strong { display: block; font-size: 0.8rem; margin-bottom: 0.2rem; }
         .ce-cta-card p { font-size: 0.7rem; color: #666; margin: 0; }
         @media (max-width: 576px) {
@@ -846,6 +855,52 @@
                 </div>
 
                 <div class="ce-field">
+                    <label>Country where you work <span class="ce-optional">(optional)</span></label>
+                    <select id="ceCountry">
+                        <option value="">Select...</option>
+                        <option value="PT">Portugal</option>
+                        <option value="BR">Brazil</option>
+                        <option value="ES">Spain</option>
+                        <option value="FR">France</option>
+                        <option value="DE">Germany</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="US">United States</option>
+                        <option value="IT">Italy</option>
+                        <option value="NL">Netherlands</option>
+                        <option value="BE">Belgium</option>
+                        <option value="CH">Switzerland</option>
+                        <option value="IE">Ireland</option>
+                        <option value="LU">Luxembourg</option>
+                        <option value="AT">Austria</option>
+                        <option value="SE">Sweden</option>
+                        <option value="NO">Norway</option>
+                        <option value="DK">Denmark</option>
+                        <option value="FI">Finland</option>
+                        <option value="PL">Poland</option>
+                        <option value="CZ">Czechia</option>
+                        <option value="RO">Romania</option>
+                        <option value="GR">Greece</option>
+                        <option value="AU">Australia</option>
+                        <option value="CA">Canada</option>
+                        <option value="MX">Mexico</option>
+                        <option value="AR">Argentina</option>
+                        <option value="CL">Chile</option>
+                        <option value="CO">Colombia</option>
+                        <option value="JP">Japan</option>
+                        <option value="KR">South Korea</option>
+                        <option value="CN">China</option>
+                        <option value="IN">India</option>
+                        <option value="SG">Singapore</option>
+                        <option value="AE">UAE</option>
+                        <option value="SA">Saudi Arabia</option>
+                        <option value="ZA">South Africa</option>
+                        <option value="AO">Angola</option>
+                        <option value="MZ">Mozambique</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+
+                <div class="ce-field">
                     <label>Total years of experience <span class="ce-optional">(optional)</span></label>
                     <select id="ceTotalExp">
                         <option value="">Select...</option>
@@ -895,6 +950,10 @@
                     <p class="ce-score-level" id="ceScoreLevel"></p>
                 </div>
 
+                <div class="ce-country-compare" id="ceCountryCompare" style="display:none;">
+                    <p id="ceCountryText"></p>
+                </div>
+
                 <div class="ce-dimensions">
                     <div class="ce-dim"><div class="ce-dim-header"><span class="ce-dim-icon">⚡</span><span class="ce-dim-name">Professional Energy</span><span class="ce-dim-score" id="ceDimScore0">0</span></div><div class="ce-dim-bar"><div class="ce-dim-fill" id="ceDimFill0"></div></div><p class="ce-dim-insight" id="ceDimInsight0"></p></div>
                     <div class="ce-dim"><div class="ce-dim-header"><span class="ce-dim-icon">🎯</span><span class="ce-dim-name">Career Mental Clarity</span><span class="ce-dim-score" id="ceDimScore1">0</span></div><div class="ce-dim-bar"><div class="ce-dim-fill" id="ceDimFill1"></div></div><p class="ce-dim-insight" id="ceDimInsight1"></p></div>
@@ -904,8 +963,8 @@
 
                 <!-- LinkedIn Share -->
                 <div class="ce-result-actions">
-                    <button class="ce-btn-linkedin" onclick="shareCELinkedIn()">
-                        <i class="fab fa-linkedin"></i> Share on LinkedIn
+                    <button class="ce-btn-linkedin" id="ceBtnLinkedIn" onclick="copyCELinkedInPost()">
+                        <i class="fab fa-linkedin"></i> Copy LinkedIn Post
                     </button>
                 </div>
 
@@ -914,17 +973,17 @@
                     <h4>Next steps</h4>
                     <div class="ce-cta-grid">
                         <a href="../pages/conhecimento.html#ebook-download" class="ce-cta-card">
-                            <span class="ce-cta-icon">📖</span>
+                            <span class="ce-cta-icon"><i class="fas fa-book-open"></i></span>
                             <strong>Free E-book</strong>
                             <p>Energy to Lead</p>
                         </a>
                         <a href="cv-analyser" class="ce-cta-card">
-                            <span class="ce-cta-icon">📄</span>
+                            <span class="ce-cta-icon"><i class="fas fa-file-alt"></i></span>
                             <strong>CV Analyser</strong>
                             <p>Free AI-powered CV analysis</p>
                         </a>
                         <a href="career-path" class="ce-cta-card">
-                            <span class="ce-cta-icon">🗺️</span>
+                            <span class="ce-cta-icon"><i class="fas fa-route"></i></span>
                             <strong>Career Path</strong>
                             <p>Personalised career roadmap</p>
                         </a>
@@ -1267,11 +1326,56 @@
         ];
 
         var levels = [
-            { min: 0, max: 25, label: 'Critical Energy', seal: 'AWARENESS' },
-            { min: 26, max: 50, label: 'Building Energy', seal: 'BUILDING' },
-            { min: 51, max: 75, label: 'Strong Energy', seal: 'STRONG' },
-            { min: 76, max: 100, label: 'High Performance Energy', seal: 'HIGH PERFORMER' }
+            { min: 0, max: 15, label: 'Needs Re-energizing', seal: 'RE-ENERGIZE' },
+            { min: 16, max: 25, label: 'Critical Energy', seal: 'AWARENESS' },
+            { min: 26, max: 40, label: 'Calibrating', seal: 'CALIBRATING' },
+            { min: 41, max: 55, label: 'Building Energy', seal: 'BUILDING' },
+            { min: 56, max: 70, label: 'Steady Energy', seal: 'STEADY' },
+            { min: 71, max: 85, label: 'Strong Energy', seal: 'STRONG' },
+            { min: 86, max: 100, label: 'High Performance', seal: 'HIGH PERFORMER' }
         ];
+
+        // World Happiness Report 2025 — scores (0-10 scale, *10 = 0-100)
+        var countryHappiness = {
+            'PT': { name: 'Portugal', score: 60 },
+            'BR': { name: 'Brazil', score: 65 },
+            'ES': { name: 'Spain', score: 65 },
+            'FR': { name: 'France', score: 66 },
+            'DE': { name: 'Germany', score: 68 },
+            'UK': { name: 'United Kingdom', score: 67 },
+            'US': { name: 'United States', score: 67 },
+            'IT': { name: 'Italy', score: 64 },
+            'NL': { name: 'Netherlands', score: 73 },
+            'BE': { name: 'Belgium', score: 69 },
+            'CH': { name: 'Switzerland', score: 69 },
+            'IE': { name: 'Ireland', score: 69 },
+            'LU': { name: 'Luxembourg', score: 71 },
+            'AT': { name: 'Austria', score: 68 },
+            'SE': { name: 'Sweden', score: 74 },
+            'NO': { name: 'Norway', score: 73 },
+            'DK': { name: 'Denmark', score: 75 },
+            'FI': { name: 'Finland', score: 77 },
+            'PL': { name: 'Poland', score: 67 },
+            'CZ': { name: 'Czechia', score: 68 },
+            'RO': { name: 'Romania', score: 66 },
+            'GR': { name: 'Greece', score: 58 },
+            'AU': { name: 'Australia', score: 70 },
+            'CA': { name: 'Canada', score: 68 },
+            'MX': { name: 'Mexico', score: 70 },
+            'AR': { name: 'Argentina', score: 64 },
+            'CL': { name: 'Chile', score: 64 },
+            'CO': { name: 'Colombia', score: 60 },
+            'JP': { name: 'Japan', score: 62 },
+            'KR': { name: 'South Korea', score: 60 },
+            'CN': { name: 'China', score: 59 },
+            'IN': { name: 'India', score: 44 },
+            'SG': { name: 'Singapore', score: 66 },
+            'AE': { name: 'UAE', score: 68 },
+            'SA': { name: 'Saudi Arabia', score: 66 },
+            'ZA': { name: 'South Africa', score: 52 },
+            'AO': { name: 'Angola', score: 46 },
+            'MZ': { name: 'Mozambique', score: 52 }
+        };
 
         var current = 0;
         var answers = new Array(12).fill(-1);
@@ -1303,7 +1407,8 @@
             profileData = {
                 workArea: document.getElementById('ceWorkArea').value,
                 roleTenure: document.getElementById('ceRoleTenure').value,
-                totalExp: document.getElementById('ceTotalExp').value
+                totalExp: document.getElementById('ceTotalExp').value,
+                country: document.getElementById('ceCountry').value
             };
             document.getElementById('ceProfileStep').style.display = 'none';
             document.getElementById('ceQuizStep').style.display = 'block';
@@ -1369,6 +1474,20 @@
 
             document.getElementById('ceScoreLevel').textContent = level.label;
 
+            // Country happiness comparison
+            var countryCode = profileData.country;
+            if (countryCode && countryHappiness[countryCode]) {
+                var ch = countryHappiness[countryCode];
+                var diff = totalScore - ch.score;
+                var diffClass = diff > 0 ? 'above' : diff < 0 ? 'below' : 'equal';
+                var diffText = diff > 0 ? '+' + diff + ' above' : diff < 0 ? diff + ' below' : 'equal to';
+                var compareEl = document.getElementById('ceCountryCompare');
+                compareEl.style.display = 'block';
+                document.getElementById('ceCountryText').innerHTML = 
+                    'Well-being average in <strong>' + ch.name + '</strong>: <span class="ce-country-score">' + ch.score + '/100</span> (World Happiness Report 2025)<br>' +
+                    'Your score is <span class="ce-country-diff ' + diffClass + '">' + diffText + '</span> the national average.';
+            }
+
             for (var d = 0; d < 4; d++) {
                 document.getElementById('ceDimScore' + d).textContent = dimScores[d] + '/100';
                 setTimeout((function(dd, sc) {
@@ -1399,21 +1518,26 @@
             el._animId = requestAnimationFrame(step);
         }
 
-        window.shareCELinkedIn = function() {
+        window.copyCELinkedInPost = function() {
             var data = window._ceData;
             if (!data) return;
             // Auto-download seal image first
             downloadCESealImage();
-            // Simplified post — global score only
+            // Post text — score only, no profession
             var postText = 'I just completed the Career Energy diagnostic by @share2inspire_ and scored ' + data.score + '/100 — ' + data.level.label + '.\n\n';
-            postText += 'Four dimensions that define professional performance.\n';
-            postText += 'Take the free diagnostic at share2inspire.pt\n\n';
+            postText += 'Four dimensions that define professional performance.\n\n';
+            postText += 'Find out your score here:\nshare2inspire.pt\n\n';
             postText += '#CareerEnergy #Share2Inspire #Career #Leadership #ProfessionalDevelopment';
 
-            setTimeout(function() {
-                var linkedInUrl = 'https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(postText);
-                window.open(linkedInUrl, '_blank');
-            }, 500);
+            navigator.clipboard.writeText(postText).then(function() {
+                var btn = document.getElementById('ceBtnLinkedIn');
+                btn.classList.add('copied');
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(function() {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = '<i class="fab fa-linkedin"></i> Copy LinkedIn Post';
+                }, 2500);
+            });
         };
 
         function downloadCESealImage() {
@@ -1457,11 +1581,18 @@
             ctx.font = '600 22px system-ui, sans-serif';
             ctx.fillStyle = '#C9A961';
             ctx.fillText(data.level.seal, 600, 400);
+            // Footer line
             ctx.fillStyle = 'rgba(201,169,97,0.3)';
-            ctx.fillRect(350, 520, 500, 1);
+            ctx.fillRect(350, 500, 500, 1);
+            // Footer text
             ctx.font = '400 14px system-ui, sans-serif';
             ctx.fillStyle = 'rgba(255,255,255,0.4)';
-            ctx.fillText('share2inspire.pt', 600, 555);
+            ctx.fillText('share2inspire.pt', 600, 535);
+            // Verified watermark — small and discreet
+            ctx.font = '300 11px system-ui, sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.25)';
+            ctx.fillText('Verified by Share2Inspire AI CV Analyser', 600, 580);
+            // Gold accent line bottom
             ctx.fillStyle = '#C9A961';
             ctx.fillRect(0, 627, 1200, 3);
             var link = document.createElement('a');
