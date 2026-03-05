@@ -1459,7 +1459,7 @@
             for (var i = 0; i < 12; i++) {
                 dimScores[questions[i].dim] += answers[i];
             }
-            dimScores = dimScores.map(function(s) { return Math.round(s / 9 * 100); });
+            dimScores = dimScores.map(function(s) { return Math.max(0, Math.round(s / 9 * 100)); });
             var totalScore = Math.round(dimScores.reduce(function(a, b) { return a + b; }, 0) / 4);
             var level = levels.find(function(l) { return totalScore >= l.min && totalScore <= l.max; }) || levels[0];
 
