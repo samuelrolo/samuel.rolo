@@ -616,6 +616,11 @@
         .ce-score-value small { font-size: 0.8rem; color: #888; font-weight: 400; }
         .ce-score-title { font-size: 1.2rem; font-weight: 600; color: #1a2332; margin-bottom: 0.3rem; }
         .ce-score-level { font-size: 0.85rem; color: #C9A961; font-weight: 500; letter-spacing: 1px; }
+        .ce-percentile { font-size: 0.75rem; color: #888; margin-top: 0.3rem; font-weight: 400; }
+        .ce-progression { margin-top: 1rem; padding: 0.8rem 1rem; background: linear-gradient(135deg, #faf7f0, #f5f0e5); border: 1px solid #e8dcc8; border-radius: 10px; text-align: center; }
+        .ce-progression p { margin: 0; font-size: 0.78rem; color: #666; line-height: 1.5; }
+        .ce-progression .ce-prog-target { font-weight: 700; color: #C9A961; }
+        .ce-progression .ce-prog-arrow { color: #C9A961; margin: 0 0.3rem; }
         .ce-country-compare { margin-top: 1rem; padding: 0.8rem 1rem; background: #faf7f0; border: 1px solid #f0ebe0; border-radius: 10px; text-align: center; }
         .ce-country-compare p { margin: 0; font-size: 0.78rem; color: #666; line-height: 1.5; }
         .ce-country-compare .ce-country-score { font-weight: 700; color: #C9A961; }
@@ -948,10 +953,15 @@
                     </div>
                     <h3 class="ce-score-title">Career Energy Score</h3>
                     <p class="ce-score-level" id="ceScoreLevel"></p>
+                    <p class="ce-percentile" id="cePercentile"></p>
                 </div>
 
                 <div class="ce-country-compare" id="ceCountryCompare" style="display:none;">
                     <p id="ceCountryText"></p>
+                </div>
+
+                <div class="ce-progression" id="ceProgression" style="display:none;">
+                    <p id="ceProgressionText"></p>
                 </div>
 
                 <div class="ce-dimensions">
@@ -1474,6 +1484,37 @@
 
             document.getElementById('ceScoreLevel').textContent = level.label;
 
+            // Percentile — simulated distribution
+            var percentile;
+            if (totalScore >= 86) percentile = 'Top 5%';
+            else if (totalScore >= 71) percentile = 'Top 15%';
+            else if (totalScore >= 56) percentile = 'Top 30%';
+            else if (totalScore >= 41) percentile = 'Top 50%';
+            else if (totalScore >= 26) percentile = 'Top 70%';
+            else if (totalScore >= 16) percentile = 'Top 85%';
+            else percentile = 'Top 95%';
+            document.getElementById('cePercentile').textContent = percentile + ' of professionals analysed';
+
+            // Progression potential — find the two lowest dimensions
+            var dimNames = ['Professional Energy', 'Mental Clarity', 'Positioning', 'Purpose'];
+            var dimPairs = dimScores.map(function(s, i) { return { score: s, idx: i }; });
+            dimPairs.sort(function(a, b) { return a.score - b.score; });
+            var potentialGain = 0;
+            var improveDims = [];
+            for (var p = 0; p < 2; p++) {
+                var gap = Math.min(25, 100 - dimPairs[p].score);
+                potentialGain += Math.round(gap / 4);
+                improveDims.push(dimNames[dimPairs[p].idx]);
+            }
+            var projectedScore = Math.min(100, totalScore + potentialGain);
+            var projectedLevel = levels.find(function(l) { return projectedScore >= l.min && projectedScore <= l.max; }) || levels[levels.length - 1];
+            if (projectedScore > totalScore && projectedLevel.label !== level.label) {
+                document.getElementById('ceProgression').style.display = 'block';
+                document.getElementById('ceProgressionText').innerHTML = 
+                    'If you improve <strong>' + improveDims.join('</strong> and <strong>') + '</strong>,<br>' +
+                    'you could reach <span class="ce-prog-target">' + projectedScore + '</span><span class="ce-prog-arrow">→</span><span class="ce-prog-target">' + projectedLevel.label + '</span>';
+            }
+
             // Country happiness comparison
             var countryCode = profileData.country;
             if (countryCode && countryHappiness[countryCode]) {
@@ -1499,7 +1540,7 @@
                 document.getElementById('ceDimInsight' + d).textContent = dimInsights[d][insightIdx];
             }
 
-            window._ceData = { score: totalScore, level: level, dimScores: dimScores, profile: profileData };
+            window._ceData = { score: totalScore, level: level, dimScores: dimScores, profile: profileData, percentile: percentile };
         }
 
         function animateValue(el, start, end, duration) {
@@ -1524,8 +1565,9 @@
             // Auto-download seal image first
             downloadCESealImage();
             // Post text — score only, no profession
-            var postText = 'I just completed the Career Energy diagnostic by @share2inspire_ and scored ' + data.score + '/100 — ' + data.level.label + '.\n\n';
-            postText += 'Four dimensions that define professional performance.\n\n';
+            var postText = 'I just completed the Career Energy diagnostic by @share2inspire_ and scored ' + data.score + '/100 — ' + data.level.label + '.';
+            if (data.percentile) postText += ' ' + data.percentile + ' of professionals analysed.';
+            postText += '\n\nFour dimensions that define professional performance.\n\n';
             postText += 'Find out your score here:\nshare2inspire.pt\n\n';
             postText += '#CareerEnergy #Share2Inspire #Career #Leadership #ProfessionalDevelopment';
 
@@ -1599,27 +1641,36 @@
             ctx.fillText('/100', 600, 305);
             ctx.font = '600 22px system-ui, sans-serif';
             ctx.fillStyle = '#C9A961';
-            ctx.fillText(data.level.seal, 600, 400);
+            ctx.fillText(data.level.seal, 600, 390);
+            // Percentile
+            if (data.percentile) {
+                ctx.font = '400 14px system-ui, sans-serif';
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.fillText(data.percentile + ' of professionals analysed', 600, 415);
+            }
             // Country average comparison
+            var yPos = 445;
             var countryCode = data.profile && data.profile.country;
             if (countryCode && countryHappiness[countryCode]) {
                 var ch = countryHappiness[countryCode];
                 var diff = data.score - ch.score;
                 var diffText = diff > 0 ? '+' + diff + ' above average' : diff < 0 ? diff + ' below average' : 'equal to average';
-                ctx.font = '400 15px system-ui, sans-serif';
-                ctx.fillStyle = 'rgba(255,255,255,0.55)';
-                ctx.fillText('Well-being average in ' + ch.name + ': ' + ch.score + '/100', 600, 445);
-                ctx.font = '600 14px system-ui, sans-serif';
-                ctx.fillStyle = diff >= 0 ? '#4ade80' : '#f87171';
-                ctx.fillText(diffText + ' (World Happiness Report 2025)', 600, 468);
+                ctx.font = '400 13px system-ui, sans-serif';
+                ctx.fillStyle = 'rgba(255,255,255,0.45)';
+                ctx.fillText(ch.name + ' average: ' + ch.score + '/100 — ' + diffText + ' (WHR 2025)', 600, yPos);
+                yPos += 25;
             }
+            // Viral CTA
+            ctx.font = '500 16px system-ui, sans-serif';
+            ctx.fillStyle = '#C9A961';
+            ctx.fillText('What\u2019s your Career Energy Score?', 600, yPos + 10);
             // Footer line
             ctx.fillStyle = 'rgba(201,169,97,0.3)';
-            ctx.fillRect(350, 510, 500, 1);
+            ctx.fillRect(350, 520, 500, 1);
             // Footer text
             ctx.font = '400 14px system-ui, sans-serif';
             ctx.fillStyle = 'rgba(255,255,255,0.4)';
-            ctx.fillText('share2inspire.pt', 600, 545);
+            ctx.fillText('share2inspire.pt', 600, 550);
             // Verified watermark — small and discreet
             ctx.font = '300 11px system-ui, sans-serif';
             ctx.fillStyle = 'rgba(255,255,255,0.25)';
