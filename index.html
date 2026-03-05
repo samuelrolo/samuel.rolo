@@ -520,6 +520,110 @@
             opacity: 1;
             transform: translateY(0);
         }
+        /* ── Career Energy Diagnostic ── */
+        .career-energy-section { padding: 5rem 0; background: #faf8f4; }
+        .ce-badge {
+            display: inline-block; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase;
+            color: #C9A961; border: 1px solid #C9A961; padding: 0.3rem 1rem; margin-bottom: 1.5rem;
+        }
+        .ce-progress-bar {
+            width: 100%; height: 4px; background: #e8e0d0; border-radius: 2px; margin-bottom: 0.5rem;
+        }
+        .ce-progress-fill {
+            height: 100%; background: #C9A961; border-radius: 2px; transition: width 0.4s ease; width: 0%;
+        }
+        .ce-progress-text { font-size: 0.75rem; color: #888; text-align: center; margin-bottom: 1.5rem; }
+        .ce-question-card {
+            background: #fff; border-radius: 12px; padding: 2.5rem 2rem; text-align: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.04); border: 1px solid #f0ebe0;
+        }
+        .ce-dimension-label {
+            font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: #C9A961; margin-bottom: 0.5rem;
+        }
+        .ce-question-text {
+            font-size: 1.15rem; font-weight: 500; color: #1a2332; margin-bottom: 2rem; line-height: 1.5;
+        }
+        .ce-options { display: flex; flex-direction: column; gap: 0.6rem; max-width: 500px; margin: 0 auto; }
+        .ce-option {
+            padding: 0.8rem 1.2rem; border: 1px solid #e8e0d0; border-radius: 8px; cursor: pointer;
+            font-size: 0.9rem; color: #444; transition: all 0.2s ease; text-align: left; background: #faf8f4;
+        }
+        .ce-option:hover { border-color: #C9A961; background: #fff; color: #1a2332; }
+        .ce-option.selected { border-color: #C9A961; background: #C9A961; color: #fff; }
+
+        /* Results */
+        .ce-score-section { text-align: center; padding: 2rem 0; }
+        .ce-score-circle { position: relative; width: 140px; height: 140px; margin: 0 auto 1rem; }
+        .ce-score-svg { width: 100%; height: 100%; }
+        .ce-score-value {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 2rem; font-weight: 700; color: #1a2332;
+        }
+        .ce-score-value small { font-size: 0.8rem; color: #888; font-weight: 400; }
+        .ce-score-title { font-size: 1.3rem; font-weight: 600; color: #1a2332; margin-bottom: 0.3rem; }
+        .ce-score-level { font-size: 0.85rem; color: #C9A961; font-weight: 500; letter-spacing: 1px; }
+
+        /* Dimensions */
+        .ce-dimensions { display: flex; flex-direction: column; gap: 1.2rem; margin: 2rem 0; }
+        .ce-dim {
+            background: #fff; border-radius: 10px; padding: 1.2rem 1.5rem;
+            border: 1px solid #f0ebe0;
+        }
+        .ce-dim-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem; }
+        .ce-dim-icon { font-size: 1.1rem; }
+        .ce-dim-name { flex: 1; font-size: 0.85rem; font-weight: 600; color: #1a2332; }
+        .ce-dim-score { font-size: 0.85rem; font-weight: 700; color: #C9A961; }
+        .ce-dim-bar { width: 100%; height: 4px; background: #e8e0d0; border-radius: 2px; margin-bottom: 0.6rem; }
+        .ce-dim-fill { height: 100%; background: #C9A961; border-radius: 2px; transition: width 1s ease; width: 0%; }
+        .ce-dim-insight { font-size: 0.8rem; color: #666; line-height: 1.4; margin: 0; }
+
+        /* Seal */
+        .ce-seal-section { text-align: center; margin: 2.5rem 0; }
+        .ce-seal {
+            display: inline-block; width: 200px; height: 200px; border-radius: 50%;
+            background: linear-gradient(135deg, #1a2332 0%, #2a3a52 100%);
+            padding: 8px; margin-bottom: 1rem;
+        }
+        .ce-seal-inner {
+            width: 100%; height: 100%; border-radius: 50%;
+            border: 2px solid #C9A961; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        .ce-seal-top { font-size: 0.55rem; letter-spacing: 3px; color: #C9A961; margin: 0; text-transform: uppercase; }
+        .ce-seal-level { font-size: 0.7rem; letter-spacing: 2px; color: #fff; margin: 0.2rem 0; font-weight: 600; }
+        .ce-seal-score-ring {
+            width: 50px; height: 50px; border-radius: 50%; border: 2px solid #C9A961;
+            display: flex; align-items: center; justify-content: center; margin: 0.3rem 0;
+        }
+        .ce-seal-score-ring span { font-size: 1.1rem; font-weight: 700; color: #fff; }
+        .ce-seal-by { font-size: 0.5rem; letter-spacing: 2px; color: rgba(255,255,255,0.6); margin: 0; }
+
+        /* CTAs */
+        .ce-ctas { text-align: center; margin-top: 2rem; }
+        .ce-ctas h3 { font-size: 1.1rem; font-weight: 600; color: #1a2332; margin-bottom: 1.2rem; }
+        .ce-cta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .ce-cta-card {
+            background: #fff; border: 1px solid #f0ebe0; border-radius: 10px; padding: 1.2rem;
+            text-decoration: none; color: #1a2332; transition: all 0.2s ease; text-align: center;
+        }
+        .ce-cta-card:hover { border-color: #C9A961; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+        .ce-cta-icon { font-size: 1.5rem; display: block; margin-bottom: 0.5rem; }
+        .ce-cta-card strong { display: block; font-size: 0.85rem; margin-bottom: 0.3rem; }
+        .ce-cta-card p { font-size: 0.75rem; color: #666; margin: 0; }
+        .ce-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.5rem;
+            border-radius: 8px; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .ce-btn-seal { background: #C9A961; color: #fff; margin-bottom: 1rem; }
+        .ce-btn-seal:hover { background: #b8963e; }
+        .ce-btn-share { background: #0077B5; color: #fff; }
+        .ce-btn-share:hover { background: #005f8d; }
+
+        @media (max-width: 768px) {
+            .ce-cta-grid { grid-template-columns: 1fr; }
+            .ce-question-card { padding: 1.5rem 1rem; }
+        }
     </style>
 
     <!-- Structured Data -->
@@ -642,6 +746,144 @@
                     </p>
                     <p class="ebook-authors">Samuel Rolo &bull; Marlene Ruivo</p>
                     <a href="pages/conhecimento.html#ebook-download" class="ebook-cta">Descarregar grátis</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ============================
+         CAREER ENERGY DIAGNOSTIC — Survey interativo gratuito
+         ============================ -->
+    <section class="section-serene career-energy-section fade-up" id="career-energy">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7 text-center">
+                    <p class="ce-badge">DIAGNÓSTICO GRATUITO</p>
+                    <h2>Qual é a tua <strong>Energia de Carreira</strong>?</h2>
+                    <div class="gold-line"></div>
+                    <p class="section-text">Descobre o teu Career Energy Score em 2 minutos. Quatro dimensões que definem a tua performance profissional.</p>
+                </div>
+            </div>
+
+            <!-- Quiz Container -->
+            <div class="row justify-content-center" style="margin-top: 2rem;">
+                <div class="col-lg-8">
+                    <div id="ceQuiz">
+                        <!-- Progress -->
+                        <div class="ce-progress-bar">
+                            <div class="ce-progress-fill" id="ceProgressFill"></div>
+                        </div>
+                        <p class="ce-progress-text" id="ceProgressText">Pergunta 1 de 12</p>
+
+                        <!-- Question Card -->
+                        <div class="ce-question-card" id="ceQuestionCard">
+                            <p class="ce-dimension-label" id="ceDimensionLabel"></p>
+                            <h3 class="ce-question-text" id="ceQuestionText"></h3>
+                            <div class="ce-options" id="ceOptions"></div>
+                        </div>
+                    </div>
+
+                    <!-- Results (hidden initially) -->
+                    <div id="ceResults" style="display:none;">
+                        <!-- Score Circle -->
+                        <div class="ce-score-section">
+                            <div class="ce-score-circle">
+                                <svg viewBox="0 0 120 120" class="ce-score-svg">
+                                    <circle cx="60" cy="60" r="52" fill="none" stroke="#e8e0d0" stroke-width="6"/>
+                                    <circle cx="60" cy="60" r="52" fill="none" stroke="#C9A961" stroke-width="6" 
+                                        stroke-dasharray="326.73" stroke-dashoffset="326.73" stroke-linecap="round"
+                                        transform="rotate(-90 60 60)" id="ceScoreArc"/>
+                                </svg>
+                                <div class="ce-score-value">
+                                    <span id="ceScoreNumber">0</span>
+                                    <small>/100</small>
+                                </div>
+                            </div>
+                            <h3 class="ce-score-title">Career Energy Score</h3>
+                            <p class="ce-score-level" id="ceScoreLevel"></p>
+                        </div>
+
+                        <!-- 4 Dimensions -->
+                        <div class="ce-dimensions">
+                            <div class="ce-dim" id="ceDim0">
+                                <div class="ce-dim-header">
+                                    <span class="ce-dim-icon">⚡</span>
+                                    <span class="ce-dim-name">Energia Profissional</span>
+                                    <span class="ce-dim-score" id="ceDimScore0">0</span>
+                                </div>
+                                <div class="ce-dim-bar"><div class="ce-dim-fill" id="ceDimFill0"></div></div>
+                                <p class="ce-dim-insight" id="ceDimInsight0"></p>
+                            </div>
+                            <div class="ce-dim" id="ceDim1">
+                                <div class="ce-dim-header">
+                                    <span class="ce-dim-icon">🎯</span>
+                                    <span class="ce-dim-name">Clareza Mental de Carreira</span>
+                                    <span class="ce-dim-score" id="ceDimScore1">0</span>
+                                </div>
+                                <div class="ce-dim-bar"><div class="ce-dim-fill" id="ceDimFill1"></div></div>
+                                <p class="ce-dim-insight" id="ceDimInsight1"></p>
+                            </div>
+                            <div class="ce-dim" id="ceDim2">
+                                <div class="ce-dim-header">
+                                    <span class="ce-dim-icon">📍</span>
+                                    <span class="ce-dim-name">Posicionamento no Mercado</span>
+                                    <span class="ce-dim-score" id="ceDimScore2">0</span>
+                                </div>
+                                <div class="ce-dim-bar"><div class="ce-dim-fill" id="ceDimFill2"></div></div>
+                                <p class="ce-dim-insight" id="ceDimInsight2"></p>
+                            </div>
+                            <div class="ce-dim" id="ceDim3">
+                                <div class="ce-dim-header">
+                                    <span class="ce-dim-icon">🧭</span>
+                                    <span class="ce-dim-name">Propósito e Progressão</span>
+                                    <span class="ce-dim-score" id="ceDimScore3">0</span>
+                                </div>
+                                <div class="ce-dim-bar"><div class="ce-dim-fill" id="ceDimFill3"></div></div>
+                                <p class="ce-dim-insight" id="ceDimInsight3"></p>
+                            </div>
+                        </div>
+
+                        <!-- LinkedIn Seal -->
+                        <div class="ce-seal-section">
+                            <div class="ce-seal" id="ceSealPreview">
+                                <div class="ce-seal-inner">
+                                    <p class="ce-seal-top">CAREER ENERGY</p>
+                                    <p class="ce-seal-level" id="ceSealLevel">CERTIFIED</p>
+                                    <div class="ce-seal-score-ring">
+                                        <span id="ceSealScore">0</span>
+                                    </div>
+                                    <p class="ce-seal-by">by Share2Inspire</p>
+                                </div>
+                            </div>
+                            <button class="ce-btn ce-btn-seal" onclick="downloadCESeal()">
+                                <i class="fas fa-download"></i> Descarregar selo LinkedIn
+                            </button>
+                        </div>
+
+                        <!-- CTAs -->
+                        <div class="ce-ctas">
+                            <h3>Próximos passos</h3>
+                            <div class="ce-cta-grid">
+                                <a href="pages/conhecimento.html#ebook-download" class="ce-cta-card">
+                                    <span class="ce-cta-icon">📖</span>
+                                    <strong>E-book Gratuito</strong>
+                                    <p>Energia para Liderar — o guia prático</p>
+                                </a>
+                                <a href="cv-analyser" class="ce-cta-card">
+                                    <span class="ce-cta-icon">📄</span>
+                                    <strong>CV Analyser</strong>
+                                    <p>Análise gratuita do teu CV com IA</p>
+                                </a>
+                                <a href="career-path" class="ce-cta-card">
+                                    <span class="ce-cta-icon">🗺️</span>
+                                    <strong>Career Path</strong>
+                                    <p>Roadmap personalizado de carreira</p>
+                                </a>
+                            </div>
+                            <button class="ce-btn ce-btn-share" onclick="shareCELinkedIn()">
+                                <i class="fab fa-linkedin"></i> Partilhar no LinkedIn
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -931,6 +1173,273 @@
         });
     </script>
 
+<script>
+    // ── Career Energy Diagnostic ──
+    (function() {
+        const questions = [
+            // Dimension 0: Energia Profissional
+            { dim: 0, label: 'ENERGIA PROFISSIONAL', q: 'Ao final de uma semana de trabalho, como te sentes habitualmente?',
+              opts: ['Exausto(a) e sem energia para mais nada', 'Cansado(a), mas com alguma reserva', 'Com energia razoável', 'Energizado(a) e com vontade de continuar'] },
+            { dim: 0, label: 'ENERGIA PROFISSIONAL', q: 'Com que frequência sentes que o teu trabalho te dá mais energia do que retira?',
+              opts: ['Raramente ou nunca', 'Ocasionalmente', 'Com alguma frequência', 'Quase sempre'] },
+            { dim: 0, label: 'ENERGIA PROFISSIONAL', q: 'Como classificas o teu equilíbrio entre vida pessoal e profissional?',
+              opts: ['Muito desequilibrado — o trabalho domina tudo', 'Desequilibrado — preciso de ajustes', 'Razoavelmente equilibrado', 'Bem equilibrado — tenho tempo para o que importa'] },
+
+            // Dimension 1: Clareza Mental de Carreira
+            { dim: 1, label: 'CLAREZA MENTAL', q: 'Se te perguntarem "qual é o teu próximo passo profissional?", o que respondes?',
+              opts: ['Não faço ideia', 'Tenho uma vaga noção, mas sem certeza', 'Sei a direção, mas faltam detalhes', 'Tenho um plano claro e definido'] },
+            { dim: 1, label: 'CLAREZA MENTAL', q: 'Com que frequência te sentes indeciso(a) sobre decisões de carreira?',
+              opts: ['Constantemente — é uma fonte de ansiedade', 'Frequentemente', 'Às vezes, mas consigo resolver', 'Raramente — tenho clareza nas decisões'] },
+            { dim: 1, label: 'CLAREZA MENTAL', q: 'Consegues articular em 30 segundos o que te diferencia profissionalmente?',
+              opts: ['Não, seria difícil', 'Talvez, mas sem confiança', 'Sim, de forma razoável', 'Sim, com clareza e convicção'] },
+
+            // Dimension 2: Posicionamento no Mercado
+            { dim: 2, label: 'POSICIONAMENTO', q: 'Se perdesses o emprego amanhã, quanto tempo achas que demorarias a encontrar algo equivalente?',
+              opts: ['Mais de 6 meses — seria muito difícil', '3 a 6 meses', '1 a 3 meses', 'Menos de 1 mês — tenho rede e visibilidade'] },
+            { dim: 2, label: 'POSICIONAMENTO', q: 'Nos últimos 6 meses, quantas vezes foste contactado(a) por recrutadores ou com oportunidades?',
+              opts: ['Nenhuma', '1 a 2 vezes', '3 a 5 vezes', 'Mais de 5 vezes'] },
+            { dim: 2, label: 'POSICIONAMENTO', q: 'Como avalias a tua presença profissional online (LinkedIn, portfólio, etc.)?',
+              opts: ['Inexistente ou desatualizada', 'Básica — tenho perfil mas não invisto', 'Ativa — publico e interajo ocasionalmente', 'Forte — sou reconhecido(a) na minha área'] },
+
+            // Dimension 3: Propósito e Progressão
+            { dim: 3, label: 'PROPÓSITO', q: 'Sentes que o teu trabalho actual está alinhado com o que realmente te importa?',
+              opts: ['Nada alinhado', 'Pouco alinhado', 'Razoavelmente alinhado', 'Totalmente alinhado'] },
+            { dim: 3, label: 'PROPÓSITO', q: 'Nos últimos 12 meses, investiste activamente no teu desenvolvimento profissional?',
+              opts: ['Não, nada', 'Muito pouco', 'Sim, alguma formação ou leitura', 'Sim, de forma consistente e estratégica'] },
+            { dim: 3, label: 'PROPÓSITO', q: 'Quando pensas no teu futuro profissional a 5 anos, o que sentes?',
+              opts: ['Ansiedade ou medo', 'Incerteza', 'Curiosidade moderada', 'Entusiasmo e confiança'] }
+        ];
+
+        const dimInsights = [
+            // Energia Profissional
+            ['A tua energia profissional está em níveis críticos. É prioritário repensar a sustentabilidade do teu ritmo.',
+             'A tua energia profissional precisa de atenção. Pequenos ajustes podem fazer grande diferença.',
+             'Tens uma base energética sólida. Optimiza as rotinas para manter este nível.',
+             'Energia profissional excelente. Estás a gerir bem os teus recursos.'],
+            // Clareza Mental
+            ['Falta clareza no teu rumo profissional. Um diagnóstico estruturado pode ajudar.',
+             'Tens alguma noção do caminho, mas precisas de mais definição.',
+             'Boa clareza mental. Falta afinar os detalhes do plano.',
+             'Clareza mental exemplar. Sabes exactamente onde queres chegar.'],
+            // Posicionamento
+            ['O teu posicionamento no mercado precisa de trabalho urgente.',
+             'Tens margem para melhorar a tua visibilidade e rede profissional.',
+             'Bom posicionamento. Continua a investir na tua presença.',
+             'Posicionamento forte. O mercado reconhece o teu valor.'],
+            // Propósito
+            ['Há um desalinhamento entre o que fazes e o que te move. Vale a pena reflectir.',
+             'Estás parcialmente alinhado(a). Identifica o que falta para maior conexão.',
+             'Bom alinhamento com o teu propósito. Continua a investir no crescimento.',
+             'Excelente conexão com o teu propósito. Estás no caminho certo.']
+        ];
+
+        const levels = [
+            { min: 0, max: 25, label: 'Energia Crítica', seal: 'AWARENESS' },
+            { min: 26, max: 50, label: 'Energia em Construção', seal: 'BUILDING' },
+            { min: 51, max: 75, label: 'Energia Sólida', seal: 'STRONG' },
+            { min: 76, max: 100, label: 'Energia de Alta Performance', seal: 'HIGH PERFORMER' }
+        ];
+
+        let current = 0;
+        let answers = new Array(12).fill(-1);
+
+        function render() {
+            const q = questions[current];
+            document.getElementById('ceProgressFill').style.width = ((current + 1) / questions.length * 100) + '%';
+            document.getElementById('ceProgressText').textContent = 'Pergunta ' + (current + 1) + ' de ' + questions.length;
+            document.getElementById('ceDimensionLabel').textContent = q.label;
+            document.getElementById('ceQuestionText').textContent = q.q;
+            const optsEl = document.getElementById('ceOptions');
+            optsEl.innerHTML = '';
+            q.opts.forEach(function(opt, i) {
+                const btn = document.createElement('div');
+                btn.className = 'ce-option' + (answers[current] === i ? ' selected' : '');
+                btn.textContent = opt;
+                btn.onclick = function() { selectOption(i); };
+                optsEl.appendChild(btn);
+            });
+        }
+
+        function selectOption(i) {
+            answers[current] = i;
+            // Brief visual feedback
+            var opts = document.querySelectorAll('.ce-option');
+            opts.forEach(function(o, idx) { o.classList.toggle('selected', idx === i); });
+            setTimeout(function() {
+                if (current < questions.length - 1) {
+                    current++;
+                    render();
+                } else {
+                    showResults();
+                }
+            }, 300);
+        }
+
+        function showResults() {
+            document.getElementById('ceQuiz').style.display = 'none';
+            document.getElementById('ceResults').style.display = 'block';
+
+            // Calculate dimension scores (each has 3 questions, score 0-3 each → 0-9 → normalize to 0-100)
+            var dimScores = [0, 0, 0, 0];
+            for (var i = 0; i < 12; i++) {
+                dimScores[questions[i].dim] += answers[i];
+            }
+            dimScores = dimScores.map(function(s) { return Math.round(s / 9 * 100); });
+
+            var totalScore = Math.round(dimScores.reduce(function(a, b) { return a + b; }, 0) / 4);
+
+            // Determine level
+            var level = levels.find(function(l) { return totalScore >= l.min && totalScore <= l.max; }) || levels[0];
+
+            // Animate score
+            var scoreEl = document.getElementById('ceScoreNumber');
+            var arcEl = document.getElementById('ceScoreArc');
+            var circumference = 326.73;
+            animateValue(scoreEl, 0, totalScore, 1200);
+            setTimeout(function() {
+                arcEl.style.transition = 'stroke-dashoffset 1.2s ease';
+                arcEl.style.strokeDashoffset = circumference * (1 - totalScore / 100);
+            }, 100);
+
+            document.getElementById('ceScoreLevel').textContent = level.label;
+
+            // Dimensions
+            for (var d = 0; d < 4; d++) {
+                document.getElementById('ceDimScore' + d).textContent = dimScores[d] + '/100';
+                setTimeout((function(dd, sc) {
+                    return function() {
+                        document.getElementById('ceDimFill' + dd).style.width = sc + '%';
+                    };
+                })(d, dimScores[d]), 300 + d * 200);
+                var insightIdx = dimScores[d] <= 25 ? 0 : dimScores[d] <= 50 ? 1 : dimScores[d] <= 75 ? 2 : 3;
+                document.getElementById('ceDimInsight' + d).textContent = dimInsights[d][insightIdx];
+            }
+
+            // Seal
+            document.getElementById('ceSealLevel').textContent = level.seal;
+            document.getElementById('ceSealScore').textContent = totalScore;
+
+            // Store for sharing
+            window._ceData = { score: totalScore, level: level, dimScores: dimScores };
+
+            // Scroll to results
+            document.getElementById('ceResults').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function animateValue(el, start, end, duration) {
+            var startTime = null;
+            function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+                var progress = Math.min((timestamp - startTime) / duration, 1);
+                el.textContent = Math.floor(progress * (end - start) + start);
+                if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        // Init
+        if (document.getElementById('ceQuiz')) {
+            render();
+        }
+
+        // Download seal as image
+        window.downloadCESeal = function() {
+            var data = window._ceData;
+            if (!data) return;
+            var canvas = document.createElement('canvas');
+            canvas.width = 600; canvas.height = 600;
+            var ctx = canvas.getContext('2d');
+
+            // Background
+            var grad = ctx.createLinearGradient(0, 0, 600, 600);
+            grad.addColorStop(0, '#1a2332');
+            grad.addColorStop(1, '#2a3a52');
+            ctx.fillStyle = grad;
+            ctx.beginPath(); ctx.arc(300, 300, 280, 0, Math.PI * 2); ctx.fill();
+
+            // Gold ring
+            ctx.strokeStyle = '#C9A961'; ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.arc(300, 300, 260, 0, Math.PI * 2); ctx.stroke();
+
+            // Inner ring
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.arc(300, 300, 245, 0, Math.PI * 2); ctx.stroke();
+
+            // Text
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#C9A961';
+            ctx.font = '14px system-ui, sans-serif';
+            ctx.letterSpacing = '4px';
+            ctx.fillText('CAREER ENERGY', 300, 160);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '600 18px system-ui, sans-serif';
+            ctx.fillText(data.level.seal, 300, 195);
+
+            // Score circle
+            ctx.strokeStyle = '#C9A961'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.arc(300, 290, 55, 0, Math.PI * 2); ctx.stroke();
+
+            // Score arc
+            ctx.strokeStyle = '#C9A961'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.arc(300, 290, 55, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * data.score / 100));
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '700 36px system-ui, sans-serif';
+            ctx.fillText(data.score.toString(), 300, 300);
+            ctx.font = '400 14px system-ui, sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.fillText('/100', 300, 320);
+
+            // Dimension bars
+            var dimNames = ['Energia', 'Clareza', 'Posicionamento', 'Propósito'];
+            for (var i = 0; i < 4; i++) {
+                var y = 390 + i * 30;
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.font = '12px system-ui, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(dimNames[i], 130, y);
+                // Bar bg
+                ctx.fillStyle = 'rgba(255,255,255,0.1)';
+                ctx.fillRect(260, y - 8, 200, 6);
+                // Bar fill
+                ctx.fillStyle = '#C9A961';
+                ctx.fillRect(260, y - 8, data.dimScores[i] * 2, 6);
+                // Score
+                ctx.fillStyle = '#C9A961';
+                ctx.textAlign = 'right';
+                ctx.fillText(data.dimScores[i], 480, y);
+            }
+
+            // Footer
+            ctx.textAlign = 'center';
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.font = '11px system-ui, sans-serif';
+            ctx.fillText('by Share2Inspire', 300, 480);
+
+            // Download
+            var link = document.createElement('a');
+            link.download = 'career-energy-seal.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        };
+
+        // Share on LinkedIn
+        window.shareCELinkedIn = function() {
+            var data = window._ceData;
+            if (!data) return;
+            var text = encodeURIComponent(
+                'Acabei de fazer o diagnóstico Career Energy da Share2Inspire e obtive ' + data.score + '/100 — ' + data.level.label + '.\n\n' +
+                'Quatro dimensões que definem a performance profissional: Energia, Clareza Mental, Posicionamento e Propósito.\n\n' +
+                'Faz o teu diagnóstico gratuito em share2inspire.pt\n\n' +
+                '#CareerEnergy #Share2Inspire #Carreira #Liderança'
+            );
+            window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent('https://www.share2inspire.pt/#career-energy') + '&summary=' + text, '_blank');
+        };
+    })();
+</script>
 </body>
 
 </html>

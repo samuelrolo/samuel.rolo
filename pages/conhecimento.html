@@ -498,6 +498,12 @@
                     <p class="desc">Um guia sobre as quatro dimensões da energia — física, mental, emocional e espiritual — para quem lidera e quer manter a performance de forma sustentável.</p>
                     <p class="authors">Por <strong>Samuel Rolo</strong> &amp; <strong>Marlene Ruivo</strong></p>
 
+                    <div class="ebook-lang-selector" style="display:flex; gap:8px; margin-bottom:12px;">
+                        <button type="button" class="ebook-lang-btn active" data-lang="pt" onclick="selectEbookLang('pt')" style="padding:6px 16px; border-radius:20px; border:1px solid #C9A961; background:#C9A961; color:#1a2332; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.3s;">Português</button>
+                        <button type="button" class="ebook-lang-btn" data-lang="en" onclick="selectEbookLang('en')" style="padding:6px 16px; border-radius:20px; border:1px solid #C9A961; background:transparent; color:#C9A961; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.3s;">English</button>
+                    </div>
+                    <input type="hidden" id="ebookLang" value="pt">
+
                     <div id="ebookFormContainer">
                         <form id="ebookDownloadForm" class="ebook-form">
                             <input type="email" id="ebookEmail" placeholder="O seu e-mail" required>
@@ -516,6 +522,7 @@
                         <div class="check">&#10003;</div>
                         <p>Registo efetuado. O download irá iniciar automaticamente.</p>
                         <a href="assets/ebooks/Energia_para_Liderar_Ebook.pdf" download id="ebookDirectLink">Descarregar novamente &rarr;</a>
+                        <a href="assets/ebooks/Energy_to_Lead_Ebook.pdf" download id="ebookDirectLinkEN" style="display:none;">Download again &rarr;</a>
                     </div>
                 </div>
             </div>
@@ -735,8 +742,9 @@
                 successDiv.style.display = 'block';
                 setTimeout(function() {
                     var link = document.createElement('a');
-                    link.href = 'assets/ebooks/Energia_para_Liderar_Ebook.pdf';
-                    link.download = 'Energia_para_Liderar_Ebook.pdf';
+                    var selectedLang = document.getElementById('ebookLang').value;
+                    link.href = selectedLang === 'en' ? 'assets/ebooks/Energy_to_Lead_Ebook.pdf' : 'assets/ebooks/Energia_para_Liderar_Ebook.pdf';
+                    link.download = selectedLang === 'en' ? 'Energy_to_Lead_Ebook.pdf' : 'Energia_para_Liderar_Ebook.pdf';
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
@@ -758,6 +766,28 @@
             submitBtn.textContent = 'Descarregar e-book';
         }
     });
+
+    function selectEbookLang(lang) {
+        document.getElementById('ebookLang').value = lang;
+        document.querySelectorAll('.ebook-lang-btn').forEach(function(btn) {
+            if (btn.dataset.lang === lang) {
+                btn.style.background = '#C9A961';
+                btn.style.color = '#1a2332';
+                btn.classList.add('active');
+            } else {
+                btn.style.background = 'transparent';
+                btn.style.color = '#C9A961';
+                btn.classList.remove('active');
+            }
+        });
+        // Update visible links
+        var ptLink = document.getElementById('ebookDirectLink');
+        var enLink = document.getElementById('ebookDirectLinkEN');
+        if (ptLink && enLink) {
+            ptLink.style.display = lang === 'pt' ? 'inline' : 'none';
+            enLink.style.display = lang === 'en' ? 'inline' : 'none';
+        }
+    }
 
     if (window.location.hash === '#ebook-download') {
         setTimeout(function() {
