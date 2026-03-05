@@ -1272,7 +1272,10 @@
             }, 300);
         }
 
+        var _resultsShown = false;
         function showResults() {
+            if (_resultsShown) return;
+            _resultsShown = true;
             document.getElementById('ceQuiz').style.display = 'none';
             document.getElementById('ceResults').style.display = 'block';
 
@@ -1317,14 +1320,19 @@
         }
 
         function animateValue(el, start, end, duration) {
+            if (el._animId) cancelAnimationFrame(el._animId);
             var startTime = null;
             function step(timestamp) {
                 if (!startTime) startTime = timestamp;
                 var progress = Math.min((timestamp - startTime) / duration, 1);
-                el.textContent = Math.floor(progress * (end - start) + start);
-                if (progress < 1) requestAnimationFrame(step);
+                el.textContent = Math.round(progress * (end - start) + start);
+                if (progress < 1) {
+                    el._animId = requestAnimationFrame(step);
+                } else {
+                    el.textContent = end;
+                }
             }
-            requestAnimationFrame(step);
+            el._animId = requestAnimationFrame(step);
         }
 
         if (document.getElementById('ceQuiz')) {
