@@ -1,117 +1,46 @@
 <!doctype html>
-<html lang="pt">
+<html lang="en">
 
   <head>
-<!-- Google Consent Mode v2 -->
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('consent', 'default', {
-    'ad_storage': 'denied',
-    'ad_user_data': 'denied',
-    'ad_personalization': 'denied',
-    'analytics_storage': 'denied',
-    'functionality_storage': 'granted',
-    'personalization_storage': 'denied',
-    'security_storage': 'granted',
-    'wait_for_update': 500
-  });
-</script>
-<!-- Google tag (gtag.js) - GA4 + Google Ads Conversion Tracking -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-8GQ1KM9FQS');
-  gtag('config', 'AW-17015553005');
-  // Fire conversion events when payment=success is in URL
-  (function(){
-    var params = new URLSearchParams(window.location.search);
-    if (params.get('payment') === 'success') {
-      // GA4 purchase event
-      gtag('event', 'purchase', {
-        transaction_id: params.get('session_id') || '',
-        value: 9.99,
-        currency: 'EUR',
-        items: [{ item_name: 'Career Path - Plano de Carreira', price: 9.99 }]
-      });
-      // Google Ads conversion event
-      gtag('event', 'conversion', {
-        'send_to': 'AW-17015553005/purchase',
-        'value': 9.99,
-        'currency': 'EUR',
-        'transaction_id': params.get('session_id') || ''
-      });
-    }
-  })();
-</script>
-<meta charset="UTF-8" />
+    <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Cria o teu roadmap de carreira personalizado com inteligência artificial. Análise de competências, gap analysis, cruzamento CV vs LinkedIn, formações recomendadas e estratégia de networking. Plano de carreira completo por €9,99.">
-    <meta name="keywords" content="career path, roadmap carreira, plano de carreira, gap analysis, desenvolvimento profissional, IA carreira, Share2Inspire, Portugal">
-    <meta name="author" content="Samuel Rolo">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <link rel="canonical" href="https://www.share2inspire.pt/career-path/">
-    <link rel="icon" href="/images/favicon.png" type="image/png">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.share2inspire.pt/career-path/">
-    <meta property="og:title" content="Career Path — Roadmap de Carreira Personalizado com IA">
-    <meta property="og:description" content="Roadmap de carreira completo: gap analysis, formações, certificações e próximos passos concretos para chegares onde queres.">
-    <meta property="og:image" content="https://www.share2inspire.pt/images/og-career-path.png">
-    <meta property="og:locale" content="pt_PT">
-    <meta property="og:site_name" content="Share2Inspire">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://www.share2inspire.pt/career-path/">
-    <meta name="twitter:title" content="Career Path — Roadmap de Carreira Personalizado com IA">
-    <meta name="twitter:description" content="Roadmap de carreira completo: gap analysis, formações, certificações e próximos passos concretos para chegares onde queres.">
-    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-career-path.png">
-    
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "Career Path",
-  "description": "Roadmap de carreira personalizado com inteligência artificial. Análise de competências, gap analysis, cruzamento CV vs LinkedIn, formações e certificações recomendadas, estratégia de networking e próximos passos concretos.",
-  "url": "https://www.share2inspire.pt/career-path/",
-  "applicationCategory": "BusinessApplication",
-  "operatingSystem": "Web",
-  "offers": {
-    "@type": "Offer",
-    "price": "9.99",
-    "priceCurrency": "EUR",
-    "description": "Roadmap de carreira completo"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "ratingCount": "85",
-    "bestRating": "5"
-  },
-  "creator": {
-    "@type": "Organization",
-    "name": "Share2Inspire",
-    "url": "https://www.share2inspire.pt",
-    "founder": {
-      "@type": "Person",
-      "name": "Samuel Rolo"
-    }
-  },
-  "inLanguage": "pt-PT"
-}
-</script>
-    <title>Career Path — Roadmap de Carreira com IA | Share2Inspire</title><script type="module" crossorigin src="/cv-analyser/assets/index-D05qUIo8.js"></script>
+    <title>Share2Inspire</title>
+    <!-- Google Consent Mode v2 -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'ad_storage': 'granted',
+        'ad_user_data': 'granted',
+        'ad_personalization': 'granted',
+        'analytics_storage': 'granted'
+      });
+    </script>
+    <!-- Google Ads + GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-17015553005');
+      gtag('config', 'G-8GQ1KM9FQS');
+    </script>
+    <!-- Meta Pixel -->
+    <script>
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+      n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+      document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '1460148528104687');
+      fbq('track', 'PageView');
+    </script>
+    <script type="module" crossorigin src="/cv-analyser/assets/index-Cty-0h5K.js"></script>
     <link rel="modulepreload" crossorigin href="/cv-analyser/assets/vendor-radix-DCmNHa0D.js">
-    <link rel="modulepreload" crossorigin href="/cv-analyser/assets/vendor-pdf-BFP0l5Dn.js">
-    <link rel="stylesheet" crossorigin href="/cv-analyser/assets/index-BRkQA7hC.css">
+    <link rel="modulepreload" crossorigin href="/cv-analyser/assets/vendor-pdf-QxCHwSML.js">
+    <link rel="stylesheet" crossorigin href="/cv-analyser/assets/index-Bxvy8GGh.css">
   </head>
 
   <body>
@@ -176,123 +105,6 @@ Error generating stack: `+l.message+`
 </script>
 
     <div id="root"></div>
-    <!-- Umami analytics disabled - configure VITE_ANALYTICS_ENDPOINT in .env to enable -->
-  <script>
-  (function(){
-    'use strict';
-    function run(){
-      var root=document.getElementById('root');
-      if(!root||root.innerHTML.length<1000)return;
-      addLinkedInButtons(root);
-      fixCourseLinks(root);
-      addFreeTraining(root);
-    }
-    function addLinkedInButtons(root){
-      var allEls=root.querySelectorAll('span,div,p');
-      var roleCards=[];
-      for(var i=0;i<allEls.length;i++){
-        var t=allEls[i].textContent.trim();
-        if(/^#\d+$/.test(t)){
-          var card=allEls[i].closest('[class*="border"]');
-          if(card&&card.offsetHeight>100&&!card.querySelector('.cp-linkedin-btn')){
-            var isDup=false;
-            for(var k=0;k<roleCards.length;k++){if(roleCards[k]===card){isDup=true;break;}}
-            if(!isDup)roleCards.push(card);
-          }
-        }
-      }
-      for(var j=0;j<roleCards.length;j++){
-        var c=roleCards[j];
-        if(c.querySelector('.cp-linkedin-btn'))continue;
-        var titleEl=null;
-        var els=c.querySelectorAll('span,p,h2,h3,div');
-        for(var m=0;m<els.length;m++){
-          var tx=els[m].textContent.trim();
-          if(tx.length>10&&tx.length<120&&!/^#\d+$/.test(tx)&&!/^\d+%/.test(tx)&&tx.indexOf('fit')<0&&tx.indexOf('prazo')<0&&tx.indexOf('term')<0&&els[m].children.length<3){
-            titleEl=els[m];break;
-          }
-        }
-        if(!titleEl)continue;
-        var roleTitle=titleEl.textContent.trim().split('/')[0].trim();
-        var btn=document.createElement('a');
-        btn.className='cp-linkedin-btn';
-        btn.href='https://www.linkedin.com/jobs/search/?keywords='+encodeURIComponent(roleTitle)+'&location=Portugal';
-        btn.target='_blank';
-        btn.rel='noopener noreferrer';
-        btn.style.cssText='display:inline-flex;align-items:center;gap:6px;margin:12px 16px;padding:8px 16px;background:#0A66C2;color:#fff;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;cursor:pointer;';
-        btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>Ver Vagas no LinkedIn';
-        btn.onmouseenter=function(){this.style.background='#004182';};
-        btn.onmouseleave=function(){this.style.background='#0A66C2';};
-        c.appendChild(btn);
-      }
-    }
-    function fixCourseLinks(root){
-      var links=root.querySelectorAll('a');
-      for(var i=0;i<links.length;i++){
-        var link=links[i];
-        var t=link.textContent.trim().toLowerCase();
-        if(t.indexOf('ver forma')>=0||t==='ver curso'){
-          if(link.dataset.cpFixed)continue;
-          var card=link.closest('[class*="border"]');
-          if(!card)continue;
-          var nameEls=card.querySelectorAll('span,p,div');
-          var formName='';
-          for(var m=0;m<nameEls.length;m++){
-            var nt=nameEls[m].textContent.trim();
-            if(nt.length>10&&nt.length<100&&nt!==t&&nt.indexOf('Ver ')<0&&nt.indexOf('Prioridade')<0&&nameEls[m].children.length<2){formName=nt;break;}
-          }
-          if(formName){
-            link.href='https://www.google.com/search?q='+encodeURIComponent(formName+' curso online');
-            link.target='_blank';
-            link.dataset.cpFixed='true';
-          }
-        }
-      }
-    }
-    function addFreeTraining(root){
-      if(document.getElementById('cp-free-training'))return;
-      var formSec=null;
-      var headers=root.querySelectorAll('p,span,div');
-      for(var i=0;i<headers.length;i++){
-        var t=headers[i].textContent.trim().toUpperCase();
-        if(t.indexOf('FORMA')>=0&&t.indexOf('RECOMENDADA')>=0){
-          formSec=headers[i].closest('[class*="border"][class*="rounded"]');
-          break;
-        }
-      }
-      if(!formSec)return;
-      var formNames=[];
-      var nameEls=formSec.querySelectorAll('span,p');
-      for(var j=0;j<nameEls.length;j++){
-        var nt=nameEls[j].textContent.trim();
-        if(nt.length>15&&nt.length<100&&nt.toUpperCase().indexOf('FORMA')<0&&nt.indexOf('Ver ')<0&&nt.indexOf('Prioridade')<0&&nameEls[j].children.length<2){
-          if(formNames.indexOf(nt)<0)formNames.push(nt);
-        }
-      }
-      var trainings=[];
-      for(var k=0;k<Math.min(3,formNames.length);k++){
-        trainings.push({name:formNames[k],url:'https://www.google.com/search?q='+encodeURIComponent(formNames[k]+' curso gratuito online')});
-      }
-      var generic=[{name:'Coursera - Cursos Gratuitos',url:'https://www.google.com/search?q=coursera+free+courses+career+development'},{name:'LinkedIn Learning - Cursos Gratuitos',url:'https://www.google.com/search?q=linkedin+learning+free+courses'},{name:'Google Career Certificates',url:'https://www.google.com/search?q=google+career+certificates+free'}];
-      while(trainings.length<3)trainings.push(generic[trainings.length]);
-      var sec=document.createElement('div');
-      sec.id='cp-free-training';
-      sec.style.cssText='margin-top:16px;padding:16px 20px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;';
-      var h='<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span style="font-size:16px;">\ud83c\udf93</span><span style="font-size:11px;font-weight:700;letter-spacing:1.2px;color:#6b7280;">FORMA\u00c7\u00d5ES GRATUITAS RECOMENDADAS</span></div>';
-      for(var n=0;n<trainings.length;n++){
-        h+='<div style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">'
-          +'<div style="flex:1;"><p style="font-size:13px;font-weight:600;color:#111827;">'+esc(trainings[n].name)+'</p><p style="font-size:11px;color:#6b7280;margin-top:2px;">Vers\u00e3o gratuita dispon\u00edvel online</p></div>'
-          +'<a href="'+trainings[n].url+'" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:4px;padding:6px 14px;background:#22c55e;color:#fff;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;">Fazer Curso</a>'
-          +'</div>';
-      }
-      sec.innerHTML=h;
-      formSec.parentNode.insertBefore(sec,formSec.nextSibling);
-    }
-    function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-    function init(){run();var obs=new MutationObserver(function(){run();});obs.observe(document.body,{childList:true,subtree:true});setTimeout(function(){obs.disconnect();},60000);}
-    if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
-  })();
-  </script>
-</body>
+  </body>
 
 </html>

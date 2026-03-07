@@ -1,132 +1,46 @@
 <!doctype html>
-<html lang="pt">
+<html lang="en">
 
   <head>
-<!-- Google Consent Mode v2 -->
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('consent', 'default', {
-    'ad_storage': 'denied',
-    'ad_user_data': 'denied',
-    'ad_personalization': 'denied',
-    'analytics_storage': 'denied',
-    'functionality_storage': 'granted',
-    'personalization_storage': 'denied',
-    'security_storage': 'granted',
-    'wait_for_update': 500
-  });
-</script>
-<!-- Google tag (gtag.js) - GA4 + Google Ads Conversion Tracking -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-8GQ1KM9FQS');
-  gtag('config', 'AW-17015553005');
-  // Fire conversion events when payment=success is in URL
-  (function(){
-    var params = new URLSearchParams(window.location.search);
-    if (params.get('payment') === 'success') {
-      // GA4 purchase event
-      gtag('event', 'purchase', {
-        transaction_id: params.get('session_id') || '',
-        value: 3.99,
-        currency: 'EUR',
-        items: [{ item_name: 'CV Analyser - Analise Completa', price: 3.99 }]
-      });
-      // Google Ads conversion event
-      gtag('event', 'conversion', {
-        'send_to': 'AW-17015553005/purchase',
-        'value': 3.99,
-        'currency': 'EUR',
-        'transaction_id': params.get('session_id') || ''
-      });
-    }
-  })();
-</script>
-<meta charset="UTF-8" />
+    <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Analisa o teu CV com inteligência artificial. Recebe um score ATS, feedback de recrutadores, estimativa salarial, risco de automação e um plano de melhoria de 30 dias. Ferramenta de análise de currículo líder em Portugal.">
-    <meta name="keywords" content="análise de CV, CV analyser, score ATS, análise de currículo, inteligência artificial CV, recrutamento, estimativa salarial, Share2Inspire, Portugal">
-    <meta name="author" content="Samuel Rolo">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <link rel="canonical" href="https://www.share2inspire.pt/cv-analyser/">
-    <link rel="icon" href="/images/favicon.png" type="image/png">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.share2inspire.pt/cv-analyser/">
-    <meta property="og:title" content="CV Analyser — Análise de CV com Inteligência Artificial">
-    <meta property="og:description" content="Descobre o que os recrutadores veem no teu CV. Score ATS, estimativa salarial, risco de automação e plano de acção personalizado.">
-    <meta property="og:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
-    <meta property="og:locale" content="pt_PT">
-    <meta property="og:site_name" content="Share2Inspire">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://www.share2inspire.pt/cv-analyser/">
-    <meta name="twitter:title" content="CV Analyser — Análise de CV com Inteligência Artificial">
-    <meta name="twitter:description" content="Descobre o que os recrutadores veem no teu CV. Score ATS, estimativa salarial, risco de automação e plano de acção personalizado.">
-    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
-    
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "CV Analyser",
-  "description": "Ferramenta de análise de CV com inteligência artificial. Analisa o teu currículo e recebe score ATS, feedback de recrutadores, estimativa salarial, risco de automação e plano de melhoria de 30 dias.",
-  "url": "https://www.share2inspire.pt/cv-analyser/",
-  "applicationCategory": "BusinessApplication",
-  "operatingSystem": "Web",
-  "offers": {
-    "@type": "Offer",
-    "price": "3.99",
-    "priceCurrency": "EUR",
-    "description": "Análise essencial de CV"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.8",
-    "ratingCount": "150",
-    "bestRating": "5"
-  },
-  "creator": {
-    "@type": "Organization",
-    "name": "Share2Inspire",
-    "url": "https://www.share2inspire.pt",
-    "founder": {
-      "@type": "Person",
-      "name": "Samuel Rolo"
-    }
-  },
-  "inLanguage": "pt-PT"
-}
-</script>
-    <title>CV Analyser — Análise de CV com IA | Share2Inspire</title><script type="module" crossorigin src="/cv-analyser/assets/index-D05qUIo8.js"></script>
+    <title>Share2Inspire</title>
+    <!-- Google Consent Mode v2 -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'ad_storage': 'granted',
+        'ad_user_data': 'granted',
+        'ad_personalization': 'granted',
+        'analytics_storage': 'granted'
+      });
+    </script>
+    <!-- Google Ads + GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-17015553005');
+      gtag('config', 'G-8GQ1KM9FQS');
+    </script>
+    <!-- Meta Pixel -->
+    <script>
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+      n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+      document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '1460148528104687');
+      fbq('track', 'PageView');
+    </script>
+    <script type="module" crossorigin src="/cv-analyser/assets/index-Cty-0h5K.js"></script>
     <link rel="modulepreload" crossorigin href="/cv-analyser/assets/vendor-radix-DCmNHa0D.js">
     <link rel="modulepreload" crossorigin href="/cv-analyser/assets/vendor-pdf-QxCHwSML.js">
-    <link rel="stylesheet" crossorigin href="/cv-analyser/assets/index-BRkQA7hC.css">
-    <style id="ft-inline-css">
-      /* Free teaser v6 inline: hide all children from 3rd onwards in main container */
-      #root [class*="max-w-4xl"][class*="space-y-6"] > *:nth-child(n+3):not(:last-child),
-      #root [class*="max-w-4xl"][class*="space-y-8"] > *:nth-child(n+3):not(:last-child) {
-        display: none !important;
-      }
-      #root [class*="max-w-4xl"][class*="space-y-6"],
-      #root [class*="max-w-4xl"][class*="space-y-8"] {
-        gap: 0 !important;
-      }
-      #ft-badge, #ft-cta { display: block !important; }
-      #ft-cta { animation: ftSlide 0.4s ease-out; }
-      @keyframes ftSlide { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-      .ft-row:hover { background: rgba(201,169,97,0.08); }
-    </style>
+    <link rel="stylesheet" crossorigin href="/cv-analyser/assets/index-Bxvy8GGh.css">
   </head>
 
   <body>
@@ -191,7 +105,6 @@ Error generating stack: `+l.message+`
 </script>
 
     <div id="root"></div>
-    <!-- Umami analytics disabled - configure VITE_ANALYTICS_ENDPOINT in .env to enable -->
   </body>
 
 </html>
