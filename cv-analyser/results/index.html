@@ -2,22 +2,46 @@
 <html lang="pt">
 
   <head>
-<!-- Google Ads Conversion - only fires on payment success -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
+<!-- Google Consent Mode v2 -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'functionality_storage': 'granted',
+    'personalization_storage': 'denied',
+    'security_storage': 'granted',
+    'wait_for_update': 500
+  });
+</script>
+<!-- Google tag (gtag.js) - GA4 + Google Ads Conversion Tracking -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-8GQ1KM9FQS');
-  // Only fire conversion event when payment=success is in URL
+  gtag('config', 'AW-17015553005');
+  // Fire conversion events when payment=success is in URL
   (function(){
     var params = new URLSearchParams(window.location.search);
     if (params.get('payment') === 'success') {
+      // GA4 purchase event
       gtag('event', 'purchase', {
         transaction_id: params.get('session_id') || '',
         value: 3.99,
         currency: 'EUR',
         items: [{ item_name: 'CV Analyser - Analise Completa', price: 3.99 }]
+      });
+      // Google Ads conversion event
+      gtag('event', 'conversion', {
+        'send_to': 'AW-17015553005/purchase',
+        'value': 3.99,
+        'currency': 'EUR',
+        'transaction_id': params.get('session_id') || ''
       });
     }
   })();
