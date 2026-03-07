@@ -30,8 +30,8 @@ let allNewsletterSubs = [];
 
 let globalLang       = 'all';
 let nurturingLang    = 'pt';
-let dashPeriodDays   = 30;
-let funnelPeriodDays = 30;
+let dashPeriodDays   = 0;
+let funnelPeriodDays = 0;
 let currentPage      = 1;
 let historyPage      = 1;
 let crmPage          = 1;
@@ -245,22 +245,21 @@ function setFunnelPeriod(days, btn) {
 // ═══════════════════════════════════════════════════════════════
 async function loadAllData() {
     try {
-        const [analyses, vouchers, contacts, ebooks, jobSearch, careerEnergy, newsletter] = await Promise.all([
-            supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,seniority_level,analysis_type,payment_status,payment_amount,payment_method,transaction_id,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc&limit=5000'),
+        const [analyses, vouchers, contacts, newsletter, jobSearch, careerEnergy] = await Promise.all([
+            supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,analysis_type,payment_status,payment_amount,payment_method,transaction_id,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc&limit=5000'),
             supaFetch('vouchers', 'select=*&order=created_at.desc'),
             supaFetch('contact_messages', 'select=*&order=created_at.desc&limit=500'),
             supaFetch('newsletter_subscribers', 'select=*&order=created_at.desc&limit=2000'),
             supaFetch('job_search_tracking', 'select=*&order=created_at.desc&limit=2000'),
-            supaFetch('career_energy_results', 'select=*&order=created_at.desc&limit=2000'),
-            supaFetch('newsletter_subscribers', 'select=*&order=created_at.desc&limit=2000')
+            supaFetch('career_energy_results', 'select=*&order=created_at.desc&limit=2000')
         ]);
         allAnalyses      = Array.isArray(analyses)     ? analyses     : [];
         allVouchers      = Array.isArray(vouchers)     ? vouchers     : [];
         allContacts      = Array.isArray(contacts)     ? contacts     : [];
-        allEbookDownloads = Array.isArray(ebooks)      ? ebooks       : [];
+        allNewsletterSubs = Array.isArray(newsletter)  ? newsletter   : [];
+        allEbookDownloads = allNewsletterSubs; // newsletter_subscribers serve como base de ebook leads
         allJobSearch     = Array.isArray(jobSearch)    ? jobSearch    : [];
         allCareerEnergy  = Array.isArray(careerEnergy) ? careerEnergy : [];
-        allNewsletterSubs = Array.isArray(newsletter)  ? newsletter   : [];
     } catch (e) {
         console.error('Erro ao carregar dados:', e);
         showToast('Erro ao carregar dados do Supabase', 'danger');
@@ -1498,7 +1497,7 @@ function renderJobSearch() {
     setText('kpiJob7d',          data.filter(j => new Date(j.created_at) > new Date(now - 7 * 86400000)).length);
 
     // Populate seniority filter
-    const senSet = new Set(data.map(j => j.seniority_level || j.seniority).filter(Boolean));
+    const senSet = new Set(data.map(j => j.seniority).filter(Boolean));
     populateSelect('filterJobSeniority', [...senSet].sort());
 
     renderJobSearchTable();
@@ -1511,7 +1510,7 @@ function renderJobSearchTable() {
     const period = document.getElementById('filterJobPeriod')?.value || 'all';
     const search = (document.getElementById('filterJobSearch')?.value || '').toLowerCase();
 
-    if (sen !== 'all') data = data.filter(j => (j.seniority_level || j.seniority) === sen);
+    if (sen !== 'all') data = data.filter(j => j.seniority === sen);
     if (period !== 'all') data = filterByPeriod(data, parseInt(period));
     if (search) data = data.filter(j => (j.detected_role || j.job_title || '').toLowerCase().includes(search) || (j.user_name || '').toLowerCase().includes(search));
 
@@ -1534,7 +1533,7 @@ function renderJobSearchTable() {
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
             <td style="font-size:12px;">${j.user_name || '—'}</td>
             <td style="font-size:12px;font-weight:500;">${j.detected_role || j.job_title || '—'}</td>
-            <td><span class="badge badge-secondary">${j.seniority_level || j.seniority || '—'}</span></td>
+            <td><span class="badge badge-secondary">${j.seniority || '—'}</span></td>
             <td style="font-size:11px;color:var(--text-muted);">${skills}</td>
             <td><span class="badge ${hasJob ? 'badge-success' : 'badge-secondary'}">${hasJob ? 'Sim' : 'Não'}</span></td>
             <td style="font-size:12px;">${j.ats_score || '—'}</td>
@@ -1559,7 +1558,7 @@ function renderJobSearchCharts() {
 
     // Seniority
     const senCount = {};
-    data.forEach(j => { const s = j.seniority_level || j.seniority; if (s) senCount[s] = (senCount[s] || 0) + 1; });
+    data.forEach(j => { const s = j.seniority; if (s) senCount[s] = (senCount[s] || 0) + 1; });
     const ctx2 = document.getElementById('chartSeniority')?.getContext('2d');
     if (ctx2) new Chart(ctx2, {
         type: 'doughnut',
@@ -1600,7 +1599,7 @@ function exportJobSearchCSV() {
     const rows = [['Data','Nome','Cargo','Senioridade','Skills','Com Vaga','ATS Score']];
     allJobSearch.forEach(j => rows.push([
         j.created_at?.slice(0,10), j.user_name||'', j.detected_role||j.job_title||'',
-        j.seniority_level||j.seniority||'',
+        j.seniority||'',
         Array.isArray(j.top_skills) ? j.top_skills.join(';') : '',
         j.has_job_offer || j.job_offer_found ? 'Sim' : 'Não',
         j.ats_score||''
