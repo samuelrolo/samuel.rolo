@@ -114,6 +114,11 @@ function isAnonymous(a) {
     const email = (a.user_email || '').toLowerCase();
     return !email || email.includes('anonymous') || email.includes('@share2inspire') || email === '';
 }
+// hasEmail: verdadeiro se o registo tem um email real contactável (mesmo que o nome seja "Utilizador Anónimo")
+function hasEmail(a) {
+    const email = (a.user_email || '').trim().toLowerCase();
+    return email.length > 0 && !email.includes('anonymous') && !email.includes('@share2inspire') && email.includes('@');
+}
 
 function getPaymentOrigin(a) {
     if (a.payment_method) return a.payment_method;
@@ -911,7 +916,8 @@ function renderAnalyses() {
     tbody.innerHTML = page.map(a => {
         const type = getAnalysisType(a);
         const lang = detectLanguage(a);
-        const date = new Date(a.created_at).toLocaleDateString('pt-PT');
+        const dt = new Date(a.created_at);
+        const date = dt.toLocaleDateString('pt-PT') + ' ' + dt.toLocaleTimeString('pt-PT', {hour:'2-digit', minute:'2-digit'});
         const score = a.score > 0 ? `<span style="font-weight:600;color:${a.score >= 70 ? 'var(--green)' : a.score >= 40 ? 'var(--orange)' : 'var(--red)'};">${a.score}</span>` : '—';
         const amount = a.payment_amount > 0 ? `<span style="color:var(--gold);font-weight:600;">${a.payment_amount.toFixed(2)}€</span>` : '—';
         const anonBadge = isAnonymous(a) ? '<span class="badge badge-secondary" style="font-size:9px;">Anónimo</span>' : '';
@@ -1045,10 +1051,10 @@ async function createVouchers() {
 function renderNurturingSegments() {
     const sentEmails = new Set(allEmailHistory.map(e => e.recipient_email?.toLowerCase()));
 
-    const upsell     = allAnalyses.filter(a => getAnalysisType(a) === 'free' && !isAnonymous(a));
-    const feedback   = allAnalyses.filter(a => getAnalysisType(a) === 'paid' && !a.user_rating && !isAnonymous(a));
-    const careerpath = allAnalyses.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && !isAnonymous(a));
-    const abandoned  = allAnalyses.filter(a => isAnonymous(a) && new Date(a.created_at) > new Date(Date.now() - 7 * 86400000));
+    const upsell     = allAnalyses.filter(a => getAnalysisType(a) === 'free' && hasEmail(a));
+    const feedback   = allAnalyses.filter(a => getAnalysisType(a) === 'paid' && !a.user_rating && hasEmail(a));
+    const careerpath = allAnalyses.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && hasEmail(a));
+    const abandoned  = allAnalyses.filter(a => !hasEmail(a) && new Date(a.created_at) > new Date(Date.now() - 7 * 86400000));
 
     const uniqueUpsell     = [...new Set(upsell.map(a => a.user_email.toLowerCase()))];
     const uniqueFeedback   = [...new Set(feedback.map(a => a.user_email.toLowerCase()))];
@@ -1121,19 +1127,19 @@ function prepareNurturing(segment) {
     let recipients = [];
 
     if (segment === 'upsell') {
-        const emails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'free' && !isAnonymous(a)).map(a => a.user_email.toLowerCase()))];
+        const emails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'free' && hasEmail(a)).map(a => a.user_email.toLowerCase().trim()))];
         recipients = emails.map(email => {
             const a = allAnalyses.find(x => x.user_email?.toLowerCase() === email);
             return { email, name: a?.user_name || '', sent: sentEmails.has(email) };
         });
     } else if (segment === 'feedback') {
-        const emails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'paid' && !a.user_rating && !isAnonymous(a)).map(a => a.user_email.toLowerCase()))];
+        const emails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'paid' && !a.user_rating && hasEmail(a)).map(a => a.user_email.toLowerCase().trim()))];
         recipients = emails.map(email => {
             const a = allAnalyses.find(x => x.user_email?.toLowerCase() === email);
             return { email, name: a?.user_name || '', sent: sentEmails.has(email) };
         });
     } else if (segment === 'careerpath') {
-        const emails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && !isAnonymous(a)).map(a => a.user_email.toLowerCase()))];
+        const emails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && hasEmail(a)).map(a => a.user_email.toLowerCase().trim()))];
         recipients = emails.map(email => {
             const a = allAnalyses.find(x => x.user_email?.toLowerCase() === email);
             return { email, name: a?.user_name || '', sent: sentEmails.has(email) };
