@@ -3,1035 +3,1093 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Share2Inspire Admin</title>
+    <title>Share2Inspire Admin · Analytics</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         :root {
-            --gold: #C9A961;
-            --gold-light: #D4B96E;
-            --gold-bg: #FBF8F1;
-            --gold-border: #E8DFC8;
-            --dark: #1A1A1A;
-            --text: #374151;
-            --text-secondary: #6B7280;
-            --text-muted: #9CA3AF;
-            --bg: #FAFAFA;
-            --white: #FFFFFF;
-            --border: #F0F0F0;
-            --border-hover: #E5E7EB;
-            --green: #10B981;
-            --green-bg: #ECFDF5;
-            --red: #EF4444;
-            --red-bg: #FEF2F2;
-            --blue: #3B82F6;
-            --blue-bg: #EFF6FF;
-            --purple: #7C3AED;
-            --purple-bg: #F5F3FF;
-            --orange: #F59E0B;
-            --radius: 12px;
-            --radius-sm: 8px;
-            --shadow: 0 1px 3px rgba(0,0,0,.04);
-            --shadow-md: 0 4px 12px rgba(0,0,0,.06);
+            --gold: #C9A961; --gold-light: #D4B96E; --gold-bg: #FBF8F1; --gold-border: #E8DFC8;
+            --dark: #1A1A1A; --text: #374151; --text-secondary: #6B7280; --text-muted: #9CA3AF;
+            --bg: #FAFAFA; --white: #FFFFFF; --border: #F0F0F0; --border-hover: #E5E7EB;
+            --green: #10B981; --green-bg: #ECFDF5; --red: #EF4444; --red-bg: #FEF2F2;
+            --blue: #3B82F6; --blue-bg: #EFF6FF; --purple: #7C3AED; --purple-bg: #F5F3FF;
+            --orange: #F59E0B; --teal: #14B8A6; --teal-bg: #F0FDFA;
+            --radius: 12px; --radius-sm: 8px;
+            --shadow: 0 1px 3px rgba(0,0,0,.04); --shadow-md: 0 4px 12px rgba(0,0,0,.06);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.5; }
 
-        /* Header */
-        .header { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 32px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-        .header-brand { display: flex; align-items: center; gap: 12px; }
-        .header-brand svg { width: 28px; height: 28px; }
-        .header-brand h1 { font-size: 15px; font-weight: 600; color: var(--dark); letter-spacing: .5px; }
-        .header-brand span { font-size: 11px; color: var(--text-muted); font-weight: 400; letter-spacing: .3px; }
-        .header-actions { display: flex; align-items: center; gap: 12px; }
-        .header-status { font-size: 11px; color: var(--text-muted); }
+        /* ── HEADER ── */
+        .header { background:var(--white); border-bottom:1px solid var(--border); padding:0 32px; height:56px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+        .header-brand { display:flex; align-items:center; gap:12px; }
+        .header-brand h1 { font-size:15px; font-weight:600; color:var(--dark); letter-spacing:.5px; }
+        .header-brand span { font-size:11px; color:var(--text-muted); }
+        .header-actions { display:flex; align-items:center; gap:12px; }
+        .header-status { font-size:11px; color:var(--text-muted); }
 
-        /* Language Toggle */
-        .lang-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-        .lang-toggle button { padding: 5px 12px; font-size: 11px; font-weight: 500; border: none; background: var(--white); color: var(--text-secondary); cursor: pointer; transition: all .15s; }
-        .lang-toggle button.active { background: var(--gold); color: var(--white); }
-        .lang-toggle button:hover:not(.active) { background: var(--gold-bg); }
+        /* ── LANG TOGGLE ── */
+        .lang-toggle { display:inline-flex; border:1px solid var(--border); border-radius:6px; overflow:hidden; }
+        .lang-toggle button { padding:5px 12px; font-size:11px; font-weight:500; border:none; background:var(--white); color:var(--text-secondary); cursor:pointer; transition:all .15s; }
+        .lang-toggle button.active { background:var(--gold); color:var(--white); }
+        .lang-toggle button:hover:not(.active) { background:var(--gold-bg); }
 
-        /* Refresh button */
-        .btn-refresh { padding: 6px 14px; font-size: 12px; font-weight: 500; border: 1px solid var(--gold); background: var(--white); color: var(--gold); border-radius: 6px; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 6px; }
-        .btn-refresh:hover { background: var(--gold); color: var(--white); }
+        .btn-refresh { padding:6px 14px; font-size:12px; font-weight:500; border:1px solid var(--gold); background:var(--white); color:var(--gold); border-radius:6px; cursor:pointer; transition:all .15s; display:flex; align-items:center; gap:6px; }
+        .btn-refresh:hover { background:var(--gold); color:var(--white); }
 
-        /* Navigation Tabs */
-        .nav-tabs { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; gap: 0; overflow-x: auto; }
-        .tab-btn { padding: 12px 20px; font-size: 13px; font-weight: 500; color: var(--text-secondary); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all .15s; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
-        .tab-btn:hover { color: var(--dark); }
-        .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
-        .tab-btn i { font-size: 13px; }
+        /* ── NAV TABS ── */
+        .nav-tabs { background:var(--white); border-bottom:1px solid var(--border); padding:0 32px; display:flex; gap:0; overflow-x:auto; }
+        .tab-btn { padding:12px 18px; font-size:13px; font-weight:500; color:var(--text-secondary); background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; transition:all .15s; white-space:nowrap; display:flex; align-items:center; gap:7px; }
+        .tab-btn:hover { color:var(--dark); }
+        .tab-btn.active { color:var(--gold); border-bottom-color:var(--gold); }
+        .tab-btn i { font-size:13px; }
 
-        /* Main content */
-        .main { padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
+        /* ── MAIN ── */
+        .main { padding:24px 32px; max-width:1440px; margin:0 auto; }
 
-        /* KPI Row */
-        .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .kpi-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; transition: border-color .15s; }
-        .kpi-card:hover { border-color: var(--gold-border); }
-        .kpi-label { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
-        .kpi-value { font-size: 28px; font-weight: 700; color: var(--dark); line-height: 1; }
-        .kpi-value.gold { color: var(--gold); }
-        .kpi-value.green { color: var(--green); }
-        .kpi-value.blue { color: var(--blue); }
-        .kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+        /* ── KPI CARDS ── */
+        .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:14px; margin-bottom:20px; }
+        .kpi-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; transition:border-color .15s; position:relative; overflow:hidden; }
+        .kpi-card:hover { border-color:var(--gold-border); }
+        .kpi-card .kpi-accent { position:absolute; top:0; left:0; width:3px; height:100%; border-radius:3px 0 0 3px; }
+        .kpi-label { font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.6px; margin-bottom:8px; }
+        .kpi-value { font-size:26px; font-weight:700; color:var(--dark); line-height:1; }
+        .kpi-value.gold { color:var(--gold); }
+        .kpi-value.green { color:var(--green); }
+        .kpi-value.blue { color:var(--blue); }
+        .kpi-value.red { color:var(--red); }
+        .kpi-value.purple { color:var(--purple); }
+        .kpi-value.teal { color:var(--teal); }
+        .kpi-sub { font-size:11px; color:var(--text-muted); margin-top:5px; }
+        .kpi-trend { font-size:11px; margin-top:4px; }
+        .kpi-trend.up { color:var(--green); }
+        .kpi-trend.down { color:var(--red); }
 
-        /* Cards */
-        .card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 20px; overflow: hidden; }
-        .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .card-title { font-size: 13px; font-weight: 600; color: var(--dark); display: flex; align-items: center; gap: 8px; }
-        .card-title i { color: var(--gold); font-size: 14px; }
-        .card-body { padding: 20px; }
+        /* ── CARDS ── */
+        .card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:20px; overflow:hidden; }
+        .card-header { padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+        .card-title { font-size:13px; font-weight:600; color:var(--dark); display:flex; align-items:center; gap:8px; }
+        .card-title i { color:var(--gold); font-size:14px; }
+        .card-body { padding:20px; }
 
-        /* Grid layouts */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-        @media (max-width: 900px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+        /* ── GRID ── */
+        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+        .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+        @media (max-width:1100px) { .grid-4 { grid-template-columns:repeat(2,1fr); } }
+        @media (max-width:900px) { .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; } }
 
-        /* Filter bar */
-        .filter-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 16px 20px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 16px; }
-        .filter-bar label { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: .3px; }
-        .form-select, .form-input { padding: 7px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px; background: var(--white); color: var(--text); font-family: inherit; outline: none; transition: border-color .15s; }
-        .form-select:focus, .form-input:focus { border-color: var(--gold); }
-        .form-select { padding-right: 28px; }
+        /* ── FILTER BAR ── */
+        .filter-bar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:14px 20px; background:var(--white); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:16px; }
+        .filter-bar label { font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px; }
+        .form-select,.form-input { padding:6px 10px; font-size:12px; border:1px solid var(--border); border-radius:6px; background:var(--white); color:var(--text); font-family:inherit; outline:none; transition:border-color .15s; }
+        .form-select:focus,.form-input:focus { border-color:var(--gold); }
+        .filter-divider { width:1px; height:20px; background:var(--border); }
 
-        /* Tables */
-        .table-wrap { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        thead th { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; padding: 10px 14px; border-bottom: 1px solid var(--border); text-align: left; background: var(--bg); }
-        tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
-        tbody tr:hover { background: var(--gold-bg); }
-        tbody tr:last-child td { border-bottom: none; }
+        /* ── TABLES ── */
+        .table-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; }
+        thead th { font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; padding:10px 14px; border-bottom:1px solid var(--border); text-align:left; background:var(--bg); white-space:nowrap; }
+        tbody td { padding:10px 14px; border-bottom:1px solid var(--border); font-size:13px; vertical-align:middle; }
+        tbody tr:hover { background:var(--gold-bg); }
+        tbody tr:last-child td { border-bottom:none; }
 
-        /* Badges */
-        .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; line-height: 1.4; }
-        .badge-paid { background: var(--green-bg); color: var(--green); }
-        .badge-free { background: #F3F4F6; color: var(--text-secondary); }
-        .badge-voucher { background: var(--gold-bg); color: #92750E; }
-        .badge-career { background: var(--blue-bg); color: var(--blue); }
-        .badge-cv { background: var(--purple-bg); color: var(--purple); }
-        .badge-pt { background: #F0FFF4; color: #166534; }
-        .badge-en { background: #EFF6FF; color: #1E40AF; }
-        .badge-success { background: var(--green-bg); color: var(--green); }
-        .badge-danger { background: var(--red-bg); color: var(--red); }
-        .badge-warning { background: #FFFBEB; color: #B45309; }
-        .badge-secondary { background: #F3F4F6; color: var(--text-secondary); }
+        /* ── BADGES ── */
+        .badge { display:inline-flex; align-items:center; padding:2px 9px; border-radius:20px; font-size:10px; font-weight:600; line-height:1.5; white-space:nowrap; }
+        .badge-paid { background:var(--green-bg); color:var(--green); }
+        .badge-free { background:#F3F4F6; color:var(--text-secondary); }
+        .badge-voucher { background:var(--gold-bg); color:#92750E; }
+        .badge-career { background:var(--blue-bg); color:var(--blue); }
+        .badge-cv { background:var(--purple-bg); color:var(--purple); }
+        .badge-pt { background:#F0FFF4; color:#166534; }
+        .badge-en { background:#EFF6FF; color:#1E40AF; }
+        .badge-success { background:var(--green-bg); color:var(--green); }
+        .badge-danger { background:var(--red-bg); color:var(--red); }
+        .badge-warning { background:#FFFBEB; color:#B45309; }
+        .badge-secondary { background:#F3F4F6; color:var(--text-secondary); }
+        .badge-teal { background:var(--teal-bg); color:var(--teal); }
+        .badge-purple { background:var(--purple-bg); color:var(--purple); }
 
-        /* Buttons */
-        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 16px; font-size: 13px; font-weight: 500; border-radius: 6px; border: none; cursor: pointer; transition: all .15s; font-family: inherit; }
-        .btn-gold { background: var(--gold); color: var(--white); }
-        .btn-gold:hover { background: var(--gold-light); }
-        .btn-outline { background: var(--white); color: var(--text); border: 1px solid var(--border); }
-        .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
-        .btn-sm { padding: 5px 10px; font-size: 12px; }
-        .btn-icon { width: 32px; height: 32px; padding: 0; border-radius: 6px; background: var(--white); border: 1px solid var(--border); color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all .15s; }
-        .btn-icon:hover { border-color: var(--gold); color: var(--gold); }
+        /* ── BUTTONS ── */
+        .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:7px 14px; font-size:12px; font-weight:500; border-radius:6px; border:none; cursor:pointer; transition:all .15s; font-family:inherit; }
+        .btn-gold { background:var(--gold); color:var(--white); }
+        .btn-gold:hover { background:var(--gold-light); }
+        .btn-outline { background:var(--white); color:var(--text); border:1px solid var(--border); }
+        .btn-outline:hover { border-color:var(--gold); color:var(--gold); }
+        .btn-sm { padding:4px 10px; font-size:11px; }
+        .btn-icon { width:30px; height:30px; padding:0; border-radius:6px; background:var(--white); border:1px solid var(--border); color:var(--text-secondary); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all .15s; }
+        .btn-icon:hover { border-color:var(--gold); color:var(--gold); }
 
-        /* Pagination */
-        .pagination { display: flex; gap: 4px; margin-top: 12px; justify-content: center; }
-        .page-btn { padding: 5px 10px; font-size: 12px; border: 1px solid var(--border); border-radius: 4px; background: var(--white); color: var(--text-secondary); cursor: pointer; }
-        .page-btn.active { background: var(--gold); color: var(--white); border-color: var(--gold); }
+        /* ── PAGINATION ── */
+        .pagination { display:flex; gap:4px; margin-top:12px; justify-content:center; }
+        .page-btn { padding:4px 9px; font-size:12px; border:1px solid var(--border); border-radius:4px; background:var(--white); color:var(--text-secondary); cursor:pointer; }
+        .page-btn.active { background:var(--gold); color:var(--white); border-color:var(--gold); }
 
-        /* Funnel */
-        .funnel-step { margin-bottom: 10px; }
-        .funnel-label { display: flex; justify-content: space-between; margin-bottom: 4px; }
-        .funnel-label span:first-child { font-size: 12px; font-weight: 500; color: var(--text); }
-        .funnel-label span:last-child { font-size: 12px; color: var(--text-muted); }
-        .funnel-bar { height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 600; transition: width .5s ease; }
+        /* ── FUNNEL ── */
+        .funnel-container { display:flex; flex-direction:column; gap:8px; }
+        .funnel-step { position:relative; }
+        .funnel-label-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+        .funnel-step-name { font-size:12px; font-weight:600; color:var(--text); }
+        .funnel-step-meta { font-size:11px; color:var(--text-muted); display:flex; gap:12px; }
+        .funnel-bar-wrap { background:#F3F4F6; border-radius:6px; height:32px; overflow:hidden; }
+        .funnel-bar { height:32px; border-radius:6px; display:flex; align-items:center; padding:0 12px; color:white; font-size:12px; font-weight:700; transition:width .6s ease; white-space:nowrap; }
+        .funnel-conv { font-size:10px; color:var(--text-muted); text-align:right; margin-top:2px; }
+        .funnel-conv .conv-pct { font-weight:700; color:var(--green); }
+        .funnel-conv .drop-pct { font-weight:700; color:var(--red); }
 
-        /* Modal */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.3); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-box { background: var(--white); border-radius: var(--radius); width: 90%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-md); }
-        .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .modal-header h3 { font-size: 15px; font-weight: 600; color: var(--dark); }
-        .modal-close { width: 32px; height: 32px; border: none; background: none; color: var(--text-muted); cursor: pointer; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .modal-close:hover { background: var(--bg); color: var(--dark); }
-        .modal-body { padding: 24px; }
-        .form-group { margin-bottom: 16px; }
-        .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
-        .form-textarea { width: 100%; padding: 10px 14px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; resize: vertical; min-height: 100px; outline: none; }
-        .form-textarea:focus { border-color: var(--gold); }
-        .form-check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); }
+        /* ── MODAL ── */
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.35); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; z-index:1000; }
+        .modal-box { background:var(--white); border-radius:var(--radius); width:90%; max-width:600px; max-height:92vh; overflow-y:auto; box-shadow:var(--shadow-md); }
+        .modal-header { padding:18px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+        .modal-header h3 { font-size:15px; font-weight:600; color:var(--dark); }
+        .modal-close { width:30px; height:30px; border:none; background:none; color:var(--text-muted); cursor:pointer; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+        .modal-close:hover { background:var(--bg); color:var(--dark); }
+        .modal-body { padding:24px; }
+        .form-group { margin-bottom:16px; }
+        .form-label { display:block; font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:6px; text-transform:uppercase; letter-spacing:.4px; }
+        .form-textarea { width:100%; padding:10px 14px; font-size:13px; border:1px solid var(--border); border-radius:6px; font-family:inherit; resize:vertical; min-height:100px; outline:none; }
+        .form-textarea:focus { border-color:var(--gold); }
+        .form-check { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text); }
 
-        /* Health dots */
-        .health-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-        .health-dot.healthy { background: var(--green); }
-        .health-dot.warning { background: var(--orange); }
-        .health-dot.critical { background: var(--red); }
-        .health-dot.down { background: var(--red); }
+        /* ── HEALTH DOTS ── */
+        .health-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; }
+        .health-dot.healthy { background:var(--green); }
+        .health-dot.warning { background:var(--orange); }
+        .health-dot.critical,.health-dot.down { background:var(--red); }
 
-        /* Nurturing */
-        .segment-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-        .segment-card { padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all .15s; text-align: center; }
-        .segment-card:hover { border-color: var(--gold); }
-        .segment-card.active { border-color: var(--gold); background: var(--gold-bg); }
-        .segment-count { font-size: 24px; font-weight: 700; color: var(--dark); }
-        .segment-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+        /* ── NURTURING SEGMENTS ── */
+        .segment-cards { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+        @media (max-width:900px) { .segment-cards { grid-template-columns:repeat(2,1fr); } }
+        .segment-card { padding:16px; border:1px solid var(--border); border-radius:var(--radius-sm); cursor:pointer; transition:all .15s; text-align:center; }
+        .segment-card:hover { border-color:var(--gold); box-shadow:0 2px 8px rgba(201,169,97,.15); }
+        .segment-card.active { border-color:var(--gold); background:var(--gold-bg); }
+        .segment-count { font-size:26px; font-weight:700; color:var(--dark); }
+        .segment-label { font-size:10px; color:var(--text-muted); margin-top:4px; font-weight:500; text-transform:uppercase; letter-spacing:.4px; }
+        .recipient-item { display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid var(--border); font-size:13px; }
+        .recipient-item.sent { opacity:.5; }
+        .sent-badge { font-size:10px; padding:2px 8px; border-radius:10px; background:#F3F4F6; color:var(--text-secondary); }
+        .sent-badge.campaign-match { background:var(--green-bg); color:var(--green); }
 
-        .recipient-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
-        .recipient-item.sent { opacity: .5; }
-        .sent-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: #F3F4F6; color: var(--text-muted); }
-        .sent-badge.campaign-match { background: var(--green-bg); color: var(--green); }
+        /* ── CRM LEAD CARD ── */
+        .lead-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; transition:all .15s; cursor:pointer; }
+        .lead-card:hover { border-color:var(--gold-border); box-shadow:var(--shadow-md); }
+        .lead-avatar { width:38px; height:38px; border-radius:50%; background:var(--gold-bg); border:2px solid var(--gold-border); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:var(--gold); flex-shrink:0; }
+        .lead-name { font-size:13px; font-weight:600; color:var(--dark); }
+        .lead-email { font-size:11px; color:var(--text-muted); }
+        .lead-meta { font-size:11px; color:var(--text-secondary); display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; }
+        .lead-meta span { display:flex; align-items:center; gap:3px; }
+        .funnel-stage { display:inline-flex; align-items:center; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:600; }
+        .stage-lead { background:#FEF3C7; color:#92400E; }
+        .stage-nurturing { background:var(--blue-bg); color:var(--blue); }
+        .stage-client { background:var(--green-bg); color:var(--green); }
+        .stage-recurring { background:var(--purple-bg); color:var(--purple); }
 
-        /* Toast */
-        .toast-container { position: fixed; top: 70px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; }
-        .toast { padding: 12px 20px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; box-shadow: var(--shadow-md); animation: slideIn .3s ease; display: flex; align-items: center; gap: 8px; }
-        .toast-success { background: var(--green-bg); color: #065F46; border: 1px solid #A7F3D0; }
-        .toast-danger { background: var(--red-bg); color: #991B1B; border: 1px solid #FECACA; }
-        .toast-info { background: var(--blue-bg); color: #1E40AF; border: 1px solid #BFDBFE; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        /* ── METRICS TABLE ── */
+        .metric-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); }
+        .metric-row:last-child { border-bottom:none; }
+        .metric-label { font-size:13px; color:var(--text); }
+        .metric-value { font-size:14px; font-weight:700; color:var(--dark); }
+        .metric-bar-wrap { flex:1; margin:0 16px; background:#F3F4F6; border-radius:4px; height:6px; overflow:hidden; }
+        .metric-bar { height:6px; border-radius:4px; background:var(--gold); transition:width .5s ease; }
 
-        /* Spinner */
-        .spinner { width: 24px; height: 24px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin .6s linear infinite; margin: 20px auto; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* ── TOAST ── */
+        #toast { position:fixed; bottom:24px; right:24px; padding:12px 20px; border-radius:8px; font-size:13px; font-weight:500; color:white; z-index:9999; opacity:0; transition:opacity .3s; pointer-events:none; }
+        #toast.show { opacity:1; }
+        #toast.success { background:var(--green); }
+        #toast.danger { background:var(--red); }
+        #toast.info { background:var(--blue); }
 
-        /* Voucher row used */
-        .voucher-used td { opacity: .5; }
+        /* ── SPINNER ── */
+        .spinner { width:24px; height:24px; border:2px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin .7s linear infinite; margin:20px auto; }
+        @keyframes spin { to { transform:rotate(360deg); } }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+        /* ── SECTION HEADER ── */
+        .section-header { margin-bottom:20px; }
+        .section-header h2 { font-size:16px; font-weight:700; color:var(--dark); }
+        .section-header p { font-size:13px; color:var(--text-muted); margin-top:4px; }
 
-        /* Utility classes */
-        .text-muted { color: var(--text-muted) !important; }
-        .text-center { text-align: center !important; }
-        .text-danger { color: var(--red) !important; }
-        .d-block { display: block !important; }
-        .me-1 { margin-right: 4px !important; }
-        .mb-1 { margin-bottom: 4px !important; }
-        .py-3 { padding-top: 12px !important; padding-bottom: 12px !important; }
-        .py-4 { padding-top: 20px !important; padding-bottom: 20px !important; }
-        code { background: var(--gold-bg); color: var(--gold); padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
-        small { font-size: 12px; }
-        em { font-style: italic; }
+        /* ── PERIOD QUICK BUTTONS ── */
+        .period-btns { display:flex; gap:6px; }
+        .period-btn { padding:4px 10px; font-size:11px; font-weight:500; border:1px solid var(--border); border-radius:5px; background:var(--white); color:var(--text-secondary); cursor:pointer; transition:all .15s; }
+        .period-btn.active { background:var(--gold); color:var(--white); border-color:var(--gold); }
+        .period-btn:hover:not(.active) { border-color:var(--gold); color:var(--gold); }
 
-        /* Hide tabs */
-        [id^="tab-"] { display: none; }
-        #tab-dashboard { display: block; }
+        /* ── USER PROFILE MODAL ── */
+        .profile-section { margin-bottom:20px; }
+        .profile-section h4 { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+        .profile-row { display:flex; justify-content:space-between; padding:6px 0; font-size:13px; }
+        .profile-row span:first-child { color:var(--text-muted); }
+        .profile-row span:last-child { font-weight:500; color:var(--dark); }
+        .timeline-item { display:flex; gap:12px; padding:8px 0; border-bottom:1px solid var(--border); }
+        .timeline-item:last-child { border-bottom:none; }
+        .timeline-dot { width:8px; height:8px; border-radius:50%; background:var(--gold); margin-top:5px; flex-shrink:0; }
+        .timeline-content { font-size:12px; }
+        .timeline-date { font-size:10px; color:var(--text-muted); }
+
+        /* ── EMPTY STATE ── */
+        .empty-state { text-align:center; padding:48px 20px; color:var(--text-muted); }
+        .empty-state i { font-size:36px; margin-bottom:12px; opacity:.4; }
+        .empty-state p { font-size:13px; }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <header class="header">
-        <div class="header-brand">
-            <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#C9A961" stroke-width="2.5"/><path d="M14 20c0-3.3 2.7-6 6-6s6 2.7 6 6-2.7 6-6 6" stroke="#C9A961" stroke-width="2" stroke-linecap="round"/><circle cx="20" cy="20" r="2" fill="#C9A961"/></svg>
-            <div>
-                <h1>Share2Inspire <span>Admin</span></h1>
-            </div>
+<!-- ── TOAST ── -->
+<div id="toast"></div>
+
+<!-- ── HEADER ── -->
+<header class="header">
+    <div class="header-brand">
+        <svg viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="14" fill="#C9A961" opacity=".15"/><path d="M8 14l4 4 8-8" stroke="#C9A961" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div>
+            <h1>Share2Inspire</h1>
+            <span>Admin · Analytics & Growth</span>
         </div>
-        <div class="header-actions">
-            <div class="lang-toggle" id="globalLangToggle">
-                <button class="active" onclick="setGlobalLang('all',this)">Todos</button>
-                <button onclick="setGlobalLang('pt',this)">PT</button>
-                <button onclick="setGlobalLang('en',this)">EN</button>
-            </div>
-            <span class="header-status" id="lastUpdate">A carregar...</span>
-            <button class="btn-refresh" onclick="refreshAll()"><i class="fas fa-sync-alt"></i> Atualizar</button>
+    </div>
+    <div class="header-actions">
+        <div class="lang-toggle" id="globalLangToggle">
+            <button class="active" onclick="setGlobalLang('all',this)">Todos</button>
+            <button onclick="setGlobalLang('pt',this)">PT</button>
+            <button onclick="setGlobalLang('en',this)">EN</button>
         </div>
-    </header>
+        <span class="header-status" id="lastUpdate">A carregar...</span>
+        <button class="btn-refresh" onclick="refreshAll()"><i class="fas fa-sync-alt"></i> Atualizar</button>
+    </div>
+</header>
 
-    <!-- Navigation -->
-    <nav class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('dashboard',this)"><i class="fas fa-chart-pie"></i> Dashboard</button>
-        <button class="tab-btn" onclick="switchTab('analyses',this)"><i class="fas fa-file-alt"></i> Análises</button>
-        <button class="tab-btn" onclick="switchTab('vouchers',this)"><i class="fas fa-ticket-alt"></i> Vouchers</button>
-        <button class="tab-btn" onclick="switchTab('nurturing',this)"><i class="fas fa-paper-plane"></i> Follow-up</button>
-        <button class="tab-btn" onclick="switchTab('history',this)"><i class="fas fa-history"></i> Histórico</button>
-        <button class="tab-btn" onclick="switchTab('contacts',this)"><i class="fas fa-inbox"></i> Contactos</button>
-        <button class="tab-btn" onclick="switchTab('health',this)"><i class="fas fa-heartbeat"></i> Saúde</button>
-        <button class="tab-btn" onclick="switchTab('ebook',this)"><i class="fas fa-book"></i> E-book</button>
-        <button class="tab-btn" onclick="switchTab('jobsearch',this)"><i class="fas fa-briefcase"></i> Cargos</button>
-        <button class="tab-btn" onclick="switchTab('careerenergy',this)"><i class="fas fa-bolt"></i> Career Energy</button>
-    </nav>
+<!-- ── NAVIGATION ── -->
+<nav class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('dashboard',this)"><i class="fas fa-chart-pie"></i> Dashboard</button>
+    <button class="tab-btn" onclick="switchTab('funnel',this)"><i class="fas fa-filter"></i> Funil</button>
+    <button class="tab-btn" onclick="switchTab('crm',this)"><i class="fas fa-users"></i> CRM / Leads</button>
+    <button class="tab-btn" onclick="switchTab('analyses',this)"><i class="fas fa-file-alt"></i> Análises</button>
+    <button class="tab-btn" onclick="switchTab('vouchers',this)"><i class="fas fa-ticket-alt"></i> Vouchers</button>
+    <button class="tab-btn" onclick="switchTab('nurturing',this)"><i class="fas fa-paper-plane"></i> Follow-up</button>
+    <button class="tab-btn" onclick="switchTab('history',this)"><i class="fas fa-history"></i> Histórico</button>
+    <button class="tab-btn" onclick="switchTab('contacts',this)"><i class="fas fa-inbox"></i> Contactos</button>
+    <button class="tab-btn" onclick="switchTab('health',this)"><i class="fas fa-heartbeat"></i> Saúde</button>
+    <button class="tab-btn" onclick="switchTab('ebook',this)"><i class="fas fa-book"></i> E-book</button>
+    <button class="tab-btn" onclick="switchTab('jobsearch',this)"><i class="fas fa-briefcase"></i> Cargos</button>
+    <button class="tab-btn" onclick="switchTab('careerenergy',this)"><i class="fas fa-bolt"></i> Career Energy</button>
+</nav>
 
-    <main class="main">
+<main class="main">
 
-        <!-- ==================== DASHBOARD ==================== -->
-        <div id="tab-dashboard">
-            <div class="kpi-row">
-                <div class="kpi-card">
-                    <div class="kpi-label">Total Análises</div>
-                    <div class="kpi-value" id="kpiTotal">--</div>
-                    <div class="kpi-sub"><span id="kpi24h">--</span> últimas 24h</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Pagas</div>
-                    <div class="kpi-value green" id="kpiPaid">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Gratuitas</div>
-                    <div class="kpi-value" id="kpiFree">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Receita Total</div>
-                    <div class="kpi-value gold" id="kpiRevenue">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Últimos 7 dias</div>
-                    <div class="kpi-value blue" id="kpi7d">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Score Médio</div>
-                    <div class="kpi-value" id="kpiAvgScore">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Career Paths</div>
-                    <div class="kpi-value blue" id="kpiCareerPaths">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Utilizadores Únicos</div>
-                    <div class="kpi-value" id="kpiUniqueUsers">--</div>
-                </div>
-            </div>
-
-            <!-- Revenue breakdown -->
-            <div class="kpi-row" style="grid-template-columns: repeat(4, 1fr);">
-                <div class="kpi-card">
-                    <div class="kpi-label">Receita PT</div>
-                    <div class="kpi-value" style="font-size:20px;" id="kpiRevenuePT">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Receita EN</div>
-                    <div class="kpi-value" style="font-size:20px;" id="kpiRevenueEN">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Receita CV Analyser</div>
-                    <div class="kpi-value" style="font-size:20px;" id="kpiRevenueCVA">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Receita Career Path</div>
-                    <div class="kpi-value" style="font-size:20px;" id="kpiRevenueCP">--</div>
-                </div>
-            </div>
-
-            <!-- Charts -->
-            <div class="grid-2" style="margin-bottom:20px;">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title"><i class="fas fa-chart-bar"></i> Vendas por Produto (14 dias)</div>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="dailyChart" height="180"></canvas>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title"><i class="fas fa-filter"></i> Funil de Conversão</div>
-                    </div>
-                    <div class="card-body" id="conversionFunnel">
-                        <div class="spinner"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <div class="card">
-                    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-                        <div class="card-title" style="margin:0;"><i class="fas fa-chart-pie"></i> Tipo de Análise</div>
-                        <select class="form-select" id="chartDateFilter" onchange="updateCharts()" style="width:auto;min-width:130px;font-size:12px;padding:4px 8px;">
-                            <option value="all">Todo o período</option>
-                            <option value="7">Últimos 7 dias</option>
-                            <option value="14" selected>Últimos 14 dias</option>
-                            <option value="30">Últimos 30 dias</option>
-                            <option value="90">Últimos 90 dias</option>
-                        </select>
-                    </div>
-                    <div class="card-body" style="max-width:280px;margin:0 auto;">
-                        <canvas id="typeChart" height="200"></canvas>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title"><i class="fas fa-globe"></i> Idioma</div>
-                    </div>
-                    <div class="card-body" style="max-width:280px;margin:0 auto;">
-                        <canvas id="langChart" height="200"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Hidden KPIs for JS compatibility -->
-            <div style="display:none;">
-                <span id="kpiConvRate"></span>
-                <span id="kpiVouchersActive"></span>
-                <span id="kpiVouchersUsed"></span>
-            </div>
+<!-- ══════════════════════════════════════════════
+     TAB: DASHBOARD
+══════════════════════════════════════════════ -->
+<div id="tab-dashboard">
+    <!-- Period Quick Buttons -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="section-header" style="margin:0;">
+            <h2>Visão Geral</h2>
         </div>
-
-        <!-- ==================== ANÁLISES ==================== -->
-        <div id="tab-analyses">
-            <div class="filter-bar">
-                <label>Tipo</label>
-                <select class="form-select" id="filterType" onchange="filterAnalyses()">
-                    <option value="all">Todos</option>
-                    <option value="paid">Pago</option>
-                    <option value="free">Gratuito</option>
-                    <option value="voucher">Voucher</option>
-                </select>
-                <label>Idioma</label>
-                <select class="form-select" id="filterLang" onchange="filterAnalyses()">
-                    <option value="all">Todos</option>
-                    <option value="pt">PT</option>
-                    <option value="en">EN</option>
-                </select>
-                <label>Produto</label>
-                <select class="form-select" id="filterProduct" onchange="filterAnalyses()">
-                    <option value="all">Todos</option>
-                    <option value="cv">CV Analyser</option>
-                    <option value="career_path">Career Path</option>
-                </select>
-                <input class="form-input" type="text" id="filterEmail" placeholder="Pesquisar email..." oninput="filterAnalyses()" style="width:180px;">
-                <input class="form-input" type="date" id="filterDateFrom" onchange="filterAnalyses()">
-                <input class="form-input" type="date" id="filterDateTo" onchange="filterAnalyses()">
-                <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
-                    <span style="font-size:12px;color:var(--text-muted);" id="analysesCount">--</span>
-                    <button class="btn btn-outline btn-sm" onclick="exportAnalysesCSV()"><i class="fas fa-download"></i> CSV</button>
-                </div>
-            </div>
-            <div class="card">
-                <div class="table-wrap">
-                    <table>
-                        <thead><tr><th>Data</th><th>Nome</th><th>Email</th><th>Score</th><th>Tipo</th><th>Origem</th><th>Produto</th><th>Idioma</th><th></th></tr></thead>
-                        <tbody id="analysesTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="pagination" id="analysesPagination"></div>
+        <div class="period-btns" id="dashPeriodBtns">
+            <button class="period-btn" onclick="setDashPeriod(1,this)">Hoje</button>
+            <button class="period-btn" onclick="setDashPeriod(7,this)">7d</button>
+            <button class="period-btn active" onclick="setDashPeriod(30,this)">30d</button>
+            <button class="period-btn" onclick="setDashPeriod(90,this)">90d</button>
+            <button class="period-btn" onclick="setDashPeriod(0,this)">Tudo</button>
         </div>
+    </div>
 
-        <!-- ==================== VOUCHERS ==================== -->
-        <div id="tab-vouchers">
-            <div class="filter-bar">
-                <label>Estado</label>
-                <select class="form-select" id="filterVoucherStatus" onchange="filterVouchers()">
-                    <option value="all">Todos</option>
-                    <option value="active">Activo</option>
-                    <option value="used">Usado</option>
-                </select>
-                <label>Tipo</label>
-                <select class="form-select" id="filterVoucherType" onchange="filterVouchers()">
-                    <option value="all">Todos os Tipos</option>
-                    <option value="standard">CV Analyser</option>
-                    <option value="career_path">Career Path</option>
-                </select>
-                <input class="form-input" type="text" id="filterVoucherEmail" placeholder="Pesquisar email..." oninput="filterVouchers()" style="width:180px;">
-                <div style="margin-left:auto;">
-                    <button class="btn btn-gold btn-sm" onclick="showCreateVoucherModal()"><i class="fas fa-plus"></i> Criar Vouchers</button>
-                </div>
-            </div>
-            <div class="card">
-                <div class="table-wrap">
-                    <table>
-                        <thead><tr><th>Código</th><th>Email</th><th>Plano</th><th>Tipo</th><th>Valor</th><th>Estado</th><th>Criado</th><th></th></tr></thead>
-                        <tbody id="vouchersTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
+    <!-- KPI Row 1: Volume -->
+    <div class="kpi-row" style="grid-template-columns:repeat(auto-fit,minmax(155px,1fr));">
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--gold);"></div>
+            <div class="kpi-label">Total Análises</div>
+            <div class="kpi-value" id="kpiTotal">--</div>
+            <div class="kpi-sub" id="kpi24h">-- últimas 24h</div>
         </div>
-
-        <!-- ==================== FOLLOW-UP / NURTURING ==================== -->
-        <div id="tab-nurturing">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-                <div class="lang-toggle" id="nurturingLangToggle">
-                    <button class="active" onclick="setNurturingLang('pt',this)">PT</button>
-                    <button onclick="setNurturingLang('en',this)">EN</button>
-                </div>
-            </div>
-            <div class="segment-cards">
-                <div class="segment-card" onclick="prepareNurturing('upsell')">
-                    <div class="segment-count" id="upsellCount">--</div>
-                    <div class="segment-label">Upsell — Análise Completa</div>
-                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Utilizadores com análise gratuita</div>
-                </div>
-                <div class="segment-card" onclick="prepareNurturing('feedback')">
-                    <div class="segment-count" id="feedbackCount">--</div>
-                    <div class="segment-label">Pedir Feedback</div>
-                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Utilizadores pagos sem rating</div>
-                </div>
-                <div class="segment-card" onclick="prepareNurturing('careerpath')">
-                    <div class="segment-count" id="careerpathCount">--</div>
-                    <div class="segment-label">Upsell — Career Path</div>
-                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Pagos sem Career Path</div>
-                </div>
-            </div>
-
-            <div class="card" id="emailComposer" style="display:none;">
-                <div class="card-header">
-                    <div class="card-title"><i class="fas fa-envelope"></i> <span id="composerTitle">Compor Email</span></div>
-                    <div style="display:flex;gap:8px;">
-                        <button class="btn btn-outline btn-sm" onclick="previewEmail()"><i class="fas fa-eye"></i> Pré-visualizar</button>
-                        <button class="btn btn-outline btn-sm" onclick="closeComposer()"><i class="fas fa-times"></i> Fechar</button>
-                    </div>
-                </div>
-                <div class="card-body" style="padding:0;">
-                    <!-- Recipients section -->
-                    <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <i class="fas fa-users" style="color:var(--gold);"></i>
-                            <span style="font-size:13px;font-weight:500;">Destinatários</span>
-                            <span style="font-weight:400;color:var(--text-muted);font-size:12px;" id="selectedCount"></span>
-                        </div>
-                        <div style="display:flex;gap:8px;">
-                            <select class="form-select" id="recipientFilter" onchange="filterRecipientList()" style="font-size:12px;">
-                                <option value="all">Todos</option>
-                                <option value="unsent">Não enviados</option>
-                                <option value="sent">Já enviados</option>
-                            </select>
-                            <input class="form-input" type="text" id="recipientSearch" placeholder="Pesquisar..." oninput="filterRecipientList()" style="width:150px;font-size:12px;">
-                        </div>
-                    </div>
-                    <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;">
-                        <button class="btn btn-outline btn-sm" onclick="toggleAllRecipients(true)">Selecionar todos</button>
-                        <button class="btn btn-outline btn-sm" onclick="toggleAllRecipients(false)">Desmarcar todos</button>
-                        <button class="btn btn-outline btn-sm" onclick="selectOnlyUnsent()">Só não enviados</button>
-                    </div>
-                    <div id="recipientList" style="max-height:250px;overflow-y:auto;"></div>
-                </div>
-                <div style="padding:16px 20px;border-top:1px solid var(--border);">
-                    <div class="form-group">
-                        <label class="form-label">Assunto:</label>
-                        <input class="form-input" type="text" id="emailSubject" style="width:100%;">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Corpo do email (HTML):</label>
-                        <textarea class="form-textarea" id="emailBody" style="min-height:200px;font-family:'Courier New',monospace;font-size:12px;"></textarea>
-                    </div>
-                    <button class="btn btn-gold" onclick="sendNurturingEmails()" style="width:100%;"><i class="fas fa-paper-plane"></i> Enviar Campanha</button>
-                </div>
-            </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--green);"></div>
+            <div class="kpi-label">Pagas</div>
+            <div class="kpi-value green" id="kpiPaid">--</div>
+            <div class="kpi-sub" id="kpiPaidPct">--% do total</div>
         </div>
-
-        <!-- ==================== HISTÓRICO ==================== -->
-        <div id="tab-history">
-            <div class="filter-bar">
-                <label>Campanha</label>
-                <select class="form-select" id="filterHistoryCampaign" onchange="filterHistory()">
-                    <option value="all">Todas</option>
-                    <option value="upsell">Upsell</option>
-                    <option value="feedback">Feedback</option>
-                    <option value="careerpath">Career Path</option>
-                    <option value="voucher">Vouchers</option>
-                    <option value="custom">Personalizado</option>
-                </select>
-                <label>Estado</label>
-                <select class="form-select" id="filterHistoryStatus" onchange="filterHistory()">
-                    <option value="all">Todos</option>
-                    <option value="sent">Enviado</option>
-                    <option value="error">Erro</option>
-                </select>
-                <input class="form-input" type="text" id="filterHistoryEmail" placeholder="Pesquisar email..." oninput="filterHistory()" style="width:180px;">
-                <input class="form-input" type="date" id="filterHistoryDateFrom" onchange="filterHistory()">
-                <input class="form-input" type="date" id="filterHistoryDateTo" onchange="filterHistory()">
-                <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-                    <span style="font-size:12px;color:var(--text-muted);" id="historyCount">--</span>
-                    <button class="btn btn-outline btn-sm" onclick="exportHistoryCSV()"><i class="fas fa-download"></i> CSV</button>
-                </div>
-            </div>
-            <div class="card">
-                <div class="table-wrap">
-                    <table>
-                        <thead><tr><th>Data</th><th>Destinatário</th><th>Assunto</th><th>Campanha</th><th>Estado</th></tr></thead>
-                        <tbody id="historyTable"><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--text-muted);"></div>
+            <div class="kpi-label">Gratuitas</div>
+            <div class="kpi-value" id="kpiFree">--</div>
+            <div class="kpi-sub" id="kpiFreePct">--% do total</div>
         </div>
-
-        <!-- ==================== CONTACTOS ==================== -->
-        <div id="tab-contacts">
-            <div class="kpi-row" style="grid-template-columns: repeat(4, 1fr); margin-bottom:16px;">
-                <div class="kpi-card">
-                    <div class="kpi-label">Total</div>
-                    <div class="kpi-value" style="font-size:22px;" id="kpiContactsTotal">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Novas</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--red);" id="kpiContactsNew">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Lidas</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--gold);" id="kpiContactsRead">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Respondidas</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--green);" id="kpiContactsReplied">--</div>
-                </div>
-            </div>
-            <div class="filter-bar">
-                <label>Estado</label>
-                <select class="form-select" id="filterContactStatus" onchange="renderContacts()">
-                    <option value="all">Todos</option>
-                    <option value="novo">Novo</option>
-                    <option value="lido">Lido</option>
-                    <option value="respondido">Respondido</option>
-                </select>
-                <label>Motivo</label>
-                <select class="form-select" id="filterContactSubject" onchange="renderContacts()">
-                    <option value="all">Todos os motivos</option>
-                </select>
-                <input class="form-input" type="text" id="filterContactSearch" placeholder="Pesquisar..." oninput="renderContacts()" style="width:180px;">
-                <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-                    <span style="font-size:12px;color:var(--text-muted);" id="contactsCount">--</span>
-                    <button class="btn btn-outline btn-sm" onclick="exportContactsCSV()"><i class="fas fa-download"></i> CSV</button>
-                </div>
-            </div>
-            <div class="card">
-                <div class="table-wrap">
-                    <table>
-                        <thead><tr><th style="width:20px;"></th><th>Data</th><th>Nome</th><th>Email</th><th>Motivo</th><th>Mensagem</th><th>Estado</th><th></th></tr></thead>
-                        <tbody id="contactsTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--gold);"></div>
+            <div class="kpi-label">Receita Total</div>
+            <div class="kpi-value gold" id="kpiRevenue">--</div>
+            <div class="kpi-sub" id="kpiRevenueVoucher">-- vouchers</div>
         </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--blue);"></div>
+            <div class="kpi-label">Utilizadores Únicos</div>
+            <div class="kpi-value blue" id="kpiUniqueUsers">--</div>
+            <div class="kpi-sub" id="kpiIdentifiedPct">--% identificados</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--purple);"></div>
+            <div class="kpi-label">Career Paths</div>
+            <div class="kpi-value purple" id="kpiCareerPaths">--</div>
+            <div class="kpi-sub" id="kpiCPPct">--% dos pagantes</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--teal);"></div>
+            <div class="kpi-label">Score Médio</div>
+            <div class="kpi-value teal" id="kpiAvgScore">--</div>
+            <div class="kpi-sub">pontos / 100</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--orange);"></div>
+            <div class="kpi-label">Últimos 7 dias</div>
+            <div class="kpi-value" style="color:var(--orange);" id="kpi7d">--</div>
+            <div class="kpi-sub" id="kpi7dRevenue">--€ receita</div>
+        </div>
+    </div>
 
-        <!-- ==================== SAÚDE ==================== -->
-        <div id="tab-health">
-            <div class="kpi-row" style="grid-template-columns: repeat(4, 1fr);">
-                <div class="kpi-card">
-                    <div class="kpi-label">TTFB Médio (24h)</div>
-                    <div class="kpi-value" style="font-size:22px;" id="healthAvgTTFB">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Uptime (7d)</div>
-                    <div class="kpi-value green" style="font-size:22px;" id="healthUptime">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Alertas (7d)</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--red);" id="healthAlerts">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Último Check</div>
-                    <div class="kpi-value" style="font-size:22px;" id="healthLastCheck">--</div>
-                </div>
+    <!-- KPI Row 2: Métricas Estratégicas -->
+    <div class="kpi-row" style="grid-template-columns:repeat(auto-fit,minmax(155px,1fr));margin-bottom:24px;">
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--green);"></div>
+            <div class="kpi-label">Conv. Gratuito→Pago</div>
+            <div class="kpi-value green" id="kpiConvRate">--</div>
+            <div class="kpi-sub">taxa de conversão</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--gold);"></div>
+            <div class="kpi-label">Ticket Médio</div>
+            <div class="kpi-value gold" id="kpiAvgTicket">--</div>
+            <div class="kpi-sub">por transação paga</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--blue);"></div>
+            <div class="kpi-label">LTV Estimado</div>
+            <div class="kpi-value blue" id="kpiLTV">--</div>
+            <div class="kpi-sub">por utilizador</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--red);"></div>
+            <div class="kpi-label">Taxa de Abandono</div>
+            <div class="kpi-value red" id="kpiAbandon">--</div>
+            <div class="kpi-sub">análises anónimas</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--purple);"></div>
+            <div class="kpi-label">Receita CV Analyser</div>
+            <div class="kpi-value purple" id="kpiRevenueCVA">--</div>
+            <div class="kpi-sub">direto + vouchers</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--teal);"></div>
+            <div class="kpi-label">Receita Career Path</div>
+            <div class="kpi-value teal" id="kpiRevenueCP">--</div>
+            <div class="kpi-sub">análises + vouchers</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--green);"></div>
+            <div class="kpi-label">Vouchers Ativos</div>
+            <div class="kpi-value green" id="kpiVouchersActive">--</div>
+            <div class="kpi-sub" id="kpiVouchersUsed">-- utilizados</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--gold);"></div>
+            <div class="kpi-label">Receita Vouchers</div>
+            <div class="kpi-value gold" id="kpiVoucherRevenue">--</div>
+            <div class="kpi-sub">total gerado</div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid-2" style="margin-bottom:20px;">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-chart-bar"></i> Atividade Diária (14 dias)</div>
+                <select class="form-select" id="chartDateFilter" onchange="updateCharts()" style="font-size:11px;padding:3px 8px;">
+                    <option value="7">7 dias</option>
+                    <option value="14" selected>14 dias</option>
+                    <option value="30">30 dias</option>
+                    <option value="90">90 dias</option>
+                </select>
             </div>
-            <div class="card" style="margin-bottom:20px;">
-                <div class="card-header">
-                    <div class="card-title"><i class="fas fa-server"></i> Estado dos Endpoints</div>
-                </div>
-                <div class="card-body" id="endpointStatus">
+            <div class="card-body"><canvas id="dailyChart" height="180"></canvas></div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-chart-pie"></i> Distribuição por Tipo</div>
+            </div>
+            <div class="card-body" style="max-width:260px;margin:0 auto;"><canvas id="typeChart" height="200"></canvas></div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-globe"></i> Idioma</div>
+            </div>
+            <div class="card-body" style="max-width:260px;margin:0 auto;"><canvas id="langChart" height="200"></canvas></div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-star"></i> Distribuição de Scores</div>
+            </div>
+            <div class="card-body"><canvas id="scoreChart" height="200"></canvas></div>
+        </div>
+    </div>
+
+    <!-- Hidden KPIs for JS compatibility -->
+    <div style="display:none;">
+        <span id="kpiRevenuePT"></span><span id="kpiRevenueEN"></span>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB: FUNIL DE CONVERSÃO
+══════════════════════════════════════════════ -->
+<div id="tab-funnel" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div class="section-header" style="margin:0;">
+            <h2>Funil de Conversão</h2>
+            <p>Percurso completo do utilizador — do topo ao fundo do funil</p>
+        </div>
+        <div class="period-btns" id="funnelPeriodBtns">
+            <button class="period-btn" onclick="setFunnelPeriod(7,this)">7d</button>
+            <button class="period-btn active" onclick="setFunnelPeriod(30,this)">30d</button>
+            <button class="period-btn" onclick="setFunnelPeriod(90,this)">90d</button>
+            <button class="period-btn" onclick="setFunnelPeriod(0,this)">Tudo</button>
+        </div>
+    </div>
+
+    <!-- Funil KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;">
+        <div class="kpi-card" style="text-align:center;border-top:3px solid #6B7280;">
+            <div class="kpi-label">Career Energy</div>
+            <div class="kpi-value" id="funnelCE">--</div>
+            <div class="kpi-sub">topo do funil</div>
+        </div>
+        <div class="kpi-card" style="text-align:center;border-top:3px solid var(--gold);">
+            <div class="kpi-label">CV Analyser Grátis</div>
+            <div class="kpi-value gold" id="funnelFree">--</div>
+            <div class="kpi-sub" id="funnelFreeConv">--% do CE</div>
+        </div>
+        <div class="kpi-card" style="text-align:center;border-top:3px solid var(--green);">
+            <div class="kpi-label">CV Analyser Pago</div>
+            <div class="kpi-value green" id="funnelPaid">--</div>
+            <div class="kpi-sub" id="funnelPaidConv">--% do grátis</div>
+        </div>
+        <div class="kpi-card" style="text-align:center;border-top:3px solid var(--blue);">
+            <div class="kpi-label">Career Path</div>
+            <div class="kpi-value blue" id="funnelCP">--</div>
+            <div class="kpi-sub" id="funnelCPConv">--% dos pagantes</div>
+        </div>
+        <div class="kpi-card" style="text-align:center;border-top:3px solid var(--purple);">
+            <div class="kpi-label">Kickstart Pro</div>
+            <div class="kpi-value purple" id="funnelKickstart">--</div>
+            <div class="kpi-sub" id="funnelKickstartConv">--% do CP</div>
+        </div>
+    </div>
+
+    <!-- Funil Visual -->
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-filter"></i> Funil Visual</div>
+            </div>
+            <div class="card-body">
+                <div class="funnel-container" id="funnelVisual">
                     <div class="spinner"></div>
                 </div>
             </div>
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title"><i class="fas fa-chart-line"></i> TTFB ao Longo do Tempo</div>
-                </div>
-                <div class="card-body">
-                    <canvas id="ttfbChart" height="120"></canvas>
-                </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-chart-bar"></i> Conversão por Etapa</div>
+            </div>
+            <div class="card-body"><canvas id="funnelChart" height="220"></canvas></div>
+        </div>
+    </div>
+
+    <!-- Abandono e Oportunidades -->
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-exclamation-triangle" style="color:var(--red);"></i> Pontos de Abandono</div>
+            </div>
+            <div class="card-body" id="abandonPoints">
+                <div class="spinner"></div>
             </div>
         </div>
-
-        <!-- ==================== E-BOOK DOWNLOADS ==================== -->
-        <div id="tab-ebook" style="display:none;">
-            <div class="kpi-row" style="grid-template-columns: repeat(4, 1fr); margin-bottom:16px;">
-                <div class="kpi-card">
-                    <div class="kpi-label">Total Downloads</div>
-                    <div class="kpi-value gold" style="font-size:22px;" id="kpiEbookTotal">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Últimas 24h</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--green);" id="kpiEbook24h">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Últimos 7 dias</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--blue);" id="kpiEbook7d">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Últimos 30 dias</div>
-                    <div class="kpi-value" style="font-size:22px;" id="kpiEbook30d">--</div>
-                </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-lightbulb" style="color:var(--orange);"></i> Oportunidades de Conversão</div>
             </div>
-            <div class="filter-bar">
-                <label>Source</label>
-                <select class="form-select" id="filterEbookSource" onchange="renderEbookDownloads()">
-                    <option value="all">Todas</option>
-                    <option value="ebook_energia_liderar">E-book Energia Liderar</option>
-                    <option value="conhecimento">Conhecimento</option>
-                </select>
-                <label>Período</label>
-                <select class="form-select" id="filterEbookPeriod" onchange="renderEbookDownloads()">
-                    <option value="all">Todos</option>
-                    <option value="7d">Últimos 7 dias</option>
-                    <option value="30d">Últimos 30 dias</option>
-                    <option value="90d">Últimos 90 dias</option>
-                </select>
-                <input class="form-input" type="text" id="filterEbookSearch" placeholder="Pesquisar e-mail..." oninput="renderEbookDownloads()" style="width:200px;">
-                <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-                    <span style="font-size:12px;color:var(--text-muted);" id="ebookCount">--</span>
-                    <button class="btn btn-outline btn-sm" onclick="exportEbookCSV()"><i class="fas fa-download"></i> CSV</button>
-                </div>
-            </div>
-            <div class="card">
-                <div class="table-wrap">
-                    <table>
-                        <thead><tr><th>Data</th><th>E-mail</th><th>Nome</th><th>Source</th><th>Estado</th></tr></thead>
-                        <tbody id="ebookTable"><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Job Search Tracking Dashboard -->
-        <div id="tab-jobsearch" style="display:none;">
-            <div class="section-header">
-                <h2>Cargos Procurados</h2>
-                <p>Análise dos cargos mais procurados e perfil dos candidatos</p>
-            </div>
-
-            <div class="kpi-row" style="grid-template-columns: repeat(5, 1fr); margin-bottom:16px;">
-                <div class="kpi-card">
-                    <div class="kpi-label">Total Pesquisas</div>
-                    <div class="kpi-value gold" style="font-size:22px;" id="kpiJobTotal">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Com Vaga</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--green);" id="kpiJobWithJob">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Sem Vaga</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--blue);" id="kpiJobNoJob">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Cargos Únicos</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--purple);" id="kpiJobUniqueRoles">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Últimos 7 dias</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--orange);" id="kpiJob7d">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Cargos Normalizados</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--green);" id="kpiJobNormRoles">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Setores</div>
-                    <div class="kpi-value" style="font-size:22px;color:#EC4899;" id="kpiJobSectors">--</div>
-                </div>
-            </div>
-
-            <!-- Charts Row -->
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                <div class="card" style="padding:20px;">
-                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Top 10 Cargos Mais Procurados</h3>
-                    <canvas id="chartTopRoles" height="250"></canvas>
-                </div>
-                <div class="card" style="padding:20px;">
-                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Distribuição por Senioridade</h3>
-                    <canvas id="chartSeniority" height="250"></canvas>
-                </div>
-            </div>
-
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                <div class="card" style="padding:20px;">
-                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Distribuição por Setor</h3>
-                    <canvas id="chartSectors" height="250"></canvas>
-                </div>
-            </div>
-
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                <div class="card" style="padding:20px;">
-                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Top Skills Procuradas</h3>
-                    <canvas id="chartTopSkills" height="250"></canvas>
-                </div>
-                <div class="card" style="padding:20px;">
-                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Top Keyword Gaps (Vagas)</h3>
-                    <canvas id="chartKeywordGaps" height="250"></canvas>
-                </div>
-            </div>
-
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                <div class="card" style="padding:20px;">
-                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Pesquisas por Dia</h3>
-                    <canvas id="chartJobDaily" height="200"></canvas>
-                </div>
-                <div class="card" style="padding:20px;">
-                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Idioma das Pesquisas</h3>
-                    <canvas id="chartJobLanguage" height="200"></canvas>
-                </div>
-            </div>
-
-            <!-- Filters and Table -->
-            <div class="filter-bar">
-                <label>Senioridade</label>
-                <select class="form-select" id="filterJobSeniority" onchange="renderJobSearchTable()">
-                    <option value="all">Todas</option>
-                </select>
-                <label>Período</label>
-                <select class="form-select" id="filterJobPeriod" onchange="renderJobSearchTable()">
-                    <option value="all">Todos</option>
-                    <option value="7d">Últimos 7 dias</option>
-                    <option value="30d">Últimos 30 dias</option>
-                    <option value="90d">Últimos 90 dias</option>
-                </select>
-                <label>Tipo</label>
-                <select class="form-select" id="filterJobType" onchange="renderJobSearchTable()">
-                    <option value="all">Todos</option>
-                    <option value="with_job">Com Vaga</option>
-                    <option value="no_job">Sem Vaga</option>
-                </select>
-                <input class="form-input" type="text" id="filterJobSearch" placeholder="Pesquisar cargo ou nome..." oninput="renderJobSearchTable()" style="width:200px;">
-                <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-                    <span style="font-size:12px;color:var(--text-muted);" id="jobSearchCount">--</span>
-                    <button class="btn btn-outline btn-sm" onclick="exportJobSearchCSV()"><i class="fas fa-download"></i> CSV</button>
-                </div>
-            </div>
-            <div class="card">
-                <div class="table-wrap">
-                    <table>
-                        <thead><tr><th>Data</th><th>Nome</th><th>Cargo Detetado</th><th>Senioridade</th><th>Skills</th><th>Vaga</th><th>ATS Score</th><th>Keyword Gaps</th></tr></thead>
-                        <tbody id="jobSearchTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== CAREER ENERGY ==================== -->
-        <div id="tab-careerenergy" style="display:none;">
-            <div class="section-header">
-                <h2>Career Energy Score</h2>
-                <p>Diagnósticos realizados e comparação com o World Happiness Report</p>
-            </div>
-
-            <div class="kpi-row" style="grid-template-columns: repeat(6, 1fr); margin-bottom:16px;">
-                <div class="kpi-card">
-                    <div class="kpi-label">Total Diagnósticos</div>
-                    <div class="kpi-value gold" style="font-size:22px;" id="kpiCETotal">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Score Médio</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--green);" id="kpiCEAvgScore">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Últimos 7 dias</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--blue);" id="kpiCE7d">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Países</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--purple);" id="kpiCECountries">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Partilhas LinkedIn</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--orange);" id="kpiCEShares">--</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Acima Média País</div>
-                    <div class="kpi-value" style="font-size:22px;color:var(--green);" id="kpiCEAboveAvg">--</div>
-                </div>
-            </div>
-
-            <!-- Charts -->
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                <div class="card" style="padding:20px;">
-                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Distribuição por Nível</h3>
-                    <canvas id="chartCELevels" height="250"></canvas>
-                </div>
-                <div class="card" style="padding:20px;">
-                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Scores por Dimensão (Média)</h3>
-                    <canvas id="chartCEDimensions" height="250"></canvas>
-                </div>
-            </div>
-
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                <div class="card" style="padding:20px;">
-                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Diagnósticos por Dia</h3>
-                    <canvas id="chartCEDaily" height="200"></canvas>
-                </div>
-                <div class="card" style="padding:20px;">
-                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Top Países</h3>
-                    <canvas id="chartCECountries" height="200"></canvas>
-                </div>
-            </div>
-
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                <div class="card" style="padding:20px;">
-                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Score vs Happiness Index do País</h3>
-                    <canvas id="chartCEvsHappiness" height="250"></canvas>
-                </div>
-                <div class="card" style="padding:20px;">
-                    <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;">Idioma</h3>
-                    <canvas id="chartCELanguage" height="200"></canvas>
-                </div>
-            </div>
-
-            <!-- Filters and Table -->
-            <div class="filter-bar">
-                <label>Nível</label>
-                <select class="form-select" id="filterCELevel" onchange="renderCETable()">
-                    <option value="all">Todos</option>
-                    <option value="Alta Performance">Alta Performance</option>
-                    <option value="Energia Forte">Energia Forte</option>
-                    <option value="Energia Estável">Energia Estável</option>
-                    <option value="A Construir Energia">A Construir Energia</option>
-                    <option value="A Calibrar">A Calibrar</option>
-                    <option value="Energia Crítica">Energia Crítica</option>
-                    <option value="Necessita Re-energizar">Necessita Re-energizar</option>
-                </select>
-                <label>Período</label>
-                <select class="form-select" id="filterCEPeriod" onchange="renderCETable()">
-                    <option value="all">Todos</option>
-                    <option value="7d">Últimos 7 dias</option>
-                    <option value="30d">Últimos 30 dias</option>
-                    <option value="90d">Últimos 90 dias</option>
-                </select>
-                <label>País</label>
-                <select class="form-select" id="filterCECountry" onchange="renderCETable()">
-                    <option value="all">Todos</option>
-                </select>
-                <input class="form-input" type="text" id="filterCESearch" placeholder="Pesquisar nome ou função..." oninput="renderCETable()" style="width:200px;">
-                <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-                    <span style="font-size:12px;color:var(--text-muted);" id="ceResultCount">--</span>
-                    <button class="btn btn-outline btn-sm" onclick="exportCECSV()"><i class="fas fa-download"></i> CSV</button>
-                </div>
-            </div>
-            <div class="card">
-                <div class="table-wrap">
-                    <table>
-                        <thead><tr><th>Data</th><th>Nome</th><th>Função</th><th>País</th><th>Score</th><th>Nível</th><th>Percentil</th><th>Energia</th><th>Clareza</th><th>Posição</th><th>Propósito</th><th>Happiness</th><th>Diff</th></tr></thead>
-                        <tbody id="ceResultsTable"><tr><td colspan="13" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Contact Detail Modal -->
-    <div id="contactDetailOverlay" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeContactDetail()">
-        <div class="modal-box" style="max-width:650px;">
-            <div class="modal-header">
-                <h3 id="contactDetailTitle">Mensagem</h3>
-                <button class="modal-close" onclick="closeContactDetail()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div id="contactDetailBody"></div>
-                <div class="form-group" style="margin-top:16px;">
-                    <label class="form-label">Notas internas:</label>
-                    <textarea class="form-textarea" id="contactDetailNotes" style="min-height:60px;" placeholder="Adicionar notas..."></textarea>
-                </div>
-                <div style="display:flex;gap:8px;">
-                    <button class="btn btn-gold" style="flex:1;" onclick="markContactReplied()"><i class="fas fa-check"></i> Marcar como respondido</button>
-                    <button class="btn btn-outline" style="flex:1;" onclick="saveContactNotes()"><i class="fas fa-save"></i> Guardar notas</button>
-                </div>
+            <div class="card-body" id="conversionOpportunities">
+                <div class="spinner"></div>
             </div>
         </div>
     </div>
 
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- Email Modal -->
-    <div id="emailModalOverlay" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeEmailModal()">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3>Enviar Email</h3>
-                <button class="modal-close" onclick="closeEmailModal()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Para:</label>
-                    <input type="text" class="form-input" id="modalEmailTo" readonly style="width:100%;background:var(--bg);">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Idioma:</label>
-                    <select class="form-select" id="modalEmailLang" onchange="loadEmailTemplate()" style="width:100%;">
-                        <option value="pt">Português</option>
-                        <option value="en">English</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Template:</label>
-                    <select class="form-select" id="modalEmailTemplate" onchange="loadEmailTemplate()" style="width:100%;">
-                        <option value="upsell">Upsell - Análise Completa</option>
-                        <option value="feedback">Pedir Feedback</option>
-                        <option value="careerpath">Upsell - Career Path</option>
-                        <option value="custom">Personalizado</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Assunto:</label>
-                    <input type="text" class="form-input" id="modalEmailSubject" style="width:100%;">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Mensagem:</label>
-                    <textarea class="form-textarea" id="modalEmailBody"></textarea>
-                </div>
-                <button class="btn btn-gold" style="width:100%;" onclick="sendSingleEmail()"><i class="fas fa-paper-plane"></i> Enviar</button>
+    <!-- Receita por Produto -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-euro-sign"></i> Receita por Produto</div>
+        </div>
+        <div class="card-body">
+            <div id="revenueByProduct">
+                <div class="spinner"></div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Create Voucher Modal -->
-    <div id="voucherModalOverlay" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeVoucherModal()">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3>Criar Vouchers</h3>
-                <button class="modal-close" onclick="closeVoucherModal()"><i class="fas fa-times"></i></button>
+<!-- ══════════════════════════════════════════════
+     TAB: CRM / LEADS
+══════════════════════════════════════════════ -->
+<div id="tab-crm" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div class="section-header" style="margin:0;">
+            <h2>CRM · Gestão de Leads</h2>
+            <p>Visão completa de cada utilizador e a sua posição no funil</p>
+        </div>
+    </div>
+
+    <!-- CRM KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+        <div class="kpi-card" style="border-top:3px solid #F59E0B;">
+            <div class="kpi-label">Novas Leads</div>
+            <div class="kpi-value" style="color:var(--orange);" id="crmLeads">--</div>
+            <div class="kpi-sub">só análise gratuita</div>
+        </div>
+        <div class="kpi-card" style="border-top:3px solid var(--blue);">
+            <div class="kpi-label">Em Nurturing</div>
+            <div class="kpi-value blue" id="crmNurturing">--</div>
+            <div class="kpi-sub">com email enviado</div>
+        </div>
+        <div class="kpi-card" style="border-top:3px solid var(--green);">
+            <div class="kpi-label">Clientes</div>
+            <div class="kpi-value green" id="crmClients">--</div>
+            <div class="kpi-sub">pelo menos 1 compra</div>
+        </div>
+        <div class="kpi-card" style="border-top:3px solid var(--purple);">
+            <div class="kpi-label">Recorrentes</div>
+            <div class="kpi-value purple" id="crmRecurring">--</div>
+            <div class="kpi-sub">2+ produtos</div>
+        </div>
+    </div>
+
+    <!-- CRM Filters -->
+    <div class="filter-bar">
+        <label>Etapa</label>
+        <select class="form-select" id="crmFilterStage" onchange="renderCRM()">
+            <option value="all">Todas</option>
+            <option value="lead">Novas Leads</option>
+            <option value="nurturing">Em Nurturing</option>
+            <option value="client">Clientes</option>
+            <option value="recurring">Recorrentes</option>
+        </select>
+        <div class="filter-divider"></div>
+        <label>Produto</label>
+        <select class="form-select" id="crmFilterProduct" onchange="renderCRM()">
+            <option value="all">Todos</option>
+            <option value="cv_free">CV Grátis</option>
+            <option value="cv_paid">CV Pago</option>
+            <option value="career_path">Career Path</option>
+        </select>
+        <div class="filter-divider"></div>
+        <label>Senioridade</label>
+        <select class="form-select" id="crmFilterSeniority" onchange="renderCRM()">
+            <option value="all">Todas</option>
+        </select>
+        <div class="filter-divider"></div>
+        <label>Área</label>
+        <select class="form-select" id="crmFilterArea" onchange="renderCRM()">
+            <option value="all">Todas</option>
+        </select>
+        <div class="filter-divider"></div>
+        <input class="form-input" type="text" id="crmSearch" placeholder="Pesquisar nome ou email..." oninput="renderCRM()" style="width:200px;">
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+            <span style="font-size:12px;color:var(--text-muted);" id="crmCount">-- leads</span>
+            <button class="btn btn-outline btn-sm" onclick="exportCRMCSV()"><i class="fas fa-download"></i> CSV</button>
+        </div>
+    </div>
+
+    <!-- CRM Table -->
+    <div class="card">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Utilizador</th>
+                        <th>Área Profissional</th>
+                        <th>Senioridade</th>
+                        <th>Produtos Usados</th>
+                        <th>Produtos Comprados</th>
+                        <th>Valor Total</th>
+                        <th>Última Interação</th>
+                        <th>Etapa</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="crmTable">
+                    <tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="pagination" id="crmPagination"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB: ANÁLISES
+══════════════════════════════════════════════ -->
+<div id="tab-analyses" style="display:none;">
+    <div class="filter-bar">
+        <label>Tipo</label>
+        <select class="form-select" id="filterType" onchange="filterAnalyses()">
+            <option value="all">Todos</option>
+            <option value="paid">Pago</option>
+            <option value="free">Gratuito</option>
+            <option value="voucher">Voucher</option>
+        </select>
+        <div class="filter-divider"></div>
+        <label>Idioma</label>
+        <select class="form-select" id="filterLang" onchange="filterAnalyses()">
+            <option value="all">Todos</option>
+            <option value="pt">PT</option>
+            <option value="en">EN</option>
+        </select>
+        <div class="filter-divider"></div>
+        <label>Produto</label>
+        <select class="form-select" id="filterProduct" onchange="filterAnalyses()">
+            <option value="all">Todos</option>
+            <option value="cv">CV Analyser</option>
+            <option value="career_path">Career Path</option>
+        </select>
+        <div class="filter-divider"></div>
+        <label>Período</label>
+        <input class="form-input" type="date" id="filterDateFrom" onchange="filterAnalyses()">
+        <span style="font-size:12px;color:var(--text-muted);">→</span>
+        <input class="form-input" type="date" id="filterDateTo" onchange="filterAnalyses()">
+        <div class="filter-divider"></div>
+        <input class="form-input" type="text" id="filterEmail" placeholder="Pesquisar email..." oninput="filterAnalyses()" style="width:180px;">
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+            <span style="font-size:12px;color:var(--text-muted);" id="analysesCount">--</span>
+            <button class="btn btn-outline btn-sm" onclick="exportAnalysesCSV()"><i class="fas fa-download"></i> CSV</button>
+        </div>
+    </div>
+    <div class="card">
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Data</th><th>Nome</th><th>Email</th><th>Score</th><th>Área</th><th>Tipo</th><th>Produto</th><th>Idioma</th><th>Valor</th><th></th></tr></thead>
+                <tbody id="analysesTable"><tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="pagination" id="analysesPagination"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB: VOUCHERS
+══════════════════════════════════════════════ -->
+<div id="tab-vouchers" style="display:none;">
+    <div class="filter-bar">
+        <label>Estado</label>
+        <select class="form-select" id="filterVoucherStatus" onchange="filterVouchers()">
+            <option value="all">Todos</option>
+            <option value="active">Ativo</option>
+            <option value="used">Usado</option>
+        </select>
+        <label>Tipo</label>
+        <select class="form-select" id="filterVoucherType" onchange="filterVouchers()">
+            <option value="all">Todos</option>
+            <option value="standard">CV Analyser</option>
+            <option value="career_path">Career Path</option>
+        </select>
+        <input class="form-input" type="text" id="filterVoucherEmail" placeholder="Pesquisar email..." oninput="filterVouchers()" style="width:180px;">
+        <div style="margin-left:auto;">
+            <button class="btn btn-gold btn-sm" onclick="showCreateVoucherModal()"><i class="fas fa-plus"></i> Criar Vouchers</button>
+        </div>
+    </div>
+    <div class="card">
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Código</th><th>Email</th><th>Plano</th><th>Tipo</th><th>Valor</th><th>Estado</th><th>Criado</th><th></th></tr></thead>
+                <tbody id="vouchersTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB: FOLLOW-UP / NURTURING
+══════════════════════════════════════════════ -->
+<div id="tab-nurturing" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="section-header" style="margin:0;">
+            <h2>Follow-up & Nurturing</h2>
+            <p>Segmentos automáticos para campanhas de email</p>
+        </div>
+        <div class="lang-toggle" id="nurturingLangToggle">
+            <button class="active" onclick="setNurturingLang('pt',this)">🇵🇹 PT</button>
+            <button onclick="setNurturingLang('en',this)">🇬🇧 EN</button>
+        </div>
+    </div>
+
+    <!-- Segmentos -->
+    <div class="segment-cards">
+        <div class="segment-card" onclick="prepareNurturing('upsell')">
+            <div class="segment-count" id="upsellCount">--</div>
+            <div class="segment-label">Upsell — Análise Completa</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Fizeram análise gratuita, não compraram</div>
+        </div>
+        <div class="segment-card" onclick="prepareNurturing('feedback')">
+            <div class="segment-count" id="feedbackCount">--</div>
+            <div class="segment-label">Pedir Feedback</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Compraram mas não avaliaram</div>
+        </div>
+        <div class="segment-card" onclick="prepareNurturing('careerpath')">
+            <div class="segment-count" id="careerpathCount">--</div>
+            <div class="segment-label">Upsell — Career Path</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Compraram CV, sem Career Path</div>
+        </div>
+        <div class="segment-card" onclick="prepareNurturing('abandoned')">
+            <div class="segment-count" id="abandonedCount">--</div>
+            <div class="segment-label">Recuperar Abandono</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Anónimos recentes (email desconhecido)</div>
+        </div>
+    </div>
+
+    <!-- Composer -->
+    <div id="emailComposer" style="display:none;">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title" id="composerTitle"><i class="fas fa-paper-plane"></i> Compor Email</div>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Email do destinatário:</label>
-                    <input type="email" class="form-input" id="voucherEmail" placeholder="email@exemplo.com" style="width:100%;">
+            <div class="card-body">
+                <div class="grid-2">
+                    <div>
+                        <div class="form-group">
+                            <label class="form-label">Assunto</label>
+                            <input class="form-input" type="text" id="emailSubject" style="width:100%;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Corpo do Email (HTML)</label>
+                            <textarea class="form-textarea" id="emailBody" style="min-height:200px;"></textarea>
+                        </div>
+                        <div style="display:flex;gap:8px;">
+                            <button class="btn btn-gold" onclick="sendBulkEmail()"><i class="fas fa-paper-plane"></i> Enviar Selecionados</button>
+                            <button class="btn btn-outline" onclick="selectOnlyUnsent()"><i class="fas fa-filter"></i> Só Não Enviados</button>
+                            <button class="btn btn-outline" onclick="toggleAllRecipients(true)">Todos</button>
+                            <button class="btn btn-outline" onclick="toggleAllRecipients(false)">Nenhum</button>
+                        </div>
+                        <div style="margin-top:8px;font-size:12px;color:var(--text-muted);" id="selectedCount">(0 selecionados)</div>
+                    </div>
+                    <div>
+                        <div style="display:flex;gap:8px;margin-bottom:10px;">
+                            <input class="form-input" type="text" id="recipientSearch" placeholder="Filtrar email..." oninput="filterRecipientList()" style="flex:1;">
+                            <select class="form-select" id="recipientFilter" onchange="filterRecipientList()">
+                                <option value="all">Todos</option>
+                                <option value="unsent">Não enviados</option>
+                                <option value="sent">Enviados</option>
+                            </select>
+                        </div>
+                        <div id="recipientList" style="max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;"></div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Plano:</label>
-                    <select class="form-select" id="voucherPlan" style="width:100%;">
-                        <optgroup label="CV Analyser (PT)">
-                            <option value="Essencial|1|3.99|standard|false">Essencial (1 análise - €3,99)</option>
-                            <option value="Profissional|3|7.99|standard|false">Profissional (3 análises - €7,99)</option>
-                            <option value="Premium|5|12.99|standard|false">Premium (5 análises - €12,99)</option>
-                        </optgroup>
-                        <optgroup label="CV Analyser (EN)">
-                            <option value="Essential|1|5.99|standard|false">Essential (1 analysis - $5.99)</option>
-                            <option value="Professional|3|14.99|standard|false">Professional (3 analyses - $14.99)</option>
-                            <option value="Premium EN|5|24.99|standard|false">Premium (5 analyses - $24.99)</option>
-                        </optgroup>
-                        <optgroup label="Career Path (PT)">
-                            <option value="Career Path|1|9.99|career_path|false">Career Path (1 análise - €9,99)</option>
-                        </optgroup>
-                        <optgroup label="Career Path (EN)">
-                            <option value="Career Path EN|1|10.00|career_path|false">Career Path (1 analysis - $10.00)</option>
-                        </optgroup>
-                        <optgroup label="Career Path - LinkedIn">
-                            <option value="Career Path - LinkedIn|1|0|career_path|false">Career Path LinkedIn (grátis)</option>
-                        </optgroup>
-                        <optgroup label="Bundles">
-                            <option value="Bundle|1|6.99|standard|true">Bundle CV + Career Path (€6,99)</option>
-                            <option value="Bundle Compensação|1|0|standard|true">Bundle Compensação (grátis)</option>
-                        </optgroup>
-                        <optgroup label="Teste">
-                            <option value="Teste|1|0|standard|false">Teste CV (grátis)</option>
-                            <option value="Teste Career Path|1|0|career_path|false">Teste Career Path (grátis)</option>
-                        </optgroup>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Método de pagamento:</label>
-                    <select class="form-select" id="voucherPayment" style="width:100%;">
-                        <option value="mbway">MB WAY</option>
-                        <option value="paypal">PayPal</option>
-                        <option value="stripe">Stripe</option>
-                        <option value="manual">Manual</option>
-                        <option value="linkedin">LinkedIn</option>
-                        <option value="test">Teste</option>
-                    </select>
-                </div>
-                <div class="form-check" style="margin-bottom:16px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB: HISTÓRICO DE EMAILS
+══════════════════════════════════════════════ -->
+<div id="tab-history" style="display:none;">
+    <div class="filter-bar">
+        <label>Tipo</label>
+        <select class="form-select" id="filterHistoryType" onchange="renderEmailHistory()">
+            <option value="all">Todos</option>
+            <option value="upsell">Upsell</option>
+            <option value="custom">Custom</option>
+            <option value="feedback">Feedback</option>
+            <option value="careerpath">Career Path</option>
+        </select>
+        <input class="form-input" type="text" id="filterHistoryEmail" placeholder="Pesquisar email..." oninput="renderEmailHistory()" style="width:200px;">
+        <div style="margin-left:auto;">
+            <span style="font-size:12px;color:var(--text-muted);" id="historyCount">--</span>
+        </div>
+    </div>
+    <div class="card">
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Data</th><th>Para</th><th>Assunto</th><th>Tipo</th><th>Estado</th></tr></thead>
+                <tbody id="emailHistoryTable"><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="pagination" id="historyPagination"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB: CONTACTOS
+══════════════════════════════════════════════ -->
+<div id="tab-contacts" style="display:none;">
+    <div class="filter-bar">
+        <input class="form-input" type="text" id="filterContact" placeholder="Pesquisar nome ou email..." oninput="renderContacts()" style="width:220px;">
+        <div style="margin-left:auto;">
+            <span style="font-size:12px;color:var(--text-muted);" id="contactsCount">--</span>
+        </div>
+    </div>
+    <div class="card">
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Data</th><th>Nome</th><th>Email</th><th>Mensagem</th><th>Serviço</th></tr></thead>
+                <tbody id="contactsTable"><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB: SAÚDE DO SISTEMA
+══════════════════════════════════════════════ -->
+<div id="tab-health" style="display:none;">
+    <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);">
+        <div class="kpi-card">
+            <div class="kpi-label">Uptime (7d)</div>
+            <div class="kpi-value green" style="font-size:22px;" id="healthUptime">--</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Alertas (7d)</div>
+            <div class="kpi-value red" style="font-size:22px;" id="healthAlerts">--</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Último Check</div>
+            <div class="kpi-value" style="font-size:22px;" id="healthLastCheck">--</div>
+        </div>
+    </div>
+    <div class="card" style="margin-bottom:20px;">
+        <div class="card-header"><div class="card-title"><i class="fas fa-server"></i> Estado dos Endpoints</div></div>
+        <div class="card-body" id="endpointStatus"><div class="spinner"></div></div>
+    </div>
+    <div class="card">
+        <div class="card-header"><div class="card-title"><i class="fas fa-chart-line"></i> TTFB ao Longo do Tempo</div></div>
+        <div class="card-body"><canvas id="ttfbChart" height="120"></canvas></div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB: E-BOOK
+══════════════════════════════════════════════ -->
+<div id="tab-ebook" style="display:none;">
+    <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px;">
+        <div class="kpi-card"><div class="kpi-label">Total Downloads</div><div class="kpi-value gold" style="font-size:22px;" id="kpiEbookTotal">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Últimas 24h</div><div class="kpi-value green" style="font-size:22px;" id="kpiEbook24h">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Últimos 7 dias</div><div class="kpi-value blue" style="font-size:22px;" id="kpiEbook7d">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Últimos 30 dias</div><div class="kpi-value" style="font-size:22px;" id="kpiEbook30d">--</div></div>
+    </div>
+    <div class="filter-bar">
+        <label>Source</label>
+        <select class="form-select" id="filterEbookSource" onchange="renderEbookDownloads()">
+            <option value="all">Todas</option>
+            <option value="ebook_energia_liderar">E-book Energia Liderar</option>
+            <option value="conhecimento">Conhecimento</option>
+        </select>
+        <label>Período</label>
+        <select class="form-select" id="filterEbookPeriod" onchange="renderEbookDownloads()">
+            <option value="all">Todos</option>
+            <option value="7d">7 dias</option>
+            <option value="30d">30 dias</option>
+            <option value="90d">90 dias</option>
+        </select>
+        <input class="form-input" type="text" id="filterEbookSearch" placeholder="Pesquisar email..." oninput="renderEbookDownloads()" style="width:200px;">
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+            <span style="font-size:12px;color:var(--text-muted);" id="ebookCount">--</span>
+            <button class="btn btn-outline btn-sm" onclick="exportEbookCSV()"><i class="fas fa-download"></i> CSV</button>
+        </div>
+    </div>
+    <div class="card">
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Data</th><th>E-mail</th><th>Nome</th><th>Source</th><th>Estado</th></tr></thead>
+                <tbody id="ebookTable"><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB: CARGOS / JOB SEARCH
+══════════════════════════════════════════════ -->
+<div id="tab-jobsearch" style="display:none;">
+    <div class="section-header"><h2>Cargos Procurados</h2><p>Análise dos cargos mais procurados e perfil dos candidatos</p></div>
+    <div class="kpi-row" style="grid-template-columns:repeat(5,1fr);margin-bottom:16px;">
+        <div class="kpi-card"><div class="kpi-label">Total Pesquisas</div><div class="kpi-value gold" style="font-size:22px;" id="kpiJobTotal">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Com Vaga</div><div class="kpi-value green" style="font-size:22px;" id="kpiJobWithJob">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Sem Vaga</div><div class="kpi-value blue" style="font-size:22px;" id="kpiJobNoJob">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Cargos Únicos</div><div class="kpi-value purple" style="font-size:22px;" id="kpiJobUniqueRoles">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Últimos 7 dias</div><div class="kpi-value" style="font-size:22px;color:var(--orange);" id="kpiJob7d">--</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+        <div class="card" style="padding:20px;"><h3 style="font-size:13px;font-weight:600;margin-bottom:12px;">Top 10 Cargos</h3><canvas id="chartTopRoles" height="250"></canvas></div>
+        <div class="card" style="padding:20px;"><h3 style="font-size:13px;font-weight:600;margin-bottom:12px;">Distribuição por Senioridade</h3><canvas id="chartSeniority" height="250"></canvas></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+        <div class="card" style="padding:20px;"><h3 style="font-size:13px;font-weight:600;margin-bottom:12px;">Top Skills</h3><canvas id="chartTopSkills" height="250"></canvas></div>
+        <div class="card" style="padding:20px;"><h3 style="font-size:13px;font-weight:600;margin-bottom:12px;">Keyword Gaps</h3><canvas id="chartKeywordGaps" height="250"></canvas></div>
+    </div>
+    <div class="filter-bar">
+        <label>Senioridade</label>
+        <select class="form-select" id="filterJobSeniority" onchange="renderJobSearchTable()"><option value="all">Todas</option></select>
+        <label>Período</label>
+        <select class="form-select" id="filterJobPeriod" onchange="renderJobSearchTable()">
+            <option value="all">Todos</option><option value="7d">7 dias</option><option value="30d">30 dias</option><option value="90d">90 dias</option>
+        </select>
+        <input class="form-input" type="text" id="filterJobSearch" placeholder="Pesquisar cargo..." oninput="renderJobSearchTable()" style="width:200px;">
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+            <span style="font-size:12px;color:var(--text-muted);" id="jobSearchCount">--</span>
+            <button class="btn btn-outline btn-sm" onclick="exportJobSearchCSV()"><i class="fas fa-download"></i> CSV</button>
+        </div>
+    </div>
+    <div class="card">
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Data</th><th>Nome</th><th>Cargo</th><th>Senioridade</th><th>Skills</th><th>Vaga</th><th>ATS Score</th></tr></thead>
+                <tbody id="jobSearchTable"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB: CAREER ENERGY
+══════════════════════════════════════════════ -->
+<div id="tab-careerenergy" style="display:none;">
+    <div class="section-header"><h2>Career Energy Score</h2><p>Diagnósticos realizados e comparação com o World Happiness Report</p></div>
+    <div class="kpi-row" style="grid-template-columns:repeat(5,1fr);margin-bottom:16px;">
+        <div class="kpi-card"><div class="kpi-label">Total Diagnósticos</div><div class="kpi-value gold" style="font-size:22px;" id="kpiCETotal">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Score Médio</div><div class="kpi-value green" style="font-size:22px;" id="kpiCEAvg">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Acima da Média País</div><div class="kpi-value blue" style="font-size:22px;" id="kpiCEAboveAvg">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Países</div><div class="kpi-value purple" style="font-size:22px;" id="kpiCECountries">--</div></div>
+        <div class="kpi-card"><div class="kpi-label">Partilhas LinkedIn</div><div class="kpi-value teal" style="font-size:22px;" id="kpiCELinkedIn">--</div></div>
+    </div>
+    <div class="grid-2" style="margin-bottom:16px;">
+        <div class="card" style="padding:20px;"><h3 style="font-size:13px;font-weight:600;margin-bottom:12px;">Distribuição de Scores</h3><canvas id="ceScoreChart" height="220"></canvas></div>
+        <div class="card" style="padding:20px;"><h3 style="font-size:13px;font-weight:600;margin-bottom:12px;">Score vs Felicidade do País</h3><canvas id="ceScatterChart" height="220"></canvas></div>
+    </div>
+    <div class="filter-bar">
+        <label>País</label>
+        <select class="form-select" id="filterCECountry" onchange="renderCETable()"><option value="all">Todos</option></select>
+        <label>Nível</label>
+        <select class="form-select" id="filterCELevel" onchange="renderCETable()"><option value="all">Todos</option></select>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+            <span style="font-size:12px;color:var(--text-muted);" id="ceCount">--</span>
+            <button class="btn btn-outline btn-sm" onclick="exportCECSV()"><i class="fas fa-download"></i> CSV</button>
+        </div>
+    </div>
+    <div class="card">
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Data</th><th>Nome</th><th>Cargo</th><th>País</th><th>Score</th><th>Nível</th><th>Felicidade País</th><th>Diferença</th></tr></thead>
+                <tbody id="ceTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</main>
+
+<!-- ══════════════════════════════════════════════
+     MODAIS
+══════════════════════════════════════════════ -->
+
+<!-- Modal: Email -->
+<div class="modal-overlay" id="emailModalOverlay" style="display:none;" onclick="if(event.target===this)closeEmailModal()">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3><i class="fas fa-envelope" style="color:var(--gold);margin-right:8px;"></i> Enviar Email</h3>
+            <button class="modal-close" onclick="closeEmailModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Para</label>
+                <input class="form-input" type="email" id="modalEmailTo" style="width:100%;">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Idioma</label>
+                <select class="form-select" id="modalEmailLang" onchange="loadEmailTemplate()" style="width:100%;">
+                    <option value="pt">🇵🇹 Português</option>
+                    <option value="en">🇬🇧 English</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Template</label>
+                <select class="form-select" id="modalEmailTemplate" onchange="loadEmailTemplate()" style="width:100%;">
+                    <option value="upsell">Upsell — Análise Completa</option>
+                    <option value="feedback">Pedir Feedback</option>
+                    <option value="careerpath">Upsell — Career Path</option>
+                    <option value="custom">Personalizado</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Assunto</label>
+                <input class="form-input" type="text" id="modalEmailSubject" style="width:100%;">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Corpo (HTML)</label>
+                <textarea class="form-textarea" id="modalEmailBody" style="min-height:150px;"></textarea>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button class="btn btn-outline" onclick="closeEmailModal()">Cancelar</button>
+                <button class="btn btn-gold" onclick="sendSingleEmail()"><i class="fas fa-paper-plane"></i> Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Criar Vouchers -->
+<div class="modal-overlay" id="voucherModalOverlay" style="display:none;" onclick="if(event.target===this)closeVoucherModal()">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3><i class="fas fa-ticket-alt" style="color:var(--gold);margin-right:8px;"></i> Criar Vouchers</h3>
+            <button class="modal-close" onclick="closeVoucherModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Email do Cliente</label>
+                <input class="form-input" type="email" id="voucherEmail" style="width:100%;" placeholder="cliente@email.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Plano</label>
+                <select class="form-select" id="voucherPlan" style="width:100%;">
+                    <option value="CV Analyser Básico|1|9.99|standard|false">CV Analyser Básico — 1 análise (9,99€)</option>
+                    <option value="CV Analyser Pro|3|24.99|standard|false">CV Analyser Pro — 3 análises (24,99€)</option>
+                    <option value="Career Path|1|19.99|career_path|true">Career Path — 1 análise (19,99€)</option>
+                    <option value="Pacote Completo|1|34.99|career_path|true">Pacote Completo — CV + Career Path (34,99€)</option>
+                    <option value="Oferta|1|0|standard|false">Oferta — Gratuito (0€)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Método de Pagamento</label>
+                <select class="form-select" id="voucherPayment" style="width:100%;">
+                    <option value="mbway">MBWay</option>
+                    <option value="multibanco">Multibanco</option>
+                    <option value="stripe">Stripe</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="transferencia">Transferência</option>
+                    <option value="oferta">Oferta</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-check">
                     <input type="checkbox" id="voucherSendEmail" checked>
-                    <label for="voucherSendEmail">Enviar email com códigos via Brevo</label>
-                </div>
-                <button class="btn btn-gold" style="width:100%;" onclick="createVouchers()"><i class="fas fa-plus"></i> Criar e Enviar</button>
+                    Enviar email com o(s) código(s) ao cliente
+                </label>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button class="btn btn-outline" onclick="closeVoucherModal()">Cancelar</button>
+                <button class="btn btn-gold" onclick="createVouchers()"><i class="fas fa-plus"></i> Criar</button>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="admin-analytics.js"></script>
+<!-- Modal: Perfil do Utilizador -->
+<div class="modal-overlay" id="userProfileModal" style="display:none;" onclick="if(event.target===this)closeUserProfile()">
+    <div class="modal-box" style="max-width:680px;">
+        <div class="modal-header">
+            <h3 id="userProfileTitle"><i class="fas fa-user" style="color:var(--gold);margin-right:8px;"></i> Perfil do Utilizador</h3>
+            <button class="modal-close" onclick="closeUserProfile()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" id="userProfileBody">
+            <div class="spinner"></div>
+        </div>
+    </div>
+</div>
+
+<script src="admin-analytics.js"></script>
 </body>
 </html>

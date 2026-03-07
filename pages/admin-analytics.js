@@ -1,51 +1,69 @@
-// ===================== CONFIG =====================
+'use strict';
+// ═══════════════════════════════════════════════════════════════
+//  Share2Inspire · Admin Analytics JS
+//  Versão 2.0 — Funil completo, CRM, Métricas de Crescimento
+// ═══════════════════════════════════════════════════════════════
+
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
-const BREVO_KEY = localStorage.getItem('s2i_brevo_key') || '';
 const BREVO_SENDER = { name: 'Share2Inspire', email: 'srshare2inspire@gmail.com' };
 
-// Second Supabase project (S2I Career Advisor) for health logs
-const SUPABASE2_URL = 'https://dnjnsotemnfhfnwmbbvk.supabase.co';
-const SUPABASE2_KEY = ''; // Will use same key pattern or public anon key
-
+function getBrevoKey() { return localStorage.getItem('s2i_brevo_key') || ''; }
 function ensureBrevoKey() {
-    if (BREVO_KEY) return true;
+    if (getBrevoKey()) return true;
     const key = prompt('Insere a API Key do Brevo para enviar emails:');
     if (key) { localStorage.setItem('s2i_brevo_key', key); location.reload(); return true; }
     showToast('API Key do Brevo necessária para enviar emails', 'danger');
     return false;
 }
 
-let allAnalyses = [];
-let allVouchers = [];
-let allEmailHistory = [];
-let allHealthLogs = [];
-let dailyChart = null;
-let typeChart = null;
-let langChart = null;
-let ttfbChart = null;
-let currentPage = 1;
-let historyPage = 1;
-const PAGE_SIZE = 20;
-let globalLang = 'all';
-let nurturingLang = 'pt';
+// ── Estado Global ──────────────────────────────────────────────
+let allAnalyses      = [];
+let allVouchers      = [];
+let allEmailHistory  = [];
+let allHealthLogs    = [];
+let allContacts      = [];
+let allEbookDownloads = [];
+let allJobSearch     = [];
+let allCareerEnergy  = [];
+let allNewsletterSubs = [];
 
-// ===================== SUPABASE HELPERS =====================
+let globalLang       = 'all';
+let nurturingLang    = 'pt';
+let dashPeriodDays   = 30;
+let funnelPeriodDays = 30;
+let currentPage      = 1;
+let historyPage      = 1;
+let crmPage          = 1;
+const PAGE_SIZE      = 25;
+
+// Chart instances
+let dailyChart = null, typeChart = null, langChart = null, ttfbChart = null;
+let funnelChart = null, scoreChart = null, ceScoreChart = null;
+
+// Nurturing state
+let nurturingSegment = null;
+let nurturingRecipients = [];
+
+// ═══════════════════════════════════════════════════════════════
+//  SUPABASE HELPERS
+// ═══════════════════════════════════════════════════════════════
 async function supaFetch(table, query = '') {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-    });
-    return res.json();
+    try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        if (!res.ok) return [];
+        return res.json();
+    } catch { return []; }
 }
 
 async function supaInsert(table, data) {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
         method: 'POST',
         headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation'
+            'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json', 'Prefer': 'return=representation'
         },
         body: JSON.stringify(data)
     });
@@ -56,46 +74,139 @@ async function supaUpdate(table, id, data) {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
         method: 'PATCH',
         headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=minimal'
+            'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json', 'Prefer': 'return=minimal'
         },
         body: JSON.stringify(data)
     });
     if (!res.ok) throw new Error(await res.text());
 }
 
-// ===================== LANGUAGE DETECTION =====================
-function detectLanguage(analysis) {
-    // Heuristic: check professional_area or analysis content for EN indicators
-    const area = (analysis.professional_area || '').toLowerCase();
-    const name = (analysis.user_name || '').toLowerCase();
-    const email = (analysis.user_email || '').toLowerCase();
-    
-    // Check if analysis_type contains language hint
-    if (analysis.analysis_type && analysis.analysis_type.includes('_en')) return 'en';
-    
-    // Check for common English professional areas
-    const enAreas = ['software engineer', 'data scientist', 'project manager', 'marketing', 'developer', 'analyst', 'consultant', 'designer', 'manager'];
-    const ptAreas = ['engenheiro', 'analista', 'gestor', 'programador', 'técnico', 'consultor', 'designer', 'administra'];
-    
-    for (const a of ptAreas) { if (area.includes(a)) return 'pt'; }
-    for (const a of enAreas) { if (area.includes(a)) return 'en'; }
-    
-    // Default: check if email domain suggests PT
+// ═══════════════════════════════════════════════════════════════
+//  LANGUAGE & PRODUCT HELPERS
+// ═══════════════════════════════════════════════════════════════
+function detectLanguage(a) {
+    if (a.analysis_type && a.analysis_type.includes('_en')) return 'en';
+    const area = (a.professional_area || '').toLowerCase();
+    const email = (a.user_email || '').toLowerCase();
+    const ptAreas = ['engenheiro','analista','gestor','programador','técnico','consultor','administra'];
+    const enAreas = ['software engineer','data scientist','project manager','developer','analyst'];
+    for (const x of ptAreas) if (area.includes(x)) return 'pt';
+    for (const x of enAreas) if (area.includes(x)) return 'en';
     if (email.endsWith('.pt') || email.endsWith('.br')) return 'pt';
-    if (email.endsWith('.uk') || email.endsWith('.com') || email.endsWith('.io')) return 'en';
-    
-    return 'pt'; // Default to PT
+    if (email.endsWith('.uk') || email.endsWith('.io')) return 'en';
+    return 'pt';
 }
 
-function getProductType(analysis) {
-    if (analysis.analysis_type === 'career_path') return 'career_path';
-    return 'cv';
+function getAnalysisType(a) {
+    if (a.analysis_type === 'career_path') return 'paid';
+    if (a.payment_status === 'paid' || (a.payment_amount && a.payment_amount > 0)) return 'paid';
+    const usedVoucher = allVouchers.find(v =>
+        v.email && a.user_email &&
+        v.email.toLowerCase() === a.user_email.toLowerCase() && v.used_analyses > 0
+    );
+    if (usedVoucher) return 'voucher';
+    if (a.analysis_type === 'free_heuristic') return 'free';
+    return 'free';
 }
 
-// ===================== GLOBAL LANGUAGE FILTER =====================
+function isAnonymous(a) {
+    const email = (a.user_email || '').toLowerCase();
+    return !email || email.includes('anonymous') || email.includes('@share2inspire') || email === '';
+}
+
+function getPaymentOrigin(a) {
+    if (a.payment_method) return a.payment_method;
+    const type = getAnalysisType(a);
+    if (type === 'voucher') return 'voucher';
+    if (type === 'free') return 'free';
+    const tid = a.transaction_id || '';
+    if (tid.startsWith('pi_') || tid.startsWith('cs_')) return 'stripe';
+    if (tid.startsWith('PAYID-') || tid.toLowerCase().includes('paypal')) return 'paypal';
+    if (a.payment_status === 'paid') return 'stripe';
+    return '—';
+}
+
+function filterByLang(data, lang) {
+    if (!lang || lang === 'all') return data;
+    return data.filter(a => detectLanguage(a) === lang);
+}
+
+function filterByPeriod(data, days) {
+    if (!days || days === 0) return data;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    return data.filter(a => new Date(a.created_at) >= cutoff);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  BADGE HELPERS
+// ═══════════════════════════════════════════════════════════════
+function getTypeBadge(type) {
+    const map = {
+        paid: '<span class="badge badge-paid">Pago</span>',
+        voucher: '<span class="badge badge-voucher">Voucher</span>',
+        free: '<span class="badge badge-free">Gratuito</span>'
+    };
+    return map[type] || map.free;
+}
+function getLangBadge(lang) {
+    return lang === 'en'
+        ? '<span class="badge badge-en">🇬🇧 EN</span>'
+        : '<span class="badge badge-pt">🇵🇹 PT</span>';
+}
+function getProductBadge(a) {
+    return a.analysis_type === 'career_path'
+        ? '<span class="badge badge-career">Career Path</span>'
+        : '<span class="badge badge-cv">CV Analyser</span>';
+}
+function getStageBadge(stage) {
+    const map = {
+        lead: '<span class="funnel-stage stage-lead">Lead</span>',
+        nurturing: '<span class="funnel-stage stage-nurturing">Nurturing</span>',
+        client: '<span class="funnel-stage stage-client">Cliente</span>',
+        recurring: '<span class="funnel-stage stage-recurring">Recorrente</span>'
+    };
+    return map[stage] || map.lead;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════════════
+function showToast(msg, type = 'info') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `show ${type}`;
+    setTimeout(() => { t.className = ''; }, 3500);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function switchTab(name, btn) {
+    document.querySelectorAll('.main > div[id^="tab-"]').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    const tab = document.getElementById('tab-' + name);
+    if (tab) tab.style.display = '';
+    if (btn) btn.classList.add('active');
+
+    // Lazy render on first visit
+    if (name === 'funnel') renderFunnel();
+    if (name === 'crm') renderCRM();
+    if (name === 'analyses') renderAnalyses();
+    if (name === 'vouchers') renderVouchers();
+    if (name === 'nurturing') renderNurturingSegments();
+    if (name === 'history') renderEmailHistory();
+    if (name === 'contacts') renderContacts();
+    if (name === 'health') renderHealth();
+    if (name === 'ebook') renderEbookDownloads();
+    if (name === 'jobsearch') renderJobSearch();
+    if (name === 'careerenergy') renderCareerEnergy();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  GLOBAL LANGUAGE FILTER
+// ═══════════════════════════════════════════════════════════════
 function setGlobalLang(lang, btn) {
     globalLang = lang;
     document.querySelectorAll('#globalLangToggle button').forEach(b => b.classList.remove('active'));
@@ -108,1724 +219,1561 @@ function setNurturingLang(lang, btn) {
     nurturingLang = lang;
     document.querySelectorAll('#nurturingLangToggle button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    if (nurturingSegment) prepareNurturing(nurturingSegment);
 }
 
-function filterByLang(data, lang) {
-    if (!lang || lang === 'all') return data;
-    return data.filter(a => detectLanguage(a) === lang);
+// ═══════════════════════════════════════════════════════════════
+//  PERIOD SELECTORS
+// ═══════════════════════════════════════════════════════════════
+function setDashPeriod(days, btn) {
+    dashPeriodDays = days;
+    document.querySelectorAll('#dashPeriodBtns .period-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updateDashboard();
+    updateCharts();
 }
 
-// ===================== DATA LOADING =====================
+function setFunnelPeriod(days, btn) {
+    funnelPeriodDays = days;
+    document.querySelectorAll('#funnelPeriodBtns .period-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderFunnel();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DATA LOADING
+// ═══════════════════════════════════════════════════════════════
 async function loadAllData() {
     try {
-        const [analyses, vouchers] = await Promise.all([
-            supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,analysis_type,payment_status,payment_amount,payment_method,transaction_id,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc'),
-            supaFetch('vouchers', 'select=*&order=created_at.desc')
+        const [analyses, vouchers, contacts, ebooks, jobSearch, careerEnergy, newsletter] = await Promise.all([
+            supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,seniority_level,analysis_type,payment_status,payment_amount,payment_method,transaction_id,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc&limit=5000'),
+            supaFetch('vouchers', 'select=*&order=created_at.desc'),
+            supaFetch('contact_messages', 'select=*&order=created_at.desc&limit=500'),
+            supaFetch('newsletter_subscribers', 'select=*&order=created_at.desc&limit=2000'),
+            supaFetch('job_search_tracking', 'select=*&order=created_at.desc&limit=2000'),
+            supaFetch('career_energy_results', 'select=*&order=created_at.desc&limit=2000'),
+            supaFetch('newsletter_subscribers', 'select=*&order=created_at.desc&limit=2000')
         ]);
-        allAnalyses = Array.isArray(analyses) ? analyses : [];
-        allVouchers = Array.isArray(vouchers) ? vouchers : [];
+        allAnalyses      = Array.isArray(analyses)     ? analyses     : [];
+        allVouchers      = Array.isArray(vouchers)     ? vouchers     : [];
+        allContacts      = Array.isArray(contacts)     ? contacts     : [];
+        allEbookDownloads = Array.isArray(ebooks)      ? ebooks       : [];
+        allJobSearch     = Array.isArray(jobSearch)    ? jobSearch    : [];
+        allCareerEnergy  = Array.isArray(careerEnergy) ? careerEnergy : [];
+        allNewsletterSubs = Array.isArray(newsletter)  ? newsletter   : [];
     } catch (e) {
         console.error('Erro ao carregar dados:', e);
-        allAnalyses = [];
-        allVouchers = [];
         showToast('Erro ao carregar dados do Supabase', 'danger');
     }
 }
 
 async function loadEmailHistory() {
     try {
-        const history = await supaFetch('email_history', 'order=sent_at.desc');
+        const history = await supaFetch('email_history', 'order=sent_at.desc&limit=2000');
         allEmailHistory = Array.isArray(history) ? history : [];
-    } catch (e) {
-        console.error('Erro ao carregar histórico:', e);
-        allEmailHistory = [];
-    }
+    } catch { allEmailHistory = []; }
 }
 
 async function loadHealthLogs() {
     try {
-        // Health logs are in the same Supabase project
         const logs = await supaFetch('backend_health_log', 'order=checked_at.desc&limit=500');
         allHealthLogs = Array.isArray(logs) ? logs : [];
-    } catch (e) {
-        console.error('Erro ao carregar health logs:', e);
-        allHealthLogs = [];
-    }
+    } catch { allHealthLogs = []; }
 }
 
-// ===================== DETERMINE ANALYSIS TYPE =====================
-function getAnalysisType(analysis) {
-    if (analysis.analysis_type === 'career_path') return 'paid';
-    const usedVoucher = allVouchers.find(v =>
-        v.email && analysis.user_email &&
-        v.email.toLowerCase() === analysis.user_email.toLowerCase() &&
-        v.used_analyses > 0
-    );
-    if (analysis.payment_status === 'paid' || analysis.payment_amount > 0) return 'paid';
-    if (usedVoucher) return 'voucher';
-    if (analysis.analysis_type === 'free_heuristic') return 'free';
-    return 'free';
-}
-
-function getTypeBadge(type) {
-    switch(type) {
-        case 'paid': return '<span class="badge badge-paid">Pago</span>';
-        case 'voucher': return '<span class="badge badge-voucher">Voucher</span>';
-        default: return '<span class="badge badge-free">Gratuito</span>';
-    }
-}
-
-function getLangBadge(lang) {
-    return lang === 'en' 
-        ? '<span class="badge badge-en">🇬🇧 EN</span>' 
-        : '<span class="badge badge-pt">🇵🇹 PT</span>';
-}
-
-function getProductBadge(analysis) {
-    return analysis.analysis_type === 'career_path'
-        ? '<span class="badge badge-career">Career Path</span>'
-        : '<span class="badge" style="background:var(--purple);color:white;">CV Analyser</span>';
-}
-
-function getPaymentOrigin(analysis) {
-    if (analysis.payment_method) return analysis.payment_method;
-    const type = getAnalysisType(analysis);
-    if (type === 'voucher') return 'voucher';
-    if (type === 'free') return 'free';
-    const tid = analysis.transaction_id || '';
-    if (tid.startsWith('pi_') || tid.startsWith('cs_')) return 'stripe';
-    if (tid.startsWith('PAYID-') || tid.toLowerCase().includes('paypal')) return 'paypal';
-    const matchedVoucher = allVouchers.find(v => v.email && analysis.user_email && v.email.toLowerCase() === analysis.user_email.toLowerCase() && v.used_analyses > 0);
-    if (matchedVoucher && matchedVoucher.payment_method) return matchedVoucher.payment_method;
-    if (analysis.payment_status === 'paid') return 'stripe';
-    return 'unknown';
-}
-
-function getPaymentOriginBadge(analysis) {
-    const origin = getPaymentOrigin(analysis);
-    const map = {
-        'stripe': '<span class="badge" style="background:#635bff;color:white;">Stripe</span>',
-        'paypal': '<span class="badge" style="background:#003087;color:white;">PayPal</span>',
-        'mbway': '<span class="badge" style="background:#e4002b;color:white;">MBWay</span>',
-        'voucher': '<span class="badge badge-voucher">Voucher</span>',
-        'free': '<span class="badge badge-free">Gratuito</span>',
-        'unknown': '<span class="badge" style="background:var(--bg-muted);color:var(--text-muted);">-</span>'
-    };
-    return map[origin] || map['unknown'];
-}
-
-// ===================== DASHBOARD KPIs =====================
+// ═══════════════════════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════════════════════
 function updateDashboard() {
-    const filtered = filterByLang(allAnalyses, globalLang);
-    const total = filtered.length;
-    const uniqueEmails = new Set(filtered.map(a => a.user_email).filter(e => e && e !== 'anonymous@share2inspire.pt'));
+    let data = filterByLang(allAnalyses, globalLang);
+    data = filterByPeriod(data, dashPeriodDays);
+
+    const paid    = data.filter(a => getAnalysisType(a) === 'paid');
+    const free    = data.filter(a => getAnalysisType(a) === 'free');
+    const voucher = data.filter(a => getAnalysisType(a) === 'voucher');
+    const cp      = data.filter(a => a.analysis_type === 'career_path');
+
     const now = new Date();
-    const h24 = filtered.filter(a => (now - new Date(a.created_at)) < 86400000).length;
-    const d7 = filtered.filter(a => (now - new Date(a.created_at)) < 604800000).length;
-    const avgScore = total > 0 ? (filtered.reduce((s,a) => s + (a.score||0), 0) / total).toFixed(1) : 'N/A';
-    const careerPaths = filtered.filter(a => a.career_path_purchased || a.analysis_type === 'career_path').length;
+    const h24 = new Date(now - 86400000);
+    const d7  = new Date(now - 7 * 86400000);
 
-    // Revenue calculation
-    const voucherBatches = {};
-    allVouchers.forEach(v => {
-        const key = v.email + '|' + v.created_at;
-        if (!voucherBatches[key]) voucherBatches[key] = { amount: parseFloat(v.amount_paid) || 0, count: 0 };
-        voucherBatches[key].count++;
-    });
-    const voucherRevenue = Object.values(voucherBatches).reduce((s,b) => s + b.amount, 0);
-    const directRevenue = filtered.reduce((s,a) => s + (parseFloat(a.payment_amount) || 0), 0);
-    const revenue = voucherRevenue + directRevenue;
+    const last24h  = data.filter(a => new Date(a.created_at) >= h24);
+    const last7d   = data.filter(a => new Date(a.created_at) >= d7);
+    const paidLast7 = last7d.filter(a => getAnalysisType(a) === 'paid');
 
-    const paidCount = allVouchers.filter(v => v.used_analyses > 0).length + filtered.filter(a => a.payment_status === 'paid').length;
-    const freeCount = total - paidCount;
-    const voucherEmails = new Set(allVouchers.filter(v => v.amount_paid > 0).map(v => v.email?.toLowerCase()));
-    const convRate = uniqueEmails.size > 0 ? ((voucherEmails.size / uniqueEmails.size) * 100).toFixed(1) : '0';
+    const totalRevenue = paid.reduce((s, a) => s + (a.payment_amount || 0), 0)
+                       + voucher.reduce((s, a) => s + (a.payment_amount || 0), 0);
+    const voucherRevenue = allVouchers.reduce((s, v) => s + (v.payment_amount || 0), 0);
+    const cvRevenue = paid.filter(a => a.analysis_type !== 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0);
+    const cpRevenue = cp.reduce((s, a) => s + (a.payment_amount || 0), 0);
 
-    const activeVouchers = allVouchers.filter(v => v.is_active === true && (v.used_analyses === 0 || v.used_analyses === null)).length;
-    const usedVouchers = allVouchers.filter(v => (v.used_analyses != null && v.used_analyses > 0) || v.is_active === false).length;
+    const uniqueEmails = new Set(data.filter(a => !isAnonymous(a)).map(a => a.user_email.toLowerCase()));
+    const identified   = data.filter(a => !isAnonymous(a));
+    const identifiedPct = data.length ? Math.round(identified.length / data.length * 100) : 0;
 
-    document.getElementById('kpiTotal').textContent = total;
-    document.getElementById('kpiPaid').textContent = paidCount;
-    document.getElementById('kpiFree').textContent = freeCount;
-    document.getElementById('kpiRevenue').textContent = `€${revenue.toFixed(2)}`;
-    document.getElementById('kpi24h').textContent = h24;
-    document.getElementById('kpi7d').textContent = d7;
-    document.getElementById('kpiAvgScore').textContent = avgScore !== 'N/A' ? `${avgScore}/100` : 'N/A';
-    document.getElementById('kpiCareerPaths').textContent = careerPaths;
-    document.getElementById('kpiUniqueUsers').textContent = uniqueEmails.size;
-    document.getElementById('kpiConvRate').textContent = `${convRate}%`;
-    document.getElementById('kpiVouchersActive').textContent = activeVouchers;
-    document.getElementById('kpiVouchersUsed').textContent = usedVouchers;
+    const avgScore = data.filter(a => a.score > 0).length
+        ? Math.round(data.filter(a => a.score > 0).reduce((s, a) => s + a.score, 0) / data.filter(a => a.score > 0).length)
+        : 0;
 
-    // Revenue breakdown by language
-    const ptAnalyses = allAnalyses.filter(a => detectLanguage(a) === 'pt');
-    const enAnalyses = allAnalyses.filter(a => detectLanguage(a) === 'en');
-    const ptRevenue = ptAnalyses.reduce((s,a) => s + (parseFloat(a.payment_amount) || 0), 0);
-    const enRevenue = enAnalyses.reduce((s,a) => s + (parseFloat(a.payment_amount) || 0), 0);
-    
-    // Revenue by product
-    const cvRevenue = allAnalyses.filter(a => a.analysis_type !== 'career_path').reduce((s,a) => s + (parseFloat(a.payment_amount) || 0), 0);
-    const cpRevenue = allAnalyses.filter(a => a.analysis_type === 'career_path').reduce((s,a) => s + (parseFloat(a.payment_amount) || 0), 0);
+    const convRate = free.length ? Math.round(paid.length / (free.length + paid.length) * 100) : 0;
+    const avgTicket = paid.length ? (totalRevenue / paid.length).toFixed(2) : '0.00';
+    const ltv = uniqueEmails.size ? (totalRevenue / uniqueEmails.size).toFixed(2) : '0.00';
+    const abandonRate = data.length ? Math.round(data.filter(isAnonymous).length / data.length * 100) : 0;
 
-    document.getElementById('kpiRevenuePT').textContent = `€${(ptRevenue + voucherRevenue * 0.8).toFixed(2)}`;
-    document.getElementById('kpiRevenueEN').textContent = `$${(enRevenue + voucherRevenue * 0.2).toFixed(2)}`;
-    document.getElementById('kpiRevenueCVA').textContent = `€${(cvRevenue + voucherRevenue).toFixed(2)}`;
-    document.getElementById('kpiRevenueCP').textContent = `€${cpRevenue.toFixed(2)}`;
+    const vActive = allVouchers.filter(v => v.status === 'active' || (!v.status && v.used_analyses < v.total_analyses)).length;
+    const vUsed   = allVouchers.filter(v => v.used_analyses > 0).length;
+    const cpPct   = paid.length ? Math.round(cp.length / paid.length * 100) : 0;
+    const rev7d   = paidLast7.reduce((s, a) => s + (a.payment_amount || 0), 0);
 
-    // Nurturing counts
-    const freeEmails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'free' && a.user_email && a.user_email !== 'anonymous@share2inspire.pt').map(a => a.user_email))];
-    document.getElementById('upsellCount').textContent = freeEmails.length;
-    document.getElementById('feedbackCount').textContent = allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.user_rating).length;
-    document.getElementById('careerpathCount').textContent = allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.career_path_purchased && a.analysis_type !== 'career_path').length;
+    setText('kpiTotal',        data.length);
+    setText('kpi24h',          `${last24h.length} últimas 24h`);
+    setText('kpiPaid',         paid.length);
+    setText('kpiPaidPct',      `${data.length ? Math.round(paid.length/data.length*100) : 0}% do total`);
+    setText('kpiFree',         free.length);
+    setText('kpiFreePct',      `${data.length ? Math.round(free.length/data.length*100) : 0}% do total`);
+    setText('kpiRevenue',      `${totalRevenue.toFixed(2)}€`);
+    setText('kpiRevenueVoucher', `${voucher.length} vouchers`);
+    setText('kpiUniqueUsers',  uniqueEmails.size);
+    setText('kpiIdentifiedPct', `${identifiedPct}% identificados`);
+    setText('kpiCareerPaths',  cp.length);
+    setText('kpiCPPct',        `${cpPct}% dos pagantes`);
+    setText('kpiAvgScore',     avgScore);
+    setText('kpi7d',           last7d.length);
+    setText('kpi7dRevenue',    `${rev7d.toFixed(2)}€ receita`);
+    setText('kpiConvRate',     `${convRate}%`);
+    setText('kpiAvgTicket',    `${avgTicket}€`);
+    setText('kpiLTV',          `${ltv}€`);
+    setText('kpiAbandon',      `${abandonRate}%`);
+    setText('kpiRevenueCVA',   `${cvRevenue.toFixed(2)}€`);
+    setText('kpiRevenueCP',    `${cpRevenue.toFixed(2)}€`);
+    setText('kpiVouchersActive', vActive);
+    setText('kpiVouchersUsed', `${vUsed} utilizados`);
+    setText('kpiVoucherRevenue', `${voucherRevenue.toFixed(2)}€`);
 
-    updateCharts();
-    updateConversionFunnel();
+    // Hidden compat
+    setText('kpiRevenuePT', '');
+    setText('kpiRevenueEN', '');
+
+    document.getElementById('lastUpdate').textContent = 'Atualizado: ' + new Date().toLocaleTimeString('pt-PT');
 }
 
-// ===================== CHARTS =====================
-function getChartDateDays() {
-    const sel = document.getElementById('chartDateFilter');
-    if (!sel) return null;
-    const val = sel.value;
-    return val === 'all' ? null : parseInt(val);
+function setText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
 }
 
-function filterByDateDays(data, days) {
-    if (!days) return data;
-    const cutoff = Date.now() - days * 86400000;
-    return data.filter(a => new Date(a.created_at).getTime() >= cutoff);
-}
-
+// ═══════════════════════════════════════════════════════════════
+//  CHARTS
+// ═══════════════════════════════════════════════════════════════
 function updateCharts() {
-    const langFiltered = filterByLang(allAnalyses, globalLang);
-    const chartDays = getChartDateDays();
-    const dateFiltered = filterByDateDays(langFiltered, chartDays);
-    
-    // Daily chart - last 14 days - STACKED by product with paid/free breakdown
-    const days = {};
+    const days = parseInt(document.getElementById('chartDateFilter')?.value || 14);
+    let data = filterByLang(allAnalyses, globalLang);
+    data = filterByPeriod(data, days);
+
+    // Daily Chart
+    const dateMap = {};
     const now = new Date();
-    for (let i = 13; i >= 0; i--) {
+    for (let i = days - 1; i >= 0; i--) {
         const d = new Date(now);
         d.setDate(d.getDate() - i);
-        const key = d.toISOString().split('T')[0];
-        days[key] = { cv_free: 0, cv_paid: 0, cp_free: 0, cp_paid: 0 };
+        dateMap[d.toISOString().slice(0, 10)] = { paid: 0, free: 0, voucher: 0 };
     }
-    langFiltered.forEach(a => {
-        const key = new Date(a.created_at).toISOString().split('T')[0];
-        if (days[key]) {
-            const isCP = a.analysis_type === 'career_path';
-            const isPaid = getAnalysisType(a) !== 'free';
-            if (isCP) { isPaid ? days[key].cp_paid++ : days[key].cp_free++; }
-            else { isPaid ? days[key].cv_paid++ : days[key].cv_free++; }
+    data.forEach(a => {
+        const key = a.created_at?.slice(0, 10);
+        if (dateMap[key]) {
+            const type = getAnalysisType(a);
+            dateMap[key][type]++;
         }
     });
-    const labels = Object.keys(days).map(d => { const dt = new Date(d); return dt.toLocaleDateString('pt-PT', {day:'2-digit',month:'2-digit'}); });
+    const labels = Object.keys(dateMap);
+    const paidData    = labels.map(d => dateMap[d].paid);
+    const freeData    = labels.map(d => dateMap[d].free);
+    const voucherData = labels.map(d => dateMap[d].voucher);
 
-    if (dailyChart) dailyChart.destroy();
-    dailyChart = new Chart(document.getElementById('dailyChart').getContext('2d'), {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [
-                { label: 'CV Analyser (Gratuito)', data: Object.values(days).map(d => d.cv_free), backgroundColor: 'rgba(124,58,237,.35)', borderColor: '#7C3AED', borderWidth: 1, stack: 'cv' },
-                { label: 'CV Analyser (Pago)', data: Object.values(days).map(d => d.cv_paid), backgroundColor: 'rgba(124,58,237,.85)', borderColor: '#7C3AED', borderWidth: 1, stack: 'cv' },
-                { label: 'Career Path (Gratuito)', data: Object.values(days).map(d => d.cp_free), backgroundColor: 'rgba(59,130,246,.35)', borderColor: '#3B82F6', borderWidth: 1, stack: 'cp' },
-                { label: 'Career Path (Pago)', data: Object.values(days).map(d => d.cp_paid), backgroundColor: 'rgba(59,130,246,.85)', borderColor: '#3B82F6', borderWidth: 1, stack: 'cp' }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 8, font: { size: 11 } } },
-                tooltip: { callbacks: { afterBody: function(items) {
-                    const idx = items[0].dataIndex;
-                    const d = Object.values(days)[idx];
-                    const cvTotal = d.cv_free + d.cv_paid;
-                    const cpTotal = d.cp_free + d.cp_paid;
-                    return `\nCV Total: ${cvTotal}  |  CP Total: ${cpTotal}`;
-                } } }
+    const ctx1 = document.getElementById('dailyChart')?.getContext('2d');
+    if (ctx1) {
+        if (dailyChart) dailyChart.destroy();
+        dailyChart = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: labels.map(d => d.slice(5)),
+                datasets: [
+                    { label: 'Pago', data: paidData, backgroundColor: '#10B981', borderRadius: 3 },
+                    { label: 'Gratuito', data: freeData, backgroundColor: '#E5E7EB', borderRadius: 3 },
+                    { label: 'Voucher', data: voucherData, backgroundColor: '#C9A961', borderRadius: 3 }
+                ]
             },
-            scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } } }
-        }
-    });
+            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }, scales: { x: { stacked: true, ticks: { font: { size: 10 } } }, y: { stacked: true, ticks: { font: { size: 10 } } } } }
+        });
+    }
 
-    // Type chart - filtered by date
-    const types = { free: 0, paid: 0, voucher: 0 };
-    dateFiltered.forEach(a => { types[getAnalysisType(a)]++; });
-    if (typeChart) typeChart.destroy();
-    typeChart = new Chart(document.getElementById('typeChart').getContext('2d'), {
-        type: 'doughnut',
-        data: {
-            labels: ['Gratuito', 'Pago', 'Voucher'],
-            datasets: [{ data: [types.free, types.paid, types.voucher], backgroundColor: ['#6c757d', '#28a745', '#BF9A33'], borderWidth: 2, borderColor: '#fff' }]
-        },
-        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } } } }
-    });
+    // Type Chart (Donut)
+    const paidCount    = data.filter(a => getAnalysisType(a) === 'paid').length;
+    const freeCount    = data.filter(a => getAnalysisType(a) === 'free').length;
+    const voucherCount = data.filter(a => getAnalysisType(a) === 'voucher').length;
+    const ctx2 = document.getElementById('typeChart')?.getContext('2d');
+    if (ctx2) {
+        if (typeChart) typeChart.destroy();
+        typeChart = new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pago', 'Gratuito', 'Voucher'],
+                datasets: [{ data: [paidCount, freeCount, voucherCount], backgroundColor: ['#10B981', '#E5E7EB', '#C9A961'], borderWidth: 0 }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+        });
+    }
 
-    // Language chart - filtered by date
-    const ptCount = dateFiltered.filter(a => detectLanguage(a) === 'pt').length;
-    const enCount = dateFiltered.filter(a => detectLanguage(a) === 'en').length;
-    if (langChart) langChart.destroy();
-    langChart = new Chart(document.getElementById('langChart').getContext('2d'), {
-        type: 'doughnut',
-        data: {
-            labels: ['🇵🇹 Português', '🇬🇧 English'],
-            datasets: [{ data: [ptCount, enCount], backgroundColor: ['#016401', '#1d4ed8'], borderWidth: 2, borderColor: '#fff' }]
-        },
-        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } } } }
+    // Lang Chart
+    const ptCount = filterByLang(data, 'pt').length;
+    const enCount = filterByLang(data, 'en').length;
+    const ctx3 = document.getElementById('langChart')?.getContext('2d');
+    if (ctx3) {
+        if (langChart) langChart.destroy();
+        langChart = new Chart(ctx3, {
+            type: 'doughnut',
+            data: {
+                labels: ['🇵🇹 PT', '🇬🇧 EN'],
+                datasets: [{ data: [ptCount, enCount], backgroundColor: ['#166534', '#1E40AF'], borderWidth: 0 }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+        });
+    }
+
+    // Score Distribution
+    const scoreBuckets = { '0-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': 0 };
+    data.filter(a => a.score > 0).forEach(a => {
+        const s = a.score;
+        if (s <= 20) scoreBuckets['0-20']++;
+        else if (s <= 40) scoreBuckets['21-40']++;
+        else if (s <= 60) scoreBuckets['41-60']++;
+        else if (s <= 80) scoreBuckets['61-80']++;
+        else scoreBuckets['81-100']++;
     });
+    const ctx4 = document.getElementById('scoreChart')?.getContext('2d');
+    if (ctx4) {
+        if (scoreChart) scoreChart.destroy();
+        scoreChart = new Chart(ctx4, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(scoreBuckets),
+                datasets: [{ label: 'Utilizadores', data: Object.values(scoreBuckets), backgroundColor: '#C9A961', borderRadius: 4 }]
+            },
+            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } }
+        });
+    }
 }
 
-function updateConversionFunnel() {
-    const total = allAnalyses.length;
-    const uniqueFree = new Set(allAnalyses.filter(a => a.user_email && a.user_email !== 'anonymous@share2inspire.pt').map(a => a.user_email)).size;
-    const paidUsers = new Set(allAnalyses.filter(a => getAnalysisType(a) !== 'free' && a.user_email).map(a => a.user_email)).size;
-    const cpUsers = new Set(allAnalyses.filter(a => (a.career_path_purchased || a.analysis_type === 'career_path') && a.user_email).map(a => a.user_email)).size;
+// ═══════════════════════════════════════════════════════════════
+//  FUNIL DE CONVERSÃO
+// ═══════════════════════════════════════════════════════════════
+function renderFunnel() {
+    let data = filterByLang(allAnalyses, globalLang);
+    data = filterByPeriod(data, funnelPeriodDays);
 
-    const maxWidth = 100;
-    const funnelData = [
-        { label: 'Total Análises', value: total, color: '#6B7280', pct: 100 },
-        { label: 'Utilizadores Únicos', value: uniqueFree, color: 'var(--gold)', pct: total > 0 ? (uniqueFree/total*100) : 0 },
-        { label: 'Pagaram', value: paidUsers, color: 'var(--green)', pct: uniqueFree > 0 ? (paidUsers/uniqueFree*100) : 0 },
-        { label: 'Career Path', value: cpUsers, color: 'var(--blue)', pct: paidUsers > 0 ? (cpUsers/paidUsers*100) : 0 }
+    const ceTotal   = allCareerEnergy.length; // Career Energy (topo)
+    const freeCount = data.filter(a => getAnalysisType(a) === 'free').length;
+    const paidCount = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path').length;
+    const cpCount   = data.filter(a => a.analysis_type === 'career_path').length;
+    const kickstart = 0; // Produto futuro
+
+    // KPIs
+    setText('funnelCE', ceTotal || freeCount + paidCount + cpCount);
+    setText('funnelFree', freeCount);
+    setText('funnelPaid', paidCount);
+    setText('funnelCP', cpCount);
+    setText('funnelKickstart', kickstart);
+
+    const topTotal = ceTotal || (freeCount + paidCount + cpCount);
+    setText('funnelFreeConv',      topTotal ? `${Math.round(freeCount / topTotal * 100)}% do CE` : '—');
+    setText('funnelPaidConv',      freeCount ? `${Math.round(paidCount / (freeCount + paidCount) * 100)}% do grátis` : '—');
+    setText('funnelCPConv',        paidCount ? `${Math.round(cpCount / paidCount * 100)}% dos pagantes` : '—');
+    setText('funnelKickstartConv', cpCount ? `${Math.round(kickstart / cpCount * 100)}% do CP` : '—');
+
+    // Funil Visual
+    const steps = [
+        { name: 'Career Energy (Diagnóstico)', count: topTotal, color: '#6B7280' },
+        { name: 'CV Analyser Grátis', count: freeCount, color: '#C9A961' },
+        { name: 'CV Analyser Pago', count: paidCount, color: '#10B981' },
+        { name: 'Career Path', count: cpCount, color: '#3B82F6' },
+        { name: 'Kickstart Pro', count: kickstart, color: '#7C3AED' }
     ];
+    const maxCount = Math.max(...steps.map(s => s.count), 1);
+    const funnelEl = document.getElementById('funnelVisual');
+    if (funnelEl) {
+        funnelEl.innerHTML = steps.map((step, i) => {
+            const pct = Math.round(step.count / maxCount * 100);
+            const conv = i > 0 && steps[i-1].count > 0 ? Math.round(step.count / steps[i-1].count * 100) : null;
+            const drop = conv !== null ? 100 - conv : null;
+            return `
+            <div class="funnel-step">
+                <div class="funnel-label-row">
+                    <span class="funnel-step-name">${step.name}</span>
+                    <span class="funnel-step-meta">
+                        <span><strong>${step.count}</strong> utilizadores</span>
+                    </span>
+                </div>
+                <div class="funnel-bar-wrap">
+                    <div class="funnel-bar" style="width:${pct}%;background:${step.color};">${step.count}</div>
+                </div>
+                ${conv !== null ? `<div class="funnel-conv">Conversão: <span class="conv-pct">${conv}%</span> &nbsp;|&nbsp; Abandono: <span class="drop-pct">${drop}%</span></div>` : ''}
+            </div>`;
+        }).join('');
+    }
 
-    const container = document.getElementById('conversionFunnel');
-    container.innerHTML = funnelData.map((d, i) => {
-        const width = i === 0 ? maxWidth : Math.max(15, (d.value / funnelData[0].value) * maxWidth);
-        return `<div class="mb-2">
-            <div class="d-flex justify-content-between mb-1">
-                <small class="fw-bold">${d.label}</small>
-                <small class="text-muted">${d.value} ${i > 0 ? `(${d.pct.toFixed(1)}%)` : ''}</small>
+    // Funil Chart
+    const ctx = document.getElementById('funnelChart')?.getContext('2d');
+    if (ctx) {
+        if (funnelChart) funnelChart.destroy();
+        funnelChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: steps.map(s => s.name),
+                datasets: [{
+                    label: 'Utilizadores',
+                    data: steps.map(s => s.count),
+                    backgroundColor: steps.map(s => s.color),
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 11 } } } }
+            }
+        });
+    }
+
+    // Pontos de Abandono
+    const abandonEl = document.getElementById('abandonPoints');
+    if (abandonEl) {
+        const anonymous = data.filter(isAnonymous).length;
+        const noEmail   = data.filter(a => !a.user_email || a.user_email === '').length;
+        const freeNoUpgrade = data.filter(a => getAnalysisType(a) === 'free' && !isAnonymous(a)).length;
+        const paidNoCp = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path').length;
+
+        abandonEl.innerHTML = `
+            <div class="metric-row">
+                <div class="metric-label"><i class="fas fa-user-slash" style="color:var(--red);margin-right:6px;"></i> Utilizadores anónimos (sem email)</div>
+                <div style="display:flex;align-items:center;gap:12px;flex:1;margin-left:16px;">
+                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:${data.length ? Math.round(anonymous/data.length*100) : 0}%;background:var(--red);"></div></div>
+                    <div class="metric-value" style="color:var(--red);">${anonymous} <small style="font-size:11px;font-weight:400;">(${data.length ? Math.round(anonymous/data.length*100) : 0}%)</small></div>
+                </div>
             </div>
-            <div class="funnel-bar" style="width:${width}%;background:${d.color};">${d.value}</div>
+            <div class="metric-row">
+                <div class="metric-label"><i class="fas fa-arrow-up" style="color:var(--orange);margin-right:6px;"></i> Grátis sem upgrade para pago</div>
+                <div style="display:flex;align-items:center;gap:12px;flex:1;margin-left:16px;">
+                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:${freeCount ? Math.round(freeNoUpgrade/freeCount*100) : 0}%;background:var(--orange);"></div></div>
+                    <div class="metric-value" style="color:var(--orange);">${freeNoUpgrade} <small style="font-size:11px;font-weight:400;">(${freeCount ? Math.round(freeNoUpgrade/freeCount*100) : 0}%)</small></div>
+                </div>
+            </div>
+            <div class="metric-row">
+                <div class="metric-label"><i class="fas fa-route" style="color:var(--blue);margin-right:6px;"></i> CV Pago sem Career Path</div>
+                <div style="display:flex;align-items:center;gap:12px;flex:1;margin-left:16px;">
+                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:${paidCount ? Math.round(paidNoCp/paidCount*100) : 0}%;background:var(--blue);"></div></div>
+                    <div class="metric-value" style="color:var(--blue);">${paidNoCp} <small style="font-size:11px;font-weight:400;">(${paidCount ? Math.round(paidNoCp/paidCount*100) : 0}%)</small></div>
+                </div>
+            </div>`;
+    }
+
+    // Oportunidades
+    const oppEl = document.getElementById('conversionOpportunities');
+    if (oppEl) {
+        const freeIdentified = data.filter(a => getAnalysisType(a) === 'free' && !isAnonymous(a)).length;
+        const cvPaidNoCp     = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && !isAnonymous(a)).length;
+        const avgTicket      = paidCount > 0 ? (data.filter(a => getAnalysisType(a) === 'paid').reduce((s, a) => s + (a.payment_amount || 0), 0) / paidCount) : 0;
+        const potentialRev   = (freeIdentified * avgTicket * 0.1 + cvPaidNoCp * 19.99 * 0.2).toFixed(0);
+
+        oppEl.innerHTML = `
+            <div style="margin-bottom:12px;padding:12px;background:var(--green-bg);border-radius:8px;border-left:3px solid var(--green);">
+                <div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:4px;">💰 Receita Potencial Estimada</div>
+                <div style="font-size:20px;font-weight:700;color:var(--dark);">${potentialRev}€</div>
+                <div style="font-size:11px;color:var(--text-muted);">Com 10% de conversão das leads grátis + 20% upsell Career Path</div>
+            </div>
+            <div class="metric-row">
+                <div class="metric-label">Leads grátis identificadas para upsell</div>
+                <div class="metric-value" style="color:var(--gold);">${freeIdentified}</div>
+            </div>
+            <div class="metric-row">
+                <div class="metric-label">Clientes CV para upsell Career Path</div>
+                <div class="metric-value" style="color:var(--blue);">${cvPaidNoCp}</div>
+            </div>
+            <div class="metric-row">
+                <div class="metric-label">Ticket médio atual</div>
+                <div class="metric-value" style="color:var(--green);">${avgTicket.toFixed(2)}€</div>
+            </div>`;
+    }
+
+    // Receita por Produto
+    const revEl = document.getElementById('revenueByProduct');
+    if (revEl) {
+        const cvRev = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0);
+        const cpRev = data.filter(a => a.analysis_type === 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0);
+        const vRev  = allVouchers.reduce((s, v) => s + (v.payment_amount || 0), 0);
+        const total = cvRev + cpRev + vRev;
+
+        revEl.innerHTML = `
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+                ${[
+                    { label: 'CV Analyser', value: cvRev, color: 'var(--purple)', icon: 'fa-file-alt' },
+                    { label: 'Career Path', value: cpRev, color: 'var(--blue)', icon: 'fa-route' },
+                    { label: 'Vouchers', value: vRev, color: 'var(--gold)', icon: 'fa-ticket-alt' }
+                ].map(p => `
+                    <div style="text-align:center;padding:16px;background:var(--bg);border-radius:8px;">
+                        <i class="fas ${p.icon}" style="font-size:20px;color:${p.color};margin-bottom:8px;display:block;"></i>
+                        <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;">${p.label}</div>
+                        <div style="font-size:22px;font-weight:700;color:${p.color};margin-top:4px;">${p.value.toFixed(2)}€</div>
+                        <div style="font-size:11px;color:var(--text-muted);">${total > 0 ? Math.round(p.value/total*100) : 0}% do total</div>
+                    </div>`).join('')}
+            </div>
+            <div style="margin-top:16px;padding:12px 16px;background:var(--gold-bg);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:13px;font-weight:600;color:var(--dark);">Total Receita (período)</span>
+                <span style="font-size:20px;font-weight:700;color:var(--gold);">${total.toFixed(2)}€</span>
+            </div>`;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CRM / LEADS
+// ═══════════════════════════════════════════════════════════════
+function buildCRMProfiles() {
+    // Agrupa análises por email para criar perfil único por utilizador
+    const profileMap = {};
+
+    allAnalyses.forEach(a => {
+        const email = isAnonymous(a) ? null : a.user_email.toLowerCase().trim();
+        if (!email) return;
+
+        if (!profileMap[email]) {
+            profileMap[email] = {
+                email,
+                name: a.user_name || '',
+                professional_area: a.professional_area || '',
+                seniority: a.seniority_level || '',
+                analyses: [],
+                purchases: [],
+                totalSpent: 0,
+                lastInteraction: a.created_at,
+                firstInteraction: a.created_at
+            };
+        }
+
+        const p = profileMap[email];
+        p.analyses.push(a);
+
+        if (new Date(a.created_at) > new Date(p.lastInteraction)) p.lastInteraction = a.created_at;
+        if (new Date(a.created_at) < new Date(p.firstInteraction)) p.firstInteraction = a.created_at;
+
+        if (!p.name && a.user_name) p.name = a.user_name;
+        if (!p.professional_area && a.professional_area) p.professional_area = a.professional_area;
+        if (!p.seniority && a.seniority_level) p.seniority = a.seniority_level;
+
+        const type = getAnalysisType(a);
+        if (type === 'paid' || type === 'voucher') {
+            p.purchases.push(a);
+            p.totalSpent += (a.payment_amount || 0);
+        }
+    });
+
+    // Determinar etapa do funil
+    const sentEmails = new Set(allEmailHistory.map(e => e.recipient_email?.toLowerCase()));
+
+    return Object.values(profileMap).map(p => {
+        const hasPurchase = p.purchases.length > 0;
+        const hasMultiple = p.purchases.length >= 2 || (p.purchases.length >= 1 && p.analyses.some(a => a.analysis_type === 'career_path'));
+        const inNurturing = sentEmails.has(p.email);
+
+        let stage = 'lead';
+        if (hasMultiple) stage = 'recurring';
+        else if (hasPurchase) stage = 'client';
+        else if (inNurturing) stage = 'nurturing';
+
+        return { ...p, stage };
+    }).sort((a, b) => new Date(b.lastInteraction) - new Date(a.lastInteraction));
+}
+
+function renderCRM() {
+    const profiles = buildCRMProfiles();
+
+    // KPIs
+    const leads     = profiles.filter(p => p.stage === 'lead').length;
+    const nurturing = profiles.filter(p => p.stage === 'nurturing').length;
+    const clients   = profiles.filter(p => p.stage === 'client').length;
+    const recurring = profiles.filter(p => p.stage === 'recurring').length;
+
+    setText('crmLeads',     leads);
+    setText('crmNurturing', nurturing);
+    setText('crmClients',   clients);
+    setText('crmRecurring', recurring);
+
+    // Populate seniority and area filters
+    const senioritySet = new Set(profiles.map(p => p.seniority).filter(Boolean));
+    const areaSet      = new Set(profiles.map(p => p.professional_area).filter(Boolean));
+    populateSelect('crmFilterSeniority', [...senioritySet].sort());
+    populateSelect('crmFilterArea',      [...areaSet].sort());
+
+    // Filter
+    const stageFilter   = document.getElementById('crmFilterStage')?.value || 'all';
+    const productFilter = document.getElementById('crmFilterProduct')?.value || 'all';
+    const senFilter     = document.getElementById('crmFilterSeniority')?.value || 'all';
+    const areaFilter    = document.getElementById('crmFilterArea')?.value || 'all';
+    const search        = (document.getElementById('crmSearch')?.value || '').toLowerCase();
+
+    let filtered = profiles;
+    if (stageFilter !== 'all') filtered = filtered.filter(p => p.stage === stageFilter);
+    if (senFilter   !== 'all') filtered = filtered.filter(p => p.seniority === senFilter);
+    if (areaFilter  !== 'all') filtered = filtered.filter(p => p.professional_area === areaFilter);
+    if (productFilter !== 'all') {
+        filtered = filtered.filter(p => {
+            if (productFilter === 'cv_free') return p.analyses.some(a => getAnalysisType(a) === 'free');
+            if (productFilter === 'cv_paid') return p.purchases.some(a => a.analysis_type !== 'career_path');
+            if (productFilter === 'career_path') return p.purchases.some(a => a.analysis_type === 'career_path');
+            return true;
+        });
+    }
+    if (search) filtered = filtered.filter(p =>
+        p.email.includes(search) || (p.name || '').toLowerCase().includes(search)
+    );
+
+    setText('crmCount', `${filtered.length} contactos`);
+
+    // Paginate
+    const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+    crmPage = Math.min(crmPage, totalPages || 1);
+    const page = filtered.slice((crmPage - 1) * PAGE_SIZE, crmPage * PAGE_SIZE);
+
+    const tbody = document.getElementById('crmTable');
+    if (!tbody) return;
+
+    if (!page.length) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum contacto encontrado</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = page.map(p => {
+        const initials = (p.name || p.email).slice(0, 2).toUpperCase();
+        const productsUsed  = [...new Set(p.analyses.map(a => a.analysis_type === 'career_path' ? 'Career Path' : 'CV Analyser'))].join(', ');
+        const productsBought = [...new Set(p.purchases.map(a => a.analysis_type === 'career_path' ? 'Career Path' : 'CV Analyser'))].join(', ') || '—';
+        const lastDate = new Date(p.lastInteraction).toLocaleDateString('pt-PT');
+        return `
+        <tr>
+            <td>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div class="lead-avatar">${initials}</div>
+                    <div>
+                        <div class="lead-name">${p.name || '—'}</div>
+                        <div class="lead-email">${p.email}</div>
+                    </div>
+                </div>
+            </td>
+            <td style="font-size:12px;">${p.professional_area || '—'}</td>
+            <td style="font-size:12px;">${p.seniority || '—'}</td>
+            <td style="font-size:12px;">${productsUsed}</td>
+            <td style="font-size:12px;">${productsBought}</td>
+            <td style="font-size:12px;font-weight:600;color:var(--gold);">${p.totalSpent > 0 ? p.totalSpent.toFixed(2) + '€' : '—'}</td>
+            <td style="font-size:12px;color:var(--text-muted);">${lastDate}</td>
+            <td>${getStageBadge(p.stage)}</td>
+            <td>
+                <div style="display:flex;gap:4px;">
+                    <button class="btn-icon" title="Ver Perfil" onclick="showUserProfile('${p.email}')"><i class="fas fa-eye"></i></button>
+                    <button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${p.email}','${(p.name||'').replace(/'/g,"\\'")}')"><i class="fas fa-envelope"></i></button>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+
+    renderPagination('crmPagination', crmPage, totalPages, (p) => { crmPage = p; renderCRM(); });
+}
+
+function populateSelect(id, options) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const current = el.value;
+    const existing = [...el.options].map(o => o.value);
+    options.forEach(opt => {
+        if (!existing.includes(opt)) {
+            const o = document.createElement('option');
+            o.value = opt; o.textContent = opt;
+            el.appendChild(o);
+        }
+    });
+    if (current) el.value = current;
+}
+
+function exportCRMCSV() {
+    const profiles = buildCRMProfiles();
+    const rows = [['Email','Nome','Área','Senioridade','Produtos Usados','Produtos Comprados','Total Gasto','Última Interação','Etapa']];
+    profiles.forEach(p => {
+        rows.push([
+            p.email, p.name || '', p.professional_area || '', p.seniority || '',
+            [...new Set(p.analyses.map(a => a.analysis_type === 'career_path' ? 'Career Path' : 'CV Analyser'))].join(';'),
+            [...new Set(p.purchases.map(a => a.analysis_type === 'career_path' ? 'Career Path' : 'CV Analyser'))].join(';') || '',
+            p.totalSpent.toFixed(2),
+            p.lastInteraction?.slice(0, 10),
+            p.stage
+        ]);
+    });
+    downloadCSV(rows, 'crm_leads.csv');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  USER PROFILE MODAL
+// ═══════════════════════════════════════════════════════════════
+function showUserProfile(email) {
+    const profiles = buildCRMProfiles();
+    const p = profiles.find(x => x.email === email);
+    if (!p) return;
+
+    document.getElementById('userProfileTitle').innerHTML = `<i class="fas fa-user" style="color:var(--gold);margin-right:8px;"></i> ${p.name || p.email}`;
+    document.getElementById('userProfileModal').style.display = 'flex';
+
+    const sentEmails = allEmailHistory.filter(e => e.recipient_email?.toLowerCase() === email);
+    const timeline = [...p.analyses, ...sentEmails].sort((a, b) => new Date(b.created_at || b.sent_at) - new Date(a.created_at || a.sent_at));
+
+    document.getElementById('userProfileBody').innerHTML = `
+        <div class="profile-section">
+            <h4>Informação do Contacto</h4>
+            <div class="profile-row"><span>Email</span><span>${p.email}</span></div>
+            <div class="profile-row"><span>Nome</span><span>${p.name || '—'}</span></div>
+            <div class="profile-row"><span>Área Profissional</span><span>${p.professional_area || '—'}</span></div>
+            <div class="profile-row"><span>Senioridade</span><span>${p.seniority || '—'}</span></div>
+            <div class="profile-row"><span>Etapa do Funil</span><span>${getStageBadge(p.stage)}</span></div>
+            <div class="profile-row"><span>Primeira Interação</span><span>${new Date(p.firstInteraction).toLocaleDateString('pt-PT')}</span></div>
+            <div class="profile-row"><span>Última Interação</span><span>${new Date(p.lastInteraction).toLocaleDateString('pt-PT')}</span></div>
+        </div>
+        <div class="profile-section">
+            <h4>Produtos & Compras</h4>
+            <div class="profile-row"><span>Análises Realizadas</span><span>${p.analyses.length}</span></div>
+            <div class="profile-row"><span>Produtos Comprados</span><span>${p.purchases.length}</span></div>
+            <div class="profile-row"><span>Total Gasto</span><span style="font-weight:700;color:var(--gold);">${p.totalSpent.toFixed(2)}€</span></div>
+            <div class="profile-row"><span>Score Médio</span><span>${p.analyses.filter(a => a.score > 0).length ? Math.round(p.analyses.filter(a => a.score > 0).reduce((s, a) => s + a.score, 0) / p.analyses.filter(a => a.score > 0).length) : '—'}</span></div>
+        </div>
+        <div class="profile-section">
+            <h4>Histórico de Atividade</h4>
+            ${timeline.slice(0, 10).map(item => {
+                const isEmail = item.sent_at;
+                const date = new Date(item.created_at || item.sent_at).toLocaleDateString('pt-PT');
+                const desc = isEmail
+                    ? `📧 Email enviado: ${item.subject || item.email_type || 'Follow-up'}`
+                    : `📄 Análise ${getAnalysisType(item)} — Score: ${item.score || '—'}`;
+                return `<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div>${desc}</div><div class="timeline-date">${date}</div></div></div>`;
+            }).join('')}
+        </div>
+        <div style="display:flex;gap:8px;margin-top:16px;">
+            <button class="btn btn-gold btn-sm" onclick="openEmailModal('${p.email}','${(p.name||'').replace(/'/g,"\\'")}')"><i class="fas fa-envelope"></i> Enviar Email</button>
+            <button class="btn btn-outline btn-sm" onclick="closeUserProfile()">Fechar</button>
         </div>`;
+}
+
+function closeUserProfile() {
+    document.getElementById('userProfileModal').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ANÁLISES
+// ═══════════════════════════════════════════════════════════════
+function filterAnalyses() { currentPage = 1; renderAnalyses(); }
+
+function renderAnalyses() {
+    let data = filterByLang(allAnalyses, globalLang);
+
+    const type    = document.getElementById('filterType')?.value || 'all';
+    const lang    = document.getElementById('filterLang')?.value || 'all';
+    const product = document.getElementById('filterProduct')?.value || 'all';
+    const email   = (document.getElementById('filterEmail')?.value || '').toLowerCase();
+    const from    = document.getElementById('filterDateFrom')?.value;
+    const to      = document.getElementById('filterDateTo')?.value;
+
+    if (type !== 'all') data = data.filter(a => getAnalysisType(a) === type);
+    if (lang !== 'all') data = data.filter(a => detectLanguage(a) === lang);
+    if (product !== 'all') {
+        if (product === 'cv') data = data.filter(a => a.analysis_type !== 'career_path');
+        else data = data.filter(a => a.analysis_type === 'career_path');
+    }
+    if (email) data = data.filter(a => (a.user_email || '').toLowerCase().includes(email));
+    if (from) data = data.filter(a => a.created_at >= from);
+    if (to)   data = data.filter(a => a.created_at <= to + 'T23:59:59');
+
+    setText('analysesCount', `${data.length} análises`);
+
+    const totalPages = Math.ceil(data.length / PAGE_SIZE);
+    currentPage = Math.min(currentPage, totalPages || 1);
+    const page = data.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+    const tbody = document.getElementById('analysesTable');
+    if (!tbody) return;
+
+    if (!page.length) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma análise encontrada</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = page.map(a => {
+        const type = getAnalysisType(a);
+        const lang = detectLanguage(a);
+        const date = new Date(a.created_at).toLocaleDateString('pt-PT');
+        const score = a.score > 0 ? `<span style="font-weight:600;color:${a.score >= 70 ? 'var(--green)' : a.score >= 40 ? 'var(--orange)' : 'var(--red)'};">${a.score}</span>` : '—';
+        const amount = a.payment_amount > 0 ? `<span style="color:var(--gold);font-weight:600;">${a.payment_amount.toFixed(2)}€</span>` : '—';
+        const anonBadge = isAnonymous(a) ? '<span class="badge badge-secondary" style="font-size:9px;">Anónimo</span>' : '';
+        return `
+        <tr>
+            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
+            <td>${a.user_name || '<span style="color:var(--text-muted);">—</span>'}</td>
+            <td style="font-size:12px;">${isAnonymous(a) ? `<span style="color:var(--text-muted);">${a.user_email || 'anónimo'}</span>` : a.user_email} ${anonBadge}</td>
+            <td>${score}</td>
+            <td style="font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${a.professional_area||''}">${a.professional_area || '—'}</td>
+            <td>${getTypeBadge(type)}</td>
+            <td>${getProductBadge(a)}</td>
+            <td>${getLangBadge(lang)}</td>
+            <td>${amount}</td>
+            <td>
+                <div style="display:flex;gap:4px;">
+                    ${!isAnonymous(a) ? `<button class="btn-icon" title="Ver Perfil" onclick="showUserProfile('${a.user_email.toLowerCase()}')"><i class="fas fa-eye"></i></button>` : ''}
+                    ${!isAnonymous(a) ? `<button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${a.user_email}','${(a.user_name||'').replace(/'/g,"\\'")}')"><i class="fas fa-envelope"></i></button>` : ''}
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+
+    renderPagination('analysesPagination', currentPage, totalPages, (p) => { currentPage = p; renderAnalyses(); });
+}
+
+function exportAnalysesCSV() {
+    let data = filterByLang(allAnalyses, globalLang);
+    const rows = [['Data','Nome','Email','Score','Área','Tipo','Produto','Idioma','Valor','Origem']];
+    data.forEach(a => rows.push([
+        a.created_at?.slice(0,10), a.user_name||'', a.user_email||'',
+        a.score||'', a.professional_area||'',
+        getAnalysisType(a), a.analysis_type === 'career_path' ? 'Career Path' : 'CV Analyser',
+        detectLanguage(a), a.payment_amount||0, getPaymentOrigin(a)
+    ]));
+    downloadCSV(rows, 'analises.csv');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  VOUCHERS
+// ═══════════════════════════════════════════════════════════════
+function filterVouchers() { renderVouchers(); }
+
+function renderVouchers() {
+    let data = [...allVouchers];
+    const status = document.getElementById('filterVoucherStatus')?.value || 'all';
+    const type   = document.getElementById('filterVoucherType')?.value || 'all';
+    const email  = (document.getElementById('filterVoucherEmail')?.value || '').toLowerCase();
+
+    if (status !== 'all') {
+        if (status === 'active') data = data.filter(v => v.status === 'active' || (!v.status && v.used_analyses < v.total_analyses));
+        else data = data.filter(v => v.status === 'used' || v.used_analyses >= v.total_analyses);
+    }
+    if (type !== 'all') data = data.filter(v => v.voucher_type === type || v.type === type);
+    if (email) data = data.filter(v => (v.email || '').toLowerCase().includes(email));
+
+    const tbody = document.getElementById('vouchersTable');
+    if (!tbody) return;
+
+    if (!data.length) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum voucher encontrado</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = data.map(v => {
+        const isActive = v.status === 'active' || (!v.status && (v.used_analyses || 0) < (v.total_analyses || 1));
+        const date = new Date(v.created_at).toLocaleDateString('pt-PT');
+        const usedPct = v.total_analyses > 0 ? Math.round((v.used_analyses || 0) / v.total_analyses * 100) : 0;
+        return `
+        <tr>
+            <td><code style="font-size:12px;background:var(--bg);padding:2px 6px;border-radius:4px;">${v.code}</code></td>
+            <td style="font-size:12px;">${v.email || '—'}</td>
+            <td style="font-size:12px;">${v.plan_name || v.plan || '—'}</td>
+            <td>${v.voucher_type === 'career_path' || v.type === 'career_path' ? '<span class="badge badge-career">Career Path</span>' : '<span class="badge badge-cv">CV Analyser</span>'}</td>
+            <td style="font-size:12px;font-weight:600;">${v.payment_amount > 0 ? v.payment_amount.toFixed(2) + '€' : '—'}</td>
+            <td>
+                <span class="badge ${isActive ? 'badge-success' : 'badge-secondary'}">${isActive ? 'Ativo' : 'Usado'}</span>
+                <span style="font-size:10px;color:var(--text-muted);margin-left:4px;">${v.used_analyses||0}/${v.total_analyses||1}</span>
+            </td>
+            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
+            <td>
+                ${v.email ? `<button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${v.email}','')"><i class="fas fa-envelope"></i></button>` : ''}
+            </td>
+        </tr>`;
     }).join('');
 }
 
-// ===================== ANALYSES TABLE =====================
-function renderAnalyses() {
-    let filtered = [...allAnalyses];
-    const typeFilter = document.getElementById('filterType').value;
-    const langFilter = document.getElementById('filterLang').value;
-    const productFilter = document.getElementById('filterProduct').value;
-    const emailFilter = document.getElementById('filterEmail').value.toLowerCase();
-    const dateFrom = document.getElementById('filterDateFrom').value;
-    const dateTo = document.getElementById('filterDateTo').value;
-
-    // Apply global lang filter first
-    filtered = filterByLang(filtered, globalLang);
-    
-    if (typeFilter !== 'all') filtered = filtered.filter(a => getAnalysisType(a) === typeFilter);
-    if (langFilter !== 'all') filtered = filtered.filter(a => detectLanguage(a) === langFilter);
-    if (productFilter !== 'all') filtered = filtered.filter(a => getProductType(a) === productFilter);
-    if (emailFilter) filtered = filtered.filter(a => a.user_email && a.user_email.toLowerCase().includes(emailFilter));
-    if (dateFrom) filtered = filtered.filter(a => new Date(a.created_at) >= new Date(dateFrom));
-    if (dateTo) filtered = filtered.filter(a => new Date(a.created_at) <= new Date(dateTo + 'T23:59:59'));
-
-    const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-    if (currentPage > totalPages) currentPage = 1;
-    const start = (currentPage - 1) * PAGE_SIZE;
-    const page = filtered.slice(start, start + PAGE_SIZE);
-
-    const tbody = document.getElementById('analysesTable');
-    if (page.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">Sem resultados</td></tr>';
-    } else {
-        tbody.innerHTML = page.map(a => {
-            const date = new Date(a.created_at);
-            const dateStr = date.toLocaleDateString('pt-PT') + ' ' + date.toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
-            const type = getAnalysisType(a);
-            const lang = detectLanguage(a);
-            return `<tr>
-                <td>${dateStr}</td>
-                <td>${a.user_name || '<em class="text-muted">Anónimo</em>'}</td>
-                <td>${a.user_email || '-'}</td>
-                <td><strong>${a.score || '-'}</strong></td>
-                <td>${getTypeBadge(type)}</td>
-                <td>${getPaymentOriginBadge(a)}</td>
-                <td>${getProductBadge(a)}</td>
-                <td>${getLangBadge(lang)}</td>
-                <td>
-                    ${a.user_email && a.user_email !== 'anonymous@share2inspire.pt' ? `<button class="btn btn-sm btn-icon" onclick="openEmailModal('${a.user_email}','${a.user_name||''}','${lang}')"><i class="fas fa-envelope"></i></button>` : ''}
-                </td>
-            </tr>`;
-        }).join('');
-    }
-
-    document.getElementById('analysesCount').textContent = `${filtered.length} análises encontradas`;
-
-    // Pagination
-    const pag = document.getElementById('analysesPagination');
-    if (totalPages <= 1) { pag.innerHTML = ''; return; }
-    let pagHtml = '';
-    for (let i = 1; i <= Math.min(totalPages, 10); i++) {
-        pagHtml += `<button class="page-btn ${i===currentPage?'active':''}" onclick="currentPage=${i};renderAnalyses()">${i}</button>`;
-    }
-    pag.innerHTML = pagHtml;
-}
-
-function filterAnalyses() { currentPage = 1; renderAnalyses(); }
-
-function exportAnalysesCSV() {
-    const csv = ['Data,Nome,Email,Score,Tipo,Origem,Produto,Idioma'];
-    allAnalyses.forEach(a => {
-        csv.push(`"${new Date(a.created_at).toLocaleString('pt-PT')}","${a.user_name||''}","${a.user_email||''}",${a.score||''},${getAnalysisType(a)},${getPaymentOrigin(a)},${getProductType(a)},${detectLanguage(a)}`);
-    });
-    downloadCSV(csv.join('\n'), 'cv_analyses_export.csv');
-}
-
-// ===================== VOUCHERS TABLE =====================
-function renderVouchers() {
-    let filtered = [...allVouchers];
-    const statusFilter = document.getElementById('filterVoucherStatus').value;
-    const typeFilter = document.getElementById('filterVoucherType') ? document.getElementById('filterVoucherType').value : 'all';
-    const emailFilter = document.getElementById('filterVoucherEmail').value.toLowerCase();
-
-    if (statusFilter === 'active') filtered = filtered.filter(v => v.is_active === true && (v.used_analyses === 0 || v.used_analyses === null));
-    if (statusFilter === 'used') filtered = filtered.filter(v => (v.used_analyses != null && v.used_analyses > 0) || v.is_active === false);
-    if (typeFilter !== 'all') filtered = filtered.filter(v => v.voucher_type === typeFilter);
-    if (emailFilter) filtered = filtered.filter(v => v.email.toLowerCase().includes(emailFilter));
-
-    const tbody = document.getElementById('vouchersTable');
-    if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Sem vouchers</td></tr>';
-    } else {
-        tbody.innerHTML = filtered.map(v => {
-            const date = new Date(v.created_at).toLocaleDateString('pt-PT');
-            const isUsed = (v.used_analyses != null && v.used_analyses > 0) || v.is_active === false;
-            const status = isUsed ? '<span class="badge badge-secondary">Usado</span>' : '<span class="badge badge-success">Activo</span>';
-            const rowClass = isUsed ? 'voucher-row used' : '';
-            const typeLabel = v.voucher_type === 'career_path' 
-                ? '<span class="badge" style="background:#3498db;">Career Path</span>' 
-                : '<span class="badge badge-cv">CV Analyser</span>';
-            return `<tr class="${rowClass}">
-                <td><code>${v.code}</code></td>
-                <td>${v.email}</td>
-                <td>${v.plan_name}</td>
-                <td>${typeLabel}</td>
-                <td>€${parseFloat(v.amount_paid).toFixed(2)}</td>
-                <td>${status}</td>
-                <td>${date}</td>
-                <td>
-                    <button class="btn btn-sm btn-icon" onclick="openEmailModal('${v.email}','')"><i class="fas fa-envelope"></i></button>
-                </td>
-            </tr>`;
-        }).join('');
-    }
-}
-
-function filterVouchers() { renderVouchers(); }
-
-// ===================== CREATE VOUCHERS =====================
 function showCreateVoucherModal() { document.getElementById('voucherModalOverlay').style.display = 'flex'; }
 function closeVoucherModal() { document.getElementById('voucherModalOverlay').style.display = 'none'; }
 
 async function createVouchers() {
-    const email = document.getElementById('voucherEmail').value.trim();
+    const email   = document.getElementById('voucherEmail')?.value?.trim();
+    const planVal = document.getElementById('voucherPlan')?.value;
+    const payment = document.getElementById('voucherPayment')?.value;
+    const sendEmail = document.getElementById('voucherSendEmail')?.checked;
+
     if (!email) { showToast('Email obrigatório', 'danger'); return; }
 
-    const parts = document.getElementById('voucherPlan').value.split('|');
-    const planName = parts[0];
-    const count = parseInt(parts[1]);
-    const amount = parseFloat(parts[2]);
-    const voucherType = parts[3] || 'standard';
-    const includesCareerPath = parts[4] === 'true';
-    const payment = document.getElementById('voucherPayment').value;
-    const sendEmail = document.getElementById('voucherSendEmail').checked;
+    const [planName, totalStr, amountStr, vType, cpFlag] = planVal.split('|');
+    const total  = parseInt(totalStr);
+    const amount = parseFloat(amountStr);
 
     const codes = [];
-    for (let i = 0; i < count; i++) {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let code = 'CVA-';
-        for (let j = 0; j < 8; j++) code += chars[Math.floor(Math.random() * chars.length)];
+    for (let i = 0; i < total; i++) {
+        const code = 'S2I-' + Math.random().toString(36).substring(2, 8).toUpperCase();
         codes.push(code);
+        await supaInsert('vouchers', {
+            code, email, plan_name: planName, total_analyses: 1, used_analyses: 0,
+            payment_amount: amount, payment_method: payment,
+            voucher_type: vType, career_path_included: cpFlag === 'true',
+            status: 'active', created_at: new Date().toISOString()
+        });
     }
 
-    const vouchers = codes.map(code => ({
-        code, email, plan_name: planName, total_analyses: 1, used_analyses: 0,
-        amount_paid: amount, payment_method: payment, is_active: true,
-        voucher_type: voucherType, includes_career_path: includesCareerPath
-    }));
+    showToast(`${codes.length} voucher(s) criado(s)!`, 'success');
+    closeVoucherModal();
 
-    try {
-        await supaInsert('vouchers', vouchers);
-        showToast(`${count} voucher(s) criado(s) com sucesso!`, 'success');
-        if (sendEmail) await sendVoucherEmail(email, codes, planName, amount);
-        closeVoucherModal();
-        await loadAllData();
-        renderVouchers();
-        updateDashboard();
-    } catch (e) {
-        console.error('Erro ao criar vouchers:', e);
-        showToast('Erro ao criar vouchers', 'danger');
+    if (sendEmail && ensureBrevoKey()) {
+        const subject = `O teu voucher Share2Inspire — ${planName}`;
+        const body = `<p>Olá,</p><p>Segue o teu voucher para <strong>${planName}</strong>:</p><p style="font-size:20px;font-weight:bold;color:#C9A961;">${codes.join('<br>')}</p><p>Acede a <a href="https://www.share2inspire.pt">share2inspire.pt</a> para usar.</p>`;
+        await sendBrevoEmail(email, subject, body);
     }
+
+    await loadAllData();
+    renderVouchers();
 }
 
-async function sendVoucherEmail(email, codes, planName, amount) {
-    const codesHtml = codes.map(c => `<div style="background:#faf9f7;border:1px solid #e8e4dc;border-radius:8px;padding:16px;margin:10px 0;text-align:center;font-family:'Courier New',monospace;font-size:18px;font-weight:600;color:#1A1A1A;letter-spacing:3px;">${c}</div>`).join('');
-    const html = `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
-  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
-    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
-    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
-    <p style="color:#999;margin:10px 0 0;font-size:13px;letter-spacing:.5px;">CV Analyser</p>
-  </div>
-  <div style="padding:40px 36px;">
-    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;line-height:1.4;">Os teus c\u00f3digos de an\u00e1lise</h2>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;margin:0 0 24px;">Obrigado pela tua compra do pacote <strong>${planName}</strong>${amount > 0 ? ` (${amount.toFixed(2)}\u20ac)` : ''}. Aqui est\u00e3o os teus ${codes.length} c\u00f3digo(s):</p>
-    ${codesHtml}
-    <div style="background:#faf9f7;border-radius:8px;padding:24px;margin:28px 0;">
-      <p style="color:#333;font-size:14px;font-weight:500;margin:0 0 12px;">Como usar:</p>
-      <div style="color:#4a4a4a;font-size:14px;line-height:2.2;">
-        1. Vai a <a href="https://www.share2inspire.pt/cv-analyser" style="color:#BF9A33;text-decoration:none;">share2inspire.pt/cv-analyser</a><br>
-        2. Faz upload do teu CV<br>
-        3. Ap\u00f3s a an\u00e1lise gratuita, clica em \u201cC\u00f3digo\u201d<br>
-        4. Insere um dos c\u00f3digos acima<br>
-        5. Desfruta do relat\u00f3rio completo!
-      </div>
-    </div>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;margin:0;">Cada c\u00f3digo d\u00e1 direito a <strong>1 an\u00e1lise completa</strong> com relat\u00f3rio PDF detalhado.</p>
-  </div>
-  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
-    <p style="color:#b0b0b0;font-size:11px;margin:0;letter-spacing:.3px;">Share2Inspire \u00a9 2026 &nbsp;\u00b7&nbsp; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
-  </div>
-</div>`;
-    await sendBrevoEmail(email, `Os teus c\u00f3digos CV Analyser - Share2Inspire`, html);
+// ═══════════════════════════════════════════════════════════════
+//  NURTURING
+// ═══════════════════════════════════════════════════════════════
+function renderNurturingSegments() {
+    const sentEmails = new Set(allEmailHistory.map(e => e.recipient_email?.toLowerCase()));
+
+    const upsell     = allAnalyses.filter(a => getAnalysisType(a) === 'free' && !isAnonymous(a));
+    const feedback   = allAnalyses.filter(a => getAnalysisType(a) === 'paid' && !a.user_rating && !isAnonymous(a));
+    const careerpath = allAnalyses.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && !isAnonymous(a));
+    const abandoned  = allAnalyses.filter(a => isAnonymous(a) && new Date(a.created_at) > new Date(Date.now() - 7 * 86400000));
+
+    const uniqueUpsell     = [...new Set(upsell.map(a => a.user_email.toLowerCase()))];
+    const uniqueFeedback   = [...new Set(feedback.map(a => a.user_email.toLowerCase()))];
+    const uniqueCareerpath = [...new Set(careerpath.map(a => a.user_email.toLowerCase()))];
+
+    setText('upsellCount',     uniqueUpsell.length);
+    setText('feedbackCount',   uniqueFeedback.length);
+    setText('careerpathCount', uniqueCareerpath.length);
+    setText('abandonedCount',  abandoned.length);
 }
 
-// ===================== EMAIL FUNCTIONS =====================
-function openEmailModal(email, name, lang) {
-    document.getElementById('modalEmailTo').value = email;
-    document.getElementById('modalEmailLang').value = lang || 'pt';
-    loadEmailTemplate();
+const emailTemplates = {
+    pt: {
+        upsell: {
+            subject: '🎯 O teu CV merece uma análise completa',
+            body: `<p>Olá {{nome}},</p>
+<p>Vimos que fizeste a análise gratuita do teu CV e ficámos impressionados com o teu perfil!</p>
+<p>A análise completa vai mostrar-te exatamente o que precisas de melhorar para te destacares no mercado de trabalho.</p>
+<p><a href="https://www.share2inspire.pt/cv-analyser" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Ver Análise Completa →</a></p>
+<p>Com os melhores cumprimentos,<br>Equipa Share2Inspire</p>`
+        },
+        feedback: {
+            subject: '⭐ Como foi a tua experiência com o Share2Inspire?',
+            body: `<p>Olá {{nome}},</p>
+<p>Obrigado por teres utilizado os nossos serviços! A tua opinião é muito importante para nós.</p>
+<p>Podes partilhar a tua experiência? Demora apenas 1 minuto.</p>
+<p><a href="https://www.share2inspire.pt" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Deixar Avaliação →</a></p>
+<p>Com os melhores cumprimentos,<br>Equipa Share2Inspire</p>`
+        },
+        careerpath: {
+            subject: '🚀 Descobre o teu próximo passo de carreira',
+            body: `<p>Olá {{nome}},</p>
+<p>Já analisaste o teu CV — agora é hora de traçar o teu caminho de carreira!</p>
+<p>O Career Path vai ajudar-te a identificar as melhores oportunidades e o plano de ação para chegares lá.</p>
+<p><a href="https://www.share2inspire.pt/career-path" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Explorar Career Path →</a></p>
+<p>Com os melhores cumprimentos,<br>Equipa Share2Inspire</p>`
+        }
+    },
+    en: {
+        upsell: {
+            subject: '🎯 Your CV deserves a full analysis',
+            body: `<p>Hi {{nome}},</p>
+<p>We noticed you completed the free CV analysis — your profile looks promising!</p>
+<p>The full analysis will show you exactly what to improve to stand out in the job market.</p>
+<p><a href="https://www.share2inspire.pt/cv-analyser" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">See Full Analysis →</a></p>
+<p>Best regards,<br>Share2Inspire Team</p>`
+        },
+        feedback: {
+            subject: '⭐ How was your Share2Inspire experience?',
+            body: `<p>Hi {{nome}},</p>
+<p>Thank you for using our services! Your feedback means a lot to us.</p>
+<p>Could you share your experience? It only takes 1 minute.</p>
+<p><a href="https://www.share2inspire.pt" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Leave a Review →</a></p>
+<p>Best regards,<br>Share2Inspire Team</p>`
+        },
+        careerpath: {
+            subject: '🚀 Discover your next career step',
+            body: `<p>Hi {{nome}},</p>
+<p>You've analysed your CV — now it's time to map your career path!</p>
+<p>Career Path will help you identify the best opportunities and the action plan to get there.</p>
+<p><a href="https://www.share2inspire.pt/career-path" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Explore Career Path →</a></p>
+<p>Best regards,<br>Share2Inspire Team</p>`
+        }
+    }
+};
+
+function prepareNurturing(segment) {
+    nurturingSegment = segment;
+    const sentEmails = new Set(allEmailHistory.map(e => e.recipient_email?.toLowerCase()));
+    let recipients = [];
+
+    if (segment === 'upsell') {
+        const emails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'free' && !isAnonymous(a)).map(a => a.user_email.toLowerCase()))];
+        recipients = emails.map(email => {
+            const a = allAnalyses.find(x => x.user_email?.toLowerCase() === email);
+            return { email, name: a?.user_name || '', sent: sentEmails.has(email) };
+        });
+    } else if (segment === 'feedback') {
+        const emails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'paid' && !a.user_rating && !isAnonymous(a)).map(a => a.user_email.toLowerCase()))];
+        recipients = emails.map(email => {
+            const a = allAnalyses.find(x => x.user_email?.toLowerCase() === email);
+            return { email, name: a?.user_name || '', sent: sentEmails.has(email) };
+        });
+    } else if (segment === 'careerpath') {
+        const emails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && !isAnonymous(a)).map(a => a.user_email.toLowerCase()))];
+        recipients = emails.map(email => {
+            const a = allAnalyses.find(x => x.user_email?.toLowerCase() === email);
+            return { email, name: a?.user_name || '', sent: sentEmails.has(email) };
+        });
+    }
+
+    nurturingRecipients = recipients;
+
+    const template = emailTemplates[nurturingLang]?.[segment] || emailTemplates['pt'][segment] || { subject: '', body: '' };
+
+    const composer = document.getElementById('emailComposer');
+    if (composer) {
+        composer.style.display = '';
+        const titleMap = { upsell: 'Upsell — Análise Completa', feedback: 'Pedir Feedback', careerpath: 'Upsell — Career Path' };
+        const titleEl = document.getElementById('composerTitle');
+        if (titleEl) titleEl.innerHTML = `<i class="fas fa-paper-plane"></i> ${titleMap[segment] || 'Compor Email'}`;
+        const subjectEl = document.getElementById('emailSubject');
+        const bodyEl    = document.getElementById('emailBody');
+        if (subjectEl) subjectEl.value = template.subject;
+        if (bodyEl)    bodyEl.value    = template.body;
+    }
+
+    renderRecipientList();
+    document.querySelectorAll('.segment-card').forEach(c => c.classList.remove('active'));
+    const segMap = { upsell: 0, feedback: 1, careerpath: 2, abandoned: 3 };
+    const cards  = document.querySelectorAll('.segment-card');
+    if (cards[segMap[segment]]) cards[segMap[segment]].classList.add('active');
+}
+
+function renderRecipientList() {
+    const search   = (document.getElementById('recipientSearch')?.value || '').toLowerCase();
+    const filter   = document.getElementById('recipientFilter')?.value || 'all';
+    const listEl   = document.getElementById('recipientList');
+    if (!listEl) return;
+
+    let filtered = nurturingRecipients;
+    if (filter === 'unsent') filtered = filtered.filter(r => !r.sent);
+    if (filter === 'sent')   filtered = filtered.filter(r => r.sent);
+    if (search) filtered = filtered.filter(r => r.email.includes(search) || r.name.toLowerCase().includes(search));
+
+    const selected = filtered.filter(r => r.checked !== false).length;
+    setText('selectedCount', `(${selected} selecionados)`);
+
+    listEl.innerHTML = filtered.map((r, i) => `
+        <div class="recipient-item ${r.sent ? 'sent' : ''}">
+            <input type="checkbox" id="rec_${i}" ${r.checked !== false ? 'checked' : ''} onchange="toggleRecipient('${r.email}', this.checked)">
+            <div style="flex:1;">
+                <div style="font-size:13px;">${r.name || r.email}</div>
+                ${r.name ? `<div style="font-size:11px;color:var(--text-muted);">${r.email}</div>` : ''}
+            </div>
+            ${r.sent ? '<span class="sent-badge campaign-match">Enviado</span>' : ''}
+        </div>`).join('');
+}
+
+function filterRecipientList() { renderRecipientList(); }
+
+function toggleRecipient(email, checked) {
+    const r = nurturingRecipients.find(x => x.email === email);
+    if (r) r.checked = checked;
+    const selected = nurturingRecipients.filter(r => r.checked !== false).length;
+    setText('selectedCount', `(${selected} selecionados)`);
+}
+
+function toggleAllRecipients(state) {
+    nurturingRecipients.forEach(r => r.checked = state);
+    renderRecipientList();
+}
+
+function selectOnlyUnsent() {
+    nurturingRecipients.forEach(r => r.checked = !r.sent);
+    renderRecipientList();
+}
+
+async function sendBulkEmail() {
+    if (!ensureBrevoKey()) return;
+    const subject = document.getElementById('emailSubject')?.value;
+    const body    = document.getElementById('emailBody')?.value;
+    if (!subject || !body) { showToast('Assunto e corpo são obrigatórios', 'danger'); return; }
+
+    const toSend = nurturingRecipients.filter(r => r.checked !== false);
+    if (!toSend.length) { showToast('Nenhum destinatário selecionado', 'danger'); return; }
+
+    let sent = 0;
+    for (const r of toSend) {
+        const personalizedBody = body.replace(/\{\{nome\}\}/g, r.name || 'Olá');
+        const ok = await sendBrevoEmail(r.email, subject, personalizedBody);
+        if (ok) {
+            sent++;
+            await supaInsert('email_history', {
+                recipient_email: r.email, subject, email_type: nurturingSegment || 'custom',
+                status: 'sent', sent_at: new Date().toISOString()
+            });
+            r.sent = true;
+        }
+    }
+    showToast(`${sent} email(s) enviado(s) com sucesso!`, 'success');
+    await loadEmailHistory();
+    renderRecipientList();
+    renderNurturingSegments();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  EMAIL MODAL (individual)
+// ═══════════════════════════════════════════════════════════════
+function openEmailModal(email, name) {
+    document.getElementById('modalEmailTo').value    = email;
+    document.getElementById('modalEmailLang').value  = 'pt';
     document.getElementById('emailModalOverlay').style.display = 'flex';
+    loadEmailTemplate();
 }
+
 function closeEmailModal() { document.getElementById('emailModalOverlay').style.display = 'none'; }
 
-// ===================== EMAIL TEMPLATES (PT & EN) =====================
-function getEmailTemplates() {
-    return {
-        pt: {
-            upsell: {
-                subject: 'O teu CV merece uma an\u00e1lise completa - Share2Inspire',
-                html: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
-  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
-    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
-    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
-  </div>
-  <div style="padding:40px 36px;">
-    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;">O teu CV merece mais</h2>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;">Vimos que analisaste o teu CV no CV Analyser. A an\u00e1lise completa inclui relat\u00f3rio PDF detalhado, estimativa salarial, recomenda\u00e7\u00f5es personalizadas e compatibilidade ATS.</p>
-    <div style="text-align:center;margin:32px 0;">
-      <a href="https://www.share2inspire.pt/cv-analyser" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;">Analisar CV Agora</a>
-    </div>
-    <p style="color:#999;font-size:13px;text-align:center;">Por apenas \u20ac3,99, desbloqueia todo o potencial da an\u00e1lise.</p>
-  </div>
-  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
-    <p style="color:#b0b0b0;font-size:11px;">Share2Inspire \u00a9 2026 &middot; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
-  </div>
-</div>`
-            },
-            feedback: {
-                subject: 'Como foi a tua experi\u00eancia? - Share2Inspire',
-                html: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
-  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
-    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
-    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
-  </div>
-  <div style="padding:40px 36px;">
-    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;">A tua opini\u00e3o \u00e9 importante</h2>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;">Obrigado por teres utilizado o CV Analyser! O teu feedback ajuda-nos a melhorar continuamente.</p>
-    <div style="text-align:center;margin:32px 0;">
-      <a href="https://www.share2inspire.pt/cv-analyser" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;">Avaliar Agora</a>
-    </div>
-  </div>
-  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
-    <p style="color:#b0b0b0;font-size:11px;">Share2Inspire \u00a9 2026 &middot; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
-  </div>
-</div>`
-            },
-            careerpath: {
-                subject: 'Descobre o teu Career Path - Share2Inspire',
-                html: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
-  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
-    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
-    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
-  </div>
-  <div style="padding:40px 36px;">
-    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;">Qual \u00e9 o teu pr\u00f3ximo passo de carreira?</h2>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;">J\u00e1 tens a tua an\u00e1lise de CV. Agora descobre o teu roadmap de carreira personalizado com pr\u00f3ximos cargos, forma\u00e7\u00f5es, plano de ac\u00e7\u00e3o e estrat\u00e9gia de networking.</p>
-    <div style="text-align:center;margin:32px 0;">
-      <a href="https://www.share2inspire.pt/career-path" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;">Descobrir Career Path</a>
-    </div>
-    <p style="color:#999;font-size:13px;text-align:center;">Por apenas \u20ac9,99, obt\u00e9m o teu roadmap personalizado.</p>
-  </div>
-  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
-    <p style="color:#b0b0b0;font-size:11px;">Share2Inspire \u00a9 2026 &middot; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
-  </div>
-</div>`
-            }
-        },
-        en: {
-            upsell: {
-                subject: 'Your CV deserves a full analysis - Share2Inspire',
-                html: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
-  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
-    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
-    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
-  </div>
-  <div style="padding:40px 36px;">
-    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;">Your CV deserves more</h2>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;">We noticed you analysed your CV with CV Analyser. The full analysis includes a detailed PDF report, salary estimation, personalised recommendations, and ATS compatibility.</p>
-    <div style="text-align:center;margin:32px 0;">
-      <a href="https://www.share2inspire.pt/en/cv-analyser" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;">Analyse CV Now</a>
-    </div>
-    <p style="color:#999;font-size:13px;text-align:center;">For just $5.99, unlock the full potential of the analysis.</p>
-  </div>
-  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
-    <p style="color:#b0b0b0;font-size:11px;">Share2Inspire \u00a9 2026 &middot; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
-  </div>
-</div>`
-            },
-            feedback: {
-                subject: 'How was your experience? - Share2Inspire',
-                html: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
-  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
-    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
-    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
-  </div>
-  <div style="padding:40px 36px;">
-    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;">Your opinion matters</h2>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;">Thank you for using CV Analyser! Your feedback helps us continuously improve our service.</p>
-    <div style="text-align:center;margin:32px 0;">
-      <a href="https://www.share2inspire.pt/en/cv-analyser" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;">Rate Now</a>
-    </div>
-  </div>
-  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
-    <p style="color:#b0b0b0;font-size:11px;">Share2Inspire \u00a9 2026 &middot; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
-  </div>
-</div>`
-            },
-            careerpath: {
-                subject: 'Discover your Career Path - Share2Inspire',
-                html: `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;">
-  <div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;">
-    <h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1>
-    <div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div>
-  </div>
-  <div style="padding:40px 36px;">
-    <h2 style="color:#1A1A1A;margin:0 0 20px;font-size:20px;font-weight:500;">What's your next career move?</h2>
-    <p style="color:#4a4a4a;font-size:15px;line-height:1.8;">You already have your CV analysis. Now discover your personalised career roadmap with next roles, training, action plan, and networking strategy.</p>
-    <div style="text-align:center;margin:32px 0;">
-      <a href="https://www.share2inspire.pt/en/career-path" style="display:inline-block;background:#1A1A1A;color:#ffffff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:500;">Discover Career Path</a>
-    </div>
-    <p style="color:#999;font-size:13px;text-align:center;">For just $10.00, get your personalised roadmap.</p>
-  </div>
-  <div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;">
-    <p style="color:#b0b0b0;font-size:11px;">Share2Inspire \u00a9 2026 &middot; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p>
-  </div>
-</div>`
-            }
-        }
-    };
-}
-
 function loadEmailTemplate() {
-    const template = document.getElementById('modalEmailTemplate').value;
-    const lang = document.getElementById('modalEmailLang').value;
-    const templates = getEmailTemplates();
-    const t = templates[lang]?.[template];
-    if (t) {
-        document.getElementById('modalEmailSubject').value = t.subject;
-        document.getElementById('modalEmailBody').value = t.html;
-    } else {
-        document.getElementById('modalEmailSubject').value = '';
-        document.getElementById('modalEmailBody').value = '';
+    const lang     = document.getElementById('modalEmailLang')?.value || 'pt';
+    const template = document.getElementById('modalEmailTemplate')?.value || 'upsell';
+    if (template === 'custom') return;
+    const tpl = emailTemplates[lang]?.[template];
+    if (tpl) {
+        document.getElementById('modalEmailSubject').value = tpl.subject;
+        document.getElementById('modalEmailBody').value    = tpl.body;
     }
 }
 
 async function sendSingleEmail() {
-    const to = document.getElementById('modalEmailTo').value;
-    const subject = document.getElementById('modalEmailSubject').value;
-    const body = document.getElementById('modalEmailBody').value;
+    if (!ensureBrevoKey()) return;
+    const to      = document.getElementById('modalEmailTo')?.value;
+    const subject = document.getElementById('modalEmailSubject')?.value;
+    const body    = document.getElementById('modalEmailBody')?.value;
     if (!to || !subject || !body) { showToast('Preenche todos os campos', 'danger'); return; }
 
-    const html = body.includes('<div') ? body : `<div style="max-width:560px;margin:0 auto;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#ffffff;"><div style="padding:40px 32px 24px;text-align:center;border-bottom:1px solid #f0ece4;"><h1 style="color:#1A1A1A;margin:0;font-size:22px;font-weight:600;letter-spacing:1px;">SHARE2INSPIRE</h1><div style="width:40px;height:2px;background:#BF9A33;margin:12px auto 0;"></div></div><div style="padding:40px 36px;"><div style="color:#4a4a4a;font-size:15px;line-height:1.8;">${body.replace(/\n/g, '<br>')}</div></div><div style="padding:24px 36px;border-top:1px solid #f0ece4;text-align:center;"><p style="color:#b0b0b0;font-size:11px;">Share2Inspire &copy; 2026 &middot; <a href="https://www.share2inspire.pt" style="color:#BF9A33;text-decoration:none;">share2inspire.pt</a></p></div></div>`;
-
-    try {
-        await sendBrevoEmail(to, subject, html);
-        showToast(`Email enviado para ${to}!`, 'success');
+    const ok = await sendBrevoEmail(to, subject, body);
+    if (ok) {
+        await supaInsert('email_history', {
+            recipient_email: to, subject,
+            email_type: document.getElementById('modalEmailTemplate')?.value || 'custom',
+            status: 'sent', sent_at: new Date().toISOString()
+        });
+        showToast('Email enviado!', 'success');
         closeEmailModal();
-    } catch (e) {
-        showToast('Erro ao enviar email', 'danger');
+        await loadEmailHistory();
     }
 }
 
-// ===================== NURTURING =====================
-window._nurturingType = '';
-window._allNurturingRecipients = [];
-
-function getEmailSentInfo(email, campaignType) {
-    const history = allEmailHistory.filter(h =>
-        h.recipient_email && h.recipient_email.toLowerCase() === email.toLowerCase() && h.status === 'sent'
-    );
-    const campaignHistory = history.filter(h => h.campaign_type === campaignType);
-    return {
-        sentThisCampaign: campaignHistory.length > 0,
-        lastSentDate: campaignHistory.length > 0 ? new Date(campaignHistory[0].sent_at).toLocaleDateString('pt-PT') : null,
-        sentAnyEmail: history.length > 0,
-        totalSent: history.length,
-        lastAnyDate: history.length > 0 ? new Date(history[0].sent_at).toLocaleDateString('pt-PT') : null
-    };
-}
-
-function renderRecipientList() {
-    const recipients = window._allNurturingRecipients || [];
-    const type = window._nurturingType;
-    const filter = document.getElementById('recipientFilter').value;
-    const search = document.getElementById('recipientSearch').value.toLowerCase();
-    const container = document.getElementById('recipientList');
-
-    if (recipients.length === 0) {
-        container.innerHTML = '<em class="text-muted" style="font-size:.82rem;">Sem destinat\u00e1rios neste segmento.</em>';
-        updateSelectedCount();
-        return;
-    }
-
-    let html = '';
-    recipients.forEach((email, idx) => {
-        const info = getEmailSentInfo(email, type);
-        const isSent = info.sentThisCampaign;
-        if (filter === 'unsent' && isSent) return;
-        if (filter === 'sent' && !isSent) return;
-        if (search && !email.toLowerCase().includes(search)) return;
-
-        const checked = document.querySelector(`#rcpt_${idx}`)?.checked ?? !isSent;
-        const sentClass = isSent ? ' sent' : '';
-        let badge = '';
-        if (isSent) {
-            badge = `<span class="sent-badge campaign-match"><i class="fas fa-check me-1"></i>Enviado ${info.lastSentDate}</span>`;
-        } else if (info.sentAnyEmail) {
-            badge = `<span class="sent-badge"><i class="fas fa-envelope me-1"></i>${info.totalSent} email(s) - \u00faltimo ${info.lastAnyDate}</span>`;
-        }
-
-        html += `<div class="recipient-item${sentClass}" data-email="${email}" data-sent="${isSent}">
-            <input type="checkbox" id="rcpt_${idx}" type="checkbox" style="margin:0;cursor:pointer;accent-color:var(--gold);" ${checked ? 'checked' : ''} onchange="updateSelectedCount()">
-            <span style="flex:1;">${email}</span>
-            ${badge}
-        </div>`;
-    });
-
-    container.innerHTML = html || '<em class="text-muted" style="font-size:.82rem;">Nenhum resultado para este filtro.</em>';
-    updateSelectedCount();
-}
-
-function updateSelectedCount() {
-    const checked = document.querySelectorAll('#recipientList input[type=checkbox]:checked');
-    const total = window._allNurturingRecipients?.length || 0;
-    document.getElementById('selectedCount').textContent = `(${checked.length} de ${total} selecionados)`;
-}
-
-function toggleAllRecipients(selectAll) {
-    document.querySelectorAll('#recipientList input[type=checkbox]').forEach(cb => { cb.checked = selectAll; });
-    updateSelectedCount();
-}
-
-function selectOnlyUnsent() {
-    document.querySelectorAll('#recipientList .recipient-item').forEach(item => {
-        const cb = item.querySelector('input[type=checkbox]');
-        const isSent = item.dataset.sent === 'true';
-        if (cb) cb.checked = !isSent;
-    });
-    updateSelectedCount();
-}
-
-function filterRecipientList() {
-    const states = {};
-    document.querySelectorAll('#recipientList input[type=checkbox]').forEach(cb => { states[cb.id] = cb.checked; });
-    renderRecipientList();
-    Object.keys(states).forEach(id => { const cb = document.getElementById(id); if (cb) cb.checked = states[id]; });
-    updateSelectedCount();
-}
-
-function getSelectedRecipients() {
-    const selected = [];
-    document.querySelectorAll('#recipientList .recipient-item').forEach(item => {
-        const cb = item.querySelector('input[type=checkbox]');
-        if (cb && cb.checked) selected.push(item.dataset.email);
-    });
-    return selected;
-}
-
-function prepareNurturing(type) {
-    let recipients = [];
-    const templates = getEmailTemplates();
-    const lang = nurturingLang;
-    const t = templates[lang]?.[type];
-
-    if (type === 'upsell') {
-        recipients = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'free' && a.user_email && a.user_email !== 'anonymous@share2inspire.pt').map(a => a.user_email))];
-    } else if (type === 'feedback') {
-        recipients = [...new Set(allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.user_rating && a.user_email).map(a => a.user_email))];
-    } else if (type === 'careerpath') {
-        recipients = [...new Set(allAnalyses.filter(a => getAnalysisType(a) !== 'free' && !a.career_path_purchased && a.analysis_type !== 'career_path' && a.user_email).map(a => a.user_email))];
-    }
-
-    window._nurturingType = type;
-    window._allNurturingRecipients = recipients;
-
-    const langLabel = lang === 'en' ? '🇬🇧' : '🇵🇹';
-    document.getElementById('emailComposer').style.display = 'block';
-    document.getElementById('composerTitle').textContent = `Compor Email ${langLabel} - ${type === 'upsell' ? 'Upsell' : type === 'feedback' ? 'Feedback' : 'Career Path'}`;
-    document.getElementById('emailSubject').value = t?.subject || '';
-    document.getElementById('emailBody').value = t?.html || '';
-    document.getElementById('recipientFilter').value = 'all';
-    document.getElementById('recipientSearch').value = '';
-
-    renderRecipientList();
-}
-
-function closeComposer() { document.getElementById('emailComposer').style.display = 'none'; }
-
-function previewEmail() {
-    const html = document.getElementById('emailBody').value;
-    const win = window.open('', '_blank');
-    win.document.write(html);
-    win.document.close();
-}
-
-async function sendNurturingEmails() {
-    const recipients = getSelectedRecipients();
-    if (recipients.length === 0) { showToast('Seleciona pelo menos um destinat\u00e1rio', 'danger'); return; }
-
-    const subject = document.getElementById('emailSubject').value;
-    const html = document.getElementById('emailBody').value;
-    const type = window._nurturingType || 'custom';
-
-    if (!confirm(`Enviar email para ${recipients.length} destinat\u00e1rio(s)?`)) return;
-
-    let sent = 0, errors = 0;
-    for (const email of recipients) {
-        try {
-            await sendBrevoEmail(email, subject, html, type);
-            sent++;
-            const item = document.querySelector(`#recipientList .recipient-item[data-email="${email}"]`);
-            if (item) { item.classList.add('sent'); const cb = item.querySelector('input[type=checkbox]'); if (cb) cb.checked = false; }
-        } catch (e) { errors++; console.error(`Erro ao enviar para ${email}:`, e); }
-        await new Promise(r => setTimeout(r, 1000));
-    }
-
-    await loadEmailHistory();
-    renderRecipientList();
-    updateSelectedCount();
-    showToast(`${sent} email(s) enviado(s), ${errors} erro(s)`, errors > 0 ? 'warning' : 'success');
-}
-
-// ===================== BREVO API =====================
-async function sendBrevoEmail(to, subject, htmlContent, campaignType = 'custom') {
-    if (!ensureBrevoKey()) throw new Error('No Brevo key');
-    const key = localStorage.getItem('s2i_brevo_key') || BREVO_KEY;
-    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-        method: 'POST',
-        headers: { 'api-key': key, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sender: BREVO_SENDER, to: [{ email: to }], subject, htmlContent })
-    });
-    const status = res.ok ? 'sent' : 'error';
-    const errorMsg = res.ok ? null : `HTTP ${res.status}`;
-    await logEmailHistory(to, null, subject, campaignType, status, errorMsg);
-    if (!res.ok) throw new Error(`Brevo error: ${res.status}`);
-    return res.json();
-}
-
-async function logEmailHistory(email, name, subject, campaignType, status = 'sent', errorMsg = null) {
+async function sendBrevoEmail(to, subject, htmlContent) {
     try {
-        await supaInsert('email_history', { recipient_email: email, recipient_name: name, subject, campaign_type: campaignType, status, error_message: errorMsg });
-    } catch (err) { console.error('Failed to log email history:', err); }
-}
-
-// ===================== HISTORY TAB =====================
-function filterHistory() {
-    const campaign = document.getElementById('filterHistoryCampaign').value;
-    const email = document.getElementById('filterHistoryEmail').value.toLowerCase();
-    const dateFrom = document.getElementById('filterHistoryDateFrom').value;
-    const dateTo = document.getElementById('filterHistoryDateTo').value;
-    let filtered = allEmailHistory.filter(h => {
-        if (campaign !== 'all' && h.campaign_type !== campaign) return false;
-        if (email && !h.recipient_email.toLowerCase().includes(email)) return false;
-        if (dateFrom && new Date(h.sent_at) < new Date(dateFrom)) return false;
-        if (dateTo && new Date(h.sent_at) > new Date(dateTo + 'T23:59:59')) return false;
+        const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: { 'api-key': getBrevoKey(), 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                sender: BREVO_SENDER,
+                to: [{ email: to }],
+                subject,
+                htmlContent
+            })
+        });
+        if (!res.ok) { const err = await res.json(); showToast(`Erro Brevo: ${err.message}`, 'danger'); return false; }
         return true;
-    });
-    renderHistory(filtered);
+    } catch (e) { showToast('Erro ao enviar email', 'danger'); return false; }
 }
 
-function renderHistory(filtered = null) {
-    const data = filtered || allEmailHistory;
-    const tbody = document.getElementById('historyTable');
-    const count = document.getElementById('historyCount');
-    if (!Array.isArray(data) || data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Nenhum email enviado ainda</td></tr>';
-        count.textContent = '0 emails';
+// ═══════════════════════════════════════════════════════════════
+//  HISTÓRICO DE EMAILS
+// ═══════════════════════════════════════════════════════════════
+function renderEmailHistory() {
+    let data = [...allEmailHistory];
+    const type  = document.getElementById('filterHistoryType')?.value || 'all';
+    const email = (document.getElementById('filterHistoryEmail')?.value || '').toLowerCase();
+
+    if (type !== 'all') data = data.filter(e => e.email_type === type);
+    if (email) data = data.filter(e => (e.recipient_email || '').toLowerCase().includes(email));
+
+    setText('historyCount', `${data.length} emails`);
+
+    const totalPages = Math.ceil(data.length / PAGE_SIZE);
+    historyPage = Math.min(historyPage, totalPages || 1);
+    const page = data.slice((historyPage - 1) * PAGE_SIZE, historyPage * PAGE_SIZE);
+
+    const tbody = document.getElementById('emailHistoryTable');
+    if (!tbody) return;
+
+    if (!page.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum email no histórico</td></tr>`;
         return;
     }
-    tbody.innerHTML = data.map(h => {
-        const date = new Date(h.sent_at).toLocaleString('pt-PT');
-        const statusBadge = h.status === 'sent' ? '<span class="badge badge-success">Enviado</span>' : `<span class="badge badge-danger" title="${h.error_message || ''}">Erro</span>`;
-        const campaignBadge = { 'upsell': '<span class="badge badge-paid">Upsell</span>', 'feedback': '<span class="badge badge-free">Feedback</span>', 'careerpath': '<span class="badge badge-career">Career Path</span>', 'voucher': '<span class="badge badge-voucher">Vouchers</span>', 'custom': '<span class="badge badge-secondary">Personalizado</span>' }[h.campaign_type] || '<span class="badge badge-secondary">-</span>';
-        return `<tr><td>${date}</td><td>${h.recipient_email}${h.recipient_name ? `<br><small class="text-muted">${h.recipient_name}</small>` : ''}</td><td>${h.subject}</td><td>${campaignBadge}</td><td>${statusBadge}</td></tr>`;
-    }).join('');
-    count.textContent = `${data.length} email(s)`;
-}
 
-function exportHistoryCSV() {
-    const headers = 'Data,Destinat\u00e1rio,Nome,Assunto,Campanha,Estado,Erro\n';
-    const rows = allEmailHistory.map(h => `"${new Date(h.sent_at).toLocaleString('pt-PT')}","${h.recipient_email}","${h.recipient_name || ''}","${h.subject}","${h.campaign_type}","${h.status}","${h.error_message || ''}"`).join('\n');
-    downloadCSV(headers + rows, `email_history_${new Date().toISOString().split('T')[0]}.csv`);
-}
-
-// ===================== CONTACTS =====================
-let contactsData = [];
-let currentContactId = null;
-
-async function loadContacts() {
-    try {
-        const data = await supaFetch('contact_messages', 'select=*&order=created_at.desc');
-        contactsData = data || [];
-        updateContactKPIs();
-        populateContactSubjectFilter();
-        renderContacts();
-    } catch (e) {
-        console.error('Erro ao carregar contactos:', e);
-        document.getElementById('contactsTable').innerHTML = '<tr><td colspan="8" class="text-center text-danger py-3">Erro ao carregar mensagens</td></tr>';
-    }
-}
-
-function updateContactKPIs() {
-    const total = contactsData.length;
-    document.getElementById('kpiContactsTotal').textContent = total;
-    document.getElementById('kpiContactsNew').textContent = contactsData.filter(c => c.status === 'novo').length;
-    document.getElementById('kpiContactsRead').textContent = contactsData.filter(c => c.status === 'lido').length;
-    document.getElementById('kpiContactsReplied').textContent = contactsData.filter(c => c.status === 'respondido').length;
-}
-
-function populateContactSubjectFilter() {
-    const sel = document.getElementById('filterContactSubject');
-    const subjects = [...new Set(contactsData.map(c => c.subject).filter(Boolean))];
-    sel.innerHTML = '<option value="all">Todos os motivos</option>' + subjects.map(s => `<option value="${s}">${s}</option>`).join('');
-}
-
-function renderContacts() {
-    const statusFilter = document.getElementById('filterContactStatus').value;
-    const subjectFilter = document.getElementById('filterContactSubject').value;
-    const search = document.getElementById('filterContactSearch').value.toLowerCase();
-    let filtered = contactsData.filter(c => {
-        if (statusFilter !== 'all' && c.status !== statusFilter) return false;
-        if (subjectFilter !== 'all' && c.subject !== subjectFilter) return false;
-        if (search && !c.name.toLowerCase().includes(search) && !c.email.toLowerCase().includes(search) && !c.message.toLowerCase().includes(search)) return false;
-        return true;
-    });
-    const tbody = document.getElementById('contactsTable');
-    if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Nenhuma mensagem encontrada</td></tr>';
-        document.getElementById('contactsCount').textContent = '0 mensagens';
-        return;
-    }
-    tbody.innerHTML = filtered.map(c => {
-        const date = new Date(c.created_at);
-        const dateStr = date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: '2-digit' });
-        const timeStr = date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
-        const statusBadge = c.status === 'novo' ? '<span class="badge badge-danger">Novo</span>' : c.status === 'lido' ? '<span class="badge badge-warning">Lido</span>' : '<span class="badge badge-success">Respondido</span>';
-        const msgPreview = c.message.length > 60 ? c.message.substring(0, 60) + '...' : c.message;
-        const isNew = c.status === 'novo';
-        return `<tr style="${isNew ? 'font-weight:600;background:#fffbf0;' : ''}cursor:pointer;" onclick="openContactDetail(${c.id})">
-            <td>${isNew ? '<i class="fas fa-circle" style="color:var(--red);font-size:8px;"></i>' : ''}</td>
-            <td><small>${dateStr}<br><span class="text-muted">${timeStr}</span></small></td>
-            <td>${c.name}</td>
-            <td><small>${c.email}</small></td>
-            <td><small>${c.subject || '-'}</small></td>
-            <td><small class="text-muted">${msgPreview}</small></td>
-            <td>${statusBadge}</td>
-            <td><button class="btn btn-sm btn-icon" onclick="event.stopPropagation();replyToContact('${c.email}','${c.name}')" title="Responder"><i class="fas fa-reply"></i></button></td>
+    tbody.innerHTML = page.map(e => {
+        const date = new Date(e.sent_at || e.created_at).toLocaleDateString('pt-PT');
+        return `
+        <tr>
+            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
+            <td style="font-size:12px;">${e.recipient_email || '—'}</td>
+            <td style="font-size:12px;">${e.subject || '—'}</td>
+            <td><span class="badge badge-secondary">${e.email_type || 'custom'}</span></td>
+            <td><span class="badge ${e.status === 'sent' ? 'badge-success' : 'badge-danger'}">${e.status || 'sent'}</span></td>
         </tr>`;
     }).join('');
-    document.getElementById('contactsCount').textContent = `${filtered.length} de ${contactsData.length} mensagens`;
+
+    renderPagination('historyPagination', historyPage, totalPages, (p) => { historyPage = p; renderEmailHistory(); });
 }
 
-async function openContactDetail(id) {
-    currentContactId = id;
-    const c = contactsData.find(x => x.id === id);
-    if (!c) return;
-    if (c.status === 'novo') {
-        try {
-            await supaUpdate('contact_messages', id, { status: 'lido', read_at: new Date().toISOString() });
-            c.status = 'lido'; c.read_at = new Date().toISOString();
-            updateContactKPIs(); renderContacts();
-        } catch (e) { console.error(e); }
-    }
-    const date = new Date(c.created_at);
-    document.getElementById('contactDetailTitle').textContent = `${c.subject || 'Mensagem'} \u2014 ${c.name}`;
-    document.getElementById('contactDetailBody').innerHTML = `
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;">
-            <div><small class="text-muted d-block">Nome</small><strong>${c.name}</strong></div>
-            <div><small class="text-muted d-block">Email</small><a href="mailto:${c.email}">${c.email}</a></div>
-            <div><small class="text-muted d-block">Telefone</small>${c.phone || 'N\u00e3o fornecido'}</div>
-            <div><small class="text-muted d-block">Data</small>${date.toLocaleDateString('pt-PT')} ${date.toLocaleTimeString('pt-PT')}</div>
-        </div>
-        <div style="background:#f8f8f8;border-left:3px solid var(--gold);padding:16px;border-radius:0 8px 8px 0;margin-bottom:1rem;">
-            <small class="text-muted d-block mb-1">Mensagem</small>
-            <p style="margin:0;white-space:pre-wrap;line-height:1.6;">${c.message}</p>
-        </div>`;
-    document.getElementById('contactDetailNotes').value = c.admin_notes || '';
-    document.getElementById('contactDetailOverlay').style.display = 'flex';
-}
+// ═══════════════════════════════════════════════════════════════
+//  CONTACTOS
+// ═══════════════════════════════════════════════════════════════
+function renderContacts() {
+    let data = [...allContacts];
+    const search = (document.getElementById('filterContact')?.value || '').toLowerCase();
+    if (search) data = data.filter(c => (c.name || '').toLowerCase().includes(search) || (c.email || '').toLowerCase().includes(search));
 
-function closeContactDetail() { document.getElementById('contactDetailOverlay').style.display = 'none'; currentContactId = null; }
+    setText('contactsCount', `${data.length} contactos`);
 
-async function markContactReplied() {
-    if (!currentContactId) return;
-    try {
-        const notes = document.getElementById('contactDetailNotes').value;
-        await supaUpdate('contact_messages', currentContactId, { status: 'respondido', replied_at: new Date().toISOString(), admin_notes: notes });
-        const c = contactsData.find(x => x.id === currentContactId);
-        if (c) { c.status = 'respondido'; c.replied_at = new Date().toISOString(); c.admin_notes = notes; }
-        updateContactKPIs(); renderContacts(); closeContactDetail();
-        showToast('Marcado como respondido', 'success');
-    } catch (e) { showToast('Erro ao atualizar: ' + e.message, 'danger'); }
-}
+    const tbody = document.getElementById('contactsTable');
+    if (!tbody) return;
 
-async function saveContactNotes() {
-    if (!currentContactId) return;
-    try {
-        const notes = document.getElementById('contactDetailNotes').value;
-        await supaUpdate('contact_messages', currentContactId, { admin_notes: notes });
-        const c = contactsData.find(x => x.id === currentContactId);
-        if (c) c.admin_notes = notes;
-        showToast('Notas guardadas', 'success');
-    } catch (e) { showToast('Erro ao guardar: ' + e.message, 'danger'); }
-}
-
-function replyToContact(email, name) {
-    document.getElementById('emailModalOverlay').style.display = 'flex';
-    document.getElementById('modalEmailTo').value = email;
-    document.getElementById('modalEmailSubject').value = `Re: A sua mensagem - Share2Inspire`;
-    document.getElementById('modalEmailBody').value = `Ol\u00e1 ${name},\n\nObrigado por nos ter contactado.\n\n\n\nCom os melhores cumprimentos,\nShare2Inspire`;
-    document.getElementById('modalEmailTemplate').value = 'custom';
-}
-
-function exportContactsCSV() {
-    if (!contactsData.length) return;
-    const headers = ['Data','Nome','Email','Telefone','Motivo','Mensagem','Estado','Notas'];
-    const rows = contactsData.map(c => [new Date(c.created_at).toLocaleDateString('pt-PT'), c.name, c.email, c.phone || '', c.subject || '', c.message.replace(/[\n\r]/g,' '), c.status, (c.admin_notes || '').replace(/[\n\r]/g,' ')]);
-    const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `contactos_share2inspire_${new Date().toISOString().slice(0,10)}.csv`;
-    a.click();
-}
-
-// ===================== HEALTH TAB =====================
-function renderHealth() {
-    if (allHealthLogs.length === 0) {
-        document.getElementById('endpointStatus').innerHTML = '<p class="text-muted text-center">Sem dados de monitoriza\u00e7\u00e3o dispon\u00edveis.</p>';
+    if (!data.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum contacto encontrado</td></tr>`;
         return;
     }
 
-    const now = new Date();
-    const h24 = allHealthLogs.filter(l => (now - new Date(l.checked_at)) < 86400000);
-    const d7 = allHealthLogs.filter(l => (now - new Date(l.checked_at)) < 604800000);
-
-    // Average TTFB (24h)
-    const avgTTFB = h24.length > 0 ? (h24.reduce((s,l) => s + (l.ttfb_seconds || 0), 0) / h24.length).toFixed(2) : 'N/A';
-    document.getElementById('healthAvgTTFB').textContent = avgTTFB !== 'N/A' ? `${avgTTFB}s` : 'N/A';
-
-    // Uptime (7d)
-    const healthyCount = d7.filter(l => l.status === 'healthy').length;
-    const uptime = d7.length > 0 ? ((healthyCount / d7.length) * 100).toFixed(1) : 'N/A';
-    document.getElementById('healthUptime').textContent = uptime !== 'N/A' ? `${uptime}%` : 'N/A';
-
-    // Alerts (7d)
-    const alerts = d7.filter(l => l.status !== 'healthy').length;
-    document.getElementById('healthAlerts').textContent = alerts;
-
-    // Last check
-    const lastCheck = allHealthLogs[0];
-    document.getElementById('healthLastCheck').textContent = lastCheck ? new Date(lastCheck.checked_at).toLocaleTimeString('pt-PT') : '--';
-
-    // Endpoint status - group by endpoint_name, show latest status
-    const endpoints = {};
-    allHealthLogs.forEach(l => {
-        if (!endpoints[l.endpoint_name]) endpoints[l.endpoint_name] = l;
-    });
-
-    document.getElementById('endpointStatus').innerHTML = `<div class="table-wrap"><table>
-        <thead><tr><th>Endpoint</th><th>Estado</th><th>TTFB</th><th>HTTP</th><th>\u00daltimo Check</th></tr></thead>
-        <tbody>${Object.values(endpoints).map(e => {
-            const dotClass = e.status === 'healthy' ? 'healthy' : e.status === 'warning' ? 'warning' : e.status === 'critical' ? 'critical' : 'down';
-            const statusLabel = e.status === 'healthy' ? 'Saud\u00e1vel' : e.status === 'warning' ? 'Aviso' : e.status === 'critical' ? 'Cr\u00edtico' : 'Em baixo';
-            return `<tr>
-                <td><strong>${e.endpoint_name}</strong><br><small class="text-muted">${e.endpoint_url || ''}</small></td>
-                <td><span class="health-status"><span class="health-dot ${dotClass}"></span>${statusLabel}</span></td>
-                <td>${e.ttfb_seconds ? e.ttfb_seconds.toFixed(3) + 's' : '-'}</td>
-                <td>${e.http_status || '-'}</td>
-                <td>${new Date(e.checked_at).toLocaleString('pt-PT')}</td>
-            </tr>`;
-        }).join('')}</tbody></table></div>`;
-
-    // TTFB chart
-    updateTTFBChart();
+    tbody.innerHTML = data.map(c => {
+        const date = new Date(c.created_at).toLocaleDateString('pt-PT');
+        return `
+        <tr>
+            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
+            <td>${c.name || '—'}</td>
+            <td style="font-size:12px;">${c.email || '—'}</td>
+            <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${c.message||''}">${c.message || '—'}</td>
+            <td style="font-size:12px;">${c.service || '—'}</td>
+        </tr>`;
+    }).join('');
 }
 
-function updateTTFBChart() {
-    // Group health logs by hour for the last 24h
-    const now = new Date();
-    const h24 = allHealthLogs.filter(l => (now - new Date(l.checked_at)) < 86400000);
-    
-    // Get unique endpoints
-    const endpointNames = [...new Set(h24.map(l => l.endpoint_name))];
-    const colors = ['#BF9A33', '#28a745', '#3498db', '#dc3545', '#7c3aed'];
-    
-    // Group by hour
-    const hours = {};
-    for (let i = 23; i >= 0; i--) {
-        const d = new Date(now);
-        d.setHours(d.getHours() - i, 0, 0, 0);
-        hours[d.toISOString().slice(0, 13)] = {};
+// ═══════════════════════════════════════════════════════════════
+//  SAÚDE DO SISTEMA
+// ═══════════════════════════════════════════════════════════════
+function renderHealth() {
+    const logs = allHealthLogs;
+    if (!logs.length) {
+        setText('healthUptime', '—');
+        setText('healthAlerts', '—');
+        setText('healthLastCheck', '—');
+        document.getElementById('endpointStatus').innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Sem dados de saúde disponíveis.</p>';
+        return;
     }
-    
-    h24.forEach(l => {
-        const hourKey = new Date(l.checked_at).toISOString().slice(0, 13);
-        if (hours[hourKey]) {
-            if (!hours[hourKey][l.endpoint_name]) hours[hourKey][l.endpoint_name] = [];
-            hours[hourKey][l.endpoint_name].push(l.ttfb_seconds || 0);
-        }
+
+    const last7d = logs.filter(l => new Date(l.checked_at) > new Date(Date.now() - 7 * 86400000));
+    const healthy = last7d.filter(l => l.status === 'healthy').length;
+    const uptime  = last7d.length ? Math.round(healthy / last7d.length * 100) : 100;
+    const alerts  = last7d.filter(l => l.status !== 'healthy').length;
+    const lastLog = logs[0];
+
+    setText('healthUptime',    `${uptime}%`);
+    setText('healthAlerts',    alerts);
+    setText('healthLastCheck', lastLog ? new Date(lastLog.checked_at).toLocaleTimeString('pt-PT') : '—');
+
+    // Endpoints
+    const endpointMap = {};
+    logs.slice(0, 200).forEach(l => {
+        if (!endpointMap[l.endpoint]) endpointMap[l.endpoint] = { ok: 0, total: 0, lastTtfb: 0 };
+        endpointMap[l.endpoint].total++;
+        if (l.status === 'healthy') endpointMap[l.endpoint].ok++;
+        endpointMap[l.endpoint].lastTtfb = l.ttfb_ms || 0;
     });
 
-    const labels = Object.keys(hours).map(h => h.slice(11, 13) + ':00');
-    const datasets = endpointNames.slice(0, 5).map((name, i) => ({
-        label: name,
-        data: Object.values(hours).map(h => {
-            const vals = h[name];
-            return vals && vals.length > 0 ? (vals.reduce((a,b) => a+b, 0) / vals.length) : null;
-        }),
-        borderColor: colors[i % colors.length],
-        backgroundColor: colors[i % colors.length] + '20',
-        fill: false,
-        tension: 0.3,
-        spanGaps: true
-    }));
-
-    if (ttfbChart) ttfbChart.destroy();
-    ttfbChart = new Chart(document.getElementById('ttfbChart').getContext('2d'), {
-        type: 'line',
-        data: { labels, datasets },
-        options: {
-            responsive: true,
-            plugins: { legend: { position: 'top' } },
-            scales: { y: { beginAtZero: true, title: { display: true, text: 'TTFB (s)' } } }
-        }
-    });
-}
-
-// ===================== UTILITIES =====================
-function switchTab(tab, btn) {
-    document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-    document.getElementById('tab-' + tab).style.display = 'block';
-    btn.classList.add('active');
-
-    if (tab === 'analyses') renderAnalyses();
-    if (tab === 'vouchers') renderVouchers();
-    if (tab === 'history') renderHistory();
-    if (tab === 'contacts') loadContacts();
-    if (tab === 'health') { loadHealthLogs().then(renderHealth); }
-    if (tab === 'ebook') { loadEbookDownloads(); }
-    if (tab === 'jobsearch') { loadJobSearchData(); }
-    if (tab === 'careerenergy') { loadCareerEnergyData(); }
-}
-
-function showToast(msg, type = 'info') {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    const typeMap = { success: 'success', danger: 'danger', info: 'info', warning: 'danger' };
-    toast.className = `toast toast-${typeMap[type] || 'info'}`;
-    toast.innerHTML = `<span>${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;margin-left:12px;font-size:14px;color:inherit;opacity:.6;">&times;</button>`;
-    container.appendChild(toast);
-    setTimeout(() => toast.remove(), 5000);
-}
-
-function downloadCSV(content, filename) {
-    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click();
-    URL.revokeObjectURL(url); a.remove();
-}
-
-// ===================== INIT =====================
-async function refreshAll() {
-    document.getElementById('lastUpdate').textContent = 'A atualizar...';
-    await Promise.all([loadAllData(), loadEmailHistory()]);
-    updateDashboard();
-    renderAnalyses();
-    renderVouchers();
-    renderHistory();
-    document.getElementById('lastUpdate').textContent = `\u00daltima atualiza\u00e7\u00e3o: ${new Date().toLocaleTimeString('pt-PT')}`;
-}
-
-// Supabase Realtime
-function initRealtime() {
-    const wsUrl = SUPABASE_URL.replace('https://', 'wss://') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY + '&vsn=1.0.0';
-    let ws;
-    let reconnectDelay = 3000;
-
-    function connect() {
-        ws = new WebSocket(wsUrl);
-        ws.onopen = () => {
-            reconnectDelay = 3000;
-            ws.send(JSON.stringify({ topic: 'realtime:public:cv_analysis', event: 'phx_join', payload: { config: { broadcast: { self: true }, presence: { key: '' }, postgres_changes: [{ event: '*', schema: 'public', table: 'cv_analysis' }] } }, ref: '1' }));
-            ws.send(JSON.stringify({ topic: 'realtime:public:vouchers', event: 'phx_join', payload: { config: { broadcast: { self: true }, presence: { key: '' }, postgres_changes: [{ event: '*', schema: 'public', table: 'vouchers' }] } }, ref: '2' }));
-            ws.send(JSON.stringify({ topic: 'realtime:public:contact_messages', event: 'phx_join', payload: { config: { broadcast: { self: true }, presence: { key: '' }, postgres_changes: [{ event: '*', schema: 'public', table: 'contact_messages' }] } }, ref: '3' }));
-            document.getElementById('lastUpdate').textContent += ' \u00b7 \ud83d\udfe2 Live';
-        };
-        ws.onmessage = (evt) => {
-            try {
-                const msg = JSON.parse(evt.data);
-                if (msg.event === 'postgres_changes' || (msg.payload && msg.payload.data)) {
-                    loadAllData().then(() => { updateDashboard(); renderAnalyses(); renderVouchers(); document.getElementById('lastUpdate').textContent = `\u00daltima actualiza\u00e7\u00e3o: ${new Date().toLocaleTimeString('pt-PT')} \u00b7 \ud83d\udfe2 Live`; });
-                }
-            } catch(e) {}
-        };
-        ws.onclose = () => {
-            document.getElementById('lastUpdate').textContent = document.getElementById('lastUpdate').textContent.replace(' \u00b7 \ud83d\udfe2 Live', ' \u00b7 \ud83d\udd34 Reconectar...');
-            setTimeout(connect, reconnectDelay);
-            reconnectDelay = Math.min(reconnectDelay * 2, 30000);
-        };
-        ws.onerror = () => ws.close();
+    const endpointEl = document.getElementById('endpointStatus');
+    if (endpointEl) {
+        endpointEl.innerHTML = Object.entries(endpointMap).map(([ep, stats]) => {
+            const pct = Math.round(stats.ok / stats.total * 100);
+            const dotClass = pct >= 95 ? 'healthy' : pct >= 80 ? 'warning' : 'critical';
+            return `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="health-dot ${dotClass}"></span>
+                    <span style="font-size:13px;">${ep}</span>
+                </div>
+                <div style="display:flex;gap:16px;font-size:12px;color:var(--text-muted);">
+                    <span>Uptime: <strong style="color:var(--dark);">${pct}%</strong></span>
+                    <span>TTFB: <strong style="color:var(--dark);">${stats.lastTtfb}ms</strong></span>
+                </div>
+            </div>`;
+        }).join('');
     }
-    connect();
-}
 
-// ===================== E-BOOK DOWNLOADS =====================
-let allEbookDownloads = [];
-
-async function loadEbookDownloads() {
-    try {
-        const data = await supaFetch('newsletter_subscribers', 'select=*&or=(source.eq.ebook_energia_liderar,source.eq.conhecimento)&order=subscribed_at.desc');
-        allEbookDownloads = data || [];
-        renderEbookDownloads();
-    } catch(e) {
-        console.error('Erro ao carregar e-book downloads:', e);
-        document.getElementById('ebookTable').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--red);">Erro ao carregar dados</td></tr>';
+    // TTFB Chart
+    const ttfbData = logs.slice(0, 50).reverse();
+    const ctx = document.getElementById('ttfbChart')?.getContext('2d');
+    if (ctx) {
+        if (ttfbChart) ttfbChart.destroy();
+        ttfbChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ttfbData.map(l => new Date(l.checked_at).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })),
+                datasets: [{ label: 'TTFB (ms)', data: ttfbData.map(l => l.ttfb_ms || 0), borderColor: '#C9A961', backgroundColor: 'rgba(201,169,97,.1)', tension: 0.3, pointRadius: 2 }]
+            },
+            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 9 }, maxTicksLimit: 10 } } } }
+        });
     }
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  E-BOOK DOWNLOADS
+// ═══════════════════════════════════════════════════════════════
 function renderEbookDownloads() {
-    const sourceFilter = document.getElementById('filterEbookSource').value;
-    const periodFilter = document.getElementById('filterEbookPeriod').value;
-    const search = document.getElementById('filterEbookSearch').value.toLowerCase().trim();
+    let data = [...allEbookDownloads];
+    const source = document.getElementById('filterEbookSource')?.value || 'all';
+    const period = document.getElementById('filterEbookPeriod')?.value || 'all';
+    const search = (document.getElementById('filterEbookSearch')?.value || '').toLowerCase();
+
+    if (source !== 'all') data = data.filter(e => e.source === source || e.download_source === source);
+    if (period !== 'all') {
+        const days = parseInt(period);
+        data = filterByPeriod(data, days);
+    }
+    if (search) data = data.filter(e => (e.email || '').toLowerCase().includes(search) || (e.name || '').toLowerCase().includes(search));
+
     const now = new Date();
-    const h24 = new Date(now - 24*60*60*1000);
-    const d7 = new Date(now - 7*24*60*60*1000);
-    const d30 = new Date(now - 30*24*60*60*1000);
-    const d90 = new Date(now - 90*24*60*60*1000);
-
-    // KPIs
-    const total = allEbookDownloads.length;
-    const last24h = allEbookDownloads.filter(d => new Date(d.subscribed_at) >= h24).length;
-    const last7d = allEbookDownloads.filter(d => new Date(d.subscribed_at) >= d7).length;
-    const last30d = allEbookDownloads.filter(d => new Date(d.subscribed_at) >= d30).length;
-    document.getElementById('kpiEbookTotal').textContent = total;
-    document.getElementById('kpiEbook24h').textContent = last24h;
-    document.getElementById('kpiEbook7d').textContent = last7d;
-    document.getElementById('kpiEbook30d').textContent = last30d;
-
-    // Filter
-    let filtered = [...allEbookDownloads];
-    if (sourceFilter !== 'all') filtered = filtered.filter(d => d.source === sourceFilter);
-    if (periodFilter === '7d') filtered = filtered.filter(d => new Date(d.subscribed_at) >= d7);
-    else if (periodFilter === '30d') filtered = filtered.filter(d => new Date(d.subscribed_at) >= d30);
-    else if (periodFilter === '90d') filtered = filtered.filter(d => new Date(d.subscribed_at) >= d90);
-    if (search) filtered = filtered.filter(d => (d.email || '').toLowerCase().includes(search) || (d.name || '').toLowerCase().includes(search));
-
-    document.getElementById('ebookCount').textContent = filtered.length + ' registo' + (filtered.length !== 1 ? 's' : '');
+    setText('kpiEbookTotal', allEbookDownloads.length);
+    setText('kpiEbook24h',   allEbookDownloads.filter(e => new Date(e.created_at) > new Date(now - 86400000)).length);
+    setText('kpiEbook7d',    allEbookDownloads.filter(e => new Date(e.created_at) > new Date(now - 7 * 86400000)).length);
+    setText('kpiEbook30d',   allEbookDownloads.filter(e => new Date(e.created_at) > new Date(now - 30 * 86400000)).length);
+    setText('ebookCount',    `${data.length} downloads`);
 
     const tbody = document.getElementById('ebookTable');
-    if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Sem registos</td></tr>';
+    if (!tbody) return;
+
+    if (!data.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum download encontrado</td></tr>`;
         return;
     }
 
-    tbody.innerHTML = filtered.map(d => {
-        const date = new Date(d.subscribed_at);
-        const dateStr = date.toLocaleDateString('pt-PT') + ' ' + date.toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
-        const sourceLabel = d.source === 'ebook_energia_liderar' ? '<span style="color:var(--gold);font-weight:500;">E-book</span>' : '<span style="color:var(--blue);">Conhecimento</span>';
-        const statusBadge = d.status === 'active' ? '<span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;background:rgba(16,185,129,0.1);color:var(--green);">Ativo</span>' : '<span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;background:rgba(239,68,68,0.1);color:var(--red);">' + (d.status || 'N/A') + '</span>';
-        return `<tr><td style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${dateStr}</td><td style="font-weight:500;">${d.email || '-'}</td><td>${d.name || '-'}</td><td>${sourceLabel}</td><td>${statusBadge}</td></tr>`;
+    tbody.innerHTML = data.map(e => {
+        const date = new Date(e.created_at).toLocaleDateString('pt-PT');
+        return `
+        <tr>
+            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
+            <td style="font-size:12px;">${e.email || '—'}</td>
+            <td>${e.name || '—'}</td>
+            <td><span class="badge badge-secondary">${e.source || e.download_source || '—'}</span></td>
+            <td><span class="badge ${e.email_sent ? 'badge-success' : 'badge-secondary'}">${e.email_sent ? 'Enviado' : 'Pendente'}</span></td>
+        </tr>`;
     }).join('');
 }
 
 function exportEbookCSV() {
-    if (!allEbookDownloads.length) return showToast('Sem dados para exportar', 'info');
-    const header = 'Data,Email,Nome,Source,Estado';
-    const rows = allEbookDownloads.map(d => {
-        const date = new Date(d.subscribed_at).toISOString();
-        return `${date},${d.email || ''},${d.name || ''},${d.source || ''},${d.status || ''}`;
-    });
-    downloadCSV(header + '\n' + rows.join('\n'), 'ebook_downloads_' + new Date().toISOString().slice(0,10) + '.csv');
-    showToast('CSV exportado com sucesso', 'success');
+    const rows = [['Data','Email','Nome','Source','Estado']];
+    allEbookDownloads.forEach(e => rows.push([e.created_at?.slice(0,10), e.email||'', e.name||'', e.source||'', e.email_sent ? 'Enviado' : 'Pendente']));
+    downloadCSV(rows, 'ebook_downloads.csv');
 }
 
-// ===================== JOB SEARCH TRACKING =====================
-let allJobSearchData = [];
-let jobChartTopRoles = null;
-let jobChartSeniority = null;
-let jobChartTopSkills = null;
-let jobChartKeywordGaps = null;
-let jobChartDaily = null;
-let jobChartLanguage = null;
+// ═══════════════════════════════════════════════════════════════
+//  JOB SEARCH TRACKING
+// ═══════════════════════════════════════════════════════════════
+function renderJobSearch() {
+    const data = allJobSearch;
+    const now  = new Date();
 
-async function loadJobSearchData() {
-    try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/job_search_tracking?select=*&order=created_at.desc&limit=5000`, {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-        });
-        if (!res.ok) throw new Error('Fetch failed');
-        allJobSearchData = await res.json();
-        renderJobSearchKPIs();
-        renderJobSearchCharts();
-        renderJobSearchTable();
-        populateJobFilters();
-    } catch (e) {
-        console.error('Error loading job search data:', e);
-        showToast('Erro ao carregar dados de cargos', 'danger');
-    }
-}
+    setText('kpiJobTotal',       data.length);
+    setText('kpiJobWithJob',     data.filter(j => j.has_job_offer || j.job_offer_found).length);
+    setText('kpiJobNoJob',       data.filter(j => !j.has_job_offer && !j.job_offer_found).length);
+    setText('kpiJobUniqueRoles', new Set(data.map(j => j.detected_role || j.job_title || '').filter(Boolean)).size);
+    setText('kpiJob7d',          data.filter(j => new Date(j.created_at) > new Date(now - 7 * 86400000)).length);
 
-function renderJobSearchKPIs() {
-    const data = allJobSearchData;
-    const withJob = data.filter(d => d.job_title && d.job_title !== 'N/A');
-    const noJob = data.filter(d => !d.job_title || d.job_title === 'N/A');
-    const uniqueRoles = new Set(data.map(d => (d.detected_role || '').toLowerCase()).filter(r => r && r !== 'n/a'));
-    const uniqueNormalized = new Set(data.map(d => (d.normalized_role || '').toLowerCase()).filter(r => r));
-    const uniqueSectors = new Set(data.map(d => (d.sector || '').toLowerCase()).filter(r => r));
-    const now = new Date();
-    const week = data.filter(d => (now - new Date(d.created_at)) < 7 * 86400000);
+    // Populate seniority filter
+    const senSet = new Set(data.map(j => j.seniority_level || j.seniority).filter(Boolean));
+    populateSelect('filterJobSeniority', [...senSet].sort());
 
-    document.getElementById('kpiJobTotal').textContent = data.length;
-    document.getElementById('kpiJobWithJob').textContent = withJob.length;
-    document.getElementById('kpiJobNoJob').textContent = noJob.length;
-    document.getElementById('kpiJobUniqueRoles').textContent = uniqueRoles.size;
-    document.getElementById('kpiJob7d').textContent = week.length;
-    if (document.getElementById('kpiJobNormRoles')) document.getElementById('kpiJobNormRoles').textContent = uniqueNormalized.size;
-    if (document.getElementById('kpiJobSectors')) document.getElementById('kpiJobSectors').textContent = uniqueSectors.size;
-}
-
-function renderJobSearchCharts() {
-    const data = allJobSearchData;
-
-    // Top 10 Normalized Roles (uses normalized_role if available, falls back to detected_role)
-    const normRoleCounts = {};
-    data.forEach(d => {
-        const role = d.normalized_role || d.detected_role || 'N/A';
-        if (role !== 'N/A') normRoleCounts[role] = (normRoleCounts[role] || 0) + 1;
-    });
-    const topNormRoles = Object.entries(normRoleCounts).sort((a,b) => b[1]-a[1]).slice(0, 10);
-    if (jobChartTopRoles) jobChartTopRoles.destroy();
-    jobChartTopRoles = new Chart(document.getElementById('chartTopRoles'), {
-        type: 'bar',
-        data: {
-            labels: topNormRoles.map(r => r[0].length > 25 ? r[0].substring(0,25)+'...' : r[0]),
-            datasets: [{ label: 'Pesquisas', data: topNormRoles.map(r => r[1]), backgroundColor: '#C9A961', borderRadius: 6 }]
-        },
-        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
-    });
-
-    // Top Sectors chart
-    const sectorCounts = {};
-    data.forEach(d => {
-        const sector = d.sector || '';
-        if (sector) sectorCounts[sector] = (sectorCounts[sector] || 0) + 1;
-    });
-    const topSectors = Object.entries(sectorCounts).sort((a,b) => b[1]-a[1]).slice(0, 8);
-    if (window.jobChartSectors) window.jobChartSectors.destroy();
-    const sectorCanvas = document.getElementById('chartSectors');
-    if (sectorCanvas && topSectors.length > 0) {
-        window.jobChartSectors = new Chart(sectorCanvas, {
-            type: 'doughnut',
-            data: {
-                labels: topSectors.map(s => s[0]),
-                datasets: [{ data: topSectors.map(s => s[1]), backgroundColor: ['#C9A961','#3B82F6','#10B981','#7C3AED','#F59E0B','#EF4444','#6B7280','#EC4899'] }]
-            },
-            options: { responsive: true, plugins: { legend: { position: 'right' } } }
-        });
-    }
-
-    // Seniority Distribution
-    const senCounts = {};
-    data.forEach(d => { const s = d.seniority || 'N/A'; senCounts[s] = (senCounts[s] || 0) + 1; });
-    if (jobChartSeniority) jobChartSeniority.destroy();
-    jobChartSeniority = new Chart(document.getElementById('chartSeniority'), {
-        type: 'doughnut',
-        data: {
-            labels: Object.keys(senCounts),
-            datasets: [{ data: Object.values(senCounts), backgroundColor: ['#C9A961','#3B82F6','#10B981','#7C3AED','#F59E0B','#EF4444','#6B7280'] }]
-        },
-        options: { responsive: true, plugins: { legend: { position: 'right' } } }
-    });
-
-    // Top Skills
-    const skillCounts = {};
-    data.forEach(d => {
-        const skills = Array.isArray(d.key_skills) ? d.key_skills : [];
-        skills.forEach(s => { if (s) skillCounts[s] = (skillCounts[s] || 0) + 1; });
-    });
-    const topSkills = Object.entries(skillCounts).sort((a,b) => b[1]-a[1]).slice(0, 10);
-    if (jobChartTopSkills) jobChartTopSkills.destroy();
-    jobChartTopSkills = new Chart(document.getElementById('chartTopSkills'), {
-        type: 'bar',
-        data: {
-            labels: topSkills.map(s => s[0].length > 25 ? s[0].substring(0,25)+'...' : s[0]),
-            datasets: [{ label: 'Candidatos', data: topSkills.map(s => s[1]), backgroundColor: '#3B82F6', borderRadius: 6 }]
-        },
-        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
-    });
-
-    // Top Keyword Gaps
-    const gapCounts = {};
-    data.forEach(d => {
-        const gaps = Array.isArray(d.keyword_gaps) ? d.keyword_gaps : [];
-        gaps.forEach(g => { if (g) gapCounts[g] = (gapCounts[g] || 0) + 1; });
-    });
-    const topGaps = Object.entries(gapCounts).sort((a,b) => b[1]-a[1]).slice(0, 10);
-    if (jobChartKeywordGaps) jobChartKeywordGaps.destroy();
-    jobChartKeywordGaps = new Chart(document.getElementById('chartKeywordGaps'), {
-        type: 'bar',
-        data: {
-            labels: topGaps.map(g => g[0].length > 25 ? g[0].substring(0,25)+'...' : g[0]),
-            datasets: [{ label: 'Gaps', data: topGaps.map(g => g[1]), backgroundColor: '#EF4444', borderRadius: 6 }]
-        },
-        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
-    });
-
-    // Daily searches (last 30 days)
-    const dailyCounts = {};
-    const now = new Date();
-    for (let i = 29; i >= 0; i--) {
-        const d = new Date(now); d.setDate(d.getDate() - i);
-        dailyCounts[d.toISOString().slice(0,10)] = 0;
-    }
-    data.forEach(d => {
-        const day = new Date(d.created_at).toISOString().slice(0,10);
-        if (dailyCounts[day] !== undefined) dailyCounts[day]++;
-    });
-    if (jobChartDaily) jobChartDaily.destroy();
-    jobChartDaily = new Chart(document.getElementById('chartJobDaily'), {
-        type: 'line',
-        data: {
-            labels: Object.keys(dailyCounts).map(d => d.slice(5)),
-            datasets: [{ label: 'Pesquisas', data: Object.values(dailyCounts), borderColor: '#C9A961', backgroundColor: 'rgba(201,169,97,0.1)', fill: true, tension: 0.3 }]
-        },
-        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
-    });
-
-    // Language distribution
-    const langCounts = {};
-    data.forEach(d => { const l = (d.language || 'pt').toUpperCase(); langCounts[l] = (langCounts[l] || 0) + 1; });
-    if (jobChartLanguage) jobChartLanguage.destroy();
-    jobChartLanguage = new Chart(document.getElementById('chartJobLanguage'), {
-        type: 'pie',
-        data: {
-            labels: Object.keys(langCounts),
-            datasets: [{ data: Object.values(langCounts), backgroundColor: ['#C9A961','#3B82F6','#10B981','#7C3AED'] }]
-        },
-        options: { responsive: true, plugins: { legend: { position: 'right' } } }
-    });
-}
-
-function populateJobFilters() {
-    const senSet = new Set(allJobSearchData.map(d => d.seniority || 'N/A'));
-    const sel = document.getElementById('filterJobSeniority');
-    sel.innerHTML = '<option value="all">Todas</option>';
-    [...senSet].sort().forEach(s => {
-        sel.innerHTML += `<option value="${s}">${s}</option>`;
-    });
+    renderJobSearchTable();
+    renderJobSearchCharts();
 }
 
 function renderJobSearchTable() {
-    const senFilter = document.getElementById('filterJobSeniority').value;
-    const periodFilter = document.getElementById('filterJobPeriod').value;
-    const typeFilter = document.getElementById('filterJobType').value;
-    const searchFilter = (document.getElementById('filterJobSearch').value || '').toLowerCase();
-    const now = new Date();
+    let data = [...allJobSearch];
+    const sen    = document.getElementById('filterJobSeniority')?.value || 'all';
+    const period = document.getElementById('filterJobPeriod')?.value || 'all';
+    const search = (document.getElementById('filterJobSearch')?.value || '').toLowerCase();
 
-    let filtered = allJobSearchData.filter(d => {
-        if (senFilter !== 'all' && d.seniority !== senFilter) return false;
-        if (periodFilter !== 'all') {
-            const days = periodFilter === '7d' ? 7 : periodFilter === '30d' ? 30 : 90;
-            if ((now - new Date(d.created_at)) > days * 86400000) return false;
-        }
-        if (typeFilter === 'with_job' && (!d.job_title || d.job_title === 'N/A')) return false;
-        if (typeFilter === 'no_job' && d.job_title && d.job_title !== 'N/A') return false;
-        if (searchFilter) {
-            const text = `${d.candidate_name} ${d.detected_role} ${d.job_title}`.toLowerCase();
-            if (!text.includes(searchFilter)) return false;
-        }
-        return true;
-    });
+    if (sen !== 'all') data = data.filter(j => (j.seniority_level || j.seniority) === sen);
+    if (period !== 'all') data = filterByPeriod(data, parseInt(period));
+    if (search) data = data.filter(j => (j.detected_role || j.job_title || '').toLowerCase().includes(search) || (j.user_name || '').toLowerCase().includes(search));
 
-    document.getElementById('jobSearchCount').textContent = `${filtered.length} registos`;
+    setText('jobSearchCount', `${data.length} pesquisas`);
 
     const tbody = document.getElementById('jobSearchTable');
-    if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Sem dados</td></tr>';
+    if (!tbody) return;
+
+    if (!data.length) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma pesquisa encontrada</td></tr>`;
         return;
     }
 
-    tbody.innerHTML = filtered.slice(0, 100).map(d => {
-        const date = new Date(d.created_at).toLocaleDateString('pt-PT', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-        const skills = Array.isArray(d.key_skills) ? d.key_skills.slice(0,3).join(', ') : '';
-        const gaps = Array.isArray(d.keyword_gaps) ? d.keyword_gaps.slice(0,3).join(', ') : '';
-        const jobTitle = d.job_title && d.job_title !== 'N/A' ? `<span style="color:var(--green);">${d.job_title}</span>` : '<span style="color:var(--text-muted);">—</span>';
-        const atsScore = d.ats_compatibility_score ? `<span style="font-weight:600;color:${d.ats_compatibility_score >= 70 ? 'var(--green)' : d.ats_compatibility_score >= 40 ? 'var(--orange)' : 'var(--red)'}">${d.ats_compatibility_score}%</span>` : '—';
-        return `<tr>
-            <td style="white-space:nowrap;font-size:12px;">${date}</td>
-            <td>${d.candidate_name || 'N/A'}</td>
-            <td><strong>${d.detected_role || 'N/A'}</strong>${d.normalized_role ? `<br><span style="font-size:10px;color:var(--gold);">${d.normalized_role}</span>` : ''}${d.sector ? `<br><span style="font-size:10px;color:var(--purple);">${d.sector}</span>` : ''}</td>
-            <td><span class="badge" style="background:var(--gold-bg);color:var(--gold);font-size:11px;padding:2px 8px;border-radius:4px;">${d.seniority || 'N/A'}</span></td>
-            <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;">${skills || '—'}</td>
-            <td>${jobTitle}</td>
-            <td>${atsScore}</td>
-            <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;color:var(--red);">${gaps || '—'}</td>
+    tbody.innerHTML = data.slice(0, 100).map(j => {
+        const date  = new Date(j.created_at).toLocaleDateString('pt-PT');
+        const skills = Array.isArray(j.top_skills) ? j.top_skills.slice(0, 3).join(', ') : (j.top_skills || '—');
+        const hasJob = j.has_job_offer || j.job_offer_found;
+        return `
+        <tr>
+            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
+            <td style="font-size:12px;">${j.user_name || '—'}</td>
+            <td style="font-size:12px;font-weight:500;">${j.detected_role || j.job_title || '—'}</td>
+            <td><span class="badge badge-secondary">${j.seniority_level || j.seniority || '—'}</span></td>
+            <td style="font-size:11px;color:var(--text-muted);">${skills}</td>
+            <td><span class="badge ${hasJob ? 'badge-success' : 'badge-secondary'}">${hasJob ? 'Sim' : 'Não'}</span></td>
+            <td style="font-size:12px;">${j.ats_score || '—'}</td>
         </tr>`;
     }).join('');
+}
+
+function renderJobSearchCharts() {
+    const data = allJobSearch;
+
+    // Top Roles
+    const roleCount = {};
+    data.forEach(j => { const r = j.detected_role || j.job_title; if (r) roleCount[r] = (roleCount[r] || 0) + 1; });
+    const topRoles = Object.entries(roleCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+    const ctx1 = document.getElementById('chartTopRoles')?.getContext('2d');
+    if (ctx1) new Chart(ctx1, {
+        type: 'bar',
+        data: { labels: topRoles.map(r => r[0]), datasets: [{ data: topRoles.map(r => r[1]), backgroundColor: '#C9A961', borderRadius: 3 }] },
+        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
+    });
+
+    // Seniority
+    const senCount = {};
+    data.forEach(j => { const s = j.seniority_level || j.seniority; if (s) senCount[s] = (senCount[s] || 0) + 1; });
+    const ctx2 = document.getElementById('chartSeniority')?.getContext('2d');
+    if (ctx2) new Chart(ctx2, {
+        type: 'doughnut',
+        data: { labels: Object.keys(senCount), datasets: [{ data: Object.values(senCount), backgroundColor: ['#C9A961','#3B82F6','#10B981','#7C3AED','#F59E0B'], borderWidth: 0 }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+    });
+
+    // Top Skills
+    const skillCount = {};
+    data.forEach(j => {
+        const skills = Array.isArray(j.top_skills) ? j.top_skills : [];
+        skills.forEach(s => { if (s) skillCount[s] = (skillCount[s] || 0) + 1; });
+    });
+    const topSkills = Object.entries(skillCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const ctx3 = document.getElementById('chartTopSkills')?.getContext('2d');
+    if (ctx3) new Chart(ctx3, {
+        type: 'bar',
+        data: { labels: topSkills.map(s => s[0]), datasets: [{ data: topSkills.map(s => s[1]), backgroundColor: '#3B82F6', borderRadius: 3 }] },
+        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
+    });
+
+    // Keyword Gaps
+    const gapCount = {};
+    data.forEach(j => {
+        const gaps = Array.isArray(j.keyword_gaps) ? j.keyword_gaps : [];
+        gaps.forEach(g => { if (g) gapCount[g] = (gapCount[g] || 0) + 1; });
+    });
+    const topGaps = Object.entries(gapCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const ctx4 = document.getElementById('chartKeywordGaps')?.getContext('2d');
+    if (ctx4) new Chart(ctx4, {
+        type: 'bar',
+        data: { labels: topGaps.map(g => g[0]), datasets: [{ data: topGaps.map(g => g[1]), backgroundColor: '#EF4444', borderRadius: 3 }] },
+        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
+    });
 }
 
 function exportJobSearchCSV() {
-    if (!allJobSearchData.length) { showToast('Sem dados para exportar', 'danger'); return; }
-    const header = 'Data,Nome,Cargo Detetado,Cargo Normalizado,Setor,Keywords,Senioridade,Anos Exp,Skills,Idioma,Vaga,ATS Score,Keyword Gaps,Overall Fit';
-    const rows = allJobSearchData.map(d => {
-        const date = new Date(d.created_at).toISOString().slice(0,19);
-        const skills = Array.isArray(d.key_skills) ? d.key_skills.join(';') : '';
-        const gaps = Array.isArray(d.keyword_gaps) ? d.keyword_gaps.join(';') : '';
-        const roleKw = Array.isArray(d.role_keywords) ? d.role_keywords.join(';') : '';
-        return `${date},"${d.candidate_name || ''}","${d.detected_role || ''}","${d.normalized_role || ''}","${d.sector || ''}","${roleKw}",${d.seniority || ''},${d.years_experience || ''},"${skills}",${d.language || ''},"${d.job_title || ''}",${d.ats_compatibility_score || ''},"${gaps}","${d.overall_fit || ''}"`;  
-    });
-    downloadCSV(header + '\n' + rows.join('\n'), 'job_search_tracking_' + new Date().toISOString().slice(0,10) + '.csv');
-    showToast('CSV exportado com sucesso', 'success');
+    const rows = [['Data','Nome','Cargo','Senioridade','Skills','Com Vaga','ATS Score']];
+    allJobSearch.forEach(j => rows.push([
+        j.created_at?.slice(0,10), j.user_name||'', j.detected_role||j.job_title||'',
+        j.seniority_level||j.seniority||'',
+        Array.isArray(j.top_skills) ? j.top_skills.join(';') : '',
+        j.has_job_offer || j.job_offer_found ? 'Sim' : 'Não',
+        j.ats_score||''
+    ]));
+    downloadCSV(rows, 'job_search.csv');
 }
 
-// ===================== CAREER ENERGY =====================
-let allCEData = [];
-let ceChartLevels, ceChartDimensions, ceChartDaily, ceChartCountries, ceChartHappiness, ceChartLanguage;
+// ═══════════════════════════════════════════════════════════════
+//  CAREER ENERGY
+// ═══════════════════════════════════════════════════════════════
+function renderCareerEnergy() {
+    const data = allCareerEnergy;
 
-async function loadCareerEnergyData() {
-    try {
-        allCEData = await supaFetch('career_energy_results', 'select=*&order=created_at.desc');
-        renderCEDashboard();
-        populateCEFilters();
-        renderCETable();
-    } catch(e) {
-        console.error('CE load error:', e);
-        showToast('Erro ao carregar Career Energy', 'danger');
-    }
-}
+    const scores = data.filter(d => d.total_score > 0).map(d => d.total_score);
+    const avgScore = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+    const countries = new Set(data.map(d => d.country).filter(Boolean));
+    const linkedin  = data.filter(d => d.linkedin_shared).length;
 
-function renderCEDashboard() {
-    const data = allCEData;
-    const now = new Date();
-    const d7 = data.filter(d => (now - new Date(d.created_at)) < 7 * 86400000);
-    const countries = new Set(data.filter(d => d.country_name).map(d => d.country_name));
-    const shares = data.filter(d => d.shared_linkedin);
-    const aboveAvg = data.filter(d => d.country_diff !== null && d.country_diff > 0);
-    const avgScore = data.length ? Math.round(data.reduce((a, d) => a + d.total_score, 0) / data.length) : 0;
+    setText('kpiCETotal',     data.length);
+    setText('kpiCEAvg',       avgScore);
+    setText('kpiCEAboveAvg',  data.filter(d => d.total_score > (d.country_avg || 50)).length);
+    setText('kpiCECountries', countries.size);
+    setText('kpiCELinkedIn',  linkedin);
 
-    document.getElementById('kpiCETotal').textContent = data.length;
-    document.getElementById('kpiCEAvgScore').textContent = avgScore + '/100';
-    document.getElementById('kpiCE7d').textContent = d7.length;
-    document.getElementById('kpiCECountries').textContent = countries.size;
-    document.getElementById('kpiCEShares').textContent = shares.length;
-    document.getElementById('kpiCEAboveAvg').textContent = data.length ? Math.round(aboveAvg.length / data.filter(d => d.country_diff !== null).length * 100) + '%' : '--';
+    // Populate filters
+    populateSelect('filterCECountry', [...countries].sort());
+    const levels = new Set(data.map(d => d.energy_level || d.level).filter(Boolean));
+    populateSelect('filterCELevel', [...levels].sort());
 
-    // Level distribution chart
-    const levelCounts = {};
-    data.forEach(d => { levelCounts[d.level_label] = (levelCounts[d.level_label] || 0) + 1; });
-    const levelOrder = ['Necessita Re-energizar','Energia Cr\u00edtica','A Calibrar','A Construir Energia','Energia Est\u00e1vel','Energia Forte','Alta Performance',
-        'Needs Re-energizing','Critical Energy','Calibrating','Building Energy','Steady Energy','Strong Energy','High Performance'];
-    const sortedLevels = Object.entries(levelCounts).sort((a,b) => {
-        const ia = levelOrder.indexOf(a[0]), ib = levelOrder.indexOf(b[0]);
-        return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
-    });
-    if (ceChartLevels) ceChartLevels.destroy();
-    ceChartLevels = new Chart(document.getElementById('chartCELevels'), {
-        type: 'bar',
-        data: {
-            labels: sortedLevels.map(l => l[0]),
-            datasets: [{ label: 'Diagn\u00f3sticos', data: sortedLevels.map(l => l[1]), backgroundColor: ['#EF4444','#F59E0B','#F59E0B','#3B82F6','#10B981','#10B981','#C9A961','#EF4444','#F59E0B','#F59E0B','#3B82F6','#10B981','#10B981','#C9A961'], borderRadius: 6 }]
-        },
-        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
-    });
-
-    // Dimensions average chart
-    const avgEnergy = data.length ? Math.round(data.reduce((a,d) => a + (d.dim_energy||0), 0) / data.length) : 0;
-    const avgClarity = data.length ? Math.round(data.reduce((a,d) => a + (d.dim_clarity||0), 0) / data.length) : 0;
-    const avgPositioning = data.length ? Math.round(data.reduce((a,d) => a + (d.dim_positioning||0), 0) / data.length) : 0;
-    const avgPurpose = data.length ? Math.round(data.reduce((a,d) => a + (d.dim_purpose||0), 0) / data.length) : 0;
-    if (ceChartDimensions) ceChartDimensions.destroy();
-    ceChartDimensions = new Chart(document.getElementById('chartCEDimensions'), {
-        type: 'radar',
-        data: {
-            labels: ['Energia Profissional', 'Clareza Mental', 'Posicionamento', 'Prop\u00f3sito'],
-            datasets: [{ label: 'M\u00e9dia', data: [avgEnergy, avgClarity, avgPositioning, avgPurpose], backgroundColor: 'rgba(201,169,97,0.2)', borderColor: '#C9A961', pointBackgroundColor: '#C9A961' }]
-        },
-        options: { responsive: true, scales: { r: { beginAtZero: true, max: 100 } }, plugins: { legend: { display: false } } }
-    });
-
-    // Daily chart (last 30 days)
-    const dailyCounts = {};
-    for (let i = 29; i >= 0; i--) {
-        const d = new Date(now); d.setDate(d.getDate() - i);
-        dailyCounts[d.toISOString().slice(0,10)] = 0;
-    }
-    data.forEach(d => {
-        const day = new Date(d.created_at).toISOString().slice(0,10);
-        if (dailyCounts[day] !== undefined) dailyCounts[day]++;
-    });
-    if (ceChartDaily) ceChartDaily.destroy();
-    ceChartDaily = new Chart(document.getElementById('chartCEDaily'), {
-        type: 'line',
-        data: {
-            labels: Object.keys(dailyCounts).map(d => d.slice(5)),
-            datasets: [{ label: 'Diagn\u00f3sticos', data: Object.values(dailyCounts), borderColor: '#C9A961', backgroundColor: 'rgba(201,169,97,0.1)', fill: true, tension: 0.3 }]
-        },
-        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
-    });
-
-    // Top countries chart
-    const countryCounts = {};
-    data.forEach(d => { if (d.country_name) countryCounts[d.country_name] = (countryCounts[d.country_name] || 0) + 1; });
-    const topCountries = Object.entries(countryCounts).sort((a,b) => b[1]-a[1]).slice(0, 10);
-    if (ceChartCountries) ceChartCountries.destroy();
-    ceChartCountries = new Chart(document.getElementById('chartCECountries'), {
-        type: 'bar',
-        data: {
-            labels: topCountries.map(c => c[0]),
-            datasets: [{ label: 'Diagn\u00f3sticos', data: topCountries.map(c => c[1]), backgroundColor: '#3B82F6', borderRadius: 6 }]
-        },
-        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
-    });
-
-    // Score vs Happiness scatter
-    const scatterData = data.filter(d => d.country_happiness_score).map(d => ({ x: d.country_happiness_score, y: d.total_score }));
-    if (ceChartHappiness) ceChartHappiness.destroy();
-    ceChartHappiness = new Chart(document.getElementById('chartCEvsHappiness'), {
-        type: 'scatter',
-        data: {
-            datasets: [{
-                label: 'Score vs Happiness',
-                data: scatterData,
-                backgroundColor: 'rgba(201,169,97,0.6)',
-                borderColor: '#C9A961',
-                pointRadius: 6
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { title: { display: true, text: 'Happiness Index (WHR 2025)' }, min: 0, max: 100 },
-                y: { title: { display: true, text: 'Career Energy Score' }, min: 0, max: 100 }
-            }
-        }
-    });
-
-    // Language chart
-    const langCounts = {};
-    data.forEach(d => { const l = (d.language || 'pt').toUpperCase(); langCounts[l] = (langCounts[l] || 0) + 1; });
-    if (ceChartLanguage) ceChartLanguage.destroy();
-    ceChartLanguage = new Chart(document.getElementById('chartCELanguage'), {
-        type: 'pie',
-        data: {
-            labels: Object.keys(langCounts),
-            datasets: [{ data: Object.values(langCounts), backgroundColor: ['#C9A961','#3B82F6','#10B981'] }]
-        },
-        options: { responsive: true, plugins: { legend: { position: 'right' } } }
-    });
-}
-
-function populateCEFilters() {
-    const countrySet = new Set(allCEData.filter(d => d.country_name).map(d => d.country_name));
-    const sel = document.getElementById('filterCECountry');
-    sel.innerHTML = '<option value="all">Todos</option>';
-    [...countrySet].sort().forEach(c => {
-        sel.innerHTML += `<option value="${c}">${c}</option>`;
-    });
+    renderCETable();
+    renderCECharts();
 }
 
 function renderCETable() {
-    const levelFilter = document.getElementById('filterCELevel').value;
-    const periodFilter = document.getElementById('filterCEPeriod').value;
-    const countryFilter = document.getElementById('filterCECountry').value;
-    const searchFilter = (document.getElementById('filterCESearch').value || '').toLowerCase();
-    const now = new Date();
+    let data = [...allCareerEnergy];
+    const country = document.getElementById('filterCECountry')?.value || 'all';
+    const level   = document.getElementById('filterCELevel')?.value || 'all';
 
-    let filtered = allCEData.filter(d => {
-        if (levelFilter !== 'all' && d.level_label !== levelFilter) return false;
-        if (periodFilter !== 'all') {
-            const days = periodFilter === '7d' ? 7 : periodFilter === '30d' ? 30 : 90;
-            if ((now - new Date(d.created_at)) > days * 86400000) return false;
-        }
-        if (countryFilter !== 'all' && d.country_name !== countryFilter) return false;
-        if (searchFilter) {
-            const text = `${d.name || ''} ${d.role || ''}`.toLowerCase();
-            if (!text.includes(searchFilter)) return false;
-        }
-        return true;
-    });
+    if (country !== 'all') data = data.filter(d => d.country === country);
+    if (level   !== 'all') data = data.filter(d => (d.energy_level || d.level) === level);
 
-    document.getElementById('ceResultCount').textContent = `${filtered.length} registos`;
+    setText('ceCount', `${data.length} diagnósticos`);
 
-    const tbody = document.getElementById('ceResultsTable');
-    if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="13" style="text-align:center;padding:40px;color:var(--text-muted);">Sem dados</td></tr>';
+    const tbody = document.getElementById('ceTable');
+    if (!tbody) return;
+
+    if (!data.length) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum diagnóstico encontrado</td></tr>`;
         return;
     }
 
-    tbody.innerHTML = filtered.slice(0, 100).map(d => {
-        const date = new Date(d.created_at).toLocaleDateString('pt-PT', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-        const scoreColor = d.total_score >= 71 ? 'var(--green)' : d.total_score >= 41 ? 'var(--orange)' : 'var(--red)';
-        const diffText = d.country_diff !== null ? (d.country_diff > 0 ? `<span style="color:var(--green);">+${d.country_diff}</span>` : d.country_diff < 0 ? `<span style="color:var(--red);">${d.country_diff}</span>` : '<span>0</span>') : '\u2014';
-        return `<tr>
-            <td style="white-space:nowrap;font-size:12px;">${date}</td>
-            <td>${d.name || '\u2014'}</td>
-            <td>${d.role || '\u2014'}</td>
-            <td>${d.country_name || '\u2014'}</td>
-            <td style="font-weight:700;color:${scoreColor};">${d.total_score}</td>
-            <td><span class="badge" style="background:var(--gold-bg);color:var(--gold);font-size:11px;padding:2px 8px;border-radius:4px;">${d.level_label}</span></td>
-            <td style="font-size:12px;">${d.percentile || '\u2014'}</td>
-            <td style="font-size:12px;">${d.dim_energy || 0}</td>
-            <td style="font-size:12px;">${d.dim_clarity || 0}</td>
-            <td style="font-size:12px;">${d.dim_positioning || 0}</td>
-            <td style="font-size:12px;">${d.dim_purpose || 0}</td>
-            <td style="font-size:12px;">${d.country_happiness_score || '\u2014'}</td>
-            <td>${diffText}</td>
+    tbody.innerHTML = data.slice(0, 100).map(d => {
+        const date  = new Date(d.created_at).toLocaleDateString('pt-PT');
+        const diff  = d.total_score && d.country_avg ? (d.total_score - d.country_avg).toFixed(1) : '—';
+        const diffColor = parseFloat(diff) > 0 ? 'var(--green)' : 'var(--red)';
+        return `
+        <tr>
+            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
+            <td style="font-size:12px;">${d.name || d.user_name || '—'}</td>
+            <td style="font-size:12px;">${d.job_title || d.role || '—'}</td>
+            <td style="font-size:12px;">${d.country || '—'}</td>
+            <td style="font-size:13px;font-weight:700;color:var(--gold);">${d.total_score || '—'}</td>
+            <td><span class="badge badge-teal">${d.energy_level || d.level || '—'}</span></td>
+            <td style="font-size:12px;">${d.country_avg || '—'}</td>
+            <td style="font-size:12px;font-weight:600;color:${diffColor};">${diff !== '—' ? (parseFloat(diff) > 0 ? '+' : '') + diff : '—'}</td>
         </tr>`;
     }).join('');
 }
 
-function exportCECSV() {
-    if (!allCEData.length) { showToast('Sem dados para exportar', 'danger'); return; }
-    const header = 'Data,Nome,Fun\u00e7\u00e3o,Experi\u00eancia,Pa\u00eds,Score,N\u00edvel,Percentil,Energia,Clareza,Posicionamento,Prop\u00f3sito,Happiness Score,Diff,Score Projetado,N\u00edvel Projetado,Idioma,LinkedIn';
-    const rows = allCEData.map(d => {
-        const date = new Date(d.created_at).toISOString().slice(0,19);
-        return `${date},"${d.name || ''}","${d.role || ''}","${d.experience || ''}","${d.country_name || ''}",${d.total_score},"${d.level_label}","${d.percentile || ''}",${d.dim_energy||0},${d.dim_clarity||0},${d.dim_positioning||0},${d.dim_purpose||0},${d.country_happiness_score||''},${d.country_diff||''},${d.projected_score||''},"${d.projected_level||''}",${d.language||''},${d.shared_linkedin||false}`;
+function renderCECharts() {
+    const data = allCareerEnergy;
+
+    // Score Distribution
+    const buckets = { '0-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': 0 };
+    data.filter(d => d.total_score > 0).forEach(d => {
+        const s = d.total_score;
+        if (s <= 20) buckets['0-20']++;
+        else if (s <= 40) buckets['21-40']++;
+        else if (s <= 60) buckets['41-60']++;
+        else if (s <= 80) buckets['61-80']++;
+        else buckets['81-100']++;
     });
-    downloadCSV(header + '\n' + rows.join('\n'), 'career_energy_results_' + new Date().toISOString().slice(0,10) + '.csv');
-    showToast('CSV exportado com sucesso', 'success');
+    const ctx1 = document.getElementById('ceScoreChart')?.getContext('2d');
+    if (ctx1) {
+        if (ceScoreChart) ceScoreChart.destroy();
+        ceScoreChart = new Chart(ctx1, {
+            type: 'bar',
+            data: { labels: Object.keys(buckets), datasets: [{ label: 'Utilizadores', data: Object.values(buckets), backgroundColor: '#C9A961', borderRadius: 4 }] },
+            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } }
+        });
+    }
+
+    // Scatter: Score vs Country Happiness
+    const scatterData = data.filter(d => d.total_score > 0 && d.country_avg > 0).map(d => ({ x: d.country_avg, y: d.total_score }));
+    const ctx2 = document.getElementById('ceScatterChart')?.getContext('2d');
+    if (ctx2) new Chart(ctx2, {
+        type: 'scatter',
+        data: { datasets: [{ label: 'Score vs Felicidade País', data: scatterData, backgroundColor: 'rgba(201,169,97,.6)', pointRadius: 5 }] },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { title: { display: true, text: 'Felicidade País', font: { size: 10 } }, ticks: { font: { size: 10 } } }, y: { title: { display: true, text: 'Career Energy Score', font: { size: 10 } }, ticks: { font: { size: 10 } } } } }
+    });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    refreshAll();
-    setInterval(refreshAll, 30000);
-    initRealtime();
-});
+function exportCECSV() {
+    const rows = [['Data','Nome','Cargo','País','Score','Nível','Média País','Diferença']];
+    allCareerEnergy.forEach(d => rows.push([
+        d.created_at?.slice(0,10), d.name||d.user_name||'', d.job_title||d.role||'',
+        d.country||'', d.total_score||'', d.energy_level||d.level||'',
+        d.country_avg||'',
+        d.total_score && d.country_avg ? (d.total_score - d.country_avg).toFixed(1) : ''
+    ]));
+    downloadCSV(rows, 'career_energy.csv');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PAGINATION HELPER
+// ═══════════════════════════════════════════════════════════════
+function renderPagination(containerId, current, total, onPage) {
+    const el = document.getElementById(containerId);
+    if (!el || total <= 1) { if (el) el.innerHTML = ''; return; }
+
+    let html = '';
+    if (current > 1) html += `<button class="page-btn" onclick="(${onPage.toString()})(${current - 1})">‹</button>`;
+
+    const start = Math.max(1, current - 2);
+    const end   = Math.min(total, current + 2);
+    if (start > 1) html += `<button class="page-btn" onclick="(${onPage.toString()})(1)">1</button>${start > 2 ? '<span style="padding:4px;">…</span>' : ''}`;
+    for (let i = start; i <= end; i++) {
+        html += `<button class="page-btn ${i === current ? 'active' : ''}" onclick="(${onPage.toString()})(${i})">${i}</button>`;
+    }
+    if (end < total) html += `${end < total - 1 ? '<span style="padding:4px;">…</span>' : ''}<button class="page-btn" onclick="(${onPage.toString()})(${total})">${total}</button>`;
+    if (current < total) html += `<button class="page-btn" onclick="(${onPage.toString()})(${current + 1})">›</button>`;
+
+    el.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CSV DOWNLOAD
+// ═══════════════════════════════════════════════════════════════
+function downloadCSV(rows, filename) {
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  REFRESH
+// ═══════════════════════════════════════════════════════════════
+async function refreshAll() {
+    showToast('A atualizar dados...', 'info');
+    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs()]);
+    updateDashboard();
+    updateCharts();
+    // Re-render active tab
+    const activeTab = document.querySelector('.tab-btn.active');
+    if (activeTab) activeTab.click();
+    showToast('Dados atualizados!', 'success');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+async function init() {
+    // Show dashboard tab
+    document.getElementById('tab-dashboard').style.display = '';
+    document.querySelectorAll('.main > div[id^="tab-"]:not(#tab-dashboard)').forEach(el => el.style.display = 'none');
+
+    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs()]);
+    updateDashboard();
+    updateCharts();
+    renderNurturingSegments();
+}
+
+document.addEventListener('DOMContentLoaded', init);
