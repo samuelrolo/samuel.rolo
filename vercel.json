@@ -69,16 +69,32 @@
       "destination": "/en/pages/contact/index.html"
     },
     {
+      "source": "/cv-analyser",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
       "source": "/cv-analyser/(.*)",
       "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/career-path",
+      "destination": "/career-path/index.html"
     },
     {
       "source": "/career-path/(.*)",
       "destination": "/career-path/index.html"
     },
     {
+      "source": "/en/cv-analyser",
+      "destination": "/en/cv-analyser/index.html"
+    },
+    {
       "source": "/en/cv-analyser/(.*)",
       "destination": "/en/cv-analyser/index.html"
+    },
+    {
+      "source": "/en/career-path",
+      "destination": "/en/career-path/index.html"
     },
     {
       "source": "/en/career-path/(.*)",
