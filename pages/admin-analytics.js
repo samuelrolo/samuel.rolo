@@ -2046,25 +2046,22 @@ function exportAffClicksCSV() {
     let clicks = [...allAffClicks];
     if (filterCode !== 'all') clicks = clicks.filter(c => c.affiliate_code === filterCode);
 
-    const header = 'Data,Afiliado,Página,Dispositivo,Browser,OS,Resolução,Referrer,UTM Source,UTM Medium,UTM Campaign,Session ID';
-    const rows = clicks.map(c => {
-        const date = new Date(c.created_at).toISOString();
-        return [date, c.affiliate_code, c.landing_page, c.device_type, c.browser, c.os, c.screen_resolution, c.referrer, c.utm_source, c.utm_medium, c.utm_campaign, c.session_id]
-            .map(v => `"${(v || '').toString().replace(/"/g, '""')}"`)
-            .join(',');
-    });
-    downloadCSV([header, ...rows].join('\n'), `affiliate_clicks_${new Date().toISOString().slice(0,10)}.csv`);
+    const header = ['Data','Afiliado','Página','Dispositivo','Browser','OS','Resolução','Referrer','UTM Source','UTM Medium','UTM Campaign','Session ID'];
+    const rows = clicks.map(c => [
+        new Date(c.created_at).toISOString(), c.affiliate_code || '', c.landing_page || '',
+        c.device_type || '', c.browser || '', c.os || '', c.screen_resolution || '',
+        c.referrer || '', c.utm_source || '', c.utm_medium || '', c.utm_campaign || '', c.session_id || ''
+    ]);
+    downloadCSV([header, ...rows], `affiliate_clicks_${new Date().toISOString().slice(0,10)}.csv`);
 }
 
 function exportAffConversionsCSV() {
-    const header = 'Data,Afiliado,Produto,Valor,Moeda,Método,Email Cliente,Transação';
-    const rows = allAffConversions.map(c => {
-        const date = new Date(c.created_at).toISOString();
-        return [date, c.affiliate_code, c.product, c.amount, c.currency, c.payment_method, c.customer_email, c.transaction_id]
-            .map(v => `"${(v || '').toString().replace(/"/g, '""')}"`)
-            .join(',');
-    });
-    downloadCSV([header, ...rows].join('\n'), `affiliate_conversions_${new Date().toISOString().slice(0,10)}.csv`);
+    const header = ['Data','Afiliado','Produto','Valor','Moeda','Método','Email Cliente','Transação'];
+    const rows = allAffConversions.map(c => [
+        new Date(c.created_at).toISOString(), c.affiliate_code || '', c.product || '',
+        c.amount || '', c.currency || '', c.payment_method || '', c.customer_email || '', c.transaction_id || ''
+    ]);
+    downloadCSV([header, ...rows], `affiliate_conversions_${new Date().toISOString().slice(0,10)}.csv`);
 }
 
 // ── HTML escape helper ──────────────────────────────────────
