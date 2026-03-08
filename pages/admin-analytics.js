@@ -207,6 +207,7 @@ function switchTab(name, btn) {
     if (name === 'ebook') renderEbookDownloads();
     if (name === 'jobsearch') renderJobSearch();
     if (name === 'careerenergy') renderCareerEnergy();
+    if (name === 'affiliates') renderAffiliates();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1758,7 +1759,7 @@ function downloadCSV(rows, filename) {
 // ═══════════════════════════════════════════════════════════════
 async function refreshAll() {
     showToast('A atualizar dados...', 'info');
-    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs()]);
+    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs(), loadAffiliateData()]);
     updateDashboard();
     updateCharts();
     // Re-render active tab
@@ -1775,10 +1776,299 @@ async function init() {
     document.getElementById('tab-dashboard').style.display = '';
     document.querySelectorAll('.main > div[id^="tab-"]:not(#tab-dashboard)').forEach(el => el.style.display = 'none');
 
-    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs()]);
+    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs(), loadAffiliateData()]);
     updateDashboard();
     updateCharts();
     renderNurturingSegments();
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// ═══════════════════════════════════════════════════════════════
+//  AFFILIATES MODULE
+// ═══════════════════════════════════════════════════════════════
+let allAffiliates = [];
+let allAffClicks = [];
+let allAffConversions = [];
+
+async function loadAffiliateData() {
+    try {
+        const [affiliates, clicks, conversions] = await Promise.all([
+            supaFetch('affiliates', 'select=*&order=created_at.desc'),
+            supaFetch('affiliate_clicks', 'select=*&order=created_at.desc&limit=5000'),
+            supaFetch('affiliate_conversions', 'select=*&order=created_at.desc&limit=5000')
+        ]);
+        allAffiliates = Array.isArray(affiliates) ? affiliates : [];
+        allAffClicks = Array.isArray(clicks) ? clicks : [];
+        allAffConversions = Array.isArray(conversions) ? conversions : [];
+    } catch (e) {
+        console.error('Erro ao carregar dados de afiliados:', e);
+    }
+}
+
+function renderAffiliates() {
+    loadAffiliateData().then(() => {
+        renderAffKPIs();
+        renderAffTable();
+        renderAffClicks();
+        renderAffConversions();
+        populateAffClickFilter();
+    });
+}
+
+function renderAffKPIs() {
+    const active = allAffiliates.filter(a => a.active);
+    const totalClicks = allAffClicks.length;
+    const totalSales = allAffConversions.length;
+    const totalRevenue = allAffConversions.reduce((s, c) => s + parseFloat(c.amount || 0), 0);
+    const convRate = totalClicks > 0 ? ((totalSales / totalClicks) * 100).toFixed(1) + '%' : '0%';
+
+    document.getElementById('affKpiTotal').textContent = active.length;
+    document.getElementById('affKpiClicks').textContent = totalClicks;
+    document.getElementById('affKpiSales').textContent = totalSales;
+    document.getElementById('affKpiRevenue').textContent = '€' + totalRevenue.toFixed(2);
+    document.getElementById('affKpiConvRate').textContent = convRate;
+}
+
+function renderAffTable() {
+    const tbody = document.getElementById('affTable');
+    if (!allAffiliates.length) {
+        tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum afiliado criado. Clica em "Novo Afiliado" para começar.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = allAffiliates.map(aff => {
+        const clicks = allAffClicks.filter(c => c.affiliate_code === aff.code).length;
+        const conversions = allAffConversions.filter(c => c.affiliate_code === aff.code);
+        const sales = conversions.length;
+        const revenue = conversions.reduce((s, c) => s + parseFloat(c.amount || 0), 0);
+        const convRate = clicks > 0 ? ((sales / clicks) * 100).toFixed(1) + '%' : '—';
+        const status = aff.active
+            ? '<span class="badge badge-success">Ativo</span>'
+            : '<span class="badge badge-danger">Inativo</span>';
+        const date = new Date(aff.created_at).toLocaleDateString('pt-PT');
+        const baseUrl = 'https://www.share2inspire.pt';
+        const link = `${baseUrl}/cv-analyser?ref=${aff.code}`;
+
+        return `<tr>
+            <td><strong>${esc(aff.name)}</strong>${aff.email ? '<br><span style="font-size:11px;color:var(--text-muted);">' + esc(aff.email) + '</span>' : ''}</td>
+            <td><code style="background:#F3F4F6;padding:2px 6px;border-radius:4px;font-size:12px;">${esc(aff.code)}</code></td>
+            <td><button class="btn btn-outline btn-sm" onclick="copyAffLink('${esc(aff.code)}')" title="Copiar link"><i class="fas fa-copy"></i></button></td>
+            <td><strong>${clicks}</strong></td>
+            <td><strong class="green">${sales}</strong></td>
+            <td><strong>€${revenue.toFixed(2)}</strong></td>
+            <td>${convRate}</td>
+            <td>${aff.commission_pct || 0}%</td>
+            <td>${status}</td>
+            <td>${date}</td>
+            <td>
+                <button class="btn-icon" onclick="editAffiliate('${aff.id}')" title="Editar"><i class="fas fa-edit"></i></button>
+                <button class="btn-icon" onclick="toggleAffiliate('${aff.id}', ${aff.active})" title="${aff.active ? 'Desativar' : 'Ativar'}"><i class="fas fa-${aff.active ? 'pause' : 'play'}"></i></button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function renderAffClicks() {
+    const tbody = document.getElementById('affClicksTable');
+    const filterCode = document.getElementById('filterAffClickCode')?.value || 'all';
+    let clicks = [...allAffClicks];
+    if (filterCode !== 'all') clicks = clicks.filter(c => c.affiliate_code === filterCode);
+    clicks = clicks.slice(0, 100); // Show last 100
+
+    if (!clicks.length) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">Sem cliques registados.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = clicks.map(c => {
+        const date = new Date(c.created_at).toLocaleString('pt-PT', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
+        const referrer = c.referrer ? new URL(c.referrer).hostname : '—';
+        return `<tr>
+            <td>${date}</td>
+            <td><code style="font-size:11px;">${esc(c.affiliate_code)}</code></td>
+            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(c.landing_page || '')}">${esc(c.landing_page || '—')}</td>
+            <td><span class="badge badge-secondary">${esc(c.device_type || '—')}</span></td>
+            <td>${esc(c.browser || '—')}</td>
+            <td>${esc(c.os || '—')}</td>
+            <td>${esc(c.screen_resolution || '—')}</td>
+            <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;" title="${esc(c.referrer || '')}">${referrer}</td>
+            <td>${esc(c.utm_source || '—')}</td>
+        </tr>`;
+    }).join('');
+}
+
+function renderAffConversions() {
+    const tbody = document.getElementById('affConversionsTable');
+    const conversions = allAffConversions.slice(0, 100);
+
+    if (!conversions.length) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Sem conversões registadas.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = conversions.map(c => {
+        const date = new Date(c.created_at).toLocaleString('pt-PT', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
+        const productBadge = c.product === 'career_path'
+            ? '<span class="badge badge-career">Career Path</span>'
+            : c.product === 'bundle'
+            ? '<span class="badge badge-purple">Bundle</span>'
+            : '<span class="badge badge-cv">CV Analyser</span>';
+        return `<tr>
+            <td>${date}</td>
+            <td><code style="font-size:11px;">${esc(c.affiliate_code)}</code></td>
+            <td>${productBadge}</td>
+            <td><strong>€${parseFloat(c.amount).toFixed(2)}</strong></td>
+            <td>${c.currency || 'EUR'}</td>
+            <td>${esc(c.payment_method || '—')}</td>
+            <td>${esc(c.customer_email || '—')}</td>
+            <td style="font-size:11px;">${esc(c.transaction_id || '—')}</td>
+        </tr>`;
+    }).join('');
+}
+
+function populateAffClickFilter() {
+    const select = document.getElementById('filterAffClickCode');
+    if (!select) return;
+    const codes = [...new Set(allAffClicks.map(c => c.affiliate_code))];
+    select.innerHTML = '<option value="all">Todos</option>' + codes.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+}
+
+// ── Affiliate CRUD ──────────────────────────────────────────
+
+function openCreateAffiliateModal() {
+    document.getElementById('affEditId').value = '';
+    document.getElementById('affName').value = '';
+    document.getElementById('affEmail').value = '';
+    document.getElementById('affCode').value = '';
+    document.getElementById('affCommission').value = '0';
+    document.getElementById('affNotes').value = '';
+    document.getElementById('affModalTitle').textContent = 'Novo Afiliado';
+    document.getElementById('affLinkPreview').textContent = 'share2inspire.pt/cv-analyser?ref=...';
+    document.getElementById('affModalOverlay').style.display = 'flex';
+
+    // Live preview of link
+    document.getElementById('affCode').oninput = function() {
+        const code = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+        this.value = code;
+        document.getElementById('affLinkPreview').textContent = code
+            ? `share2inspire.pt/cv-analyser?ref=${code}`
+            : 'share2inspire.pt/cv-analyser?ref=...';
+    };
+}
+
+function closeAffiliateModal() {
+    document.getElementById('affModalOverlay').style.display = 'none';
+}
+
+function editAffiliate(id) {
+    const aff = allAffiliates.find(a => a.id === id);
+    if (!aff) return;
+    document.getElementById('affEditId').value = aff.id;
+    document.getElementById('affName').value = aff.name || '';
+    document.getElementById('affEmail').value = aff.email || '';
+    document.getElementById('affCode').value = aff.code || '';
+    document.getElementById('affCommission').value = aff.commission_pct || 0;
+    document.getElementById('affNotes').value = aff.notes || '';
+    document.getElementById('affModalTitle').textContent = 'Editar Afiliado';
+    document.getElementById('affLinkPreview').textContent = `share2inspire.pt/cv-analyser?ref=${aff.code}`;
+    document.getElementById('affModalOverlay').style.display = 'flex';
+
+    document.getElementById('affCode').oninput = function() {
+        const code = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+        this.value = code;
+        document.getElementById('affLinkPreview').textContent = code
+            ? `share2inspire.pt/cv-analyser?ref=${code}`
+            : 'share2inspire.pt/cv-analyser?ref=...';
+    };
+}
+
+async function saveAffiliate() {
+    const editId = document.getElementById('affEditId').value;
+    const name = document.getElementById('affName').value.trim();
+    const email = document.getElementById('affEmail').value.trim();
+    const code = document.getElementById('affCode').value.trim().toLowerCase();
+    const commission = parseFloat(document.getElementById('affCommission').value) || 0;
+    const notes = document.getElementById('affNotes').value.trim();
+
+    if (!name) { showToast('Nome é obrigatório', 'danger'); return; }
+    if (!code) { showToast('Código é obrigatório', 'danger'); return; }
+    if (!/^[a-z0-9_-]+$/.test(code)) { showToast('Código só pode conter letras minúsculas, números, - e _', 'danger'); return; }
+
+    try {
+        if (editId) {
+            // Update
+            await supaUpdate('affiliates', editId, { name, email: email || null, code, commission_pct: commission, notes: notes || null });
+            showToast('Afiliado atualizado!', 'success');
+        } else {
+            // Create
+            await supaInsert('affiliates', { name, email: email || null, code, commission_pct: commission, notes: notes || null, active: true });
+            showToast('Afiliado criado! Link: share2inspire.pt/cv-analyser?ref=' + code, 'success');
+        }
+        closeAffiliateModal();
+        renderAffiliates();
+    } catch (e) {
+        console.error('Erro ao guardar afiliado:', e);
+        showToast('Erro ao guardar: ' + (e.message || 'código duplicado?'), 'danger');
+    }
+}
+
+async function toggleAffiliate(id, currentActive) {
+    try {
+        await supaUpdate('affiliates', id, { active: !currentActive });
+        showToast(currentActive ? 'Afiliado desativado' : 'Afiliado ativado', 'success');
+        renderAffiliates();
+    } catch (e) {
+        showToast('Erro ao alterar estado', 'danger');
+    }
+}
+
+function copyAffLink(code) {
+    const links = [
+        `https://www.share2inspire.pt/cv-analyser?ref=${code}`,
+        `https://www.share2inspire.pt/career-path?ref=${code}`,
+        `https://www.share2inspire.pt/en/cv-analyser?ref=${code}`,
+        `https://www.share2inspire.pt/en/career-path?ref=${code}`
+    ];
+    const text = links.join('\n');
+    navigator.clipboard.writeText(text).then(() => {
+        showToast('4 links copiados (PT+EN, CV+Career Path)', 'success');
+    }).catch(() => {
+        // Fallback
+        prompt('Copia os links:', text);
+    });
+}
+
+// ── CSV Exports ─────────────────────────────────────────────
+
+function exportAffClicksCSV() {
+    const filterCode = document.getElementById('filterAffClickCode')?.value || 'all';
+    let clicks = [...allAffClicks];
+    if (filterCode !== 'all') clicks = clicks.filter(c => c.affiliate_code === filterCode);
+
+    const header = 'Data,Afiliado,Página,Dispositivo,Browser,OS,Resolução,Referrer,UTM Source,UTM Medium,UTM Campaign,Session ID';
+    const rows = clicks.map(c => {
+        const date = new Date(c.created_at).toISOString();
+        return [date, c.affiliate_code, c.landing_page, c.device_type, c.browser, c.os, c.screen_resolution, c.referrer, c.utm_source, c.utm_medium, c.utm_campaign, c.session_id]
+            .map(v => `"${(v || '').toString().replace(/"/g, '""')}"`)
+            .join(',');
+    });
+    downloadCSV([header, ...rows].join('\n'), `affiliate_clicks_${new Date().toISOString().slice(0,10)}.csv`);
+}
+
+function exportAffConversionsCSV() {
+    const header = 'Data,Afiliado,Produto,Valor,Moeda,Método,Email Cliente,Transação';
+    const rows = allAffConversions.map(c => {
+        const date = new Date(c.created_at).toISOString();
+        return [date, c.affiliate_code, c.product, c.amount, c.currency, c.payment_method, c.customer_email, c.transaction_id]
+            .map(v => `"${(v || '').toString().replace(/"/g, '""')}"`)
+            .join(',');
+    });
+    downloadCSV([header, ...rows].join('\n'), `affiliate_conversions_${new Date().toISOString().slice(0,10)}.csv`);
+}
+
+// ── HTML escape helper ──────────────────────────────────────
+function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
