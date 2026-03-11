@@ -306,11 +306,18 @@ function updateDashboard() {
     const last7d   = data.filter(a => new Date(a.created_at) >= d7);
     const paidLast7 = last7d.filter(a => getAnalysisType(a) === 'paid');
 
-    const totalRevenue = paid.reduce((s, a) => s + (a.payment_amount || 0), 0)
-                       + voucher.reduce((s, a) => s + (a.payment_amount || 0), 0);
-    const voucherRevenue = allVouchers.reduce((s, v) => s + (v.payment_amount || 0), 0);
-    const cvRevenue = paid.filter(a => a.analysis_type !== 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0);
-    const cpRevenue = cp.reduce((s, a) => s + (a.payment_amount || 0), 0);
+    // Revenue from direct paid analyses (payment_amount on cv_analysis)
+    const directRevenue = paid.reduce((s, a) => s + (a.payment_amount || 0), 0);
+    // Revenue from voucher sales (amount_paid on vouchers table, excluding test/promo)
+    const voucherRevenue = allVouchers
+        .filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo')
+        .reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
+    // Total = direct analysis payments + voucher sales
+    const totalRevenue = directRevenue + voucherRevenue;
+    const cvRevenue = paid.filter(a => a.analysis_type !== 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0) 
+                    + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type !== 'career_path').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
+    const cpRevenue = cp.reduce((s, a) => s + (a.payment_amount || 0), 0)
+                    + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type === 'career_path').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
 
     const uniqueEmails = new Set(data.filter(a => !isAnonymous(a)).map(a => a.user_email.toLowerCase()));
     const identified   = data.filter(a => !isAnonymous(a));
@@ -615,7 +622,7 @@ function renderFunnel() {
     if (revEl) {
         const cvRev = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0);
         const cpRev = data.filter(a => a.analysis_type === 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0);
-        const vRev  = allVouchers.reduce((s, v) => s + (v.payment_amount || 0), 0);
+        const vRev  = allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
         const total = cvRev + cpRev + vRev;
 
         revEl.innerHTML = `
@@ -993,7 +1000,7 @@ function renderVouchers() {
             <td style="font-size:12px;">${v.email || '—'}</td>
             <td style="font-size:12px;">${v.plan_name || v.plan || '—'}</td>
             <td>${v.voucher_type === 'career_path' || v.type === 'career_path' ? '<span class="badge badge-career">Career Path</span>' : '<span class="badge badge-cv">CV Analyser</span>'}</td>
-            <td style="font-size:12px;font-weight:600;">${v.payment_amount > 0 ? v.payment_amount.toFixed(2) + '€' : '—'}</td>
+            <td style="font-size:12px;font-weight:600;">${parseFloat(v.amount_paid) > 0 ? parseFloat(v.amount_paid).toFixed(2) + '€' : '—'}</td>
             <td>
                 <span class="badge ${isActive ? 'badge-success' : 'badge-secondary'}">${isActive ? 'Ativo' : 'Usado'}</span>
                 <span style="font-size:10px;color:var(--text-muted);margin-left:4px;">${v.used_analyses||0}/${v.total_analyses||1}</span>
