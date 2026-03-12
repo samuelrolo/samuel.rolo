@@ -1089,7 +1089,7 @@ const emailTemplates = {
             body: `<p>Olá {{nome}},</p>
 <p>Obrigado por teres utilizado os nossos serviços! A tua opinião é muito importante para nós.</p>
 <p>Podes partilhar a tua experiência? Demora apenas 1 minuto.</p>
-<p><a href="https://www.share2inspire.pt" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Deixar Avaliação →</a></p>
+<p><a href="https://g.page/r/CZS08nYUvP4qEBM/review" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Deixar Avaliação →</a></p>
 <p>Com os melhores cumprimentos,<br>Equipa Share2Inspire</p>`
         },
         careerpath: {
