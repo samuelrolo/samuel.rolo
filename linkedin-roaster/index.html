@@ -34,7 +34,7 @@
     <meta name="description" content="Descobre em 30 segundos o que os recrutadores pensam do teu perfil LinkedIn. Auditoria profissional com IA: nota, erros críticos, headlines sugeridas e palavras-chave SEO. Apenas 1,99€.">
 
     <!-- ── Keywords (long-tail PT) ── -->
-    <meta name="keywords" content="auditoria perfil linkedin, otimizar perfil linkedin, linkedin para recrutadores, análise linkedin com ia, melhorar perfil linkedin, linkedin seo, headline linkedin, perfil linkedin invisível, linkedin portugal, como melhorar linkedin, análise linkedin grátis, linkedin roaster, share2inspire, samuel rolo, recrutadores linkedin, visibilidade linkedin, linkedin algoritmo">
+    <meta name="keywords" content="auditoria perfil linkedin, otimizar perfil linkedin, linkedin para recrutadores, análise linkedin com ia, melhorar perfil linkedin, linkedin seo, headline linkedin, perfil linkedin invisível, linkedin portugal, como melhorar linkedin, linkedin roaster, share2inspire, samuel rolo, recrutadores linkedin, visibilidade linkedin, linkedin algoritmo">
 
     <!-- ── Metadados Gerais ── -->
     <meta name="author" content="Samuel Rolo — Share2Inspire">
@@ -876,7 +876,7 @@
                 </div>
 
                 <button class="btn-primary" id="btnAnalyze" onclick="startAnalysis()">
-                    Analisar Perfil Gratuitamente
+                    Analisar Perfil
                 </button>
 
                 <div class="error-msg" id="errorMsg"></div>
@@ -891,30 +891,15 @@
         <p>A extrair dados e a avaliar cada detalhe. Cerca de 30 segundos.</p>
     </section>
 
-    <!-- Teaser (After Free Analysis) -->
+    <!-- Payment (Before Analysis) -->
     <section class="teaser-section" id="teaserSection">
         <div class="container">
             <div class="result-card">
-                <p class="result-label">Resultado da Auditoria</p>
+                <p class="result-label">Auditoria de Perfil LinkedIn</p>
 
-                <div class="archetype-badge" id="archetypeBadge"></div>
-
-                <div class="score-ring" id="scoreRing">
-                    <div>
-                        <span class="val" id="scoreValue">-</span>
-                        <span class="max">/10</span>
-                    </div>
-                </div>
-
-                <p class="hook-text" id="teaserHook"></p>
-
-                <button class="share-linkedin-btn" onclick="shareOnLinkedIn()">
-                    <i class="fab fa-linkedin"></i> Partilhar o meu score no LinkedIn
-                </button>
-
-                <p class="cta-text" style="margin-top:20px;">
-                    Analisámos o teu perfil. <strong>Queres saber o que está a limitar a tua visibilidade?</strong>
-                    Desbloqueia a auditoria completa com recomendações concretas.
+                <p class="cta-text" style="margin-top:12px;">
+                    <strong>Descobre o que os recrutadores realmente pensam do teu perfil.</strong><br>
+                    Recebe uma auditoria completa com nota, pontos fortes, áreas de melhoria, headlines sugeridas e recomendações SEO.
                 </p>
 
                 <!-- Paywall -->
@@ -985,17 +970,17 @@
                 <div class="how-step">
                     <div class="step-num">1</div>
                     <h4>Insere o teu perfil</h4>
-                    <p>Cola o URL do teu LinkedIn ou faz upload do PDF. A nossa IA extrai todos os dados automaticamente.</p>
+                    <p>Cola o URL do teu LinkedIn ou faz upload do PDF do teu perfil.</p>
                 </div>
                 <div class="how-step">
                     <div class="step-num">2</div>
-                    <h4>Recebe a tua nota</h4>
-                    <p>Em 30 segundos, recebes a nota geral do teu perfil e um teaser do que precisa de mudar.</p>
+                    <h4>Pagamento seguro</h4>
+                    <p>Por apenas 1,99€, desbloqueia a auditoria completa do teu perfil.</p>
                 </div>
                 <div class="how-step">
                     <div class="step-num">3</div>
-                    <h4>Desbloqueia a Auditoria</h4>
-                    <p>Por apenas 1,99€, recebe o relatório completo com pontos fortes, áreas de melhoria, headlines e recomendações.</p>
+                    <h4>Recebe a Auditoria</h4>
+                    <p>Em 30 segundos, recebe o relatório completo com nota, pontos fortes, áreas de melhoria, headlines e recomendações.</p>
                 </div>
             </div>
         </div>
@@ -1122,10 +1107,9 @@
     }
 
     // ============================================
-    // MAIN ANALYSIS FLOW
-    // Uses the same Apify scraper as CV Analyser
-    // Step 1: Scrape LinkedIn via backend (Apify)
-    // Step 2: Send cv_text to Edge Function for AI analysis
+    // MAIN FLOW: PAYMENT FIRST, THEN ANALYSIS
+    // Step 1: Validate inputs → show paywall
+    // Step 2: After payment → scrape + AI analysis
     // ============================================
     async function startAnalysis() {
         const linkedinUrl = document.getElementById('linkedinUrl').value.trim();
@@ -1145,18 +1129,40 @@
             return;
         }
 
+        // Store inputs for after payment
+        sessionStorage.setItem('roasterLinkedinUrl', linkedinUrl);
+        sessionStorage.setItem('roasterTargetArea', targetArea);
+        sessionStorage.setItem('roasterEmail', email);
+        if (uploadedFile) {
+            const base64 = await fileToBase64(uploadedFile);
+            sessionStorage.setItem('roasterUploadedFile', base64);
+            sessionStorage.setItem('roasterUploadedFileName', uploadedFile.name);
+        } else {
+            sessionStorage.removeItem('roasterUploadedFile');
+            sessionStorage.removeItem('roasterUploadedFileName');
+        }
+
+        // Show paywall directly (no scraping, no analysis yet)
+        showSection('teaserSection');
+        fbq('track', 'ViewContent', { content_name: 'LinkedIn Roaster Paywall', value: 1.99, currency: 'EUR' });
+    }
+
+    // ============================================
+    // FULL ANALYSIS (called AFTER payment confirmed)
+    // ============================================
+    async function runFullAnalysis() {
+        const linkedinUrl = sessionStorage.getItem('roasterLinkedinUrl') || '';
+        const targetArea = sessionStorage.getItem('roasterTargetArea') || '';
+        const email = sessionStorage.getItem('roasterEmail') || '';
+        const storedFile = sessionStorage.getItem('roasterUploadedFile');
+        const storedFileName = sessionStorage.getItem('roasterUploadedFileName');
+
         showSection('loadingSection');
-        document.getElementById('btnAnalyze').disabled = true;
 
         try {
-            let cvText = '';
-
-            // ── STEP 1: Extract profile data ──
-            if (uploadedFile) {
+            if (storedFile) {
                 // PDF upload: send as base64 to Edge Function
-                console.log('[ROASTER] Step 1: Extracting text from PDF...');
-                const base64 = await fileToBase64(uploadedFile);
-                // Send directly to edge function with file
+                console.log('[ROASTER] Analysing PDF after payment...');
                 const response = await fetch(SUPABASE_EDGE_URL, {
                     method: 'POST',
                     headers: {
@@ -1165,8 +1171,8 @@
                     },
                     body: JSON.stringify({
                         mode: 'linkedin_roast',
-                        file: base64,
-                        filename: uploadedFile.name,
+                        file: storedFile,
+                        filename: storedFileName,
                         target_area: targetArea
                     })
                 });
@@ -1176,50 +1182,40 @@
                 }
                 analysisData = data;
             } else {
-                // LinkedIn URL: try backend Apify scraper first, fallback to Edge Function with URL
+                // LinkedIn URL: scrape + AI analysis
                 let cvText = '';
-                let scrapeSuccess = false;
 
-                // ── STEP 1: Backend Apify scraper (REQUIRED - no fallback to prevent hallucinations) ──
+                // ── STEP 1: Scrape LinkedIn profile via backend (RapidAPI) ──
                 try {
-                    console.log('[ROASTER] Step 1: Scraping LinkedIn profile via Apify...', linkedinUrl);
+                    console.log('[ROASTER] Step 1: Scraping LinkedIn profile...', linkedinUrl);
                     const scrapeResponse = await fetch(BACKEND_URL + '/api/services/scrape-linkedin', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ linkedin_url: linkedinUrl })
                     });
-
                     const scrapeData = await scrapeResponse.json();
-
                     if (scrapeResponse.ok && scrapeData?.success && scrapeData?.cv_text) {
                         cvText = scrapeData.cv_text;
-                        scrapeSuccess = true;
                         console.log('[ROASTER] Step 1 OK: Extracted', cvText.length, 'chars for', scrapeData.profile_name);
                     } else {
-                        // CRITICAL: If scraping fails, BLOCK the analysis completely
                         const errorMsg = scrapeData?.error || 'Não foi possível aceder ao perfil LinkedIn.';
-                        console.error('[ROASTER] Step 1 FAILED - BLOCKING analysis:', errorMsg);
+                        console.error('[ROASTER] Step 1 FAILED:', errorMsg);
                         throw new Error('Erro técnico: não foi possível extrair os dados do perfil. <a href="/contactos" style="color:#0073b1;text-decoration:underline">Contactar suporte</a>');
                     }
                 } catch (scrapeErr) {
-                    if (scrapeErr.message.includes('Erro técnico')) {
-                        throw scrapeErr; // Re-throw our custom error
-                    }
-                    console.error('[ROASTER] Step 1 FAILED (network error):', scrapeErr.message);
+                    if (scrapeErr.message.includes('Erro técnico')) throw scrapeErr;
+                    console.error('[ROASTER] Step 1 FAILED (network):', scrapeErr.message);
                     throw new Error('Erro técnico: não foi possível aceder ao serviço de extração. <a href="/contactos" style="color:#0073b1;text-decoration:underline">Contactar suporte</a>');
                 }
 
-                // ── STEP 2: Send to Edge Function for AI analysis (only with real scraped data) ──
-                console.log('[ROASTER] Step 2: Sending to AI for analysis with scraped data...');
+                // ── STEP 2: Send to Edge Function for AI analysis ──
+                console.log('[ROASTER] Step 2: Sending to AI for analysis...');
                 const payload = {
                     mode: 'linkedin_roast',
                     linkedin_url: linkedinUrl,
-                    target_area: targetArea
+                    target_area: targetArea,
+                    cv_text: cvText.substring(0, 8000)
                 };
-                if (scrapeSuccess) {
-                    payload.cv_text = cvText.substring(0, 8000);
-                }
-
                 const response = await fetch(SUPABASE_EDGE_URL, {
                     method: 'POST',
                     headers: {
@@ -1228,7 +1224,6 @@
                     },
                     body: JSON.stringify(payload)
                 });
-
                 const data = await response.json();
                 if (!response.ok || !data.success) {
                     throw new Error(data.error || 'Erro na análise. Tenta novamente.');
@@ -1239,35 +1234,23 @@
             // Log to Supabase
             logToSupabase(linkedinUrl, email, analysisData);
 
-            // Show teaser
-            const scoreRaw = analysisData.teaser?.nota_geral || '5/10';
-            const hook = analysisData.teaser?.hook_vendas || 'O teu perfil precisa de atenção urgente.';
-            const scoreNum = typeof scoreRaw === 'number' ? scoreRaw : (parseInt(String(scoreRaw).split('/')[0]) || 5);
+            // Show full results directly (already paid)
+            displayFullResults();
+            sendResultsEmail(email);
+            document.getElementById('successEmail').textContent = email;
+            showSection('successSection');
 
-            document.getElementById('scoreValue').textContent = scoreNum;
-            document.getElementById('teaserHook').textContent = hook;
-
-            // Set archetype
-            const archetype = getArchetype(scoreNum);
-            document.getElementById('archetypeBadge').textContent = archetype.name;
-
-            // Set score ring colour
-            const ring = document.getElementById('scoreRing');
-            ring.className = 'score-ring';
-            if (scoreNum <= 3) ring.classList.add('score-low');
-            else if (scoreNum <= 6) ring.classList.add('score-mid');
-            else ring.classList.add('score-high');
-
-            showSection('teaserSection');
-            fbq('track', 'ViewContent', { content_name: 'LinkedIn Roaster Teaser', value: 0, currency: 'EUR' });
+            // Clean up sessionStorage
+            sessionStorage.removeItem('roasterLinkedinUrl');
+            sessionStorage.removeItem('roasterTargetArea');
+            sessionStorage.removeItem('roasterUploadedFile');
+            sessionStorage.removeItem('roasterUploadedFileName');
 
         } catch (error) {
             console.error('Analysis error:', error);
             showSection('inputSection');
             const isHtml = error.message && error.message.includes('<a ');
             showError('inputSection', error.message || 'Não foi possível analisar o perfil. Verifica o URL e tenta novamente.', isHtml);
-        } finally {
-            document.getElementById('btnAnalyze').disabled = false;
         }
     }
 
@@ -1387,8 +1370,6 @@
             });
             const data = await response.json();
             if (data.success && data.url) {
-                sessionStorage.setItem('roasterAnalysis', JSON.stringify(analysisData));
-                sessionStorage.setItem('roasterEmail', email);
                 sessionStorage.setItem('roasterAnalysisId', analysisId);
                 window.location.href = data.url;
             } else {
@@ -1410,8 +1391,6 @@
             '&return=' + encodeURIComponent(window.location.href + '?payment=success&method=paypal') +
             '&cancel_return=' + encodeURIComponent(window.location.href + '?payment=cancelled') +
             '&custom=' + (analysisId || 'LR-' + Date.now());
-        sessionStorage.setItem('roasterAnalysis', JSON.stringify(analysisData));
-        sessionStorage.setItem('roasterEmail', email);
         sessionStorage.setItem('roasterAnalysisId', analysisId);
         window.location.href = paypalUrl;
     }
@@ -1428,10 +1407,8 @@
                 body: JSON.stringify({ payment_status: 'paid', payment_method: method, payment_amount: 1.99 })
             }).catch(e => console.warn('[ROASTER] Update failed:', e));
         }
-        sendResultsEmail(email);
-        displayFullResults();
-        document.getElementById('successEmail').textContent = email;
-        showSection('successSection');
+        // Payment confirmed! Now run the actual analysis (scraping + AI)
+        runFullAnalysis();
         gtag('event', 'purchase', {
             transaction_id: 'LR-' + Date.now(),
             value: 1.99,
@@ -1607,23 +1584,38 @@
         }
     }
 
-    // Check for return from payment redirect
+    // Check for return from payment redirect (Stripe/PayPal)
     (function checkPaymentReturn() {
         const params = new URLSearchParams(window.location.search);
         const payment = params.get('payment');
         const method = params.get('method') || 'stripe';
         if (payment === 'success') {
-            const storedData = sessionStorage.getItem('roasterAnalysis');
             const storedEmail = sessionStorage.getItem('roasterEmail');
             const storedId = sessionStorage.getItem('roasterAnalysisId');
-            if (storedData) {
-                analysisData = JSON.parse(storedData);
+            if (storedEmail) {
                 analysisId = storedId;
-                onPaymentSuccess(storedEmail, method);
-                sessionStorage.removeItem('roasterAnalysis');
-                sessionStorage.removeItem('roasterEmail');
-                sessionStorage.removeItem('roasterAnalysisId');
+                // Update payment status in Supabase
+                if (analysisId) {
+                    fetch(SUPABASE_URL + '/rest/v1/linkedin_roaster_analyses?id=eq.' + analysisId, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                        },
+                        body: JSON.stringify({ payment_status: 'paid', payment_method: method, payment_amount: 1.99 })
+                    }).catch(e => console.warn('[ROASTER] Update failed:', e));
+                }
+                gtag('event', 'purchase', {
+                    transaction_id: 'LR-' + Date.now(),
+                    value: 1.99,
+                    currency: 'EUR',
+                    items: [{ item_name: 'LinkedIn Roaster', price: 1.99 }]
+                });
+                fbq('track', 'Purchase', { value: 1.99, currency: 'EUR', content_ids: ['linkedin-roast'], content_type: 'product' });
                 window.history.replaceState({}, '', window.location.pathname);
+                // Payment confirmed! Now run the actual analysis
+                runFullAnalysis();
             }
         }
     })();
