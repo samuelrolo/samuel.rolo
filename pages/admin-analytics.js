@@ -1840,7 +1840,7 @@ function renderAffKPIs() {
 function renderAffTable() {
     const tbody = document.getElementById('affTable');
     if (!allAffiliates.length) {
-        tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum afiliado criado. Clica em "Novo Afiliado" para começar.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum afiliado criado. Clica em "Novo Afiliado" para começar.</td></tr>';
         return;
     }
 
@@ -1855,12 +1855,16 @@ function renderAffTable() {
             : '<span class="badge badge-danger">Inativo</span>';
         const date = new Date(aff.created_at).toLocaleDateString('pt-PT');
         const baseUrl = 'https://www.share2inspire.pt';
-        const link = `${baseUrl}/cv-analyser?ref=${aff.code}`;
+        const product = aff.product || 'cv-analyser';
+        const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','linkedin-roaster':'LinkedIn Roaster'};
+        const productLabel = productLabels[product] || product;
+        const link = `${baseUrl}/${product}?ref=${aff.code}`;
 
         return `<tr>
             <td><strong>${esc(aff.name)}</strong>${aff.email ? '<br><span style="font-size:11px;color:var(--text-muted);">' + esc(aff.email) + '</span>' : ''}</td>
+            <td><span class="badge" style="background:${product==='linkedin-roaster'?'#0077B5':product==='career-path'?'var(--gold)':'var(--blue)'};color:#fff;font-size:11px;">${esc(productLabel)}</span></td>
             <td><code style="background:#F3F4F6;padding:2px 6px;border-radius:4px;font-size:12px;">${esc(aff.code)}</code></td>
-            <td><button class="btn btn-outline btn-sm" onclick="copyAffLink('${esc(aff.code)}')" title="Copiar link"><i class="fas fa-copy"></i></button></td>
+            <td><button class="btn btn-outline btn-sm" onclick="copyAffLink('${esc(aff.code)}','${esc(product)}')" title="Copiar link"><i class="fas fa-copy"></i></button></td>
             <td><strong>${clicks}</strong></td>
             <td><strong class="green">${sales}</strong></td>
             <td><strong>€${revenue.toFixed(2)}</strong></td>
@@ -1943,24 +1947,28 @@ function populateAffClickFilter() {
 
 // ── Affiliate CRUD ──────────────────────────────────────────
 
+function updateAffLinkPreview() {
+    const product = document.getElementById('affProduct').value;
+    const code = document.getElementById('affCode').value.trim().toLowerCase();
+    document.getElementById('affLinkPreview').textContent = code
+        ? `share2inspire.pt/${product}?ref=${code}`
+        : `share2inspire.pt/${product}?ref=...`;
+}
 function openCreateAffiliateModal() {
     document.getElementById('affEditId').value = '';
     document.getElementById('affName').value = '';
     document.getElementById('affEmail').value = '';
+    document.getElementById('affProduct').value = 'cv-analyser';
     document.getElementById('affCode').value = '';
     document.getElementById('affCommission').value = '0';
     document.getElementById('affNotes').value = '';
     document.getElementById('affModalTitle').textContent = 'Novo Afiliado';
     document.getElementById('affLinkPreview').textContent = 'share2inspire.pt/cv-analyser?ref=...';
     document.getElementById('affModalOverlay').style.display = 'flex';
-
-    // Live preview of link
     document.getElementById('affCode').oninput = function() {
         const code = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
         this.value = code;
-        document.getElementById('affLinkPreview').textContent = code
-            ? `share2inspire.pt/cv-analyser?ref=${code}`
-            : 'share2inspire.pt/cv-analyser?ref=...';
+        updateAffLinkPreview();
     };
 }
 
@@ -1974,19 +1982,18 @@ function editAffiliate(id) {
     document.getElementById('affEditId').value = aff.id;
     document.getElementById('affName').value = aff.name || '';
     document.getElementById('affEmail').value = aff.email || '';
+    document.getElementById('affProduct').value = aff.product || 'cv-analyser';
     document.getElementById('affCode').value = aff.code || '';
     document.getElementById('affCommission').value = aff.commission_pct || 0;
     document.getElementById('affNotes').value = aff.notes || '';
     document.getElementById('affModalTitle').textContent = 'Editar Afiliado';
-    document.getElementById('affLinkPreview').textContent = `share2inspire.pt/cv-analyser?ref=${aff.code}`;
+    const product = aff.product || 'cv-analyser';
+    document.getElementById('affLinkPreview').textContent = `share2inspire.pt/${product}?ref=${aff.code}`;
     document.getElementById('affModalOverlay').style.display = 'flex';
-
     document.getElementById('affCode').oninput = function() {
         const code = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
         this.value = code;
-        document.getElementById('affLinkPreview').textContent = code
-            ? `share2inspire.pt/cv-analyser?ref=${code}`
-            : 'share2inspire.pt/cv-analyser?ref=...';
+        updateAffLinkPreview();
     };
 }
 
@@ -1995,6 +2002,7 @@ async function saveAffiliate() {
     const name = document.getElementById('affName').value.trim();
     const email = document.getElementById('affEmail').value.trim();
     const code = document.getElementById('affCode').value.trim().toLowerCase();
+    const product = document.getElementById('affProduct').value;
     const commission = parseFloat(document.getElementById('affCommission').value) || 0;
     const notes = document.getElementById('affNotes').value.trim();
 
@@ -2005,12 +2013,12 @@ async function saveAffiliate() {
     try {
         if (editId) {
             // Update
-            await supaUpdate('affiliates', editId, { name, email: email || null, code, commission_pct: commission, notes: notes || null });
+            await supaUpdate('affiliates', editId, { name, email: email || null, code, product, commission_pct: commission, notes: notes || null });
             showToast('Afiliado atualizado!', 'success');
         } else {
             // Create
-            await supaInsert('affiliates', { name, email: email || null, code, commission_pct: commission, notes: notes || null, active: true });
-            showToast('Afiliado criado! Link: share2inspire.pt/cv-analyser?ref=' + code, 'success');
+            await supaInsert('affiliates', { name, email: email || null, code, product, commission_pct: commission, notes: notes || null, active: true });
+            showToast(`Afiliado criado! Link: share2inspire.pt/${product}?ref=${code}`, 'success');
         }
         closeAffiliateModal();
         renderAffiliates();
@@ -2030,18 +2038,18 @@ async function toggleAffiliate(id, currentActive) {
     }
 }
 
-function copyAffLink(code) {
-    const links = [
-        `https://www.share2inspire.pt/cv-analyser?ref=${code}`,
-        `https://www.share2inspire.pt/career-path?ref=${code}`,
-        `https://www.share2inspire.pt/en/cv-analyser?ref=${code}`,
-        `https://www.share2inspire.pt/en/career-path?ref=${code}`
-    ];
+function copyAffLink(code, product) {
+    product = product || 'cv-analyser';
+    const base = 'https://www.share2inspire.pt';
+    const links = [`${base}/${product}?ref=${code}`];
+    if (product !== 'linkedin-roaster') {
+        links.push(`${base}/en/${product}?ref=${code}`);
+    }
     const text = links.join('\n');
+    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','linkedin-roaster':'LinkedIn Roaster'};
     navigator.clipboard.writeText(text).then(() => {
-        showToast('4 links copiados (PT+EN, CV+Career Path)', 'success');
+        showToast(`Link${links.length > 1 ? 's' : ''} copiado${links.length > 1 ? 's' : ''} (${productLabels[product] || product})`, 'success');
     }).catch(() => {
-        // Fallback
         prompt('Copia os links:', text);
     });
 }

@@ -1024,8 +1024,8 @@
         </div>
         <div class="table-wrap">
             <table>
-                <thead><tr><th>Nome</th><th>Código</th><th>Link</th><th>Cliques</th><th>Vendas</th><th>Receita</th><th>Conversão</th><th>Comissão %</th><th>Estado</th><th>Criado</th><th>Ações</th></tr></thead>
-                <tbody id="affTable"><tr><td colspan="11" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                <thead><tr><th>Nome</th><th>Produto</th><th>Código</th><th>Link</th><th>Cliques</th><th>Vendas</th><th>Receita</th><th>Conversão</th><th>Comissão %</th><th>Estado</th><th>Criado</th><th>Ações</th></tr></thead>
+                <tbody id="affTable"><tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
             </table>
         </div>
     </div>
@@ -1187,6 +1187,14 @@
             <div class="form-group">
                 <label class="form-label">Email</label>
                 <input class="form-input" type="email" id="affEmail" style="width:100%;" placeholder="email@exemplo.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Produto</label>
+                <select class="form-select" id="affProduct" style="width:100%;" onchange="updateAffLinkPreview()">
+                    <option value="cv-analyser">CV Analyser</option>
+                    <option value="career-path">Career Path</option>
+                    <option value="linkedin-roaster">LinkedIn Roaster</option>
+                </select>
             </div>
             <div class="form-group">
                 <label class="form-label">Código (slug único para o link)</label>
