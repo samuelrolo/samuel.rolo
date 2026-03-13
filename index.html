@@ -364,6 +364,69 @@
             transform: translateY(-2px);
         }
 
+        /* --- Estudo em Destaque --- */
+        .estudo-destaque {
+            background: #1A1A1A;
+            text-align: center;
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .estudo-destaque::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 70% 60%, rgba(201, 169, 97, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .estudo-destaque h2 { color: #fff; font-size: 1.8rem; font-weight: 300; }
+        .estudo-destaque h2 strong { color: #C9A961; font-weight: 600; }
+        .estudo-destaque .estudo-stat {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #C9A961;
+            margin: 1.5rem 0 0.5rem;
+        }
+        .estudo-destaque .estudo-stat-label {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 2rem;
+        }
+        .estudo-destaque .estudo-desc {
+            font-size: 0.95rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.6);
+            max-width: 550px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+        }
+        .estudo-destaque .estudo-badge {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #C9A961;
+            border: 1px solid rgba(201,169,97,0.3);
+            padding: 6px 16px;
+            margin-bottom: 1.5rem;
+        }
+        .estudo-cta {
+            display: inline-block;
+            padding: 14px 40px;
+            background: #C9A961;
+            color: #1A1A1A;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: all 0.4s ease;
+        }
+        .estudo-cta:hover { background: #fff; color: #1A1A1A; transform: translateY(-2px); }
+
         /* --- Serviços --- */
         .servicos-section {
             background: var(--s2i-bg);
@@ -1102,6 +1165,25 @@
                         <a href="career-path" class="servico-link">Criar roadmap <i class="fas fa-arrow-right"></i></a>
                     </div>
 
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         ESTUDO EM DESTAQUE
+         ============================ -->
+    <section class="estudo-destaque fade-up">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7">
+                    <span class="estudo-badge">Novo Estudo Q1 2026</span>
+                    <h2>O Estado do <strong>LinkedIn</strong> em Portugal</h2>
+                    <div class="gold-line"></div>
+                    <div class="estudo-stat">74%</div>
+                    <div class="estudo-stat-label">dos profissionais portugueses tem um perfil com score abaixo de 5/10</div>
+                    <p class="estudo-desc">Uma analise a 500 perfis revela os erros mais comuns que estao a custar oportunidades de carreira. Descobre os dados completos no estudo.</p>
+                    <a href="/estudos/" class="estudo-cta">Ler o estudo completo</a>
                 </div>
             </div>
         </div>

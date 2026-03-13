@@ -99,6 +99,14 @@
     {
       "source": "/en/career-path/(.*)",
       "destination": "/en/career-path/index.html"
+    },
+    {
+      "source": "/estudos",
+      "destination": "/estudos/index.html"
+    },
+    {
+      "source": "/estudos/(.*)",
+      "destination": "/estudos/index.html"
     }
   ]
 }

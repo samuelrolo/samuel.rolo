@@ -128,6 +128,22 @@
   </url>
 
 
+  <!-- LinkedIn Roaster -->
+  <url>
+    <loc>https://www.share2inspire.pt/linkedin-roaster</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Estudos -->
+  <url>
+    <loc>https://www.share2inspire.pt/estudos/</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- GEO Profile Page -->
   <url>
     <loc>https://www.share2inspire.pt/pages/geo-profile.html</loc>
