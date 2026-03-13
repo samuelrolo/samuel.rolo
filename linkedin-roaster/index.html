@@ -222,8 +222,8 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-            --gold: #BF9A33;
-            --gold-hover: #a38125;
+            --gold: #C9A961;
+            --gold-hover: #b8953a;
             --dark: #1A1A1A;
             --text: #333;
             --muted: #888;
@@ -443,12 +443,12 @@
         }
         .score-ring .val { font-size: 2.4rem; font-weight: 800; color: var(--gold); }
         .score-ring .max { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
-        .score-ring.score-low { border-color: var(--red); }
-        .score-ring.score-low .val { color: var(--red); }
-        .score-ring.score-mid { border-color: #f0a500; }
-        .score-ring.score-mid .val { color: #f0a500; }
-        .score-ring.score-high { border-color: var(--green); }
-        .score-ring.score-high .val { color: var(--green); }
+        .score-ring.score-low { border-color: var(--gold); }
+        .score-ring.score-low .val { color: var(--gold); }
+        .score-ring.score-mid { border-color: var(--gold); }
+        .score-ring.score-mid .val { color: var(--gold); }
+        .score-ring.score-high { border-color: var(--gold); }
+        .score-ring.score-high .val { color: var(--gold); }
         .archetype-badge {
             display: inline-block;
             background: var(--dark);
@@ -559,7 +559,7 @@
         .success-icon {
             width: 56px; height: 56px;
             border-radius: 50%;
-            background: var(--green);
+            background: var(--gold);
             color: var(--white);
             display: flex;
             align-items: center;
@@ -568,162 +568,235 @@
             margin: 0 auto 16px;
         }
 
-        /* ── Full Results ── */
+        /* ── Full Results (Share2Inspire Clean Style) ── */
         #fullResults { text-align: left; margin-top: 32px; }
+
+        /* Score Header */
         .report-header {
+            text-align: center;
+            padding: 40px 24px 32px;
+            margin-bottom: 32px;
+        }
+        .score-ring-lg {
+            width: 140px; height: 140px;
+            border-radius: 50%;
+            border: 4px solid var(--gold);
             display: flex;
             align-items: center;
-            gap: 20px;
-            padding: 24px;
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-left: 4px solid var(--gold);
-            border-radius: 8px;
-            margin-bottom: 24px;
+            justify-content: center;
+            margin: 0 auto 20px;
         }
-        .report-header .score-ring-sm {
-            width: 72px; height: 72px;
+        .score-ring-lg .score-inner { text-align: center; }
+        .score-ring-lg .val {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--dark);
+            line-height: 1;
+        }
+        .score-ring-lg .max {
+            font-size: 0.85rem;
+            color: var(--muted);
+            font-weight: 400;
+        }
+        .archetype-name {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+        .archetype-desc {
+            font-size: 0.85rem;
+            color: var(--muted);
+            max-width: 400px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Section Block */
+        .s2i-section {
+            padding: 28px 0;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .s2i-section:last-child { border-bottom: none; }
+        .s2i-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gold);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .s2i-section-title i {
+            font-size: 0.7rem;
+            width: 28px; height: 28px;
             border-radius: 50%;
+            background: rgba(201,169,97,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+        }
+        .s2i-section p, .s2i-section li {
+            font-size: 0.84rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        /* Dimension Cards */
+        .dim-card {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .dim-card:last-child { border-bottom: none; }
+        .dim-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .dim-card-header span:first-child {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .dim-card-header span:last-child {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .dim-bar-track {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .dim-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: var(--gold);
+            transition: width 0.8s ease;
+        }
+        .dim-card-text {
+            font-size: 0.78rem;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* Improvement items */
+        .improve-item {
+            padding: 18px 20px;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 3px solid var(--gold);
+        }
+        .improve-item .improve-area {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+        .improve-item .improve-diag {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        .improve-item .improve-rec {
+            font-size: 0.8rem;
+            color: var(--text);
+            padding-left: 14px;
+            border-left: 2px solid var(--gold);
+            line-height: 1.7;
+        }
+
+        /* Strength items */
+        .strength-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+        }
+        .strength-icon {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            background: rgba(201,169,97,0.1);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            background: var(--light);
+            color: var(--gold);
+            font-size: 0.65rem;
+            margin-top: 2px;
         }
-        .report-header .score-ring-sm .val { font-size: 1.6rem; font-weight: 800; color: var(--dark); }
-        .report-header .score-ring-sm .max { font-size: 0.65rem; color: var(--muted); }
-        .report-header-info h3 { font-size: 0.92rem; font-weight: 600; margin-bottom: 2px; color: var(--dark); }
-        .report-header-info p { font-size: 0.75rem; color: var(--muted); margin: 0; line-height: 1.5; }
-        .result-block {
-            padding: 20px 24px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border);
-            background: var(--white);
-        }
-        .result-block.rb-gold { border-left: 3px solid var(--gold); }
-        .result-block.rb-green { border-left: 3px solid var(--green); }
-        .result-block.rb-neutral { border-left: 3px solid var(--border); }
-        .result-block.rb-highlight { border-left: 3px solid var(--gold); background: #fdfaf0; }
-        .result-block.rb-red { border-left: 3px solid var(--red); }
-        .result-block h4 {
-            font-size: 0.72rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--dark);
-        }
-        .result-block h4 i { font-size: 0.8rem; }
-        .result-block p, .result-block li {
+        .strength-item p {
             font-size: 0.82rem;
-            line-height: 1.8;
+            line-height: 1.7;
             color: var(--text);
+            margin: 0;
         }
-        /* Progress bars for dimensions */
-        .dim-bar {
-            margin-bottom: 12px;
-        }
-        .dim-bar-label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-        .dim-bar-label span:first-child {
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--text);
-        }
-        .dim-bar-label span:last-child {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--dark);
-        }
-        .dim-bar-track {
-            height: 5px;
-            background: var(--border);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        .dim-bar-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.8s ease;
-        }
-        .dim-bar-fill.fill-red { background: var(--red); }
-        .dim-bar-fill.fill-orange { background: #f0a500; }
-        .dim-bar-fill.fill-green { background: var(--green); }
-        .dim-bar-fill.fill-gold { background: var(--gold); }
-        /* Improvement items */
-        .improve-item {
-            padding: 14px 16px;
-            background: var(--light);
-            border-radius: 6px;
-            margin-bottom: 10px;
-        }
-        .improve-item .improve-area {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 4px;
-        }
-        .improve-item .improve-diag {
-            font-size: 0.75rem;
-            color: var(--muted);
-            margin-bottom: 4px;
-        }
-        .improve-item .improve-rec {
-            font-size: 0.78rem;
-            color: var(--text);
-            padding-left: 12px;
-            border-left: 2px solid var(--gold);
-        }
+
         /* Headlines */
         .headline-suggestion {
             display: block;
-            padding: 10px 14px;
+            padding: 14px 18px;
             background: var(--light);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            margin-bottom: 8px;
-            font-size: 0.82rem;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.84rem;
             font-style: italic;
             color: var(--text);
+            line-height: 1.6;
+            border-left: 3px solid var(--gold);
         }
-        .headline-suggestion::before {
-            content: '\201C';
-            font-size: 1.1rem;
-            color: var(--gold);
-            margin-right: 4px;
-        }
+
+        /* Tags */
         .tag {
             display: inline-block;
-            background: var(--dark);
-            color: var(--white);
-            padding: 4px 12px;
-            border-radius: 50px;
-            font-size: 0.68rem;
-            font-weight: 600;
-            margin: 3px 4px 3px 0;
-        }
-        /* Visibility badge */
-        .vis-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            background: rgba(201,169,97,0.1);
+            color: var(--gold);
             padding: 5px 14px;
             border-radius: 50px;
             font-size: 0.72rem;
             font-weight: 600;
-            border: 1px solid;
+            margin: 4px 6px 4px 0;
+            border: 1px solid rgba(201,169,97,0.25);
         }
-        .vis-badge.vis-low { background: #fff5f5; color: var(--red); border-color: var(--red); }
-        .vis-badge.vis-mid { background: #fff8e1; color: #f0a500; border-color: #f0a500; }
-        .vis-badge.vis-high { background: #f0f9f0; color: var(--green); border-color: var(--green); }
+
+        /* Visibility badge */
+        .vis-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(201,169,97,0.08);
+            color: var(--gold);
+            border: 1px solid rgba(201,169,97,0.2);
+        }
+
+        /* Priority recommendation */
+        .priority-box {
+            padding: 24px;
+            background: rgba(201,169,97,0.06);
+            border: 1px solid rgba(201,169,97,0.2);
+            border-radius: 10px;
+        }
+        .priority-box p {
+            font-size: 0.84rem;
+            line-height: 1.8;
+            color: var(--text);
+            font-weight: 500;
+        }
 
         /* ── How it works ── */
         .how-section { padding: 48px 24px; }
@@ -838,7 +911,7 @@
     <!-- Hero -->
     <section class="hero">
         <h1>Audita o teu perfil <span>LinkedIn</span></h1>
-        <p>Análise gratuita em 30 segundos. Descobre se o teu perfil está a afastar recrutadores.</p>
+        <p>Análise profissional em 30 segundos. Descobre se o teu perfil está a afastar recrutadores.</p>
         <div class="trust-bar">
             <span class="trust-item"><i class="fas fa-bolt"></i> Resultado imediato</span>
             <span class="trust-item"><i class="fas fa-robot"></i> Powered by AI</span>
@@ -941,22 +1014,26 @@
     <section class="success-section" id="successSection">
         <div class="container">
             <div class="result-card" style="text-align:left;">
-                <div style="text-align:center;margin-bottom:24px;">
+                <div style="text-align:center;margin-bottom:32px;">
                     <div class="success-icon"><i class="fas fa-check"></i></div>
-                    <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:8px;">Pagamento Confirmado</h2>
-                    <p style="font-size:0.88rem;color:var(--muted);max-width:420px;margin:0 auto 16px;">
-                        A tua auditoria completa foi enviada para <strong id="successEmail"></strong>.
+                    <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:8px;color:var(--dark);">Pagamento Confirmado</h2>
+                    <p style="font-size:0.82rem;color:var(--muted);max-width:420px;margin:0 auto 16px;">
+                        A tua auditoria completa foi enviada para <strong id="successEmail" style="color:var(--dark);"></strong>.
                     </p>
                     <button class="share-linkedin-btn" onclick="shareOnLinkedIn()">
                         <i class="fab fa-linkedin"></i> Partilhar o meu score no LinkedIn
                     </button>
                 </div>
                 <div id="fullResults"></div>
-                <div style="margin-top:24px;padding:20px;background:var(--light);border-radius:10px;border-left:3px solid var(--gold);">
+                <div style="margin-top:32px;padding:20px;background:rgba(201,169,97,0.06);border-radius:10px;border:1px solid rgba(201,169,97,0.2);">
                     <p style="font-size:0.82rem;color:var(--muted);margin:0;">
                         <strong style="color:var(--dark);">Próximo passo:</strong> Garante que o teu CV acompanha o teu perfil LinkedIn.
                         <a href="/cv-analyser" style="color:var(--gold);font-weight:600;">Analisa o teu CV gratuitamente →</a>
                     </p>
+                </div>
+                <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);text-align:center;">
+                    <p style="font-size:0.65rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin:0;">Share2Inspire &middot; LinkedIn Roaster &middot; <span id="reportDate"></span></p>
+                    <p style="font-size:0.6rem;color:#bbb;margin-top:4px;">https://share2inspire.pt</p>
                 </div>
             </div>
         </div>
@@ -1238,6 +1315,13 @@
             displayFullResults();
             sendResultsEmail(email);
             document.getElementById('successEmail').textContent = email;
+            // Set report date
+            const dateEl = document.getElementById('reportDate');
+            if (dateEl) {
+                const now = new Date();
+                const months = ['janeiro','fevereiro','mar\u00e7o','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+                dateEl.textContent = months[now.getMonth()] + ' de ' + now.getFullYear();
+            }
             showSection('successSection');
 
             // Clean up sessionStorage
@@ -1419,81 +1503,103 @@
     }
 
     function displayFullResults() {
-        if (!analysisData || !analysisData.analise_completa) return;
+        if (!analysisData || !analysisData.analise_completa) {
+            console.error('[ROASTER] displayFullResults: No data available');
+            return;
+        }
         const ac = analysisData.analise_completa;
         const c = document.getElementById('fullResults');
         const scoreRaw3 = analysisData.teaser?.nota_geral || '5/10';
         const scoreNum = typeof scoreRaw3 === 'number' ? scoreRaw3 : (parseInt(String(scoreRaw3).split('/')[0]) || 5);
         const arch = getArchetype(scoreNum);
-        const scoreClass = scoreNum <= 3 ? 'score-low' : scoreNum <= 6 ? 'score-mid' : 'score-high';
-        const ringBorder = scoreNum <= 3 ? '3px solid var(--red)' : scoreNum <= 6 ? '3px solid #f0a500' : '3px solid var(--green)';
-        const valColor = scoreNum <= 3 ? 'var(--red)' : scoreNum <= 6 ? '#f0a500' : 'var(--green)';
         let h = '';
 
-        // Report Header with score ring
+        // ── Score Ring Header ──
         h += '<div class="report-header">';
-        h += '<div class="score-ring-sm" style="border:' + ringBorder + ';">';
-        h += '<div><span class="val" style="color:' + valColor + ';">' + scoreNum + '</span><span class="max">/10</span></div>';
+        h += '<div class="score-ring-lg">';
+        h += '<div class="score-inner"><span class="val">' + scoreNum + '</span><span class="max">/10</span></div>';
         h += '</div>';
-        h += '<div class="report-header-info">';
-        h += '<h3>' + arch.name + '</h3>';
-        h += '<p>' + arch.desc + '</p>';
-        h += '</div></div>';
+        h += '<div class="archetype-name">' + arch.name + '</div>';
+        h += '<div class="archetype-desc">' + arch.desc + '</div>';
+        h += '</div>';
 
-        // Visibilidade Badge
+        // ── Visibilidade Badge ──
         const vis = ac.visibilidade_algoritmo || 'Baixa';
-        const visClass = vis.includes('Alta') ? 'vis-high' : vis.includes('M\u00e9dia') ? 'vis-mid' : 'vis-low';
-        const visIcon = vis.includes('Alta') ? 'fa-eye' : vis.includes('M\u00e9dia') ? 'fa-eye-low-vision' : 'fa-eye-slash';
-        h += '<div style="text-align:center;margin-bottom:20px;">';
-        h += '<span class="vis-badge ' + visClass + '"><i class="fas ' + visIcon + '"></i> Visibilidade: ' + vis + '</span>';
+        const visText = vis.split('\u2014')[0].split(' — ')[0].trim();
+        const visExplain = vis.includes('\u2014') ? vis.split('\u2014')[1].trim() : (vis.includes(' — ') ? vis.split(' — ').slice(1).join(' — ').trim() : '');
+        const visIcon = visText.includes('Alta') ? 'fa-eye' : visText.includes('M\u00e9dia') ? 'fa-eye-low-vision' : 'fa-eye-slash';
+        h += '<div style="text-align:center;margin-bottom:28px;">';
+        h += '<span class="vis-badge"><i class="fas ' + visIcon + '"></i> Visibilidade: ' + visText + '</span>';
+        if (visExplain) {
+            h += '<p style="font-size:0.78rem;color:var(--muted);margin-top:10px;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.6;">' + visExplain + '</p>';
+        }
         h += '</div>';
 
-        // Dimension Bars (use real data from Edge Function, fallback to score-based estimate)
-        h += '<div class="result-block rb-neutral">';
-        h += '<h4><i class="fas fa-chart-bar" style="color:var(--gold);"></i> Dimens\u00f5es do Perfil</h4>';
+        // ── Dimens\u00f5es do Perfil (with explanations) ──
+        h += '<div class="s2i-section">';
+        h += '<div class="s2i-section-title"><i class="fas fa-chart-bar"></i> Dimens\u00f5es do Perfil</div>';
         const dimData = ac.dimensoes || {};
         const dims = [
-            { label: 'Headline & Sum\u00e1rio', val: Math.min(10, Math.max(1, parseInt(dimData.headline_sumario) || scoreNum)) },
-            { label: 'Experi\u00eancia & Conte\u00fado', val: Math.min(10, Math.max(1, parseInt(dimData.experiencia_conteudo) || scoreNum)) },
-            { label: 'Forma\u00e7\u00e3o & Certifica\u00e7\u00f5es', val: Math.min(10, Math.max(1, parseInt(dimData.formacao_certificacoes) || scoreNum)) },
-            { label: 'Rede & Alcance', val: Math.min(10, Math.max(1, parseInt(dimData.rede_alcance) || scoreNum)) },
-            { label: 'SEO & Palavras-chave', val: Math.min(10, Math.max(1, parseInt(dimData.seo_keywords) || scoreNum)) }
+            { key: 'headline_sumario', label: 'Headline & Sum\u00e1rio' },
+            { key: 'experiencia_conteudo', label: 'Experi\u00eancia & Conte\u00fado' },
+            { key: 'formacao_certificacoes', label: 'Forma\u00e7\u00e3o & Certifica\u00e7\u00f5es' },
+            { key: 'rede_alcance', label: 'Rede & Alcance' },
+            { key: 'seo_keywords', label: 'SEO & Palavras-chave' }
         ];
         dims.forEach(d => {
-            const pct = d.val * 10;
-            const fillClass = d.val <= 3 ? 'fill-red' : d.val <= 6 ? 'fill-orange' : 'fill-green';
-            h += '<div class="dim-bar">';
-            h += '<div class="dim-bar-label"><span>' + d.label + '</span><span>' + d.val + '/10</span></div>';
-            h += '<div class="dim-bar-track"><div class="dim-bar-fill ' + fillClass + '" style="width:' + pct + '%;"></div></div>';
+            const dimObj = dimData[d.key];
+            let val, analise = '';
+            if (typeof dimObj === 'object' && dimObj !== null) {
+                val = Math.min(10, Math.max(1, parseInt(dimObj.score) || scoreNum));
+                analise = dimObj.analise || '';
+            } else {
+                val = Math.min(10, Math.max(1, parseInt(dimObj) || scoreNum));
+            }
+            const pct = val * 10;
+            h += '<div class="dim-card">';
+            h += '<div class="dim-card-header"><span>' + d.label + '</span><span>' + val + '/10</span></div>';
+            h += '<div class="dim-bar-track"><div class="dim-bar-fill" style="width:' + pct + '%;"></div></div>';
+            if (analise) {
+                h += '<div class="dim-card-text">' + analise + '</div>';
+            }
             h += '</div>';
         });
         h += '</div>';
 
-        // Sum\u00e1rio Executivo
+        // ── Sum\u00e1rio Executivo ──
         if (ac.sumario_executivo) {
-            h += '<div class="result-block rb-gold">';
-            h += '<h4><i class="fas fa-file-alt" style="color:var(--gold);"></i> Sum\u00e1rio Executivo</h4>';
+            h += '<div class="s2i-section">';
+            h += '<div class="s2i-section-title"><i class="fas fa-file-alt"></i> Sum\u00e1rio Executivo</div>';
             h += '<p>' + ac.sumario_executivo + '</p></div>';
         }
 
-        // Pontos Fortes
+        // ── Pontos Fortes ──
         if (ac.pontos_fortes?.length) {
-            h += '<div class="result-block rb-green">';
-            h += '<h4><i class="fas fa-check-circle" style="color:var(--green);"></i> Pontos Fortes</h4><ul style="padding-left:18px;list-style:none;">';
-            ac.pontos_fortes.forEach(p => { h += '<li style="margin-bottom:8px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--green);">\u2713</span>' + p + '</li>'; });
-            h += '</ul></div>';
+            h += '<div class="s2i-section">';
+            h += '<div class="s2i-section-title"><i class="fas fa-check"></i> Pontos Fortes</div>';
+            ac.pontos_fortes.forEach(p => {
+                h += '<div class="strength-item">';
+                h += '<div class="strength-icon"><i class="fas fa-check"></i></div>';
+                h += '<p>' + p + '</p>';
+                h += '</div>';
+            });
+            h += '</div>';
         }
 
-        // \u00c1reas de Melhoria
+        // ── \u00c1reas de Melhoria ──
         if (ac.areas_melhoria?.length) {
-            h += '<div class="result-block rb-red">';
-            h += '<h4><i class="fas fa-exclamation-triangle" style="color:var(--red);"></i> \u00c1reas de Melhoria</h4>';
+            h += '<div class="s2i-section">';
+            h += '<div class="s2i-section-title"><i class="fas fa-arrow-up"></i> \u00c1reas de Melhoria</div>';
             ac.areas_melhoria.forEach(item => {
                 if (typeof item === 'object') {
                     h += '<div class="improve-item">';
                     h += '<div class="improve-area">' + (item.area || '') + '</div>';
-                    h += '<div class="improve-diag"><i class="fas fa-search" style="font-size:0.7rem;margin-right:4px;"></i>' + (item.diagnostico || '') + '</div>';
-                    h += '<div class="improve-rec">' + (item.recomendacao || '') + '</div>';
+                    if (item.diagnostico) {
+                        h += '<div class="improve-diag">' + item.diagnostico + '</div>';
+                    }
+                    if (item.recomendacao) {
+                        h += '<div class="improve-rec">' + item.recomendacao + '</div>';
+                    }
                     h += '</div>';
                 } else {
                     h += '<div class="improve-item"><div class="improve-rec">' + item + '</div></div>';
@@ -1502,41 +1608,43 @@
             h += '</div>';
         }
 
-        // Headlines Sugeridas
+        // ── Headlines Sugeridas ──
         if (ac.headlines_sugeridas?.length) {
-            h += '<div class="result-block rb-highlight">';
-            h += '<h4><i class="fas fa-lightbulb" style="color:var(--gold);"></i> Headlines Sugeridas</h4>';
+            h += '<div class="s2i-section">';
+            h += '<div class="s2i-section-title"><i class="fas fa-lightbulb"></i> Headlines Sugeridas</div>';
             ac.headlines_sugeridas.forEach(hl => { h += '<span class="headline-suggestion">' + hl + '</span>'; });
             h += '</div>';
         }
 
-        // Palavras-Chave SEO
+        // ── Palavras-Chave SEO ──
         if (ac.dicas_seo?.length) {
-            h += '<div class="result-block rb-neutral">';
-            h += '<h4><i class="fas fa-key" style="color:var(--gold);"></i> Palavras-Chave SEO</h4><div style="display:flex;flex-wrap:wrap;gap:4px;">';
+            h += '<div class="s2i-section">';
+            h += '<div class="s2i-section-title"><i class="fas fa-key"></i> Palavras-Chave SEO</div>';
+            h += '<div style="display:flex;flex-wrap:wrap;gap:6px;">';
             ac.dicas_seo.forEach(kw => { h += '<span class="tag">' + kw + '</span>'; });
             h += '</div></div>';
         }
 
-        // An\u00e1lise de Forma\u00e7\u00e3o
+        // ── Forma\u00e7\u00e3o e Certifica\u00e7\u00f5es ──
         if (ac.analise_formacao) {
-            h += '<div class="result-block rb-neutral">';
-            h += '<h4><i class="fas fa-graduation-cap" style="color:var(--gold);"></i> Forma\u00e7\u00e3o e Certifica\u00e7\u00f5es</h4>';
+            h += '<div class="s2i-section">';
+            h += '<div class="s2i-section-title"><i class="fas fa-graduation-cap"></i> Forma\u00e7\u00e3o e Certifica\u00e7\u00f5es</div>';
             h += '<p>' + ac.analise_formacao + '</p></div>';
         }
 
-        // An\u00e1lise de Rede
+        // ── Rede e Alcance ──
         if (ac.analise_rede) {
-            h += '<div class="result-block rb-neutral">';
-            h += '<h4><i class="fas fa-network-wired" style="color:var(--gold);"></i> Rede e Alcance</h4>';
+            h += '<div class="s2i-section">';
+            h += '<div class="s2i-section-title"><i class="fas fa-network-wired"></i> Rede e Alcance</div>';
             h += '<p>' + ac.analise_rede + '</p></div>';
         }
 
-        // Recomenda\u00e7\u00e3o Priorit\u00e1ria
+        // ── Recomenda\u00e7\u00e3o Priorit\u00e1ria ──
         if (ac.recomendacao_prioritaria) {
-            h += '<div class="result-block rb-highlight">';
-            h += '<h4><i class="fas fa-star" style="color:var(--gold);"></i> Recomenda\u00e7\u00e3o Priorit\u00e1ria</h4>';
-            h += '<p style="font-weight:500;">' + ac.recomendacao_prioritaria + '</p></div>';
+            h += '<div class="s2i-section">';
+            h += '<div class="s2i-section-title"><i class="fas fa-star"></i> Recomenda\u00e7\u00e3o Priorit\u00e1ria</div>';
+            h += '<div class="priority-box"><p>' + ac.recomendacao_prioritaria + '</p></div>';
+            h += '</div>';
         }
 
         c.innerHTML = h;
@@ -1585,6 +1693,27 @@
     }
 
     // Check for return from payment redirect (Stripe/PayPal)
+    // Preview mode for testing
+    (function checkPreviewMode() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('preview_results') === 'true' && params.get('mock')) {
+            try {
+                analysisData = JSON.parse(decodeURIComponent(params.get('mock')));
+                displayFullResults();
+                document.getElementById('successEmail').textContent = 'test@example.com';
+                const dateEl = document.getElementById('reportDate');
+                if (dateEl) {
+                    const now = new Date();
+                    const months = ['janeiro','fevereiro','mar\u00e7o','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+                    dateEl.textContent = months[now.getMonth()] + ' de ' + now.getFullYear();
+                }
+                showSection('successSection');
+                window.history.replaceState({}, '', window.location.pathname + '?preview_results=active');
+                return;
+            } catch(e) { console.error('Preview error:', e); }
+        }
+    })();
+
     (function checkPaymentReturn() {
         const params = new URLSearchParams(window.location.search);
         const payment = params.get('payment');
