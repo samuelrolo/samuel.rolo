@@ -1951,7 +1951,7 @@ function openCreateAffiliateModal() {
     document.getElementById('affCommission').value = '0';
     document.getElementById('affNotes').value = '';
     document.getElementById('affModalTitle').textContent = 'Novo Afiliado';
-    document.getElementById('affLinkPreview').textContent = 'share2inspire.pt/cv-analyser?ref=...';
+    document.getElementById('affLinkPreview').textContent = 'share2inspire.pt/cv-analyser?ref=... (CV + LinkedIn Roaster + Career Path)';
     document.getElementById('affModalOverlay').style.display = 'flex';
 
     // Live preview of link
@@ -1959,8 +1959,8 @@ function openCreateAffiliateModal() {
         const code = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
         this.value = code;
         document.getElementById('affLinkPreview').textContent = code
-            ? `share2inspire.pt/cv-analyser?ref=${code}`
-            : 'share2inspire.pt/cv-analyser?ref=...';
+            ? `share2inspire.pt/cv-analyser?ref=${code} (CV + LinkedIn Roaster + Career Path)`
+            : 'share2inspire.pt/cv-analyser?ref=... (CV + LinkedIn Roaster + Career Path)';
     };
 }
 
@@ -1978,15 +1978,15 @@ function editAffiliate(id) {
     document.getElementById('affCommission').value = aff.commission_pct || 0;
     document.getElementById('affNotes').value = aff.notes || '';
     document.getElementById('affModalTitle').textContent = 'Editar Afiliado';
-    document.getElementById('affLinkPreview').textContent = `share2inspire.pt/cv-analyser?ref=${aff.code}`;
+    document.getElementById('affLinkPreview').textContent = `share2inspire.pt/cv-analyser?ref=${aff.code} (CV + LinkedIn Roaster + Career Path)`;
     document.getElementById('affModalOverlay').style.display = 'flex';
 
     document.getElementById('affCode').oninput = function() {
         const code = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
         this.value = code;
         document.getElementById('affLinkPreview').textContent = code
-            ? `share2inspire.pt/cv-analyser?ref=${code}`
-            : 'share2inspire.pt/cv-analyser?ref=...';
+            ? `share2inspire.pt/cv-analyser?ref=${code} (CV + LinkedIn Roaster + Career Path)`
+            : 'share2inspire.pt/cv-analyser?ref=... (CV + LinkedIn Roaster + Career Path)';
     };
 }
 
@@ -2010,7 +2010,7 @@ async function saveAffiliate() {
         } else {
             // Create
             await supaInsert('affiliates', { name, email: email || null, code, commission_pct: commission, notes: notes || null, active: true });
-            showToast('Afiliado criado! Link: share2inspire.pt/cv-analyser?ref=' + code, 'success');
+            showToast('Afiliado criado! 6 links: CV + LinkedIn Roaster + Career Path (PT+EN)', 'success');
         }
         closeAffiliateModal();
         renderAffiliates();
@@ -2033,13 +2033,15 @@ async function toggleAffiliate(id, currentActive) {
 function copyAffLink(code) {
     const links = [
         `https://www.share2inspire.pt/cv-analyser?ref=${code}`,
+        `https://www.share2inspire.pt/cv-analyser?ref=${code}&mode=linkedin`,
         `https://www.share2inspire.pt/career-path?ref=${code}`,
         `https://www.share2inspire.pt/en/cv-analyser?ref=${code}`,
+        `https://www.share2inspire.pt/en/cv-analyser?ref=${code}&mode=linkedin`,
         `https://www.share2inspire.pt/en/career-path?ref=${code}`
     ];
     const text = links.join('\n');
     navigator.clipboard.writeText(text).then(() => {
-        showToast('4 links copiados (PT+EN, CV+Career Path)', 'success');
+        showToast('6 links copiados (PT+EN: CV, LinkedIn Roaster, Career Path)', 'success');
     }).catch(() => {
         // Fallback
         prompt('Copia os links:', text);
