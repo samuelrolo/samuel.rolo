@@ -772,11 +772,17 @@
             if (kickstartForm) {
                 kickstartForm.addEventListener('submit', async function (e) {
                     e.preventDefault();
-                    const email = document.getElementById('kickstartEmail').value;
-                    const name = document.getElementById('kickstartName').value;
-                    const objectives = document.getElementById('kickstartObjectives').value;
+                    const email = document.getElementById('kickstartEmail').value.trim();
+                    const name = document.getElementById('kickstartName').value.trim();
+                    const phone = document.getElementById('kickstartPhone').value.trim();
+                    const objectives = document.getElementById('kickstartObjectives').value.trim();
                     const submitBtn = kickstartForm.querySelector('button[type="submit"]');
                     const messageDiv = document.getElementById('kickstartFormMessage');
+                    // Validação local antes de enviar
+                    if (!name || !email || !phone) {
+                        messageDiv.innerHTML = '<div class="alert alert-danger">Por favor, preencha o Nome, Email e Telemóvel.</div>';
+                        return;
+                    }
                     if (!window.EmailFlows || !window.EmailFlows.isValidEmail(email)) {
                         messageDiv.innerHTML = '<div class="alert alert-danger">Por favor, introduza um email válido.</div>';
                         return;
@@ -784,7 +790,7 @@
                     submitBtn.disabled = true;
                     submitBtn.innerHTML = 'A processar...';
                     try {
-                        const result = await window.EmailFlows.sendKickstartConfirmation(email, name, { objectives });
+                        const result = await window.EmailFlows.sendKickstartConfirmation(email, name, { objectives, phone });
                         if (result.success) {
                             messageDiv.innerHTML = `<div class="alert alert-success"><strong>${result.message}</strong></div>`;
                             kickstartForm.reset();
