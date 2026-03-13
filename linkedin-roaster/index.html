@@ -1004,6 +1004,23 @@
                         <p style="font-size:0.68rem;color:#aaa;margin-top:6px;text-align:center;">Vais receber uma notificação no teu telemóvel.</p>
                     </div>
 
+                    <!-- Voucher Section -->
+                    <div style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb;">
+                        <button class="pay-btn" onclick="toggleVoucherForm()" style="background:#fdf8ef;border-color:#C9A961;color:#92750E;">
+                            <i class="fas fa-ticket-alt" style="color:#C9A961;"></i>
+                            Tenho um Voucher
+                        </button>
+                        <div id="voucherForm" style="display:none;margin-top:12px;">
+                            <p style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">Introduz o código do teu voucher:</p>
+                            <input type="text" id="voucherCode" placeholder="S2I-XXXXXX" maxlength="20" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;text-transform:uppercase;letter-spacing:2px;text-align:center;">
+                            <button class="btn-primary" onclick="validateVoucher()" id="btnVoucher" style="margin-top:8px;background:#C9A961;border-color:#C9A961;">
+                                Validar Voucher
+                            </button>
+                            <div id="voucherError" style="display:none;color:#dc2626;font-size:0.78rem;margin-top:8px;text-align:center;"></div>
+                            <div id="voucherSuccess" style="display:none;color:#16a34a;font-size:0.78rem;margin-top:8px;text-align:center;"></div>
+                        </div>
+                    </div>
+
                     <div class="error-msg" id="paymentError"></div>
                 </div>
             </div>
@@ -1367,6 +1384,108 @@
     // ============================================
     // PAYMENT HANDLERS
     // ============================================
+    // ============================================
+    // VOUCHER HANDLERS
+    // ============================================
+    function toggleVoucherForm() {
+        const form = document.getElementById('voucherForm');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        if (form.style.display === 'block') {
+            document.getElementById('voucherCode').focus();
+        }
+    }
+
+    async function validateVoucher() {
+        const code = document.getElementById('voucherCode').value.trim().toUpperCase();
+        const errEl = document.getElementById('voucherError');
+        const successEl = document.getElementById('voucherSuccess');
+        const btn = document.getElementById('btnVoucher');
+
+        errEl.style.display = 'none';
+        successEl.style.display = 'none';
+
+        if (!code) {
+            errEl.textContent = 'Introduz um c\u00f3digo de voucher.';
+            errEl.style.display = 'block';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'A validar...';
+
+        try {
+            const resp = await fetch(SUPABASE_URL + '/rest/v1/vouchers?code=eq.' + encodeURIComponent(code) + '&select=*', {
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                }
+            });
+            const vouchers = await resp.json();
+
+            if (!Array.isArray(vouchers) || vouchers.length === 0) {
+                errEl.textContent = 'C\u00f3digo inv\u00e1lido. Verifica e tenta novamente.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            const voucher = vouchers[0];
+            const remaining = (voucher.total_analyses || 0) - (voucher.used_analyses || 0);
+
+            if (remaining <= 0) {
+                errEl.textContent = 'Este voucher j\u00e1 n\u00e3o tem an\u00e1lises dispon\u00edveis.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            // Voucher is valid! Increment used_analyses
+            await fetch(SUPABASE_URL + '/rest/v1/vouchers?id=eq.' + voucher.id, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                },
+                body: JSON.stringify({ used_analyses: (voucher.used_analyses || 0) + 1 })
+            });
+
+            successEl.textContent = 'Voucher v\u00e1lido! A iniciar an\u00e1lise...';
+            successEl.style.display = 'block';
+
+            // Update analysis record as paid via voucher
+            if (analysisId) {
+                fetch(SUPABASE_URL + '/rest/v1/linkedin_roaster_analyses?id=eq.' + analysisId, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                    },
+                    body: JSON.stringify({ payment_status: 'paid', payment_method: 'voucher', payment_amount: 0, voucher_code: code })
+                }).catch(e => console.warn('[ROASTER] Voucher update failed:', e));
+            }
+
+            // Track events
+            gtag('event', 'purchase', {
+                transaction_id: 'LR-V-' + Date.now(),
+                value: 0,
+                currency: 'EUR',
+                items: [{ item_name: 'LinkedIn Roaster (Voucher)', price: 0 }]
+            });
+            fbq('track', 'Purchase', { value: 0, currency: 'EUR', content_ids: ['linkedin-roast-voucher'], content_type: 'product' });
+
+            // Run the analysis directly (skip payment)
+            setTimeout(() => runFullAnalysis(), 500);
+
+        } catch (error) {
+            console.error('[ROASTER] Voucher validation error:', error);
+            errEl.textContent = 'Erro ao validar voucher. Tenta novamente.';
+            errEl.style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Validar Voucher';
+        }
+    }
+
     function showMBWayForm() {
         document.getElementById('mbwayModal').style.display = 'block';
         document.getElementById('mbwayPhone').focus();
