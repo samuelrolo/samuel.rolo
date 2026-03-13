@@ -101,6 +101,14 @@
       "destination": "/en/career-path/index.html"
     },
     {
+      "source": "/linkedin-roaster",
+      "destination": "/linkedin-roaster/index.html"
+    },
+    {
+      "source": "/linkedin-roaster/(.*)",
+      "destination": "/linkedin-roaster/index.html"
+    },
+    {
       "source": "/estudos",
       "destination": "/estudos/index.html"
     },
