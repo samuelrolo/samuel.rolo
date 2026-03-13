@@ -1067,8 +1067,8 @@
     }
 
     function shareOnLinkedIn() {
-        const score = analysisData?.teaser?.nota_geral || '5/10';
-        const scoreNum = parseInt(score.split('/')[0]) || 5;
+        const scoreRaw2 = analysisData?.teaser?.nota_geral || '5/10';
+        const scoreNum = typeof scoreRaw2 === 'number' ? scoreRaw2 : (parseInt(String(scoreRaw2).split('/')[0]) || 5);
         const arch = getArchetype(scoreNum);
         const shareText = arch.share + '\n\nDescobre o teu score: https://www.share2inspire.pt/linkedin-roaster\n\n#LinkedInRoaster #Share2Inspire #LinkedIn #CarreirasProfissionais';
         const url = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent('https://www.share2inspire.pt/linkedin-roaster') + '&summary=' + encodeURIComponent(shareText);
@@ -1228,9 +1228,9 @@
             logToSupabase(linkedinUrl, email, analysisData);
 
             // Show teaser
-            const score = analysisData.teaser?.nota_geral || '5/10';
+            const scoreRaw = analysisData.teaser?.nota_geral || '5/10';
             const hook = analysisData.teaser?.hook_vendas || 'O teu perfil precisa de atenção urgente.';
-            const scoreNum = parseInt(score.split('/')[0]) || 5;
+            const scoreNum = typeof scoreRaw === 'number' ? scoreRaw : (parseInt(String(scoreRaw).split('/')[0]) || 5);
 
             document.getElementById('scoreValue').textContent = scoreNum;
             document.getElementById('teaserHook').textContent = hook;
@@ -1432,8 +1432,8 @@
         if (!analysisData || !analysisData.analise_completa) return;
         const ac = analysisData.analise_completa;
         const c = document.getElementById('fullResults');
-        const score = analysisData.teaser?.nota_geral || '5/10';
-        const scoreNum = parseInt(score.split('/')[0]) || 5;
+        const scoreRaw3 = analysisData.teaser?.nota_geral || '5/10';
+        const scoreNum = typeof scoreRaw3 === 'number' ? scoreRaw3 : (parseInt(String(scoreRaw3).split('/')[0]) || 5);
         const arch = getArchetype(scoreNum);
         const scoreClass = scoreNum <= 3 ? 'score-low' : scoreNum <= 6 ? 'score-mid' : 'score-high';
         const ringBorder = scoreNum <= 3 ? '3px solid var(--red)' : scoreNum <= 6 ? '3px solid #f0a500' : '3px solid var(--green)';
