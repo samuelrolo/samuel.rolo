@@ -1090,11 +1090,15 @@
         }
     });
 
-    function showError(section, msg) {
+    function showError(section, msg, isHtml = false) {
         const el = section === 'inputSection' ? document.getElementById('errorMsg') : document.getElementById('paymentError');
-        el.textContent = msg;
+        if (isHtml) {
+            el.innerHTML = msg;
+        } else {
+            el.textContent = msg;
+        }
         el.style.display = 'block';
-        setTimeout(() => { el.style.display = 'none'; }, 8000);
+        setTimeout(() => { el.style.display = 'none'; }, 12000);
     }
 
     function showSection(sectionId) {
@@ -1176,29 +1180,37 @@
                 let cvText = '';
                 let scrapeSuccess = false;
 
-                // ── ATTEMPT 1: Backend Apify scraper (best quality) ──
+                // ── STEP 1: Backend Apify scraper (REQUIRED - no fallback to prevent hallucinations) ──
                 try {
-                    console.log('[ROASTER] Step 1A: Trying Apify scraper...', linkedinUrl);
+                    console.log('[ROASTER] Step 1: Scraping LinkedIn profile via Apify...', linkedinUrl);
                     const scrapeResponse = await fetch(BACKEND_URL + '/api/services/scrape-linkedin', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ linkedin_url: linkedinUrl })
                     });
 
-                    if (scrapeResponse.ok) {
-                        const scrapeData = await scrapeResponse.json();
-                        if (scrapeData?.success && scrapeData?.cv_text) {
-                            cvText = scrapeData.cv_text;
-                            scrapeSuccess = true;
-                            console.log('[ROASTER] Step 1A OK: Extracted', cvText.length, 'chars for', scrapeData.profile_name);
-                        }
+                    const scrapeData = await scrapeResponse.json();
+
+                    if (scrapeResponse.ok && scrapeData?.success && scrapeData?.cv_text) {
+                        cvText = scrapeData.cv_text;
+                        scrapeSuccess = true;
+                        console.log('[ROASTER] Step 1 OK: Extracted', cvText.length, 'chars for', scrapeData.profile_name);
+                    } else {
+                        // CRITICAL: If scraping fails, BLOCK the analysis completely
+                        const errorMsg = scrapeData?.error || 'Não foi possível aceder ao perfil LinkedIn.';
+                        console.error('[ROASTER] Step 1 FAILED - BLOCKING analysis:', errorMsg);
+                        throw new Error('Erro técnico: não foi possível extrair os dados do perfil. <a href="/contactos" style="color:#0073b1;text-decoration:underline">Contactar suporte</a>');
                     }
                 } catch (scrapeErr) {
-                    console.warn('[ROASTER] Step 1A failed (Apify):', scrapeErr.message);
+                    if (scrapeErr.message.includes('Erro técnico')) {
+                        throw scrapeErr; // Re-throw our custom error
+                    }
+                    console.error('[ROASTER] Step 1 FAILED (network error):', scrapeErr.message);
+                    throw new Error('Erro técnico: não foi possível aceder ao serviço de extração. <a href="/contactos" style="color:#0073b1;text-decoration:underline">Contactar suporte</a>');
                 }
 
-                // ── STEP 2: Send to Edge Function for AI analysis ──
-                console.log('[ROASTER] Step 2: Sending to AI for analysis...', scrapeSuccess ? '(with cv_text)' : '(with URL only, using Google Search)');
+                // ── STEP 2: Send to Edge Function for AI analysis (only with real scraped data) ──
+                console.log('[ROASTER] Step 2: Sending to AI for analysis with scraped data...');
                 const payload = {
                     mode: 'linkedin_roast',
                     linkedin_url: linkedinUrl,
@@ -1252,7 +1264,8 @@
         } catch (error) {
             console.error('Analysis error:', error);
             showSection('inputSection');
-            showError('inputSection', error.message || 'Não foi possível analisar o perfil. Verifica o URL e tenta novamente.');
+            const isHtml = error.message && error.message.includes('<a ');
+            showError('inputSection', error.message || 'Não foi possível analisar o perfil. Verifica o URL e tenta novamente.', isHtml);
         } finally {
             document.getElementById('btnAnalyze').disabled = false;
         }
