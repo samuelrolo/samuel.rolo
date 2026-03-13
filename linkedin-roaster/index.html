@@ -969,41 +969,49 @@
                 }
                 analysisData = data;
             } else {
-                // LinkedIn URL: use backend Apify scraper (same as CV Analyser)
-                console.log('[ROASTER] Step 1: Scraping LinkedIn via Apify...', linkedinUrl);
-                const scrapeResponse = await fetch(BACKEND_URL + '/api/services/scrape-linkedin', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ linkedin_url: linkedinUrl })
-                });
+                // LinkedIn URL: try backend Apify scraper first, fallback to Edge Function with URL
+                let cvText = '';
+                let scrapeSuccess = false;
 
-                if (!scrapeResponse.ok) {
-                    const scrapeError = await scrapeResponse.json().catch(() => ({}));
-                    throw new Error(scrapeError?.error || 'Não conseguimos ler o teu perfil público. Por favor, faz o download do PDF no teu LinkedIn e faz o upload aqui.');
+                // ── ATTEMPT 1: Backend Apify scraper (best quality) ──
+                try {
+                    console.log('[ROASTER] Step 1A: Trying Apify scraper...', linkedinUrl);
+                    const scrapeResponse = await fetch(BACKEND_URL + '/api/services/scrape-linkedin', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ linkedin_url: linkedinUrl })
+                    });
+
+                    if (scrapeResponse.ok) {
+                        const scrapeData = await scrapeResponse.json();
+                        if (scrapeData?.success && scrapeData?.cv_text) {
+                            cvText = scrapeData.cv_text;
+                            scrapeSuccess = true;
+                            console.log('[ROASTER] Step 1A OK: Extracted', cvText.length, 'chars for', scrapeData.profile_name);
+                        }
+                    }
+                } catch (scrapeErr) {
+                    console.warn('[ROASTER] Step 1A failed (Apify):', scrapeErr.message);
                 }
 
-                const scrapeData = await scrapeResponse.json();
-                if (!scrapeData?.success || !scrapeData?.cv_text) {
-                    throw new Error(scrapeData?.error || 'Não foi possível extrair dados do perfil LinkedIn. Verifica se o perfil é público ou faz upload do PDF.');
+                // ── STEP 2: Send to Edge Function for AI analysis ──
+                console.log('[ROASTER] Step 2: Sending to AI for analysis...', scrapeSuccess ? '(with cv_text)' : '(with URL only, using Google Search)');
+                const payload = {
+                    mode: 'linkedin_roast',
+                    linkedin_url: linkedinUrl,
+                    target_area: targetArea
+                };
+                if (scrapeSuccess) {
+                    payload.cv_text = cvText.substring(0, 8000);
                 }
 
-                cvText = scrapeData.cv_text;
-                console.log('[ROASTER] Step 1 OK: Extracted', cvText.length, 'chars for', scrapeData.profile_name);
-
-                // ── STEP 2: Send extracted text to Edge Function for AI analysis ──
-                console.log('[ROASTER] Step 2: Sending to AI for analysis...');
                 const response = await fetch(SUPABASE_EDGE_URL, {
                     method: 'POST',
                     headers: {
                         'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        mode: 'linkedin_roast',
-                        cv_text: cvText.substring(0, 8000),
-                        linkedin_url: linkedinUrl,
-                        target_area: targetArea
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 const data = await response.json();
