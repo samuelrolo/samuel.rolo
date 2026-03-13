@@ -41,7 +41,6 @@ const PAGE_SIZE      = 25;
 // Chart instances
 let dailyChart = null, typeChart = null, langChart = null, ttfbChart = null;
 let funnelChart = null, scoreChart = null, ceScoreChart = null;
-let lrDailyChart = null, lrConvChart = null;
 
 // Nurturing state
 let nurturingSegment = null;
@@ -101,6 +100,10 @@ function detectLanguage(a) {
 }
 
 function getAnalysisType(a) {
+    // LinkedIn Roaster: paid = paid, non-paid = free (gratuito)
+    if (a._source === 'linkedin_roaster') {
+        return (a.payment_status === 'paid' || (a.payment_amount && a.payment_amount > 0)) ? 'paid' : 'free';
+    }
     if (a.analysis_type === 'career_path') return 'paid';
     if (a.payment_status === 'paid' || (a.payment_amount && a.payment_amount > 0)) return 'paid';
     const usedVoucher = allVouchers.find(v =>
@@ -294,8 +297,13 @@ async function loadHealthLogs() {
 //  DASHBOARD
 // ═══════════════════════════════════════════════════════════════
 function updateDashboard() {
-    let data = filterByLang(allAnalyses, globalLang);
-    data = filterByPeriod(data, dashPeriodDays);
+    let cvData = filterByLang(allAnalyses, globalLang);
+    cvData = filterByPeriod(cvData, dashPeriodDays);
+
+    // Merge LR into the main data for unified KPIs
+    const lrTaggedAll = allLinkedinRoaster.map(a => ({ ...a, _source: 'linkedin_roaster' }));
+    const lrPeriod = filterByPeriod(lrTaggedAll, dashPeriodDays);
+    const data = [...cvData, ...lrPeriod];
 
     const paid    = data.filter(a => getAnalysisType(a) === 'paid');
     const free    = data.filter(a => getAnalysisType(a) === 'free');
@@ -310,15 +318,15 @@ function updateDashboard() {
     const last7d   = data.filter(a => new Date(a.created_at) >= d7);
     const paidLast7 = last7d.filter(a => getAnalysisType(a) === 'paid');
 
-    // Revenue from direct paid analyses (payment_amount on cv_analysis)
-    const directRevenue = paid.reduce((s, a) => s + (a.payment_amount || 0), 0);
+    // Revenue from direct paid analyses (payment_amount on cv_analysis) + LR paid
+    const directRevenue = paid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
     // Revenue from voucher sales (amount_paid on vouchers table, excluding test/promo)
     const voucherRevenue = allVouchers
         .filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo')
         .reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
     // Total = direct analysis payments + voucher sales
     const totalRevenue = directRevenue + voucherRevenue;
-    const cvRevenue = paid.filter(a => a.analysis_type !== 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0) 
+    const cvRevenue = paid.filter(a => a.analysis_type !== 'career_path' && a._source !== 'linkedin_roaster').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0) 
                     + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type !== 'career_path').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
     const cpRevenue = cp.reduce((s, a) => s + (a.payment_amount || 0), 0)
                     + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type === 'career_path').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
@@ -366,16 +374,16 @@ function updateDashboard() {
     setText('kpiVouchersUsed', `${vUsed} utilizados`);
     setText('kpiVoucherRevenue', `${voucherRevenue.toFixed(2)}€`);
 
-    // LinkedIn Roaster KPIs
-    const lrData = filterByPeriod(allLinkedinRoaster, dashPeriodDays);
-    const lrPaid = lrData.filter(a => a.payment_status === 'paid');
-    const lrRevenue = lrPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
-    setText('kpiLinkedinRoaster', lrData.length);
-    setText('kpiLinkedinRoasterPaid', `${lrPaid.length} pagas`);
+    // LinkedIn Roaster KPIs (using lrPeriod already computed above)
+    const lrPaidItems = lrPeriod.filter(a => a.payment_status === 'paid');
+    const lrRevenue = lrPaidItems.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
+    const lrFreeCount = lrPeriod.length - lrPaidItems.length;
+    setText('kpiLinkedinRoaster', lrPeriod.length);
+    setText('kpiLinkedinRoasterPaid', `${lrPaidItems.length} pagas · ${lrFreeCount} gratuitas`);
     setText('kpiRevenueLR', `${lrRevenue.toFixed(2)}€`);
 
     // Dashboard Revenue by Product (includes LinkedIn Roaster)
-    renderDashRevenueByProduct(data, lrData);
+    renderDashRevenueByProduct(cvData, lrPeriod);
 
     // Hidden compat
     setText('kpiRevenuePT', '');
@@ -425,8 +433,13 @@ function setText(id, val) {
 // ═══════════════════════════════════════════════════════════════
 function updateCharts() {
     const days = parseInt(document.getElementById('chartDateFilter')?.value || 14);
-    let data = filterByLang(allAnalyses, globalLang);
-    data = filterByPeriod(data, days);
+    let cvData = filterByLang(allAnalyses, globalLang);
+    cvData = filterByPeriod(cvData, days);
+
+    // Merge LinkedIn Roaster into chart data (LR paid = paid, LR non-paid = free/gratuito)
+    const lrTagged = allLinkedinRoaster.map(a => ({ ...a, _source: 'linkedin_roaster' }));
+    const lrFiltered = filterByPeriod(lrTagged, days);
+    const data = [...cvData, ...lrFiltered];
 
     // Daily Chart
     const dateMap = {};
@@ -465,7 +478,7 @@ function updateCharts() {
         });
     }
 
-    // Type Chart (Donut)
+    // Type Chart (Donut) — includes all products
     const paidCount    = data.filter(a => getAnalysisType(a) === 'paid').length;
     const freeCount    = data.filter(a => getAnalysisType(a) === 'free').length;
     const voucherCount = data.filter(a => getAnalysisType(a) === 'voucher').length;
@@ -498,14 +511,17 @@ function updateCharts() {
         });
     }
 
-    // Score Distribution
+    // Score Distribution — includes LR teaser_score
     const scoreBuckets = { '0-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': 0 };
-    data.filter(a => a.score > 0).forEach(a => {
-        const s = a.score;
-        if (s <= 20) scoreBuckets['0-20']++;
-        else if (s <= 40) scoreBuckets['21-40']++;
-        else if (s <= 60) scoreBuckets['41-60']++;
-        else if (s <= 80) scoreBuckets['61-80']++;
+    data.forEach(a => {
+        const s = a.score || a.teaser_score || 0;
+        if (s <= 0) return;
+        // LR scores are 1-10, normalize to 0-100
+        const normalized = a._source === 'linkedin_roaster' ? s * 10 : s;
+        if (normalized <= 20) scoreBuckets['0-20']++;
+        else if (normalized <= 40) scoreBuckets['21-40']++;
+        else if (normalized <= 60) scoreBuckets['41-60']++;
+        else if (normalized <= 80) scoreBuckets['61-80']++;
         else scoreBuckets['81-100']++;
     });
     const ctx4 = document.getElementById('scoreChart')?.getContext('2d');
@@ -522,64 +538,6 @@ function updateCharts() {
     }
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  LINKEDIN ROASTER CHARTS
-// ═══════════════════════════════════════════════════════════════
-function updateLRChart() {
-    const days = parseInt(document.getElementById('lrChartDateFilter')?.value || 14);
-    const lrData = allLinkedinRoaster;
-
-    // Daily Chart
-    const dateMap = {};
-    const now = new Date();
-    for (let i = days - 1; i >= 0; i--) {
-        const d = new Date(now);
-        d.setDate(d.getDate() - i);
-        dateMap[d.toISOString().slice(0, 10)] = { pending: 0, paid: 0 };
-    }
-    lrData.forEach(a => {
-        const key = a.created_at?.slice(0, 10);
-        if (dateMap[key]) {
-            if (a.payment_status === 'paid') dateMap[key].paid++;
-            else dateMap[key].pending++;
-        }
-    });
-    const labels = Object.keys(dateMap);
-    const paidData = labels.map(d => dateMap[d].paid);
-    const pendingData = labels.map(d => dateMap[d].pending);
-
-    const ctx1 = document.getElementById('lrDailyChart')?.getContext('2d');
-    if (ctx1) {
-        if (lrDailyChart) lrDailyChart.destroy();
-        lrDailyChart = new Chart(ctx1, {
-            type: 'bar',
-            data: {
-                labels: labels.map(d => d.slice(5)),
-                datasets: [
-                    { label: 'Pagas', data: paidData, backgroundColor: '#0077B5', borderRadius: 3 },
-                    { label: 'Pendentes', data: pendingData, backgroundColor: '#B0D4E8', borderRadius: 3 }
-                ]
-            },
-            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }, scales: { x: { stacked: true, ticks: { font: { size: 10 } } }, y: { stacked: true, ticks: { font: { size: 10 } } } } }
-        });
-    }
-
-    // Conversion Donut
-    const totalPaid = lrData.filter(a => a.payment_status === 'paid').length;
-    const totalPending = lrData.filter(a => a.payment_status !== 'paid').length;
-    const ctx2 = document.getElementById('lrConvChart')?.getContext('2d');
-    if (ctx2) {
-        if (lrConvChart) lrConvChart.destroy();
-        lrConvChart = new Chart(ctx2, {
-            type: 'doughnut',
-            data: {
-                labels: ['Pagas', 'Pendentes'],
-                datasets: [{ data: [totalPaid, totalPending], backgroundColor: ['#0077B5', '#B0D4E8'], borderWidth: 0 }]
-            },
-            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
-        });
-    }
-}
 
 // ═══════════════════════════════════════════════════════════════
 //  FUNIL DE CONVERSÃO
@@ -1888,7 +1846,6 @@ async function refreshAll() {
     await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs(), loadAffiliateData()]);
     updateDashboard();
     updateCharts();
-    updateLRChart();
     // Re-render active tab
     const activeTab = document.querySelector('.tab-btn.active');
     if (activeTab) activeTab.click();
@@ -1906,7 +1863,6 @@ async function init() {
     await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs(), loadAffiliateData()]);
     updateDashboard();
     updateCharts();
-    updateLRChart();
     renderNurturingSegments();
 }
 
@@ -1978,14 +1934,15 @@ function renderAffTable() {
         const baseUrl = 'https://www.share2inspire.pt';
         const product = aff.product || 'cv-analyser';
         const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','linkedin-roaster':'LinkedIn Roaster'};
-        const productLabel = productLabels[product] || product;
-        const link = `${baseUrl}/${product}?ref=${aff.code}`;
+        const productColors = {'cv-analyser':'var(--blue)','career-path':'var(--gold)','linkedin-roaster':'#0077B5'};
+        const products = product.split(',');
+        const badges = products.map(p => `<span class="badge" style="background:${productColors[p]||'var(--blue)'};color:#fff;font-size:10px;margin:1px;">${esc(productLabels[p]||p)}</span>`).join(' ');
 
         return `<tr>
             <td><strong>${esc(aff.name)}</strong>${aff.email ? '<br><span style="font-size:11px;color:var(--text-muted);">' + esc(aff.email) + '</span>' : ''}</td>
-            <td><span class="badge" style="background:${product==='linkedin-roaster'?'#0077B5':product==='career-path'?'var(--gold)':'var(--blue)'};color:#fff;font-size:11px;">${esc(productLabel)}</span></td>
+            <td>${badges}</td>
             <td><code style="background:#F3F4F6;padding:2px 6px;border-radius:4px;font-size:12px;">${esc(aff.code)}</code></td>
-            <td><button class="btn btn-outline btn-sm" onclick="copyAffLink('${esc(aff.code)}','${esc(product)}')" title="Copiar link"><i class="fas fa-copy"></i></button></td>
+            <td><button class="btn btn-outline btn-sm" onclick="copyAffLink('${esc(aff.code)}','${esc(product)}')" title="Copiar links"><i class="fas fa-copy"></i></button></td>
             <td><strong>${clicks}</strong></td>
             <td><strong class="green">${sales}</strong></td>
             <td><strong>€${revenue.toFixed(2)}</strong></td>
@@ -2070,23 +2027,44 @@ function populateAffClickFilter() {
 
 // ── Affiliate CRUD ──────────────────────────────────────────
 
-function updateAffLinkPreview() {
-    const product = document.getElementById('affProduct').value;
-    const code = document.getElementById('affCode').value.trim().toLowerCase();
-    document.getElementById('affLinkPreview').textContent = code
-        ? `share2inspire.pt/${product}?ref=${code}`
-        : `share2inspire.pt/${product}?ref=...`;
+function getSelectedProducts() {
+    return [...document.querySelectorAll('.aff-product-cb:checked')].map(cb => cb.value);
 }
+
+function updateAffLinkPreview() {
+    const products = getSelectedProducts();
+    const code = document.getElementById('affCode').value.trim().toLowerCase();
+    const el = document.getElementById('affLinkPreview');
+    if (!products.length) {
+        el.innerHTML = '<span style="color:var(--red);">Seleciona pelo menos um produto</span>';
+        return;
+    }
+    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','linkedin-roaster':'LinkedIn Roaster'};
+    const slug = code || '...';
+    el.innerHTML = products.map(p => {
+        const links = [`share2inspire.pt/${p}?ref=${slug}`];
+        if (p !== 'linkedin-roaster') links.push(`share2inspire.pt/en/${p}?ref=${slug}`);
+        return `<div style="margin-bottom:4px;"><strong style="color:var(--dark);">${productLabels[p]}:</strong><br>${links.map(l => `<span style="color:var(--blue);">${l}</span>`).join(' &middot; ')}</div>`;
+    }).join('');
+}
+
+function setProductCheckboxes(products) {
+    const list = Array.isArray(products) ? products : (products ? products.split(',') : ['cv-analyser']);
+    document.querySelectorAll('.aff-product-cb').forEach(cb => {
+        cb.checked = list.includes(cb.value);
+    });
+}
+
 function openCreateAffiliateModal() {
     document.getElementById('affEditId').value = '';
     document.getElementById('affName').value = '';
     document.getElementById('affEmail').value = '';
-    document.getElementById('affProduct').value = 'cv-analyser';
+    setProductCheckboxes(['cv-analyser']);
     document.getElementById('affCode').value = '';
     document.getElementById('affCommission').value = '0';
     document.getElementById('affNotes').value = '';
     document.getElementById('affModalTitle').textContent = 'Novo Afiliado';
-    document.getElementById('affLinkPreview').textContent = 'share2inspire.pt/cv-analyser?ref=...';
+    updateAffLinkPreview();
     document.getElementById('affModalOverlay').style.display = 'flex';
     document.getElementById('affCode').oninput = function() {
         const code = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
@@ -2105,13 +2083,14 @@ function editAffiliate(id) {
     document.getElementById('affEditId').value = aff.id;
     document.getElementById('affName').value = aff.name || '';
     document.getElementById('affEmail').value = aff.email || '';
-    document.getElementById('affProduct').value = aff.product || 'cv-analyser';
+    // Support both old single-product and new multi-product (comma-separated)
+    const products = (aff.product || 'cv-analyser').split(',');
+    setProductCheckboxes(products);
     document.getElementById('affCode').value = aff.code || '';
     document.getElementById('affCommission').value = aff.commission_pct || 0;
     document.getElementById('affNotes').value = aff.notes || '';
     document.getElementById('affModalTitle').textContent = 'Editar Afiliado';
-    const product = aff.product || 'cv-analyser';
-    document.getElementById('affLinkPreview').textContent = `share2inspire.pt/${product}?ref=${aff.code}`;
+    updateAffLinkPreview();
     document.getElementById('affModalOverlay').style.display = 'flex';
     document.getElementById('affCode').oninput = function() {
         const code = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
@@ -2125,23 +2104,25 @@ async function saveAffiliate() {
     const name = document.getElementById('affName').value.trim();
     const email = document.getElementById('affEmail').value.trim();
     const code = document.getElementById('affCode').value.trim().toLowerCase();
-    const product = document.getElementById('affProduct').value;
+    const products = getSelectedProducts();
+    const product = products.join(',');  // Store as comma-separated
     const commission = parseFloat(document.getElementById('affCommission').value) || 0;
     const notes = document.getElementById('affNotes').value.trim();
 
     if (!name) { showToast('Nome é obrigatório', 'danger'); return; }
     if (!code) { showToast('Código é obrigatório', 'danger'); return; }
+    if (!products.length) { showToast('Seleciona pelo menos um produto', 'danger'); return; }
     if (!/^[a-z0-9_-]+$/.test(code)) { showToast('Código só pode conter letras minúsculas, números, - e _', 'danger'); return; }
 
     try {
         if (editId) {
-            // Update
             await supaUpdate('affiliates', editId, { name, email: email || null, code, product, commission_pct: commission, notes: notes || null });
             showToast('Afiliado atualizado!', 'success');
         } else {
-            // Create
             await supaInsert('affiliates', { name, email: email || null, code, product, commission_pct: commission, notes: notes || null, active: true });
-            showToast(`Afiliado criado! Link: share2inspire.pt/${product}?ref=${code}`, 'success');
+            const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','linkedin-roaster':'LinkedIn Roaster'};
+            const labels = products.map(p => productLabels[p] || p).join(', ');
+            showToast(`Afiliado criado para ${labels}!`, 'success');
         }
         closeAffiliateModal();
         renderAffiliates();
@@ -2164,14 +2145,20 @@ async function toggleAffiliate(id, currentActive) {
 function copyAffLink(code, product) {
     product = product || 'cv-analyser';
     const base = 'https://www.share2inspire.pt';
-    const links = [`${base}/${product}?ref=${code}`];
-    if (product !== 'linkedin-roaster') {
-        links.push(`${base}/en/${product}?ref=${code}`);
-    }
-    const text = links.join('\n');
     const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','linkedin-roaster':'LinkedIn Roaster'};
+    // Support comma-separated multi-product
+    const products = product.split(',');
+    const allLinks = [];
+    products.forEach(p => {
+        allLinks.push(`${base}/${p}?ref=${code}`);
+        if (p !== 'linkedin-roaster') {
+            allLinks.push(`${base}/en/${p}?ref=${code}`);
+        }
+    });
+    const text = allLinks.join('\n');
+    const labels = products.map(p => productLabels[p] || p).join(', ');
     navigator.clipboard.writeText(text).then(() => {
-        showToast(`Link${links.length > 1 ? 's' : ''} copiado${links.length > 1 ? 's' : ''} (${productLabels[product] || product})`, 'success');
+        showToast(`${allLinks.length} link${allLinks.length > 1 ? 's' : ''} copiado${allLinks.length > 1 ? 's' : ''} (${labels})`, 'success');
     }).catch(() => {
         prompt('Copia os links:', text);
     });

@@ -398,7 +398,7 @@
     <div class="grid-2" style="margin-bottom:20px;">
         <div class="card">
             <div class="card-header">
-                <div class="card-title"><i class="fas fa-chart-bar"></i> Atividade Diária (14 dias)</div>
+                <div class="card-title"><i class="fas fa-chart-bar"></i> Atividade Diária — Todos os Produtos</div>
                 <select class="form-select" id="chartDateFilter" onchange="updateCharts()" style="font-size:11px;padding:3px 8px;">
                     <option value="7">7 dias</option>
                     <option value="14" selected>14 dias</option>
@@ -428,28 +428,6 @@
                 <div class="card-title"><i class="fas fa-star"></i> Distribuição de Scores</div>
             </div>
             <div class="card-body"><canvas id="scoreChart" height="200"></canvas></div>
-        </div>
-    </div>
-
-    <!-- LinkedIn Roaster Chart -->
-    <div class="grid-2" style="margin-top:20px;">
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title"><i class="fab fa-linkedin" style="color:#0077B5;"></i> LinkedIn Roaster — Atividade Diária</div>
-                <select class="form-select" id="lrChartDateFilter" onchange="updateLRChart()" style="font-size:11px;padding:3px 8px;">
-                    <option value="7">7 dias</option>
-                    <option value="14" selected>14 dias</option>
-                    <option value="30">30 dias</option>
-                    <option value="90">90 dias</option>
-                </select>
-            </div>
-            <div class="card-body"><canvas id="lrDailyChart" height="180"></canvas></div>
-        </div>
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title"><i class="fab fa-linkedin" style="color:#0077B5;"></i> LinkedIn Roaster — Conversão</div>
-            </div>
-            <div class="card-body" style="max-width:260px;margin:0 auto;"><canvas id="lrConvChart" height="200"></canvas></div>
         </div>
     </div>
 
@@ -1234,17 +1212,26 @@
                 <input class="form-input" type="email" id="affEmail" style="width:100%;" placeholder="email@exemplo.com">
             </div>
             <div class="form-group">
-                <label class="form-label">Produto</label>
-                <select class="form-select" id="affProduct" style="width:100%;" onchange="updateAffLinkPreview()">
-                    <option value="cv-analyser">CV Analyser</option>
-                    <option value="career-path">Career Path</option>
-                    <option value="linkedin-roaster">LinkedIn Roaster</option>
-                </select>
+                <label class="form-label">Produtos</label>
+                <div id="affProductCheckboxes" style="display:flex;flex-direction:column;gap:8px;padding:8px 0;">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="aff-product-cb" value="cv-analyser" onchange="updateAffLinkPreview()" checked>
+                        <span class="badge" style="background:var(--blue);color:#fff;font-size:11px;">CV Analyser</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="aff-product-cb" value="career-path" onchange="updateAffLinkPreview()">
+                        <span class="badge" style="background:var(--gold);color:#fff;font-size:11px;">Career Path</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="aff-product-cb" value="linkedin-roaster" onchange="updateAffLinkPreview()">
+                        <span class="badge" style="background:#0077B5;color:#fff;font-size:11px;">LinkedIn Roaster</span>
+                    </label>
+                </div>
             </div>
             <div class="form-group">
                 <label class="form-label">Código (slug único para o link)</label>
                 <input class="form-input" type="text" id="affCode" style="width:100%;" placeholder="ex: joao, partner1">
-                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Link: <span id="affLinkPreview">share2inspire.pt/cv-analyser?ref=...</span></div>
+                <div id="affLinkPreview" style="font-size:11px;color:var(--text-muted);margin-top:8px;">Links: share2inspire.pt/cv-analyser?ref=...</div>
             </div>
             <div class="form-group">
                 <label class="form-label">Comissão (%)</label>
