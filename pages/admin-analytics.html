@@ -372,6 +372,16 @@
             <div class="kpi-value teal" id="kpiRevenueCP">--</div>
             <div class="kpi-sub">análises + vouchers</div>
         </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:#0077B5;"></div>
+            <div class="kpi-label">LinkedIn Roaster</div>
+            <div class="kpi-value" style="color:#0077B5;" id="kpiLinkedinRoaster">--</div>
+            <div class="kpi-sub" id="kpiLinkedinRoasterPaid">-- pagas</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:#0077B5;"></div>
+            <div class="kpi-label">Receita LinkedIn R.</div>
+            <div class="kpi-value" style="color:#0077B5;" id="kpiRevenueLR">--</div>
+            <div class="kpi-sub">auditorias LinkedIn</div>
+        </div>
         <div class="kpi-card"><div class="kpi-accent" style="background:var(--green);"></div>
             <div class="kpi-label">Vouchers Ativos</div>
             <div class="kpi-value green" id="kpiVouchersActive">--</div>
@@ -421,6 +431,38 @@
         </div>
     </div>
 
+    <!-- LinkedIn Roaster Chart -->
+    <div class="grid-2" style="margin-top:20px;">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fab fa-linkedin" style="color:#0077B5;"></i> LinkedIn Roaster — Atividade Diária</div>
+                <select class="form-select" id="lrChartDateFilter" onchange="updateLRChart()" style="font-size:11px;padding:3px 8px;">
+                    <option value="7">7 dias</option>
+                    <option value="14" selected>14 dias</option>
+                    <option value="30">30 dias</option>
+                    <option value="90">90 dias</option>
+                </select>
+            </div>
+            <div class="card-body"><canvas id="lrDailyChart" height="180"></canvas></div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fab fa-linkedin" style="color:#0077B5;"></i> LinkedIn Roaster — Conversão</div>
+            </div>
+            <div class="card-body" style="max-width:260px;margin:0 auto;"><canvas id="lrConvChart" height="200"></canvas></div>
+        </div>
+    </div>
+
+    <!-- Receita por Produto (inclui LinkedIn Roaster) -->
+    <div class="card" style="margin-top:20px;">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-euro-sign"></i> Receita por Produto (Global)</div>
+        </div>
+        <div class="card-body">
+            <div id="dashRevenueByProduct"><div class="spinner"></div></div>
+        </div>
+    </div>
+
     <!-- Hidden KPIs for JS compatibility -->
     <div style="display:none;">
         <span id="kpiRevenuePT"></span><span id="kpiRevenueEN"></span>
@@ -446,10 +488,15 @@
 
     <!-- Funil KPIs -->
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;">
+        <div class="kpi-card" style="text-align:center;border-top:3px solid #0077B5;">
+            <div class="kpi-label">LinkedIn Roaster</div>
+            <div class="kpi-value" style="color:#0077B5;" id="funnelLR">--</div>
+            <div class="kpi-sub" id="funnelLRConv">topo do funil</div>
+        </div>
         <div class="kpi-card" style="text-align:center;border-top:3px solid #6B7280;">
             <div class="kpi-label">Career Energy</div>
             <div class="kpi-value" id="funnelCE">--</div>
-            <div class="kpi-sub">topo do funil</div>
+            <div class="kpi-sub">diagnóstico</div>
         </div>
         <div class="kpi-card" style="text-align:center;border-top:3px solid var(--gold);">
             <div class="kpi-label">CV Analyser Grátis</div>
@@ -465,11 +512,6 @@
             <div class="kpi-label">Career Path</div>
             <div class="kpi-value blue" id="funnelCP">--</div>
             <div class="kpi-sub" id="funnelCPConv">--% dos pagantes</div>
-        </div>
-        <div class="kpi-card" style="text-align:center;border-top:3px solid var(--purple);">
-            <div class="kpi-label">Kickstart Pro</div>
-            <div class="kpi-value purple" id="funnelKickstart">--</div>
-            <div class="kpi-sub" id="funnelKickstartConv">--% do CP</div>
         </div>
     </div>
 
@@ -648,6 +690,7 @@
             <option value="all">Todos</option>
             <option value="cv">CV Analyser</option>
             <option value="career_path">Career Path</option>
+            <option value="linkedin_roaster">LinkedIn Roaster</option>
         </select>
         <div class="filter-divider"></div>
         <label>Período</label>
@@ -688,6 +731,7 @@
             <option value="all">Todos</option>
             <option value="standard">CV Analyser</option>
             <option value="career_path">Career Path</option>
+            <option value="linkedin_roaster">LinkedIn Roaster</option>
         </select>
         <input class="form-input" type="text" id="filterVoucherEmail" placeholder="Pesquisar email..." oninput="filterVouchers()" style="width:180px;">
         <div style="margin-left:auto;">
@@ -1130,6 +1174,7 @@
                     <option value="CV Analyser|1|3.99|standard|false">CV Analyser — 1 análise (3,99€)</option>
                     <option value="Career Path|1|10.00|career_path|true">Career Path — 1 análise (10,00€)</option>
                     <option value="Bundle CV + Career Path|1|12.00|career_path|true">Bundle CV + Career Path (12,00€)</option>
+                    <option value="LinkedIn Roaster|1|1.99|linkedin_roaster|false">LinkedIn Roaster — 1 auditoria (1,99€)</option>
                     <option value="Oferta|1|0|standard|false">Oferta — Gratuito (0€)</option>
                 </select>
             </div>
