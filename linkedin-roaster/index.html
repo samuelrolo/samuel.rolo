@@ -573,75 +573,79 @@
         .report-header {
             display: flex;
             align-items: center;
-            gap: 24px;
+            gap: 20px;
             padding: 24px;
-            background: var(--dark);
-            border-radius: 12px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--gold);
+            border-radius: 8px;
             margin-bottom: 24px;
-            color: #fff;
         }
         .report-header .score-ring-sm {
-            width: 80px; height: 80px;
+            width: 72px; height: 72px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            background: var(--light);
         }
-        .report-header .score-ring-sm .val { font-size: 1.8rem; font-weight: 800; }
-        .report-header .score-ring-sm .max { font-size: 0.7rem; color: rgba(255,255,255,0.4); }
-        .report-header-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; color: #fff; }
-        .report-header-info p { font-size: 0.78rem; color: rgba(255,255,255,0.6); margin: 0; }
+        .report-header .score-ring-sm .val { font-size: 1.6rem; font-weight: 800; color: var(--dark); }
+        .report-header .score-ring-sm .max { font-size: 0.65rem; color: var(--muted); }
+        .report-header-info h3 { font-size: 0.92rem; font-weight: 600; margin-bottom: 2px; color: var(--dark); }
+        .report-header-info p { font-size: 0.75rem; color: var(--muted); margin: 0; line-height: 1.5; }
         .result-block {
             padding: 20px 24px;
-            border-radius: 10px;
+            border-radius: 8px;
             margin-bottom: 16px;
-            border-left: 3px solid transparent;
+            border: 1px solid var(--border);
+            background: var(--white);
         }
-        .result-block.rb-gold { background: #fdfaf0; border-left-color: var(--gold); }
-        .result-block.rb-green { background: #f0f9f0; border-left-color: var(--green); }
-        .result-block.rb-neutral { background: var(--light); border-left-color: var(--border); }
-        .result-block.rb-highlight { background: #fdfaf0; border: 1.5px solid var(--gold); border-left: 4px solid var(--gold); }
-        .result-block.rb-red { background: #fff5f5; border-left-color: var(--red); }
+        .result-block.rb-gold { border-left: 3px solid var(--gold); }
+        .result-block.rb-green { border-left: 3px solid var(--green); }
+        .result-block.rb-neutral { border-left: 3px solid var(--border); }
+        .result-block.rb-highlight { border-left: 3px solid var(--gold); background: #fdfaf0; }
+        .result-block.rb-red { border-left: 3px solid var(--red); }
         .result-block h4 {
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.2px;
             margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
+            color: var(--dark);
         }
-        .result-block h4 i { font-size: 0.85rem; }
+        .result-block h4 i { font-size: 0.8rem; }
         .result-block p, .result-block li {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             line-height: 1.8;
             color: var(--text);
         }
         /* Progress bars for dimensions */
         .dim-bar {
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
         .dim-bar-label {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
         .dim-bar-label span:first-child {
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 500;
             color: var(--text);
         }
         .dim-bar-label span:last-child {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             font-weight: 700;
             color: var(--dark);
         }
         .dim-bar-track {
-            height: 6px;
-            background: #eee;
+            height: 5px;
+            background: var(--border);
             border-radius: 3px;
             overflow: hidden;
         }
@@ -657,24 +661,23 @@
         /* Improvement items */
         .improve-item {
             padding: 14px 16px;
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            background: var(--light);
+            border-radius: 6px;
             margin-bottom: 10px;
         }
         .improve-item .improve-area {
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             font-weight: 600;
             color: var(--dark);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .improve-item .improve-diag {
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             color: var(--muted);
             margin-bottom: 4px;
         }
         .improve-item .improve-rec {
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             color: var(--text);
             padding-left: 12px;
             border-left: 2px solid var(--gold);
@@ -683,27 +686,27 @@
         .headline-suggestion {
             display: block;
             padding: 10px 14px;
-            background: #fff;
-            border: 1px solid #f0e6c8;
+            background: var(--light);
+            border: 1px solid var(--border);
             border-radius: 6px;
             margin-bottom: 8px;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-style: italic;
             color: var(--text);
         }
         .headline-suggestion::before {
             content: '\201C';
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--gold);
             margin-right: 4px;
         }
         .tag {
             display: inline-block;
-            background: var(--gold);
+            background: var(--dark);
             color: var(--white);
-            padding: 5px 14px;
+            padding: 4px 12px;
             border-radius: 50px;
-            font-size: 0.72rem;
+            font-size: 0.68rem;
             font-weight: 600;
             margin: 3px 4px 3px 0;
         }
@@ -712,14 +715,15 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 16px;
+            padding: 5px 14px;
             border-radius: 50px;
-            font-size: 0.78rem;
-            font-weight: 700;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border: 1px solid;
         }
-        .vis-badge.vis-low { background: #fff5f5; color: var(--red); }
-        .vis-badge.vis-mid { background: #fff8e1; color: #f0a500; }
-        .vis-badge.vis-high { background: #f0f9f0; color: var(--green); }
+        .vis-badge.vis-low { background: #fff5f5; color: var(--red); border-color: var(--red); }
+        .vis-badge.vis-mid { background: #fff8e1; color: #f0a500; border-color: #f0a500; }
+        .vis-badge.vis-high { background: #f0f9f0; color: var(--green); border-color: var(--green); }
 
         /* ── How it works ── */
         .how-section { padding: 48px 24px; }
@@ -1454,15 +1458,16 @@
         h += '<span class="vis-badge ' + visClass + '"><i class="fas ' + visIcon + '"></i> Visibilidade: ' + vis + '</span>';
         h += '</div>';
 
-        // Dimension Bars
+        // Dimension Bars (use real data from Edge Function, fallback to score-based estimate)
         h += '<div class="result-block rb-neutral">';
         h += '<h4><i class="fas fa-chart-bar" style="color:var(--gold);"></i> Dimens\u00f5es do Perfil</h4>';
+        const dimData = ac.dimensoes || {};
         const dims = [
-            { label: 'Headline & Sum\u00e1rio', val: Math.min(10, Math.max(1, scoreNum + (Math.random() > 0.5 ? 1 : -1))) },
-            { label: 'Experi\u00eancia & Conte\u00fado', val: Math.min(10, Math.max(1, scoreNum + (Math.random() > 0.5 ? 0 : -1))) },
-            { label: 'Forma\u00e7\u00e3o & Certifica\u00e7\u00f5es', val: Math.min(10, Math.max(1, scoreNum + (Math.random() > 0.3 ? 1 : -2))) },
-            { label: 'Rede & Alcance', val: Math.min(10, Math.max(1, scoreNum + (Math.random() > 0.5 ? 0 : -1))) },
-            { label: 'SEO & Palavras-chave', val: Math.min(10, Math.max(1, scoreNum + (Math.random() > 0.6 ? 1 : -2))) }
+            { label: 'Headline & Sum\u00e1rio', val: Math.min(10, Math.max(1, parseInt(dimData.headline_sumario) || scoreNum)) },
+            { label: 'Experi\u00eancia & Conte\u00fado', val: Math.min(10, Math.max(1, parseInt(dimData.experiencia_conteudo) || scoreNum)) },
+            { label: 'Forma\u00e7\u00e3o & Certifica\u00e7\u00f5es', val: Math.min(10, Math.max(1, parseInt(dimData.formacao_certificacoes) || scoreNum)) },
+            { label: 'Rede & Alcance', val: Math.min(10, Math.max(1, parseInt(dimData.rede_alcance) || scoreNum)) },
+            { label: 'SEO & Palavras-chave', val: Math.min(10, Math.max(1, parseInt(dimData.seo_keywords) || scoreNum)) }
         ];
         dims.forEach(d => {
             const pct = d.val * 10;
