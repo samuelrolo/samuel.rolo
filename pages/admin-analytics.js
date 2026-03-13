@@ -960,6 +960,7 @@ function renderAnalyses() {
     // Merge CV analyses with LinkedIn Roaster analyses (tagged with _source)
     const lrTagged = allLinkedinRoaster.map(a => ({ ...a, _source: 'linkedin_roaster', analysis_type: 'linkedin_roaster' }));
     let data = filterByLang([...allAnalyses, ...lrTagged], globalLang);
+    data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     const type    = document.getElementById('filterType')?.value || 'all';
     const lang    = document.getElementById('filterLang')?.value || 'all';
@@ -1028,6 +1029,7 @@ function renderAnalyses() {
 function exportAnalysesCSV() {
     const lrTagged = allLinkedinRoaster.map(a => ({ ...a, _source: 'linkedin_roaster', analysis_type: 'linkedin_roaster' }));
     let data = filterByLang([...allAnalyses, ...lrTagged], globalLang);
+    data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     const rows = [['Data','Nome','Email','Score','Área','Tipo','Produto','Idioma','Valor','Origem']];
     data.forEach(a => {
         const productName = a._source === 'linkedin_roaster' ? 'LinkedIn Roaster' : (a.analysis_type === 'career_path' ? 'Career Path' : 'CV Analyser');
