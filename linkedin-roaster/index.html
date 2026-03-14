@@ -10,8 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://connect.facebook.net">
-    <link rel="dns-prefetch" href="https://api.brevo.com">
+<link rel="dns-prefetch" href="https://api.brevo.com">
     <link rel="dns-prefetch" href="https://cvlumvgrbuolrnwrtrgz.supabase.co">
 
     <!-- Google tag (gtag.js) -->
@@ -206,21 +205,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript></noscript>
-
-    <!-- ── Meta Pixel (Facebook) ── -->
-    <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1460148528104687');
-    fbq('track', 'PageView');
-    </script>
-    <style>
+<style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
             --gold: #C9A961;
@@ -1259,7 +1244,7 @@
 
         // Show paywall directly (no scraping, no analysis yet)
         showSection('teaserSection');
-        fbq('track', 'ViewContent', { content_name: 'LinkedIn Roaster Paywall', value: 1.99, currency: 'EUR' });
+
     }
 
     // ============================================
@@ -1492,7 +1477,6 @@
                 currency: 'EUR',
                 items: [{ item_name: 'LinkedIn Roaster (Voucher)', price: 0 }]
             });
-            fbq('track', 'Purchase', { value: 0, currency: 'EUR', content_ids: ['linkedin-roast-voucher'], content_type: 'product' });
 
             // Run the analysis directly (skip payment)
             setTimeout(() => runFullAnalysis(), 500);
@@ -1510,7 +1494,7 @@
     function showMBWayForm() {
         document.getElementById('mbwayModal').style.display = 'block';
         document.getElementById('mbwayPhone').focus();
-        fbq('track', 'InitiateCheckout', { value: 1.99, currency: 'EUR', content_ids: ['linkedin-roast'], content_type: 'product' });
+
     }
 
     async function confirmMBWay() {
@@ -1577,7 +1561,7 @@
 
     async function payWithStripe() {
         const email = document.getElementById('userEmail').value.trim();
-        fbq('track', 'InitiateCheckout', { value: 1.99, currency: 'EUR', content_ids: ['linkedin-roast'], content_type: 'product' });
+
         try {
             const response = await fetch(BACKEND_URL + '/api/payment/stripe-checkout', {
                 method: 'POST',
@@ -1606,7 +1590,7 @@
 
     function payWithPayPal() {
         const email = document.getElementById('userEmail').value.trim();
-        fbq('track', 'InitiateCheckout', { value: 1.99, currency: 'EUR', content_ids: ['linkedin-roast'], content_type: 'product' });
+
         const paypalUrl = 'https://www.paypal.com/cgi-bin/webscr?cmd=_xclick' +
             '&business=srshare2inspire@gmail.com' +
             '&item_name=LinkedIn+Roaster+-+Auditoria+Completa' +
@@ -1639,7 +1623,7 @@
             currency: 'EUR',
             items: [{ item_name: 'LinkedIn Roaster', price: 1.99 }]
         });
-        fbq('track', 'Purchase', { value: 1.99, currency: 'EUR', content_ids: ['linkedin-roast'], content_type: 'product' });
+
     }
 
     function displayFullResults() {
@@ -1881,7 +1865,7 @@
                     currency: 'EUR',
                     items: [{ item_name: 'LinkedIn Roaster', price: 1.99 }]
                 });
-                fbq('track', 'Purchase', { value: 1.99, currency: 'EUR', content_ids: ['linkedin-roast'], content_type: 'product' });
+
                 window.history.replaceState({}, '', window.location.pathname);
                 // Payment confirmed! Now run the actual analysis
                 runFullAnalysis();
