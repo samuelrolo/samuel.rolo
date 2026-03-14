@@ -100,8 +100,9 @@ function detectLanguage(a) {
 }
 
 function getAnalysisType(a) {
-    // LinkedIn Roaster: paid = paid, non-paid = free (gratuito)
+    // LinkedIn Roaster: paid = paid, voucher = voucher, non-paid = free (gratuito)
     if (a._source === 'linkedin_roaster') {
+        if (a.payment_method === 'voucher') return 'voucher';
         return (a.payment_status === 'paid' || (a.payment_amount && a.payment_amount > 0)) ? 'paid' : 'free';
     }
     if (a.analysis_type === 'career_path') return 'paid';
@@ -368,19 +369,13 @@ function updateDashboard() {
     setText('kpiAvgTicket',    `${avgTicket}€`);
     setText('kpiLTV',          `${ltv}€`);
     setText('kpiAbandon',      `${abandonRate}%`);
-    setText('kpiRevenueCVA',   `${cvRevenue.toFixed(2)}€`);
-    setText('kpiRevenueCP',    `${cpRevenue.toFixed(2)}€`);
     setText('kpiVouchersActive', vActive);
     setText('kpiVouchersUsed', `${vUsed} utilizados`);
-    setText('kpiVoucherRevenue', `${voucherRevenue.toFixed(2)}€`);
 
-    // LinkedIn Roaster KPIs (using lrPeriod already computed above)
+    // LinkedIn Roaster computed values
     const lrPaidItems = lrPeriod.filter(a => a.payment_status === 'paid');
     const lrRevenue = lrPaidItems.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
     const lrFreeCount = lrPeriod.length - lrPaidItems.length;
-    setText('kpiLinkedinRoaster', lrPeriod.length);
-    setText('kpiLinkedinRoasterPaid', `${lrPaidItems.length} pagas · ${lrFreeCount} gratuitas`);
-    setText('kpiRevenueLR', `${lrRevenue.toFixed(2)}€`);
 
     // === VENDAS REAIS (excluindo samuelrolo@gmail.com) ===
     const excludeEmail = 'samuelrolo@gmail.com';
@@ -399,16 +394,95 @@ function updateDashboard() {
                         + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type === 'career_path' && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
     const realLRRevenue = realLRPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
 
-    setText('kpiRealSalesTotal', `${realTotalRevenue.toFixed(2)}\u20ac`);
-    setText('kpiRealSalesCount', `${realPaid.length + realVouchersSold.length} transa\u00e7\u00f5es`);
-    setText('kpiRealSalesCVA', `${realCVARevenue.toFixed(2)}\u20ac`);
-    setText('kpiRealSalesCVACount', `${realCVAPaid.length} transa\u00e7\u00f5es`);
-    setText('kpiRealSalesCP', `${realCPRevenue.toFixed(2)}\u20ac`);
-    setText('kpiRealSalesCPCount', `${realCPPaid.length} transa\u00e7\u00f5es`);
-    setText('kpiRealSalesLR', `${realLRRevenue.toFixed(2)}\u20ac`);
-    setText('kpiRealSalesLRCount', `${realLRPaid.length} transa\u00e7\u00f5es`);
-    setText('kpiRealSalesVoucher', `${realVoucherRevenue.toFixed(2)}\u20ac`);
-    setText('kpiRealSalesVoucherCount', `${realVouchersSold.length} vouchers vendidos`);
+    // === PIVOT TABLE ===
+    const cvAll = data.filter(a => a.analysis_type !== 'career_path' && a._source !== 'linkedin_roaster');
+    const cvFreeItems = cvAll.filter(a => getAnalysisType(a) === 'free');
+    const cvPaidItems = cvAll.filter(a => getAnalysisType(a) === 'paid');
+    const cvVoucherItems = cvAll.filter(a => getAnalysisType(a) === 'voucher');
+    const cpFreeItems = cp.filter(a => getAnalysisType(a) === 'free');
+    const cpPaidItems = cp.filter(a => getAnalysisType(a) === 'paid');
+    const cpVoucherItems = cp.filter(a => getAnalysisType(a) === 'voucher');
+    const lrFreeItems = lrPeriod.filter(a => getAnalysisType(a) === 'free');
+    const lrPaidType = lrPeriod.filter(a => getAnalysisType(a) === 'paid');
+    const lrVoucherItems = lrPeriod.filter(a => getAnalysisType(a) === 'voucher');
+
+    const pivotProducts = [
+        {
+            name: 'CV Analyser', color: 'var(--purple)', icon: 'fa-file-lines',
+            total: cvAll.length, free: cvFreeItems.length, paid: cvPaidItems.length, voucher: cvVoucherItems.length,
+            revenue: cvRevenue, realRevenue: realCVARevenue
+        },
+        {
+            name: 'Career Path', color: 'var(--teal)', icon: 'fa-route',
+            total: cp.length, free: cpFreeItems.length, paid: cpPaidItems.length, voucher: cpVoucherItems.length,
+            revenue: cpRevenue, realRevenue: realCPRevenue
+        },
+        {
+            name: 'LinkedIn Roaster', color: '#0077B5', icon: 'fa-linkedin',
+            total: lrPeriod.length, free: lrFreeItems.length, paid: lrPaidType.length, voucher: lrVoucherItems.length,
+            revenue: lrRevenue, realRevenue: realLRRevenue
+        },
+        {
+            name: 'Vouchers', color: 'var(--green)', icon: 'fa-ticket',
+            total: allVouchers.length, free: 0, paid: 0, voucher: 0,
+            revenue: voucherRevenue, realRevenue: realVoucherRevenue,
+            isVoucher: true, active: vActive, used: vUsed
+        }
+    ];
+
+    const pivotBody = document.getElementById('pivotBody');
+    const pivotFoot = document.getElementById('pivotFoot');
+    if (pivotBody) {
+        pivotBody.innerHTML = '';
+        pivotProducts.forEach(p => {
+            const conv = (p.free + p.paid) > 0 ? Math.round(p.paid / (p.free + p.paid) * 100) : 0;
+            const ticket = p.paid > 0 ? (p.revenue / p.paid).toFixed(2) : '0.00';
+            const tr = document.createElement('tr');
+            if (p.isVoucher) {
+                tr.innerHTML = `
+                    <td><span style="color:${p.color};font-weight:600;"><i class="fas ${p.icon}" style="margin-right:6px;"></i>${p.name}</span></td>
+                    <td style="text-align:center;">${p.total}</td>
+                    <td style="text-align:center;color:var(--text-muted);">${p.active} ativos</td>
+                    <td style="text-align:center;color:var(--text-muted);">${p.used} usados</td>
+                    <td style="text-align:center;">-</td>
+                    <td style="text-align:center;">-</td>
+                    <td style="text-align:right;font-weight:600;color:${p.color};">${p.revenue.toFixed(2)}\u20ac</td>
+                    <td style="text-align:right;">-</td>
+                    <td style="text-align:right;font-weight:700;color:var(--gold);">${p.realRevenue.toFixed(2)}\u20ac</td>
+                `;
+            } else {
+                tr.innerHTML = `
+                    <td><span style="color:${p.color};font-weight:600;"><i class="fas ${p.icon}" style="margin-right:6px;"></i>${p.name}</span></td>
+                    <td style="text-align:center;font-weight:600;">${p.total}</td>
+                    <td style="text-align:center;">${p.free}</td>
+                    <td style="text-align:center;color:var(--green);font-weight:600;">${p.paid}</td>
+                    <td style="text-align:center;">${p.voucher}</td>
+                    <td style="text-align:center;">${conv}%</td>
+                    <td style="text-align:right;font-weight:600;color:${p.color};">${p.revenue.toFixed(2)}\u20ac</td>
+                    <td style="text-align:right;">${ticket}\u20ac</td>
+                    <td style="text-align:right;font-weight:700;color:var(--gold);">${p.realRevenue.toFixed(2)}\u20ac</td>
+                `;
+            }
+            pivotBody.appendChild(tr);
+        });
+
+        // Totals row
+        const tAll = pivotProducts.filter(p => !p.isVoucher).reduce((s, p) => s + p.total, 0) + allVouchers.length;
+        const tFree = pivotProducts.filter(p => !p.isVoucher).reduce((s, p) => s + p.free, 0);
+        const tPaid = pivotProducts.filter(p => !p.isVoucher).reduce((s, p) => s + p.paid, 0);
+        const tVoucher = pivotProducts.filter(p => !p.isVoucher).reduce((s, p) => s + p.voucher, 0);
+        const tConv = (tFree + tPaid) > 0 ? Math.round(tPaid / (tFree + tPaid) * 100) : 0;
+        const tTicket = tPaid > 0 ? (totalRevenue / tPaid).toFixed(2) : '0.00';
+        setText('pivotTotalAll', tAll);
+        setText('pivotTotalFree', tFree);
+        setText('pivotTotalPaid', tPaid);
+        setText('pivotTotalVoucher', tVoucher);
+        setText('pivotTotalConv', `${tConv}%`);
+        setText('pivotTotalRevenue', `${totalRevenue.toFixed(2)}\u20ac`);
+        setText('pivotTotalTicket', `${tTicket}\u20ac`);
+        setText('pivotTotalReal', `${realTotalRevenue.toFixed(2)}\u20ac`);
+        if (pivotFoot) pivotFoot.style.display = '';
+    }
 
     // Dashboard Revenue by Product (includes LinkedIn Roaster)
     renderDashRevenueByProduct(cvData, lrPeriod);
