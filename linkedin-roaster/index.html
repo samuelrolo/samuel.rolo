@@ -984,7 +984,12 @@
                 <!-- Paywall -->
                 <div class="paywall">
                     <h3>Desbloqueia a Auditoria Completa</h3>
-                    <div class="price">1,99&euro; <small>pagamento único</small></div>
+                    <div class="price" id="priceDisplay">1,99&euro; <small>pagamento único</small></div>
+                    <div id="discountBadge" style="display:none;margin-top:4px;">
+                        <span style="text-decoration:line-through;color:#999;font-size:1rem;font-weight:400;">1,99&euro;</span>
+                        <span id="discountedPrice" style="font-size:2rem;font-weight:800;color:var(--gold);margin-left:8px;"></span>
+                        <span id="discountTag" style="display:inline-block;background:#16a34a;color:#fff;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:middle;"></span>
+                    </div>
                     <p class="includes">Inclui: Sumário executivo, pontos fortes, áreas de melhoria, headlines sugeridas, análise de formação, SEO e recomendação prioritária.</p>
 
                     <button class="pay-btn" onclick="showMBWayForm()">
@@ -1008,6 +1013,23 @@
                             Confirmar Pagamento
                         </button>
                         <p style="font-size:0.68rem;color:#aaa;margin-top:6px;text-align:center;">Vais receber uma notificação no teu telemóvel.</p>
+                    </div>
+
+                    <!-- Discount Coupon Section -->
+                    <div style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb;">
+                        <button class="pay-btn" onclick="toggleCouponForm()" style="background:#f0fdf4;border-color:#16a34a;color:#15803d;">
+                            <i class="fas fa-percent" style="color:#16a34a;"></i>
+                            Tenho um Código de Desconto
+                        </button>
+                        <div id="couponForm" style="display:none;margin-top:12px;">
+                            <p style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">Introduz o teu código de desconto:</p>
+                            <input type="text" id="couponCode" placeholder="PARTNER20" maxlength="30" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;text-transform:uppercase;letter-spacing:2px;text-align:center;">
+                            <button class="btn-primary" onclick="validateCoupon()" id="btnCoupon" style="margin-top:8px;background:#16a34a;border-color:#16a34a;">
+                                Aplicar Desconto
+                            </button>
+                            <div id="couponError" style="display:none;color:#dc2626;font-size:0.78rem;margin-top:8px;text-align:center;"></div>
+                            <div id="couponSuccess" style="display:none;color:#16a34a;font-size:0.78rem;margin-top:8px;text-align:center;"></div>
+                        </div>
                     </div>
 
                     <!-- Voucher Section -->
@@ -1131,6 +1153,8 @@
     let analysisData = null;
     let analysisId = null;
     let uploadedFile = null;
+    let activeCoupon = null; // { code, discount_percent, partner_name }
+    const BASE_PRICE = 1.99;
 
     // Archetypes for each score level (1-10)
     const ARCHETYPES = {
@@ -1390,8 +1414,171 @@
     // ============================================
     // PAYMENT HANDLERS
     // ============================================
+
     // ============================================
-    // VOUCHER HANDLERS
+    // DISCOUNT COUPON HANDLERS (percentage discount)
+    // ============================================
+    function toggleCouponForm() {
+        const form = document.getElementById('couponForm');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        if (form.style.display === 'block') {
+            document.getElementById('couponCode').focus();
+        }
+    }
+
+    function getCurrentPrice() {
+        if (activeCoupon) {
+            return Math.round(BASE_PRICE * (100 - activeCoupon.discount_percent)) / 100;
+        }
+        return BASE_PRICE;
+    }
+
+    function updatePriceDisplay() {
+        const priceEl = document.getElementById('priceDisplay');
+        const badgeEl = document.getElementById('discountBadge');
+        if (activeCoupon) {
+            const discounted = getCurrentPrice();
+            priceEl.style.display = 'none';
+            badgeEl.style.display = 'block';
+            document.getElementById('discountedPrice').textContent = discounted.toFixed(2).replace('.', ',') + '\u20AC';
+            document.getElementById('discountTag').textContent = '-' + activeCoupon.discount_percent + '%';
+        } else {
+            priceEl.style.display = 'block';
+            badgeEl.style.display = 'none';
+        }
+    }
+
+    async function validateCoupon() {
+        const code = document.getElementById('couponCode').value.trim().toUpperCase();
+        const errEl = document.getElementById('couponError');
+        const successEl = document.getElementById('couponSuccess');
+        const btn = document.getElementById('btnCoupon');
+
+        errEl.style.display = 'none';
+        successEl.style.display = 'none';
+
+        if (!code) {
+            errEl.textContent = 'Introduz um c\u00f3digo de desconto.';
+            errEl.style.display = 'block';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'A validar...';
+
+        try {
+            // Query Supabase directly for the coupon
+            const resp = await fetch(SUPABASE_URL + '/rest/v1/discount_coupons?code=eq.' + encodeURIComponent(code) + '&is_active=eq.true&select=code,discount_percent,partner_name,max_uses,current_uses,valid_from,valid_until,applicable_products', {
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                }
+            });
+            const coupons = await resp.json();
+
+            if (!Array.isArray(coupons) || coupons.length === 0) {
+                errEl.textContent = 'C\u00f3digo de desconto inv\u00e1lido ou expirado.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            const coupon = coupons[0];
+
+            // Check date validity
+            const now = new Date();
+            if (coupon.valid_from && new Date(coupon.valid_from) > now) {
+                errEl.textContent = 'Este c\u00f3digo de desconto ainda n\u00e3o est\u00e1 ativo.';
+                errEl.style.display = 'block';
+                return;
+            }
+            if (coupon.valid_until && new Date(coupon.valid_until) < now) {
+                errEl.textContent = 'Este c\u00f3digo de desconto j\u00e1 expirou.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            // Check usage limits
+            if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) {
+                errEl.textContent = 'Este c\u00f3digo atingiu o limite de utiliza\u00e7\u00f5es.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            // Check product applicability
+            const products = coupon.applicable_products || [];
+            if (products.length > 0 && !products.includes('all') && !products.includes('linkedin_roaster')) {
+                errEl.textContent = 'Este c\u00f3digo n\u00e3o \u00e9 aplic\u00e1vel ao LinkedIn Roaster.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            // Coupon is valid!
+            activeCoupon = {
+                code: coupon.code,
+                discount_percent: coupon.discount_percent,
+                partner_name: coupon.partner_name
+            };
+
+            const discounted = getCurrentPrice();
+            successEl.textContent = 'Desconto de ' + coupon.discount_percent + '% aplicado! Novo pre\u00e7o: ' + discounted.toFixed(2).replace('.', ',') + '\u20AC';
+            successEl.style.display = 'block';
+
+            updatePriceDisplay();
+
+            // Track coupon application
+            gtag('event', 'apply_coupon', {
+                coupon_code: code,
+                discount_percent: coupon.discount_percent,
+                product: 'linkedin_roaster'
+            });
+
+        } catch (error) {
+            console.error('[ROASTER] Coupon validation error:', error);
+            errEl.textContent = 'Erro ao validar c\u00f3digo. Tenta novamente.';
+            errEl.style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Aplicar Desconto';
+        }
+    }
+
+    // Increment coupon usage after successful payment
+    async function useCoupon(code) {
+        try {
+            // Get current coupon data
+            const resp = await fetch(SUPABASE_URL + '/rest/v1/discount_coupons?code=eq.' + encodeURIComponent(code) + '&select=id,current_uses,max_uses', {
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                }
+            });
+            const coupons = await resp.json();
+            if (!Array.isArray(coupons) || coupons.length === 0) return;
+
+            const coupon = coupons[0];
+            const newUses = (coupon.current_uses || 0) + 1;
+            const updateData = { current_uses: newUses, updated_at: new Date().toISOString() };
+            if (coupon.max_uses !== null && newUses >= coupon.max_uses) {
+                updateData.is_active = false;
+            }
+
+            await fetch(SUPABASE_URL + '/rest/v1/discount_coupons?id=eq.' + coupon.id, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                },
+                body: JSON.stringify(updateData)
+            });
+            console.log('[ROASTER] Coupon usage incremented:', code, newUses);
+        } catch (e) {
+            console.warn('[ROASTER] Failed to increment coupon usage:', e);
+        }
+    }
+
+    // ============================================
+    // VOUCHER HANDLERS (full free access)
     // ============================================
     function toggleVoucherForm() {
         const form = document.getElementById('voucherForm');
@@ -1522,10 +1709,10 @@
                     orderId: orderId,
                     phone: formattedPhone,
                     mobileNumber: formattedPhone,
-                    amount: '1.99',
+                    amount: getCurrentPrice().toFixed(2),
                     email: email,
-                    product: 'LinkedIn Roaster - Auditoria Completa',
-                    description: 'LinkedIn Roaster - Auditoria Completa'
+                    product: 'LinkedIn Roaster - Auditoria Completa' + (activeCoupon ? ' (' + activeCoupon.code + ')' : ''),
+                    description: 'LinkedIn Roaster - Auditoria Completa' + (activeCoupon ? ' (Desconto ' + activeCoupon.discount_percent + '%)' : '')
                 })
             });
             const result = await response.json();
@@ -1561,16 +1748,17 @@
 
     async function payWithStripe() {
         const email = document.getElementById('userEmail').value.trim();
-
+        const stripePrice = getCurrentPrice();
+        fbq('track', 'InitiateCheckout', { value: stripePrice, currency: 'EUR', content_ids: ['linkedin-roast'], content_type: 'product' });
         try {
             const response = await fetch(BACKEND_URL + '/api/payment/stripe-checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     email: email,
-                    name: 'LinkedIn Roaster',
+                    name: 'LinkedIn Roaster' + (activeCoupon ? ' (' + activeCoupon.code + ')' : ''),
                     product_type: 'linkedin_roast',
-                    amount: 1.99,
+                    amount: stripePrice,
                     currency: 'eur',
                     language: 'pt',
                     orderId: 'LR-' + Date.now()
@@ -1578,8 +1766,9 @@
             });
             const data = await response.json();
             if (data.success && data.url) {
-                sessionStorage.setItem('roasterAnalysisId', analysisId);
-                window.location.href = data.url;
+        sessionStorage.setItem('roasterAnalysisId', analysisId);
+        if (activeCoupon) sessionStorage.setItem('roasterCouponCode', activeCoupon.code);
+        window.location.href = data.url;
             } else {
                 throw new Error(data.error || 'Erro ao criar sessão de pagamento.');
             }
@@ -1590,21 +1779,28 @@
 
     function payWithPayPal() {
         const email = document.getElementById('userEmail').value.trim();
-
+        const paypalPrice = getCurrentPrice();
+        fbq('track', 'InitiateCheckout', { value: paypalPrice, currency: 'EUR', content_ids: ['linkedin-roast'], content_type: 'product' });
         const paypalUrl = 'https://www.paypal.com/cgi-bin/webscr?cmd=_xclick' +
             '&business=srshare2inspire@gmail.com' +
-            '&item_name=LinkedIn+Roaster+-+Auditoria+Completa' +
-            '&amount=1.99' +
+            '&item_name=LinkedIn+Roaster+-+Auditoria+Completa' + (activeCoupon ? '+(' + activeCoupon.code + ')' : '') +
+            '&amount=' + paypalPrice.toFixed(2) +
             '&currency_code=EUR' +
             '&return=' + encodeURIComponent(window.location.href + '?payment=success&method=paypal') +
             '&cancel_return=' + encodeURIComponent(window.location.href + '?payment=cancelled') +
             '&custom=' + (analysisId || 'LR-' + Date.now());
         sessionStorage.setItem('roasterAnalysisId', analysisId);
+        if (activeCoupon) sessionStorage.setItem('roasterCouponCode', activeCoupon.code);
         window.location.href = paypalUrl;
     }
 
     function onPaymentSuccess(email, method) {
+        const paidAmount = getCurrentPrice();
+        const couponCode = activeCoupon ? activeCoupon.code : (sessionStorage.getItem('roasterCouponCode') || null);
+
         if (analysisId) {
+            const updateData = { payment_status: 'paid', payment_method: method, payment_amount: paidAmount };
+            if (couponCode) updateData.coupon_code = couponCode;
             fetch(SUPABASE_URL + '/rest/v1/linkedin_roaster_analyses?id=eq.' + analysisId, {
                 method: 'PATCH',
                 headers: {
@@ -1612,18 +1808,26 @@
                     'apikey': SUPABASE_ANON_KEY,
                     'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
                 },
-                body: JSON.stringify({ payment_status: 'paid', payment_method: method, payment_amount: 1.99 })
+                body: JSON.stringify(updateData)
             }).catch(e => console.warn('[ROASTER] Update failed:', e));
         }
+
+        // Increment coupon usage after successful payment
+        if (couponCode) {
+            useCoupon(couponCode);
+            sessionStorage.removeItem('roasterCouponCode');
+        }
+
         // Payment confirmed! Now run the actual analysis (scraping + AI)
         runFullAnalysis();
         gtag('event', 'purchase', {
             transaction_id: 'LR-' + Date.now(),
-            value: 1.99,
+            value: paidAmount,
             currency: 'EUR',
-            items: [{ item_name: 'LinkedIn Roaster', price: 1.99 }]
+            coupon: couponCode || undefined,
+            items: [{ item_name: 'LinkedIn Roaster', price: paidAmount }]
         });
-
+        fbq('track', 'Purchase', { value: paidAmount, currency: 'EUR', content_ids: ['linkedin-roast'], content_type: 'product' });
     }
 
     function displayFullResults() {
@@ -1845,10 +2049,14 @@
         if (payment === 'success') {
             const storedEmail = sessionStorage.getItem('roasterEmail');
             const storedId = sessionStorage.getItem('roasterAnalysisId');
+            const returnCouponCode = sessionStorage.getItem('roasterCouponCode') || null;
             if (storedEmail) {
                 analysisId = storedId;
                 // Update payment status in Supabase
+                const paidAmount = activeCoupon ? getCurrentPrice() : BASE_PRICE;
                 if (analysisId) {
+                    const updateData = { payment_status: 'paid', payment_method: method, payment_amount: paidAmount };
+                    if (returnCouponCode) updateData.coupon_code = returnCouponCode;
                     fetch(SUPABASE_URL + '/rest/v1/linkedin_roaster_analyses?id=eq.' + analysisId, {
                         method: 'PATCH',
                         headers: {
@@ -1856,16 +2064,22 @@
                             'apikey': SUPABASE_ANON_KEY,
                             'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
                         },
-                        body: JSON.stringify({ payment_status: 'paid', payment_method: method, payment_amount: 1.99 })
+                        body: JSON.stringify(updateData)
                     }).catch(e => console.warn('[ROASTER] Update failed:', e));
+                }
+                // Increment coupon usage on return from Stripe/PayPal
+                if (returnCouponCode) {
+                    useCoupon(returnCouponCode);
+                    sessionStorage.removeItem('roasterCouponCode');
                 }
                 gtag('event', 'purchase', {
                     transaction_id: 'LR-' + Date.now(),
-                    value: 1.99,
+                    value: paidAmount,
                     currency: 'EUR',
-                    items: [{ item_name: 'LinkedIn Roaster', price: 1.99 }]
+                    coupon: returnCouponCode || undefined,
+                    items: [{ item_name: 'LinkedIn Roaster', price: paidAmount }]
                 });
-
+                fbq('track', 'Purchase', { value: paidAmount, currency: 'EUR', content_ids: ['linkedin-roast'], content_type: 'product' });
                 window.history.replaceState({}, '', window.location.pathname);
                 // Payment confirmed! Now run the actual analysis
                 runFullAnalysis();
