@@ -382,6 +382,34 @@ function updateDashboard() {
     setText('kpiLinkedinRoasterPaid', `${lrPaidItems.length} pagas · ${lrFreeCount} gratuitas`);
     setText('kpiRevenueLR', `${lrRevenue.toFixed(2)}€`);
 
+    // === VENDAS REAIS (excluindo samuelrolo@gmail.com) ===
+    const excludeEmail = 'samuelrolo@gmail.com';
+    const realPaid = paid.filter(a => (a.user_email || '').toLowerCase() !== excludeEmail);
+    const realCVAPaid = realPaid.filter(a => a.analysis_type !== 'career_path' && a._source !== 'linkedin_roaster');
+    const realCPPaid = realPaid.filter(a => a.analysis_type === 'career_path');
+    const realLRPaid = realPaid.filter(a => a._source === 'linkedin_roaster');
+    const realVouchersSold = allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail);
+
+    const realDirectRevenue = realPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
+    const realVoucherRevenue = realVouchersSold.reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
+    const realTotalRevenue = realDirectRevenue + realVoucherRevenue;
+    const realCVARevenue = realCVAPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0)
+                         + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type !== 'career_path' && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
+    const realCPRevenue = realCPPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0)
+                        + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type === 'career_path' && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
+    const realLRRevenue = realLRPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
+
+    setText('kpiRealSalesTotal', `${realTotalRevenue.toFixed(2)}\u20ac`);
+    setText('kpiRealSalesCount', `${realPaid.length + realVouchersSold.length} transa\u00e7\u00f5es`);
+    setText('kpiRealSalesCVA', `${realCVARevenue.toFixed(2)}\u20ac`);
+    setText('kpiRealSalesCVACount', `${realCVAPaid.length} transa\u00e7\u00f5es`);
+    setText('kpiRealSalesCP', `${realCPRevenue.toFixed(2)}\u20ac`);
+    setText('kpiRealSalesCPCount', `${realCPPaid.length} transa\u00e7\u00f5es`);
+    setText('kpiRealSalesLR', `${realLRRevenue.toFixed(2)}\u20ac`);
+    setText('kpiRealSalesLRCount', `${realLRPaid.length} transa\u00e7\u00f5es`);
+    setText('kpiRealSalesVoucher', `${realVoucherRevenue.toFixed(2)}\u20ac`);
+    setText('kpiRealSalesVoucherCount', `${realVouchersSold.length} vouchers vendidos`);
+
     // Dashboard Revenue by Product (includes LinkedIn Roaster)
     renderDashRevenueByProduct(cvData, lrPeriod);
 
