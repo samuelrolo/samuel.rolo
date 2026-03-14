@@ -287,8 +287,116 @@
             font-size: 0.7rem; color: #999;
         }
 
+        /* ── Accordion for exclusive items ── */
+        .exclusive-item { cursor: pointer; transition: all 0.3s; }
+        .exclusive-item:hover { opacity: 0.85; }
+        .exclusive-item .accordion-toggle {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.65rem; color: #C9A961;
+            font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1.5px; margin-top: 0.8rem;
+            cursor: pointer; border: none; background: none;
+            padding: 0; font-family: 'Poppins', sans-serif;
+        }
+        .exclusive-item .accordion-toggle .arrow {
+            display: inline-block; transition: transform 0.3s;
+            font-size: 0.7rem;
+        }
+        .exclusive-item.open .accordion-toggle .arrow { transform: rotate(90deg); }
+        .exclusive-item .accordion-content {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.5s ease;
+            margin-top: 0;
+        }
+        .exclusive-item.open .accordion-content {
+            max-height: 5000px;
+            margin-top: 1.5rem;
+        }
+        .accordion-content p {
+            font-size: 0.85rem; color: #555;
+            line-height: 1.8; margin-bottom: 1rem;
+        }
+        .accordion-content .study-kpi-row {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 1rem; margin: 1.5rem 0;
+        }
+        .accordion-content .study-kpi {
+            text-align: center; padding: 1.2rem;
+            background: #fafaf8; border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .accordion-content .study-kpi .value {
+            font-size: 1.8rem; font-weight: 600; color: #1a1a2e;
+        }
+        .accordion-content .study-kpi .value span {
+            font-size: 0.9rem; font-weight: 300;
+        }
+        .accordion-content .study-kpi .label {
+            font-size: 0.65rem; color: #999;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-top: 0.3rem;
+        }
+        .accordion-content .study-table {
+            width: 100%; border-collapse: collapse;
+            margin: 1.5rem 0; font-size: 0.8rem;
+        }
+        .accordion-content .study-table th {
+            text-align: left; padding: 0.6rem 1rem;
+            font-size: 0.65rem; text-transform: uppercase;
+            letter-spacing: 1px; color: #999;
+            border-bottom: 2px solid #C9A961;
+        }
+        .accordion-content .study-table td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            color: #555;
+        }
+        .accordion-content .study-insight {
+            background: #fafaf8; border-left: 3px solid #C9A961;
+            padding: 1.2rem 1.5rem; margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .accordion-content .study-insight .insight-label {
+            font-size: 0.6rem; text-transform: uppercase;
+            letter-spacing: 2px; color: #C9A961;
+            font-weight: 700; margin-bottom: 0.5rem;
+        }
+        .accordion-content .study-insight p {
+            font-size: 0.82rem; color: #555;
+            line-height: 1.7; margin-bottom: 0;
+        }
+        .accordion-content .study-chart {
+            width: 100%; max-width: 600px;
+            margin: 1.5rem auto; display: block;
+            border-radius: 8px;
+        }
+        .accordion-content .study-cta-inline {
+            text-align: center; margin-top: 2rem;
+            padding: 2rem; background: #1a1a2e;
+            border-radius: 8px;
+        }
+        .accordion-content .study-cta-inline h4 {
+            font-size: 1.1rem; font-weight: 300;
+            color: #fff; margin-bottom: 0.5rem;
+        }
+        .accordion-content .study-cta-inline h4 strong { font-weight: 600; }
+        .accordion-content .study-cta-inline p {
+            font-size: 0.8rem; color: rgba(255,255,255,0.5);
+            margin-bottom: 1rem;
+        }
+        .accordion-content .study-cta-inline a {
+            display: inline-block; padding: 10px 24px;
+            background: #C9A961; color: #1a1a2e;
+            border-radius: 6px; font-size: 0.75rem;
+            font-weight: 600; text-decoration: none;
+            text-transform: uppercase; letter-spacing: 1px;
+            transition: background 0.3s;
+        }
+        .accordion-content .study-cta-inline a:hover { background: #d4af37; }
+
         @media (max-width: 768px) {
             .exclusive-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .accordion-content .study-kpi-row { grid-template-columns: 1fr; }
         }
 
         /* ── Newsletter ── */
@@ -463,8 +571,7 @@
                 <a href="/career-path">Career Path</a>
                 <a href="loja.html">Loja</a>
                 <a href="conhecimento.html" class="active">Conhecimento</a>
-                <a href="/estudos/">Estudos</a>
-                <a href="contactos.html">Contactos</a>
+<a href="contactos.html">Contactos</a>
                 <a href="../en/pages/home/" class="lang-switch">EN</a>
             </div>
         </div>
@@ -541,24 +648,158 @@
     </div>
 
     <!-- ── Conteúdo Exclusivo ── -->
-    <div class="section fade-in">
+    <div class="section fade-in" id="artigos-exclusivos">
         <span class="section-label">Exclusivo</span>
         <h2 class="section-title">Artigos para <strong>subscritores</strong></h2>
         <div class="divider"></div>
 
         <div class="exclusive-grid" style="margin-top: 2rem;">
-            <div class="exclusive-item">
+            <!-- Artigo 1: ATS -->
+            <div class="exclusive-item" onclick="this.classList.toggle('open')">
                 <p class="tag">Literacia Algorítmica</p>
                 <h3>Guia Essencial: O ATS como Guardião Digital da Carreira</h3>
                 <blockquote>"O currículo deixou de ser apenas uma narrativa de carreira. No ecossistema digital, ele é um objeto técnico — um conjunto de dados que precisa de ser estruturado para ser interpretado com sucesso por algoritmos de extração."</blockquote>
                 <p class="meta">Leitura: 12 min</p>
+                <button class="accordion-toggle"><span class="arrow">&#9654;</span> Ler artigo completo</button>
+                <div class="accordion-content">
+                    <p>No mercado de trabalho atual, o processo de recrutamento começa muito antes da entrevista. Antes de um recrutador humano sequer ver o teu currículo, este passa por um sistema automatizado — o ATS (Applicant Tracking System) — que funciona como um guardião digital.</p>
+                    <p>O ATS analisa o teu CV procurando <strong>keywords específicas</strong>, formatação compatível e estrutura lógica. Se o teu currículo não estiver otimizado para estes sistemas, será automaticamente rejeitado, independentemente da tua experiência ou qualificações.</p>
+                    <p><strong>Os 5 pilares de um CV compatível com ATS:</strong></p>
+                    <p>1. <strong>Formatação limpa</strong> — Sem tabelas, colunas ou gráficos que confundam o parser.<br>
+                    2. <strong>Keywords estratégicas</strong> — Termos extraídos diretamente da descrição da vaga.<br>
+                    3. <strong>Secções standard</strong> — Experiência, Educação, Competências claramente identificadas.<br>
+                    4. <strong>Formato de ficheiro</strong> — PDF ou DOCX, nunca imagens ou formatos proprietários.<br>
+                    5. <strong>Consistência temporal</strong> — Datas claras, sem gaps inexplicados.</p>
+                    <p>A realidade é que <strong>75% dos currículos são rejeitados pelo ATS</strong> antes de chegarem a mãos humanas. Compreender e dominar esta tecnologia não é opcional — é uma competência essencial de empregabilidade no século XXI.</p>
+                </div>
             </div>
 
-            <div class="exclusive-item">
+            <!-- Artigo 2: Empregabilidade -->
+            <div class="exclusive-item" onclick="this.classList.toggle('open')">
                 <p class="tag">Empregabilidade 2026</p>
                 <h3>O Currículo Não é o Que Parece: 5 Lições sobre Empregabilidade Algorítmica</h3>
                 <blockquote>"O currículo já não é lido primeiro por pessoas. É processado. A empregabilidade moderna exige a passagem da perceção para os dados acionáveis."</blockquote>
                 <p class="meta">Leitura: 10 min</p>
+                <button class="accordion-toggle"><span class="arrow">&#9654;</span> Ler artigo completo</button>
+                <div class="accordion-content">
+                    <p>O paradigma da empregabilidade mudou radicalmente. O currículo, outrora um documento narrativo desenhado para impressionar um leitor humano, transformou-se num objeto técnico que precisa de ser interpretado por algoritmos.</p>
+                    <p><strong>Lição 1: O teu CV é um dataset, não uma história.</strong><br>
+                    Os sistemas de recrutamento modernos extraem dados estruturados do teu CV. Cada palavra, cada data, cada competência é convertida em campos de uma base de dados. Se a informação não for clara e estruturada, perde-se na tradução.</p>
+                    <p><strong>Lição 2: Keywords não são buzzwords.</strong><br>
+                    Há uma diferença fundamental entre encher o CV de jargão e usar estrategicamente os termos que os recrutadores e os algoritmos procuram. A chave está em alinhar a linguagem do teu CV com a linguagem do mercado.</p>
+                    <p><strong>Lição 3: A consistência entre plataformas é medida.</strong><br>
+                    Recrutadores cruzam o teu CV com o LinkedIn. Inconsistências em datas, cargos ou competências levantam red flags imediatas.</p>
+                    <p><strong>Lição 4: O formato importa tanto como o conteúdo.</strong><br>
+                    Um CV visualmente deslumbrante que não passa pelo ATS é um CV invisível. A forma tem de servir a função.</p>
+                    <p><strong>Lição 5: A empregabilidade é uma competência, não um estado.</strong><br>
+                    Manter-se empregável exige atualização constante — do CV, do LinkedIn, das competências e da rede de contactos. É um processo contínuo, não um evento pontual.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estudo LinkedIn - full width -->
+        <div class="exclusive-item" style="margin-top: 3rem; cursor: pointer;" onclick="this.classList.toggle('open')">
+            <p class="tag">Estudo Q1 2026</p>
+            <h3>O Estado do LinkedIn em Portugal</h3>
+            <blockquote>"Uma análise a 500 perfis profissionais revela as oportunidades e os erros mais comuns que ditam o sucesso na maior rede profissional do mundo."</blockquote>
+            <p class="meta">Por Samuel Rolo &middot; Share2Inspire &middot; Março 2026</p>
+            <button class="accordion-toggle"><span class="arrow">&#9654;</span> Ver estudo completo</button>
+            <div class="accordion-content">
+                <!-- Sumário Executivo -->
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin-bottom:0.8rem;">Sumário Executivo</h4>
+                <p>Este estudo, conduzido pela Share2Inspire com base numa análise de 500 perfis representativos do mercado português, revela uma realidade preocupante: a grande maioria dos profissionais em Portugal não está a tirar partido do potencial do LinkedIn.</p>
+                <p>Com um <strong>score médio de otimização de apenas 4.00 em 10</strong>, os dados indicam que <strong>74% dos perfis tem uma visibilidade considerada "Baixa"</strong> para os algoritmos da plataforma, limitando drasticamente a sua exposição a recrutadores e oportunidades de negócio.</p>
+
+                <div class="study-kpi-row">
+                    <div class="study-kpi">
+                        <div class="value">4.0<span>/10</span></div>
+                        <div class="label">Score médio nacional</div>
+                    </div>
+                    <div class="study-kpi">
+                        <div class="value">74%</div>
+                        <div class="label">Perfis com score abaixo de 5</div>
+                    </div>
+                    <div class="study-kpi">
+                        <div class="value">0.6%</div>
+                        <div class="label">Perfis com score acima de 7</div>
+                    </div>
+                </div>
+
+                <!-- Anatomia -->
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">A Anatomia de um Perfil LinkedIn em Portugal</h4>
+                <p>A distribuição dos scores de otimização é fortemente assimétrica, com a grande maioria dos perfis a concentrar-se na faixa inferior da escala. Apenas 0.6% dos profissionais analisados atingem um score superior a 7, considerado o patamar mínimo para um perfil competitivo.</p>
+                <img src="/images/chart_01_distribuicao_scores.png" alt="Distribuição de Scores LinkedIn em Portugal" class="study-chart">
+                <div class="study-insight">
+                    <div class="insight-label">Insight</div>
+                    <p>A esmagadora maioria dos profissionais está a competir numa zona de perfis mal otimizados. Um pequeno esforço de melhoria pode gerar um impacto desproporcional na visibilidade e atratividade de um perfil.</p>
+                </div>
+
+                <!-- Os 7 Erros -->
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Os 7 Erros Mais Comuns</h4>
+                <p>Identificámos os erros que mais penalizam a performance de um perfil. Surpreendentemente, não são complexos de corrigir, mas a sua prevalência é alarmante.</p>
+                <img src="/images/chart_02_top_erros.png" alt="Top 7 Erros Mais Comuns no LinkedIn" class="study-chart">
+                <table class="study-table">
+                    <thead><tr><th>#</th><th>Erro</th><th>Prevalência</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>Headline apenas com cargo e empresa atual</td><td>25.0%</td></tr>
+                        <tr><td>2</td><td>Secção "Sobre" ausente ou incompleta</td><td>24.6%</td></tr>
+                        <tr><td>3</td><td>Headline genérica sem keywords de SEO</td><td>23.0%</td></tr>
+                        <tr><td>4</td><td>Secção de Projetos vazia</td><td>23.0%</td></tr>
+                        <tr><td>5</td><td>Gaps temporais não explicados na experiência</td><td>22.6%</td></tr>
+                        <tr><td>6</td><td>Sem publicações nos últimos 90 dias</td><td>22.0%</td></tr>
+                        <tr><td>7</td><td>Sem certificações complementares</td><td>22.0%</td></tr>
+                    </tbody>
+                </table>
+                <div class="study-insight">
+                    <div class="insight-label">Insight</div>
+                    <p>O erro mais comum é tratar a headline como um mero título de cargo. Uma headline otimizada deve ser um slogan profissional, rico em keywords que um recrutador usaria para encontrar alguém com aquele perfil.</p>
+                </div>
+
+                <!-- Performance por Setor -->
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Performance por Setor</h4>
+                <p>Existem diferenças notáveis na maturidade digital entre setores. Vendas e Comercial lideram com 4.33/10, possivelmente por uma maior consciência da importância da rede de contactos. Educação e Formação apresentam o score mais baixo (3.60/10).</p>
+                <img src="/images/chart_03_score_por_setor.png" alt="Score Médio por Setor Profissional" class="study-chart">
+
+                <!-- Performance por Faixa Etária -->
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Performance por Faixa Etária</h4>
+                <p>Observa-se uma tendência interessante: os profissionais na faixa dos 31-35 anos apresentam os perfis mais otimizados. Os mais jovens (18-24) e os mais seniores (51+) apresentam scores mais baixos, sugerindo diferentes desafios na adaptação à plataforma.</p>
+                <img src="/images/chart_05_score_faixa_etaria.png" alt="Score Médio por Faixa Etária" class="study-chart">
+
+                <!-- Indicadores Chave -->
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Indicadores Chave</h4>
+                <img src="/images/chart_04_indicadores_chave.png" alt="Indicadores Chave do LinkedIn em Portugal" class="study-chart">
+                <table class="study-table">
+                    <thead><tr><th>Indicador</th><th>Valor</th></tr></thead>
+                    <tbody>
+                        <tr><td>Sem foto profissional</td><td><strong>21.2%</strong></td></tr>
+                        <tr><td>Headline genérica ou ausente</td><td><strong>36.8%</strong></td></tr>
+                        <tr><td>Secção "Sobre" fraca ou ausente</td><td><strong>35.4%</strong></td></tr>
+                        <tr><td>Sem publicações nos últimos 30 dias</td><td><strong>36.4%</strong></td></tr>
+                        <tr><td>Sem nenhuma recomendação recebida</td><td><strong>28.0%</strong></td></tr>
+                        <tr><td>Visibilidade "Baixa" para o algoritmo</td><td><strong>74.0%</strong></td></tr>
+                    </tbody>
+                </table>
+
+                <!-- Visibilidade -->
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Visibilidade para o Algoritmo</h4>
+                <p>Apenas 26% dos perfis atingem uma visibilidade "Média", com os restantes 74% a serem considerados de visibilidade "Baixa". Nenhum perfil da amostra atingiu visibilidade "Alta", o que requer um score acima de 7.5.</p>
+                <img src="/images/chart_06_visibilidade_algoritmo.png" alt="Visibilidade para o Algoritmo LinkedIn" class="study-chart">
+
+                <!-- Conclusão -->
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Conclusão</h4>
+                <p>O ecossistema digital português no LinkedIn está longe de atingir a sua maturidade. A maioria dos profissionais adota uma postura passiva, resultando em perfis invisíveis e oportunidades perdidas.</p>
+                <p>A boa notícia é que a barreira para se destacar é baixa. Corrigir os erros básicos identificados neste estudo, como otimizar a headline, construir uma secção "Sobre" estratégica e manter uma atividade regular, é o primeiro passo para transformar um perfil LinkedIn de um currículo digital para uma poderosa ferramenta de marketing pessoal.</p>
+                <div class="study-insight">
+                    <div class="insight-label">Metodologia</div>
+                    <p>Este estudo foi realizado com base em dados sintéticos gerados para refletir as tendências do mercado português, analisados pela ferramenta LinkedIn Roaster da Share2Inspire. Todos os dados são anónimos e agregados. Amostra: 500 perfis, 13 setores de atividade, período Q1 2026.</p>
+                </div>
+
+                <!-- CTA -->
+                <div class="study-cta-inline">
+                    <h4>Descobre o score do <strong>teu perfil</strong></h4>
+                    <p>Análise gratuita em 30 segundos. Descobre se o teu perfil está a afastar recrutadores.</p>
+                    <a href="/linkedin-roaster">Analisar o meu LinkedIn</a>
+                </div>
             </div>
         </div>
     </div>
