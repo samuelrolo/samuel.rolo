@@ -218,13 +218,13 @@
             text-decoration: underline;
         }
 
-        /* Second Featured Book */
+        /* Second Featured Book — Light style (same as featured-book) */
         .featured-book-alt {
-            background: var(--s2i-dark);
+            background: var(--s2i-white);
+            border: 1px solid var(--s2i-border);
             border-radius: var(--s2i-radius);
             padding: 50px;
-            margin-top: 40px;
-            color: var(--s2i-white);
+            margin-top: 60px;
         }
 
         .featured-book-alt .section-title {
@@ -232,7 +232,7 @@
         }
 
         .featured-book-alt h3 {
-            color: var(--s2i-white);
+            color: var(--s2i-dark);
             font-size: 1.6rem;
             font-weight: 600;
             margin-bottom: 8px;
@@ -245,34 +245,190 @@
         }
 
         .featured-book-alt .description {
-            color: #aaa;
+            color: var(--s2i-text-muted);
             line-height: 1.8;
             font-size: 0.95rem;
             margin-bottom: 25px;
         }
 
         .featured-book-alt .review-highlight {
-            background: rgba(255, 255, 255, 0.05);
-            border-left-color: var(--s2i-gold);
+            background: var(--s2i-bg);
+            border-left: 3px solid var(--s2i-gold);
         }
 
         .featured-book-alt .review-highlight .quote {
-            color: #ccc;
+            color: var(--s2i-text);
         }
 
         .featured-book-alt .review-highlight .source {
-            color: #888;
+            color: var(--s2i-text-muted);
         }
 
         .featured-book-alt .book-btn {
+            background: var(--s2i-dark);
+            color: var(--s2i-gold);
+            border-color: var(--s2i-gold);
+        }
+
+        .featured-book-alt .book-btn:hover {
+            background: var(--s2i-gold);
+            color: var(--s2i-dark);
+        }
+
+        /* Lead Magnet Modal */
+        .leadmagnet-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .leadmagnet-modal-overlay.active {
+            display: flex;
+        }
+
+        .leadmagnet-modal {
+            background: var(--s2i-white);
+            border-radius: var(--s2i-radius);
+            padding: 40px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .leadmagnet-modal h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--s2i-dark);
+            margin-bottom: 8px;
+        }
+
+        .leadmagnet-modal p {
+            color: var(--s2i-text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .leadmagnet-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .leadmagnet-form input {
+            padding: 10px 14px;
+            border: 1px solid var(--s2i-border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--s2i-dark);
+            transition: var(--s2i-transition);
+        }
+
+        .leadmagnet-form input:focus {
+            outline: none;
+            border-color: var(--s2i-gold);
+            box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
+        }
+
+        .leadmagnet-form button {
+            padding: 11px 20px;
+            background: var(--s2i-dark);
+            color: var(--s2i-gold);
+            border: 1px solid var(--s2i-gold);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: var(--s2i-transition);
+        }
+
+        .leadmagnet-form button:hover {
+            background: var(--s2i-gold);
+            color: var(--s2i-dark);
+        }
+
+        .leadmagnet-form button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .leadmagnet-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--s2i-text-muted);
+            cursor: pointer;
+            transition: var(--s2i-transition);
+        }
+
+        .leadmagnet-close:hover {
+            color: var(--s2i-dark);
+        }
+
+        /* Lead Magnet Featured Block */
+        .leadmagnet-featured {
+            background: linear-gradient(135deg, rgba(201,168,76,0.08) 0%, rgba(201,168,76,0.03) 100%);
+            border: 1px solid rgba(201,168,76,0.2);
+            border-radius: var(--s2i-radius);
+            padding: 50px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .leadmagnet-featured .badge {
+            display: inline-block;
+            background: var(--s2i-gold);
+            color: var(--s2i-dark);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .leadmagnet-featured h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--s2i-dark);
+            margin-bottom: 12px;
+        }
+
+        .leadmagnet-featured p {
+            color: var(--s2i-text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+
+        .leadmagnet-featured .book-btn {
             background: var(--s2i-gold);
             color: var(--s2i-dark);
             border-color: var(--s2i-gold);
         }
 
-        .featured-book-alt .book-btn:hover {
-            background: var(--s2i-white);
-            color: var(--s2i-dark);
+        .leadmagnet-featured .book-btn:hover {
+            background: var(--s2i-dark);
+            color: var(--s2i-gold);
         }
 
         /* CTA Section */
@@ -791,10 +947,44 @@
         <section class="books-section">
             <div class="container">
 
-                <!-- Books Grid - Horizontal -->
+                <!-- ===== LEAD MAGNET FEATURED BLOCK ===== -->
+                <div class="leadmagnet-featured">
+                    <span class="badge">🎁 GRÁTIS</span>
+                    <h3>10 Erros Fatais do LinkedIn</h3>
+                    <p>O guia que revela os 10 erros mais comuns que sabotam o teu perfil de LinkedIn e impedem que recruta dores te encontrem. Estratégias práticas para otimizar o teu perfil em 15 minutos.</p>
+                    <button class="book-btn" onclick="openLeadmagnetModal()">
+                        <i class="fas fa-download me-2"></i> Download Grátis
+                    </button>
+                </div>
+
+                <!-- Books Grid - E-books profissionais -->
                 <div class="text-center">
-                    <span class="section-title">Publicações</span>
-                    <h2 class="section-heading">Livros de Samuel Rolo</h2>
+                    <span class="section-title">E-books Profissionais</span>
+                    <h2 class="section-heading">Guias Práticos de Carreira</h2>
+                </div>
+
+                <div class="books-grid">
+                    <!-- E-book 1 - Script de Entrevistas -->
+                    <div class="book-card">
+                        <img src="../images/ebook-entrevistas-capa.png" alt="Script de Entrevistas — O Guia Definitivo" class="book-cover">
+                        <h4>Script de Entrevistas</h4>
+                        <p class="author">Samuel Rolo · 3,99€</p>
+                        <button class="book-btn" onclick="openPaymentModal()">Comprar</button>
+                    </div>
+
+                    <!-- E-book 2 - Energia para Liderar -->
+                    <div class="book-card">
+                        <img src="../images/ebook-capa.png" alt="Energia para Liderar" class="book-cover">
+                        <h4>Energia para Liderar</h4>
+                        <p class="author">Samuel Rolo &amp; Marlene Ruivo</p>
+                        <a href="https://go.hotmart.com/Q104764153P?dp=1" target="_blank" class="book-btn">Comprar</a>
+                    </div>
+                </div>
+
+                <!-- Books Grid - Livros -->
+                <div class="text-center" style="margin-top: 80px;">
+                    <span class="section-title">Livros</span>
+                    <h2 class="section-heading">Desenvolvimento Pessoal e Transformação</h2>
                 </div>
 
                 <div class="books-grid">
@@ -815,21 +1005,53 @@
                         <p class="author">Samuel Rolo</p>
                         <a href="https://www.amazon.com.br/dp/B0FC2GGSPP" target="_blank" class="book-btn">Comprar</a>
                     </div>
+                </div>
 
-                    <!-- Book 3 - Energia para Liderar (E-book) -->
-                    <div class="book-card">
-                        <img src="../images/ebook-capa.png" alt="Energia para Liderar" class="book-cover">
-                        <h4>Energia para Liderar</h4>
-                        <p class="author">Samuel Rolo &amp; Marlene Ruivo</p>
-                        <a href="https://go.hotmart.com/Q104764153P?dp=1" target="_blank" class="book-btn">Comprar</a>
+                <!-- Featured Book - Script de Entrevistas (E-book) -->
+                <div class="featured-book">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img src="../images/ebook-entrevistas-capa.png" alt="Script de Entrevistas — O Guia Definitivo" class="featured-cover">
+                        </div>
+                        <div class="col-md-8">
+                            <span class="section-title">Novo E-book 2026</span>
+                            <h3>Script de Entrevistas</h3>
+                            <p class="subtitle">O Guia Definitivo</p>
+                            <p class="description">Da preparação ao follow-up: o método completo para conquistar qualquer recrutador. 39 páginas de scripts prontos, estratégias práticas e técnicas testadas — para quem quer chegar à entrevista com confiança e sair com a oferta.</p>
+
+                            <div class="review-highlight">
+                                <p class="quote">"O guia definitivo para quem quer dominar qualquer entrevista. Scripts prontos, estratégias testadas e técnicas de negociação que funcionam no terreno."</p>
+                                <p class="source">— Conteúdo desenvolvido com base em 14 anos de experiência em transformação organizacional</p>
+                            </div>
+
+                            <a href="#script-entrevistas" class="book-btn" onclick="openPaymentModal(); return false;">
+                                <i class="fas fa-shopping-cart me-2"></i> Comprar e-book
+                            </a>
+                        </div>
                     </div>
+                </div>
 
-                    <!-- Book 4 - Script de Entrevistas (E-book) -->
-                    <div class="book-card">
-                        <img src="../images/ebook-entrevistas-capa.png" alt="Script de Entrevistas — O Guia Definitivo" class="book-cover">
-                        <h4>Script de Entrevistas</h4>
-                        <p class="author">Samuel Rolo · 3,99€</p>
-                        <button class="book-btn" onclick="openPaymentModal()">Comprar</button>
+                <!-- Featured Book - Energia para Liderar (E-book) -->
+                <div class="featured-book">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img src="../images/ebook-capa.png" alt="Energia para Liderar" class="featured-cover">
+                        </div>
+                        <div class="col-md-8">
+                            <span class="section-title">E-book</span>
+                            <h3>Energia para Liderar</h3>
+                            <p class="subtitle">O Guia Prático de Performance Mental e Física</p>
+                            <p class="description">Um guia sobre as quatro dimensões da energia — física, mental, emocional e espiritual — para quem lidera e pretende manter a performance de forma sustentável. Escrito a quatro mãos por Samuel Rolo e Marlene Ruivo, este e-book combina estratégias de coaching e nutrição clínica ao serviço da alta performance cognitiva e metabólica.</p>
+
+                            <div class="review-highlight">
+                                <p class="quote">"A liderança não se esgota na estratégia. Começa na forma como cada líder gere a própria energia — física, mental, emocional e espiritual."</p>
+                                <p class="source">— Excerto do e-book</p>
+                            </div>
+
+                            <a href="https://go.hotmart.com/Q104764153P?dp=1" target="_blank" class="book-btn">
+                                Comprar e-book
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -857,7 +1079,7 @@
                             <div class="review-highlight">
                                 <p class="quote">"Um guia prático e humano para quem precisa de liderar transformações
                                     organizacionais. Samuel Rolo consegue traduzir anos de experiência em multinacionais
-                                    em conselhos aplicáveis e genuínos."</p>
+                                    em conselhos aplicáveis e genúinos."</p>
                                 <p class="source">— Disponível na <a
                                         href="https://www.amazon.com.br/Gest%C3%A3o-Mudan%C3%A7a-Estrat%C3%A9gias-Transforma%C3%A7%C3%A3o-Organizacional/dp/B0F8QK4SQY?ref_=ast_author_dp&th=1&psc=1"
                                         target="_blank">Amazon</a></p>
@@ -911,98 +1133,7 @@
                     </div>
                 </div>
 
-                <!-- Featured Book - Energia para Liderar (E-book) -->
-                <div class="featured-book">
-                    <div class="row">
-                        <div class="col-md-4 text-center">
-                            <img src="../images/ebook-capa.png" alt="Energia para Liderar" class="featured-cover">
-                        </div>
-                        <div class="col-md-8">
-                            <span class="section-title">E-book</span>
-                            <h3>Energia para Liderar</h3>
-                            <p class="subtitle">O Guia Prático de Performance Mental e Física</p>
-                            <p class="description">Um guia sobre as quatro dimensões da energia — física, mental, emocional e espiritual — para quem lidera e pretende manter a performance de forma sustentável. Escrito a quatro mãos por Samuel Rolo e Marlene Ruivo, este e-book combina estratégias de coaching e nutrição clínica ao serviço da alta performance cognitiva e metabólica.</p>
 
-                            <div class="review-highlight">
-                                <p class="quote">"A liderança não se esgota na estratégia. Começa na forma como cada líder gere a própria energia — física, mental, emocional e espiritual."</p>
-                                <p class="source">— Excerto do e-book</p>
-                            </div>
-
-                            <a href="https://go.hotmart.com/Q104764153P?dp=1" target="_blank" class="book-btn">
-                                Comprar e-book
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ===== NEW: Script de Entrevistas E-book ===== -->
-                <div class="ebook-interview-section" id="script-entrevistas">
-                    <div class="row">
-                        <div class="col-md-4 text-center mb-4 mb-md-0">
-                            <img src="../images/ebook-entrevistas-capa.png"
-                                 alt="Script de Entrevistas — O Guia Definitivo"
-                                 class="ebook-interview-cover">
-                        </div>
-                        <div class="col-md-8">
-                            <span class="section-title">Novo E-book 2026</span>
-                            <h3>Script de Entrevistas</h3>
-                            <p class="subtitle">O Guia Definitivo</p>
-                            <p class="description">Da preparação ao follow-up: o método completo para conquistar qualquer recrutador. 39 páginas de scripts prontos, estratégias práticas e técnicas testadas — para quem quer chegar à entrevista com confiança e sair com a oferta.</p>
-
-                            <div class="ebook-features">
-                                <div class="ebook-feature-item">
-                                    <i class="fas fa-check-circle feat-icon"></i>
-                                    <span>10 scripts prontos para as perguntas mais difíceis</span>
-                                </div>
-                                <div class="ebook-feature-item">
-                                    <i class="fas fa-check-circle feat-icon"></i>
-                                    <span>Gestão do stress e ansiedade antes da entrevista</span>
-                                </div>
-                                <div class="ebook-feature-item">
-                                    <i class="fas fa-check-circle feat-icon"></i>
-                                    <span>Presencial vs. vídeo — como dominar cada formato</span>
-                                </div>
-                                <div class="ebook-feature-item">
-                                    <i class="fas fa-check-circle feat-icon"></i>
-                                    <span>Como negociar o salário com confiança</span>
-                                </div>
-                                <div class="ebook-feature-item">
-                                    <i class="fas fa-check-circle feat-icon"></i>
-                                    <span>Como explicar lacunas no CV sem desconforto</span>
-                                </div>
-                                <div class="ebook-feature-item">
-                                    <i class="fas fa-check-circle feat-icon"></i>
-                                    <span>O follow-up perfeito após a entrevista</span>
-                                </div>
-                                <div class="ebook-feature-item">
-                                    <i class="fas fa-check-circle feat-icon"></i>
-                                    <span>Checklist completa de preparação</span>
-                                </div>
-                                <div class="ebook-feature-item">
-                                    <i class="fas fa-check-circle feat-icon"></i>
-                                    <span>Templates de email prontos a usar</span>
-                                </div>
-                                <div class="ebook-feature-item">
-                                    <i class="fas fa-check-circle feat-icon"></i>
-                                    <span>39 páginas de conteúdo prático e acionável</span>
-                                </div>
-                                <div class="ebook-feature-item">
-                                    <i class="fas fa-bolt feat-icon"></i>
-                                    <span><strong>Download imediato</strong> após pagamento</span>
-                                </div>
-                            </div>
-
-                            <div class="price-badge">
-                                <span class="price-amount">3,99€</span>
-                                <span class="price-label">pagamento único · PDF</span>
-                            </div>
-
-                            <button class="book-btn" onclick="openPaymentModal()">
-                                <i class="fas fa-download me-2"></i> Comprar e fazer download
-                            </button>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- CTA Section -->
                 <div class="cta-section">
@@ -1074,6 +1205,20 @@
             </div>
         </div>
     </footer>
+
+    <!-- ===== LEAD MAGNET MODAL ===== -->
+    <div class="leadmagnet-modal-overlay" id="leadmagnetModalOverlay" onclick="handleLeadmagnetOverlayClick(event)">
+        <div class="leadmagnet-modal" style="position: relative;">
+            <button class="leadmagnet-close" onclick="closeLeadmagnetModal()" aria-label="Fechar">&times;</button>
+            <h3>Descarrega o teu guia gratuito</h3>
+            <p>Preenche o formulário e recebe imediatamente o PDF "10 Erros Fatais do LinkedIn" no teu email.</p>
+            <form class="leadmagnet-form" onsubmit="submitLeadmagnetForm(event)">
+                <input type="text" id="leadmagnet-name" placeholder="O teu nome" required>
+                <input type="email" id="leadmagnet-email" placeholder="O teu email" required>
+                <button type="submit">Descarregar Grátis</button>
+            </form>
+        </div>
+    </div>
 
     <!-- ===== PAYMENT MODAL — Career Path style ===== -->
     <div class="modal-overlay" id="paymentModalOverlay" onclick="handleOverlayClick(event)">
@@ -1454,6 +1599,44 @@
             }, 300);
         }
     })();
+
+    // ===== LEAD MAGNET MODAL JS =====
+    function openLeadmagnetModal() {
+        document.getElementById('leadmagnetModalOverlay').classList.add('active');
+    }
+
+    function closeLeadmagnetModal() {
+        document.getElementById('leadmagnetModalOverlay').classList.remove('active');
+    }
+
+    function handleLeadmagnetOverlayClick(event) {
+        if (event.target.id === 'leadmagnetModalOverlay') {
+            closeLeadmagnetModal();
+        }
+    }
+
+    function submitLeadmagnetForm(event) {
+        event.preventDefault();
+        const name = document.getElementById('leadmagnet-name').value.trim();
+        const email = document.getElementById('leadmagnet-email').value.trim();
+        
+        if (!name || !email) return;
+        
+        // Trigger download directly
+        const link = document.createElement('a');
+        link.href = '../interview-scripts/assets/downloads/10-erros-linkedin.pdf';
+        link.download = '10-erros-linkedin.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Close modal
+        closeLeadmagnetModal();
+        
+        // Reset form
+        document.getElementById('leadmagnet-name').value = '';
+        document.getElementById('leadmagnet-email').value = '';
+    }
     </script>
 </body>
 
