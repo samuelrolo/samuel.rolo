@@ -203,14 +203,12 @@ function switchTab(name, btn) {
 
     // Lazy render on first visit
     if (name === 'funnel') renderFunnel();
-    if (name === 'crm') renderCRM();
+    if (name === 'crm') { renderCRM(); renderNurturingSegments(); }
     if (name === 'analyses') renderAnalyses();
     if (name === 'vouchers') renderVouchers();
-    if (name === 'nurturing') renderNurturingSegments();
     if (name === 'history') renderEmailHistory();
     if (name === 'contacts') renderContacts();
     if (name === 'health') renderHealth();
-    if (name === 'ebook') renderEbookDownloads();
     if (name === 'jobsearch') renderJobSearch();
     if (name === 'careerenergy') renderCareerEnergy();
     if (name === 'affiliates') renderAffiliates();
