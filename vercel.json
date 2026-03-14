@@ -49,6 +49,14 @@
       "destination": "/en/career-path/llms.txt"
     },
     {
+      "source": "/interview-scripts",
+      "destination": "/interview-scripts/index.html"
+    },
+    {
+      "source": "/en/interview-scripts",
+      "destination": "/en/interview-scripts/index.html"
+    },
+    {
       "source": "/en/pages/about",
       "destination": "/en/pages/about/index.html"
     },
