@@ -263,14 +263,12 @@
 <nav class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('dashboard',this)"><i class="fas fa-chart-pie"></i> Dashboard</button>
     <button class="tab-btn" onclick="switchTab('funnel',this)"><i class="fas fa-filter"></i> Funil</button>
-    <button class="tab-btn" onclick="switchTab('crm',this)"><i class="fas fa-users"></i> CRM / Leads</button>
+    <button class="tab-btn" onclick="switchTab('crm',this)"><i class="fas fa-users"></i> CRM</button>
     <button class="tab-btn" onclick="switchTab('analyses',this)"><i class="fas fa-file-alt"></i> Análises</button>
     <button class="tab-btn" onclick="switchTab('vouchers',this)"><i class="fas fa-ticket-alt"></i> Vouchers</button>
-    <button class="tab-btn" onclick="switchTab('nurturing',this)"><i class="fas fa-paper-plane"></i> Follow-up</button>
     <button class="tab-btn" onclick="switchTab('history',this)"><i class="fas fa-history"></i> Histórico</button>
     <button class="tab-btn" onclick="switchTab('contacts',this)"><i class="fas fa-inbox"></i> Contactos</button>
     <button class="tab-btn" onclick="switchTab('health',this)"><i class="fas fa-heartbeat"></i> Saúde</button>
-    <button class="tab-btn" onclick="switchTab('ebook',this)"><i class="fas fa-book"></i> E-book</button>
     <button class="tab-btn" onclick="switchTab('jobsearch',this)"><i class="fas fa-briefcase"></i> Cargos</button>
     <button class="tab-btn" onclick="switchTab('careerenergy',this)"><i class="fas fa-bolt"></i> Career Energy</button>
     <button class="tab-btn" onclick="switchTab('affiliates',this)"><i class="fas fa-link"></i> Afiliados</button>
@@ -659,6 +657,85 @@
         </div>
     </div>
     <div class="pagination" id="crmPagination"></div>
+
+    <!-- ── Follow-up & Nurturing (merged) ── -->
+    <div style="margin-top:32px;border-top:1px solid var(--border);padding-top:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <div>
+                <h3 style="font-size:16px;font-weight:600;margin:0;"><i class="fas fa-paper-plane" style="color:var(--gold);margin-right:8px;"></i>Follow-up & Nurturing</h3>
+                <p style="font-size:12px;color:var(--text-muted);margin:4px 0 0;">Segmentos automáticos para campanhas de email</p>
+            </div>
+            <div class="lang-toggle" id="nurturingLangToggle">
+                <button class="active" onclick="setNurturingLang('pt',this)">PT</button>
+                <button onclick="setNurturingLang('en',this)">EN</button>
+            </div>
+        </div>
+
+        <!-- Segmentos -->
+        <div class="segment-cards">
+            <div class="segment-card" onclick="prepareNurturing('upsell')">
+                <div class="segment-count" id="upsellCount">--</div>
+                <div class="segment-label">Upsell — Análise Completa</div>
+                <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Fizeram análise gratuita, não compraram</div>
+            </div>
+            <div class="segment-card" onclick="prepareNurturing('feedback')">
+                <div class="segment-count" id="feedbackCount">--</div>
+                <div class="segment-label">Pedir Feedback</div>
+                <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Compraram mas não avaliaram</div>
+            </div>
+            <div class="segment-card" onclick="prepareNurturing('careerpath')">
+                <div class="segment-count" id="careerpathCount">--</div>
+                <div class="segment-label">Upsell — Career Path</div>
+                <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Compraram CV, sem Career Path</div>
+            </div>
+            <div class="segment-card" onclick="prepareNurturing('abandoned')">
+                <div class="segment-count" id="abandonedCount">--</div>
+                <div class="segment-label">Recuperar Abandono</div>
+                <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Anónimos recentes (email desconhecido)</div>
+            </div>
+        </div>
+
+        <!-- Composer -->
+        <div id="emailComposer" style="display:none;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title" id="composerTitle"><i class="fas fa-paper-plane"></i> Compor Email</div>
+                </div>
+                <div class="card-body">
+                    <div class="grid-2">
+                        <div>
+                            <div class="form-group">
+                                <label class="form-label">Assunto</label>
+                                <input class="form-input" type="text" id="emailSubject" style="width:100%;">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Corpo do Email (HTML)</label>
+                                <textarea class="form-textarea" id="emailBody" style="min-height:200px;"></textarea>
+                            </div>
+                            <div style="display:flex;gap:8px;">
+                                <button class="btn btn-gold" onclick="sendBulkEmail()"><i class="fas fa-paper-plane"></i> Enviar Selecionados</button>
+                                <button class="btn btn-outline" onclick="selectOnlyUnsent()"><i class="fas fa-filter"></i> Só Não Enviados</button>
+                                <button class="btn btn-outline" onclick="toggleAllRecipients(true)">Todos</button>
+                                <button class="btn btn-outline" onclick="toggleAllRecipients(false)">Nenhum</button>
+                            </div>
+                            <div style="margin-top:8px;font-size:12px;color:var(--text-muted);" id="selectedCount">(0 selecionados)</div>
+                        </div>
+                        <div>
+                            <div style="display:flex;gap:8px;margin-bottom:10px;">
+                                <input class="form-input" type="text" id="recipientSearch" placeholder="Filtrar email..." oninput="filterRecipientList()" style="flex:1;">
+                                <select class="form-select" id="recipientFilter" onchange="filterRecipientList()">
+                                    <option value="all">Todos</option>
+                                    <option value="unsent">Não enviados</option>
+                                    <option value="sent">Enviados</option>
+                                </select>
+                            </div>
+                            <div id="recipientList" style="max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- ══════════════════════════════════════════════
@@ -744,9 +821,7 @@
     </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     TAB: FOLLOW-UP / NURTURING
-══════════════════════════════════════════════ -->
+<!-- Old Follow-up tab removed (merged into CRM) -->
 <div id="tab-nurturing" style="display:none;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <div class="section-header" style="margin:0;">
@@ -902,9 +977,7 @@
     </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     TAB: E-BOOK
-══════════════════════════════════════════════ -->
+<!-- E-book tab removed (now free) -->
 <div id="tab-ebook" style="display:none;">
     <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px;">
         <div class="kpi-card"><div class="kpi-label">Total Downloads</div><div class="kpi-value gold" style="font-size:22px;" id="kpiEbookTotal">--</div></div>
