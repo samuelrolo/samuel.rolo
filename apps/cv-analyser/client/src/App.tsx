@@ -1,0 +1,133 @@
+import { Suspense, lazy, useEffect } from "react";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import NotFound from "@/pages/NotFound";
+import { Route, Router, Switch } from "wouter";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { initAffiliateTracking } from "./lib/affiliate";
+
+// ─── Lazy-loaded page components for code splitting ───
+const Home = lazy(() => import("./pages/Home"));
+const Results = lazy(() => import("./pages/Results"));
+const TestData = lazy(() => import("./pages/TestData"));
+const CareerPathHome = lazy(() => import("./pages/CareerPathHome"));
+const CareerPathResults = lazy(() => import("./pages/CareerPathResults"));
+const HomeEN = lazy(() => import("./pages/en/HomeEN"));
+const CareerPathHomeEN = lazy(() => import("./pages/en/CareerPathHomeEN"));
+
+// ─── Loading fallback ───
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm text-slate-500">A carregar...</p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Dynamic page title based on route ───
+function usePageTitle() {
+  useEffect(() => {
+    const pathname = window.location.pathname;
+    const titles: Record<string, string> = {
+      '/en/career-path': 'Share2Inspire — Career Path',
+      '/en/cv-analyser': 'Share2Inspire — CV Analyser (EN)',
+      '/career-path': 'Share2Inspire — Career Path',
+      '/cv-analyser': 'Share2Inspire — CV Analyser',
+    };
+
+    // Match the most specific path first
+    const matchedKey = Object.keys(titles)
+      .sort((a, b) => b.length - a.length)
+      .find(key => pathname.startsWith(key));
+
+    document.title = matchedKey ? titles[matchedKey] : 'Share2Inspire';
+  }, []);
+}
+
+// Determine which product to render based on the URL path
+function AppRouter() {
+  const pathname = window.location.pathname;
+  usePageTitle();
+
+  // ─── English International Routes ───
+
+  // EN Career Path: /en/career-path and /en/career-path/results
+  if (pathname.startsWith('/en/career-path')) {
+    return (
+      <Router base="/en/career-path">
+        <Switch>
+          <Route path={"/"} component={CareerPathHomeEN} />
+          <Route path={"/results"} component={CareerPathResults} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // EN CV Analyser: /en/cv-analyser and /en/cv-analyser/results
+  if (pathname.startsWith('/en/cv-analyser') || pathname.startsWith('/en')) {
+    return (
+      <Router base="/en/cv-analyser">
+        <Switch>
+          <Route path={"/"} component={HomeEN} />
+          <Route path={"/results"} component={Results} />
+          <Route path={"/test"} component={TestData} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // ─── Portuguese Routes (unchanged) ───
+
+  // Career Path product: /career-path and /career-path/results
+  if (pathname.startsWith('/career-path')) {
+    return (
+      <Router base="/career-path">
+        <Switch>
+          <Route path={"/"} component={CareerPathHome} />
+          <Route path={"/results"} component={CareerPathResults} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // CV Analyser product: /cv-analyser (default)
+  return (
+    <Router base="/cv-analyser">
+      <Switch>
+        <Route path={"/"} component={Home} />
+        <Route path={"/results"} component={Results} />
+        <Route path={"/test"} component={TestData} />
+        <Route path={"/404"} component={NotFound} />
+        {/* Final fallback route */}
+        <Route component={NotFound} />
+      </Switch>
+    </Router>
+  );
+}
+
+function App() {
+  useEffect(() => { initAffiliateTracking(); }, []);
+  return (
+    <ErrorBoundary>
+      <ThemeProvider
+        defaultTheme="light"
+      >
+        <TooltipProvider>
+          <Toaster />
+          <Suspense fallback={<PageLoader />}>
+            <AppRouter />
+          </Suspense>
+        </TooltipProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
+  );
+}
+
+export default App;
