@@ -273,6 +273,7 @@
     <button class="tab-btn" onclick="switchTab('jobsearch',this)"><i class="fas fa-briefcase"></i> Cargos</button>
     <button class="tab-btn" onclick="switchTab('careerenergy',this)"><i class="fas fa-bolt"></i> Career Energy</button>
     <button class="tab-btn" onclick="switchTab('affiliates',this)"><i class="fas fa-link"></i> Afiliados</button>
+    <button class="tab-btn" onclick="switchTab('coupons',this)"><i class="fas fa-percent"></i> Cupões</button>
 </nav>
 
 <main class="main">
@@ -1175,12 +1176,63 @@
         </div>
     </div>
 </div>
+<!-- Tab: Cupões de Desconto -->
+<div id="tab-coupons" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="section-header" style="margin:0;">
+            <h2><i class="fas fa-percent" style="color:var(--green);margin-right:8px;"></i> Cupões de Desconto</h2>
+            <p>Cria e gere cupões de desconto percentual para parcerias</p>
+        </div>
+        <button class="btn btn-gold" onclick="openCreateCouponModal()"><i class="fas fa-plus"></i> Novo Cupão</button>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="kpi-row" style="grid-template-columns:repeat(auto-fit,minmax(155px,1fr));">
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--green);"></div>
+            <div class="kpi-label">Cupões Ativos</div>
+            <div class="kpi-value green" id="couponKpiActive">--</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--blue);"></div>
+            <div class="kpi-label">Total Utilizados</div>
+            <div class="kpi-value blue" id="couponKpiUses">--</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--gold);"></div>
+            <div class="kpi-label">Desconto Médio</div>
+            <div class="kpi-value gold" id="couponKpiAvgDiscount">--</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--purple);"></div>
+            <div class="kpi-label">Total Cupões</div>
+            <div class="kpi-value purple" id="couponKpiTotal">--</div>
+        </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-bar">
+        <label>Estado</label>
+        <select class="form-select" id="filterCouponStatus" onchange="renderCoupons()">
+            <option value="all">Todos</option>
+            <option value="active">Ativos</option>
+            <option value="inactive">Inativos</option>
+        </select>
+        <input class="form-input" type="text" id="filterCouponSearch" placeholder="Pesquisar código ou parceiro..." oninput="renderCoupons()" style="width:220px;">
+    </div>
+
+    <!-- Coupons Table -->
+    <div class="card">
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Código</th><th>Parceiro</th><th>Desconto</th><th>Produtos</th><th>Utilizações</th><th>Limite</th><th>Validade</th><th>Estado</th><th>Criado</th><th>Ações</th></tr></thead>
+                <tbody id="couponsTable"><tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 </main>
 
-<!-- ══════════════════════════════════════════════
+<!-- ══════════════════════════════════════════════════
      MODAIS
-══════════════════════════════════════════════ -->
+══════════════════════════════════════════════════ -->
 
 <!-- Modal: Email -->
 <div class="modal-overlay" id="emailModalOverlay" style="display:none;" onclick="if(event.target===this)closeEmailModal()">
@@ -1336,6 +1388,73 @@
             <div style="display:flex;gap:8px;justify-content:flex-end;">
                 <button class="btn btn-outline" onclick="closeAffiliateModal()">Cancelar</button>
                 <button class="btn btn-gold" id="affSaveBtn" onclick="saveAffiliate()"><i class="fas fa-save"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Criar/Editar Cupão de Desconto -->
+<div class="modal-overlay" id="couponModalOverlay" style="display:none;" onclick="if(event.target===this)closeCouponModal()">
+    <div class="modal-box" style="max-width:520px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-percent" style="color:var(--green);margin-right:8px;"></i> <span id="couponModalTitle">Novo Cupão de Desconto</span></h3>
+            <button class="modal-close" onclick="closeCouponModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="couponEditId">
+            <div class="form-group">
+                <label class="form-label">Código do Cupão</label>
+                <input class="form-input" type="text" id="couponCodeInput" style="width:100%;text-transform:uppercase;letter-spacing:1px;" placeholder="Ex: ISEG30, NOVA20">
+                <small style="color:var(--text-muted);font-size:11px;">O código que o parceiro partilha com os seus utilizadores</small>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nome do Parceiro</label>
+                <input class="form-input" type="text" id="couponPartnerName" style="width:100%;" placeholder="Ex: ISEG, Nova SBE, ISCTE">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Desconto (%)</label>
+                <input class="form-input" type="number" id="couponDiscount" style="width:100%;" placeholder="20" min="1" max="100" step="1">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Descrição (opcional)</label>
+                <input class="form-input" type="text" id="couponDescription" style="width:100%;" placeholder="Desconto para alunos do ISEG">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Produtos aplicáveis</label>
+                <div id="couponProductCheckboxes" style="display:flex;flex-direction:column;gap:8px;padding:8px 0;">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="cv_analysis" checked>
+                        <span class="badge" style="background:var(--blue);color:#fff;font-size:11px;">CV Analyser</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="career_path" checked>
+                        <span class="badge" style="background:var(--gold);color:#fff;font-size:11px;">Career Path</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="bundle" checked>
+                        <span class="badge" style="background:var(--purple);color:#fff;font-size:11px;">Bundle (CV + Career Path)</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="linkedin_roaster" checked>
+                        <span class="badge" style="background:#0077B5;color:#fff;font-size:11px;">LinkedIn Roaster</span>
+                    </label>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="form-group">
+                    <label class="form-label">Limite de utilizações</label>
+                    <input class="form-input" type="number" id="couponMaxUses" style="width:100%;" placeholder="Sem limite" min="1">
+                    <small style="color:var(--text-muted);font-size:11px;">Deixar vazio = ilimitado</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Válido até</label>
+                    <input class="form-input" type="date" id="couponValidUntil" style="width:100%;">
+                    <small style="color:var(--text-muted);font-size:11px;">Deixar vazio = sem expiração</small>
+                </div>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
+                <button class="btn btn-outline" onclick="closeCouponModal()">Cancelar</button>
+                <button class="btn btn-gold" id="couponSaveBtn" onclick="saveCoupon()"><i class="fas fa-save"></i> Guardar</button>
             </div>
         </div>
     </div>

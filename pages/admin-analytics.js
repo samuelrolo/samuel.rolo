@@ -212,6 +212,7 @@ function switchTab(name, btn) {
     if (name === 'jobsearch') renderJobSearch();
     if (name === 'careerenergy') renderCareerEnergy();
     if (name === 'affiliates') renderAffiliates();
+    if (name === 'coupons') renderCoupons();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1945,7 +1946,7 @@ function downloadCSV(rows, filename) {
 // ═══════════════════════════════════════════════════════════════
 async function refreshAll() {
     showToast('A atualizar dados...', 'info');
-    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs(), loadAffiliateData()]);
+    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs(), loadAffiliateData(), loadCouponData()]);
     updateDashboard();
     updateCharts();
     // Re-render active tab
@@ -1962,7 +1963,7 @@ async function init() {
     document.getElementById('tab-dashboard').style.display = '';
     document.querySelectorAll('.main > div[id^="tab-"]:not(#tab-dashboard)').forEach(el => el.style.display = 'none');
 
-    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs(), loadAffiliateData()]);
+    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs(), loadAffiliateData(), loadCouponData()]);
     updateDashboard();
     updateCharts();
     renderNurturingSegments();
@@ -2295,4 +2296,215 @@ function exportAffConversionsCSV() {
 function esc(str) {
     if (!str) return '';
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  DISCOUNT COUPONS MODULE
+// ═══════════════════════════════════════════════════════════════
+let allCoupons = [];
+
+async function loadCouponData() {
+    try {
+        const coupons = await supaFetch('discount_coupons', 'select=*&order=created_at.desc');
+        allCoupons = Array.isArray(coupons) ? coupons : [];
+    } catch (e) {
+        console.error('Erro ao carregar cupões:', e);
+    }
+}
+
+function renderCoupons() {
+    const statusFilter = document.getElementById('filterCouponStatus')?.value || 'all';
+    const searchFilter = (document.getElementById('filterCouponSearch')?.value || '').toLowerCase();
+
+    let filtered = allCoupons.filter(c => {
+        if (statusFilter === 'active' && !c.is_active) return false;
+        if (statusFilter === 'inactive' && c.is_active) return false;
+        if (searchFilter) {
+            const match = (c.code || '').toLowerCase().includes(searchFilter) ||
+                          (c.partner_name || '').toLowerCase().includes(searchFilter) ||
+                          (c.description || '').toLowerCase().includes(searchFilter);
+            if (!match) return false;
+        }
+        return true;
+    });
+
+    // KPIs
+    const active = allCoupons.filter(c => c.is_active);
+    const totalUses = allCoupons.reduce((s, c) => s + (c.current_uses || 0), 0);
+    const avgDiscount = allCoupons.length > 0
+        ? (allCoupons.reduce((s, c) => s + (c.discount_percent || 0), 0) / allCoupons.length).toFixed(0)
+        : 0;
+
+    document.getElementById('couponKpiActive').textContent = active.length;
+    document.getElementById('couponKpiUses').textContent = totalUses;
+    document.getElementById('couponKpiAvgDiscount').textContent = avgDiscount + '%';
+    document.getElementById('couponKpiTotal').textContent = allCoupons.length;
+
+    // Table
+    const tbody = document.getElementById('couponsTable');
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum cupão encontrado</td></tr>';
+        return;
+    }
+
+    const productLabels = {
+        'cv_analysis': '<span class="badge" style="background:var(--blue);color:#fff;font-size:10px;">CV</span>',
+        'career_path': '<span class="badge" style="background:var(--gold);color:#fff;font-size:10px;">Career</span>',
+        'bundle': '<span class="badge" style="background:var(--purple);color:#fff;font-size:10px;">Bundle</span>',
+        'linkedin_roaster': '<span class="badge" style="background:#0077B5;color:#fff;font-size:10px;">Roaster</span>'
+    };
+
+    tbody.innerHTML = filtered.map(c => {
+        const products = (c.applicable_products || []).map(p => productLabels[p] || esc(p)).join(' ');
+        const uses = c.current_uses || 0;
+        const maxUses = c.max_uses ? c.max_uses : '<span style="color:var(--text-muted);">∞</span>';
+        const validUntil = c.valid_until
+            ? new Date(c.valid_until).toLocaleDateString('pt-PT')
+            : '<span style="color:var(--text-muted);">Sem limite</span>';
+        const isExpired = c.valid_until && new Date(c.valid_until) < new Date();
+        const statusBadge = c.is_active && !isExpired
+            ? '<span class="badge" style="background:var(--green);color:#fff;">Ativo</span>'
+            : '<span class="badge" style="background:var(--danger);color:#fff;">' + (isExpired ? 'Expirado' : 'Inativo') + '</span>';
+        const created = new Date(c.created_at).toLocaleDateString('pt-PT');
+
+        return `<tr>
+            <td><code style="font-size:12px;font-weight:600;letter-spacing:1px;">${esc(c.code)}</code></td>
+            <td>${esc(c.partner_name) || '<span style="color:var(--text-muted);">—</span>'}</td>
+            <td><span style="font-weight:600;color:var(--green);">${c.discount_percent}%</span></td>
+            <td>${products}</td>
+            <td>${uses}</td>
+            <td>${maxUses}</td>
+            <td>${validUntil}</td>
+            <td>${statusBadge}</td>
+            <td>${created}</td>
+            <td>
+                <div style="display:flex;gap:4px;">
+                    <button class="btn btn-outline btn-sm" onclick="editCoupon('${c.id}')" title="Editar"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-outline btn-sm" onclick="toggleCoupon('${c.id}', ${c.is_active})" title="${c.is_active ? 'Desativar' : 'Ativar'}">
+                        <i class="fas fa-${c.is_active ? 'pause' : 'play'}"></i>
+                    </button>
+                    <button class="btn btn-outline btn-sm" onclick="copyCouponCode('${esc(c.code)}')" title="Copiar código"><i class="fas fa-copy"></i></button>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function openCreateCouponModal() {
+    document.getElementById('couponModalTitle').textContent = 'Novo Cupão de Desconto';
+    document.getElementById('couponEditId').value = '';
+    document.getElementById('couponCodeInput').value = '';
+    document.getElementById('couponPartnerName').value = '';
+    document.getElementById('couponDiscount').value = '';
+    document.getElementById('couponDescription').value = '';
+    document.getElementById('couponMaxUses').value = '';
+    document.getElementById('couponValidUntil').value = '';
+    document.getElementById('couponCodeInput').disabled = false;
+    // Reset all product checkboxes to checked
+    document.querySelectorAll('.coupon-product-cb').forEach(cb => cb.checked = true);
+    document.getElementById('couponModalOverlay').style.display = 'flex';
+}
+
+function closeCouponModal() {
+    document.getElementById('couponModalOverlay').style.display = 'none';
+}
+
+function editCoupon(id) {
+    const c = allCoupons.find(x => x.id === id);
+    if (!c) return;
+    document.getElementById('couponModalTitle').textContent = 'Editar Cupão';
+    document.getElementById('couponEditId').value = c.id;
+    document.getElementById('couponCodeInput').value = c.code || '';
+    document.getElementById('couponCodeInput').disabled = true; // Code cannot be changed
+    document.getElementById('couponPartnerName').value = c.partner_name || '';
+    document.getElementById('couponDiscount').value = c.discount_percent || '';
+    document.getElementById('couponDescription').value = c.description || '';
+    document.getElementById('couponMaxUses').value = c.max_uses || '';
+    document.getElementById('couponValidUntil').value = c.valid_until ? c.valid_until.slice(0, 10) : '';
+    // Set product checkboxes
+    const products = c.applicable_products || [];
+    document.querySelectorAll('.coupon-product-cb').forEach(cb => {
+        cb.checked = products.includes(cb.value);
+    });
+    document.getElementById('couponModalOverlay').style.display = 'flex';
+}
+
+async function saveCoupon() {
+    const editId = document.getElementById('couponEditId').value;
+    const code = document.getElementById('couponCodeInput').value.trim().toUpperCase();
+    const partnerName = document.getElementById('couponPartnerName').value.trim();
+    const discount = parseInt(document.getElementById('couponDiscount').value);
+    const description = document.getElementById('couponDescription').value.trim();
+    const maxUses = document.getElementById('couponMaxUses').value ? parseInt(document.getElementById('couponMaxUses').value) : null;
+    const validUntil = document.getElementById('couponValidUntil').value || null;
+    const products = Array.from(document.querySelectorAll('.coupon-product-cb:checked')).map(cb => cb.value);
+
+    // Validations
+    if (!code) { showToast('O código do cupão é obrigatório', 'danger'); return; }
+    if (!discount || discount < 1 || discount > 100) { showToast('O desconto deve ser entre 1% e 100%', 'danger'); return; }
+    if (products.length === 0) { showToast('Seleciona pelo menos um produto', 'danger'); return; }
+
+    // Check for duplicate code (only on create)
+    if (!editId) {
+        const existing = allCoupons.find(c => c.code === code);
+        if (existing) { showToast('Já existe um cupão com este código', 'danger'); return; }
+    }
+
+    const data = {
+        discount_percent: discount,
+        partner_name: partnerName || null,
+        description: description || null,
+        applicable_products: products,
+        max_uses: maxUses,
+        valid_until: validUntil ? new Date(validUntil + 'T23:59:59Z').toISOString() : null
+    };
+
+    try {
+        if (editId) {
+            await supaUpdate('discount_coupons', editId, data);
+            showToast('Cupão atualizado com sucesso', 'success');
+        } else {
+            data.code = code;
+            data.is_active = true;
+            data.current_uses = 0;
+            await supaInsert('discount_coupons', data);
+            showToast('Cupão criado com sucesso: ' + code, 'success');
+        }
+        closeCouponModal();
+        await loadCouponData();
+        renderCoupons();
+    } catch (e) {
+        console.error('Erro ao guardar cupão:', e);
+        showToast('Erro ao guardar cupão', 'danger');
+    }
+}
+
+async function toggleCoupon(id, currentActive) {
+    const action = currentActive ? 'desativar' : 'ativar';
+    if (!confirm(`Tens a certeza que queres ${action} este cupão?`)) return;
+    try {
+        await supaUpdate('discount_coupons', id, { is_active: !currentActive });
+        showToast(`Cupão ${currentActive ? 'desativado' : 'ativado'} com sucesso`, 'success');
+        await loadCouponData();
+        renderCoupons();
+    } catch (e) {
+        console.error('Erro ao alterar estado do cupão:', e);
+        showToast('Erro ao alterar estado do cupão', 'danger');
+    }
+}
+
+function copyCouponCode(code) {
+    navigator.clipboard.writeText(code).then(() => {
+        showToast('Código copiado: ' + code, 'success');
+    }).catch(() => {
+        // Fallback
+        const el = document.createElement('textarea');
+        el.value = code;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        showToast('Código copiado: ' + code, 'success');
+    });
 }
