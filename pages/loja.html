@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loja | Share2Inspire | Samuel Rolo</title>
     <meta name="description"
-        content="Livros de Samuel Rolo sobre desenvolvimento pessoal, gestão da mudança e transformação organizacional.">
+        content="Livros e e-books de Samuel Rolo sobre desenvolvimento pessoal, gestão da mudança, transformação organizacional e preparação para entrevistas.">
 
     <!-- Favicon -->
     <link rel="icon" href="../images/logo.png" type="image/png">
@@ -141,6 +141,7 @@
             letter-spacing: 1px;
             text-decoration: none;
             transition: var(--s2i-transition);
+            cursor: pointer;
         }
 
         .book-btn:hover {
@@ -315,30 +316,359 @@
             color: var(--s2i-dark);
         }
 
+        /* ===== E-BOOK INTERVIEW SCRIPTS SECTION ===== */
+        .ebook-interview-section {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border-radius: var(--s2i-radius);
+            padding: 60px 50px;
+            margin-top: 40px;
+            color: var(--s2i-white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ebook-interview-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #C9A84C, #e8c96a, #C9A84C);
+        }
+
+        .ebook-interview-section .section-title {
+            color: var(--s2i-gold);
+        }
+
+        .ebook-interview-section h3 {
+            color: var(--s2i-white);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .ebook-interview-section .subtitle {
+            color: var(--s2i-gold);
+            font-size: 1rem;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .ebook-interview-section .description {
+            color: rgba(255,255,255,0.75);
+            line-height: 1.8;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+        }
+
+        .ebook-interview-cover {
+            max-width: 280px;
+            border-radius: 8px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.3);
+        }
+
+        /* Features grid */
+        .ebook-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0 25px;
+        }
+
+        .ebook-feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.85);
+        }
+
+        .ebook-feature-item .feat-icon {
+            color: var(--s2i-gold);
+            font-size: 0.9rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Price badge */
+        .price-badge {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .price-amount {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--s2i-gold);
+        }
+
+        .price-label {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* CTA button for ebook */
+        .ebook-cta-btn {
+            display: inline-block;
+            background: var(--s2i-gold);
+            color: var(--s2i-dark);
+            border: none;
+            padding: 14px 32px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .ebook-cta-btn:hover {
+            background: #e8c96a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(201,168,76,0.4);
+        }
+
+        /* ===== PAYMENT MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .payment-modal {
+            background: #fff;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 480px;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: #666;
+            line-height: 1;
+        }
+
+        .modal-close:hover { color: #1a1a1a; }
+
+        .modal-product-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-product-img {
+            width: 60px;
+            height: 85px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .modal-product-info h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .modal-product-info .modal-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #C9A84C;
+        }
+
+        .modal-product-info .modal-price-sub {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .modal-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .modal-input:focus {
+            border-color: #C9A84C;
+        }
+
+        /* Payment method tabs */
+        .pay-method-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .pay-tab {
+            flex: 1;
+            padding: 10px 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #f8f8f8;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            color: #555;
+        }
+
+        .pay-tab.active {
+            background: #1a1a1a;
+            color: #C9A84C;
+            border-color: #1a1a1a;
+        }
+
+        .pay-tab:hover:not(.active) {
+            border-color: #C9A84C;
+            color: #C9A84C;
+        }
+
+        .pay-panel { display: none; }
+        .pay-panel.active { display: block; }
+
+        .pay-btn-main {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .pay-btn-mbway {
+            background: #C9A84C;
+            color: #1a1a1a;
+        }
+
+        .pay-btn-mbway:hover { background: #b8963e; }
+
+        .pay-btn-stripe {
+            background: #635bff;
+            color: #fff;
+        }
+
+        .pay-btn-stripe:hover { background: #4f46e5; }
+
+        .pay-btn-paypal {
+            background: #0070ba;
+            color: #fff;
+        }
+
+        .pay-btn-paypal:hover { background: #005ea6; }
+
+        .pay-btn-main:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .modal-phone-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            outline: none;
+        }
+
+        .modal-phone-input:focus { border-color: #C9A84C; }
+
+        .payment-status-msg {
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: center;
+            display: none;
+        }
+
+        .payment-status-msg.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .payment-status-msg.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .payment-status-msg.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            display: block;
+        }
+
+        .modal-secure-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 16px;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
-            .books-grid {
-                gap: 25px;
-            }
-
-            .book-card {
-                flex: 0 0 200px;
-            }
-
-            .book-cover {
-                width: 140px;
-                height: 200px;
-            }
-
+            .books-grid { gap: 25px; }
+            .book-card { flex: 0 0 200px; }
+            .book-cover { width: 140px; height: 200px; }
             .featured-book,
-            .featured-book-alt {
-                padding: 30px;
-            }
-
-            .featured-cover {
-                max-width: 220px;
-                margin-bottom: 30px;
-            }
+            .featured-book-alt,
+            .ebook-interview-section { padding: 30px; }
+            .featured-cover { max-width: 220px; margin-bottom: 30px; }
+            .ebook-interview-cover { max-width: 200px; margin-bottom: 25px; }
+            .ebook-features { grid-template-columns: 1fr; }
+            .payment-modal { padding: 28px 20px; }
         }
     </style>
     <link rel="stylesheet" href="../css/coach-agent.css">
@@ -352,7 +682,7 @@
         gtag('config', 'AW-17015553005');
     </script>
     <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035"
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3753557750574547"
         crossorigin="anonymous"></script>
     <!-- Meta Pixel Code -->
     <script>
@@ -471,6 +801,14 @@
                         <p class="author">Samuel Rolo &amp; Marlene Ruivo</p>
                         <a href="https://go.hotmart.com/Q104764153P?dp=1" target="_blank" class="book-btn">Comprar</a>
                     </div>
+
+                    <!-- Book 4 - Script de Entrevistas (E-book) -->
+                    <div class="book-card">
+                        <img src="../images/ebook-entrevistas-capa.png" alt="Script de Entrevistas — O Guia Definitivo" class="book-cover">
+                        <h4>Script de Entrevistas</h4>
+                        <p class="author">Samuel Rolo · 3,99€</p>
+                        <button class="book-btn" onclick="openPaymentModal()">Comprar</button>
+                    </div>
                 </div>
 
                 <!-- Featured Book - Gestão da Mudança -->
@@ -575,6 +913,76 @@
                     </div>
                 </div>
 
+                <!-- ===== NEW: Script de Entrevistas E-book ===== -->
+                <div class="ebook-interview-section" id="script-entrevistas">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-4 mb-md-0">
+                            <img src="../images/ebook-entrevistas-capa.png"
+                                 alt="Script de Entrevistas — O Guia Definitivo"
+                                 class="ebook-interview-cover">
+                        </div>
+                        <div class="col-md-8">
+                            <span class="section-title">Novo E-book 2026</span>
+                            <h3>Script de Entrevistas</h3>
+                            <p class="subtitle">O Guia Definitivo</p>
+                            <p class="description">Da preparação ao follow-up: o método completo para conquistar qualquer recrutador. 39 páginas de scripts prontos, estratégias práticas e técnicas testadas — para quem quer chegar à entrevista com confiança e sair com a oferta.</p>
+
+                            <div class="ebook-features">
+                                <div class="ebook-feature-item">
+                                    <i class="fas fa-check-circle feat-icon"></i>
+                                    <span>10 scripts prontos para as perguntas mais difíceis</span>
+                                </div>
+                                <div class="ebook-feature-item">
+                                    <i class="fas fa-check-circle feat-icon"></i>
+                                    <span>Gestão do stress e ansiedade antes da entrevista</span>
+                                </div>
+                                <div class="ebook-feature-item">
+                                    <i class="fas fa-check-circle feat-icon"></i>
+                                    <span>Presencial vs. vídeo — como dominar cada formato</span>
+                                </div>
+                                <div class="ebook-feature-item">
+                                    <i class="fas fa-check-circle feat-icon"></i>
+                                    <span>Como negociar o salário com confiança</span>
+                                </div>
+                                <div class="ebook-feature-item">
+                                    <i class="fas fa-check-circle feat-icon"></i>
+                                    <span>Como explicar lacunas no CV sem desconforto</span>
+                                </div>
+                                <div class="ebook-feature-item">
+                                    <i class="fas fa-check-circle feat-icon"></i>
+                                    <span>O follow-up perfeito após a entrevista</span>
+                                </div>
+                                <div class="ebook-feature-item">
+                                    <i class="fas fa-check-circle feat-icon"></i>
+                                    <span>Checklist completa de preparação</span>
+                                </div>
+                                <div class="ebook-feature-item">
+                                    <i class="fas fa-check-circle feat-icon"></i>
+                                    <span>Templates de email prontos a usar</span>
+                                </div>
+                                <div class="ebook-feature-item">
+                                    <i class="fas fa-check-circle feat-icon"></i>
+                                    <span>39 páginas de conteúdo prático e acionável</span>
+                                </div>
+                                <div class="ebook-feature-item">
+                                    <i class="fas fa-bolt feat-icon"></i>
+                                    <span><strong style="color:#C9A84C;">Download imediato</strong> após pagamento</span>
+                                </div>
+                            </div>
+
+                            <div class="price-badge">
+                                <span class="price-amount">3,99€</span>
+                                <span class="price-label">pagamento único · PDF</span>
+                            </div>
+
+                            <br>
+                            <button class="ebook-cta-btn" onclick="openPaymentModal()">
+                                <i class="fas fa-download me-2"></i> Comprar e fazer download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- CTA Section -->
                 <div class="cta-section">
                     <h2>Procura uma recomendação personalizada?</h2>
@@ -646,10 +1054,351 @@
         </div>
     </footer>
 
+    <!-- ===== PAYMENT MODAL ===== -->
+    <div class="modal-overlay" id="paymentModalOverlay" onclick="handleOverlayClick(event)">
+        <div class="payment-modal" id="paymentModal">
+            <button class="modal-close" onclick="closePaymentModal()" aria-label="Fechar">&times;</button>
+
+            <div class="modal-product-header">
+                <img src="../images/ebook-entrevistas-capa.png"
+                     alt="Script de Entrevistas"
+                     class="modal-product-img">
+                <div class="modal-product-info">
+                    <h4>Script de Entrevistas — O Guia Definitivo</h4>
+                    <div class="modal-price">3,99€</div>
+                    <div class="modal-price-sub">Pagamento único · Download imediato em PDF</div>
+                </div>
+            </div>
+
+            <div class="modal-label">O teu email</div>
+            <input type="email" id="modalEmail" class="modal-input"
+                   placeholder="email@exemplo.com"
+                   autocomplete="email">
+
+            <div class="modal-label">Método de pagamento</div>
+            <div class="pay-method-tabs">
+                <button class="pay-tab active" onclick="switchTab('mbway', this)">
+                    <i class="fas fa-mobile-alt"></i> MB WAY
+                </button>
+                <button class="pay-tab" onclick="switchTab('stripe', this)">
+                    <i class="fas fa-credit-card"></i> Cartão
+                </button>
+                <button class="pay-tab" onclick="switchTab('paypal', this)">
+                    <i class="fab fa-paypal"></i> PayPal
+                </button>
+            </div>
+
+            <!-- MB WAY Panel -->
+            <div class="pay-panel active" id="tab-mbway">
+                <input type="tel" id="modalPhone" class="modal-phone-input"
+                       placeholder="Número de telemóvel (9 dígitos)"
+                       maxlength="9">
+                <button class="pay-btn-main pay-btn-mbway" id="btn-mbway" onclick="payMBWay()">
+                    <i class="fas fa-mobile-alt"></i> Pagar com MB WAY
+                </button>
+            </div>
+
+            <!-- Stripe Panel -->
+            <div class="pay-panel" id="tab-stripe">
+                <button class="pay-btn-main pay-btn-stripe" id="btn-stripe" onclick="payStripe()">
+                    <i class="fas fa-credit-card"></i> Pagar com Cartão
+                </button>
+            </div>
+
+            <!-- PayPal Panel -->
+            <div class="pay-panel" id="tab-paypal">
+                <button class="pay-btn-main pay-btn-paypal" id="btn-paypal" onclick="payPayPal()">
+                    <i class="fab fa-paypal"></i> Pagar com PayPal
+                </button>
+            </div>
+
+            <div class="payment-status-msg" id="modalStatus"></div>
+
+            <div class="modal-secure-note">
+                <i class="fas fa-lock"></i>
+                Pagamento seguro · Dados encriptados · Download imediato
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/coach-agent.js"></script>
     <script src="../js/hub-widget.js"></script>
+
+    <script>
+    // ===== INTERVIEW SCRIPTS EBOOK PAYMENT =====
+    const IS_API_BASE = 'https://share2inspire-beckend.lm.r.appspot.com';
+    const IS_PRODUCT = 'interview_scripts_ebook';
+    const IS_PRICE = 3.99;
+    const IS_PDF = 'Script_de_Entrevistas_Share2Inspire.pdf';
+    const IS_PDF_PATH = '/interview-scripts/assets/downloads/' + IS_PDF;
+
+    // Modal open/close
+    function openPaymentModal() {
+        document.getElementById('paymentModalOverlay').classList.add('active');
+        document.body.style.overflow = 'hidden';
+        // Check if returning from Stripe
+        checkStripeReturn();
+    }
+
+    function closePaymentModal() {
+        document.getElementById('paymentModalOverlay').classList.remove('active');
+        document.body.style.overflow = '';
+        hideModalStatus();
+    }
+
+    function handleOverlayClick(e) {
+        if (e.target === document.getElementById('paymentModalOverlay')) {
+            closePaymentModal();
+        }
+    }
+
+    // Tab switching
+    function switchTab(method, btn) {
+        document.querySelectorAll('.pay-tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.pay-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + method).classList.add('active');
+        hideModalStatus();
+    }
+
+    // Status messages
+    function showModalStatus(msg, type) {
+        const el = document.getElementById('modalStatus');
+        el.textContent = msg;
+        el.className = 'payment-status-msg ' + type;
+    }
+
+    function hideModalStatus() {
+        const el = document.getElementById('modalStatus');
+        el.className = 'payment-status-msg';
+        el.textContent = '';
+    }
+
+    // Email validation
+    function getModalEmail() {
+        const email = document.getElementById('modalEmail').value.trim();
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showModalStatus('Introduz um email válido para receberes o link de download.', 'error');
+            document.getElementById('modalEmail').focus();
+            return null;
+        }
+        return email;
+    }
+
+    // Disable all pay buttons
+    function setButtonsDisabled(disabled) {
+        ['btn-mbway', 'btn-stripe', 'btn-paypal'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.disabled = disabled;
+        });
+    }
+
+    // Trigger PDF download
+    function triggerDownload() {
+        const link = document.createElement('a');
+        link.href = IS_PDF_PATH;
+        link.download = IS_PDF;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Google Ads + Meta Pixel purchase tracking
+    function trackPurchase(transactionId) {
+        if (typeof gtag === 'function') {
+            gtag('event', 'purchase', {
+                transaction_id: transactionId,
+                value: IS_PRICE,
+                currency: 'EUR',
+                items: [{ item_name: 'Script de Entrevistas Ebook', price: IS_PRICE, quantity: 1 }]
+            });
+        }
+        if (typeof fbq === 'function') {
+            fbq('track', 'Purchase', { value: IS_PRICE, currency: 'EUR' });
+        }
+    }
+
+    // Send download link by email
+    async function sendDownloadEmail(email) {
+        try {
+            await fetch(IS_API_BASE + '/api/payment/send-link-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    product: IS_PRODUCT,
+                    downloadUrl: 'https://www.share2inspire.pt' + IS_PDF_PATH
+                })
+            });
+        } catch (e) { /* silent */ }
+    }
+
+    // ===== MB WAY =====
+    async function payMBWay() {
+        const email = getModalEmail();
+        if (!email) return;
+        const phone = document.getElementById('modalPhone').value.replace(/\D/g, '');
+        if (!phone || phone.length !== 9) {
+            showModalStatus('Introduz um número de telemóvel válido com 9 dígitos.', 'error');
+            return;
+        }
+        setButtonsDisabled(true);
+        showModalStatus('A processar o pedido MB WAY...', 'info');
+        try {
+            const res = await fetch(IS_API_BASE + '/api/payment/mbway', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    phone: phone,
+                    email: email,
+                    amount: IS_PRICE,
+                    product: IS_PRODUCT
+                })
+            });
+            if (!res.ok) throw new Error('Erro ao iniciar pagamento MB WAY.');
+            const data = await res.json();
+            if (!data.orderId) throw new Error('Resposta inválida do servidor.');
+            sessionStorage.setItem('isOrderId', data.orderId);
+            sessionStorage.setItem('isEmail', email);
+            showModalStatus('Pedido enviado! Confirma o pagamento na app MB WAY.', 'info');
+            pollPaymentStatus(data.orderId, email);
+        } catch (err) {
+            showModalStatus(err.message || 'Erro ao processar pagamento.', 'error');
+            setButtonsDisabled(false);
+        }
+    }
+
+    // ===== STRIPE =====
+    async function payStripe() {
+        const email = getModalEmail();
+        if (!email) return;
+        setButtonsDisabled(true);
+        showModalStatus('A redirecionar para pagamento seguro...', 'info');
+        try {
+            const res = await fetch(IS_API_BASE + '/api/payment/stripe-checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    amount: IS_PRICE,
+                    product: IS_PRODUCT,
+                    productName: 'Script de Entrevistas — O Guia Definitivo',
+                    successUrl: window.location.href + '?payment=success',
+                    cancelUrl: window.location.href
+                })
+            });
+            if (!res.ok) throw new Error('Erro ao criar sessão de pagamento.');
+            const data = await res.json();
+            if (!data.url) throw new Error('Resposta inválida do servidor.');
+            sessionStorage.setItem('isEmail', email);
+            sessionStorage.setItem('isStripeSession', data.sessionId || '');
+            window.location.href = data.url;
+        } catch (err) {
+            showModalStatus(err.message || 'Erro ao processar pagamento.', 'error');
+            setButtonsDisabled(false);
+        }
+    }
+
+    // ===== PAYPAL =====
+    function payPayPal() {
+        const email = getModalEmail();
+        if (!email) return;
+        const transactionId = 'IS-PP-' + Date.now();
+        sessionStorage.setItem('isEmail', email);
+        window.open('https://paypal.me/SamuelRolo/' + IS_PRICE + 'EUR', '_blank');
+        showModalStatus('Após concluíres o pagamento no PayPal, o download iniciará automaticamente.', 'success');
+        trackPurchase(transactionId);
+        setTimeout(() => { triggerDownload(); }, 3000);
+    }
+
+    // ===== POLL PAYMENT STATUS (MB WAY) =====
+    function pollPaymentStatus(orderId, email) {
+        let attempts = 0;
+        const maxAttempts = 60;
+        let errorCount = 0;
+        const startTime = Date.now();
+        const interval = setInterval(async () => {
+            attempts++;
+            try {
+                const res = await fetch(IS_API_BASE + '/api/payment/check-payment-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId: orderId })
+                });
+                if (!res.ok) {
+                    errorCount++;
+                    if (errorCount >= 8) {
+                        clearInterval(interval);
+                        setButtonsDisabled(false);
+                        showModalStatus('Não foi possível verificar o pagamento. Se já pagaste, contacta-nos.', 'error');
+                    }
+                    return;
+                }
+                errorCount = 0;
+                const data = await res.json();
+                if (data.paid) {
+                    clearInterval(interval);
+                    showModalStatus('✅ Pagamento confirmado! O download vai iniciar...', 'success');
+                    trackPurchase(orderId);
+                    sendDownloadEmail(email);
+                    setTimeout(() => { triggerDownload(); }, 1500);
+                    setButtonsDisabled(false);
+                    return;
+                }
+                const elapsed = Date.now() - startTime;
+                if (data.expired && elapsed > 90000) {
+                    clearInterval(interval);
+                    setButtonsDisabled(false);
+                    showModalStatus('O pagamento expirou. Tenta novamente.', 'error');
+                    return;
+                }
+                if (elapsed < 30000) {
+                    showModalStatus('Confirma o pagamento na app MB WAY...', 'info');
+                } else if (elapsed < 60000) {
+                    showModalStatus('Ainda à espera da confirmação...', 'info');
+                } else {
+                    showModalStatus('A verificar... Se já pagaste, aguarda um momento.', 'info');
+                }
+            } catch (e) { errorCount++; }
+            if (attempts >= maxAttempts) {
+                clearInterval(interval);
+                setButtonsDisabled(false);
+                showModalStatus('Tempo esgotado. Se já pagaste, contacta srshare2inspire@gmail.com.', 'error');
+            }
+        }, 5000);
+    }
+
+    // ===== CHECK STRIPE RETURN =====
+    function checkStripeReturn() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('payment') === 'success' || urlParams.get('session_id')) {
+            const email = sessionStorage.getItem('isEmail') || '';
+            const orderId = sessionStorage.getItem('isStripeSession') || ('IS-STR-' + Date.now());
+            showModalStatus('✅ Pagamento confirmado! O download vai iniciar...', 'success');
+            trackPurchase(orderId);
+            if (email) sendDownloadEmail(email);
+            setTimeout(() => { triggerDownload(); }, 2000);
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }
+
+    // Check on page load if returning from Stripe
+    (function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('payment') === 'success' || urlParams.get('session_id')) {
+            // Auto-open modal to show success
+            setTimeout(() => { openPaymentModal(); }, 500);
+        }
+        // Also check for anchor link to ebook section
+        if (window.location.hash === '#script-entrevistas') {
+            setTimeout(() => {
+                document.getElementById('script-entrevistas').scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        }
+    })();
+    </script>
 </body>
 
 </html>
