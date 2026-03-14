@@ -663,6 +663,17 @@
                 messageDiv.textContent = data.message || 'Subscrição efetuada com sucesso.';
                 e.target.reset();
                 setTimeout(() => { messageDiv.style.display = 'none'; }, 5000);
+                // Disparar sequência de nurturing do lead magnet LinkedIn (async, non-blocking)
+                fetch('https://share2inspire-beckend.lm.r.appspot.com/api/leadmagnet/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        source: 'conhecimento',
+                        download_link: 'https://share2inspire.pt/assets/downloads/10-erros-linkedin.pdf'
+                    })
+                }).catch(() => {}); // Silent fail
             } else {
                 throw new Error(data.error || 'Erro ao processar subscrição');
             }

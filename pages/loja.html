@@ -1615,17 +1615,23 @@
         }
     }
 
-    function submitLeadmagnetForm(event) {
+    async function submitLeadmagnetForm(event) {
         event.preventDefault();
         const name = document.getElementById('leadmagnet-name').value.trim();
         const email = document.getElementById('leadmagnet-email').value.trim();
+        const btn = event.target.querySelector('button[type="submit"]');
         
         if (!name || !email) return;
         
-        // Trigger download directly
+        // Disable button during processing
+        if (btn) { btn.disabled = true; btn.textContent = 'A processar...'; }
+        
+        // Trigger download immediately (don't wait for API)
+        const pdfUrl = '/assets/downloads/10-erros-linkedin.pdf';
         const link = document.createElement('a');
-        link.href = '../interview-scripts/assets/downloads/10-erros-linkedin.pdf';
+        link.href = pdfUrl;
         link.download = '10-erros-linkedin.pdf';
+        link.target = '_blank';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -1636,6 +1642,26 @@
         // Reset form
         document.getElementById('leadmagnet-name').value = '';
         document.getElementById('leadmagnet-email').value = '';
+        if (btn) { btn.disabled = false; btn.textContent = 'Download Grátis'; }
+        
+        // Call backend to start email nurturing sequence (async, non-blocking)
+        try {
+            fetch('https://share2inspire-beckend.lm.r.appspot.com/api/leadmagnet/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    source: 'loja',
+                    download_link: 'https://share2inspire.pt' + pdfUrl
+                })
+            }).then(r => r.json()).then(data => {
+                if (data.success) console.log('[LeadMagnet] Email de boas-vindas enviado:', email);
+                else console.warn('[LeadMagnet] Aviso ao enviar email:', data.error);
+            }).catch(err => console.warn('[LeadMagnet] Erro na chamada API:', err));
+        } catch(e) {
+            // Silent fail — o download já foi iniciado
+        }
     }
     </script>
 </body>
