@@ -5,10 +5,10 @@
   <!-- Homepage PT -->
   <url>
     <loc>https://www.share2inspire.pt/</loc>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/" />
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/home/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/" />
-    <lastmod>2026-03-06</lastmod>
+    <lastmod>2026-03-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -17,24 +17,48 @@
   <url>
     <loc>https://www.share2inspire.pt/en/pages/home/</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/home/" />
-    <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/" />
-    <lastmod>2026-03-06</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/" />
+    <lastmod>2026-03-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
-  <!-- About Page -->
+  <!-- Sobre PT -->
   <url>
     <loc>https://www.share2inspire.pt/pages/sobre</loc>
-    <lastmod>2026-03-06</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/sobre" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/about" />
+    <lastmod>2026-03-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   
-  <!-- Services Page -->
+  <!-- About EN -->
+  <url>
+    <loc>https://www.share2inspire.pt/en/pages/about</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/about" />
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/sobre" />
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Serviços PT -->
   <url>
     <loc>https://www.share2inspire.pt/pages/servicos</loc>
-    <lastmod>2026-03-06</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/servicos" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/services" />
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Services EN -->
+  <url>
+    <loc>https://www.share2inspire.pt/en/pages/services</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/services" />
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/servicos" />
+    <lastmod>2026-03-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -42,9 +66,9 @@
   <!-- CV Analyser PT -->
   <url>
     <loc>https://www.share2inspire.pt/cv-analyser</loc>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/cv-analyser" />
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/cv-analyser" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/cv-analyser" />
-    <lastmod>2026-03-06</lastmod>
+    <lastmod>2026-03-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -53,8 +77,8 @@
   <url>
     <loc>https://www.share2inspire.pt/en/cv-analyser</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/cv-analyser" />
-    <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/cv-analyser" />
-    <lastmod>2026-03-06</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/cv-analyser" />
+    <lastmod>2026-03-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -62,9 +86,9 @@
   <!-- Career Path PT -->
   <url>
     <loc>https://www.share2inspire.pt/career-path</loc>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/career-path" />
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/career-path" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/career-path" />
-    <lastmod>2026-03-06</lastmod>
+    <lastmod>2026-03-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -73,8 +97,8 @@
   <url>
     <loc>https://www.share2inspire.pt/en/career-path</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/career-path" />
-    <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/career-path" />
-    <lastmod>2026-03-06</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/career-path" />
+    <lastmod>2026-03-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -82,7 +106,7 @@
   <!-- Shop/Loja -->
   <url>
     <loc>https://www.share2inspire.pt/pages/loja</loc>
-    <lastmod>2026-03-06</lastmod>
+    <lastmod>2026-03-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -90,15 +114,27 @@
   <!-- Knowledge/Blog -->
   <url>
     <loc>https://www.share2inspire.pt/pages/conhecimento</loc>
-    <lastmod>2026-03-06</lastmod>
+    <lastmod>2026-03-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   
-  <!-- Contact -->
+  <!-- Contactos PT -->
   <url>
     <loc>https://www.share2inspire.pt/pages/contactos</loc>
-    <lastmod>2026-03-06</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/contactos" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/contact" />
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Contact EN -->
+  <url>
+    <loc>https://www.share2inspire.pt/en/pages/contact</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/contact" />
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/contactos" />
+    <lastmod>2026-03-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -106,7 +142,7 @@
   <!-- Privacy Policy -->
   <url>
     <loc>https://www.share2inspire.pt/pages/politica-privacidade</loc>
-    <lastmod>2026-03-06</lastmod>
+    <lastmod>2026-03-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -114,7 +150,7 @@
   <!-- Cookies Policy -->
   <url>
     <loc>https://www.share2inspire.pt/pages/politica-cookies</loc>
-    <lastmod>2026-03-06</lastmod>
+    <lastmod>2026-03-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -122,7 +158,7 @@
   <!-- Legal Information -->
   <url>
     <loc>https://www.share2inspire.pt/pages/informacao-legal</loc>
-    <lastmod>2026-03-06</lastmod>
+    <lastmod>2026-03-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -131,24 +167,34 @@
   <!-- LinkedIn Roaster -->
   <url>
     <loc>https://www.share2inspire.pt/linkedin-roaster</loc>
-    <lastmod>2026-03-13</lastmod>
+    <lastmod>2026-03-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- Estudos -->
+  <!-- Criação de Conteúdos -->
   <url>
-    <loc>https://www.share2inspire.pt/estudos/</loc>
-    <lastmod>2026-03-13</lastmod>
+    <loc>https://www.share2inspire.pt/pages/criacao-conteudos</loc>
+    <lastmod>2026-03-14</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Termos e Condições -->
+  <url>
+    <loc>https://www.share2inspire.pt/pages/termos-condicoes</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <!-- Tratamento de Dados -->
+  <url>
+    <loc>https://www.share2inspire.pt/pages/tratamento-dados</loc>
+    <lastmod>2026-03-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 
-  <!-- GEO Profile Page -->
-  <url>
-    <loc>https://www.share2inspire.pt/pages/geo-profile.html</loc>
-    <lastmod>2026-03-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
+
 </urlset>

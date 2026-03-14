@@ -2,6 +2,13 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
+    <!-- Preconnect hints para CDNs -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://connect.facebook.net">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>O Estado do LinkedIn em Portugal Q1 2026 | Share2Inspire</title>
     <meta name="description" content="Estudo Share2Inspire: 74% dos profissionais portugueses no LinkedIn t\u00eam um perfil com score abaixo de 5 em 10. An\u00e1lise a 500 perfis revela os erros mais comuns e como corrigi-los.">
@@ -52,7 +59,8 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     <link rel="icon" href="/images/favicon.ico">
 
     <style>
@@ -390,7 +398,7 @@
         style="background: var(--s2i-white); border-bottom: 1px solid rgba(0,0,0,0.06);">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="/images/logo.png" alt="Share2Inspire" style="height: 40px;">
+                <img loading="lazy" src="/images/logo.webp" alt="Share2Inspire" style="height: 40px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -478,7 +486,7 @@
             <h2>A Anatomia de um <strong>Perfil LinkedIn</strong> em Portugal</h2>
             <div class="section-line"></div>
             <p>A distribuicao dos scores de otimizacao e fortemente assimetrica, com a grande maioria dos perfis a concentrar-se na faixa inferior da escala. Apenas 0.6% dos profissionais analisados atingem um score superior a 7, considerado o patamar minimo para um perfil competitivo.</p>
-            <img src="/images/chart_01_distribuicao_scores.png" alt="Distribuicao de Scores LinkedIn em Portugal" class="study-chart">
+            <img loading="lazy" src="/images/chart_01_distribuicao_scores.webp" alt="Distribuicao de Scores LinkedIn em Portugal" class="study-chart">
 
             <div class="study-insight">
                 <div class="insight-label">Insight</div>
@@ -491,7 +499,7 @@
             <h2>Os 7 Erros Mais <strong>Comuns</strong></h2>
             <div class="section-line"></div>
             <p>Identificamos os erros que mais penalizam a performance de um perfil. Surpreendentemente, nao sao complexos de corrigir, mas a sua prevalencia e alarmante.</p>
-            <img src="/images/chart_02_top_erros.png" alt="Top 7 Erros Mais Comuns no LinkedIn" class="study-chart">
+            <img loading="lazy" src="/images/chart_02_top_erros.webp" alt="Top 7 Erros Mais Comuns no LinkedIn" class="study-chart">
 
             <table class="study-table">
                 <thead>
@@ -523,7 +531,7 @@
             <h2>Performance por <strong>Setor</strong></h2>
             <div class="section-line"></div>
             <p>Existem diferencas notaveis na maturidade digital entre setores. Vendas e Comercial lideram com 4.33/10, possivelmente por uma maior consciencia da importancia da rede de contactos. Educacao e Formacao apresentam o score mais baixo (3.60/10).</p>
-            <img src="/images/chart_03_score_por_setor.png" alt="Score Medio por Setor Profissional" class="study-chart">
+            <img loading="lazy" src="/images/chart_03_score_por_setor.webp" alt="Score Medio por Setor Profissional" class="study-chart">
         </section>
 
         <!-- Faixa Etaria -->
@@ -531,14 +539,14 @@
             <h2>Performance por <strong>Faixa Etaria</strong></h2>
             <div class="section-line"></div>
             <p>Observa-se uma tendencia interessante: os profissionais na faixa dos 31-35 anos apresentam os perfis mais otimizados. Os mais jovens (18-24) e os mais seniores (51+) apresentam scores mais baixos, sugerindo diferentes desafios na adaptacao a plataforma.</p>
-            <img src="/images/chart_05_score_faixa_etaria.png" alt="Score Medio por Faixa Etaria" class="study-chart">
+            <img loading="lazy" src="/images/chart_05_score_faixa_etaria.png" alt="Score Medio por Faixa Etaria" class="study-chart">
         </section>
 
         <!-- Indicadores Chave -->
         <section class="study-section">
             <h2>Indicadores <strong>Chave</strong></h2>
             <div class="section-line"></div>
-            <img src="/images/chart_04_indicadores_chave.png" alt="Indicadores Chave do LinkedIn em Portugal" class="study-chart">
+            <img loading="lazy" src="/images/chart_04_indicadores_chave.webp" alt="Indicadores Chave do LinkedIn em Portugal" class="study-chart">
 
             <table class="study-table">
                 <thead>
@@ -563,7 +571,7 @@
             <h2>Visibilidade para o <strong>Algoritmo</strong></h2>
             <div class="section-line"></div>
             <p>Apenas 26% dos perfis atingem uma visibilidade "Media", com os restantes 74% a serem considerados de visibilidade "Baixa". Nenhum perfil da amostra atingiu visibilidade "Alta", o que requer um score acima de 7.5.</p>
-            <img src="/images/chart_06_visibilidade_algoritmo.png" alt="Visibilidade para o Algoritmo LinkedIn" class="study-chart">
+            <img loading="lazy" src="/images/chart_06_visibilidade_algoritmo.webp" alt="Visibilidade para o Algoritmo LinkedIn" class="study-chart">
         </section>
 
         <!-- Conclusao -->
@@ -636,7 +644,7 @@
             <div class="row g-4">
                 <div class="col-lg-4">
                     <div class="footer-brand"></div>
-                    <img src="/images/logo.png" alt="Share2Inspire" style="height:28px;filter:brightness(10);margin-bottom:1rem;">
+                    <img loading="lazy" src="/images/logo.webp" alt="Share2Inspire" style="height:28px;filter:brightness(10);margin-bottom:1rem;">
                     <p class="footer-text">A transformar mindsets e carreiras.</p>
                 </div>
                 <div class="col-lg-2">

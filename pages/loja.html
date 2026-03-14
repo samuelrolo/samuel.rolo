@@ -3,6 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
+    <!-- Preconnect hints para CDNs -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://connect.facebook.net">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loja | Share2Inspire | Samuel Rolo</title>
     <meta name="description"
@@ -18,7 +25,8 @@
     <link href="../css/consolidated-styles.css" rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
@@ -846,8 +854,10 @@
             .payment-modal { padding: 28px 20px; }
         }
     </style>
-    <link rel="stylesheet" href="../css/coach-agent.css">
-    <link rel="stylesheet" href="../css/side-widgets.css">
+    <link rel="stylesheet" href="../css/coach-agent.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="../css/coach-agent.css"></noscript>
+    <link rel="stylesheet" href="../css/side-widgets.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="../css/side-widgets.css"></noscript>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
     <script>
@@ -872,11 +882,47 @@
     fbq('init', '1460148528104687');
     fbq('track', 'PageView');
     </script>
-    <noscript><img height="1" width="1" style="display:none"
+    <noscript><img loading="lazy" height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1460148528104687&ev=PageView&noscript=1"
-    /></noscript>
+     alt="Imagem Share2Inspire" /></noscript>
     <!-- End Meta Pixel Code -->
-</head>
+
+    <!-- SEO Meta Tags -->
+    <link rel="canonical" href="https://www.share2inspire.pt/pages/loja">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Loja - E-books e Recursos de Carreira | Share2Inspire">
+    <meta property="og:description" content="Descobre os nossos e-books e recursos exclusivos para impulsionar a tua carreira. Guias práticos sobre liderança, entrevistas e desenvolvimento profissional.">
+    <meta property="og:url" content="https://www.share2inspire.pt/pages/loja">
+    <meta property="og:image" content="https://www.share2inspire.pt/images/logo.webp">
+    <meta property="og:site_name" content="Share2Inspire">
+    <meta property="og:locale" content="pt_PT">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Loja - E-books e Recursos de Carreira | Share2Inspire">
+    <meta name="twitter:description" content="Descobre os nossos e-books e recursos exclusivos para impulsionar a tua carreira. Guias práticos sobre liderança, entrevistas e desenvolvimento profissional.">
+    <meta name="twitter:image" content="https://www.share2inspire.pt/images/logo.webp">
+      <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "name": "Share2Inspire - Loja",
+      "description": "E-books e recursos exclusivos para desenvolvimento de carreira e liderança",
+      "url": "https://www.share2inspire.pt/pages/loja",
+      "brand": {
+        "@type": "Brand",
+        "name": "Share2Inspire"
+      },
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": "EUR",
+        "availability": "https://schema.org/InStock"
+      }
+    }
+    </script>
+  </head>
 
 <body>
     <!-- Google Analytics -->
@@ -893,7 +939,7 @@
         style="background: var(--s2i-white); border-bottom: 1px solid var(--s2i-border);">
         <div class="container">
             <a class="navbar-brand" href="../index.html">
-                <img src="../images/logo.png" alt="Share2Inspire" style="height: 40px;">
+                <img loading="lazy" src="../images/logo.webp" alt="Share2Inspire" style="height: 40px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -963,7 +1009,7 @@
                 <div class="books-grid">
                     <!-- E-book 1 - Script de Entrevistas -->
                     <div class="book-card">
-                        <img src="../images/ebook-entrevistas-capa.png" alt="Script de Entrevistas — O Guia Definitivo" class="book-cover">
+                        <img loading="lazy" src="../images/ebook-entrevistas-capa.webp" alt="Script de Entrevistas — O Guia Definitivo" class="book-cover">
                         <h4>Script de Entrevistas</h4>
                         <p class="author">Samuel Rolo · 3,99€</p>
                         <button class="book-btn" onclick="openPaymentModal()">Comprar</button>
@@ -971,7 +1017,7 @@
 
                     <!-- E-book 2 - Energia para Liderar -->
                     <div class="book-card">
-                        <img src="../images/ebook-capa.png" alt="Energia para Liderar" class="book-cover">
+                        <img loading="lazy" src="../images/ebook-capa.webp" alt="Energia para Liderar" class="book-cover">
                         <h4>Energia para Liderar</h4>
                         <p class="author">Samuel Rolo &amp; Marlene Ruivo</p>
                         <a href="https://go.hotmart.com/Q104764153P?dp=1" target="_blank" class="book-btn">Comprar</a>
@@ -987,7 +1033,7 @@
                 <div class="books-grid">
                     <!-- Book 1 - Gestão da Mudança -->
                     <div class="book-card">
-                        <img src="../images/mudanca.png" alt="Gestão da Mudança" class="book-cover">
+                        <img loading="lazy" src="../images/mudanca.webp" alt="Gestão da Mudança" class="book-cover">
                         <h4>Gestão da Mudança</h4>
                         <p class="author">Samuel Rolo</p>
                         <a href="https://www.amazon.com.br/Gest%C3%A3o-Mudan%C3%A7a-Estrat%C3%A9gias-Transforma%C3%A7%C3%A3o-Organizacional/dp/B0F8QK4SQY?ref_=ast_author_dp&th=1&psc=1"
@@ -996,7 +1042,7 @@
 
                     <!-- Book 2 - Enquanto Há Vento -->
                     <div class="book-card">
-                        <img src="../images/livro_portugues.jpg" alt="Enquanto Há Vento, Há Sentimento"
+                        <img loading="lazy" src="../images/livro_portugues.webp" alt="Enquanto Há Vento, Há Sentimento"
                             class="book-cover">
                         <h4>Enquanto Há Vento, Há Sentimento</h4>
                         <p class="author">Samuel Rolo</p>
@@ -1008,7 +1054,7 @@
                 <div class="featured-book">
                     <div class="row">
                         <div class="col-md-4 text-center">
-                            <img src="../images/ebook-entrevistas-capa.png" alt="Script de Entrevistas — O Guia Definitivo" class="featured-cover">
+                            <img loading="lazy" src="../images/ebook-entrevistas-capa.webp" alt="Script de Entrevistas — O Guia Definitivo" class="featured-cover">
                         </div>
                         <div class="col-md-8">
                             <span class="section-title">Novo E-book 2026</span>
@@ -1032,7 +1078,7 @@
                 <div class="featured-book">
                     <div class="row">
                         <div class="col-md-4 text-center">
-                            <img src="../images/ebook-capa.png" alt="Energia para Liderar" class="featured-cover">
+                            <img loading="lazy" src="../images/ebook-capa.webp" alt="Energia para Liderar" class="featured-cover">
                         </div>
                         <div class="col-md-8">
                             <span class="section-title">E-book</span>
@@ -1056,7 +1102,7 @@
                 <div class="featured-book">
                     <div class="row">
                         <div class="col-md-4 text-center">
-                            <img src="../images/mudanca.png" alt="Gestão da Mudança" class="featured-cover">
+                            <img loading="lazy" src="../images/mudanca.webp" alt="Gestão da Mudança" class="featured-cover">
                         </div>
                         <div class="col-md-8">
                             <span class="section-title">Em Destaque</span>
@@ -1124,7 +1170,7 @@
                             </a>
                         </div>
                         <div class="col-md-4 text-center order-md-2 order-1 mb-4 mb-md-0">
-                            <img src="../images/livro_portugues.jpg" alt="Enquanto Há Vento, Há Sentimento"
+                            <img loading="lazy" src="../images/livro_portugues.webp" alt="Enquanto Há Vento, Há Sentimento"
                                 class="featured-cover">
                         </div>
                     </div>
@@ -1148,7 +1194,7 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-4">
-                    <img src="../images/logo.png" alt="Share2Inspire"
+                    <img loading="lazy" src="../images/logo.webp" alt="Share2Inspire"
                         style="height: 40px; margin-bottom: 20px; filter: brightness(0) invert(1);">
                     <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.7;">A transformar mindsets
                         e carreiras através da fusão entre estratégia corporativa e empatia humana.</p>
@@ -1229,7 +1275,7 @@
 
             <!-- Product summary card -->
             <div class="modal-product-card">
-                <img src="../images/ebook-entrevistas-capa.png"
+                <img loading="lazy" src="../images/ebook-entrevistas-capa.webp"
                      alt="Script de Entrevistas"
                      class="modal-product-img">
                 <div class="modal-product-info">

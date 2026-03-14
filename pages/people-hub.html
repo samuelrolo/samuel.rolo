@@ -2,6 +2,13 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
+    <!-- Preconnect hints para CDNs -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://connect.facebook.net">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>People Hub | Share2Inspire | Samuel Rolo</title>
     <meta name="description"
@@ -21,7 +28,8 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
@@ -31,8 +39,10 @@
     <!-- Consolidated Styles: Design System + Header/Footer -->
     <link href="../css/consolidated-styles.css" rel="stylesheet">
     <!-- Career Adviser Widgets -->
-    <link rel="stylesheet" href="../css/coach-agent.css">
-    <link rel="stylesheet" href="../css/side-widgets.css">
+    <link rel="stylesheet" href="../css/coach-agent.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="../css/coach-agent.css"></noscript>
+    <link rel="stylesheet" href="../css/side-widgets.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="../css/side-widgets.css"></noscript>
     <style>
         /* Page-specific nav/footer styles removed - using consolidated-styles.css */
         /* Variáveis CSS */
@@ -447,9 +457,9 @@
     fbq('init', '1460148528104687');
     fbq('track', 'PageView');
     </script>
-    <noscript><img height="1" width="1" style="display:none"
+    <noscript><img loading="lazy" height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1460148528104687&ev=PageView&noscript=1"
-    /></noscript>
+     alt="Imagem Share2Inspire" /></noscript>
     <!-- End Meta Pixel Code -->
 </head>
 <body>
@@ -467,7 +477,7 @@
         style="background: var(--s2i-white); border-bottom: 1px solid var(--s2i-border);">
         <div class="container">
             <a class="navbar-brand" href="../index.html">
-                <img src="../images/logo.png" alt="Share2Inspire" style="height: 40px;">
+                <img loading="lazy" src="../images/logo.webp" alt="Share2Inspire" style="height: 40px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -657,7 +667,7 @@
             <!-- Article 1: Human Sustainability -->
             <div class="col-md-4 mb-4">
                 <div class="card h-100 border-0 shadow-sm article-card">
-                    <img src="../images/blog/human-sustainability.png" class="card-img-top" alt="Human Sustainability">
+                    <img loading="lazy" src="../images/blog/human-sustainability.png" class="card-img-top" alt="Human Sustainability">
                     <div class="card-body">
                         <div class="badge bg-warning text-dark mb-2">People & Culture</div>
                         <h5 class="card-title fw-bold">Human Sustainability: A fragilidade invisível do trabalho</h5>
@@ -672,7 +682,7 @@
             <!-- Article 2: Agentic AI -->
             <div class="col-md-4 mb-4">
                 <div class="card h-100 border-0 shadow-sm article-card">
-                    <img src="../images/blog/agentic-ai.png" class="card-img-top" alt="Agentic AI">
+                    <img loading="lazy" src="../images/blog/agentic-ai.png" class="card-img-top" alt="Agentic AI">
                     <div class="card-body">
                         <div class="badge bg-warning text-dark mb-2">IA & Recrutamento</div>
                         <h5 class="card-title fw-bold">Agentic AI e o Futuro do Recrutamento</h5>
@@ -1043,7 +1053,7 @@ document.getElementById('newsletterSubscriptionForm').addEventListener('submit',
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-4">
-                    <img src="../images/logo.png" alt="Share2Inspire"
+                    <img loading="lazy" src="../images/logo.webp" alt="Share2Inspire"
                         style="height: 40px; margin-bottom: 20px; filter: brightness(0) invert(1);">
                     <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.7;">A transformar mindsets
                         e carreiras através da fusão entre estratégia corporativa e empatia humana.</p>

@@ -3,6 +3,13 @@
 
 <head>
     <meta charset="utf-8" />
+    <!-- Preconnect hints para CDNs -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://connect.facebook.net">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>About | Samuel Rolo AI (The Mindset Maverick)</title>
     <meta
@@ -19,7 +26,8 @@
     <link href="../../../css/consolidated-styles.css" rel="stylesheet" />
 
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" / media="print" onload="this.media='all'">>
+    <noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" /></noscript>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
@@ -391,8 +399,10 @@
         }
 
     </style>
-    <link rel="stylesheet" href="../../../css/coach-agent.css">
-    <link rel="stylesheet" href="../../../css/side-widgets.css">
+    <link rel="stylesheet" href="../../../css/coach-agent.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="../../../css/coach-agent.css"></noscript>
+    <link rel="stylesheet" href="../../../css/side-widgets.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="../../../css/side-widgets.css"></noscript>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
     <script>
@@ -417,9 +427,9 @@
     fbq('init', '1460148528104687');
     fbq('track', 'PageView');
     </script>
-    <noscript><img height="1" width="1" style="display:none"
+    <noscript><img loading="lazy" height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1460148528104687&ev=PageView&noscript=1"
-    /></noscript>
+     alt="Imagem Share2Inspire" /></noscript>
     <!-- End Meta Pixel Code -->
 </head>
 
@@ -429,7 +439,7 @@
         style="background: var(--s2i-white); border-bottom: 1px solid var(--s2i-border);">
         <div class="container">
             <a class="navbar-brand" href="../../../index.html">
-                <img src="../../../images/logo.png" alt="Share2Inspire" style="height: 40px;">
+                <img loading="lazy" src="../../../images/logo.png" alt="Share2Inspire" style="height: 40px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -488,7 +498,7 @@
         <div class="container">
             <div class="narrative-container">
                 <div class="founder-image-container">
-                    <img src="../../../images/samuel-hero.jpg" alt="Samuel Rolo" class="founder-image">
+                    <img fetchpriority="high" src="../../../images/samuel-hero.jpg" alt="Samuel Rolo" class="founder-image">
                 </div>
 
                 <div class="narrative-text">
@@ -721,7 +731,7 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-4">
-                    <img src="../../../images/logo.png" alt="Share2Inspire"
+                    <img loading="lazy" src="../../../images/logo.png" alt="Share2Inspire"
                         style="height: 40px; margin-bottom: 20px; filter: brightness(0) invert(1);">
                     <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.7;">Transforming mindsets
                         and careers through the fusion of corporate strategy and human empathy.</p>

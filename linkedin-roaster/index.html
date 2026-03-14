@@ -204,7 +204,8 @@
     <!-- ── Fonts & Icons ── -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript></noscript>
 
     <!-- ── Meta Pixel (Facebook) ── -->
     <script>
@@ -893,12 +894,32 @@
             .paywall .price { font-size: 1.4rem; }
         }
     </style>
-</head>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "LinkedIn Roaster by Share2Inspire",
+      "description": "Ferramenta gratuita de análise de perfil LinkedIn com IA. Recebe feedback humorístico e construtivo sobre o teu perfil.",
+      "url": "https://www.share2inspire.pt/linkedin-roaster",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Share2Inspire"
+      }
+    }
+    </script>
+  </head>
 <body>
     <!-- Navbar -->
     <nav class="nav">
         <a href="../index.html" class="nav-logo">
-            <img src="../images/logo.png" alt="Share2Inspire">
+            <img loading="lazy" src="../images/logo.webp" alt="Share2Inspire">
             LinkedIn Roaster
         </a>
         <div class="nav-links">
@@ -982,7 +1003,7 @@
                     <p class="includes">Inclui: Sumário executivo, pontos fortes, áreas de melhoria, headlines sugeridas, análise de formação, SEO e recomendação prioritária.</p>
 
                     <button class="pay-btn" onclick="showMBWayForm()">
-                        <img src="https://ifthenpay.com/images/mbway.svg" alt="MB WAY" onerror="this.style.display='none'">
+                        <img loading="lazy" src="https://ifthenpay.com/images/mbway.svg" alt="MB WAY" onerror="this.style.display='none'">
                         Pagar com MB WAY
                     </button>
                     <button class="pay-btn" onclick="payWithStripe()">
@@ -1084,7 +1105,7 @@
     <footer class="footer">
         <div class="footer-inner">
             <div>
-                <img src="../images/logo.png" alt="Share2Inspire" style="height:28px;filter:brightness(0) invert(1);margin-bottom:10px;display:block;">
+                <img loading="lazy" src="../images/logo.webp" alt="Share2Inspire" style="height:28px;filter:brightness(0) invert(1);margin-bottom:10px;display:block;">
                 <p style="max-width:200px;">A transformar mindsets e carreiras.</p>
             </div>
             <div>

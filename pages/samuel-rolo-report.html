@@ -11,6 +11,13 @@
     gtag('config', 'AW-17015553005');
     </script>
     <meta charset="UTF-8">
+    <!-- Preconnect hints para CDNs -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://connect.facebook.net">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relatório de Análise Profissional - Samuel Rolo</title>
     <!-- Fonts -->
@@ -18,7 +25,8 @@
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
         rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -323,8 +331,10 @@
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035"
         crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../css/coach-agent.css">
-    <link rel="stylesheet" href="../css/side-widgets.css">
+    <link rel="stylesheet" href="../css/coach-agent.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="../css/coach-agent.css"></noscript>
+    <link rel="stylesheet" href="../css/side-widgets.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="../css/side-widgets.css"></noscript>
     <!-- Meta Pixel Code -->
     <script>
     !function(f,b,e,v,n,t,s)
@@ -338,9 +348,9 @@
     fbq('init', '1460148528104687');
     fbq('track', 'PageView');
     </script>
-    <noscript><img height="1" width="1" style="display:none"
+    <noscript><img loading="lazy" height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1460148528104687&ev=PageView&noscript=1"
-    /></noscript>
+     alt="Imagem Share2Inspire" /></noscript>
     <!-- End Meta Pixel Code -->
 </head>
 

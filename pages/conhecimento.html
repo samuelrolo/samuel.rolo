@@ -3,6 +3,13 @@
 
 <head>
     <meta charset="utf-8" />
+    <!-- Preconnect hints para CDNs -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://connect.facebook.net">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Conhecimento | E-books, Artigos e Recursos de Carreira Gratuitos | Share2Inspire</title>
     <meta name="description" content="Recursos gratuitos para a tua carreira: e-books sobre gestão da mudança, liderança e energia profissional. Artigos, podcasts e ferramentas por Samuel Rolo.">
@@ -29,12 +36,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" / media="print" onload="this.media='all'">>
+    <noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" /></noscript>
 
     <!-- Consolidated Styles -->
     <link href="../css/consolidated-styles.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../css/coach-agent.css">
-    <link rel="stylesheet" href="../css/side-widgets.css">
+    <link rel="stylesheet" href="../css/coach-agent.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="../css/coach-agent.css"></noscript>
+    <link rel="stylesheet" href="../css/side-widgets.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="../css/side-widgets.css"></noscript>
 
     <style>
         /* ── Reset & Base ── */
@@ -547,10 +557,23 @@
     fbq('init', '1460148528104687');
     fbq('track', 'PageView');
     </script>
-    <noscript><img height="1" width="1" style="display:none"
+    <noscript><img loading="lazy" height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1460148528104687&ev=PageView&noscript=1"
-    /></noscript>
-</head>
+     alt="Imagem Share2Inspire" /></noscript>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Conhecimento - Share2Inspire",
+      "description": "Recursos de conhecimento sobre carreira, liderança e desenvolvimento profissional. Podcast, e-books, artigos exclusivos e estudos.",
+      "url": "https://www.share2inspire.pt/pages/conhecimento",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Share2Inspire"
+      }
+    }
+    </script>
+  </head>
 
 <body>
 
@@ -558,7 +581,7 @@
     <nav class="nav-bar">
         <div class="nav-inner">
             <a href="../index.html" class="nav-logo">
-                <img src="../images/logo.png" alt="Share2Inspire">
+                <img loading="lazy" src="../images/logo.webp" alt="Share2Inspire">
             </a>
             <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
                 <span></span><span></span><span></span>
@@ -590,7 +613,7 @@
         <div class="section-inner">
             <div class="ebook-section fade-in">
                 <div class="ebook-cover">
-                    <img src="../images/ebook-capa.png" alt="E-book Energia para Liderar">
+                    <img loading="lazy" src="../images/ebook-capa.webp" alt="E-book Energia para Liderar">
                 </div>
                 <div class="ebook-info">
                     <span class="badge-free">E-book</span>
@@ -728,7 +751,7 @@
                 <!-- Anatomia -->
                 <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">A Anatomia de um Perfil LinkedIn em Portugal</h4>
                 <p>A distribuição dos scores de otimização é fortemente assimétrica, com a grande maioria dos perfis a concentrar-se na faixa inferior da escala. Apenas 0.6% dos profissionais analisados atingem um score superior a 7, considerado o patamar mínimo para um perfil competitivo.</p>
-                <img src="/images/chart_01_distribuicao_scores.png" alt="Distribuição de Scores LinkedIn em Portugal" class="study-chart">
+                <img loading="lazy" src="/images/chart_01_distribuicao_scores.webp" alt="Distribuição de Scores LinkedIn em Portugal" class="study-chart">
                 <div class="study-insight">
                     <div class="insight-label">Insight</div>
                     <p>A esmagadora maioria dos profissionais está a competir numa zona de perfis mal otimizados. Um pequeno esforço de melhoria pode gerar um impacto desproporcional na visibilidade e atratividade de um perfil.</p>
@@ -737,7 +760,7 @@
                 <!-- Os 7 Erros -->
                 <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Os 7 Erros Mais Comuns</h4>
                 <p>Identificámos os erros que mais penalizam a performance de um perfil. Surpreendentemente, não são complexos de corrigir, mas a sua prevalência é alarmante.</p>
-                <img src="/images/chart_02_top_erros.png" alt="Top 7 Erros Mais Comuns no LinkedIn" class="study-chart">
+                <img loading="lazy" src="/images/chart_02_top_erros.webp" alt="Top 7 Erros Mais Comuns no LinkedIn" class="study-chart">
                 <table class="study-table">
                     <thead><tr><th>#</th><th>Erro</th><th>Prevalência</th></tr></thead>
                     <tbody>
@@ -758,16 +781,16 @@
                 <!-- Performance por Setor -->
                 <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Performance por Setor</h4>
                 <p>Existem diferenças notáveis na maturidade digital entre setores. Vendas e Comercial lideram com 4.33/10, possivelmente por uma maior consciência da importância da rede de contactos. Educação e Formação apresentam o score mais baixo (3.60/10).</p>
-                <img src="/images/chart_03_score_por_setor.png" alt="Score Médio por Setor Profissional" class="study-chart">
+                <img loading="lazy" src="/images/chart_03_score_por_setor.webp" alt="Score Médio por Setor Profissional" class="study-chart">
 
                 <!-- Performance por Faixa Etária -->
                 <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Performance por Faixa Etária</h4>
                 <p>Observa-se uma tendência interessante: os profissionais na faixa dos 31-35 anos apresentam os perfis mais otimizados. Os mais jovens (18-24) e os mais seniores (51+) apresentam scores mais baixos, sugerindo diferentes desafios na adaptação à plataforma.</p>
-                <img src="/images/chart_05_score_faixa_etaria.png" alt="Score Médio por Faixa Etária" class="study-chart">
+                <img loading="lazy" src="/images/chart_05_score_faixa_etaria.png" alt="Score Médio por Faixa Etária" class="study-chart">
 
                 <!-- Indicadores Chave -->
                 <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Indicadores Chave</h4>
-                <img src="/images/chart_04_indicadores_chave.png" alt="Indicadores Chave do LinkedIn em Portugal" class="study-chart">
+                <img loading="lazy" src="/images/chart_04_indicadores_chave.webp" alt="Indicadores Chave do LinkedIn em Portugal" class="study-chart">
                 <table class="study-table">
                     <thead><tr><th>Indicador</th><th>Valor</th></tr></thead>
                     <tbody>
@@ -783,7 +806,7 @@
                 <!-- Visibilidade -->
                 <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Visibilidade para o Algoritmo</h4>
                 <p>Apenas 26% dos perfis atingem uma visibilidade "Média", com os restantes 74% a serem considerados de visibilidade "Baixa". Nenhum perfil da amostra atingiu visibilidade "Alta", o que requer um score acima de 7.5.</p>
-                <img src="/images/chart_06_visibilidade_algoritmo.png" alt="Visibilidade para o Algoritmo LinkedIn" class="study-chart">
+                <img loading="lazy" src="/images/chart_06_visibilidade_algoritmo.webp" alt="Visibilidade para o Algoritmo LinkedIn" class="study-chart">
 
                 <!-- Conclusão -->
                 <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Conclusão</h4>
@@ -850,7 +873,7 @@
     <footer class="footer">
         <div class="footer-inner">
             <div class="footer-col">
-                <a href="../index.html"><img src="../images/logo.png" alt="Share2Inspire" style="height: 32px; filter: brightness(0) invert(1); margin-bottom: 1rem;"></a>
+                <a href="../index.html"><img loading="lazy" src="../images/logo.webp" alt="Share2Inspire" style="height: 32px; filter: brightness(0) invert(1); margin-bottom: 1rem;"></a>
                 <p>A transformar mindsets e carreiras<br>através da fusão entre estratégia e empatia.</p>
             </div>
             <div class="footer-col">

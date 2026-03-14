@@ -11,6 +11,13 @@
     gtag('config', 'AW-17015553005');
     </script>
     <meta charset="UTF-8">
+    <!-- Preconnect hints para CDNs -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://connect.facebook.net">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfólio de Projetos | Share2Inspire | Samuel Rolo</title>
     <meta name="description"
@@ -20,7 +27,8 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -236,8 +244,10 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="../css/coach-agent.css">
-    <link rel="stylesheet" href="../css/side-widgets.css">
+    <link rel="stylesheet" href="../css/coach-agent.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="../css/coach-agent.css"></noscript>
+    <link rel="stylesheet" href="../css/side-widgets.css" media="print" onload="this.media='all'">>
+    <noscript><link rel="stylesheet" href="../css/side-widgets.css"></noscript>
     <!-- Meta Pixel Code -->
     <script>
     !function(f,b,e,v,n,t,s)
@@ -251,9 +261,9 @@
     fbq('init', '1460148528104687');
     fbq('track', 'PageView');
     </script>
-    <noscript><img height="1" width="1" style="display:none"
+    <noscript><img loading="lazy" height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1460148528104687&ev=PageView&noscript=1"
-    /></noscript>
+     alt="Imagem Share2Inspire" /></noscript>
     <!-- End Meta Pixel Code -->
 </head>
 
@@ -263,7 +273,7 @@
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="../index.html">
-                    <img src="../images/logo.png" alt="Share2Inspire Logo" class="logo-img">
+                    <img fetchpriority="high" src="../images/logo.webp" alt="Share2Inspire Logo" class="logo-img">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -325,10 +335,10 @@
 
                     <div class="screenshots-grid">
                         <div class="screenshot-item">
-                            <img src="../images/portfolio/share2inspire-desktop.png" alt="Share2Inspire Desktop">
+                            <img loading="lazy" src="../images/portfolio/share2inspire-desktop.png" alt="Share2Inspire Desktop">
                         </div>
                         <div class="screenshot-item">
-                            <img src="../images/portfolio/share2inspire-mobile.png" alt="Share2Inspire Mobile">
+                            <img loading="lazy" src="../images/portfolio/share2inspire-mobile.png" alt="Share2Inspire Mobile">
                         </div>
                     </div>
 
@@ -365,10 +375,10 @@
 
                     <div class="screenshots-grid">
                         <div class="screenshot-item">
-                            <img src="../images/portfolio/marlene-desktop.png" alt="Marlene Ruivo Desktop">
+                            <img loading="lazy" src="../images/portfolio/marlene-desktop.png" alt="Marlene Ruivo Desktop">
                         </div>
                         <div class="screenshot-item">
-                            <img src="../images/portfolio/marlene-mobile.png" alt="Marlene Ruivo Mobile">
+                            <img loading="lazy" src="../images/portfolio/marlene-mobile.png" alt="Marlene Ruivo Mobile">
                         </div>
                     </div>
 
@@ -405,10 +415,10 @@
 
                     <div class="screenshots-grid">
                         <div class="screenshot-item">
-                            <img src="../images/portfolio/vando-desktop.png" alt="Vando & Anita Desktop">
+                            <img loading="lazy" src="../images/portfolio/vando-desktop.png" alt="Vando & Anita Desktop">
                         </div>
                         <div class="screenshot-item">
-                            <img src="../images/portfolio/vando-mobile.png" alt="Vando & Anita Mobile">
+                            <img loading="lazy" src="../images/portfolio/vando-mobile.png" alt="Vando & Anita Mobile">
                         </div>
                     </div>
 
@@ -453,7 +463,7 @@
             <div class="row g-4">
                 <div class="col-lg-4">
                     <div class="footer-brand">
-                        <img src="../images/logo.png" alt="Samuel Rolo Logo">
+                        <img loading="lazy" src="../images/logo.webp" alt="Samuel Rolo Logo">
                     </div>
                     <p class="footer-text">Transformando mindsets e carreiras através da fusão entre estratégia
                         corporativa e empatia humana.</p>
