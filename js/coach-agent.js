@@ -18,6 +18,8 @@ class SamuelRoloAI {
         this.edgeFunctionUrl = `${this.supabaseUrl}/functions/v1/hyper-task`;
         this.sessionId = this.generateSessionId();
         this.conversationContext = [];
+        // Detect language from HTML lang attribute
+        this.lang = document.documentElement.lang?.startsWith('en') ? 'en' : 'pt';
         this.init();
     }
 
@@ -38,21 +40,21 @@ class SamuelRoloAI {
         const html = `
             <!-- Samuel Rolo AI - Side Tab -->
             <div class="career-side-widget" id="coachAgentTab">
-                <div class="career-side-tab" id="coachTabButton" role="button" aria-label="Abrir assistente de carreira">
+                <div class="career-side-tab" id="coachTabButton" role="button" aria-label="${this.lang === 'en' ? 'Open career assistant' : 'Abrir assistente de carreira'}">
                     <span class="icon">🤖</span>
                     <span class="text">Career Adviser</span>
                 </div>
             </div>
 
             <!-- Samuel Rolo AI - Chat Widget -->
-            <div class="coach-chat-widget" id="coachChatWidget" role="dialog" aria-label="Assistente de Carreira">
+            <div class="coach-chat-widget" id="coachChatWidget" role="dialog" aria-label="${this.lang === 'en' ? 'Career Assistant' : 'Assistente de Carreira'}">
                 <!-- Header -->
                 <div class="coach-chat-header">
                     <div class="coach-chat-header-info">
                         <div class="coach-avatar">SR</div>
                         <div class="coach-header-text">
                             <h3>Samuel Rolo AI</h3>
-                            <p>Disponível para ajudar</p>
+                            <p>${this.lang === 'en' ? 'Available to help' : 'Disponível para ajudar'}</p>
                         </div>
                     </div>
                     <div class="coach-header-actions">
@@ -69,10 +71,10 @@ class SamuelRoloAI {
                 <!-- Input Area -->
                 <div class="coach-chat-input-area">
                     <div class="coach-quick-actions" id="coachQuickActions">
-                        <button class="coach-quick-action" data-action="carreira">🎯 Carreira</button>
-                        <button class="coach-quick-action" data-action="formacao">📚 Formação</button>
+                        <button class="coach-quick-action" data-action="carreira">🎯 ${this.lang === 'en' ? 'Career' : 'Carreira'}</button>
+                        <button class="coach-quick-action" data-action="formacao">📚 ${this.lang === 'en' ? 'Training' : 'Formação'}</button>
                         <button class="coach-quick-action" data-action="cv">📄 CV</button>
-                        <button class="coach-quick-action" data-action="transicao">🔄 Transição</button>
+                        <button class="coach-quick-action" data-action="transicao">🔄 ${this.lang === 'en' ? 'Transition' : 'Transição'}</button>
                     </div>
                     <div class="coach-input-wrapper">
                         <input 
@@ -156,9 +158,17 @@ class SamuelRoloAI {
     }
 
     addWelcomeMessage() {
-        const welcomeMsg = {
-            type: 'bot',
-            content: `Olá! Sou o **Samuel Rolo AI**, o teu assistente de carreira.
+        const content = this.lang === 'en'
+            ? `Hi! I'm **Samuel Rolo AI**, your career assistant.
+
+I can help you with:
+• Career guidance and professional decisions
+• Training and development questions
+• CV analysis and improvement
+• Career transitions
+
+How can I help you today?`
+            : `Olá! Sou o **Samuel Rolo AI**, o teu assistente de carreira.
 
 Posso ajudar-te com:
 • Orientação de carreira e decisões profissionais
@@ -166,7 +176,10 @@ Posso ajudar-te com:
 • Análise e melhoria de CV
 • Transições de carreira
 
-Como posso ajudar-te hoje?`,
+Como posso ajudar-te hoje?`;
+        const welcomeMsg = {
+            type: 'bot',
+            content: content,
             timestamp: new Date()
         };
         
@@ -227,7 +240,7 @@ Como posso ajudar-te hoje?`,
             
             const errorMsg = {
                 type: 'bot',
-                content: 'Peço desculpa, ocorreu um erro temporário. Por favor, tenta novamente ou contacta-me diretamente em **samuel.rolo@share2inspire.pt**',
+                content: this.lang === 'en' ? 'Sorry, a temporary error occurred. Please try again or contact me directly at **samuel.rolo@share2inspire.pt**' : 'Peço desculpa, ocorreu um erro temporário. Por favor, tenta novamente ou contacta-me diretamente em **samuel.rolo@share2inspire.pt**',
                 timestamp: new Date()
             };
             
@@ -356,7 +369,7 @@ Dicas rápidas:
 • **Resultados, não tarefas** - Não "Responsável por...", mas "Aumentei X em Y%"
 • **Adaptação** - Cada CV deve ser feito para a vaga específica
 
-Para uma análise profunda e detalhada, usa o nosso [CV Analyser](/pages/cv-analysis.html) - é gratuito e usa IA para te dar feedback real.`;
+Para uma análise profunda e detalhada, usa o nosso [CV Analyser](/cv-analyser) - é gratuito e usa IA para te dar feedback real.`;
         }
 
         // Transition
@@ -407,7 +420,12 @@ Quanto mais me contares, melhor posso ajudar. 🎯`;
     }
 
     handleQuickAction(action) {
-        const prompts = {
+        const prompts = this.lang === 'en' ? {
+            carreira: 'I need guidance about my career',
+            formacao: 'What training do you recommend for professional growth?',
+            cv: 'I would like to improve my CV',
+            transicao: 'I am thinking about changing careers'
+        } : {
             carreira: 'Preciso de orientação sobre a minha carreira',
             formacao: 'Que formação me recomendas para evoluir profissionalmente?',
             cv: 'Gostaria de melhorar o meu CV',
