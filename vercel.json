@@ -115,6 +115,94 @@
     {
       "source": "/estudos/(.*)",
       "destination": "/estudos/index.html"
+    },
+    {
+      "source": "/sobre",
+      "destination": "/pages/sobre.html"
+    },
+    {
+      "source": "/pages/sobre",
+      "destination": "/pages/sobre.html"
+    },
+    {
+      "source": "/servicos",
+      "destination": "/pages/servicos.html"
+    },
+    {
+      "source": "/pages/servicos",
+      "destination": "/pages/servicos.html"
+    },
+    {
+      "source": "/loja",
+      "destination": "/pages/loja.html"
+    },
+    {
+      "source": "/pages/loja",
+      "destination": "/pages/loja.html"
+    },
+    {
+      "source": "/conhecimento",
+      "destination": "/pages/conhecimento.html"
+    },
+    {
+      "source": "/pages/conhecimento",
+      "destination": "/pages/conhecimento.html"
+    },
+    {
+      "source": "/contactos",
+      "destination": "/pages/contactos.html"
+    },
+    {
+      "source": "/pages/contactos",
+      "destination": "/pages/contactos.html"
+    },
+    {
+      "source": "/politica-privacidade",
+      "destination": "/pages/politica-privacidade.html"
+    },
+    {
+      "source": "/pages/politica-privacidade",
+      "destination": "/pages/politica-privacidade.html"
+    },
+    {
+      "source": "/politica-cookies",
+      "destination": "/pages/politica-cookies.html"
+    },
+    {
+      "source": "/pages/politica-cookies",
+      "destination": "/pages/politica-cookies.html"
+    },
+    {
+      "source": "/informacao-legal",
+      "destination": "/pages/informacao-legal.html"
+    },
+    {
+      "source": "/pages/informacao-legal",
+      "destination": "/pages/informacao-legal.html"
+    },
+    {
+      "source": "/termos-condicoes",
+      "destination": "/pages/termos-condicoes.html"
+    },
+    {
+      "source": "/pages/termos-condicoes",
+      "destination": "/pages/termos-condicoes.html"
+    },
+    {
+      "source": "/tratamento-dados",
+      "destination": "/pages/tratamento-dados.html"
+    },
+    {
+      "source": "/pages/tratamento-dados",
+      "destination": "/pages/tratamento-dados.html"
+    },
+    {
+      "source": "/admin-analytics",
+      "destination": "/pages/admin-analytics.html"
+    },
+    {
+      "source": "/pages/admin-analytics",
+      "destination": "/pages/admin-analytics.html"
     }
   ]
 }
