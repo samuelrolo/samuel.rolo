@@ -2,10 +2,11 @@
  * Share2Inspire — Botão "Guardar na minha conta"
  * 
  * Injeta automaticamente um botão "Guardar na minha conta" nas páginas de resultados
- * do CV Analyser, Career Path e LinkedIn Roaster quando o utilizador está autenticado.
+ * do CV Analyser, Career Path, LinkedIn Roaster e Career Energy Score
+ * quando o utilizador está autenticado.
  * 
- * Funciona com builds React minificados e HTML puro sem necessidade de alterar o código-fonte.
- * Usa MutationObserver para detetar quando os resultados aparecem no DOM.
+ * O botão é posicionado ao lado do botão de ação existente (ex: "Enviar resultados por e-mail",
+ * "Partilhar no LinkedIn", "Copiar Post LinkedIn") em vez de flutuante.
  * 
  * Dependência: shared-auth.js (carrega Supabase e gere sessão)
  */
@@ -24,12 +25,15 @@
     else if (path.indexOf('/career-path') !== -1) toolType = 'career_path';
     else if (path.indexOf('/linkedin-roaster') !== -1) toolType = 'linkedin_roaster';
 
-    if (!toolType) return;
+    // Career Energy is on the main index.html (homepage)
+    var isCEPage = (path === '/' || path === '/index.html' || path === '' || path.indexOf('/pages/') === -1 && document.getElementById('career-energy'));
+    if (!toolType && !isCEPage) return;
 
     var TOOL_LABELS = {
         cv_analyser: 'CV Analyser',
         career_path: 'Career Path',
-        linkedin_roaster: 'LinkedIn Roaster'
+        linkedin_roaster: 'LinkedIn Roaster',
+        career_energy: 'Career Energy Score'
     };
 
     /**
@@ -57,7 +61,8 @@
      * Watch for results appearing in the DOM
      */
     function startWatching() {
-        console.log('[S2I Save] A observar resultados de ' + TOOL_LABELS[toolType]);
+        var label = toolType ? TOOL_LABELS[toolType] : 'Career Energy Score';
+        console.log('[S2I Save] A observar resultados de ' + label);
         checkForResults();
 
         var observer = new MutationObserver(function() {
@@ -77,85 +82,128 @@
      */
     function checkForResults() {
         if (buttonInjected) return;
-        var container = null;
 
-        if (toolType === 'cv_analyser') container = findCVAnalyserResults();
-        else if (toolType === 'career_path') container = findCareerPathResults();
-        else if (toolType === 'linkedin_roaster') container = findLinkedInRoasterResults();
-
-        if (container) injectSaveButton(container);
-    }
-
-    function findCVAnalyserResults() {
-        var candidates = document.querySelectorAll('h1, h2, h3, [class*="score"], [class*="result"], [class*="Score"], [class*="Result"]');
-        for (var i = 0; i < candidates.length; i++) {
-            var text = (candidates[i].textContent || '').trim();
-            if ((text.match(/\d{1,3}\s*\/\s*100/) || text.indexOf('Score ATS') !== -1 || text.indexOf('ATS Score') !== -1) && text.length < 300) {
-                var c = candidates[i].closest('section') || candidates[i].closest('[class*="result"]') || candidates[i].closest('main') || candidates[i].parentElement;
-                if (c) return c;
-            }
+        if (toolType === 'cv_analyser') {
+            injectForCVAnalyser();
+        } else if (toolType === 'career_path') {
+            injectForCareerPath();
+        } else if (toolType === 'linkedin_roaster') {
+            injectForLinkedInRoaster();
+        } else if (isCEPage) {
+            injectForCareerEnergy();
         }
-        var buttons = document.querySelectorAll('button');
-        for (var i = 0; i < buttons.length; i++) {
-            var text = (buttons[i].textContent || '').trim();
-            if (text.indexOf('Enviar') !== -1 || text.indexOf('Download') !== -1 || text.indexOf('Descarregar') !== -1 || text.indexOf('E-mail') !== -1) {
-                var c = buttons[i].closest('section') || buttons[i].closest('main') || buttons[i].parentElement;
-                if (c && c.textContent.length > 200) return c;
-            }
-        }
-        return null;
-    }
-
-    function findCareerPathResults() {
-        var candidates = document.querySelectorAll('h1, h2, h3, [class*="result"], [class*="career"], [class*="roadmap"], [class*="path"]');
-        for (var i = 0; i < candidates.length; i++) {
-            var text = (candidates[i].textContent || '').trim();
-            if ((text.indexOf('Plano de Carreira') !== -1 || text.indexOf('Career Plan') !== -1 || text.indexOf('Roadmap') !== -1 || text.indexOf('Resultado') !== -1 || text.indexOf('30-60-90') !== -1) && text.length < 300) {
-                var c = candidates[i].closest('section') || candidates[i].closest('[class*="result"]') || candidates[i].closest('main') || candidates[i].parentElement;
-                if (c) return c;
-            }
-        }
-        var buttons = document.querySelectorAll('button');
-        for (var i = 0; i < buttons.length; i++) {
-            var text = (buttons[i].textContent || '').trim();
-            if (text.indexOf('Enviar') !== -1 || text.indexOf('Download') !== -1 || text.indexOf('PDF') !== -1) {
-                var c = buttons[i].closest('section') || buttons[i].closest('main') || buttons[i].parentElement;
-                if (c && c.textContent.length > 200) return c;
-            }
-        }
-        return null;
-    }
-
-    function findLinkedInRoasterResults() {
-        var el = document.getElementById('successSection');
-        if (el && el.offsetParent !== null) {
-            var s = window.getComputedStyle(el);
-            if (s.display !== 'none' && s.visibility !== 'hidden') return el;
-        }
-        var teaser = document.getElementById('teaserSection');
-        if (teaser && teaser.offsetParent !== null) {
-            var s = window.getComputedStyle(teaser);
-            if (s.display !== 'none' && s.visibility !== 'hidden') return teaser;
-        }
-        return null;
     }
 
     /**
-     * Inject the "Guardar na minha conta" button
+     * CV Analyser: inject next to the "Enviar" button in results
      */
-    function injectSaveButton(container) {
+    function injectForCVAnalyser() {
+        // Look for buttons with text "Enviar", "Download", "PDF", "E-mail" in the results area
+        var buttons = document.querySelectorAll('button');
+        for (var i = 0; i < buttons.length; i++) {
+            var text = (buttons[i].textContent || '').trim();
+            if ((text.indexOf('Enviar') !== -1 || text.indexOf('Download') !== -1 || text.indexOf('PDF') !== -1 || text.indexOf('E-mail') !== -1) && text.length < 50) {
+                // Found an action button - inject next to it
+                var parent = buttons[i].parentElement;
+                if (parent && parent.textContent.length > 50) {
+                    injectButton(buttons[i], 'cv_analyser');
+                    return;
+                }
+            }
+        }
+        // Fallback: look for score display
+        var allText = document.body.innerText || '';
+        if (allText.match(/\d{1,3}\s*\/\s*100/) || allText.indexOf('Score ATS') !== -1) {
+            var scoreElements = document.querySelectorAll('h1, h2, h3, [class*="score"], [class*="Score"]');
+            for (var j = 0; j < scoreElements.length; j++) {
+                var t = (scoreElements[j].textContent || '').trim();
+                if (t.match(/\d{1,3}\s*\/\s*100/) || t.indexOf('Score') !== -1) {
+                    var container = scoreElements[j].closest('section') || scoreElements[j].closest('main');
+                    if (container) {
+                        var actionBtns = container.querySelectorAll('button');
+                        if (actionBtns.length > 0) {
+                            injectButton(actionBtns[actionBtns.length - 1], 'cv_analyser');
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Career Path: inject next to the "Enviar" / "Download" button
+     */
+    function injectForCareerPath() {
+        var buttons = document.querySelectorAll('button');
+        for (var i = 0; i < buttons.length; i++) {
+            var text = (buttons[i].textContent || '').trim();
+            if ((text.indexOf('Enviar') !== -1 || text.indexOf('Download') !== -1 || text.indexOf('PDF') !== -1) && text.length < 50) {
+                var parent = buttons[i].parentElement;
+                if (parent) {
+                    injectButton(buttons[i], 'career_path');
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * LinkedIn Roaster: inject next to "Partilhar o meu score no LinkedIn" button
+     */
+    function injectForLinkedInRoaster() {
+        var successSection = document.getElementById('successSection');
+        if (!successSection) return;
+        var s = window.getComputedStyle(successSection);
+        if (s.display === 'none' || s.visibility === 'hidden') return;
+
+        var shareBtn = successSection.querySelector('.share-linkedin-btn');
+        if (shareBtn) {
+            injectButton(shareBtn, 'linkedin_roaster');
+            return;
+        }
+        // Fallback: look for any button in successSection
+        var btns = successSection.querySelectorAll('button');
+        if (btns.length > 0) {
+            injectButton(btns[0], 'linkedin_roaster');
+        }
+    }
+
+    /**
+     * Career Energy Score: inject next to "Copiar Post LinkedIn" button
+     */
+    function injectForCareerEnergy() {
+        var resultsStep = document.getElementById('ceResultsStep');
+        if (!resultsStep) return;
+        if (resultsStep.style.display === 'none') return;
+
+        var linkedinBtn = document.getElementById('ceBtnLinkedIn');
+        if (linkedinBtn) {
+            injectButton(linkedinBtn, 'career_energy');
+            return;
+        }
+        // Fallback: look in .ce-result-actions
+        var actions = resultsStep.querySelector('.ce-result-actions');
+        if (actions) {
+            var btns = actions.querySelectorAll('button');
+            if (btns.length > 0) {
+                injectButton(btns[btns.length - 1], 'career_energy');
+            }
+        }
+    }
+
+    /**
+     * Inject the save button next to the reference button (sibling)
+     */
+    function injectButton(referenceBtn, type) {
         if (buttonInjected || document.getElementById('s2i-save-to-account')) return;
         buttonInjected = true;
-
-        var wrapper = document.createElement('div');
-        wrapper.id = 's2i-save-wrapper';
-        wrapper.style.cssText = 'display:flex;justify-content:center;align-items:center;padding:16px 0;margin:12px 0;';
 
         var btn = document.createElement('button');
         btn.id = 's2i-save-to-account';
         btn.type = 'button';
         btn.innerHTML = getSaveIcon() + ' Guardar na minha conta';
-        btn.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;background:linear-gradient(135deg,#BF9A33 0%,#d4af5a 100%);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;transition:all 0.3s ease;font-family:Poppins,system-ui,sans-serif;box-shadow:0 2px 8px rgba(191,154,51,0.3);letter-spacing:0.3px;';
+        btn.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;background:linear-gradient(135deg,#BF9A33 0%,#d4af5a 100%);color:#0a0a0a;border:none;border-radius:8px;font-weight:600;font-size:0.82rem;cursor:pointer;transition:all 0.3s ease;font-family:Poppins,system-ui,sans-serif;box-shadow:0 2px 8px rgba(191,154,51,0.3);letter-spacing:0.3px;margin-top:8px;';
 
         btn.onmouseover = function() { btn.style.transform = 'translateY(-1px)'; btn.style.boxShadow = '0 4px 12px rgba(191,154,51,0.4)'; };
         btn.onmouseout = function() { btn.style.transform = 'translateY(0)'; btn.style.boxShadow = '0 2px 8px rgba(191,154,51,0.3)'; };
@@ -163,49 +211,28 @@
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            saveToAccount(btn);
+            saveToAccount(btn, type);
         });
 
-        wrapper.appendChild(btn);
-
-        // Insert in the right place
-        if (toolType === 'linkedin_roaster') {
-            var shareBtn = container.querySelector('.share-linkedin-btn');
-            if (shareBtn && shareBtn.parentElement) {
-                shareBtn.parentElement.insertBefore(wrapper, shareBtn.nextSibling);
+        // Insert after the reference button (as a sibling)
+        var parent = referenceBtn.parentElement;
+        if (parent) {
+            // If parent is a flex/grid container, just append after the reference button
+            if (referenceBtn.nextSibling) {
+                parent.insertBefore(btn, referenceBtn.nextSibling);
             } else {
-                var resultCard = container.querySelector('.result-card');
-                if (resultCard) {
-                    var tc = resultCard.querySelector('[style*="text-align:center"]');
-                    if (tc) tc.appendChild(wrapper);
-                    else resultCard.insertBefore(wrapper, resultCard.firstChild);
-                } else {
-                    container.insertBefore(wrapper, container.firstChild);
-                }
-            }
-        } else {
-            var actionButtons = container.querySelectorAll('button');
-            var lastButton = null;
-            for (var i = 0; i < actionButtons.length; i++) {
-                var t = (actionButtons[i].textContent || '').trim();
-                if (t.indexOf('Enviar') !== -1 || t.indexOf('Download') !== -1 || t.indexOf('E-mail') !== -1 || t.indexOf('PDF') !== -1) {
-                    lastButton = actionButtons[i];
-                }
-            }
-            if (lastButton && lastButton.parentElement) {
-                lastButton.parentElement.insertBefore(wrapper, lastButton.nextSibling);
-            } else {
-                container.insertBefore(wrapper, container.firstChild);
+                parent.appendChild(btn);
             }
         }
 
-        console.log('[S2I Save] Botao injetado em ' + TOOL_LABELS[toolType]);
+        var label = TOOL_LABELS[type] || type;
+        console.log('[S2I Save] Botao injetado ao lado do botao de acao em ' + label);
     }
 
     /**
-     * Save analysis to Supabase
+     * Save analysis to Supabase user_analyses table
      */
-    function saveToAccount(btn) {
+    function saveToAccount(btn, type) {
         var auth = window.S2I_AUTH;
         if (!auth || !auth.currentUser || !auth.currentSession) {
             showToast('Sessao expirada. Faz login na Area de Cliente e volta aqui.', 'error');
@@ -217,7 +244,7 @@
         btn.disabled = true;
         btn.style.opacity = '0.7';
 
-        var analysisData = captureResults();
+        var analysisData = captureResults(type);
 
         fetch(SUPA_URL + '/rest/v1/user_analyses', {
             method: 'POST',
@@ -229,7 +256,7 @@
             },
             body: JSON.stringify({
                 user_id: auth.currentUser.id,
-                analysis_type: toolType,
+                analysis_type: type,
                 data: analysisData,
                 created_at: new Date().toISOString()
             })
@@ -264,27 +291,27 @@
     }
 
     /**
-     * Capture analysis results
+     * Capture analysis results based on tool type
      */
-    function captureResults() {
+    function captureResults(type) {
         var data = {
-            tool: toolType,
-            tool_label: TOOL_LABELS[toolType],
+            tool: type,
+            tool_label: TOOL_LABELS[type] || type,
             url: window.location.href,
             page_title: document.title,
             captured_at: new Date().toISOString()
         };
 
-        if (toolType === 'cv_analyser') {
+        if (type === 'cv_analyser') {
             var allText = document.body.innerText || '';
             var scoreMatch = allText.match(/(\d{1,3})\s*\/\s*100/);
             if (scoreMatch) data.score = parseInt(scoreMatch[1]);
             captureStorage(data, /cv|analysis|result|score|report/i);
             data.visible_sections = captureVisibleSections('section, [class*="result"], [class*="analysis"], [class*="quadrant"]');
-        } else if (toolType === 'career_path') {
+        } else if (type === 'career_path') {
             captureStorage(data, /career|path|result|roadmap|plan/i);
             data.visible_sections = captureVisibleSections('section, [class*="result"], [class*="career"], [class*="roadmap"], [class*="plan"]');
-        } else if (toolType === 'linkedin_roaster') {
+        } else if (type === 'linkedin_roaster') {
             if (window.analysisData) data.analysis = window.analysisData;
             var fullResults = document.getElementById('fullResults');
             if (fullResults) {
@@ -293,6 +320,35 @@
             var emailEl = document.getElementById('successEmail');
             if (emailEl) data.email_used = emailEl.textContent.trim();
             captureStorage(data, /roaster|linkedin|analysis/i);
+        } else if (type === 'career_energy') {
+            // Capture from window._ceData (set by the Career Energy quiz)
+            if (window._ceData) {
+                data.total_score = window._ceData.score;
+                data.level = window._ceData.level ? window._ceData.level.label : null;
+                data.percentile = window._ceData.percentile;
+                data.dimensions = {
+                    energy: window._ceData.dimScores ? window._ceData.dimScores[0] : null,
+                    clarity: window._ceData.dimScores ? window._ceData.dimScores[1] : null,
+                    positioning: window._ceData.dimScores ? window._ceData.dimScores[2] : null,
+                    purpose: window._ceData.dimScores ? window._ceData.dimScores[3] : null
+                };
+                if (window._ceData.profile) {
+                    data.profile = {
+                        name: window._ceData.profile.name,
+                        role: window._ceData.profile.role,
+                        experience: window._ceData.profile.experience,
+                        country: window._ceData.profile.country
+                    };
+                }
+            }
+            // Also capture dimension insights from the DOM
+            for (var d = 0; d < 4; d++) {
+                var insightEl = document.getElementById('ceDimInsight' + d);
+                if (insightEl) {
+                    if (!data.dim_insights) data.dim_insights = [];
+                    data.dim_insights.push(insightEl.textContent.trim());
+                }
+            }
         }
 
         return data;
