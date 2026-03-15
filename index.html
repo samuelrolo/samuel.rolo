@@ -3,20 +3,114 @@
 
 <head>
     <meta charset="UTF-8">
+    <!-- Preconnect hints para CDNs -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S H A R E 2 I N S P I R E | S A M U E L R O L O</title>
+    <title>Share2Inspire | Consultoria de Carreira e CV com IA</title>
     <meta name="description"
-        content="Consultoria e coaching por Samuel Rolo. Desenvolvimento humano, transformação organizacional e liderança consciente.">
+        content="Analisa o teu CV com IA em 30 segundos e descobre o teu Career Path ideal. Consultoria de carreira, coaching e ferramentas por Samuel Rolo.">
     <meta name="keywords"
-        content="consultoria, coaching, transformação organizacional, gestão da mudança, liderança consciente, desenvolvimento humano, cultura organizacional, comunicação estratégica, recursos humanos, Samuel Rolo, share2inspire, ebook gestão da mudança, futuro do trabalho, HR Innovation Hub, desenvolvimento de talento, coaching para líderes, palestras, keynote speaker, RH Portugal, liderança empática">
+        content="análise de CV, CV analyser, análise de CV com IA, career path, roadmap de carreira, career energy score, consultoria de carreira, coaching profissional, transformação organizacional, gestão da mudança, liderança, recursos humanos, Samuel Rolo, share2inspire, ATS score, análise gratuita CV, plano de carreira, orientação profissional, RH Portugal, futuro do trabalho">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.share2inspire.pt/">
+    <meta property="og:title" content="Share2Inspire | Consultoria de Carreira e Transformação Profissional">
+    <meta property="og:description" content="Analisa o teu CV gratuitamente com IA. Descobre o teu Career Energy Score e cria o teu roadmap de carreira personalizado.">
+    <meta property="og:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
+    <meta property="og:locale" content="pt_PT">
+    <meta property="og:site_name" content="Share2Inspire">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://www.share2inspire.pt/">
+    <meta name="twitter:title" content="Share2Inspire | Consultoria de Carreira e Transformação Profissional">
+    <meta name="twitter:description" content="Analisa o teu CV gratuitamente com IA. Descobre o teu Career Energy Score e cria o teu roadmap de carreira personalizado.">
+    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="author" content="Samuel Rolo">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="https://www.share2inspire.pt/">
+    <!-- Hreflang -->
+    <link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/">
+    <link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/home/">
+    <link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/">
+    <!-- FAQ Schema for Rich Snippets -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "O que \u00e9 o Career Energy Score?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O Career Energy Score \u00e9 um diagn\u00f3stico gratuito que mede a tua energia profissional em 4 dimens\u00f5es: Energia Profissional, Clareza Mental de Carreira, Posicionamento no Mercado e Prop\u00f3sito e Progress\u00e3o. Obt\u00e9ns um score de 0 a 100 com compara\u00e7\u00e3o com a m\u00e9dia do teu pa\u00eds."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "A an\u00e1lise de CV \u00e9 gratuita?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim, a primeira an\u00e1lise de CV \u00e9 totalmente gratuita. Recebes o ATS Score, an\u00e1lise por quadrantes, benchmarks e percep\u00e7\u00e3o de recrutador. Relat\u00f3rios completos e planos de carreira est\u00e3o dispon\u00edveis a partir de \u20ac3,99."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que \u00e9 o Career Path?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O Career Path \u00e9 um roadmap de carreira personalizado gerado por IA. Analisa o teu CV e LinkedIn para recomendar fun\u00e7\u00f5es ideais, micro-cursos gratuitos e um plano de a\u00e7\u00e3o 30-60-90 dias. Dispon\u00edvel por \u20ac9,99."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Como funciona a an\u00e1lise de CV com IA?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Carregas o teu CV em PDF ou DOCX e a nossa IA analisa-o em 30 segundos. Obt\u00e9ns um ATS Score (compatibilidade com sistemas de recrutamento), an\u00e1lise de 4 quadrantes, benchmarks do mercado e sugest\u00f5es de melhoria."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quem \u00e9 o Samuel Rolo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Samuel Rolo \u00e9 especialista em Digital HR e Process Excellence, com experi\u00eancia em transforma\u00e7\u00e3o organizacional e gest\u00e3o da mudan\u00e7a. Fundador da Share2Inspire, combina intelig\u00eancia artificial com consultoria humana para ajudar profissionais a evoluir."
+          }
+        }
+      ]
+    }
+    </script>
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Share2Inspire",
+      "url": "https://www.share2inspire.pt",
+      "logo": "https://www.share2inspire.pt/images/logo.png",
+      "founder": {"@type": "Person", "name": "Samuel Rolo"},
+      "sameAs": ["https://www.linkedin.com/company/share2inspire"],
+      "description": "Consultoria de carreira com IA. An\u00e1lise de CV gratuita, Career Energy Score e roadmaps de carreira personalizados."
+    }
+    </script>
+    
+    <!-- Preload hero image for LCP -->
+    <link rel="preload" as="image" href="images/hero-samuel-blur.webp" type="image/webp">
     <!-- Favicon -->
     <link rel="icon" href="images/logo.png" type="image/png">
-    <!-- Google Consent Mode v2 - DEVE SER CARREGADO ANTES DE QUALQUER SCRIPT DO GOOGLE -->
+    <!-- Google Consent Mode v2 -->
     <script>
-        // Configuração inicial do Google Consent Mode v2
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
-        // Definir estado padrão de consentimento (negado por padrão)
         gtag('consent', 'default', {
             'ad_storage': 'denied',
             'ad_user_data': 'denied',
@@ -28,650 +122,435 @@
             'wait_for_update': 500
         });
     </script>
-    <!-- Google Tag Manager (substitua GTM-XXXXXXX pelo seu ID real) -->
-    <script>(function (w, d, s, l, i) {
-            w[l] = w[l] || []; w[l].push({
-                'gtm.start':
-                    new Date().getTime(), event: 'gtm.js'
-            }); var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
-                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-XXXXXXX');</script>
-    <!-- End Google Tag Manager -->
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google tag (gtag.js) - Ads -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'AW-17015553005');
+    </script>
+    <!-- Google Tag Manager -->
+    <!-- Google Tag Manager: adicionar ID real quando disponível -->
+    <!-- Bootstrap CSS (deferred) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"></noscript>
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <!-- Chart.js para gráficos -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- CSS Externo -->
-    <link rel="stylesheet" href="https://raw.githubusercontent.com/samuelrolo/samuel.rolo/main/css/style.css">
     <link rel="stylesheet" href="css/style.css?v=fix_mobile">
-    <link rel="stylesheet" href="css/diagnostic.css">
-    <!-- Consolidated Styles: Design System + Header/Footer -->
+    <link rel="stylesheet" href="css/diagnostic.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="css/diagnostic.css"></noscript>
     <link rel="stylesheet" href="css/consolidated-styles.css">
+    <link rel="stylesheet" href="css/coach-agent.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="css/coach-agent.css"></noscript>
+    <link rel="stylesheet" href="css/side-widgets.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="css/side-widgets.css"></noscript>
     <style>
-        :root {
-            --primary-color: #bf9a33;
-            /* Dourado principal */
-            --secondary-color: #333333;
-            /* Cinza escuro */
-            --accent-color: #a57b0a;
-            /* Dourado suave */
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-            --text-color: #333333;
-            --text-light: #6c757d;
-            --border-color: #dee2e6;
-            --success-color: #28a745;
-            --error-color: #dc3545;
-            --warning-color: #fece43;
-            /* Dourado claro (mesmo tom do logo) */
-            --info-color: #17a2b8;
-            --transition: all 0.3s ease;
-            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            --border-radius: 5px;
+        /* Hide Vercel Speed Insights widget */
+        iframe[src*="vercel-insights"],
+        iframe[src*="_vercel"],
+        div[id*="vercel-live-feedback-button"],
+        .__vercel-live-feedback-button,
+        #vercel-live-feedback-button {
+            display: none !important;
+            visibility: hidden !important;
         }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
-        }
+        /* ============================================
+           HOMEPAGE REDESIGN — MINIMALISTA SUBLIME
+           Serenidade. Modernidade. Sofisticação.
+           ============================================ */
 
-        /* Header e Navegação */
-        .navbar {
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            padding: 1rem 0;
-        }
-
-        .navbar-brand img {
-            height: 40px;
-        }
-
-        .navbar-nav {
-            margin-left: auto;
-        }
-
-        .navbar-nav .nav-link {
-            color: #333;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            margin: 0 0.25rem;
-        }
-
-        .navbar-nav .nav-link.active {
-            color: #BF9A33;
-            position: relative;
-        }
-
-        .navbar-nav .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 1rem;
-            right: 1rem;
-            height: 2px;
-            background-color: #BF9A33;
-        }
-
-        /* Hero Section - V2.0 Conversion Focus */
-        .hero-section {
+        /* --- Hero --- */
+        .hero-minimal {
             height: 100vh;
             min-height: 600px;
-            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)), url('images/samuel-hero.jpg');
+            background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.5)), url('images/hero-samuel-blur.webp');
             background-size: cover;
-            background-position: center top;
+            background-position: center;
             background-attachment: fixed;
-            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
+            text-align: center;
+            color: #fff;
             position: relative;
-            margin: 0;
-            padding: 0;
         }
 
-        .hero-content {
-            text-align: center;
-            max-width: 1000px;
+        .hero-minimal::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            background: linear-gradient(transparent, var(--s2i-bg));
+        }
+
+        .hero-inner {
+            max-width: 700px;
             padding: 2rem;
             z-index: 2;
         }
 
-        .hero-content h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
+        .hero-inner h1 {
+            font-size: 3rem;
+            font-weight: 300;
             color: #fff;
+            line-height: 1.25;
+            letter-spacing: -0.5px;
             margin-bottom: 1.5rem;
-            line-height: 1.2;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
-        .hero-content .highlight {
-            color: var(--primary-color);
+        .hero-inner h1 strong {
+            font-weight: 700;
+            color: #C9A961;
         }
 
-        .hero-subtitle {
-            font-size: 1.4rem;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.95);
+        .hero-inner p {
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.7;
             margin-bottom: 2.5rem;
-            line-height: 1.6;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
-        .hero-ctas {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn-hero-primary {
-            background: var(--primary-color);
-            color: var(--dark-color);
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: 2px solid var(--primary-color);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-hero-primary:hover {
-            background: transparent;
-            color: var(--primary-color);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(191, 154, 51, 0.4);
-        }
-
-        .btn-hero-secondary {
+        .hero-cta {
+            display: inline-block;
+            padding: 14px 40px;
             background: transparent;
             color: #fff;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: 2px solid #fff;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            text-decoration: none;
+            transition: all 0.4s ease;
         }
 
-        .btn-hero-secondary:hover {
+        .hero-cta:hover {
             background: #fff;
-            color: var(--dark-color);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+            color: #1A1A1A;
+            border-color: #fff;
         }
 
-        /* Intro Section */
-        .intro-section {
-            padding: 6rem 0;
-            background-color: #fff;
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            animation: float 2.5s ease-in-out infinite;
         }
 
-        .intro-section h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            text-align: center;
+        .scroll-hint span {
+            display: block;
+            width: 1px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.4);
+            margin: 0 auto;
         }
 
-        .intro-section .proposito-gold {
-            color: var(--primary-color);
+        @keyframes float {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
         }
 
-        .intro-section .share2inspire-highlight {
-            color: var(--primary-color);
-            font-weight: 700;
+        /* --- Secções Gerais --- */
+        .section-serene {
+            padding: 120px 0;
         }
 
-        .intro-section .lead {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            color: var(--text-color);
+        .section-serene h2 {
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: -0.3px;
+            color: #1A1A1A;
+            margin-bottom: 0;
         }
 
-        .intro-section p {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-            color: var(--text-light);
+        .section-serene h2 strong {
+            font-weight: 600;
         }
 
-        .text-column {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        .gold-line {
+            width: 40px;
+            height: 2px;
+            background: #C9A961;
+            margin: 1.5rem auto;
         }
 
-        .text-column p {
-            margin-bottom: 1.5rem;
-        }
-
-        /* O Que Nos Move Section - Estilo Moderno */
-        .what-moves-us-section {
-            background-color: var(--dark-color);
-            color: #fff;
-            padding: 8rem 0;
-        }
-
-        .what-moves-us-section .section-header h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: #fff;
-        }
-
-        .what-moves-us-section .move-gold {
-            color: var(--primary-color);
-        }
-
-        .what-moves-us-section .section-subtitle {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.8);
+        .section-text {
+            font-size: 1rem;
+            font-weight: 300;
+            color: #555;
+            line-height: 1.9;
             max-width: 600px;
-            margin: 0 auto 4rem;
-            line-height: 1.6;
+            margin: 0 auto;
         }
 
-        .values-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-            margin-bottom: 5rem;
+        .section-text strong {
+            font-weight: 500;
+            color: #333;
         }
 
-        .value-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 3rem 2rem;
+        /* --- Propósito --- */
+        .proposito-section {
+            background: #fff;
             text-align: center;
-            transition: all 0.3s ease;
+        }
+
+        /* --- E-book --- */
+        .ebook-section {
+            background: #1A1A1A;
+            text-align: center;
             position: relative;
             overflow: hidden;
         }
 
-        .value-card::before {
+        .ebook-section::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            transform: scaleX(0);
-            transition: all 0.3s ease;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 40%, rgba(201, 169, 97, 0.04) 0%, transparent 50%);
+            pointer-events: none;
         }
 
-        .value-card:hover {
-            border-color: var(--primary-color);
-        }
-
-        .value-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(191, 154, 51, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
-            font-size: 2rem;
-            color: var(--primary-color);
-        }
-
-        .value-title {
-            font-size: 1.4rem;
-            font-weight: 600;
+        .ebook-section h2 {
             color: #fff;
+        }
+
+        .ebook-section h2 strong {
+            color: #C9A961;
+        }
+
+        .ebook-section .gold-line {
+            margin: 1.5rem auto;
+        }
+
+        .ebook-section .section-text {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .ebook-cover {
+            max-width: 240px;
+            width: 100%;
+            margin: 0 auto 2.5rem;
+            display: block;
+            border-radius: 4px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .ebook-authors {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        .ebook-cta {
+            display: inline-block;
+            padding: 14px 40px;
+            background: #C9A961;
+            color: #1A1A1A;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: all 0.4s ease;
+            border: none;
+        }
+
+        .ebook-cta:hover {
+            background: #fff;
+            color: #1A1A1A;
+            transform: translateY(-2px);
+        }
+
+        /* --- Estudo em Destaque --- */
+        .estudo-destaque {
+            background: #1A1A1A;
+            text-align: center;
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .estudo-destaque::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 70% 60%, rgba(201, 169, 97, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .estudo-destaque h2 { color: #fff; font-size: 1.8rem; font-weight: 300; }
+        .estudo-destaque h2 strong { color: #C9A961; font-weight: 600; }
+        .estudo-destaque .estudo-stat {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #C9A961;
+            margin: 1.5rem 0 0.5rem;
+        }
+        .estudo-destaque .estudo-stat-label {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 2rem;
+        }
+        .estudo-destaque .estudo-desc {
+            font-size: 0.95rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.6);
+            max-width: 550px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+        }
+        .estudo-destaque .estudo-badge {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #C9A961;
+            border: 1px solid rgba(201,169,97,0.3);
+            padding: 6px 16px;
             margin-bottom: 1.5rem;
         }
-
-        .value-description {
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.6;
-            font-size: 1rem;
-        }
-
-        .core-values-section {
-            margin-top: 4rem;
-            padding-top: 4rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .core-values-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-
-        .core-value-item {
-            text-align: center;
-            padding: 2rem 1rem;
-        }
-
-        .core-value-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 1.5rem;
-            color: var(--dark-color);
-        }
-
-        .core-value-title {
-            font-size: 1.2rem;
+        .estudo-cta {
+            display: inline-block;
+            padding: 14px 40px;
+            background: #C9A961;
+            color: #1A1A1A;
+            font-size: 0.78rem;
             font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .core-value-description {
-            font-size: 0.95rem;
-            line-height: 1.5;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        /* Estilos globais para botões - Paleta Minimalista */
-        .btn-primary {
-            background-color: var(--dark-color);
-            border-color: var(--dark-color);
-            color: white;
-            font-weight: 600;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            color: var(--dark-color);
-        }
-
-        .btn-outline-primary {
-            background-color: transparent;
-            border: 2px solid #2c3e50;
-            color: #2c3e50;
-            font-weight: 600;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-        }
-
-        .btn-outline-primary:hover {
-            background-color: #2c3e50;
-            border-color: #2c3e50;
-            color: white;
-        }
-
-        .btn-secondary {
-            background-color: #f5f5f5;
-            border-color: #f5f5f5;
-            color: var(--dark-color);
-            font-weight: 600;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-        }
-
-        .btn-secondary:hover {
-            background-color: #e0e0e0;
-            border-color: #e0e0e0;
-            color: var(--dark-color);
-        }
-
-        /* Estilo        /* Proposta de Valor Section */
-        .value-proposition-section {
-            padding: 6rem 0;
-            background-color: #f8f9fa;
-        }
-
-        .value-proposition-section h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 4rem;
-            text-align: center;
-        }
-
-        .value-proposition-section .valor-gold {
-            color: var(--primary-color);
-        }
-
-        .video-container-clean {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .video-player-clean {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
-
-        .value-proposition-text {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .consultoria-box {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            border: 1px solid #dee2e6;
-            height: 100%;
-        }
-
-        /* Estilos para os botões de ação */
-        .action-buttons-section {
-            background-color: var(--primary-color);
-            padding: 2rem 0;
-        }
-
-        .action-button {
-            display: block;
-            background-color: #111;
-            color: #fff;
-            text-align: center;
-            padding: 1rem;
-            border-radius: 5px;
-            font-weight: 600;
             text-decoration: none;
-            transition: var(--transition);
+            transition: all 0.4s ease;
+        }
+        .estudo-cta:hover { background: #fff; color: #1A1A1A; transform: translateY(-2px); }
+
+        /* --- Serviços --- */
+        .servicos-section {
+            background: var(--s2i-bg);
+            text-align: center;
+        }
+
+        .servico-item {
+            padding: 2rem 0;
+            text-align: left;
+        }
+
+        .servico-item h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.2px;
+        }
+
+        .servico-item p {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: #777;
+            line-height: 1.7;
             margin-bottom: 1rem;
         }
 
-        .action-button:hover {
-            background-color: #000;
-            color: var(--primary-color);
-        }
-
-        /* Estilos para o footer */
-        footer {
-            background-color: #212529;
-            color: #fff;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .footer-left p {
-            margin: 0;
-            color: #BF9A33;
-        }
-
-        .footer-right {
-            display: flex;
-            gap: 30px;
-        }
-
-        .footer-contact p {
-            margin: 0;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-
-        .footer-contact i {
-            color: #BF9A33;
-            margin-right: 8px;
-        }
-
-        .footer-social {
-            display: flex;
-            gap: 15px;
-        }
-
-        .footer-social a {
-            color: #BF9A33;
-            font-size: 20px;
-            transition: color 0.3s;
-        }
-
-        .footer-social a:hover {
-            color: #fff;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 15px;
-        }
-
-        .footer-links a {
-            color: #BF9A33;
-            font-size: 14px;
+        .servico-link {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #C9A961;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
             text-decoration: none;
-            transition: color 0.3s;
+            transition: all 0.3s ease;
         }
 
-        .footer-links a:hover {
-            color: #fff;
-            text-decoration: underline;
+        .servico-link:hover {
+            color: #1A1A1A;
         }
 
-        /* Responsividade */
-        @media (max-width: 992px) {
-            .hero-content h1 {
-                font-size: 3.5rem;
-                letter-spacing: 6px;
-            }
-
-            .hero-content h2 {
-                font-size: 2.8rem;
-                letter-spacing: 4px;
-            }
-
-            .intro-section h2,
-            .what-moves-us-section h2,
-            .value-proposition-section h2 {
-                font-size: 2rem;
-            }
-
-            .feature-box {
-                flex-direction: column;
-            }
-
-            .feature-title-box {
-                width: 100%;
-                margin-right: 0;
-                margin-bottom: 1rem;
-            }
-
-            .value-item {
-                flex: 0 0 calc(50% - 2rem);
-            }
-
-            .footer-container {
-                flex-direction: column;
-                text-align: center;
-                gap: 20px;
-            }
-
-            .diagnostic-features {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .diagnostic-card {
-                padding: 3rem 2rem;
-            }
-
-            .diagnostic-title {
-                font-size: 2rem;
-            }
+        .servico-link i {
+            font-size: 0.6rem;
+            margin-left: 6px;
+            transition: transform 0.3s ease;
         }
 
-        .footer-right {
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
+        .servico-link:hover i {
+            transform: translateX(4px);
         }
 
+        .servico-divider {
+            width: 100%;
+            height: 1px;
+            background: #eee;
+        }
+
+        /* --- Valores --- */
+        .valores-section {
+            background: #fff;
+            text-align: center;
+        }
+
+        .valor-item {
+            padding: 2.5rem 1rem;
+        }
+
+        .valor-word {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #C9A961;
+            margin-bottom: 0.75rem;
+        }
+
+        .valor-desc {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: #888;
+            line-height: 1.6;
+        }
+
+        /* --- Responsive --- */
         @media (max-width: 768px) {
-            .hero-section {
-                padding: 6rem 0;
-            }
-
-            .hero-content h1 {
-                font-size: 2.5rem;
-                letter-spacing: 4px;
-            }
-
-            .hero-content h2 {
+            .hero-inner h1 {
                 font-size: 2rem;
-                letter-spacing: 3px;
             }
 
-            .value-item {
-                flex: 0 0 100%;
+            .hero-inner p {
+                font-size: 1rem;
             }
 
-            .footer-social {
-                justify-content: center;
+            .section-serene {
+                padding: 80px 0;
             }
 
-            .footer-links {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
+            .section-serene h2 {
+                font-size: 1.6rem;
+            }
+
+            .hero-minimal {
+                background-attachment: scroll;
+            }
+
+            .servico-item {
+                text-align: center;
             }
         }
 
-        /* Banner de Consentimento de Cookies */
+        /* --- Cookie Banner (keep) --- */
         .cookie-consent-banner {
             position: fixed;
             bottom: 0;
@@ -684,961 +563,7 @@
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
         }
 
-        /* Modal Styles - Moderno e Elegante */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-        }
-
-        .modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* SOLUÇÃO SIMPLES E DIRETA PARA O MODAL */
-        .modal-content {
-            background: white !important;
-            border-radius: 16px !important;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
-            width: 90% !important;
-            max-width: 700px !important;
-            height: 80vh !important;
-            position: relative !important;
-            overflow: hidden !important;
-        }
-
-        /* Header do Modal */
-        .modal-header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
-            color: white !important;
-            padding: 1.5rem 2rem !important;
-            text-align: center !important;
-            border-radius: 16px 16px 0 0 !important;
-            height: 100px !important;
-            box-sizing: border-box !important;
-        }
-
-        /* Corpo do Modal - SCROLL GARANTIDO */
-        .modal-body {
-            padding: 20px !important;
-            height: calc(80vh - 160px) !important;
-            overflow-y: scroll !important;
-            background: white !important;
-            box-sizing: border-box !important;
-        }
-
-        /* Navegação do Modal - FIXA NA BASE */
-        .modal-navigation {
-            background: white !important;
-            padding: 15px 20px !important;
-            border-top: 1px solid #e9ecef !important;
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            border-radius: 0 0 16px 16px !important;
-            height: 60px !important;
-            box-sizing: border-box !important;
-            position: absolute !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-        }
-
-        /* Barra de scroll visível */
-        .modal-body::-webkit-scrollbar {
-            width: 12px !important;
-        }
-
-        .modal-body::-webkit-scrollbar-track {
-            background: #f1f1f1 !important;
-            border-radius: 6px !important;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb {
-            background: #bf9a33 !important;
-            border-radius: 6px !important;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb:hover {
-            background: #a57b0a !important;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px) scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .modal-header p {
-            margin: 0.5rem 0 0 0;
-            opacity: 0.9;
-            font-size: 1rem;
-        }
-
-        .close {
-            position: absolute;
-            top: 1rem;
-            right: 1.5rem;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .close:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(90deg);
-        }
-
-        /* Progress Bar Moderna */
-        .progress-container {
-            padding: 1.5rem 2rem 0;
-            background: white;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 1rem;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #bf9a33, #d4af37);
-            border-radius: 10px;
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% {
-                transform: translateX(-100%);
-            }
-
-            100% {
-                transform: translateX(100%);
-            }
-        }
-
-        .progress-text {
-            text-align: center;
-            color: #6c757d;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        /* Corpo do Modal */
-        .modal-body {
-            padding: 20px;
-            height: 480px;
-            overflow-y: auto;
-            background: white;
-        }
-
-        /* Cartão de Pergunta Moderno - FORÇAR ALTURA MÍNIMA */
-        .question-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
-            border-radius: 16px !important;
-            padding: 2rem !important;
-            border-left: 4px solid #d4af37 !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
-            margin-bottom: 2rem !important;
-            min-height: 250px !important;
-            transition: all 0.3s ease !important;
-        }
-
-        .question-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-        }
-
-        .question-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
-        }
-
-        /* Rating Buttons Modernos */
-        .rating-container {
-            display: flex;
-            gap: 0.75rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .rating-option {
-            position: relative;
-        }
-
-        .rating-option input[type="radio"] {
-            display: none;
-        }
-
-        .rating-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border: 2px solid #e9ecef;
-            border-radius: 50%;
-            background: white;
-            color: #6c757d;
-            font-weight: 600;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .rating-label::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: linear-gradient(135deg, #bf9a33, #d4af37);
-            border-radius: 50%;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translate(-50%, -50%);
-            z-index: 1;
-        }
-
-        .rating-label span {
-            position: relative;
-            z-index: 2;
-            transition: color 0.3s ease;
-        }
-
-        .rating-option input[type="radio"]:checked+.rating-label {
-            border-color: #bf9a33;
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .rating-option input[type="radio"]:checked+.rating-label::before {
-            width: 100%;
-            height: 100%;
-        }
-
-        .rating-label:hover {
-            border-color: #bf9a33;
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(191, 154, 51, 0.3);
-        }
-
-        /* Seção de Níveis de Maturidade - FORÇAR ALTURA */
-        .maturity-levels {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
-            border-radius: 16px !important;
-            padding: 2rem !important;
-            margin-top: 2rem !important;
-            border: 1px solid #e9ecef !important;
-            min-height: 400px !important;
-        }
-
-        .maturity-levels h3 {
-            color: #2c3e50;
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .maturity-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .maturity-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .maturity-number {
-            background: linear-gradient(135deg, #bf9a33, #d4af37);
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-
-        .maturity-text {
-            color: #495057;
-            line-height: 1.5;
-            font-size: 0.95rem;
-        }
-
-        /* Navegação do Modal */
-        .modal-navigation {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            padding: 15px 20px;
-            border-top: 1px solid #e9ecef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn-nav {
-            padding: 0.75rem 2rem;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-nav-secondary {
-            background: #e9ecef;
-            color: #6c757d;
-        }
-
-        .btn-nav-secondary:hover {
-            background: #dee2e6;
-            transform: translateY(-1px);
-        }
-
-        .btn-nav-primary {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            color: white;
-        }
-
-        .btn-nav-primary:hover {
-            background: linear-gradient(135deg, #34495e, #2c3e50);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(44, 62, 80, 0.3);
-        }
-
-        .btn-nav:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .modal-content {
-                width: 95%;
-                margin: 1rem;
-            }
-
-            .modal-header {
-                padding: 1.5rem;
-            }
-
-            .modal-body {
-                padding: 1.5rem;
-            }
-
-            .question-card {
-                padding: 1.5rem;
-            }
-
-            .rating-container {
-                gap: 0.5rem;
-            }
-
-            .rating-label {
-                width: 45px;
-                height: 45px;
-                font-size: 1rem;
-            }
-
-            .modal-navigation {
-                padding: 1rem 1.5rem;
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .btn-nav {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        .modal-xl {
-            max-width: 95%;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 700px;
-            height: 600px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            padding: 1.5rem 2rem;
-            text-align: center;
-            border-radius: 16px 16px 0 0;
-            flex-shrink: 0;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--dark-color);
-        }
-
-        .btn-close {
-            background: var(--light-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            opacity: 1;
-        }
-
-        .modal-body {
-            padding: 20px;
-            overflow-y: auto;
-            background: white;
-            flex: 1;
-            min-height: 0;
-            max-height: calc(90vh - 140px);
-        }
-
-        /* Estilos para melhorar a visibilidade do scroll */
-        .modal-body::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .modal-body::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb {
-            background: #bf9a33;
-            border-radius: 4px;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb:hover {
-            background: #a57b0a;
-        }
-
-        /* Progress Bar - Estilo Moderno */
-        .progress-clean {
-            background: var(--light-color);
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 3rem;
-        }
-
-        .progress-clean-bar {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            height: 100%;
-            transition: width 0.4s ease;
-            border-radius: 3px;
-        }
-
-        /* Question Cards - Estilo Moderno */
-        .dimension-card-clean {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 3rem;
-            margin-bottom: 2rem;
-        }
-
-        .dimension-title-clean {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 2.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--light-color);
-        }
-
-        .question-item-clean {
-            margin-bottom: 2.5rem;
-            padding: 2rem;
-            background: var(--light-color);
-            border-radius: 12px;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .question-text-clean {
-            font-weight: 500;
-            color: var(--dark-color);
-            margin-bottom: 1.5rem;
-            font-size: 1.05rem;
-        }
-
-        .rating-container-clean {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1rem;
-        }
-
-        .rating-option-clean {
-            position: relative;
-        }
-
-        .rating-option-clean input[type="radio"] {
-            display: none;
-        }
-
-        .rating-option-clean label {
-            display: block;
-            padding: 1rem;
-            background: var(--white);
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        .rating-option-clean label:hover {
-            border-color: var(--primary-color);
-            background: rgba(191, 154, 51, 0.05);
-        }
-
-        .rating-option-clean input[type="radio"]:checked+label {
-            background: var(--primary-color);
-            color: var(--white);
-            border-color: var(--primary-color);
-            transform: scale(1.05);
-        }
-
-        /* Navigation Buttons - Estilo Moderno */
-        .navigation-clean {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .btn-nav-clean {
-            padding: 1rem 2.5rem;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            font-size: 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-nav-primary-clean {
-            background: var(--dark-color);
-            color: var(--white);
-        }
-
-        .btn-nav-primary-clean:hover {
-            background: var(--primary-color);
-            color: var(--dark-color);
-            transform: translateY(-2px);
-        }
-
-        .btn-nav-secondary-clean {
-            background: var(--light-color);
-            color: var(--text-color);
-        }
-
-        .btn-nav-secondary-clean:hover {
-            background: var(--border-color);
-        }
-
-        .btn-nav-clean:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Secção de Diagnóstico Moderna - Baseada no indextest.html */
-        .diagnostic-section-modern {
-            padding: 8rem 0;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            position: relative;
-        }
-
-        .section-header-modern {
-            text-align: center;
-            margin-bottom: 5rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .diagnostic-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: var(--white);
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .section-title-modern {
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 2rem;
-            line-height: 1.1;
-        }
-
-        .title-highlight {
-            color: var(--primary-color);
-        }
-
-        .section-subtitle-modern {
-            font-size: 1.3rem;
-            color: var(--text-light);
-            margin-bottom: 3rem;
-            line-height: 1.6;
-        }
-
-        .features-grid-modern {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-            margin-bottom: 4rem;
-        }
-
-        .feature-card-modern {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 3rem 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card-modern::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            transform: scaleX(0);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card-modern:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-            border-color: var(--primary-color);
-        }
-
-        .feature-card-modern:hover::before {
-            transform: scaleX(1);
-        }
-
-        .feature-icon-modern {
-            width: 80px;
-            height: 80px;
-            background: var(--light-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
-            font-size: 2rem;
-            color: var(--primary-color);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card-modern:hover .feature-icon-modern {
-            background: var(--primary-color);
-            color: var(--white);
-            transform: scale(1.1);
-        }
-
-        .feature-title-modern {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 1rem;
-        }
-
-        .feature-description-modern {
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-
-        .cta-container-modern {
-            text-align: center;
-            margin-top: 4rem;
-        }
-
-        .hero-cta-modern {
-            background: #000000;
-            color: #ffffff;
-            padding: 1.5rem 3.5rem;
-            border: 3px solid #000000;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .hero-cta-modern:hover {
-            background: #ffffff;
-            color: #000000;
-            border-color: #000000;
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .cta-note-modern {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .diagnostic-section {
-            padding: 6rem 0;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            position: relative;
-        }
-
-        .diagnostic-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23bf9a33" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            pointer-events: none;
-        }
-
-        .diagnostic-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 4rem 3rem;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .diagnostic-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-        }
-
-        .diagnostic-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
-            box-shadow: 0 10px 30px rgba(191, 154, 51, 0.3);
-        }
-
-        .diagnostic-icon i {
-            font-size: 2.5rem;
-            color: #fff;
-        }
-
-        .diagnostic-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--dark-color);
-        }
-
-        .highlight-gold {
-            color: var(--primary-color);
-            position: relative;
-        }
-
-        .diagnostic-description {
-            font-size: 1.2rem;
-            line-height: 1.8;
-            color: var(--text-light);
-            margin-bottom: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .diagnostic-features {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 3rem;
-            flex-wrap: wrap;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-
-        .feature-item i {
-            color: var(--primary-color);
-            font-size: 1.1rem;
-        }
-
-        .btn-diagnostic-modern {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: #fff;
-            border: none;
-            padding: 1.2rem 3rem;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            text-transform: uppercase;
-            box-shadow: 0 8px 25px rgba(191, 154, 51, 0.3);
-        }
-
-        .btn-diagnostic-modern::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn-diagnostic-modern:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(191, 154, 51, 0.4);
-        }
-
-        .btn-diagnostic-modern:hover::before {
-            left: 100%;
-        }
-
-        .btn-diagnostic-modern i {
-            margin-right: 0.5rem;
-        }
-
-        .cookie-consent-banner.show {
-            transform: translateY(0);
-        }
+        .cookie-consent-banner.show { transform: translateY(0); }
 
         .cookie-consent-content {
             max-width: 1200px;
@@ -1650,304 +575,261 @@
             gap: 15px;
         }
 
-        .cookie-consent-text h4 {
-            margin: 0 0 5px 0;
-            font-size: 16px;
-            color: #BF9A33;
+        .cookie-consent-text h4 { margin: 0 0 5px 0; font-size: 16px; color: #C9A961; }
+        .cookie-consent-text p { margin: 0; font-size: 14px; line-height: 1.4; }
+
+        .cookie-consent-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .cookie-btn { padding: 8px 16px; border: none; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .cookie-btn-accept { background-color: #C9A961; color: #212529; }
+        .cookie-btn-accept:hover { background-color: #a57b0a; }
+        .cookie-btn-decline { background-color: transparent; color: white; border: 1px solid #6c757d; }
+        .cookie-btn-decline:hover { background-color: #6c757d; }
+        .cookie-btn-settings { background-color: transparent; color: #C9A961; border: 1px solid #C9A961; }
+        .cookie-btn-settings:hover { background-color: #C9A961; color: #212529; }
+
+        /* Cookie Preferences Modal */
+        .cookie-preferences-modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); }
+        .cookie-preferences-content { background-color: white; margin: 5% auto; padding: 0; border-radius: 8px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; }
+        .cookie-preferences-header { padding: 20px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center; }
+        .cookie-preferences-header h3 { margin: 0; color: #212529; }
+        .cookie-preferences-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d; }
+        .cookie-preferences-body { padding: 20px; }
+        .cookie-category { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+        .cookie-category:last-child { border-bottom: none; }
+        .cookie-category-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .cookie-category h4 { margin: 0; color: #212529; }
+        .cookie-toggle { position: relative; display: inline-block; width: 50px; height: 24px; }
+        .cookie-toggle input { opacity: 0; width: 0; height: 0; }
+        .cookie-toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+        .cookie-toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        .cookie-toggle input:checked+.cookie-toggle-slider { background-color: #C9A961; }
+        .cookie-toggle input:checked+.cookie-toggle-slider:before { transform: translateX(26px); }
+        .cookie-toggle.disabled { opacity: 0.6; pointer-events: none; }
+        .cookie-preferences-footer { padding: 20px; border-top: 1px solid #dee2e6; display: flex; justify-content: flex-end; gap: 10px; }
+
+        /* Contact Modal */
+        #contactModal .modal-content { border: none; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.12); overflow: hidden; }
+        #contactModal .cm-header { padding: 2rem 2.5rem 0.5rem; text-align: center; }
+        #contactModal .cm-header h5 { font-family: 'Poppins', sans-serif; font-weight: 300; font-size: 1.5rem; letter-spacing: 0.08em; color: #1A1A1A; margin: 0; }
+        #contactModal .cm-header .cm-line { width: 40px; height: 2px; background: #C9A961; margin: 0.75rem auto 0; }
+        #contactModal .cm-body { padding: 1.5rem 2.5rem 2rem; }
+        #contactModal .cm-field { margin-bottom: 1.25rem; }
+        #contactModal .cm-label { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #999; display: block; margin-bottom: 0.4rem; }
+        #contactModal .cm-input,
+        #contactModal .cm-select,
+        #contactModal .cm-textarea { width: 100%; padding: 0.7rem 0.9rem; border: 1px solid #e8e8e8; border-radius: 8px; font-size: 0.9rem; color: #333; background: #fafafa; transition: border-color 0.25s, background 0.25s; outline: none; }
+        #contactModal .cm-input:focus,
+        #contactModal .cm-select:focus,
+        #contactModal .cm-textarea:focus { border-color: #C9A961; background: #fff; }
+        #contactModal .cm-textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+        #contactModal .cm-row { display: flex; gap: 1rem; }
+        #contactModal .cm-row .cm-field { flex: 1; }
+        #contactModal .cm-privacy { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 1.5rem; }
+        #contactModal .cm-privacy input[type="checkbox"] { margin-top: 2px; accent-color: #C9A961; }
+        #contactModal .cm-privacy label { font-size: 0.8rem; color: #888; line-height: 1.4; cursor: pointer; }
+        #contactModal .cm-privacy a { color: #C9A961; text-decoration: none; }
+        #contactModal .cm-privacy a:hover { text-decoration: underline; }
+        #contactModal .cm-submit { width: 100%; padding: 0.85rem; background: #1A1A1A; color: #fff; border: none; border-radius: 8px; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: background 0.25s; }
+        #contactModal .cm-submit:hover { background: #333; }
+        #contactModal .cm-submit:disabled { background: #999; cursor: not-allowed; }
+        #contactModal .cm-alert { font-size: 0.8rem; padding: 0.7rem 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        #contactModal .cm-alert-success { background: #f0faf0; color: #2d7a2d; border: 1px solid #c8e6c8; }
+        #contactModal .cm-alert-error { background: #fdf0f0; color: #c0392b; border: 1px solid #f0c8c8; }
+        #contactModal .btn-close { position: absolute; top: 1.25rem; right: 1.25rem; opacity: 0.4; z-index: 1; }
+        #contactModal .btn-close:hover { opacity: 0.8; }
+        @media (max-width: 576px) {
+            #contactModal .cm-body { padding: 1.25rem 1.5rem 1.5rem; }
+            #contactModal .cm-header { padding: 1.5rem 1.5rem 0.5rem; }
+            #contactModal .cm-row { flex-direction: column; gap: 0; }
         }
 
-        .cookie-consent-text p {
-            margin: 0;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .cookie-consent-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .cookie-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .cookie-btn-accept {
-            background-color: #BF9A33;
-            color: #212529;
-        }
-
-        .cookie-btn-accept:hover {
-            background-color: #a57b0a;
-        }
-
-        .cookie-btn-decline {
-            background-color: transparent;
-            color: white;
-            border: 1px solid #6c757d;
-        }
-
-        .cookie-btn-decline:hover {
-            background-color: #6c757d;
-        }
-
-        .cookie-btn-settings {
-            background-color: transparent;
-            color: #BF9A33;
-            border: 1px solid #BF9A33;
-        }
-
-        .cookie-btn-settings:hover {
-            background-color: #BF9A33;
-            color: #212529;
-        }
-
-        /* Modal de Preferências de Cookies */
-        .cookie-preferences-modal {
-            display: none;
-            position: fixed;
-            z-index: 10000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .cookie-preferences-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 0;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .cookie-preferences-header {
-            padding: 20px;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .cookie-preferences-header h3 {
-            margin: 0;
-            color: #212529;
-        }
-
-        .cookie-preferences-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #6c757d;
-        }
-
-        .cookie-preferences-body {
-            padding: 20px;
-        }
-
-        .cookie-category {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .cookie-category:last-child {
-            border-bottom: none;
-        }
-
-        .cookie-category-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .cookie-category h4 {
-            margin: 0;
-            color: #212529;
-        }
-
-        .cookie-toggle {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-
-        .cookie-toggle input {
+        /* Fade-in animation */
+        .fade-up {
             opacity: 0;
-            width: 0;
-            height: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
         }
 
-        .cookie-toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
-
-        .cookie-toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
+        /* ── Career Energy Diagnostic (Modal) ── */
+        /* ── Career Energy Diagnostic — Modal ── */
+        .career-energy-section { padding: 5rem 0; background: #faf8f4; }
+        .ce-badge {
+            display: inline-block; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase;
+            color: #C9A961; border: 1px solid #C9A961; padding: 0.3rem 1rem; margin-bottom: 1.5rem;
         }
-
-        .cookie-toggle input:checked+.cookie-toggle-slider {
-            background-color: #BF9A33;
+        .ce-start-btn {
+            display: inline-block; padding: 14px 40px; background: #C9A961; color: #1a2332;
+            font-size: 0.8rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+            text-decoration: none; border: none; cursor: pointer; transition: all 0.4s ease; margin-top: 1.5rem;
         }
-
-        .cookie-toggle input:checked+.cookie-toggle-slider:before {
-            transform: translateX(26px);
+        .ce-start-btn:hover { background: #b8963e; color: #fff; }
+        /* Modal Overlay */
+        .ce-modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 10000;
+            align-items: center; justify-content: center; padding: 1rem;
         }
-
-        .cookie-toggle.disabled {
-            opacity: 0.6;
-            pointer-events: none;
+        .ce-modal-overlay.active { display: flex; }
+        .ce-modal {
+            background: #faf8f4; border-radius: 16px; max-width: 640px; width: 100%;
+            max-height: 90vh; overflow-y: auto; position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 2.5rem 2rem;
         }
-
-        .cookie-preferences-footer {
-            padding: 20px;
-            border-top: 1px solid #dee2e6;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        /* Botão de Feedback */
-        .feedback-btn {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            background-color: #BF9A33;
-            color: #212529;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 20px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .feedback-btn:hover {
-            background-color: #a57b0a;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Estilos para o formulário de feedback */
-        .rating {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-
-        .star {
-            font-size: 24px;
-            cursor: pointer;
-            color: #ddd;
+        .ce-modal-close {
+            position: absolute; top: 1rem; right: 1rem; background: none; border: none;
+            font-size: 1.5rem; color: #888; cursor: pointer; line-height: 1; padding: 0.3rem;
             transition: color 0.2s;
         }
-
-        .star:hover,
-        .star.active {
-            color: #BF9A33;
+        .ce-modal-close:hover { color: #1a2332; }
+        /* Step: Profile (optional fields) */
+        .ce-profile-step { text-align: center; }
+        .ce-profile-step h3 { font-size: 1.3rem; font-weight: 600; color: #1a2332; margin-bottom: 0.3rem; }
+        .ce-profile-step p.ce-subtitle { font-size: 0.85rem; color: #888; margin-bottom: 2rem; }
+        .ce-field { margin-bottom: 1.2rem; text-align: left; }
+        .ce-field label {
+            display: block; font-size: 0.75rem; font-weight: 600; color: #1a2332;
+            letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.4rem;
         }
-
-        @media (max-width: 768px) {
-            .cookie-consent-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .cookie-consent-buttons {
-                justify-content: center;
-                width: 100%;
-            }
-
-            .cookie-preferences-content {
-                width: 95%;
-                margin: 2% auto;
-            }
-
-            .feedback-btn {
-                right: 15px;
-                bottom: 15px;
-                padding: 10px 16px;
-                font-size: 14px;
-            }
+        .ce-field span.ce-optional { font-size: 0.65rem; color: #aaa; font-weight: 400; letter-spacing: 0; text-transform: none; margin-left: 0.3rem; }
+        .ce-field select, .ce-field input {
+            width: 100%; padding: 0.7rem 1rem; border: 1px solid #e0d8c8; border-radius: 8px;
+            font-size: 0.9rem; color: #1a2332; background: #fff; appearance: none;
+            -webkit-appearance: none; transition: border-color 0.2s;
+        }
+        .ce-field select { background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%23888'/%3E%3C/svg%3E") no-repeat right 1rem center; padding-right: 2.5rem; }
+        .ce-field select:focus, .ce-field input:focus { border-color: #C9A961; outline: none; }
+        .ce-profile-actions { display: flex; gap: 0.8rem; margin-top: 1.5rem; justify-content: center; }
+        .ce-btn-skip {
+            padding: 0.7rem 1.5rem; background: transparent; border: 1px solid #ddd; border-radius: 8px;
+            color: #888; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
+        }
+        .ce-btn-skip:hover { border-color: #C9A961; color: #1a2332; }
+        .ce-btn-next {
+            padding: 0.7rem 2rem; background: #C9A961; border: none; border-radius: 8px;
+            color: #1a2332; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .ce-btn-next:hover { background: #b8963e; color: #fff; }
+        /* Step: Quiz */
+        .ce-quiz-step { display: none; }
+        .ce-progress-bar {
+            width: 100%; height: 4px; background: #e8e0d0; border-radius: 2px; margin-bottom: 0.5rem;
+        }
+        .ce-progress-fill {
+            height: 100%; background: #C9A961; border-radius: 2px; transition: width 0.4s ease; width: 0%;
+        }
+        .ce-progress-text { font-size: 0.75rem; color: #888; text-align: center; margin-bottom: 1.5rem; }
+        .ce-question-card {
+            text-align: center; padding: 0.5rem 0;
+        }
+        .ce-dimension-label {
+            font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: #C9A961; margin-bottom: 0.5rem;
+        }
+        .ce-question-text {
+            font-size: 1.1rem; font-weight: 500; color: #1a2332; margin-bottom: 1.5rem; line-height: 1.5;
+        }
+        .ce-options { display: flex; flex-direction: column; gap: 0.5rem; max-width: 500px; margin: 0 auto; }
+        .ce-option {
+            padding: 0.7rem 1rem; border: 1px solid #e8e0d0; border-radius: 8px; cursor: pointer;
+            font-size: 0.85rem; color: #444; transition: all 0.2s ease; text-align: left; background: #fff;
+        }
+        .ce-option:hover { border-color: #C9A961; background: #faf8f4; color: #1a2332; }
+        .ce-option.selected { border-color: #C9A961; background: #C9A961; color: #fff; }
+        /* Step: Results */
+        .ce-results-step { display: none; text-align: center; }
+        .ce-score-section { padding: 1rem 0; }
+        .ce-score-circle { position: relative; width: 140px; height: 140px; margin: 0 auto 1rem; }
+        .ce-score-svg { width: 100%; height: 100%; }
+        .ce-score-value {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 2rem; font-weight: 700; color: #1a2332;
+        }
+        .ce-score-value small { font-size: 0.8rem; color: #888; font-weight: 400; }
+        .ce-score-title { font-size: 1.2rem; font-weight: 600; color: #1a2332; margin-bottom: 0.3rem; }
+        .ce-score-level { font-size: 0.85rem; color: #C9A961; font-weight: 500; letter-spacing: 1px; }
+        .ce-percentile { font-size: 0.75rem; color: #888; margin-top: 0.3rem; font-weight: 400; }
+        .ce-progression { margin-top: 1rem; padding: 0.8rem 1rem; background: linear-gradient(135deg, #faf7f0, #f5f0e5); border: 1px solid #e8dcc8; border-radius: 10px; text-align: center; }
+        .ce-progression p { margin: 0; font-size: 0.78rem; color: #666; line-height: 1.5; }
+        .ce-progression .ce-prog-target { font-weight: 700; color: #C9A961; }
+        .ce-progression .ce-prog-arrow { color: #C9A961; margin: 0 0.3rem; }
+        .ce-country-compare { margin-top: 1rem; padding: 0.8rem 1rem; background: #faf7f0; border: 1px solid #f0ebe0; border-radius: 10px; text-align: center; }
+        .ce-country-compare p { margin: 0; font-size: 0.78rem; color: #666; line-height: 1.5; }
+        .ce-country-compare .ce-country-score { font-weight: 700; color: #C9A961; }
+        .ce-country-compare .ce-country-diff { font-weight: 600; }
+        .ce-country-compare .ce-country-diff.above { color: #28a745; }
+        .ce-country-compare .ce-country-diff.below { color: #c0392b; }
+        .ce-country-compare .ce-country-diff.equal { color: #C9A961; }
+        /* Dimensions */
+        .ce-dimensions { display: flex; flex-direction: column; gap: 0.8rem; margin: 1.5rem 0; text-align: left; }
+        .ce-dim {
+            background: #fff; border-radius: 10px; padding: 1rem 1.2rem;
+            border: 1px solid #f0ebe0;
+        }
+        .ce-dim-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .ce-dim-icon { font-size: 1rem; }
+        .ce-dim-name { flex: 1; font-size: 0.8rem; font-weight: 600; color: #1a2332; }
+        .ce-dim-score { font-size: 0.8rem; font-weight: 700; color: #C9A961; }
+        .ce-dim-bar { width: 100%; height: 4px; background: #e8e0d0; border-radius: 2px; margin-bottom: 0.5rem; }
+        .ce-dim-fill { height: 100%; background: #C9A961; border-radius: 2px; transition: width 1s ease; width: 0%; }
+        .ce-dim-insight { font-size: 0.78rem; color: #666; line-height: 1.4; margin: 0; }
+        /* Result Actions */
+        .ce-result-actions { margin-top: 2rem; display: flex; flex-direction: column; gap: 0.8rem; align-items: center; }
+        .ce-btn-linkedin {
+            display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 2rem;
+            background: #0077B5; color: #fff; border: none; border-radius: 8px;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none;
+        }
+        .ce-btn-linkedin:hover { background: #005f8d; color: #fff; }
+        .ce-btn-linkedin i { font-size: 1.1rem; }
+        .ce-btn-linkedin.copied { background: #28a745; }
+        .ce-btn-linkedin.copied:hover { background: #218838; }
+        /* CTAs */
+        .ce-ctas { margin-top: 2rem; }
+        .ce-ctas h4 { font-size: 0.95rem; font-weight: 600; color: #1a2332; margin-bottom: 1rem; }
+        .ce-cta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
+        .ce-cta-card {
+            background: #fff; border: 1px solid #f0ebe0; border-radius: 10px; padding: 1rem;
+            text-decoration: none; color: #1a2332; transition: all 0.2s ease; text-align: center;
+        }
+        .ce-cta-card:hover { border-color: #C9A961; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+        .ce-cta-icon { font-size: 1.3rem; display: block; margin-bottom: 0.4rem; color: #C9A961; }
+        .ce-cta-card strong { display: block; font-size: 0.8rem; margin-bottom: 0.2rem; }
+        .ce-cta-card p { font-size: 0.7rem; color: #666; margin: 0; }
+        @media (max-width: 576px) {
+            .ce-modal { padding: 1.5rem 1.2rem; margin: 0.5rem; }
+            .ce-cta-grid { grid-template-columns: 1fr; }
+            .ce-question-text { font-size: 1rem; }
         }
     </style>
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "Share2Inspire - Samuel Rolo",
+      "url": "https://www.share2inspire.pt",
+      "description": "Consultoria de carreira e transformação profissional",
+      "founder": { "@type": "Person", "name": "Samuel Rolo" },
+      "areaServed": "PT"
+    }
+    </script>
 </head>
 
 <body>
-    <!-- Launch Campaign Banner -->
-    <div class="sticky-top" id="launchBanner"
-        style="z-index: 1040; background: linear-gradient(135deg, #BF9A33 0%, #D4AF37 100%); color: #1A1A1A; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        <div class="container">
-            <div class="row align-items-center py-2">
-                <div class="col-lg-10 col-md-9 text-center text-md-start">
-                    <h6 class="mb-0 fw-bold d-inline">
-                        🚀 Campanha de Lançamento - Primeiros 30 Dias&nbsp;&nbsp;|&nbsp;&nbsp;
-                    </h6>
-                    <span class="small">
-                        <strong>Kickstart Pro</strong>: <span class="text-decoration-line-through">40€</span> <strong
-                            class="text-dark">30€</strong> (-25%)&nbsp;&nbsp;|&nbsp;&nbsp;
-                        <strong>Revisão CV</strong>: <span class="text-decoration-line-through">25€</span> <strong
-                            class="text-dark">20€</strong> (-20%)&nbsp;&nbsp;|&nbsp;&nbsp;
-                        Cupão <code class="bg-dark text-warning px-2 py-1 rounded"
-                            style="font-size: 0.85rem;">NEWS2I10</code> para <strong>-10% extra</strong>
-                    </span>
-                </div>
-                <div class="col-lg-2 col-md-3 text-center text-md-end mt-2 mt-md-0">
-                    <a href="pages/servicos.html" class="btn btn-sm btn-dark fw-bold px-3 py-1"
-                        style="border-radius: 20px;">
-                        Ver Serviços
-                    </a>
-                    <button class="btn btn-sm btn-link text-dark p-0 ms-2"
-                        onclick="document.getElementById('launchBanner').style.display='none'"
-                        style="text-decoration: none; font-size: 1.2rem;">
-                        ×
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX" height="0" width="0"
-            style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-    <!-- Header e Navegação -->
+    <!-- Google Tag Manager noscript: adicionar ID real quando disponível -->
+
+    <!-- Header -->
     <header class="header">
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="index.html">
-                    <img src="images/logo.png" alt="Share2Inspire Logo" class="logo-img">
+                    <img fetchpriority="high" src="images/logo.webp" alt="Share2Inspire Logo" class="logo-img">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -1955,422 +837,447 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="index.html">Início</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/sobre.html">Sobre</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/servicos.html">Serviços</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/cv-analysis.html">CV Analyser</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/loja.html">Loja</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/people-hub.html">People Hub</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="modal"
-                                data-bs-target="#contactModal">Contactos</a>
-                        </li>
-                        <li class="nav-item ms-2">
-                            <a class="nav-link" href="/area-cliente/" style="background: #BF9A33; color: #0a0a0a !important; padding: 0.4rem 1rem; border-radius: 4px; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='#d4af5a'" onmouseout="this.style.background='#BF9A33'">Área de Cliente</a>
+                        <li class="nav-item"><a class="nav-link active" href="index.html">Início</a></li>
+                        <li class="nav-item"><a class="nav-link" href="pages/sobre.html">Sobre</a></li>
+                        <li class="nav-item"><a class="nav-link" href="pages/servicos.html">Serviços</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/cv-analyser">CV Analyser</a></li>
+                        <li class="nav-item"><a class="nav-link" href="career-path">Career Path</a></li>
+                        <li class="nav-item"><a class="nav-link" href="pages/loja.html">Loja</a></li>
+                        <li class="nav-item"><a class="nav-link" href="pages/conhecimento.html">Conhecimento</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/pages/contactos">Contactos</a></li>
+                        <li class="nav-item ms-2"><a class="nav-link" href="/area-cliente/" style="background:#BF9A33;color:#0a0a0a !important;padding:0.4rem 1rem;border-radius:4px;font-weight:600;transition:all 0.3s;" onmouseover="this.style.background='#d4af5a'" onmouseout="this.style.background='#BF9A33'">Área de Cliente</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; font-weight: 500;">
+                                <i class="fas fa-globe"></i> PT
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                                <li><a class="dropdown-item" href="/en/pages/home">EN</a></li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <!-- Hero Section - V2.0 -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Clareza para decidir o que vem a seguir na <span class="highlight">tua carreira</span></h1>
-                <p class="hero-subtitle">Acompanhamento estratégico e humano para profissionais em momentos de dúvida,
-                    transição ou reorientação.</p>
-                <p class="hero-signature" style="font-size: 1rem; margin-top: 1.5rem; opacity: 0.9;">
-                    <strong>Samuel Rolo</strong><br>
-                    Autor e mentor em carreira e transformação profissional.
-                </p>
-                <p class="hero-context"
-                    style="font-size: 0.95rem; margin-top: 1rem; opacity: 0.85; max-width: 700px; margin-left: auto; margin-right: auto;">
-                    Da análise do teu percurso à definição consciente dos próximos passos, com contexto, critério e
-                    intenção.
-                </p>
-                <div class="hero-ctas">
-                    <a href="pages/servicos.html" class="btn-hero-primary">Conhecer o Kickstart Pro</a>
-                    <a href="pages/cv-analysis.html" class="btn-hero-secondary">Analisar o meu CV</a>
-                    <a href="/area-cliente/" class="btn-hero-secondary" style="border-color: #BF9A33; color: #BF9A33;">Área de Cliente &rarr;</a>
-                </div>
-            </div>
-        </div>
-        <div class="scroll-down">
-            <div class="arrow"></div>
-        </div>
-    </section>
-    <!-- Intro Section -->
-    <section class="intro-section" id="intro">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 text-center">
-                    <h2>O nosso <span class="proposito-gold">propósito</span></h2>
-                    <p class="lead" style="margin-bottom: 1.5rem;">Ajudamos profissionais a ganhar clareza quando o
-                        caminho deixa de ser óbvio.</p>
-                    <p style="text-align: left; line-height: 1.8;">
-                        Trabalhamos a carreira como um processo de leitura e decisão. Olhamos para o que já foi feito,
-                        para o contexto atual e para as opções reais que fazem sentido a seguir.
-                    </p>
-                    <p style="text-align: left; line-height: 1.8;">
-                        Não acreditamos em fórmulas rápidas nem em discursos motivacionais vazios. Acreditamos em
-                        pensamento crítico, análise estratégica e acompanhamento humano, para escolhas mais conscientes
-                        e sustentáveis.
-                    </p>
-                    <p style="text-align: left; line-height: 1.8; font-weight: 600;">
-                        Aqui, crescer não é acelerar sem pensar. É saber para onde se vai e porquê.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Services Preview Section -->
-    <section class="services-preview py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);">
-        <div class="container">
-            <div class="text-center mb-5">
-                <span class="text-uppercase small fw-bold" style="color: #BF9A33; letter-spacing: 2px;">Os nossos
-                    serviços</span>
-                <h2 class="mt-3 fw-bold">Apoio profissional</h2>
-            </div>
-            <div class="row g-4 justify-content-center">
-                <!-- Kickstart Pro -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-preview-card p-4 h-100"
-                        style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
-                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
-                            style="width: 70px; height: 70px; background: rgba(191, 154, 51, 0.1); border-radius: 50%;">
-                            <i class="fas fa-compass" style="color: #BF9A33; font-size: 1.8rem;"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">Kickstart Pro</h4>
-                        <p class="text-muted small mb-2" style="line-height: 1.6;">Uma sessão estratégica para parar,
-                            pensar e recentrar.</p>
-                        <p class="text-muted small mb-3" style="line-height: 1.6;">Exploramos o teu momento
-                            profissional, clarificamos opções e definimos próximos passos com critério e realismo.</p>
-                        <p class="text-muted small" style="line-height: 1.6; font-style: italic;">Indicado para fases de
-                            transição, desgaste profissional ou necessidade de reorientação.</p>
-                        <a href="pages/servicos.html" class="btn btn-sm px-4 py-2 rounded-pill fw-semibold mt-3"
-                            style="background: #BF9A33; color: #fff;">Saber mais</a>
-                    </div>
-                </div>
-                <!-- Revisão de CV -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-preview-card p-4 h-100"
-                        style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
-                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
-                            style="width: 70px; height: 70px; background: rgba(191, 154, 51, 0.1); border-radius: 50%;">
-                            <i class="fas fa-file-alt" style="color: #BF9A33; font-size: 1.8rem;"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">Revisão de CV</h4>
-                        <p class="text-muted small mb-2" style="line-height: 1.6;">Uma análise estratégica e humana do
-                            teu CV.</p>
-                        <p class="text-muted small mb-3" style="line-height: 1.6;">Mais do que rever um documento,
-                            trabalhamos o posicionamento, a narrativa e a coerência entre o teu percurso e os teus
-                            objetivos profissionais.</p>
-                        <p class="text-muted small" style="line-height: 1.6; font-style: italic;">O CV como reflexo
-                            claro de quem és e para onde queres ir.</p>
-                        <a href="pages/servicos.html" class="btn btn-sm px-4 py-2 rounded-pill fw-semibold mt-3"
-                            style="background: #BF9A33; color: #fff;">Saber mais</a>
-                    </div>
-                </div>
-                <!-- CV Analyzer -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-preview-card p-4 h-100"
-                        style="background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; transition: all 0.3s ease;">
-                        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center"
-                            style="width: 70px; height: 70px; background: rgba(191, 154, 51, 0.1); border-radius: 50%;">
-                            <i class="fas fa-brain" style="color: #BF9A33; font-size: 1.8rem;"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">CV Analyzer</h4>
-                        <p class="text-muted small mb-2" style="line-height: 1.6;">Um diagnóstico inicial apoiado por
-                            tecnologia.</p>
-                        <p class="text-muted small mb-3" style="line-height: 1.6;">Permite identificar padrões, lacunas
-                            e oportunidades de melhoria, servindo como ponto de partida para uma análise mais
-                            aprofundada e consciente.</p>
-                        <p class="text-muted small" style="line-height: 1.6; font-style: italic;">Rápido, informativo e
-                            complementar à avaliação humana.</p>
-                        <a href="pages/cv-analysis.html" class="btn btn-sm px-4 py-2 rounded-pill fw-semibold mt-3"
-                            style="background: #BF9A33; color: #fff;">Analisar agora</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <style>
-        .service-preview-card:hover {
-            transform: translateY(-5px);
-            border-color: #BF9A33 !important;
-            box-shadow: 0 10px 30px rgba(191, 154, 51, 0.15);
-        }
 
-        .service-preview-card:hover .btn {
-            background: #a58428 !important;
-        }
-    </style>
-    <!-- O Que Nos Move Section -->
-    <section class="what-moves-us-section" id="o-que-nos-move">
+    <!-- ============================
+         HERO — Uma mensagem. Espaço.
+         ============================ -->
+    <section class="hero-minimal">
+        <div class="hero-inner">
+            <h1>Clareza para decidir<br>o que vem <strong>a seguir</strong></h1>
+            <p>Acompanhamento estratégico e humano para profissionais<br>em momentos de dúvida, transição ou reorientação.</p>
+            <a href="pages/servicos.html" class="hero-cta">Explorar serviços</a>
+        </div>
+        <div class="scroll-hint"><span></span></div>
+    </section>
+
+    <!-- ============================
+         PROPÓSITO — Uma ideia central.
+         ============================ -->
+    <section class="section-serene proposito-section fade-up">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="section-header text-center mb-5">
-                        <h2>O que nos <span class="move-gold">move</span></h2>
-                    </div>
-                    <div class="core-values-section">
-                        <div class="core-values-grid">
-                            <div class="core-value-item">
-                                <div class="core-value-icon">
-                                </div>
-                                <h4 class="core-value-title">HUMANIDADE</h4>
-                                <p class="core-value-description">Pessoas primeiro. Decisões conscientes, não
-                                    automáticas.</p>
-                            </div>
-                            <div class="core-value-item">
-                                <div class="core-value-icon">
-                                </div>
-                                <h4 class="core-value-title">CONFIANÇA</h4>
-                                <p class="core-value-description">Relações baseadas em transparência, não em promessas.
-                                </p>
-                            </div>
-                            <div class="core-value-item">
-                                <div class="core-value-icon">
-                                </div>
-                                <h4 class="core-value-title">IMPACTO</h4>
-                                <p class="core-value-description">Resultados tangíveis. Mudanças que se sentem, não
-                                    apenas se dizem.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Proposta de Valor Section -->
-    <section class="value-proposition-section" id="proposta-valor">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <h2 class="text-center mb-5">A nossa proposta de <span class="valor-gold">valor</span></h2>
-                    <div class="video-container-clean">
-                        <video class="video-player-clean" controls poster="images/video-thumbnail.jpg">
-                            <source
-                                src="https://github.com/samuelrolo/samuel.rolo/raw/main/video/share2inspire_video_final_sincronizado%20.mp4"
-                                type="video/mp4">
-                            O seu navegador não suporta vídeos HTML5.
-                        </video>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Secção de Diagnóstico de Maturidade de RH -->
-    <!-- Secção de Diagnóstico Moderna -->
-    <!-- 
-    SECÇÃO AUTONOMIZADA (OCULTA DA HOMEPAGE)
-    Para reativar, descomentar este bloco.
-    
-    <section class="diagnostic-section-modern" id="diagnostico">
-        <div class="container">
-            <div class="section-header-modern">
-                <div class="diagnostic-badge">
-                    Avaliação Profissional
-                </div>
-                <h2 class="section-title-modern">
-                    Diagnóstico de<br>
-                    <span class="title-highlight">Maturidade de RH</span>
-                </h2>
-                <p class="section-subtitle-modern">
-                    Avalie o nível de maturidade dos processos de Recursos Humanos da sua organização através de um
-                    questionário especializado baseado em 10 dimensões fundamentais.
-                </p>
-            </div>
-            <div class="features-grid-modern">
-                <div class="feature-card-modern">
-                    <div class="feature-icon-modern">
-                    </div>
-                    <h3 class="feature-title-modern">Avaliação em 8 dimensões críticas</h3>
-                    <p class="feature-description-modern">
-                        Análise completa de processos fundamentais desde alinhamento estratégico até compliance e ESG.
+                <div class="col-lg-7 text-center">
+                    <h2>O nosso <strong>propósito</strong></h2>
+                    <div class="gold-line"></div>
+                    <p class="section-text">
+                        Trabalhamos a carreira como um processo de leitura e decisão. Olhamos para o que já foi feito, para o contexto atual e para as opções reais que fazem sentido a seguir.
+                    </p>
+                    <p class="section-text" style="margin-top: 1.5rem;">
+                        <strong>Crescer não é acelerar sem pensar. É saber para onde se vai e porquê.</strong>
                     </p>
                 </div>
-                <div class="feature-card-modern">
-                    <div class="feature-icon-modern">
-                    </div>
-                    <h3 class="feature-title-modern">Relatório personalizado instantâneo</h3>
-                    <p class="feature-description-modern">
-                        Compare os seus resultados com benchmarks do mercado e identifique oportunidades de melhoria.
-                    </p>
-                </div>
-                <div class="feature-card-modern">
-                    <div class="feature-icon-modern">
-                    </div>
-                    <h3 class="feature-title-modern">Recomendações práticas de melhoria</h3>
-                    <p class="feature-description-modern">
-                        Receba insights personalizados e um plano de ação claro para evoluir a maturidade dos seus
-                        processos.
-                    </p>
-                </div>
-            </div>
-            <div class="cta-container-modern">
-                <button class="hero-cta-modern" data-bs-toggle="modal" data-bs-target="#diagnosticModalClean">
-                    Iniciar Avaliação Gratuita
-                </button>
-                <p class="cta-note-modern">
-                    Demora apenas 5-10 minutos • Resultados imediatos
-                </p>
             </div>
         </div>
     </section>
 
-    <div class="modal fade modal-clean" id="diagnosticModalClean" tabindex="-1"
-        aria-labelledby="diagnosticModalCleanLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="diagnosticModalCleanLabel">Diagnóstico de Maturidade de RH</h5>
-                    <p class="modal-subtitle">Avalie o nível de desenvolvimento dos seus processos de Recursos Humanos
+    <!-- ============================
+         E-BOOK — Lead magnet limpo.
+         ============================ -->
+    <section class="section-serene ebook-section fade-up">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6 text-center">
+                    <img loading="lazy" src="images/ebook-capa.webp" alt="E-book Energia para Liderar" class="ebook-cover">
+                    <h2>Energia para <strong>Liderar</strong></h2>
+                    <div class="gold-line"></div>
+                    <p class="section-text">
+                        O guia prático de performance mental e física para quem lidera e quer manter a energia de forma sustentável.
                     </p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <p class="ebook-authors">Samuel Rolo &bull; Marlene Ruivo</p>
+                    <a href="pages/conhecimento.html#ebook-download" class="ebook-cta">Saber mais</a>
                 </div>
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressBarClean" style="width: 12.5%"></div>
-                    </div>
-                    <div class="progress-text">
-                        <span id="currentQuestionClean">1</span> de <span id="totalQuestionsClean">8</span> perguntas
-                    </div>
+            </div>
+        </div>
+    </section>
+    <!-- ============================
+         CAREER ENERGY DIAGNOSTIC — Survey interativo gratuito
+         ============================ -->
+    <!-- ============================
+         CAREER ENERGY — Diagnóstico Gratuito
+         ============================ -->
+    <section class="section-serene career-energy-section fade-up" id="career-energy">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7 text-center">
+                    <p class="ce-badge">DIAGNÓSTICO GRATUITO</p>
+                    <h2>Qual é a tua <strong>Energia de Carreira</strong>?</h2>
+                    <div class="gold-line"></div>
+                    <p class="section-text">Descobre o teu Career Energy Score em 2 minutos. Quatro dimensões que definem a tua performance profissional.</p>
+                    <button class="ce-start-btn" onclick="openCEModal()">Começar Diagnóstico</button>
                 </div>
-                <div class="modal-body">
-                    <div id="surveyContentClean">
-                    </div>
-                    <div class="maturity-levels">
-                        <h3>Níveis de Maturidade</h3>
-                        <div class="maturity-item">
-                            <div class="maturity-number">1</div>
-                            <div class="maturity-text">Práticas reactivas, sem ligação explícita à estratégia.</div>
-                        </div>
-                        <div class="maturity-item">
-                            <div class="maturity-number">2</div>
-                            <div class="maturity-text">Algum alinhamento e análises pontuais de lacunas; uso limitado de
-                                dados.</div>
-                        </div>
-                        <div class="maturity-item">
-                            <div class="maturity-number">3</div>
-                            <div class="maturity-text">Alinhamento consistente; planeamento baseado em dados básicos e
-                                cenários anuais.</div>
-                        </div>
-                        <div class="maturity-item">
-                            <div class="maturity-number">4</div>
-                            <div class="maturity-text">RH lidera o planeamento estratégico de pessoas, usando dados
-                                avançados e projecções a médio prazo.</div>
-                        </div>
-                        <div class="maturity-item">
-                            <div class="maturity-number">5</div>
-                            <div class="maturity-text">Planeamento de força de trabalho em tempo real, preditivo,
-                                reconhecido como benchmark no sector.</div>
-                        </div>
-                    </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Career Energy Modal -->
+    <div class="ce-modal-overlay" id="ceModalOverlay">
+        <div class="ce-modal" id="ceModal">
+            <button class="ce-modal-close" onclick="closeCEModal()">&times;</button>
+
+            <!-- Step 1: Profile (optional) -->
+            <div class="ce-profile-step" id="ceProfileStep">
+                <p class="ce-badge" style="margin-bottom:1rem;">CAREER ENERGY</p>
+                <h3>Antes de começar</h3>
+                <p class="ce-subtitle">Estes dados são opcionais e ajudam a contextualizar o teu resultado.</p>
+
+                <div class="ce-field">
+                    <label>Área de trabalho <span class="ce-optional">(opcional)</span></label>
+                    <select id="ceWorkArea">
+                        <option value="">Selecionar...</option>
+                        <option value="tech">Tecnologia / IT</option>
+                        <option value="finance">Finanças / Banca</option>
+                        <option value="hr">Recursos Humanos</option>
+                        <option value="marketing">Marketing / Comunicação</option>
+                        <option value="sales">Vendas / Comercial</option>
+                        <option value="consulting">Consultoria</option>
+                        <option value="health">Saúde</option>
+                        <option value="education">Educação / Formação</option>
+                        <option value="legal">Jurídico</option>
+                        <option value="engineering">Engenharia</option>
+                        <option value="operations">Operações / Logística</option>
+                        <option value="creative">Design / Criativo</option>
+                        <option value="public">Sector Público</option>
+                        <option value="other">Outra</option>
+                    </select>
                 </div>
-                <div class="modal-navigation">
-                    <button type="button" class="btn-nav btn-nav-secondary" id="prevBtnClean"
-                        onclick="previousDimensionClean()" disabled>
-                        Anterior
+
+                <div class="ce-field">
+                    <label>Antiguidade na função actual <span class="ce-optional">(opcional)</span></label>
+                    <select id="ceRoleTenure">
+                        <option value="">Selecionar...</option>
+                        <option value="<1">Menos de 1 ano</option>
+                        <option value="1-3">1 a 3 anos</option>
+                        <option value="3-5">3 a 5 anos</option>
+                        <option value="5-10">5 a 10 anos</option>
+                        <option value="10+">Mais de 10 anos</option>
+                    </select>
+                </div>
+
+                <div class="ce-field">
+                    <label>País onde trabalhas <span class="ce-optional">(opcional)</span></label>
+                    <select id="ceCountry">
+                        <option value="">Selecionar...</option>
+                        <option value="PT">Portugal</option>
+                        <option value="BR">Brasil</option>
+                        <option value="ES">Espanha</option>
+                        <option value="FR">França</option>
+                        <option value="DE">Alemanha</option>
+                        <option value="UK">Reino Unido</option>
+                        <option value="US">Estados Unidos</option>
+                        <option value="IT">Itália</option>
+                        <option value="NL">Países Baixos</option>
+                        <option value="BE">Bélgica</option>
+                        <option value="CH">Suíça</option>
+                        <option value="IE">Irlanda</option>
+                        <option value="LU">Luxemburgo</option>
+                        <option value="AT">Áustria</option>
+                        <option value="SE">Suécia</option>
+                        <option value="NO">Noruega</option>
+                        <option value="DK">Dinamarca</option>
+                        <option value="FI">Finlândia</option>
+                        <option value="PL">Polónia</option>
+                        <option value="CZ">Chéquia</option>
+                        <option value="RO">Roménia</option>
+                        <option value="GR">Grécia</option>
+                        <option value="AU">Austrália</option>
+                        <option value="CA">Canadá</option>
+                        <option value="MX">México</option>
+                        <option value="AR">Argentina</option>
+                        <option value="CL">Chile</option>
+                        <option value="CO">Colômbia</option>
+                        <option value="JP">Japão</option>
+                        <option value="KR">Coreia do Sul</option>
+                        <option value="CN">China</option>
+                        <option value="IN">Índia</option>
+                        <option value="SG">Singapura</option>
+                        <option value="AE">Emirados Árabes</option>
+                        <option value="SA">Arábia Saudita</option>
+                        <option value="ZA">África do Sul</option>
+                        <option value="AO">Angola</option>
+                        <option value="MZ">Moçambique</option>
+                        <option value="OTHER">Outro</option>
+                    </select>
+                </div>
+
+                <div class="ce-field">
+                    <label>Anos de experiência total <span class="ce-optional">(opcional)</span></label>
+                    <select id="ceTotalExp">
+                        <option value="">Selecionar...</option>
+                        <option value="0-2">0 a 2 anos</option>
+                        <option value="3-5">3 a 5 anos</option>
+                        <option value="6-10">6 a 10 anos</option>
+                        <option value="11-15">11 a 15 anos</option>
+                        <option value="15+">Mais de 15 anos</option>
+                    </select>
+                </div>
+
+                <div class="ce-profile-actions">
+                    <button class="ce-btn-skip" onclick="startCEQuiz()">Saltar</button>
+                    <button class="ce-btn-next" onclick="startCEQuiz()">Continuar</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Quiz -->
+            <div class="ce-quiz-step" id="ceQuizStep">
+                <div class="ce-progress-bar">
+                    <div class="ce-progress-fill" id="ceProgressFill"></div>
+                </div>
+                <p class="ce-progress-text" id="ceProgressText">Pergunta 1 de 12</p>
+                <div class="ce-question-card" id="ceQuestionCard">
+                    <p class="ce-dimension-label" id="ceDimensionLabel"></p>
+                    <h3 class="ce-question-text" id="ceQuestionText"></h3>
+                    <div class="ce-options" id="ceOptions"></div>
+                </div>
+            </div>
+
+            <!-- Step 3: Results -->
+            <div class="ce-results-step" id="ceResultsStep">
+                <div class="ce-score-section">
+                    <div class="ce-score-circle">
+                        <svg viewBox="0 0 120 120" class="ce-score-svg">
+                            <circle cx="60" cy="60" r="52" fill="none" stroke="#e8e0d0" stroke-width="6"/>
+                            <circle cx="60" cy="60" r="52" fill="none" stroke="#C9A961" stroke-width="6" 
+                                stroke-dasharray="326.73" stroke-dashoffset="326.73" stroke-linecap="round"
+                                transform="rotate(-90 60 60)" id="ceScoreArc"/>
+                        </svg>
+                        <div class="ce-score-value">
+                            <span id="ceScoreNumber">0</span>
+                            <small>/100</small>
+                        </div>
+                    </div>
+                    <h3 class="ce-score-title">Career Energy Score</h3>
+                    <p class="ce-score-level" id="ceScoreLevel"></p>
+                    <p class="ce-percentile" id="cePercentile"></p>
+                </div>
+
+                <div class="ce-country-compare" id="ceCountryCompare" style="display:none;">
+                    <p id="ceCountryText"></p>
+                </div>
+
+                <div class="ce-progression" id="ceProgression" style="display:none;">
+                    <p id="ceProgressionText"></p>
+                </div>
+
+                <div class="ce-dimensions">
+                    <div class="ce-dim"><div class="ce-dim-header"><span class="ce-dim-icon">⚡</span><span class="ce-dim-name">Energia Profissional</span><span class="ce-dim-score" id="ceDimScore0">0</span></div><div class="ce-dim-bar"><div class="ce-dim-fill" id="ceDimFill0"></div></div><p class="ce-dim-insight" id="ceDimInsight0"></p></div>
+                    <div class="ce-dim"><div class="ce-dim-header"><span class="ce-dim-icon">🎯</span><span class="ce-dim-name">Clareza Mental de Carreira</span><span class="ce-dim-score" id="ceDimScore1">0</span></div><div class="ce-dim-bar"><div class="ce-dim-fill" id="ceDimFill1"></div></div><p class="ce-dim-insight" id="ceDimInsight1"></p></div>
+                    <div class="ce-dim"><div class="ce-dim-header"><span class="ce-dim-icon">📍</span><span class="ce-dim-name">Posicionamento no Mercado</span><span class="ce-dim-score" id="ceDimScore2">0</span></div><div class="ce-dim-bar"><div class="ce-dim-fill" id="ceDimFill2"></div></div><p class="ce-dim-insight" id="ceDimInsight2"></p></div>
+                    <div class="ce-dim"><div class="ce-dim-header"><span class="ce-dim-icon">🧭</span><span class="ce-dim-name">Propósito e Progressão</span><span class="ce-dim-score" id="ceDimScore3">0</span></div><div class="ce-dim-bar"><div class="ce-dim-fill" id="ceDimFill3"></div></div><p class="ce-dim-insight" id="ceDimInsight3"></p></div>
+                </div>
+
+                <!-- LinkedIn Share -->
+                <div class="ce-result-actions">
+                    <button class="ce-btn-linkedin" id="ceBtnLinkedIn" onclick="copyCELinkedInPost()">
+                        <i class="fab fa-linkedin"></i> Copiar Post LinkedIn
                     </button>
-                    <button type="button" class="btn-nav btn-nav-primary" id="nextBtnClean"
-                        onclick="nextDimensionClean()">
-                        Próxima
-                    </button>
+                </div>
+
+                <!-- CTAs -->
+                <div class="ce-ctas">
+                    <h4>Próximos passos</h4>
+                    <div class="ce-cta-grid">
+                        <a href="pages/conhecimento.html#ebook-download" class="ce-cta-card">
+                            <span class="ce-cta-icon"><i class="fas fa-book-open"></i></span>
+                            <strong>E-book Gratuito</strong>
+                            <p>Energia para Liderar</p>
+                        </a>
+                        <a href="cv-analyser" class="ce-cta-card">
+                            <span class="ce-cta-icon"><i class="fas fa-file-alt"></i></span>
+                            <strong>CV Analyser</strong>
+                            <p>Análise gratuita do teu CV</p>
+                        </a>
+                        <a href="career-path" class="ce-cta-card">
+                            <span class="ce-cta-icon"><i class="fas fa-route"></i></span>
+                            <strong>Career Path</strong>
+                            <p>Roadmap de carreira</p>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade modal-clean" id="resultsModalClean" tabindex="-1" aria-labelledby="resultsModalCleanLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="resultsModalCleanLabel">
-                        Resultados do Diagnóstico
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- ============================
+         SERVIÇOS — Texto limpo, sem caixas.
+         ============================ -->
+    <section class="section-serene servicos-section fade-up">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7 text-center">
+                    <h2>O que <strong>fazemos</strong></h2>
+                    <div class="gold-line"></div>
                 </div>
-                <div class="modal-body">
-                    <div id="resultsContentClean">
+            </div>
+            <div class="row justify-content-center" style="margin-top: 3rem;">
+                <div class="col-lg-8">
+
+                    <div class="servico-item fade-up">
+                        <h3>Kickstart Pro</h3>
+                        <p>Uma sessão estratégica para parar, pensar e recentrar. Exploramos o momento profissional, clarificamos opções e definimos próximos passos com critério.</p>
+                        <a href="pages/servicos.html" class="servico-link">Agendar sessão <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="servico-divider"></div>
+
+                    <div class="servico-item fade-up">
+                        <h3>Revisão de CV</h3>
+                        <p>Análise estratégica e humana do percurso profissional. Trabalhamos o posicionamento, a narrativa e a coerência entre o percurso e os objetivos.</p>
+                        <a href="pages/servicos.html" class="servico-link">Pedir revisão <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="servico-divider"></div>
+
+                    <div class="servico-item fade-up">
+                        <h3>CV Analyzer</h3>
+                        <p>Diagnóstico inicial apoiado por tecnologia. Identifica padrões, lacunas e oportunidades de melhoria como ponto de partida para uma análise mais consciente.</p>
+                        <a href="cv-analyser" class="servico-link">Analisar <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="servico-divider"></div>
+
+                    <div class="servico-item fade-up">
+                        <h3>Career Path</h3>
+                        <p>Plano de carreira personalizado com IA. Cruzamos o CV com o LinkedIn para criar um roadmap estratégico com os próximos passos concretos.</p>
+                        <a href="career-path" class="servico-link">Criar roadmap <i class="fas fa-arrow-right"></i></a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         ESTUDO EM DESTAQUE
+         ============================ -->
+    <section class="estudo-destaque fade-up">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7">
+                    <span class="estudo-badge">Novo Estudo Q1 2026</span>
+                    <h2>O Estado do <strong>LinkedIn</strong> em Portugal</h2>
+                    <div class="gold-line"></div>
+                    <div class="estudo-stat">74%</div>
+                    <div class="estudo-stat-label">dos profissionais portugueses tem um perfil com score abaixo de 5/10</div>
+                    <p class="estudo-desc">Uma análise a 500 perfis revela os erros mais comuns que estão a custar oportunidades de carreira. Descobre os dados completos no estudo.</p>
+                    <a href="pages/conhecimento.html#artigos-exclusivos" class="estudo-cta">Ler o estudo completo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         VALORES — Tipografia como elemento visual.
+         ============================ -->
+    <section class="section-serene valores-section fade-up">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7 text-center">
+                    <h2>O que nos <strong>move</strong></h2>
+                    <div class="gold-line"></div>
+                </div>
+            </div>
+            <div class="row justify-content-center" style="margin-top: 2rem;">
+                <div class="col-6 col-md-3">
+                    <div class="valor-item">
+                        <div class="valor-word">Humanidade</div>
+                        <p class="valor-desc">Pessoas primeiro. Decisões conscientes.</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="valor-item">
+                        <div class="valor-word">Confiança</div>
+                        <p class="valor-desc">Transparência, não promessas.</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="valor-item">
+                        <div class="valor-word">Clareza</div>
+                        <p class="valor-desc">Pensamento crítico e direção.</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="valor-item">
+                        <div class="valor-word">Impacto</div>
+                        <p class="valor-desc">Mudanças que se sentem.</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    -->
+    </section>
+
     <!-- Footer -->
-    <footer id="contactos">
+    <footer>
         <div class="container">
-            <div class="footer-container">
-                <div class="footer-left">
-                    <p>© 2026 Share2Inspire. Todos os direitos reservados.</p>
-                </div>
-                <div class="footer-right">
-                    <div class="footer-contact">
-                        <p> srshare2inspire@gmail.com</p>
-                        <p> +351 961 925 050</p>
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="footer-brand">
+                        <img loading="lazy" src="images/logo.webp" alt="Samuel Rolo Logo">
                     </div>
-                    <div class="footer-social">
-                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-white"
-                            style="width: 36px; height: 36px; background: rgba(191, 154, 51, 0.2); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; transition: all 0.3s; text-decoration: none;"
-                            onmouseover="this.style.background='#BF9A33'"
-                            onmouseout="this.style.background='rgba(191, 154, 51, 0.2)'">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="https://www.instagram.com/share2inspire_/" target="_blank" class="text-white ms-2"
-                            style="width: 36px; height: 36px; background: rgba(191, 154, 51, 0.2); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; transition: all 0.3s; text-decoration: none;"
-                            onmouseover="this.style.background='#BF9A33'"
-                            onmouseout="this.style.background='rgba(191, 154, 51, 0.2)'">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://www.instagram.com/samuel_rolo/" target="_blank" class="text-white ms-2"
-                            style="width: 36px; height: 36px; background: rgba(191, 154, 51, 0.2); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; transition: all 0.3s; text-decoration: none;"
-                            onmouseover="this.style.background='#BF9A33'"
-                            onmouseout="this.style.background='rgba(191, 154, 51, 0.2)'">
-                            <i class="fab fa-instagram"></i>
-                        </a>
+                    <p class="footer-text">A transformar mindsets e carreiras através da fusão entre estratégia corporativa e empatia humana.</p>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5 class="footer-title">Navegação</h5>
+                    <a href="index.html" class="footer-link">Início</a>
+                    <a href="pages/sobre.html" class="footer-link">Sobre</a>
+                    <a href="pages/servicos.html" class="footer-link">Serviços</a>
+                    <a href="pages/conhecimento.html" class="footer-link">Conhecimento</a>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <h5 class="footer-title">Legal</h5>
+                    <a href="pages/politica-privacidade.html" class="footer-link">Privacidade</a>
+                    <a href="pages/politica-cookies.html" class="footer-link">Cookies</a>
+                    <a href="pages/informacao-legal.html" class="footer-link">Informação Legal</a>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <h5 class="footer-title">Contacto</h5>
+                    <p class="footer-text small mb-2"><i class="fas fa-envelope text-gold me-2"></i>srshare2inspire@gmail.com</p>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-gold"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="https://www.instagram.com/share2inspire_/" target="_blank" class="text-gold"><i class="fab fa-instagram fa-lg"></i></a>
                     </div>
                 </div>
             </div>
-            <div class="footer-links">
-                <a href="pages/politica-privacidade.html">Política de Privacidade</a>
-                <a href="pages/politica-cookies.html">Política de Cookies</a>
-                <a href="pages/tratamento-dados.html">Tratamento de Dados</a>
-                <a href="pages/informacao-legal.html">Informação Legal</a>
+            <div class="footer-bottom">
+                <p class="footer-copy">&copy; 2026 SHARE2INSPIRE | SAMUEL ROLO. TODOS OS DIREITOS RESERVADOS.</p>
             </div>
         </div>
     </footer>
+
     <!-- Cookie Consent Banner -->
     <div id="cookieConsentBanner" class="cookie-consent-banner">
         <div class="cookie-consent-content">
             <div class="cookie-consent-text">
                 <h4>Utilizamos cookies</h4>
-                <p>Este site utiliza cookies para melhorar a tua experiência. Ao continuar a navegar, concordas com a
-                    nossa utilização de cookies.</p>
+                <p>Este site utiliza cookies para melhorar a experiência. Ao continuar a navegar, concorda com a nossa utilização de cookies.</p>
             </div>
             <div class="cookie-consent-buttons">
                 <button class="cookie-btn cookie-btn-accept" onclick="acceptAllCookies()">Aceitar Todos</button>
-                <button class="cookie-btn cookie-btn-decline" onclick="declineAllCookies()">Recusar Não
-                    Essenciais</button>
+                <button class="cookie-btn cookie-btn-decline" onclick="declineAllCookies()">Recusar Não Essenciais</button>
                 <button class="cookie-btn cookie-btn-settings" onclick="openCookieSettings()">Preferências</button>
             </div>
         </div>
     </div>
+
     <!-- Cookie Preferences Modal -->
     <div id="cookiePreferencesModal" class="cookie-preferences-modal">
         <div class="cookie-preferences-content">
@@ -2387,7 +1294,7 @@
                             <span class="cookie-toggle-slider"></span>
                         </label>
                     </div>
-                    <p>Estes cookies são essenciais para o funcionamento do site e não podem ser desativados.</p>
+                    <p>Essenciais para o funcionamento do site.</p>
                 </div>
                 <div class="cookie-category">
                     <div class="cookie-category-header">
@@ -2397,8 +1304,7 @@
                             <span class="cookie-toggle-slider"></span>
                         </label>
                     </div>
-                    <p>Ajudam-nos a entender como os visitantes interagem com o site, permitindo melhorar a experiência.
-                    </p>
+                    <p>Ajudam-nos a entender como os visitantes interagem com o site.</p>
                 </div>
                 <div class="cookie-category">
                     <div class="cookie-category-header">
@@ -2408,8 +1314,7 @@
                             <span class="cookie-toggle-slider"></span>
                         </label>
                     </div>
-                    <p>Utilizados para rastrear visitantes em websites. A intenção é exibir anúncios relevantes e
-                        envolventes.</p>
+                    <p>Utilizados para exibir anúncios relevantes.</p>
                 </div>
                 <div class="cookie-category">
                     <div class="cookie-category-header">
@@ -2419,7 +1324,7 @@
                             <span class="cookie-toggle-slider"></span>
                         </label>
                     </div>
-                    <p>Permitem oferecer funcionalidades e conteúdos personalizados com base nas suas preferências.</p>
+                    <p>Permitem conteúdos personalizados com base nas preferências.</p>
                 </div>
             </div>
             <div class="cookie-preferences-footer">
@@ -2428,102 +1333,553 @@
             </div>
         </div>
     </div>
+
     <!-- Contact Modal -->
-    <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true" style="--bs-modal-bg: rgba(0,0,0,0.7);">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
-            <div class="modal-content"
-                style="border: none; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.15);">
-                <div class="modal-header" style="border-bottom: 1px solid #e0e0e0; padding: 1.5rem 2rem 1rem 2rem;">
-                    <h5 class="modal-title" style="font-weight: 500; font-size: 1.25rem; color: #1A1A1A;">Entre em
-                        contacto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                        style="opacity: 0.5;"></button>
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+            <div class="modal-content">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                <div class="cm-header">
+                    <h5>Entre em contacto</h5>
+                    <div class="cm-line"></div>
                 </div>
-                <div class="modal-body" style="padding: 1.5rem 2rem 1.25rem 2rem;">
+                <div class="cm-body">
                     <form id="contactForm">
-                        <div class="mb-4">
-                            <label for="name"
-                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Nome</label>
-                            <input type="text" id="name" name="name" placeholder="O teu nome" required
-                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#BF9A33'" onblur="this.style.borderColor='#ddd'">
+                        <div class="cm-row">
+                            <div class="cm-field">
+                                <label class="cm-label" for="name">Nome</label>
+                                <input class="cm-input" type="text" id="name" name="name" placeholder="O seu nome" required>
+                            </div>
+                            <div class="cm-field">
+                                <label class="cm-label" for="email">Email</label>
+                                <input class="cm-input" type="email" id="email" name="email" placeholder="O seu email" required>
+                            </div>
                         </div>
-                        <div class="mb-4">
-                            <label for="email"
-                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Email</label>
-                            <input type="email" id="email" name="email" placeholder="O teu email" required
-                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#BF9A33'" onblur="this.style.borderColor='#ddd'">
+                        <div class="cm-row">
+                            <div class="cm-field">
+                                <label class="cm-label" for="phone">Telefone <span style="color:#bbb;text-transform:none;letter-spacing:0;">(opcional)</span></label>
+                                <input class="cm-input" type="tel" id="phone" name="phone" placeholder="912 345 678">
+                            </div>
+                            <div class="cm-field">
+                                <label class="cm-label" for="reason">Motivo</label>
+                                <select class="cm-select" id="reason" name="reason" required>
+                                    <option value="" selected disabled>Selecionar</option>
+                                    <option value="Clareza de carreira">Clareza de carreira</option>
+                                    <option value="Revisão de CV">Revisão de CV</option>
+                                    <option value="Kickstart Pro">Kickstart Pro</option>
+                                    <option value="Suporte">Suporte</option>
+                                    <option value="Parceria">Parceria</option>
+                                    <option value="Outro tema">Outro tema</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="mb-4">
-                            <label for="phone"
-                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Telefone
-                                <span style="color: #999;">(opcional)</span></label>
-                            <input type="tel" id="phone" name="phone" placeholder="Opcional"
-                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#BF9A33'" onblur="this.style.borderColor='#ddd'">
+                        <div class="cm-field">
+                            <label class="cm-label" for="message">Mensagem</label>
+                            <textarea class="cm-textarea" id="message" name="message" rows="3" placeholder="O que o trouxe até aqui?" required></textarea>
                         </div>
-                        <div class="mb-4">
-                            <label for="reason"
-                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Motivo</label>
-                            <select id="reason" name="reason" required
-                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; background-color: white; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#BF9A33'" onblur="this.style.borderColor='#ddd'">
-                                <option value="" selected disabled>Escolhe o motivo do contacto</option>
-                                <option value="Clareza de carreira">Clareza de carreira</option>
-                                <option value="Revisão de CV">Revisão de CV</option>
-                                <option value="Kickstart Pro">Kickstart Pro</option>
-                                <option value="Outro tema">Outro tema</option>
-                            </select>
+                        <div class="cm-privacy">
+                            <input type="checkbox" id="privacy" name="privacy" required>
+                            <label for="privacy">Li e aceito a <a href="pages/politica-privacidade.html" target="_blank">Política de Privacidade</a></label>
                         </div>
-                        <div class="mb-4">
-                            <label for="message"
-                                style="font-size: 0.875rem; font-weight: 400; color: #666; display: block; margin-bottom: 0.5rem;">Mensagem</label>
-                            <textarea id="message" name="message" rows="3" placeholder="O que te trouxe até aqui?"
-                                required
-                                style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; resize: vertical; transition: border-color 0.2s;"
-                                onfocus="this.style.borderColor='#BF9A33'"
-                                onblur="this.style.borderColor='#ddd'"></textarea>
-                        </div>
-                        <div class="mb-4">
-                            <label
-                                style="display: flex; align-items: center; font-size: 0.875rem; color: #666; cursor: pointer;">
-                                <input type="checkbox" id="privacy" name="privacy" required
-                                    style="margin-right: 0.5rem;">
-                                Li e aceito a <a href="pages/politica-privacidade.html" target="_blank"
-                                    style="color: #BF9A33; text-decoration: none; margin-left: 0.25rem;">Política de
-                                    Privacidade</a>
-                            </label>
-                        </div>
-                        <div class="alert alert-success d-none" id="contactSuccess"
-                            style="font-size: 0.875rem; padding: 0.75rem; border-radius: 6px;">
-                            Mensagem enviada com sucesso!
-                        </div>
-                        <div class="alert alert-danger d-none" id="contactError"
-                            style="font-size: 0.875rem; padding: 0.75rem; border-radius: 6px;">
-                            Erro ao enviar mensagem.
-                        </div>
-                        <button type="submit"
-                            style="width: 100%; padding: 0.875rem; background: #BF9A33; color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background 0.2s;"
-                            onmouseover="this.style.background='#a58428'" onmouseout="this.style.background='#BF9A33'">
-                            Enviar mensagem
-                        </button>
+                        <div class="cm-alert cm-alert-success d-none" id="contactSuccess">Mensagem enviada com sucesso!</div>
+                        <div class="cm-alert cm-alert-error d-none" id="contactError">Erro ao enviar mensagem.</div>
+                        <button type="submit" class="cm-submit">Enviar mensagem</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Formulários -->
-    <script src="js/contact-form.js"></script>
-    <script src="js/brevo-integration.js"></script>
+    <script defer src="js/contact-form.js"></script>
+    <script defer src="js/brevo-integration.js"></script>
     <!-- JavaScript do Diagnóstico de RH Clean -->
-    <script src="pages/diagnostic.js"></script>
+    <script defer src="pages/diagnostic.js"></script>
     <!-- Global Feedback Widget -->
-    <script src="js/feedback-widget.js"></script>
+    <script defer src="js/feedback-widget.js"></script>
     <!-- Cookie Consent System -->
-    <script src="js/cookie-consent.js"></script>
+    <script defer src="js/cookie-consent.js"></script>
+    <!-- Coach Agent JavaScript -->
+    <script defer src="js/coach-agent.js"></script>
+    <!-- Unified Hub Widget -->
+    <script defer src="js/hub-widget.js"></script>
+
+    <!-- Fade-in on scroll -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll('.fade-up').forEach(function (el) {
+                observer.observe(el);
+            });
+        });
+    </script>
+
+<script>
+    // ── Career Energy Diagnostic (Modal) ──
+    (function() {
+        var questions = [
+            { dim: 0, label: 'ENERGIA PROFISSIONAL', q: 'Ao final de uma semana de trabalho, como te sentes habitualmente?',
+              opts: ['Exausto(a) e sem energia para mais nada', 'Cansado(a), mas com alguma reserva', 'Com energia razoável', 'Energizado(a) e com vontade de continuar'] },
+            { dim: 0, label: 'ENERGIA PROFISSIONAL', q: 'Com que frequência sentes que o teu trabalho te dá mais energia do que retira?',
+              opts: ['Raramente ou nunca', 'Ocasionalmente', 'Com alguma frequência', 'Quase sempre'] },
+            { dim: 0, label: 'ENERGIA PROFISSIONAL', q: 'Como classificas o teu equilíbrio entre vida pessoal e profissional?',
+              opts: ['Muito desequilibrado', 'Desequilibrado — preciso de ajustes', 'Razoavelmente equilibrado', 'Bem equilibrado'] },
+            { dim: 1, label: 'CLAREZA MENTAL', q: 'Se te perguntarem "qual é o teu próximo passo profissional?", o que respondes?',
+              opts: ['Não faço ideia', 'Tenho uma vaga noção', 'Sei a direção, mas faltam detalhes', 'Tenho um plano claro e definido'] },
+            { dim: 1, label: 'CLAREZA MENTAL', q: 'Com que frequência te sentes indeciso(a) sobre decisões de carreira?',
+              opts: ['Constantemente', 'Frequentemente', 'Às vezes, mas consigo resolver', 'Raramente'] },
+            { dim: 1, label: 'CLAREZA MENTAL', q: 'Consegues articular em 30 segundos o que te diferencia profissionalmente?',
+              opts: ['Não, seria difícil', 'Talvez, mas sem confiança', 'Sim, de forma razoável', 'Sim, com clareza e convicção'] },
+            { dim: 2, label: 'POSICIONAMENTO', q: 'Se perdesses o emprego amanhã, quanto tempo demorarias a encontrar algo equivalente?',
+              opts: ['Mais de 6 meses', '3 a 6 meses', '1 a 3 meses', 'Menos de 1 mês'] },
+            { dim: 2, label: 'POSICIONAMENTO', q: 'Nos últimos 6 meses, quantas vezes foste contactado(a) por recrutadores?',
+              opts: ['Nenhuma', '1 a 2 vezes', '3 a 5 vezes', 'Mais de 5 vezes'] },
+            { dim: 2, label: 'POSICIONAMENTO', q: 'Como avalias a tua presença profissional online?',
+              opts: ['Inexistente ou desatualizada', 'Básica', 'Ativa — publico ocasionalmente', 'Forte — sou reconhecido(a) na minha área'] },
+            { dim: 3, label: 'PROPÓSITO', q: 'Sentes que o teu trabalho actual está alinhado com o que realmente te importa?',
+              opts: ['Nada alinhado', 'Pouco alinhado', 'Razoavelmente alinhado', 'Totalmente alinhado'] },
+            { dim: 3, label: 'PROPÓSITO', q: 'Nos últimos 12 meses, investiste activamente no teu desenvolvimento profissional?',
+              opts: ['Não, nada', 'Muito pouco', 'Sim, alguma formação ou leitura', 'Sim, de forma consistente e estratégica'] },
+            { dim: 3, label: 'PROPÓSITO', q: 'Quando pensas no teu futuro profissional a 5 anos, o que sentes?',
+              opts: ['Ansiedade ou medo', 'Incerteza', 'Curiosidade moderada', 'Entusiasmo e confiança'] }
+        ];
+
+        var dimInsights = [
+            ['A tua energia profissional está em níveis críticos. É prioritário repensar a sustentabilidade do teu ritmo.',
+             'A tua energia profissional precisa de atenção. Pequenos ajustes podem fazer grande diferença.',
+             'Tens uma base energética sólida. Optimiza as rotinas para manter este nível.',
+             'Energia profissional excelente. Estás a gerir bem os teus recursos.'],
+            ['Falta clareza no teu rumo profissional. Um diagnóstico estruturado pode ajudar.',
+             'Tens alguma noção do caminho, mas precisas de mais definição.',
+             'Boa clareza mental. Falta afinar os detalhes do plano.',
+             'Clareza mental exemplar. Sabes exactamente onde queres chegar.'],
+            ['O teu posicionamento no mercado precisa de trabalho urgente.',
+             'Tens margem para melhorar a tua visibilidade e rede profissional.',
+             'Bom posicionamento. Continua a investir na tua presença.',
+             'Posicionamento forte. O mercado reconhece o teu valor.'],
+            ['Há um desalinhamento entre o que fazes e o que te move. Vale a pena reflectir.',
+             'Estás parcialmente alinhado(a). Identifica o que falta para maior conexão.',
+             'Bom alinhamento com o teu propósito. Continua a investir no crescimento.',
+             'Excelente conexão com o teu propósito. Estás no caminho certo.']
+        ];
+
+        var levels = [
+            { min: 0, max: 15, label: 'Necessita Re-energizar', seal: 'RE-ENERGIZE' },
+            { min: 16, max: 25, label: 'Energia Crítica', seal: 'AWARENESS' },
+            { min: 26, max: 40, label: 'Em Calibração', seal: 'CALIBRATING' },
+            { min: 41, max: 55, label: 'Energia em Construção', seal: 'BUILDING' },
+            { min: 56, max: 70, label: 'Energia Estável', seal: 'STEADY' },
+            { min: 71, max: 85, label: 'Energia Sólida', seal: 'STRONG' },
+            { min: 86, max: 100, label: 'Alta Performance', seal: 'HIGH PERFORMER' }
+        ];
+
+        // World Happiness Report 2025 — scores (0-10 scale, *10 = 0-100)
+        var countryHappiness = {
+            'PT': { name: 'Portugal', score: 60 },
+            'BR': { name: 'Brasil', score: 65 },
+            'ES': { name: 'Espanha', score: 65 },
+            'FR': { name: 'França', score: 66 },
+            'DE': { name: 'Alemanha', score: 68 },
+            'UK': { name: 'Reino Unido', score: 67 },
+            'US': { name: 'Estados Unidos', score: 67 },
+            'IT': { name: 'Itália', score: 64 },
+            'NL': { name: 'Países Baixos', score: 73 },
+            'BE': { name: 'Bélgica', score: 69 },
+            'CH': { name: 'Suíça', score: 69 },
+            'IE': { name: 'Irlanda', score: 69 },
+            'LU': { name: 'Luxemburgo', score: 71 },
+            'AT': { name: 'Áustria', score: 68 },
+            'SE': { name: 'Suécia', score: 74 },
+            'NO': { name: 'Noruega', score: 73 },
+            'DK': { name: 'Dinamarca', score: 75 },
+            'FI': { name: 'Finlândia', score: 77 },
+            'PL': { name: 'Polónia', score: 67 },
+            'CZ': { name: 'Chéquia', score: 68 },
+            'RO': { name: 'Roménia', score: 66 },
+            'GR': { name: 'Grécia', score: 58 },
+            'AU': { name: 'Austrália', score: 70 },
+            'CA': { name: 'Canadá', score: 68 },
+            'MX': { name: 'México', score: 70 },
+            'AR': { name: 'Argentina', score: 64 },
+            'CL': { name: 'Chile', score: 64 },
+            'CO': { name: 'Colômbia', score: 60 },
+            'JP': { name: 'Japão', score: 62 },
+            'KR': { name: 'Coreia do Sul', score: 60 },
+            'CN': { name: 'China', score: 59 },
+            'IN': { name: 'Índia', score: 44 },
+            'SG': { name: 'Singapura', score: 66 },
+            'AE': { name: 'Emirados Árabes', score: 68 },
+            'SA': { name: 'Arábia Saudita', score: 66 },
+            'ZA': { name: 'África do Sul', score: 52 },
+            'AO': { name: 'Angola', score: 46 },
+            'MZ': { name: 'Moçambique', score: 52 }
+        };
+
+        var current = 0;
+        var answers = new Array(12).fill(-1);
+        var profileData = {};
+
+        // Modal controls
+        window.openCEModal = function() {
+            current = 0;
+            answers = new Array(12).fill(-1);
+            document.getElementById('ceProfileStep').style.display = 'block';
+            document.getElementById('ceQuizStep').style.display = 'none';
+            document.getElementById('ceResultsStep').style.display = 'none';
+            document.getElementById('ceModalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeCEModal = function() {
+            document.getElementById('ceModalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        // Close on overlay click
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'ceModalOverlay') closeCEModal();
+        });
+
+        // Close on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeCEModal();
+        });
+
+        window.startCEQuiz = function() {
+            profileData = {
+                workArea: document.getElementById('ceWorkArea').value,
+                roleTenure: document.getElementById('ceRoleTenure').value,
+                totalExp: document.getElementById('ceTotalExp').value,
+                country: document.getElementById('ceCountry').value
+            };
+            document.getElementById('ceProfileStep').style.display = 'none';
+            document.getElementById('ceQuizStep').style.display = 'block';
+            renderQuestion();
+        };
+
+        function renderQuestion() {
+            var q = questions[current];
+            document.getElementById('ceProgressFill').style.width = ((current + 1) / questions.length * 100) + '%';
+            document.getElementById('ceProgressText').textContent = 'Pergunta ' + (current + 1) + ' de ' + questions.length;
+            document.getElementById('ceDimensionLabel').textContent = q.label;
+            document.getElementById('ceQuestionText').textContent = q.q;
+            var optsEl = document.getElementById('ceOptions');
+            optsEl.innerHTML = '';
+            q.opts.forEach(function(opt, i) {
+                var btn = document.createElement('div');
+                btn.className = 'ce-option' + (answers[current] === i ? ' selected' : '');
+                btn.textContent = opt;
+                btn.onclick = function() { selectOption(i); };
+                optsEl.appendChild(btn);
+            });
+        }
+
+        function selectOption(i) {
+            answers[current] = i;
+            var opts = document.querySelectorAll('#ceQuizStep .ce-option');
+            opts.forEach(function(o, idx) { o.classList.toggle('selected', idx === i); });
+            setTimeout(function() {
+                if (current < questions.length - 1) {
+                    current++;
+                    renderQuestion();
+                    // Scroll modal to top
+                    document.getElementById('ceModal').scrollTop = 0;
+                } else {
+                    showResults();
+                }
+            }, 300);
+        }
+
+        var _resultsShown = false;
+        function showResults() {
+            if (_resultsShown) return;
+            _resultsShown = true;
+            document.getElementById('ceQuizStep').style.display = 'none';
+            document.getElementById('ceResultsStep').style.display = 'block';
+            document.getElementById('ceModal').scrollTop = 0;
+
+            var dimScores = [0, 0, 0, 0];
+            for (var i = 0; i < 12; i++) {
+                dimScores[questions[i].dim] += answers[i];
+            }
+            dimScores = dimScores.map(function(s) { return Math.max(0, Math.round(s / 9 * 100)); });
+            var totalScore = Math.round(dimScores.reduce(function(a, b) { return a + b; }, 0) / 4);
+            var level = levels.find(function(l) { return totalScore >= l.min && totalScore <= l.max; }) || levels[0];
+
+            // Animate score
+            var scoreEl = document.getElementById('ceScoreNumber');
+            var arcEl = document.getElementById('ceScoreArc');
+            var circumference = 326.73;
+            animateValue(scoreEl, 0, totalScore, 1200);
+            setTimeout(function() {
+                arcEl.style.transition = 'stroke-dashoffset 1.2s ease';
+                arcEl.style.strokeDashoffset = circumference * (1 - totalScore / 100);
+            }, 100);
+
+            document.getElementById('ceScoreLevel').textContent = level.label;
+
+            // Percentile — simulated distribution (bell curve centered around 52)
+            var percentile;
+            if (totalScore >= 86) percentile = 'Top 5%';
+            else if (totalScore >= 71) percentile = 'Top 15%';
+            else if (totalScore >= 56) percentile = 'Top 30%';
+            else if (totalScore >= 41) percentile = 'Top 50%';
+            else if (totalScore >= 26) percentile = 'Top 70%';
+            else if (totalScore >= 16) percentile = 'Top 85%';
+            else percentile = 'Top 95%';
+            document.getElementById('cePercentile').textContent = percentile + ' dos profissionais analisados';
+
+            // Progression potential — find the two lowest dimensions
+            var dimNames = ['Energia Profissional', 'Clareza Mental', 'Posicionamento', 'Propósito'];
+            var dimPairs = dimScores.map(function(s, i) { return { score: s, idx: i }; });
+            dimPairs.sort(function(a, b) { return a.score - b.score; });
+            var potentialGain = 0;
+            var improveDims = [];
+            for (var p = 0; p < 2; p++) {
+                var gap = Math.min(25, 100 - dimPairs[p].score);
+                potentialGain += Math.round(gap / 4);
+                improveDims.push(dimNames[dimPairs[p].idx]);
+            }
+            var projectedScore = Math.min(100, totalScore + potentialGain);
+            var projectedLevel = levels.find(function(l) { return projectedScore >= l.min && projectedScore <= l.max; }) || levels[levels.length - 1];
+            if (projectedScore > totalScore && projectedLevel.label !== level.label) {
+                document.getElementById('ceProgression').style.display = 'block';
+                document.getElementById('ceProgressionText').innerHTML = 
+                    'Se melhorares <strong>' + improveDims.join('</strong> e <strong>') + '</strong>,<br>' +
+                    'podes atingir <span class="ce-prog-target">' + projectedScore + '</span><span class="ce-prog-arrow">→</span><span class="ce-prog-target">' + projectedLevel.label + '</span>';
+            }
+
+            // Country happiness comparison
+            var countryCode = profileData.country;
+            if (countryCode && countryHappiness[countryCode]) {
+                var ch = countryHappiness[countryCode];
+                var diff = totalScore - ch.score;
+                var diffClass = diff > 0 ? 'above' : diff < 0 ? 'below' : 'equal';
+                var diffText = diff > 0 ? '+' + diff + ' acima' : diff < 0 ? diff + ' abaixo' : 'igual';
+                var compareEl = document.getElementById('ceCountryCompare');
+                compareEl.style.display = 'block';
+                document.getElementById('ceCountryText').innerHTML = 
+                    'Média de bem-estar em <strong>' + ch.name + '</strong>: <span class="ce-country-score">' + ch.score + '/100</span> (World Happiness Report 2025)<br>' +
+                    'O teu score está <span class="ce-country-diff ' + diffClass + '">' + diffText + '</span> da média nacional.';
+            }
+
+            for (var d = 0; d < 4; d++) {
+                document.getElementById('ceDimScore' + d).textContent = dimScores[d] + '/100';
+                setTimeout((function(dd, sc) {
+                    return function() {
+                        document.getElementById('ceDimFill' + dd).style.width = sc + '%';
+                    };
+                })(d, dimScores[d]), 300 + d * 200);
+                var insightIdx = dimScores[d] <= 25 ? 0 : dimScores[d] <= 50 ? 1 : dimScores[d] <= 75 ? 2 : 3;
+                document.getElementById('ceDimInsight' + d).textContent = dimInsights[d][insightIdx];
+            }
+
+            window._ceData = { score: totalScore, level: level, dimScores: dimScores, profile: profileData, percentile: percentile };
+
+            // Save to Supabase
+            (function saveCEResult() {
+                var SUPA_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+                var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+                var countryCode = profileData.country;
+                var ch = countryCode && countryHappiness[countryCode] ? countryHappiness[countryCode] : null;
+                var payload = {
+                    name: profileData.name || null,
+                    role: profileData.role || null,
+                    experience: profileData.experience || null,
+                    country: countryCode || null,
+                    country_name: ch ? ch.name : null,
+                    total_score: totalScore,
+                    level_label: level.label,
+                    percentile: percentile,
+                    dim_energy: dimScores[0],
+                    dim_clarity: dimScores[1],
+                    dim_positioning: dimScores[2],
+                    dim_purpose: dimScores[3],
+                    country_happiness_score: ch ? ch.score : null,
+                    country_diff: ch ? (totalScore - ch.score) : null,
+                    projected_score: projectedScore || null,
+                    projected_level: projectedLevel ? projectedLevel.label : null,
+                    language: 'pt',
+                    user_agent: navigator.userAgent
+                };
+                fetch(SUPA_URL + '/rest/v1/career_energy_results', {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPA_KEY,
+                        'Authorization': 'Bearer ' + SUPA_KEY,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(payload)
+                }).then(function(r) { return r.json(); }).then(function(d) {
+                    console.log('CE result saved:', d);
+                }).catch(function(e) { console.warn('CE save error:', e); });
+            })();
+        }
+
+        function animateValue(el, start, end, duration) {
+            if (el._animId) cancelAnimationFrame(el._animId);
+            var startTime = null;
+            function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+                var progress = Math.min((timestamp - startTime) / duration, 1);
+                el.textContent = Math.round(progress * (end - start) + start);
+                if (progress < 1) {
+                    el._animId = requestAnimationFrame(step);
+                } else {
+                    el.textContent = end;
+                }
+            }
+            el._animId = requestAnimationFrame(step);
+        }
+
+        // Share on LinkedIn — opens LinkedIn share with pre-filled post
+        window.copyCELinkedInPost = function() {
+            var data = window._ceData;
+            if (!data) return;
+            // Auto-download seal image first
+            downloadCESealImage();
+            // Post text — score only, no profession
+            var postText = 'Acabei de fazer o diagnóstico Career Energy da @share2inspire_ e obtive ' + data.score + '/100 — ' + data.level.label + '.';
+            if (data.percentile) postText += ' ' + data.percentile + ' dos profissionais analisados.';
+            postText += '\n\nQuatro dimensões que definem a performance profissional.\n\n';
+            postText += 'Descobre o teu score aqui:\nshare2inspire.pt\n\n';
+            postText += '#CareerEnergy #Share2Inspire #Carreira #Liderança #DesenvolvimentoProfissional';
+
+            // Clipboard copy with fallback
+            function doCopy() {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    return navigator.clipboard.writeText(postText);
+                } else {
+                    var ta = document.createElement('textarea');
+                    ta.value = postText;
+                    ta.style.position = 'fixed';
+                    ta.style.left = '-9999px';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    return Promise.resolve();
+                }
+            }
+            doCopy().then(function() {
+                var btn = document.getElementById('ceBtnLinkedIn');
+                btn.classList.add('copied');
+                btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                setTimeout(function() {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = '<i class="fab fa-linkedin"></i> Copiar Post LinkedIn';
+                }, 2500);
+            }).catch(function(err) {
+                console.error('Clipboard copy failed:', err);
+                alert('Texto copiado para a área de transferência!');
+            });
+        };
+
+        function downloadCESealImage() {
+            var data = window._ceData;
+            if (!data) return;
+            var canvas = document.createElement('canvas');
+            canvas.width = 1200; canvas.height = 630;
+            var ctx = canvas.getContext('2d');
+            // Background
+            ctx.fillStyle = '#1a2332';
+            ctx.fillRect(0, 0, 1200, 630);
+            // Subtle gradient overlay
+            var grd = ctx.createRadialGradient(600, 315, 50, 600, 315, 500);
+            grd.addColorStop(0, 'rgba(201,169,97,0.08)');
+            grd.addColorStop(1, 'rgba(26,35,50,0)');
+            ctx.fillStyle = grd;
+            ctx.fillRect(0, 0, 1200, 630);
+            // Gold accent line top
+            ctx.fillStyle = '#C9A961';
+            ctx.fillRect(0, 0, 1200, 3);
+            // CAREER ENERGY label
+            ctx.font = '600 14px system-ui, sans-serif';
+            ctx.fillStyle = '#C9A961';
+            ctx.textAlign = 'center';
+            ctx.letterSpacing = '4px';
+            ctx.fillText('CAREER ENERGY', 600, 80);
+            // Score circle
+            ctx.beginPath();
+            ctx.arc(600, 260, 100, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(201,169,97,0.2)';
+            ctx.lineWidth = 6;
+            ctx.stroke();
+            // Score arc
+            var pct = data.score / 100;
+            ctx.beginPath();
+            ctx.arc(600, 260, 100, -Math.PI/2, -Math.PI/2 + (Math.PI * 2 * pct));
+            ctx.strokeStyle = '#C9A961';
+            ctx.lineWidth = 6;
+            ctx.stroke();
+            // Score number
+            ctx.font = 'bold 64px system-ui, sans-serif';
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.fillText(data.score, 600, 275);
+            // /100
+            ctx.font = '300 20px system-ui, sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.fillText('/100', 600, 305);
+            // Level label
+            ctx.font = '600 22px system-ui, sans-serif';
+            ctx.fillStyle = '#C9A961';
+            ctx.fillText(data.level.seal, 600, 390);
+            // Percentile
+            if (data.percentile) {
+                ctx.font = '400 14px system-ui, sans-serif';
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.fillText(data.percentile + ' dos profissionais analisados', 600, 415);
+            }
+            // Country average comparison
+            var yPos = 445;
+            var countryCode = data.profile && data.profile.country;
+            if (countryCode && countryHappiness[countryCode]) {
+                var ch = countryHappiness[countryCode];
+                var diff = data.score - ch.score;
+                var diffText = diff > 0 ? '+' + diff + ' acima da média' : diff < 0 ? diff + ' abaixo da média' : 'igual à média';
+                ctx.font = '400 13px system-ui, sans-serif';
+                ctx.fillStyle = 'rgba(255,255,255,0.45)';
+                ctx.fillText('Média ' + ch.name + ': ' + ch.score + '/100 — ' + diffText + ' (WHR 2025)', 600, yPos);
+                yPos += 25;
+            }
+            // Viral CTA
+            ctx.font = '500 16px system-ui, sans-serif';
+            ctx.fillStyle = '#C9A961';
+            ctx.fillText('Qual é o teu Career Energy Score?', 600, yPos + 10);
+            // Footer line
+            ctx.fillStyle = 'rgba(201,169,97,0.3)';
+            ctx.fillRect(350, 520, 500, 1);
+            // Footer text
+            ctx.font = '400 14px system-ui, sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.fillText('share2inspire.pt', 600, 550);
+            // Verified watermark — small and discreet
+            ctx.font = '300 11px system-ui, sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.25)';
+            ctx.fillText('Verified by Share2Inspire AI CV Analyser', 600, 580);
+            // Gold accent line bottom
+            ctx.fillStyle = '#C9A961';
+            ctx.fillRect(0, 627, 1200, 3);
+            // Download
+            var link = document.createElement('a');
+            link.download = 'career-energy-seal.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    })();
+
+</script>
 </body>
 
 </html>
