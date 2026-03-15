@@ -6,6 +6,7 @@ import { Route, Router, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { initAffiliateTracking } from "./lib/affiliate";
+import { checkMemberToken } from "./lib/memberAuth";
 
 // ─── Lazy-loaded page components for code splitting ───
 const Home = lazy(() => import("./pages/Home"));
@@ -113,7 +114,15 @@ function AppRouter() {
 }
 
 function App() {
-  useEffect(() => { initAffiliateTracking(); }, []);
+  useEffect(() => {
+    initAffiliateTracking();
+    // Verificar token de membro na URL (subscritor do S2I Career Advisor)
+    // Se válido, define isPaid e careerPathPaid no sessionStorage automaticamente
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('member_token')) {
+      checkMemberToken().catch(() => {/* silencioso — fluxo normal continua */});
+    }
+  }, []);
   return (
     <ErrorBoundary>
       <ThemeProvider
