@@ -1406,6 +1406,10 @@
     <!-- Unified Hub Widget -->
     <script defer src="js/hub-widget.js"></script>
 
+    <!-- Supabase Auth Module -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script defer src="js/supabase-auth.js"></script>
+
     <!-- Fade-in on scroll -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -1723,6 +1727,27 @@
                 }).then(function(r) { return r.json(); }).then(function(d) {
                     console.log('CE result saved:', d);
                 }).catch(function(e) { console.warn('CE save error:', e); });
+
+                // Also save to user_analyses if authenticated
+                if (window.s2iAuth && window.s2iAuth.isAuthenticated()) {
+                    window.s2iAuth.saveAnalysis('career_energy', {
+                        total_score: totalScore,
+                        level: level.label,
+                        percentile: percentile,
+                        dimensions: {
+                            energy: dimScores[0],
+                            clarity: dimScores[1],
+                            positioning: dimScores[2],
+                            purpose: dimScores[3]
+                        },
+                        profile: {
+                            name: profileData.name,
+                            role: profileData.role,
+                            experience: profileData.experience,
+                            country: profileData.country
+                        }
+                    });
+                }
             })();
         }
 
@@ -1880,6 +1905,8 @@
     })();
 
 </script>
+    <!-- S2I Auth -->
+    <script src="/js/shared-auth.js"></script>
 </body>
 
 </html>
