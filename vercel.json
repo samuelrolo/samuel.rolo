@@ -237,6 +237,14 @@
     {
       "source": "/pages/admin-analytics",
       "destination": "/pages/admin-analytics.html"
+    },
+    {
+      "source": "/area-cliente",
+      "destination": "/area-cliente/index.html"
+    },
+    {
+      "source": "/area-cliente/(.*)",
+      "destination": "/area-cliente/index.html"
     }
   ]
 }
