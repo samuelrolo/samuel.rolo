@@ -81,10 +81,10 @@ class SamuelRoloAI {
                             type="text" 
                             class="coach-chat-input" 
                             id="coachChatInput" 
-                            placeholder="Escreva a sua dúvida..."
+                            placeholder="${this.lang === 'en' ? 'Type your question...' : 'Escreve a tua dúvida...'}"
                             autocomplete="off"
                         />
-                        <button class="coach-send-btn" id="coachSendBtn" aria-label="Enviar">
+                        <button class="coach-send-btn" id="coachSendBtn" aria-label="${this.lang === 'en' ? 'Send' : 'Enviar'}">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
