@@ -1216,6 +1216,39 @@ async function createVouchers() {
 
     if (!email) { showToast('Email obrigatório', 'danger'); return; }
 
+    // Pack Teste Parceria: cria 3 vouchers (CV + Career Path + LinkedIn Roaster)
+    if (planVal === 'PACK_TESTE_PARCERIA') {
+        const packItems = [
+            { plan_name: 'CV Analyser', voucher_type: 'standard', includes_career_path: false, amount_paid: '0' },
+            { plan_name: 'Career Path', voucher_type: 'career_path', includes_career_path: true, amount_paid: '0' },
+            { plan_name: 'LinkedIn Roaster', voucher_type: 'linkedin_roaster', includes_career_path: false, amount_paid: '0' }
+        ];
+        const codes = [];
+        for (const item of packItems) {
+            const code = 'S2I-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            codes.push({ code, plan: item.plan_name });
+            await supaInsert('vouchers', {
+                code, email, plan_name: item.plan_name, total_analyses: 1, used_analyses: 0,
+                amount_paid: item.amount_paid, payment_method: 'oferta',
+                voucher_type: item.voucher_type, includes_career_path: item.includes_career_path,
+                is_active: true, created_at: new Date().toISOString()
+            });
+        }
+        showToast(`Pack Teste criado! ${codes.map(c => c.code).join(', ')}`, 'success');
+        closeVoucherModal();
+
+        if (sendEmail && ensureBrevoKey()) {
+            const codesList = codes.map(c => `<strong>${c.plan}</strong>: <span style="font-size:18px;font-weight:bold;color:#C9A961;">${c.code}</span>`).join('<br>');
+            const subject = 'Os teus vouchers Share2Inspire — Pack Teste';
+            const body = `<p>Olá,</p><p>Seguem os teus vouchers de teste:</p>${codesList}<p style="margin-top:16px;">Acede a <a href="https://www.share2inspire.pt">share2inspire.pt</a> para usar cada um no respetivo produto.</p><p>Com os melhores cumprimentos,<br>Equipa Share2Inspire</p>`;
+            await sendBrevoEmail(email, subject, body);
+        }
+
+        await loadAllData();
+        renderVouchers();
+        return;
+    }
+
     const [planName, totalStr, amountStr, vType, cpFlag] = planVal.split('|');
     const total  = parseInt(totalStr);
     const amount = parseFloat(amountStr);
