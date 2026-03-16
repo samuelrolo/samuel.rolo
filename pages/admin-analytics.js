@@ -344,7 +344,7 @@ function updateDashboard() {
     const ltv = uniqueEmails.size ? (totalRevenue / uniqueEmails.size).toFixed(2) : '0.00';
     const abandonRate = data.length ? Math.round(data.filter(isAnonymous).length / data.length * 100) : 0;
 
-    const vActive = allVouchers.filter(v => v.status === 'active' || (!v.status && v.used_analyses < v.total_analyses)).length;
+    const vActive = allVouchers.filter(v => v.is_active === true || (v.is_active !== false && v.used_analyses < v.total_analyses)).length;
     const vUsed   = allVouchers.filter(v => v.used_analyses > 0).length;
     const cpPct   = paid.length ? Math.round(cp.length / paid.length * 100) : 0;
     const rev7d   = paidLast7.reduce((s, a) => s + (a.payment_amount || 0), 0);
@@ -1156,10 +1156,10 @@ function renderVouchers() {
     const email  = (document.getElementById('filterVoucherEmail')?.value || '').toLowerCase();
 
     if (status !== 'all') {
-        if (status === 'active') data = data.filter(v => v.status === 'active' || (!v.status && v.used_analyses < v.total_analyses));
-        else data = data.filter(v => v.status === 'used' || v.used_analyses >= v.total_analyses);
+        if (status === 'active') data = data.filter(v => v.is_active === true || (!v.is_active && v.used_analyses < v.total_analyses));
+        else data = data.filter(v => v.is_active === false || v.used_analyses >= v.total_analyses);
     }
-    if (type !== 'all') data = data.filter(v => v.voucher_type === type || v.type === type);
+    if (type !== 'all') data = data.filter(v => v.voucher_type === type);
     if (email) data = data.filter(v => (v.email || '').toLowerCase().includes(email));
 
     const tbody = document.getElementById('vouchersTable');
@@ -1171,15 +1171,16 @@ function renderVouchers() {
     }
 
     tbody.innerHTML = data.map(v => {
-        const isActive = v.status === 'active' || (!v.status && (v.used_analyses || 0) < (v.total_analyses || 1));
+        const isActive = v.is_active === true || (v.is_active !== false && (v.used_analyses || 0) < (v.total_analyses || 1));
         const date = new Date(v.created_at).toLocaleDateString('pt-PT');
         const usedPct = v.total_analyses > 0 ? Math.round((v.used_analyses || 0) / v.total_analyses * 100) : 0;
+        const hasCareerPath = v.includes_career_path === true || v.voucher_type === 'complete';
         return `
         <tr>
             <td><code style="font-size:12px;background:var(--bg);padding:2px 6px;border-radius:4px;">${v.code}</code></td>
             <td style="font-size:12px;">${v.email || '—'}</td>
-            <td style="font-size:12px;">${v.plan_name || v.plan || '—'}</td>
-            <td>${v.voucher_type === 'career_path' || v.type === 'career_path' ? '<span class="badge badge-career">Career Path</span>' : '<span class="badge badge-cv">CV Analyser</span>'}</td>
+            <td style="font-size:12px;">${v.plan_name || '—'}</td>
+            <td>${hasCareerPath ? '<span class="badge badge-career">Career Path</span>' : '<span class="badge badge-cv">CV Analyser</span>'}</td>
             <td style="font-size:12px;font-weight:600;">${parseFloat(v.amount_paid) > 0 ? parseFloat(v.amount_paid).toFixed(2) + '€' : '—'}</td>
             <td>
                 <span class="badge ${isActive ? 'badge-success' : 'badge-secondary'}">${isActive ? 'Ativo' : 'Usado'}</span>
@@ -1214,9 +1215,9 @@ async function createVouchers() {
         codes.push(code);
         await supaInsert('vouchers', {
             code, email, plan_name: planName, total_analyses: 1, used_analyses: 0,
-            payment_amount: amount, payment_method: payment,
-            voucher_type: vType, career_path_included: cpFlag === 'true',
-            status: 'active', created_at: new Date().toISOString()
+            amount_paid: amount.toString(), payment_method: payment,
+            voucher_type: vType, includes_career_path: cpFlag === 'true',
+            is_active: true, created_at: new Date().toISOString()
         });
     }
 
