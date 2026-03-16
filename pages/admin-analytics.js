@@ -105,14 +105,15 @@ function getAnalysisType(a) {
         if (a.payment_method === 'voucher') return 'voucher';
         return (a.payment_status === 'paid' || (a.payment_amount && a.payment_amount > 0)) ? 'paid' : 'free';
     }
+    // Career path is always paid
     if (a.analysis_type === 'career_path') return 'paid';
+    // Voucher: only if payment_method explicitly says 'voucher' on THIS analysis
+    if (a.payment_method === 'voucher') return 'voucher';
+    // Paid: confirmed payment on THIS analysis
     if (a.payment_status === 'paid' || (a.payment_amount && a.payment_amount > 0)) return 'paid';
-    const usedVoucher = allVouchers.find(v =>
-        v.email && a.user_email &&
-        v.email.toLowerCase() === a.user_email.toLowerCase() && v.used_analyses > 0
-    );
-    if (usedVoucher) return 'voucher';
-    if (a.analysis_type === 'free_heuristic') return 'free';
+    // Paid analysis_type from backend
+    if (a.analysis_type === 'paid') return 'paid';
+    // Everything else is free
     return 'free';
 }
 
