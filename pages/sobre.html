@@ -149,6 +149,31 @@
             font-size: 1.1rem;
         }
 
+        /* Section Break - Visual Divider */
+        .section-break {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 3rem 0 2rem;
+        }
+
+        .section-break::before,
+        .section-break::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--s2i-border, #e5e5e5), transparent);
+        }
+
+        .section-break .divider-icon {
+            width: 8px;
+            height: 8px;
+            background: var(--s2i-gold);
+            transform: rotate(45deg);
+            flex-shrink: 0;
+            opacity: 0.7;
+        }
+
         /* Pilares */
         .pilares-grid {
             display: grid;
@@ -477,6 +502,10 @@
                     Sou Samuel Rolo, profissional de Recursos Humanos e transformação organizacional com mais de 14 anos de experiência em consultoria internacional, tendo trabalhado em projetos de transformação digital e cultural em grandes organizações.
                 </div>
 
+                <div class="section-break">
+                    <div class="divider-icon"></div>
+                </div>
+
                 <div class="narrative-text">
                     <p>Não acredito em transformação organizacional sem transformação humana. Ao longo desse percurso em contextos globais de Recursos Humanos e transformação digital, aprendi que a tecnologia acelera processos, mas são as pessoas que determinam o seu impacto.</p>
 
@@ -505,7 +534,11 @@
                     </div>
                 </div>
 
-                <div class="narrative-text" style="margin-top: 2rem;">
+                <div class="section-break">
+                    <div class="divider-icon"></div>
+                </div>
+
+                <div class="narrative-text" style="margin-top: 0;">
                     <p>Escrevo, falo e crio plataformas de conhecimento porque acredito que liderar o futuro exige mais do que executar frameworks. Exige compreender o contexto, questionar o sistema e agir com intenção.</p>
 
                     <div class="narrative-highlight">
@@ -519,7 +552,10 @@
                     </div>
                 </div>
 
-                <h2 class="visually-hidden">Percurso Profissional</h2>
+                <div class="section-break">
+                    <div class="divider-icon"></div>
+                </div>
+
                 <!-- Dropdown Biográfico Animado -->
                 <div class="bio-accordion">
                     <button class="bio-accordion-header" id="bioToggle" aria-expanded="false" aria-controls="bioBody">

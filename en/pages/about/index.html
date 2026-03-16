@@ -133,6 +133,31 @@
             font-size: 1.1rem;
         }
 
+        /* Section Break - Visual Divider */
+        .section-break {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 3rem 0 2rem;
+        }
+
+        .section-break::before,
+        .section-break::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--s2i-border, #e5e5e5), transparent);
+        }
+
+        .section-break .divider-icon {
+            width: 8px;
+            height: 8px;
+            background: var(--s2i-gold);
+            transform: rotate(45deg);
+            flex-shrink: 0;
+            opacity: 0.7;
+        }
+
         /* Pillars */
         .pilares-grid {
             display: grid;
@@ -503,6 +528,10 @@
                     I'm Samuel Rolo, a Human Resources and organisational transformation professional with over 14 years of experience in international consulting, having worked on digital and cultural transformation projects in major organisations.
                 </div>
 
+                <div class="section-break">
+                    <div class="divider-icon"></div>
+                </div>
+
                 <div class="narrative-text">
                     <p>I don't believe in organizational transformation without human transformation. Throughout this journey in global Human Resources and digital transformation contexts, I've learned that technology accelerates processes, but it's people who determine its impact.</p>
 
@@ -531,7 +560,11 @@
                     </div>
                 </div>
 
-                <div class="narrative-text" style="margin-top: 2rem;">
+                <div class="section-break">
+                    <div class="divider-icon"></div>
+                </div>
+
+                <div class="narrative-text" style="margin-top: 0;">
                     <p>I write, speak, and create knowledge platforms because I believe that leading the future requires more than executing frameworks. It requires understanding the context, questioning the system, and acting with intention.</p>
 
                     <div class="narrative-highlight">
@@ -557,6 +590,10 @@
                         <h4>Top 3</h4>
                         <p>Favikon Creator for Productivity & Personal Growth</p>
                     </div>
+                </div>
+
+                <div class="section-break">
+                    <div class="divider-icon"></div>
                 </div>
 
                 <!-- Animated Biographical Dropdown -->
