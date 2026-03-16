@@ -39,9 +39,13 @@ export type MemberContent = {
   id: string;
   title: string;
   description: string;
-  type: 'ebook' | 'article' | 'template' | 'video' | 'tool';
-  content_url: string;
-  thumbnail_url: string;
-  access_level: 'monthly' | 'semiannual' | 'annual';
+  content_type: 'ebook' | 'article' | 'template' | 'video' | 'tool';
+  file_url: string;
+  thumbnail_url: string | null;
+  tags: string[] | null;
+  is_published: boolean;
+  required_plan: 'monthly' | 'semiannual' | 'annual';
+  sort_order: number;
   created_at: string;
+  updated_at: string;
 };

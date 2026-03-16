@@ -69,7 +69,7 @@ export default function MemberArea() {
 
   const filtered = useMemo(() => {
     let items = content;
-    if (filter !== 'all') items = items.filter(c => c.type === filter);
+    if (filter !== 'all') items = items.filter(c => c.content_type === filter);
     if (search.trim()) {
       const q = search.toLowerCase();
       items = items.filter(c =>
@@ -192,7 +192,7 @@ export default function MemberArea() {
               {filtered.map((item) => (
                 <a
                   key={item.id}
-                  href={item.content_url}
+                  href={item.file_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group border border-[#e5e5e5] rounded overflow-hidden hover:border-gold/20 transition-all duration-500"
@@ -209,7 +209,7 @@ export default function MemberArea() {
                   <div className="p-4">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[10px] text-[#999] uppercase tracking-wider">
-                        {item.type}
+                        {item.content_type}
                       </span>
                     </div>
                     <h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors mb-1">
