@@ -28,6 +28,11 @@ let allJobSearch     = [];
 let allCareerEnergy  = [];
 let allNewsletterSubs = [];
 let allLinkedinRoaster = [];
+let allAuthUsers       = [];
+let allUserProfiles    = [];
+let allSubscriptions   = [];
+let allUserAnalyses    = [];
+let usersPage          = 1;
 
 let globalLang       = 'all';
 let nurturingLang    = 'pt';
@@ -214,6 +219,7 @@ function switchTab(name, btn) {
     if (name === 'careerenergy') renderCareerEnergy();
     if (name === 'affiliates') renderAffiliates();
     if (name === 'coupons') renderCoupons();
+    if (name === 'users') renderUsers();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1948,7 +1954,7 @@ function downloadCSV(rows, filename) {
 // ═══════════════════════════════════════════════════════════════
 async function refreshAll() {
     showToast('A atualizar dados...', 'info');
-    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs(), loadAffiliateData(), loadCouponData()]);
+    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs(), loadAffiliateData(), loadCouponData(), loadUsersData()]);
     updateDashboard();
     updateCharts();
     // Re-render active tab
@@ -1965,7 +1971,7 @@ async function init() {
     document.getElementById('tab-dashboard').style.display = '';
     document.querySelectorAll('.main > div[id^="tab-"]:not(#tab-dashboard)').forEach(el => el.style.display = 'none');
 
-    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs(), loadAffiliateData(), loadCouponData()]);
+    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs(), loadAffiliateData(), loadCouponData(), loadUsersData()]);
     updateDashboard();
     updateCharts();
     renderNurturingSegments();
@@ -2509,4 +2515,312 @@ function copyCouponCode(code) {
         document.body.removeChild(el);
         showToast('Código copiado: ' + code, 'success');
     });
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  USERS & LICENSES MODULE
+// ═══════════════════════════════════════════════════════════════
+
+async function loadUsersData() {
+    try {
+        const [authUsers, profiles, subscriptions, userAnalyses] = await Promise.all([
+            supaFetch('admin_auth_users', 'select=id,email,raw_user_meta_data,created_at,last_sign_in_at,email_confirmed_at&order=created_at.desc'),
+            supaFetch('user_profiles', 'select=*&order=created_at.desc'),
+            supaFetch('subscriptions', 'select=*&order=created_at.desc'),
+            supaFetch('user_analyses', 'select=id,user_id,analysis_type,created_at&order=created_at.desc&limit=5000')
+        ]);
+        allAuthUsers    = Array.isArray(authUsers)    ? authUsers    : [];
+        allUserProfiles = Array.isArray(profiles)     ? profiles     : [];
+        allSubscriptions = Array.isArray(subscriptions) ? subscriptions : [];
+        allUserAnalyses = Array.isArray(userAnalyses) ? userAnalyses : [];
+    } catch (e) {
+        console.error('Erro ao carregar dados de utilizadores:', e);
+    }
+}
+
+function getMergedUsers() {
+    return allAuthUsers.map(au => {
+        const profile = allUserProfiles.find(p => p.id === au.id || p.user_id === au.id || p.email === au.email);
+        const subs = allSubscriptions.filter(s => s.user_id === au.id);
+        const activeSub = subs.find(s => s.status === 'active' && (!s.expires_at || new Date(s.expires_at) > new Date()));
+        const analyses = allUserAnalyses.filter(a => a.user_id === au.id);
+        const meta = au.raw_user_meta_data || {};
+
+        return {
+            id: au.id,
+            email: au.email,
+            first_name: profile?.first_name || meta.first_name || '',
+            last_name: profile?.last_name || meta.last_name || '',
+            phone: profile?.phone || '',
+            linkedin_url: profile?.linkedin_url || '',
+            avatar_url: profile?.avatar_url || '',
+            cv_url: profile?.cv_url || '',
+            cv_filename: profile?.cv_filename || '',
+            address: profile?.address || '',
+            email_confirmed: au.email_confirmed_at ? true : (meta.email_verified || false),
+            created_at: au.created_at,
+            last_sign_in_at: au.last_sign_in_at,
+            active_sub: activeSub || null,
+            all_subs: subs,
+            analyses: analyses,
+            analyses_count: analyses.length,
+            cv_analyser_count: analyses.filter(a => a.analysis_type === 'cv_analyser').length,
+            career_path_count: analyses.filter(a => a.analysis_type === 'career_path').length,
+            linkedin_roaster_count: analyses.filter(a => a.analysis_type === 'linkedin_roaster').length,
+            career_energy_count: analyses.filter(a => a.analysis_type === 'career_energy').length,
+            profile_complete: !!(profile && profile.first_name && profile.last_name && profile.phone)
+        };
+    });
+}
+
+function renderUsers() {
+    const users = getMergedUsers();
+
+    // KPIs
+    const totalUsers = users.length;
+    const activeSubs = users.filter(u => u.active_sub).length;
+    const totalSavedAnalyses = users.reduce((s, u) => s + u.analyses_count, 0);
+    const subRevenue = allSubscriptions.reduce((s, sub) => s + (parseFloat(sub.price_eur) || 0), 0);
+    const profilesComplete = users.filter(u => u.profile_complete).length;
+    const lastReg = users.length > 0 ? new Date(users[0].created_at).toLocaleDateString('pt-PT') : '—';
+
+    setText('usersKpiTotal', totalUsers);
+    setText('usersKpiActiveSubs', activeSubs);
+    setText('usersKpiSavedAnalyses', totalSavedAnalyses);
+    setText('usersKpiRevenue', subRevenue > 0 ? subRevenue.toFixed(2) + '€' : '0€');
+    setText('usersKpiComplete', `${profilesComplete}/${totalUsers}`);
+    setText('usersKpiLastReg', lastReg);
+
+    // Filters
+    const statusFilter = document.getElementById('filterUserStatus')?.value || 'all';
+    const searchFilter = (document.getElementById('filterUserSearch')?.value || '').toLowerCase();
+
+    let filtered = [...users];
+    if (statusFilter === 'active_sub') filtered = filtered.filter(u => u.active_sub);
+    if (statusFilter === 'no_sub') filtered = filtered.filter(u => !u.active_sub && u.all_subs.length === 0);
+    if (statusFilter === 'expired') filtered = filtered.filter(u => !u.active_sub && u.all_subs.length > 0);
+    if (searchFilter) {
+        filtered = filtered.filter(u => {
+            const haystack = `${u.first_name} ${u.last_name} ${u.email} ${u.phone}`.toLowerCase();
+            return haystack.includes(searchFilter);
+        });
+    }
+
+    // Pagination
+    const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
+    usersPage = Math.min(usersPage, totalPages);
+    const page = filtered.slice((usersPage - 1) * PAGE_SIZE, usersPage * PAGE_SIZE);
+
+    const tbody = document.getElementById('usersTable');
+    if (!tbody) return;
+
+    if (!page.length) {
+        tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum utilizador encontrado</td></tr>`;
+        renderPagination('usersPagination', usersPage, totalPages, (p) => { usersPage = p; renderUsers(); });
+        return;
+    }
+
+    tbody.innerHTML = page.map(u => {
+        const name = `${u.first_name} ${u.last_name}`.trim() || '<span style="color:var(--text-muted);">—</span>';
+        const emailBadge = u.email_confirmed
+            ? '<i class="fas fa-check-circle" style="color:var(--green);font-size:10px;margin-left:4px;" title="Email verificado"></i>'
+            : '<i class="fas fa-exclamation-circle" style="color:var(--orange);font-size:10px;margin-left:4px;" title="Email não verificado"></i>';
+        const phone = u.phone || '<span style="color:var(--text-muted);">—</span>';
+        const linkedin = u.linkedin_url
+            ? `<a href="${u.linkedin_url}" target="_blank" style="color:var(--blue);font-size:12px;" title="${u.linkedin_url}"><i class="fab fa-linkedin"></i></a>`
+            : '<span style="color:var(--text-muted);">—</span>';
+
+        // Subscription
+        let subBadge, planBadge, expireDate;
+        if (u.active_sub) {
+            subBadge = '<span class="badge badge-success">Ativa</span>';
+            planBadge = `<span class="badge badge-paid">${u.active_sub.plan || '—'}</span>`;
+            expireDate = u.active_sub.expires_at ? new Date(u.active_sub.expires_at).toLocaleDateString('pt-PT') : 'Sem limite';
+        } else if (u.all_subs.length > 0) {
+            subBadge = '<span class="badge badge-danger">Expirada</span>';
+            const lastSub = u.all_subs[0];
+            planBadge = `<span class="badge badge-secondary">${lastSub.plan || '—'}</span>`;
+            expireDate = lastSub.expires_at ? new Date(lastSub.expires_at).toLocaleDateString('pt-PT') : '—';
+        } else {
+            subBadge = '<span class="badge badge-secondary">Nenhuma</span>';
+            planBadge = '—';
+            expireDate = '—';
+        }
+
+        // Analyses count with breakdown tooltip
+        const analysesHtml = u.analyses_count > 0
+            ? `<span style="font-weight:600;cursor:help;" title="CV: ${u.cv_analyser_count} | Career: ${u.career_path_count} | LinkedIn: ${u.linkedin_roaster_count}">${u.analyses_count}</span>`
+            : '<span style="color:var(--text-muted);">0</span>';
+
+        // CV
+        const cvBadge = u.cv_filename
+            ? `<span class="badge badge-teal" title="${u.cv_filename}"><i class="fas fa-file-pdf" style="margin-right:3px;"></i> Sim</span>`
+            : '<span style="color:var(--text-muted);">—</span>';
+
+        const regDate = new Date(u.created_at);
+        const regStr = regDate.toLocaleDateString('pt-PT') + ' ' + regDate.toLocaleTimeString('pt-PT', {hour:'2-digit', minute:'2-digit'});
+        const loginStr = u.last_sign_in_at
+            ? new Date(u.last_sign_in_at).toLocaleDateString('pt-PT') + ' ' + new Date(u.last_sign_in_at).toLocaleTimeString('pt-PT', {hour:'2-digit', minute:'2-digit'})
+            : '<span style="color:var(--text-muted);">Nunca</span>';
+
+        return `
+        <tr>
+            <td style="font-weight:500;">${name}</td>
+            <td style="font-size:12px;">${u.email}${emailBadge}</td>
+            <td style="font-size:12px;">${phone}</td>
+            <td>${linkedin}</td>
+            <td>${subBadge}</td>
+            <td>${planBadge}</td>
+            <td style="font-size:12px;">${expireDate}</td>
+            <td>${analysesHtml}</td>
+            <td>${cvBadge}</td>
+            <td style="font-size:11px;color:var(--text-muted);">${regStr}</td>
+            <td style="font-size:11px;color:var(--text-muted);">${loginStr}</td>
+            <td>
+                <div style="display:flex;gap:4px;">
+                    <button class="btn-icon" title="Ver Detalhes" onclick="showUserDetail('${u.id}')"><i class="fas fa-eye"></i></button>
+                    <button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${u.email}','${(u.first_name + ' ' + u.last_name).trim().replace(/'/g,"\\'")}')"><i class="fas fa-envelope"></i></button>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+
+    renderPagination('usersPagination', usersPage, totalPages, (p) => { usersPage = p; renderUsers(); });
+}
+
+function showUserDetail(userId) {
+    const users = getMergedUsers();
+    const u = users.find(x => x.id === userId);
+    if (!u) return;
+
+    const name = `${u.first_name} ${u.last_name}`.trim() || 'Sem nome';
+    const emailStatus = u.email_confirmed ? '✓ Verificado' : '✗ Não verificado';
+    const regDate = new Date(u.created_at).toLocaleString('pt-PT');
+    const loginDate = u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleString('pt-PT') : 'Nunca';
+
+    // Subscription history
+    let subsHtml = '';
+    if (u.all_subs.length > 0) {
+        subsHtml = `<table style="width:100%;margin-top:8px;font-size:12px;">
+            <thead><tr><th>Plano</th><th>Estado</th><th>Preço</th><th>Método</th><th>Início</th><th>Expira</th></tr></thead>
+            <tbody>${u.all_subs.map(s => `
+                <tr>
+                    <td><strong>${s.plan || '—'}</strong></td>
+                    <td>${s.status === 'active' ? '<span class="badge badge-success">Ativa</span>' : '<span class="badge badge-danger">Expirada</span>'}</td>
+                    <td>${s.price_eur ? s.price_eur + '€' : '—'}</td>
+                    <td>${s.payment_method || '—'}</td>
+                    <td>${s.started_at ? new Date(s.started_at).toLocaleDateString('pt-PT') : '—'}</td>
+                    <td>${s.expires_at ? new Date(s.expires_at).toLocaleDateString('pt-PT') : 'Sem limite'}</td>
+                </tr>`).join('')}
+            </tbody>
+        </table>`;
+    } else {
+        subsHtml = '<p style="color:var(--text-muted);font-size:13px;margin-top:8px;">Nenhuma subscrição registada.</p>';
+    }
+
+    // Saved analyses
+    let analysesHtml = '';
+    if (u.analyses.length > 0) {
+        analysesHtml = `<table style="width:100%;margin-top:8px;font-size:12px;">
+            <thead><tr><th>Tipo</th><th>Data</th></tr></thead>
+            <tbody>${u.analyses.map(a => {
+                const typeMap = { cv_analyser: 'CV Analyser', career_path: 'Career Path', linkedin_roaster: 'LinkedIn Roaster', career_energy: 'Career Energy' };
+                return `<tr>
+                    <td>${typeMap[a.analysis_type] || a.analysis_type}</td>
+                    <td>${new Date(a.created_at).toLocaleString('pt-PT')}</td>
+                </tr>`;
+            }).join('')}
+            </tbody>
+        </table>`;
+    } else {
+        analysesHtml = '<p style="color:var(--text-muted);font-size:13px;margin-top:8px;">Nenhuma análise guardada.</p>';
+    }
+
+    const html = `
+    <div class="modal-overlay" id="userDetailOverlay" onclick="if(event.target===this)this.remove()">
+        <div class="modal-box" style="max-width:700px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-user" style="color:var(--purple);margin-right:8px;"></i> ${name}</h3>
+                <button class="modal-close" onclick="document.getElementById('userDetailOverlay').remove()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <!-- Profile Info -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+                    <div>
+                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Email</div>
+                        <div style="font-size:14px;">${u.email} <span style="font-size:11px;color:${u.email_confirmed ? 'var(--green)' : 'var(--orange)'};">${emailStatus}</span></div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Telefone</div>
+                        <div style="font-size:14px;">${u.phone || '—'}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Morada</div>
+                        <div style="font-size:14px;">${u.address || '—'}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">LinkedIn</div>
+                        <div style="font-size:14px;">${u.linkedin_url ? `<a href="${u.linkedin_url}" target="_blank" style="color:var(--blue);">${u.linkedin_url}</a>` : '—'}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Registado em</div>
+                        <div style="font-size:14px;">${regDate}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Último Login</div>
+                        <div style="font-size:14px;">${loginDate}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">CV Carregado</div>
+                        <div style="font-size:14px;">${u.cv_filename ? `<span class="badge badge-teal"><i class="fas fa-file-pdf" style="margin-right:3px;"></i> ${u.cv_filename}</span>` : '—'}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Perfil Completo</div>
+                        <div style="font-size:14px;">${u.profile_complete ? '<span class="badge badge-success">Sim</span>' : '<span class="badge badge-warning">Incompleto</span>'}</div>
+                    </div>
+                </div>
+
+                <!-- Subscriptions -->
+                <div style="margin-bottom:20px;">
+                    <h4 style="font-size:13px;font-weight:600;color:var(--dark);margin-bottom:4px;"><i class="fas fa-credit-card" style="color:var(--gold);margin-right:6px;"></i> Subscrições</h4>
+                    ${subsHtml}
+                </div>
+
+                <!-- Saved Analyses -->
+                <div style="margin-bottom:12px;">
+                    <h4 style="font-size:13px;font-weight:600;color:var(--dark);margin-bottom:4px;"><i class="fas fa-chart-bar" style="color:var(--blue);margin-right:6px;"></i> Análises Guardadas (${u.analyses_count})</h4>
+                    <div style="display:flex;gap:12px;margin-top:6px;margin-bottom:4px;">
+                        <span class="badge badge-cv">CV: ${u.cv_analyser_count}</span>
+                        <span class="badge badge-career">Career: ${u.career_path_count}</span>
+                        <span class="badge" style="background:#E0F2FE;color:#0077B5;">LinkedIn: ${u.linkedin_roaster_count}</span>
+                    </div>
+                    ${analysesHtml}
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+    // Remove existing overlay if any
+    const existing = document.getElementById('userDetailOverlay');
+    if (existing) existing.remove();
+    document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function exportUsersCSV() {
+    const users = getMergedUsers();
+    const rows = [['Nome','Email','Telefone','LinkedIn','Subscrição','Plano','Expira','Análises','CV','Registado','Último Login']];
+    users.forEach(u => {
+        const name = `${u.first_name} ${u.last_name}`.trim();
+        const subStatus = u.active_sub ? 'Ativa' : (u.all_subs.length > 0 ? 'Expirada' : 'Nenhuma');
+        const plan = u.active_sub ? (u.active_sub.plan || '') : (u.all_subs.length > 0 ? (u.all_subs[0].plan || '') : '');
+        const expires = u.active_sub?.expires_at ? new Date(u.active_sub.expires_at).toLocaleDateString('pt-PT') : '';
+        rows.push([
+            name, u.email, u.phone, u.linkedin_url, subStatus, plan, expires,
+            u.analyses_count, u.cv_filename || '', 
+            new Date(u.created_at).toLocaleDateString('pt-PT'),
+            u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString('pt-PT') : ''
+        ]);
+    });
+    downloadCSV(rows, 'utilizadores_s2i_' + new Date().toISOString().slice(0,10) + '.csv');
 }
