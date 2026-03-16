@@ -1073,14 +1073,25 @@
                     try {
                         const result = await window.EmailFlows.sendKickstartConfirmation(email, name, { objectives, phone });
                         if (result.success) {
-                            messageDiv.innerHTML = `<div class="alert alert-success"><strong>${result.message}</strong></div>`;
-                            kickstartForm.reset();
+                            // Replace form with success confirmation
+                            kickstartForm.innerHTML = `
+                                <div style="text-align:center;padding:2rem 1rem;">
+                                    <div style="width:56px;height:56px;background:#d4edda;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <h6 style="font-weight:600;color:#1A1A1A;margin-bottom:0.5rem;">Pedido recebido!</h6>
+                                    <p style="font-size:0.85rem;color:#555;margin-bottom:1rem;">${result.message}</p>
+                                    <p style="font-size:0.8rem;color:#888;">Confirma o pagamento via MB WAY e receberás o link do Google Meet por email.</p>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="bootstrap.Modal.getInstance(document.getElementById('kickstartModal')).hide()">Fechar</button>
+                                </div>
+                            `;
                         } else {
                             messageDiv.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = 'Agendar Sessão';
                         }
                     } catch (error) {
                         messageDiv.innerHTML = `<div class="alert alert-danger">Erro: ${error.message}</div>`;
-                    } finally {
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = 'Agendar Sessão';
                     }
