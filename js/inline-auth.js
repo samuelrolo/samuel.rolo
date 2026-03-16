@@ -282,9 +282,15 @@
     // ── Substituir o botão "Área de Cliente" na nav ──
     function replaceNavButton() {
         var link = document.querySelector('a[href*="area-cliente"]');
-        if (!link) return;
-
-        var navItem = link.closest('li') || link.parentElement;
+        var navItem;
+        var navList;
+        if (link) {
+            navItem = link.closest('li') || link.parentElement;
+        } else {
+            // Fallback: adicionar ao final da navbar
+            navList = document.querySelector('#navbarNav .navbar-nav') || document.querySelector('.navbar-nav');
+            if (!navList) return;
+        };
 
         // Criar container para o botão/dropdown
         var container = document.createElement('li');
@@ -379,8 +385,12 @@
             });
         }
 
-        // Substituir o link original
-        navItem.replaceWith(container);
+        // Substituir o link original ou adicionar ao final da nav
+        if (navItem) {
+            navItem.replaceWith(container);
+        } else if (navList) {
+            navList.appendChild(container);
+        }
 
         // Estado inicial
         if (window.S2I_AUTH && window.S2I_AUTH.ready) {
