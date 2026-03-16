@@ -196,5 +196,44 @@
     <priority>0.3</priority>
   </url>
 
+  <!-- Blog Index -->
+  <url>
+    <loc>https://www.share2inspire.pt/blog</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Blog Article 1: 7 Erros no CV -->
+  <url>
+    <loc>https://www.share2inspire.pt/blog/artigos/7-erros-cv-candidatos-rejeitados.html</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Blog Article 2: CV ou LinkedIn -->
+  <url>
+    <loc>https://www.share2inspire.pt/blog/artigos/cv-linkedin-importancia.html</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Blog Article 3: Melhorar LinkedIn -->
+  <url>
+    <loc>https://www.share2inspire.pt/blog/artigos/melhorar-linkedin-pesquisas.html</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Blog Article 4: Posicionamento no Mercado -->
+  <url>
+    <loc>https://www.share2inspire.pt/blog/artigos/posicionamento-mercado.html</loc>
+    <lastmod>2026-03-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 
 </urlset>
