@@ -277,11 +277,33 @@
                 // Clone and remove navigation/header/footer to keep only results
                 var clone = root.cloneNode(true);
                 // Remove nav, header, footer elements
-                var removeSelectors = ['nav', 'header', 'footer', '[class*="nav"]', '[class*="Nav"]', 'button', '[role="navigation"]'];
+                var removeSelectors = [
+                    'nav', 'header', 'footer',
+                    '[class*="nav"]', '[class*="Nav"]',
+                    'button',
+                    '[role="navigation"]',
+                    '[role="status"]',
+                    '[aria-label*="Notification"]',
+                    '[aria-label*="notification"]',
+                    '[data-sonner-toaster]',
+                    'section[aria-label]',
+                    '[class*="toast"]', '[class*="Toast"]',
+                    '[class*="toaster"]', '[class*="Toaster"]',
+                    'style', 'script', 'link',
+                    '[class*="feedback"]', '[class*="Feedback"]',
+                    '[id*="feedback"]',
+                    '[class*="coach"]', '[class*="Coach"]',
+                    '[id*="coach"]'
+                ];
                 removeSelectors.forEach(function(sel) {
-                    var els = clone.querySelectorAll(sel);
-                    els.forEach(function(el) { el.remove(); });
+                    try {
+                        var els = clone.querySelectorAll(sel);
+                        els.forEach(function(el) { el.remove(); });
+                    } catch(e) {}
                 });
+                // Remove accessibility overlays
+                var tabEls = clone.querySelectorAll('[tabindex="-1"][aria-live]');
+                tabEls.forEach(function(el) { el.remove(); });
                 data.results_html = clone.innerHTML;
             }
             // Also capture JSON data from sessionStorage for structured access
@@ -305,11 +327,34 @@
             var root2 = document.getElementById('root');
             if (root2) {
                 var clone2 = root2.cloneNode(true);
-                var removeSelectors2 = ['nav', 'header', 'footer', '[class*="nav"]', '[class*="Nav"]', 'button', '[role="navigation"]'];
+                // Remove navigation, header, footer, buttons, notifications, toasts, and other non-content elements
+                var removeSelectors2 = [
+                    'nav', 'header', 'footer',
+                    '[class*="nav"]', '[class*="Nav"]',
+                    'button',
+                    '[role="navigation"]',
+                    '[role="status"]',
+                    '[aria-label*="Notification"]',
+                    '[aria-label*="notification"]',
+                    '[data-sonner-toaster]',
+                    'section[aria-label]',
+                    '[class*="toast"]', '[class*="Toast"]',
+                    '[class*="toaster"]', '[class*="Toaster"]',
+                    'style', 'script', 'link',
+                    '[class*="feedback"]', '[class*="Feedback"]',
+                    '[id*="feedback"]',
+                    '[class*="coach"]', '[class*="Coach"]',
+                    '[id*="coach"]'
+                ];
                 removeSelectors2.forEach(function(sel) {
-                    var els = clone2.querySelectorAll(sel);
-                    els.forEach(function(el) { el.remove(); });
+                    try {
+                        var els = clone2.querySelectorAll(sel);
+                        els.forEach(function(el) { el.remove(); });
+                    } catch(e) {}
                 });
+                // Also remove any elements with tabindex=-1 (often accessibility overlays)
+                var tabIndexEls = clone2.querySelectorAll('[tabindex="-1"][aria-live]');
+                tabIndexEls.forEach(function(el) { el.remove(); });
                 data.results_html = clone2.innerHTML;
             }
             // Also capture JSON data from sessionStorage
