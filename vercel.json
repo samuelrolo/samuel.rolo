@@ -87,8 +87,20 @@
       "destination": "/en/pages/about/index.html"
     },
     {
+      "source": "/en/home",
+      "destination": "/en/pages/home/index.html"
+    },
+    {
       "source": "/en/pages/home",
       "destination": "/en/pages/home/index.html"
+    },
+    {
+      "source": "/en/pages/knowledge",
+      "destination": "/en/pages/knowledge.html"
+    },
+    {
+      "source": "/en/knowledge",
+      "destination": "/en/pages/knowledge.html"
     },
     {
       "source": "/en/pages/services",
@@ -245,6 +257,18 @@
     {
       "source": "/area-cliente/:path*",
       "destination": "/area-cliente/index.html"
+    },
+    {
+      "source": "/en/sobre",
+      "destination": "/en/pages/about/index.html"
+    },
+    {
+      "source": "/en/servicos",
+      "destination": "/en/pages/services/index.html"
+    },
+    {
+      "source": "/en/contactos",
+      "destination": "/en/pages/contact/index.html"
     }
   ]
 }
