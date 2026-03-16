@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Preconnect hints -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Knowledge | Free Career Resources | Share2Inspire</title>
+    <meta name="description" content="E-books, articles and free tools for your career. Change management, leadership and professional energy, by Samuel Rolo and Share2Inspire.">
+    <meta name="author" content="Samuel Rolo">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.share2inspire.pt/en/pages/knowledge">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.share2inspire.pt/en/pages/knowledge">
+    <meta property="og:title" content="Knowledge | Free E-books and Career Resources">
+    <meta property="og:description" content="Free e-books, articles and resources on change management, leadership and professional development.">
+    <meta property="og:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Share2Inspire">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Knowledge | Free E-books and Resources">
+    <meta name="twitter:description" content="Free e-books, articles and resources on career and leadership.">
+    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
+    <!-- Favicon -->
+    <link rel="icon" href="../../../images/logo.png" type="image/png">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" / media="print" onload="this.media='all'">
+    <noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" /></noscript>
+
+    <!-- Consolidated Styles -->
+    <link href="../../../css/consolidated-styles.css" rel="stylesheet" />
+<noscript>
+</noscript>
+    <link rel="stylesheet" href="../../../css/side-widgets.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="../../../css/side-widgets.css"></noscript>
+
+    <style>
+        /* ── Reset & Base ── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #fff;
+            color: #1a1a2e;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Hide Vercel widget ── */
+        iframe[src*="vercel-insights"], iframe[src*="_vercel"],
+        div[id*="vercel-live-feedback-button"], .__vercel-live-feedback-button,
+        #vercel-live-feedback-button {
+            display: none !important; visibility: hidden !important;
+            opacity: 0 !important; pointer-events: none !important;
+        }
+
+        /* ── Navigation ── */
+        .nav-bar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+        .nav-inner {
+            max-width: 1100px; margin: 0 auto;
+            padding: 0 2rem;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 70px;
+        }
+        .nav-logo img { height: 36px; }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            font-size: 0.75rem; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: #1a1a2e; text-decoration: none;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover, .nav-links a.active { color: #C9A961; }
+
+        /* Language dropdown */
+        .lang-switch {
+            font-size: 0.75rem; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: #1a1a2e; text-decoration: none;
+            cursor: pointer; position: relative;
+        }
+        .lang-switch:hover { color: #C9A961; }
+
+        /* Mobile menu */
+        .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+        .nav-toggle span { display: block; width: 22px; height: 2px; background: #1a1a2e; margin: 5px 0; transition: 0.3s; }
+
+        @media (max-width: 768px) {
+            .nav-toggle { display: block; }
+            .nav-links {
+                display: none; position: absolute; top: 70px; left: 0; right: 0;
+                background: #fff; flex-direction: column;
+                padding: 2rem; gap: 1.5rem;
+                border-bottom: 1px solid rgba(0,0,0,0.04);
+            }
+            .nav-links.open { display: flex; }
+        }
+
+        /* ── Hero ── */
+        .hero {
+            min-height: 50vh;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center;
+            padding: 140px 2rem 80px;
+            background: #fff;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 300; line-height: 1.2;
+            color: #1a1a2e; margin-bottom: 1.5rem;
+        }
+        .hero h1 strong { font-weight: 600; }
+        .hero p {
+            font-size: 1rem; font-weight: 300;
+            color: #666; max-width: 550px; margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* ── Sections ── */
+        .section { padding: 80px 2rem; max-width: 1100px; margin: 0 auto; }
+        .section-dark { background: #1a1a2e; padding: 80px 2rem; }
+        .section-dark .section-inner { max-width: 1100px; margin: 0 auto; }
+        .section-light { background: #fafaf8; padding: 80px 2rem; }
+        .section-light .section-inner { max-width: 1100px; margin: 0 auto; }
+
+        .section-label {
+            font-size: 0.65rem; text-transform: uppercase;
+            letter-spacing: 3px; color: #C9A961;
+            font-weight: 600; margin-bottom: 1rem;
+        }
+        .section-title {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            font-weight: 300; margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        .section-title strong { font-weight: 600; }
+        .section-desc {
+            font-size: 0.95rem; color: #666;
+            line-height: 1.8; max-width: 600px;
+        }
+
+        .divider {
+            width: 40px; height: 2px;
+            background: #C9A961;
+            margin: 1.5rem 0;
+        }
+
+        /* ── E-book Section ── */
+        .ebook-section {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 4rem; align-items: center;
+        }
+        .ebook-cover { text-align: center; }
+        .ebook-cover img {
+            max-width: 320px; width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+        }
+        .ebook-info { color: #fff; }
+        .ebook-info .badge-free {
+            display: inline-block;
+            font-size: 0.6rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 2px;
+            color: #C9A961; margin-bottom: 1rem;
+        }
+        .ebook-info h2 {
+            font-size: 1.8rem; font-weight: 300;
+            color: #fff; margin-bottom: 0.5rem;
+        }
+        .ebook-info h2 strong { font-weight: 600; color: #C9A961; }
+        .ebook-info .subtitle {
+            font-size: 0.9rem; color: #C9A961;
+            font-style: italic; margin-bottom: 1rem;
+        }
+        .ebook-info .desc {
+            font-size: 0.85rem; color: rgba(255,255,255,0.6);
+            line-height: 1.8; margin-bottom: 0.5rem;
+        }
+        .ebook-info .authors {
+            font-size: 0.75rem; color: rgba(255,255,255,0.4);
+            margin-bottom: 2rem;
+        }
+        .ebook-info .authors strong { color: #fff; }
+
+        /* E-book actions */
+        .ebook-actions { display: flex; flex-direction: column; gap: 1rem; max-width: 400px; margin-top: 0.5rem; }
+        .ebook-actions .btn-preview {
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 12px 24px;
+            background: transparent; color: #C9A961;
+            border: 1px solid #C9A961; border-radius: 6px;
+            font-size: 0.8rem; font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; transition: all 0.3s;
+            text-decoration: none;
+        }
+        .ebook-actions .btn-preview:hover { background: rgba(201,169,97,0.1); transform: translateY(-1px); }
+        .ebook-actions .btn-buy {
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 12px 24px;
+            background: #C9A961; color: #1a1a2e;
+            border: none; border-radius: 6px;
+            font-size: 0.8rem; font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; transition: all 0.3s;
+            text-decoration: none;
+        }
+        .ebook-actions .btn-buy:hover { background: #d4af37; transform: translateY(-1px); }
+        .ebook-actions .btn-buy.coming-soon {
+            opacity: 0.5; pointer-events: none;
+        }
+        .ebook-actions .buy-note {
+            font-size: 0.68rem; color: rgba(255,255,255,0.35);
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .ebook-section { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
+            .ebook-actions { margin: 0 auto; align-items: center; }
+        }
+
+        /* ── Podcast ── */
+        .podcast-embed {
+            border-radius: 12px; margin-top: 2rem;
+            overflow: hidden;
+        }
+
+        /* ── Blog article items ── */
+        .blog-article-item {
+            padding: 2rem 0; border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        .blog-article-item:last-child { border-bottom: none; }
+        .blog-article-header {
+            display: flex; justify-content: space-between;
+            align-items: flex-start; gap: 2rem;
+        }
+        .blog-article-header h3 {
+            font-size: 1.2rem; font-weight: 500;
+            color: #1a1a2e; margin-bottom: 0.5rem;
+        }
+        .blog-article-header .source {
+            font-size: 0.65rem; text-transform: uppercase;
+            letter-spacing: 1.5px; color: #C9A961;
+            font-weight: 600; margin-bottom: 0.5rem;
+        }
+        .blog-article-actions {
+            display: flex; gap: 1rem; flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .btn-ver-resumo, .btn-ver-artigo {
+            padding: 8px 12px;
+            background: transparent; color: #C9A961;
+            border: 1px solid #C9A961; border-radius: 4px;
+            font-size: 0.65rem; font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; transition: all 0.3s;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .btn-ver-resumo:hover, .btn-ver-artigo:hover {
+            background: rgba(201,169,97,0.1);
+        }
+        .blog-article-summary {
+            display: none; padding: 2rem 0;
+            border-top: 1px solid rgba(0,0,0,0.04);
+            margin-top: 2rem;
+        }
+        .blog-article-summary.open { display: block; }
+        .blog-article-summary p {
+            font-size: 0.9rem; color: #666;
+            line-height: 1.8; margin-bottom: 1rem;
+        }
+        .blog-article-summary strong { color: #1a1a2e; }
+        .blog-cta-light {
+            background: rgba(201,169,97,0.08);
+            padding: 1.5rem; border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        .blog-cta-light p {
+            font-size: 0.85rem; color: #1a1a2e;
+            margin-bottom: 0.5rem;
+        }
+        .blog-cta-light a {
+            font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 1.5px; font-weight: 600;
+            color: #C9A961; text-decoration: none;
+        }
+        .blog-article-footer-link {
+            margin-top: 1.5rem;
+        }
+        .blog-article-footer-link a {
+            font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 1.5px; font-weight: 600;
+            color: #C9A961; text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .blog-article-header {
+                flex-direction: column; gap: 1rem;
+            }
+            .blog-article-actions {
+                justify-content: flex-start;
+            }
+        }
+
+        /* ── Exclusive articles ── */
+        .exclusive-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        .exclusive-item {
+            background: #fafaf8; padding: 2rem;
+            border-radius: 8px; cursor: pointer;
+            transition: all 0.3s;
+        }
+        .exclusive-item:hover {
+            background: #f0f0ed; transform: translateY(-2px);
+        }
+        .exclusive-item .tag {
+            font-size: 0.6rem; text-transform: uppercase;
+            letter-spacing: 2px; color: #C9A961;
+            font-weight: 600; margin-bottom: 0.5rem;
+        }
+        .exclusive-item h3 {
+            font-size: 1.1rem; font-weight: 500;
+            color: #1a1a2e; margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+        .exclusive-item blockquote {
+            font-size: 0.85rem; color: #666;
+            font-style: italic; line-height: 1.6;
+            padding-left: 1rem; border-left: 2px solid #C9A961;
+            margin-bottom: 1rem;
+        }
+        .exclusive-item .meta {
+            font-size: 0.7rem; color: #999;
+            margin-bottom: 1rem;
+        }
+        .exclusive-item .accordion-toggle {
+            background: transparent; color: #C9A961;
+            border: 1px solid #C9A961; border-radius: 4px;
+            padding: 8px 12px; font-size: 0.7rem;
+            font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; cursor: pointer;
+            transition: all 0.3s; font-family: 'Poppins', sans-serif;
+        }
+        .exclusive-item .accordion-toggle:hover {
+            background: rgba(201,169,97,0.1);
+        }
+        .accordion-content {
+            display: none; margin-top: 1.5rem;
+            padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.06);
+        }
+        .exclusive-item.open .accordion-content {
+            display: block;
+        }
+        .accordion-content p {
+            font-size: 0.85rem; color: #666;
+            line-height: 1.8; margin-bottom: 1rem;
+        }
+        .accordion-content strong { color: #1a1a2e; }
+
+        @media (max-width: 768px) {
+            .exclusive-grid { grid-template-columns: 1fr; gap: 2rem; }
+        }
+
+        /* ── Newsletter ── */
+        .newsletter-box { text-align: center; max-width: 550px; margin: 0 auto; }
+        .newsletter-box h2 {
+            font-size: 1.5rem; font-weight: 300;
+            color: #fff; margin-bottom: 0.5rem;
+        }
+        .newsletter-box h2 strong { font-weight: 600; color: #C9A961; }
+        .newsletter-box .sub-desc {
+            font-size: 0.85rem; color: rgba(255,255,255,0.5);
+            margin-bottom: 2rem; line-height: 1.7;
+        }
+        .newsletter-form {
+            display: flex; gap: 0.5rem;
+            justify-content: center; flex-wrap: wrap;
+        }
+        .newsletter-form input {
+            padding: 12px 16px;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 6px; font-size: 0.85rem;
+            background: rgba(255,255,255,0.06);
+            color: #fff; outline: none;
+            font-family: 'Poppins', sans-serif;
+            min-width: 160px; transition: border-color 0.3s;
+        }
+        .newsletter-form input:focus { border-color: #C9A961; }
+        .newsletter-form input::placeholder { color: rgba(255,255,255,0.3); }
+        .newsletter-form button {
+            padding: 12px 24px;
+            background: #C9A961; color: #1a1a2e;
+            border: none; border-radius: 6px;
+            font-size: 0.75rem; font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .newsletter-form button:hover { background: #d4af37; }
+        .newsletter-note {
+            font-size: 0.65rem; color: rgba(255,255,255,0.3);
+            margin-top: 1rem;
+        }
+        .newsletter-msg {
+            display: none; margin-top: 1rem;
+            padding: 8px 12px; border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        /* LinkedIn newsletter link */
+        .linkedin-cta {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            margin-top: 1.5rem;
+            font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 1.5px; font-weight: 600;
+            color: rgba(255,255,255,0.4); text-decoration: none;
+            transition: color 0.3s;
+        }
+        .linkedin-cta:hover { color: #C9A961; }
+
+        /* ── Multimedia ── */
+        .media-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+        .media-item h3 {
+            font-size: 1.1rem; font-weight: 500;
+            color: #1a1a2e; margin-bottom: 0.5rem;
+        }
+        .media-item p {
+            font-size: 0.85rem; color: #666;
+            line-height: 1.7; margin-bottom: 1rem;
+        }
+        .media-item a {
+            font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 1.5px; font-weight: 600;
+            color: #C9A961; text-decoration: none;
+        }
+        .media-item a:hover { color: #1a1a2e; }
+
+        @media (max-width: 768px) {
+            .media-grid { grid-template-columns: 1fr; gap: 2rem; }
+        }
+
+        /* ── Footer ── */
+        .footer {
+            background: #1a1a2e; padding: 60px 2rem 30px;
+        }
+        .footer-inner {
+            max-width: 1100px; margin: 0 auto;
+            display: flex; justify-content: space-between;
+            flex-wrap: wrap; gap: 2rem;
+        }
+        .footer-col h4 {
+            font-size: 0.65rem; text-transform: uppercase;
+            letter-spacing: 2px; color: #C9A961;
+            font-weight: 600; margin-bottom: 1rem;
+        }
+        .footer-col a {
+            display: block; font-size: 0.8rem;
+            color: rgba(255,255,255,0.5); text-decoration: none;
+            margin-bottom: 0.5rem; transition: color 0.3s;
+        }
+        .footer-col a:hover { color: #C9A961; }
+        .footer-col p {
+            font-size: 0.8rem; color: rgba(255,255,255,0.5);
+            line-height: 1.7;
+        }
+        .footer-bottom {
+            max-width: 1100px; margin: 3rem auto 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            text-align: center;
+        }
+        .footer-bottom p {
+            font-size: 0.65rem; color: rgba(255,255,255,0.3);
+            text-transform: uppercase; letter-spacing: 1.5px;
+        }
+
+        /* ── Fade-in animation ── */
+        .fade-in {
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+    </style>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'AW-17015553005');
+    </script>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035" crossorigin="anonymous"></script>
+<script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Knowledge - Share2Inspire",
+      "description": "Knowledge resources on career, leadership and professional development. Podcast, e-books, exclusive articles and studies.",
+      "url": "https://www.share2inspire.pt/en/pages/knowledge",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Share2Inspire"
+      }
+    }
+    </script>
+</head>
+
+<body>
+
+    <!-- ── Navigation ── -->
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <a href="../home/index.html" class="nav-logo">
+                <img loading="lazy" src="../../../images/logo.webp" alt="Share2Inspire">
+            </a>
+            <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="nav-links">
+                <a href="../home/index.html">Home</a>
+                <a href="/cv-analyser">CV Analyser</a>
+                <a href="/career-path">Career Path</a>
+                <a href="services.html">Services</a>
+                <a href="knowledge.html" class="active">Knowledge</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+                <a href="/area-cliente/" style="background:#BF9A33;color:#0a0a0a!important;padding:0.3rem 0.8rem;border-radius:4px;font-weight:600;">Client Area</a>
+                <a href="../../" class="lang-switch">PT</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ── Hero ── -->
+    <section class="hero">
+        <div>
+            <h1>Where strategy<br>meets the <strong>human</strong></h1>
+            <p>A curated collection of ideas, articles and podcasts for those seeking to navigate the transformation of work with purpose.</p>
+        </div>
+    </section>
+
+    <!-- ── E-book Download ── -->
+    <div class="section-dark" id="ebook-download">
+        <div class="section-inner">
+            <div class="ebook-section fade-in">
+                <div class="ebook-cover">
+                    <img loading="lazy" src="../../../images/ebook-capa.webp" alt="E-book Energy to Lead">
+                </div>
+                <div class="ebook-info">
+                    <span class="badge-free">E-book</span>
+                    <h2>Energy to <strong>Lead</strong></h2>
+                    <p class="subtitle">The Practical Guide to Mental and Physical Performance</p>
+                    <p class="desc">A guide on the four dimensions of energy — physical, mental, emotional and spiritual — for leaders who want to maintain performance sustainably.</p>
+                    <p class="authors">By <strong>Samuel Rolo</strong> &amp; <strong>Marlene Ruivo</strong></p>
+
+                    <div class="ebook-actions">
+                        <a href="../../../assets/ebooks/Energia_para_Liderar_Preview_PT.pdf" download class="btn-preview">Download preview &rarr;</a>
+                        <a href="https://go.hotmart.com/Q104764153P?dp=1" target="_blank" rel="noopener" class="btn-buy">Buy complete e-book (PT) &rarr;</a>
+                        <span class="buy-note">English version coming soon.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Podcast ── -->
+    <div class="section fade-in">
+        <span class="section-label">Podcast</span>
+        <h2 class="section-title">Humans and <strong>Machines</strong></h2>
+        <p class="section-desc">The intersection between artificial intelligence and human essence. How to maintain empathy and critical thinking in an increasingly automated world.</p>
+
+        <div class="podcast-embed">
+            <iframe style="border-radius:12px"
+                src="https://open.spotify.com/embed/show/2P09p0F3HIR0jXRdCMPOSe?utm_source=generator&theme=0"
+                width="100%" height="352" frameBorder="0" allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"></iframe>
+        </div>
+    </div>
+
+    <!-- ── Blog Articles ── -->
+    <div class="section-light">
+        <div class="section-inner fade-in">
+            <span class="section-label">Blog</span>
+            <h2 class="section-title">Share2Inspire <strong>Articles</strong></h2>
+            <div class="divider"></div>
+
+            <!-- Article 1: 7 CV Errors -->
+            <div class="blog-article-item">
+                <div class="blog-article-header">
+                    <div>
+                        <p class="source">Career Strategy &middot; <span style="color:#999;font-weight:400;">6 min</span></p>
+                        <h3>7 Common CV Errors That Get Candidates Rejected</h3>
+                    </div>
+                    <div class="blog-article-actions">
+                        <button class="btn-ver-resumo" onclick="toggleBlogSummary(this)">&#9654; View summary</button>
+                        <a href="/blog/articles/7-cv-errors-rejected.html" class="btn-ver-artigo">Read full article &rarr;</a>
+                    </div>
+                </div>
+                <div class="blog-article-summary">
+                    <p>Your CV is often your first and only chance to make an impression. Yet many candidates make critical mistakes that lead to instant rejection.</p>
+                    <p><strong>Error 1: Poor formatting</strong> &mdash; Inconsistent fonts, spacing, or structure make your CV hard to read and process by ATS systems.</p>
+                    <p><strong>Error 2: Lack of keywords</strong> &mdash; Recruiters search for specific terms. If your CV doesn't match the job description, it won't be found.</p>
+                    <p><strong>Error 3: Vague descriptions</strong> &mdash; Generic statements don't demonstrate impact. Use metrics and results.</p>
+                    <p><strong>Error 4: Typos and grammar mistakes</strong> &mdash; These signal carelessness and lack of attention to detail.</p>
+                    <p><strong>Error 5: Outdated information</strong> &mdash; A CV that hasn't been updated in years raises questions about your engagement.</p>
+                    <div class="blog-cta-light">
+                        <p>Discover how your CV is evaluated with Share2Inspire's <strong>CV Analyser</strong>.</p>
+                        <a href="/cv-analyser">Analyse your CV for free &rarr;</a>
+                    </div>
+                    <div class="blog-article-footer-link">
+                        <a href="/blog/articles/7-cv-errors-rejected.html">Read full article &rarr;</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Article 2: CV or LinkedIn -->
+            <div class="blog-article-item">
+                <div class="blog-article-header">
+                    <div>
+                        <p class="source">Career Strategy &middot; <span style="color:#999;font-weight:400;">7 min</span></p>
+                        <h3>CV or LinkedIn: Which Is More Important for Your Career?</h3>
+                    </div>
+                    <div class="blog-article-actions">
+                        <button class="btn-ver-resumo" onclick="toggleBlogSummary(this)">&#9654; View summary</button>
+                        <a href="/blog/articles/cv-linkedin-importance.html" class="btn-ver-artigo">Read full article &rarr;</a>
+                    </div>
+                </div>
+                <div class="blog-article-summary">
+                    <p>In recent years, LinkedIn has become almost as important as a traditional CV. The most honest answer is: both are essential, but they serve different functions.</p>
+                    <p><strong>The role of CV</strong> &mdash; The CV is the main document in formal application processes. It allows quick assessment of experience, progression and skills.</p>
+                    <p><strong>The role of LinkedIn</strong> &mdash; It functions as an extension of professional identity. Recruiters use it to search for candidates, validate experiences and analyze activity.</p>
+                    <p><strong>The most common problem</strong> &mdash; Many have a good CV but outdated LinkedIn, or vice versa. Both should convey a coherent narrative.</p>
+                    <p><strong>The ideal balance</strong> &mdash; Optimized CV for applications + LinkedIn prepared for recruiter searches = maximum opportunities.</p>
+                    <div class="blog-cta-light">
+                        <p>Discover how your profile is evaluated with Share2Inspire's <strong>CV Analyser</strong>.</p>
+                        <a href="/cv-analyser">Analyse your CV for free &rarr;</a>
+                    </div>
+                    <div class="blog-article-footer-link">
+                        <a href="/blog/articles/cv-linkedin-importance.html">Read full article &rarr;</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Article 3: Improve LinkedIn -->
+            <div class="blog-article-item">
+                <div class="blog-article-header">
+                    <div>
+                        <p class="source">Online Visibility &middot; <span style="color:#999;font-weight:400;">9 min</span></p>
+                        <h3>How to Improve Your LinkedIn to Appear in Recruiter Searches</h3>
+                    </div>
+                    <div class="blog-article-actions">
+                        <button class="btn-ver-resumo" onclick="toggleBlogSummary(this)">&#9654; View summary</button>
+                        <a href="/blog/articles/improve-linkedin-searches.html" class="btn-ver-artigo">Read full article &rarr;</a>
+                    </div>
+                </div>
+                <div class="blog-article-summary">
+                    <p>LinkedIn has become one of the main platforms used by recruiters. Small adjustments to your profile can significantly increase visibility.</p>
+                    <p><strong>1. Clear headline</strong> &mdash; Should include area of expertise, relevant keywords and professional value proposition.</p>
+                    <p><strong>2. Structured "About" section</strong> &mdash; Tell your professional story with experience, specialization and objectives.</p>
+                    <p><strong>3. Keywords in experiences</strong> &mdash; Search algorithms analyze descriptions. Relevant terms increase visibility.</p>
+                    <p><strong>4. Relevant skills</strong> &mdash; Help recruiters quickly understand your positioning.</p>
+                    <p><strong>5. Platform activity</strong> &mdash; Profiles that share content regularly have greater organic visibility.</p>
+                    <div class="blog-cta-light">
+                        <p>Analyse your profile visibility with Share2Inspire's <strong>LinkedIn Roaster</strong>.</p>
+                        <a href="/linkedin-roaster">Analyse your LinkedIn for free &rarr;</a>
+                    </div>
+                    <div class="blog-article-footer-link">
+                        <a href="/blog/articles/improve-linkedin-searches.html">Read full article &rarr;</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Article 4: Market Positioning -->
+            <div class="blog-article-item">
+                <div class="blog-article-header">
+                    <div>
+                        <p class="source">Career Assessment &middot; <span style="color:#999;font-weight:400;">8 min</span></p>
+                        <h3>How to Know if You're Well Positioned in the Job Market</h3>
+                    </div>
+                    <div class="blog-article-actions">
+                        <button class="btn-ver-resumo" onclick="toggleBlogSummary(this)">&#9654; View summary</button>
+                        <a href="/blog/articles/market-positioning.html" class="btn-ver-artigo">Read full article &rarr;</a>
+                    </div>
+                </div>
+                <div class="blog-article-summary">
+                    <p>Many professionals ask themselves: am I earning below market rate? Is my profile competitive? What are the next steps? Answering requires structured analysis.</p>
+                    <p><strong>Assess your profile</strong> &mdash; Indicators like years of experience, specialization, progression and professional impact determine market positioning.</p>
+                    <p><strong>Comparison with benchmarks</strong> &mdash; Comparing with other professionals helps you understand if your profile is above average and where improvement opportunities exist.</p>
+                    <p><strong>Clarity on next steps</strong> &mdash; A clear vision of possible career paths helps make more informed decisions.</p>
+                    <p><strong>Start with your CV</strong> &mdash; The first step is to objectively analyze your CV to understand how your profile is evaluated in the market.</p>
+                    <div class="blog-cta-light">
+                        <p>Discover your positioning with Share2Inspire's <strong>Career Path</strong>.</p>
+                        <a href="/career-path">Explore Career Path &rarr;</a>
+                    </div>
+                    <div class="blog-article-footer-link">
+                        <a href="/blog/articles/market-positioning.html">Read full article &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Exclusive Content ── -->
+    <div class="section fade-in" id="exclusive-articles">
+        <span class="section-label">Exclusive</span>
+        <h2 class="section-title">Articles for <strong>subscribers</strong></h2>
+        <div class="divider"></div>
+
+        <div class="exclusive-grid" style="margin-top: 2rem;">
+            <!-- Article 1: ATS -->
+            <div class="exclusive-item" onclick="this.classList.toggle('open')">
+                <p class="tag">Algorithmic Literacy</p>
+                <h3>Essential Guide: ATS as the Digital Guardian of Your Career</h3>
+                <blockquote>"Your CV is no longer just a career narrative. In the digital ecosystem, it's a technical object — a set of data that needs to be structured to be successfully interpreted by extraction algorithms."</blockquote>
+                <p class="meta">Reading time: 12 min</p>
+                <button class="accordion-toggle"><span class="arrow">&#9654;</span> Read full article</button>
+                <div class="accordion-content">
+                    <p>In today's job market, the recruitment process begins long before the interview. Before a human recruiter even sees your CV, it passes through an automated system — the ATS (Applicant Tracking System) — which functions as a digital gatekeeper.</p>
+                    <p>The ATS analyzes your CV looking for <strong>specific keywords</strong>, compatible formatting and logical structure. If your CV isn't optimized for these systems, it will be automatically rejected, regardless of your experience or qualifications.</p>
+                    <p><strong>The 5 pillars of an ATS-compatible CV:</strong></p>
+                    <p>1. <strong>Clean formatting</strong> — No tables, columns or graphics that confuse the parser.<br>
+                    2. <strong>Strategic keywords</strong> — Terms extracted directly from the job description.<br>
+                    3. <strong>Standard sections</strong> — Experience, Education, Skills clearly identified.<br>
+                    4. <strong>File format</strong> — PDF or DOCX, never images or proprietary formats.<br>
+                    5. <strong>Temporal consistency</strong> — Clear dates, no unexplained gaps.</p>
+                    <p>The reality is that <strong>75% of CVs are rejected by ATS</strong> before reaching human hands. Understanding and mastering this technology is not optional — it's an essential employability skill for the 21st century.</p>
+                </div>
+            </div>
+
+            <!-- Article 2: Employability -->
+            <div class="exclusive-item" onclick="this.classList.toggle('open')">
+                <p class="tag">Employability 2026</p>
+                <h3>The CV Is Not What It Seems: 5 Lessons on Algorithmic Employability</h3>
+                <blockquote>"Your CV is no longer read first by people. It's processed. Modern employability requires the shift from perception to actionable data."</blockquote>
+                <p class="meta">Reading time: 10 min</p>
+                <button class="accordion-toggle"><span class="arrow">&#9654;</span> Read full article</button>
+                <div class="accordion-content">
+                    <p>The paradigm of employability has changed radically. The CV, once a narrative document designed to impress a human reader, has transformed into a technical object that needs to be interpreted by algorithms.</p>
+                    <p><strong>Lesson 1: Your CV is a dataset, not a story.</strong><br>
+                    Modern recruitment systems extract structured data from your CV. Each word, each date, each skill is converted into fields of a database. If information isn't clear and structured, it's lost in translation.</p>
+                    <p><strong>Lesson 2: Keywords are not buzzwords.</strong><br>
+                    There's a fundamental difference between filling your CV with jargon and strategically using the terms recruiters and algorithms search for. The key is aligning your CV language with market language.</p>
+                    <p><strong>Lesson 3: Consistency across platforms is measured.</strong><br>
+                    Recruiters cross-reference your CV with LinkedIn. Inconsistencies in dates, titles or skills raise immediate red flags.</p>
+                    <p><strong>Lesson 4: Format matters as much as content.</strong><br>
+                    A visually stunning CV that doesn't pass through ATS is an invisible CV. Form must serve function.</p>
+                    <p><strong>Lesson 5: Employability is a skill, not a state.</strong><br>
+                    Staying employable requires constant updating — of your CV, LinkedIn, skills and market awareness.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Newsletter ── -->
+    <div class="section-dark fade-in" id="newsletter-download">
+        <div class="section-inner fade-in">
+            <div class="newsletter-box">
+                <h2>The Mindset <strong>Maverick</strong></h2>
+                <p class="sub-desc">Reflections on the intersection between technology, strategy and humanity. Practical insights for those who challenge the status quo.</p>
+
+                <form id="newsletterSubscriptionForm" class="newsletter-form">
+                    <input type="text" id="subscriberName" placeholder="Name" required>
+                    <input type="email" id="subscriberEmail" placeholder="Email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+                <div id="subscriptionMessage" class="newsletter-msg"></div>
+                <p class="newsletter-note">Your data is protected. Cancel anytime.</p>
+
+                <a href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7384145793324085248" target="_blank" class="linkedin-cta">
+                    <i class="fab fa-linkedin"></i> Also on LinkedIn &rarr;
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Multimedia ── -->
+    <div class="section fade-in">
+        <span class="section-label">Multimedia</span>
+        <h2 class="section-title">Podcast &amp; <strong>Video</strong></h2>
+        <div class="divider"></div>
+
+        <div class="media-grid" style="margin-top: 2rem;">
+            <div class="media-item">
+                <h3>Humans and Machines Podcast</h3>
+                <p>Conversations about the future of work, artificial intelligence and the digital transformation of Human Resources.</p>
+                <a href="https://open.spotify.com/show/2P09p0F3HIR0jXRdCMPOSe" target="_blank">Listen on Spotify &rarr;</a>
+            </div>
+            <div class="media-item">
+                <h3>Share2Inspire Channel</h3>
+                <p>Video content on career development, CV analysis, recruitment strategies and much more.</p>
+                <a href="https://www.youtube.com/@share2inspire/videos" target="_blank">View channel &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <a href="../home/index.html"><img loading="lazy" src="../../../images/logo.webp" alt="Share2Inspire" style="height: 32px; filter: brightness(0) invert(1); margin-bottom: 1rem;"></a>
+                <p>Share to inspire careers.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigation</h4>
+                <a href="../home/index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="services.html">Services</a>
+                <a href="knowledge.html">Knowledge</a>
+            </div>
+            <div class="footer-col">
+                <h4>Legal Information</h4>
+                <a href="privacy-policy.html">Privacy</a>
+                <a href="cookies-policy.html">Cookies</a>
+                <a href="legal-information.html">Legal Information</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <p>srshare2inspire@gmail.com</p>
+                <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" style="color: #C9A961;"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://www.instagram.com/share2inspire_/" target="_blank" style="color: #C9A961;"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Share2Inspire | Samuel Rolo. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ── Scripts ── -->
+
+    <!-- Newsletter Form -->
+    <script>
+    document.getElementById('newsletterSubscriptionForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const name = document.getElementById('subscriberName').value.trim();
+        const email = document.getElementById('subscriberEmail').value.trim();
+        const messageDiv = document.getElementById('subscriptionMessage');
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processing...';
+        try {
+            const response = await fetch('https://share2inspire-beckend.lm.r.appspot.com/api/newsletter/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: name, email: email, source: 'knowledge' })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                messageDiv.style.cssText = 'display:block; background:rgba(201,169,97,0.15); color:#C9A961; padding:10px 16px; border-radius:6px; margin-top:1rem; font-size:0.8rem;';
+                messageDiv.textContent = data.message || 'Subscription successful.';
+                e.target.reset();
+                setTimeout(() => { messageDiv.style.display = 'none'; }, 5000);
+                fetch('https://share2inspire-beckend.lm.r.appspot.com/api/leadmagnet/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        source: 'knowledge',
+                        download_link: 'https://share2inspire.pt/assets/downloads/10-linkedin-errors.pdf'
+                    })
+                }).catch(() => {});
+            } else {
+                throw new Error(data.error || 'Error processing subscription');
+            }
+        } catch (error) {
+            messageDiv.style.cssText = 'display:block; background:rgba(220,53,69,0.15); color:#ff6b6b; padding:10px 16px; border-radius:6px; margin-top:1rem; font-size:0.8rem;';
+            messageDiv.textContent = error.message;
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Subscribe';
+        }
+    });
+    </script>
+
+    <!-- E-book scroll -->
+    <script>
+    if (window.location.hash === '#ebook-download') {
+        setTimeout(function() {
+            document.getElementById('ebook-download').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+    }
+    </script>
+
+    <!-- Blog summary toggle -->
+    <script>
+    function toggleBlogSummary(btn) {
+        const item = btn.closest('.blog-article-item');
+        const summary = item.querySelector('.blog-article-summary');
+        const isOpen = summary.classList.contains('open');
+        summary.classList.toggle('open', !isOpen);
+        btn.classList.toggle('open', !isOpen);
+        if (!isOpen) {
+            btn.innerHTML = '&#9654; Close summary';
+        } else {
+            btn.innerHTML = '&#9654; View summary';
+        }
+    }
+    </script>
+
+    <!-- Fade-in observer -->
+    <script>
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    </script>
+<script src="../../../js/hub-widget.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../../js/shared-auth.js"></script>
+    <script src="../../../js/inline-auth.js"></script>
+</body>
+
+</html>
