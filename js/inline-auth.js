@@ -44,7 +44,7 @@
         '.s2i-user-nav{position:relative;display:flex;align-items:center;gap:8px;cursor:pointer;padding:.35rem .75rem;border-radius:6px;transition:background .2s;}',
         '.s2i-user-nav:hover{background:rgba(191,154,51,.1);}',
         '.s2i-user-avatar{width:32px;height:32px;border-radius:50%;background:#BF9A33;color:#0a0a0a;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;font-family:Inter,sans-serif;flex-shrink:0;}',
-        '.s2i-user-name{color:#eee;font-size:.85rem;font-weight:500;font-family:Inter,sans-serif;white-space:nowrap;}',
+        '.s2i-user-name{color:#fff;font-size:.85rem;font-weight:600;font-family:Inter,sans-serif;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.5);}',
         '.s2i-user-chevron{color:#888;font-size:.65rem;transition:transform .2s;}',
         '.s2i-user-chevron.open{transform:rotate(180deg);}',
 
