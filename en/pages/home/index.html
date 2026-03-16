@@ -158,7 +158,53 @@
             font-weight: 300;
             color: rgba(255, 255, 255, 0.85);
             line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .hero-proofs {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
             margin-bottom: 2.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .proof-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(201, 169, 97, 0.2);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .proof-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(201, 169, 97, 0.4);
+        }
+
+        .proof-icon {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .proof-text {
+            font-size: 0.72rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 0.2px;
+            line-height: 1.3;
+        }
+
+        .proof-text strong {
+            font-weight: 500;
+            color: #fff;
         }
 
         .hero-cta {
@@ -410,6 +456,22 @@
 
             .hero-inner p {
                 font-size: 1rem;
+            }
+
+            .hero-proofs {
+                flex-direction: column;
+                gap: 0.6rem;
+                align-items: center;
+            }
+
+            .proof-item {
+                width: 100%;
+                max-width: 340px;
+                justify-content: flex-start;
+            }
+
+            .proof-text {
+                font-size: 0.68rem;
             }
 
             .section-serene {
@@ -770,8 +832,22 @@
     <section class="hero-minimal">
         <div class="hero-inner">
             <h1>Clarity to decide<br>what comes <strong>next</strong></h1>
-            <p>Strategic and human support for professionals<br>in moments of doubt, transition, or reorientation.</p>
-            <a href="/en/pages/services/" class="hero-cta">Explore services</a>
+            <p>AI-powered diagnosis and strategic guidance for professionals<br>in moments of doubt, transition, or reorientation.</p>
+            <a href="https://share2inspire.pt/cv-analyser" class="hero-cta">Start diagnosis</a>
+            <div class="hero-proofs">
+                <div class="proof-item">
+                    <div class="proof-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+                    <div class="proof-text"><strong>Free diagnosis</strong> in less than 30 seconds</div>
+                </div>
+                <div class="proof-item">
+                    <div class="proof-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>
+                    <div class="proof-text"><strong>ATS compatible</strong> used by recruiters</div>
+                </div>
+                <div class="proof-item">
+                    <div class="proof-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
+                    <div class="proof-text"><strong>Practical tips</strong> to improve your CV</div>
+                </div>
+            </div>
         </div>
         <div class="scroll-hint"><span></span></div>
     </section>
