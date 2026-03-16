@@ -73,6 +73,10 @@ async function supaInsert(table, data) {
         },
         body: JSON.stringify(data)
     });
+    if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Insert failed (${res.status}): ${errText}`);
+    }
     return res.json();
 }
 
