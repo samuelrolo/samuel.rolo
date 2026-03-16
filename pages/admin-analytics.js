@@ -1191,7 +1191,7 @@ function renderVouchers() {
             <td><code style="font-size:12px;background:var(--bg);padding:2px 6px;border-radius:4px;">${v.code}</code></td>
             <td style="font-size:12px;">${v.email || '—'}</td>
             <td style="font-size:12px;">${v.plan_name || '—'}</td>
-            <td>${hasCareerPath ? '<span class="badge badge-career">Career Path</span>' : '<span class="badge badge-cv">CV Analyser</span>'}</td>
+            <td>${v.voucher_type === 'linkedin_roaster' ? '<span class="badge" style="background:#0077B5;color:#fff;font-size:10px;">LinkedIn Roaster</span>' : v.voucher_type === 'career_path' ? '<span class="badge badge-career">Career Path</span>' : v.voucher_type === 'complete' || v.voucher_type === 'bundle' ? '<span class="badge" style="background:var(--gold);color:#fff;font-size:10px;">Bundle</span>' : '<span class="badge badge-cv">CV Analyser</span>'}</td>
             <td style="font-size:12px;font-weight:600;">${parseFloat(v.amount_paid) > 0 ? parseFloat(v.amount_paid).toFixed(2) + '€' : '—'}</td>
             <td>
                 <span class="badge ${isActive ? 'badge-success' : 'badge-secondary'}">${isActive ? 'Ativo' : 'Usado'}</span>
