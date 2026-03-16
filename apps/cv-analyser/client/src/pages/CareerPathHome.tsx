@@ -206,6 +206,8 @@ export default function CareerPathHome() {
       // Voucher válido — marcar como pago e ir para resultados
       setShowVoucherModal(false);
       sessionStorage.setItem('careerPathPaid', 'true');
+      sessionStorage.setItem('cpOrderId', `CP-VOUCHER-${v.code}`);
+      if (v.email) sessionStorage.setItem('cpPaymentEmail', v.email);
       setTimeout(() => { setLocation('/results'); }, 400);
     } catch (err: any) {
       setVoucherError(err.message || 'Código inválido');
