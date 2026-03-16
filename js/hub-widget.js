@@ -1,9 +1,9 @@
 /**
  * SHARE2INSPIRE - Unified Floating Hub
- * Single minimal button that expands to Career Adviser + Feedback
+ * Single minimal button that expands to Feedback (+ Career Adviser only in area-cliente)
  * 
  * Created: 2026-03-04
- * Purpose: Replace two noisy side-tabs with one clean floating hub
+ * Updated: 2026-03-16 — Career Adviser only visible inside /area-cliente/
  */
 
 (function () {
@@ -12,18 +12,27 @@
     // Prevent duplicate injection
     if (document.getElementById('s2iHub')) return;
 
-    // Inject HTML
-    const hubHTML = `
-        <div class="s2i-hub-overlay" id="s2iHubOverlay"></div>
-        <div class="s2i-hub" id="s2iHub">
-            <div class="s2i-hub-menu">
+    // Detect if we are inside the area-cliente
+    var isAreaCliente = window.location.pathname.indexOf('/area-cliente') !== -1;
+
+    // Build Career Adviser button only if inside area-cliente
+    var careerBtnHTML = '';
+    if (isAreaCliente) {
+        careerBtnHTML = `
                 <button class="s2i-hub-option" id="s2iHubCareer" aria-label="Career Adviser">
                     <span class="opt-icon">🎯</span>
                     <div>
                         <div class="opt-label">Career Adviser</div>
                         <div class="opt-desc">Assistente de carreira</div>
                     </div>
-                </button>
+                </button>`;
+    }
+
+    // Inject HTML
+    const hubHTML = `
+        <div class="s2i-hub-overlay" id="s2iHubOverlay"></div>
+        <div class="s2i-hub" id="s2iHub">
+            <div class="s2i-hub-menu">${careerBtnHTML}
                 <button class="s2i-hub-option" id="s2iHubFeedback" aria-label="Feedback">
                     <span class="opt-icon">💬</span>
                     <div>
@@ -47,7 +56,6 @@
     const hub = document.getElementById('s2iHub');
     const trigger = document.getElementById('s2iHubTrigger');
     const overlay = document.getElementById('s2iHubOverlay');
-    const careerBtn = document.getElementById('s2iHubCareer');
     const feedbackBtn = document.getElementById('s2iHubFeedback');
 
     function toggleHub() {
@@ -63,18 +71,21 @@
     trigger.addEventListener('click', toggleHub);
     overlay.addEventListener('click', closeHub);
 
-    // Career Adviser — trigger the existing coach widget
-    careerBtn.addEventListener('click', function () {
-        closeHub();
-        // Use the existing SamuelRoloAI instance
-        if (window.samuelRoloAI) {
-            window.samuelRoloAI.openWidget();
-        } else {
-            // Fallback: click the hidden tab button
-            var tabBtn = document.getElementById('coachTabButton');
-            if (tabBtn) tabBtn.click();
+    // Career Adviser — only if inside area-cliente
+    if (isAreaCliente) {
+        var careerBtn = document.getElementById('s2iHubCareer');
+        if (careerBtn) {
+            careerBtn.addEventListener('click', function () {
+                closeHub();
+                if (window.samuelRoloAI) {
+                    window.samuelRoloAI.openWidget();
+                } else {
+                    var tabBtn = document.getElementById('coachTabButton');
+                    if (tabBtn) tabBtn.click();
+                }
+            });
         }
-    });
+    }
 
     // Feedback — trigger the existing feedback modal
     feedbackBtn.addEventListener('click', function () {
@@ -84,7 +95,6 @@
             var modal = new bootstrap.Modal(feedbackModalEl);
             modal.show();
         } else {
-            // Fallback: click the hidden feedback button
             var openBtn = document.getElementById('openFeedbackBtn');
             if (openBtn) openBtn.click();
         }

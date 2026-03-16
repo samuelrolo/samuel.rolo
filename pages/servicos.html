@@ -170,14 +170,15 @@
         /* Service card */
         .svc-card {
             border: 1px solid #f0f0f0;
-            border-radius: 6px;
-            margin-bottom: 12px;
+            border-radius: 8px;
+            margin-bottom: 14px;
             background: #fff;
             transition: border-color 0.3s, box-shadow 0.3s;
             overflow: hidden;
         }
         .svc-card:hover {
             border-color: #e8d5a8;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         /* Highlighted card (Career Path) */
         .svc-card.highlighted {
@@ -204,21 +205,24 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 16px;
+            padding: 18px 22px;
             cursor: pointer;
             user-select: none;
+            min-height: 62px;
         }
         .svc-card-header:hover .svc-card-name {
             color: #C9A961;
         }
         .svc-card-name {
-            font-size: 0.92rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: #1A1A1A;
             transition: color 0.2s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            flex-shrink: 1;
+            min-width: 0;
         }
         .svc-badge {
             font-size: 0.5rem;
@@ -235,10 +239,11 @@
         .svc-badge.green { background: #2E7D32; }
 
         .svc-card-price {
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             font-weight: 300;
             color: #aaa;
-            margin-right: 8px;
+            margin-right: 10px;
+            white-space: nowrap;
         }
         .svc-card-price strong {
             font-weight: 600;
@@ -246,15 +251,15 @@
         }
 
         .svc-toggle {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             border: 1px solid #ddd;
             background: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 300;
             color: #999;
             transition: all 0.25s ease;
@@ -378,7 +383,7 @@
         @media (max-width: 991px) {
             .steps-row {
                 grid-template-columns: 1fr;
-                gap: 40px;
+                gap: 36px;
             }
             .steps-row::before { display: none; }
             .step-col:not(:last-child)::after { display: none; }
@@ -386,6 +391,24 @@
             .svc-hero { padding: 100px 0 30px; }
             .svc-hero h1 { font-size: 1.6rem; }
             .journey-horizontal { padding: 20px 16px 60px; }
+            .svc-card-header { padding: 16px 18px; min-height: 56px; }
+            .svc-card-name { font-size: 0.88rem; }
+            .svc-card-price { font-size: 0.75rem; }
+            .svc-toggle { width: 26px; height: 26px; }
+            .step-header h2 { font-size: 0.95rem; }
+            .step-dot { width: 36px; height: 36px; font-size: 0.8rem; }
+        }
+        @media (max-width: 576px) {
+            .svc-hero { padding: 90px 0 20px; }
+            .svc-hero h1 { font-size: 1.35rem; }
+            .svc-hero .hero-desc { font-size: 0.85rem; }
+            .journey-horizontal { padding: 16px 12px 50px; }
+            .svc-card-header { padding: 14px 14px; min-height: 50px; }
+            .svc-card-name { font-size: 0.84rem; gap: 6px; }
+            .svc-badge { font-size: 0.45rem; padding: 1px 5px; }
+            .svc-detail-inner { padding: 14px 16px 18px; }
+            .svc-detail-inner p { font-size: 0.82rem; }
+            .svc-detail-inner ul li { font-size: 0.8rem; }
         }
 
         /* --- Fade-up --- */
@@ -974,8 +997,7 @@
     </script>
     <script src="../js/coupon-system.js"></script>
     <script src="../js/coupon-handler.js"></script>
-    <script src="../js/coach-agent.js"></script>
-    <script src="../js/hub-widget.js"></script>
+<script src="../js/hub-widget.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/shared-auth.js"></script>
     <script src="../js/inline-auth.js"></script>
