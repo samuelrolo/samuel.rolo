@@ -1,11 +1,25 @@
 # robots.txt for share2inspire.pt
-# Generated: 2026-03-01
+# Updated: 2026-03-16
 
 User-agent: *
 Allow: /
+
+# Admin & internal pages
 Disallow: /pages/admin-analytics
+Disallow: /pages/hr-analytics
+Disallow: /pages/hr-dashboard
+Disallow: /pages/hr-downloads-dashboard
+Disallow: /pages/samuel-rolo-report
+Disallow: /pages/lifestyle-sections
+Disallow: /pages/pagamento
+Disallow: /pages/pagamento_sucesso
+Disallow: /pages/payment-confirmation
 Disallow: /admin/
 Disallow: /api/
+
+# Test pages
+Disallow: /linkedin-roaster/test-preview
+Disallow: /hr-report/
 
 # Sitemap
 Sitemap: https://www.share2inspire.pt/sitemap.xml
