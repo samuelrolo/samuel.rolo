@@ -127,15 +127,28 @@ export default function Dashboard() {
     if (file.size > 10 * 1024 * 1024) return;
     setUploading(true);
     setCvUploaded(false);
-    const ext = file.name.split('.').pop();
-    const path = `cvs/${profile.id}/cv.${ext}`;
-    await supabase.storage.from('user-files').upload(path, file, { upsert: true });
-    const { data } = supabase.storage.from('user-files').getPublicUrl(path);
-    await updateProfile({ cv_file_url: data.publicUrl } as any);
-    await refreshProfile();
-    setUploading(false);
-    setCvUploaded(true);
-    setTimeout(() => setCvUploaded(false), 3000);
+    try {
+      const userId = profile.user_id || profile.id;
+      const ext = file.name.split('.').pop();
+      const path = `${userId}/cv.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from('user-cvs')
+        .upload(path, file, { upsert: true, contentType: file.type });
+      if (uploadError) throw uploadError;
+      const { data: urlData } = supabase.storage.from('user-cvs').getPublicUrl(path);
+      await updateProfile({
+        cv_url: urlData.publicUrl,
+        cv_filename: file.name,
+        cv_uploaded_at: new Date().toISOString(),
+      } as any);
+      await refreshProfile();
+      setCvUploaded(true);
+      setTimeout(() => setCvUploaded(false), 3000);
+    } catch (err) {
+      console.error('CV upload error:', err);
+    } finally {
+      setUploading(false);
+    }
   }
 
   const planLabels: Record<string, string> = {
@@ -174,6 +187,11 @@ export default function Dashboard() {
     }
   }
 
+  // Strip HTML tags and return plain text preview
+  function stripHtml(html: string): string {
+    return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
   function getAnalysisSummary(analysis: SavedAnalysis): string {
     const data = analysis.data;
     if (!data) return '';
@@ -183,7 +201,7 @@ export default function Dashboard() {
       if (data.analysis?.score !== undefined) return `Score ATS: ${data.analysis.score}/100`;
       if (data.analysis?.atsScore !== undefined) return `Score ATS: ${data.analysis.atsScore}/100`;
       if (data.analysis?.overall_score !== undefined) return `Score ATS: ${data.analysis.overall_score}/100`;
-      if (data.results_html) return data.results_html.substring(0, 80) + '...';
+      if (data.results_html) return stripHtml(data.results_html).substring(0, 80) + '...';
     }
     if (analysis.analysis_type === 'linkedin_roaster') {
       if (data.score) return `Score: ${data.score}`;
@@ -194,7 +212,7 @@ export default function Dashboard() {
     if (analysis.analysis_type === 'career_path') {
       if (data.career_path?.title) return data.career_path.title;
       if (data.career_path?.summary) return data.career_path.summary.substring(0, 80) + '...';
-      if (data.results_html) return data.results_html.substring(0, 80) + '...';
+      if (data.results_html) return stripHtml(data.results_html).substring(0, 80) + '...';
     }
     if (analysis.analysis_type === 'career_energy') {
       if (data.total_score) return `Score: ${data.total_score}${data.level ? ` — ${data.level}` : ''}`;
@@ -543,13 +561,13 @@ export default function Dashboard() {
             {/* CV Upload */}
             <div className="border border-[#e5e5e5] rounded-lg p-6">
               <h2 className="text-sm font-medium text-[#1a1a1a] mb-4">{t('dash.cv')}</h2>
-              {profile?.cv_file_url ? (
-                <div className="flex items-center gap-4">
+              {(profile?.cv_url || profile?.cv_file_url) ? (
+                <div className="flex items-center gap-4 flex-wrap">
                   <div className="flex items-center gap-2 text-sm text-[#555]">
                     <FileText className="w-4 h-4 text-gold/60" />
-                    <span className="font-light">CV carregado</span>
+                    <span className="font-light">{profile.cv_filename || 'CV carregado'}</span>
                   </div>
-                  <a href={profile.cv_file_url} target="_blank" rel="noopener noreferrer"
+                  <a href={profile.cv_url || profile.cv_file_url} target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-1.5 text-xs text-gold hover:text-gold-light transition-colors">
                     <Download className="w-3.5 h-3.5" />
                     {t('dash.downloadCv')}

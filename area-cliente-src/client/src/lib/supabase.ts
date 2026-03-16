@@ -7,13 +7,19 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export type UserProfile = {
   id: string;
+  user_id: string;
   first_name: string;
   last_name: string;
   email: string;
   phone: string;
   address: string;
   linkedin_url: string;
-  cv_file_url: string;
+  avatar_url: string;
+  cv_url: string;         // actual DB column name
+  cv_filename: string;    // original file name
+  cv_uploaded_at: string; // upload timestamp
+  // legacy alias kept for backward compat
+  cv_file_url?: string;
   created_at: string;
   updated_at: string;
 };
