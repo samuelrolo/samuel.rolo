@@ -10,7 +10,7 @@ import { supabase } from '@/lib/supabase';
 import { Link } from 'wouter';
 import {
   Loader2, Upload, Download, FileText, Check, ArrowRight,
-  BarChart3, FileSearch, Compass, Clock, ExternalLink, Trash2,
+  BarChart3, FileSearch, Compass, Clock, Trash2,
   Linkedin, RefreshCw, BookOpen, Lock,
 } from 'lucide-react';
 
@@ -304,7 +304,7 @@ export default function Dashboard() {
                           }}
                           className="flex items-center gap-1.5 text-xs text-gold hover:text-gold-light transition-colors"
                         >
-                          Ver resultados <ExternalLink className="w-3 h-3" />
+                          Ver resultados <ArrowRight className="w-3 h-3" />
                         </button>
                       </div>
                     ) : (
@@ -312,8 +312,6 @@ export default function Dashboard() {
                         <p className="text-xs text-[#aaa] font-light">Ainda sem análises guardadas</p>
                         <a
                           href={tool.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 text-xs text-gold/60 hover:text-gold transition-colors"
                         >
                           Fazer análise <ArrowRight className="w-3 h-3" />
@@ -511,11 +509,9 @@ export default function Dashboard() {
                                 {config?.link && (
                                   <a
                                     href={config.link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
                                     className="inline-flex items-center gap-1.5 text-xs text-gold/60 hover:text-gold transition-colors mt-2"
                                   >
-                                    Fazer nova análise <ExternalLink className="w-3 h-3" />
+                                    Fazer nova análise <ArrowRight className="w-3 h-3" />
                                   </a>
                                 )}
 
@@ -546,8 +542,6 @@ export default function Dashboard() {
                     <a
                       key={tool.type}
                       href={tool.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs text-gold/60 border border-gold/10 rounded hover:border-gold/30 hover:text-gold transition-all"
                     >
                       <tool.icon className="w-3 h-3" />
