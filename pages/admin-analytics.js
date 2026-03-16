@@ -2120,17 +2120,18 @@ function renderAffClicks() {
 
     tbody.innerHTML = clicks.map(c => {
         const date = new Date(c.created_at).toLocaleString('pt-PT', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
-        const referrer = c.referrer ? new URL(c.referrer).hostname : '—';
+        const referrer = c.referrer ? (() => { try { return new URL(c.referrer).hostname; } catch { return c.referrer; } })() : '—';
+        const countryFlag = c.country ? `<span title="${esc(c.country)}">${esc(c.country)}</span>` : '<span style="color:var(--text-muted)">—</span>';
         return `<tr>
             <td>${date}</td>
             <td><code style="font-size:11px;">${esc(c.affiliate_code)}</code></td>
-            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(c.landing_page || '')}">${esc(c.landing_page || '—')}</td>
+            <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(c.landing_page || '')}">${esc(c.landing_page || '—')}</td>
+            <td>${countryFlag}</td>
+            <td style="font-size:12px;color:var(--text-secondary);">${esc(c.city || '—')}</td>
             <td><span class="badge badge-secondary">${esc(c.device_type || '—')}</span></td>
             <td>${esc(c.browser || '—')}</td>
             <td>${esc(c.os || '—')}</td>
-            <td>${esc(c.screen_resolution || '—')}</td>
             <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;" title="${esc(c.referrer || '')}">${referrer}</td>
-            <td>${esc(c.utm_source || '—')}</td>
         </tr>`;
     }).join('');
 }

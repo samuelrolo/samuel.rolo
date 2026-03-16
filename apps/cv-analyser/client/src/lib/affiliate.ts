@@ -42,6 +42,20 @@ function generateSessionId(): string {
   return `s_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
 }
 
+async function getGeoLocation(): Promise<{ country: string | null; city: string | null }> {
+  try {
+    const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3000) });
+    if (!res.ok) return { country: null, city: null };
+    const data = await res.json();
+    return {
+      country: data.country_name || data.country || null,
+      city: data.city || null,
+    };
+  } catch {
+    return { country: null, city: null };
+  }
+}
+
 // ── Core Functions ──────────────────────────────────────────
 
 /**
@@ -62,6 +76,9 @@ export async function initAffiliateTracking(): Promise<void> {
       sessionStorage.setItem('affiliate_session', sessionId);
       sessionStorage.setItem('affiliate_landing', window.location.pathname);
 
+      // Fetch geo location (country/city) from IP — silent fallback if unavailable
+      const geo = await getGeoLocation();
+
       // Fire-and-forget: register the click with full details
       const clickData = {
         affiliate_code: refCode,
@@ -76,6 +93,8 @@ export async function initAffiliateTracking(): Promise<void> {
         utm_medium: params.get('utm_medium') || null,
         utm_campaign: params.get('utm_campaign') || null,
         session_id: sessionId,
+        country: geo.country,
+        city: geo.city,
       };
 
       // Resolve affiliate_id from code
