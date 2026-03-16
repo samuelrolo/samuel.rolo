@@ -243,6 +243,102 @@
             overflow: hidden;
         }
 
+        /* ── Blog article items (Share2Inspire articles with summary toggle) ── */
+        .blog-article-item {
+            padding: 2rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        .blog-article-item:last-child { border-bottom: none; }
+        .blog-article-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .blog-article-header > div:first-child { flex: 1; }
+        .blog-article-header .source {
+            font-size: 0.6rem; text-transform: uppercase;
+            letter-spacing: 2px; color: #C9A961;
+            font-weight: 600; margin-bottom: 0.4rem;
+        }
+        .blog-article-header h3 {
+            font-size: 1.05rem; font-weight: 500;
+            color: #1a1a2e; margin-bottom: 0;
+            line-height: 1.4;
+        }
+        .blog-article-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+            padding-top: 1.4rem;
+        }
+        .btn-ver-resumo {
+            font-size: 0.65rem; color: #C9A961;
+            font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1.5px; cursor: pointer;
+            border: none; background: none;
+            padding: 0; font-family: 'Poppins', sans-serif;
+            white-space: nowrap;
+        }
+        .btn-ver-resumo .arrow { display: inline-block; transition: transform 0.3s; font-size: 0.65rem; }
+        .btn-ver-resumo.open .arrow { transform: rotate(90deg); }
+        .btn-ver-artigo {
+            font-size: 0.65rem; text-transform: uppercase;
+            letter-spacing: 1.5px; font-weight: 600;
+            color: #1a1a2e; text-decoration: none;
+            border: 1px solid #1a1a2e; padding: 6px 14px;
+            border-radius: 4px; white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .btn-ver-artigo:hover { background: #1a1a2e; color: #fff; }
+        .blog-article-summary {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.5s ease;
+            margin-top: 0;
+        }
+        .blog-article-summary.open {
+            max-height: 5000px;
+            margin-top: 1.5rem;
+        }
+        .blog-article-summary p {
+            font-size: 0.85rem; color: #555;
+            line-height: 1.8; margin-bottom: 0.9rem;
+        }
+        .blog-cta-light {
+            border: 1px solid #e8dfc8;
+            border-left: 3px solid #C9A961;
+            background: #faf8f3;
+            border-radius: 0 6px 6px 0;
+            padding: 1.2rem 1.5rem;
+            margin: 1.5rem 0 1rem;
+        }
+        .blog-cta-light p {
+            font-size: 0.82rem; color: #555;
+            margin-bottom: 0.6rem !important;
+        }
+        .blog-cta-light a {
+            font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 1.5px; font-weight: 600;
+            color: #C9A961; text-decoration: none;
+        }
+        .blog-cta-light a:hover { color: #1a1a2e; }
+        .blog-article-footer-link {
+            text-align: right;
+            margin-top: 0.5rem;
+        }
+        .blog-article-footer-link a {
+            font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 1.5px; font-weight: 600;
+            color: #C9A961; text-decoration: none;
+        }
+        .blog-article-footer-link a:hover { color: #1a1a2e; }
+        @media (max-width: 768px) {
+            .blog-article-header { flex-direction: column; gap: 0.8rem; }
+            .blog-article-actions { padding-top: 0; flex-wrap: wrap; }
+        }
+
         /* ── Article items ── */
         .article-item {
             padding: 2rem 0;
@@ -666,39 +762,119 @@
             </div>
 
             <!-- Artigo 1: 7 Erros no CV -->
-            <div class="article-item">
-                <p class="source">Desenvolvimento Profissional</p>
-                <h3>7 Erros no CV que Fazem Muitos Candidatos Serem Rejeitados</h3>
-                <p>O currículo continua a ser um dos documentos mais importantes no processo de recrutamento. No entanto, muitos profissionais cometem erros simples que podem reduzir drasticamente as suas hipóteses de chegar à fase de entrevista.</p>
-                <p class="meta" style="font-size:0.7rem;color:#999;margin-bottom:0.8rem;">Leitura: 8 min</p>
-                <a href="/blog/artigos/7-erros-cv-candidatos-rejeitados.html">Ler artigo completo &rarr;</a>
+            <div class="blog-article-item">
+                <div class="blog-article-header">
+                    <div>
+                        <p class="source">Desenvolvimento Profissional &middot; <span style="color:#999;font-weight:400;">8 min</span></p>
+                        <h3>7 Erros no CV que Fazem Muitos Candidatos Serem Rejeitados</h3>
+                    </div>
+                    <div class="blog-article-actions">
+                        <button class="btn-ver-resumo" onclick="toggleBlogSummary(this)">&#9654; Ver resumo</button>
+                        <a href="/blog/artigos/7-erros-cv-candidatos-rejeitados.html" class="btn-ver-artigo">Ler artigo completo &rarr;</a>
+                    </div>
+                </div>
+                <div class="blog-article-summary">
+                    <p>O currículo continua a ser um dos documentos mais importantes no processo de recrutamento. No entanto, muitos profissionais cometem erros simples que podem reduzir drasticamente as suas hipóteses de chegar à fase de entrevista.</p>
+                    <p><strong>1. Resumo genérico</strong> &mdash; Frases como &ldquo;profissional motivado e orientado para resultados&rdquo; aparecem em milhares de currículos. O resumo deve comunicar área, experiência e impacto.</p>
+                    <p><strong>2. Falta de resultados concretos</strong> &mdash; Em vez de &ldquo;Responsável pela gestão de projetos&rdquo;, prefira &ldquo;Coordenei projetos que reduziram custos em 15%&rdquo;.</p>
+                    <p><strong>3. Palavras-chave insuficientes</strong> &mdash; Muitas empresas usam sistemas automáticos (ATS). Sem termos relevantes, o CV pode ser filtrado antes de chegar a um recrutador.</p>
+                    <p><strong>4. Estrutura pouco clara</strong> &mdash; Os recrutadores procuram rapidamente experiência, formação e competências. Se não encontrarem facilmente, passam ao candidato seguinte.</p>
+                    <p><strong>5. Formatação complexa</strong> &mdash; Layouts gráficos nem sempre são bem interpretados por sistemas de recrutamento. Simplicidade e clareza continuam a ser as melhores opções.</p>
+                    <p><strong>6. Experiência vaga</strong> &mdash; Expressões genéricas não diferenciam. Quanto mais concreto for o impacto, maior a probabilidade de despertar interesse.</p>
+                    <p><strong>7. CV demasiado longo</strong> &mdash; Na maioria dos casos, duas páginas são suficientes. Recrutadores passam poucos segundos na primeira leitura.</p>
+                    <div class="blog-cta-light">
+                        <p>Identifica os pontos fracos do teu currículo com o <strong>CV Analyser</strong> da Share2Inspire.</p>
+                        <a href="/cv-analyser">Testar CV Analyser gratuitamente &rarr;</a>
+                    </div>
+                    <div class="blog-article-footer-link">
+                        <a href="/blog/artigos/7-erros-cv-candidatos-rejeitados.html">Ler artigo completo &rarr;</a>
+                    </div>
+                </div>
             </div>
 
             <!-- Artigo 2: CV ou LinkedIn -->
-            <div class="article-item">
-                <p class="source">Estratégia de Carreira</p>
-                <h3>CV ou LinkedIn: Qual é Mais Importante para a Tua Carreira?</h3>
-                <p>Nos últimos anos, o perfil de LinkedIn tornou-se quase tão importante quanto o currículo tradicional. Mas qual dos dois tem mais peso no processo de recrutamento?</p>
-                <p class="meta" style="font-size:0.7rem;color:#999;margin-bottom:0.8rem;">Leitura: 7 min</p>
-                <a href="/blog/artigos/cv-linkedin-importancia.html">Ler artigo completo &rarr;</a>
+            <div class="blog-article-item">
+                <div class="blog-article-header">
+                    <div>
+                        <p class="source">Estratégia de Carreira &middot; <span style="color:#999;font-weight:400;">7 min</span></p>
+                        <h3>CV ou LinkedIn: Qual é Mais Importante para a Tua Carreira?</h3>
+                    </div>
+                    <div class="blog-article-actions">
+                        <button class="btn-ver-resumo" onclick="toggleBlogSummary(this)">&#9654; Ver resumo</button>
+                        <a href="/blog/artigos/cv-linkedin-importancia.html" class="btn-ver-artigo">Ler artigo completo &rarr;</a>
+                    </div>
+                </div>
+                <div class="blog-article-summary">
+                    <p>Nos últimos anos, o perfil de LinkedIn tornou-se quase tão importante quanto o currículo tradicional. A resposta mais honesta é: ambos são essenciais, mas desempenham funções diferentes.</p>
+                    <p><strong>O papel do CV</strong> &mdash; O currículo é o documento principal em processos formais de candidatura. Permite avaliar rapidamente experiência, progressão e competências.</p>
+                    <p><strong>O papel do LinkedIn</strong> &mdash; Funciona como extensão da identidade profissional. Recrutadores usam-no para procurar candidatos, validar experiências e analisar atividade.</p>
+                    <p><strong>O problema mais comum</strong> &mdash; Muitos têm um bom CV mas LinkedIn desatualizado, ou vice-versa. Ambos devem transmitir uma narrativa coerente.</p>
+                    <p><strong>O equilíbrio ideal</strong> &mdash; CV otimizado para candidaturas + LinkedIn preparado para pesquisas de recrutadores = máximas oportunidades.</p>
+                    <div class="blog-cta-light">
+                        <p>Descobre como o teu perfil é avaliado com o <strong>CV Analyser</strong> da Share2Inspire.</p>
+                        <a href="/cv-analyser">Analisar CV gratuitamente &rarr;</a>
+                    </div>
+                    <div class="blog-article-footer-link">
+                        <a href="/blog/artigos/cv-linkedin-importancia.html">Ler artigo completo &rarr;</a>
+                    </div>
+                </div>
             </div>
 
             <!-- Artigo 3: Melhorar LinkedIn -->
-            <div class="article-item">
-                <p class="source">Visibilidade Online</p>
-                <h3>Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores</h3>
-                <p>O LinkedIn tornou-se uma das principais plataformas utilizadas por recrutadores para identificar candidatos. Pequenos ajustes no perfil podem aumentar significativamente a visibilidade.</p>
-                <p class="meta" style="font-size:0.7rem;color:#999;margin-bottom:0.8rem;">Leitura: 9 min</p>
-                <a href="/blog/artigos/melhorar-linkedin-pesquisas.html">Ler artigo completo &rarr;</a>
+            <div class="blog-article-item">
+                <div class="blog-article-header">
+                    <div>
+                        <p class="source">Visibilidade Online &middot; <span style="color:#999;font-weight:400;">9 min</span></p>
+                        <h3>Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores</h3>
+                    </div>
+                    <div class="blog-article-actions">
+                        <button class="btn-ver-resumo" onclick="toggleBlogSummary(this)">&#9654; Ver resumo</button>
+                        <a href="/blog/artigos/melhorar-linkedin-pesquisas.html" class="btn-ver-artigo">Ler artigo completo &rarr;</a>
+                    </div>
+                </div>
+                <div class="blog-article-summary">
+                    <p>O LinkedIn tornou-se uma das principais plataformas utilizadas por recrutadores. Pequenos ajustes no perfil podem aumentar significativamente a visibilidade.</p>
+                    <p><strong>1. Headline clara</strong> &mdash; Deve incluir área de especialização, palavras-chave relevantes e proposta de valor profissional.</p>
+                    <p><strong>2. Secção &ldquo;Sobre&rdquo; estruturada</strong> &mdash; Conta a tua história profissional com experiência, especialização e objetivos.</p>
+                    <p><strong>3. Palavras-chave nas experiências</strong> &mdash; Os algoritmos de pesquisa analisam as descrições. Termos relevantes aumentam a visibilidade.</p>
+                    <p><strong>4. Competências relevantes</strong> &mdash; Ajudam os recrutadores a perceber rapidamente o teu posicionamento.</p>
+                    <p><strong>5. Atividade na plataforma</strong> &mdash; Perfis que partilham conteúdo regularmente têm maior visibilidade orgânica.</p>
+                    <div class="blog-cta-light">
+                        <p>Analisa a visibilidade do teu perfil com o <strong>LinkedIn Roaster</strong> da Share2Inspire.</p>
+                        <a href="/linkedin-roaster">Analisar LinkedIn gratuitamente &rarr;</a>
+                    </div>
+                    <div class="blog-article-footer-link">
+                        <a href="/blog/artigos/melhorar-linkedin-pesquisas.html">Ler artigo completo &rarr;</a>
+                    </div>
+                </div>
             </div>
 
             <!-- Artigo 4: Posicionamento no Mercado -->
-            <div class="article-item">
-                <p class="source">Avaliação de Carreira</p>
-                <h3>Como Saber se Estás Bem Posicionado no Mercado de Trabalho</h3>
-                <p>Muitos profissionais questionam-se se estão realmente bem posicionados no mercado. Responder a estas perguntas exige uma análise estruturada — não apenas intuição.</p>
-                <p class="meta" style="font-size:0.7rem;color:#999;margin-bottom:0.8rem;">Leitura: 8 min</p>
-                <a href="/blog/artigos/posicionamento-mercado.html">Ler artigo completo &rarr;</a>
+            <div class="blog-article-item">
+                <div class="blog-article-header">
+                    <div>
+                        <p class="source">Avaliação de Carreira &middot; <span style="color:#999;font-weight:400;">8 min</span></p>
+                        <h3>Como Saber se Estás Bem Posicionado no Mercado de Trabalho</h3>
+                    </div>
+                    <div class="blog-article-actions">
+                        <button class="btn-ver-resumo" onclick="toggleBlogSummary(this)">&#9654; Ver resumo</button>
+                        <a href="/blog/artigos/posicionamento-mercado.html" class="btn-ver-artigo">Ler artigo completo &rarr;</a>
+                    </div>
+                </div>
+                <div class="blog-article-summary">
+                    <p>Muitos profissionais questionam-se: estou a ganhar abaixo do mercado? O meu perfil é competitivo? Quais são os próximos passos? Responder exige uma análise estruturada.</p>
+                    <p><strong>Avaliar o perfil</strong> &mdash; Indicadores como anos de experiência, especialização, progressão e impacto profissional determinam o posicionamento no mercado.</p>
+                    <p><strong>Comparação com benchmarks</strong> &mdash; Comparar com outros profissionais permite perceber se o perfil está acima da média e onde existem oportunidades de melhoria.</p>
+                    <p><strong>Clareza sobre os próximos passos</strong> &mdash; Uma visão clara dos possíveis caminhos de carreira ajuda a tomar decisões mais informadas.</p>
+                    <p><strong>Começa pelo CV</strong> &mdash; O primeiro passo é analisar objetivamente o teu currículo para perceber como o teu perfil é avaliado no mercado.</p>
+                    <div class="blog-cta-light">
+                        <p>Descobre o teu posicionamento com o <strong>Career Path</strong> da Share2Inspire.</p>
+                        <a href="/career-path">Explorar Career Path &rarr;</a>
+                    </div>
+                    <div class="blog-article-footer-link">
+                        <a href="/blog/artigos/posicionamento-mercado.html">Ler artigo completo &rarr;</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -990,6 +1166,22 @@
         setTimeout(function() {
             document.getElementById('ebook-download').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 300);
+    }
+    </script>
+
+    <!-- Blog summary toggle -->
+    <script>
+    function toggleBlogSummary(btn) {
+        const item = btn.closest('.blog-article-item');
+        const summary = item.querySelector('.blog-article-summary');
+        const isOpen = summary.classList.contains('open');
+        summary.classList.toggle('open', !isOpen);
+        btn.classList.toggle('open', !isOpen);
+        if (!isOpen) {
+            btn.innerHTML = '&#9654; Fechar resumo';
+        } else {
+            btn.innerHTML = '&#9654; Ver resumo';
+        }
     }
     </script>
 
