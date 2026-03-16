@@ -220,24 +220,48 @@
 
         .hero-proofs {
             display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            gap: 1.5rem;
+            margin-top: 2rem;
             margin-bottom: 2.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .proof-item {
+            display: flex;
             align-items: center;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(201, 169, 97, 0.2);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            transition: all 0.3s ease;
         }
 
-        .hero-proofs span {
-            font-size: 0.8rem;
+        .proof-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(201, 169, 97, 0.4);
+        }
+
+        .proof-icon {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .proof-text {
+            font-size: 0.72rem;
             font-weight: 300;
-            color: rgba(255, 255, 255, 0.7);
-            letter-spacing: 0.3px;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 0.2px;
+            line-height: 1.3;
         }
 
-        .hero-proofs span::before {
-            content: '✔';
-            color: #C9A961;
-            margin-right: 0.5rem;
-            font-size: 0.75rem;
+        .proof-text strong {
+            font-weight: 500;
+            color: #fff;
         }
 
         .hero-cta {
@@ -554,8 +578,20 @@
                 font-size: 1rem;
             }
 
-            .hero-proofs span {
-                font-size: 0.7rem;
+            .hero-proofs {
+                flex-direction: column;
+                gap: 0.6rem;
+                align-items: center;
+            }
+
+            .proof-item {
+                width: 100%;
+                max-width: 340px;
+                justify-content: flex-start;
+            }
+
+            .proof-text {
+                font-size: 0.68rem;
             }
 
             .section-serene {
@@ -914,12 +950,21 @@
     <section class="hero-minimal">
         <div class="hero-inner">
             <h1>Clareza para decidir<br>o que vem <strong>a seguir</strong></h1>
-            <p>Diagnóstico com IA e acompanhamento estratégico para profissionais<br>em momentos de dúvida, transição ou reorientação.</p>
+            <p>Diagnóstico com IA e orientação estratégica para profissionais<br>em momentos de dúvida, transição ou reorientação.</p>
             <a href="https://share2inspire.pt/cv-analyser" class="hero-cta">Começar diagnóstico</a>
             <div class="hero-proofs">
-                <span>diagnóstico gratuito em menos de 30 segundos</span>
-                <span>análise compatível com sistemas ATS usados por recrutadores</span>
-                <span>recomendações práticas para melhorar o teu CV e posicionamento profissional</span>
+                <div class="proof-item">
+                    <div class="proof-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+                    <div class="proof-text"><strong>Diagnóstico gratuito</strong> em menos de 30 segundos</div>
+                </div>
+                <div class="proof-item">
+                    <div class="proof-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>
+                    <div class="proof-text"><strong>Compatível com ATS</strong> usados por recrutadores</div>
+                </div>
+                <div class="proof-item">
+                    <div class="proof-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
+                    <div class="proof-text"><strong>Recomendações práticas</strong> para melhorar o teu CV</div>
+                </div>
             </div>
         </div>
         <div class="scroll-hint"><span></span></div>
