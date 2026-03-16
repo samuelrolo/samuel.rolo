@@ -215,7 +215,29 @@
             font-weight: 300;
             color: rgba(255, 255, 255, 0.85);
             line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .hero-proofs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
             margin-bottom: 2.5rem;
+            align-items: center;
+        }
+
+        .hero-proofs span {
+            font-size: 0.8rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.3px;
+        }
+
+        .hero-proofs span::before {
+            content: '✔';
+            color: #C9A961;
+            margin-right: 0.5rem;
+            font-size: 0.75rem;
         }
 
         .hero-cta {
@@ -530,6 +552,10 @@
 
             .hero-inner p {
                 font-size: 1rem;
+            }
+
+            .hero-proofs span {
+                font-size: 0.7rem;
             }
 
             .section-serene {
@@ -888,8 +914,13 @@
     <section class="hero-minimal">
         <div class="hero-inner">
             <h1>Clareza para decidir<br>o que vem <strong>a seguir</strong></h1>
-            <p>Acompanhamento estratégico e humano para profissionais<br>em momentos de dúvida, transição ou reorientação.</p>
-            <a href="pages/servicos.html" class="hero-cta">Explorar serviços</a>
+            <p>Diagnóstico com IA e acompanhamento estratégico para profissionais<br>em momentos de dúvida, transição ou reorientação.</p>
+            <a href="https://share2inspire.pt/cv-analyser" class="hero-cta">Começar diagnóstico</a>
+            <div class="hero-proofs">
+                <span>diagnóstico gratuito em menos de 30 segundos</span>
+                <span>análise compatível com sistemas ATS usados por recrutadores</span>
+                <span>recomendações práticas para melhorar o teu CV e posicionamento profissional</span>
+            </div>
         </div>
         <div class="scroll-hint"><span></span></div>
     </section>
