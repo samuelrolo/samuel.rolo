@@ -193,11 +193,83 @@
             display: block;
         }
 
+        .pilar-item p {
+            font-size: 0.82rem;
+            color: var(--s2i-text-muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* CTA Block */
+        .sobre-cta {
+            text-align: center;
+            padding: 2.5rem 2rem;
+            margin: 2.5rem 0;
+            background: var(--s2i-bg, #fafaf8);
+            border: 1px solid var(--s2i-border);
+            border-radius: var(--s2i-radius);
+        }
+
+        .sobre-cta p {
+            font-size: 1.05rem;
+            color: var(--s2i-text);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .sobre-cta .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .sobre-cta .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: var(--s2i-transition);
+        }
+
+        .sobre-cta .cta-btn-primary {
+            background: var(--s2i-gold);
+            color: #fff;
+            border: 1px solid var(--s2i-gold);
+        }
+
+        .sobre-cta .cta-btn-primary:hover {
+            background: var(--s2i-gold-hover, #b8960c);
+            transform: translateY(-1px);
+            box-shadow: var(--s2i-shadow-hover);
+        }
+
+        .sobre-cta .cta-btn-outline {
+            background: transparent;
+            color: var(--s2i-dark);
+            border: 1px solid var(--s2i-border);
+        }
+
+        .sobre-cta .cta-btn-outline:hover {
+            border-color: var(--s2i-gold);
+            color: var(--s2i-gold);
+            transform: translateY(-1px);
+        }
+
         .pilar-item h5 {
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin: 0;
+            margin: 0 0 8px;
             color: var(--s2i-dark);
         }
 
@@ -549,14 +621,17 @@
                     <div class="pilar-item">
                         <i class="fas fa-compass"></i>
                         <h5>Strategic Clarity</h5>
+                        <p>Understand where you want to go before optimising your profile.</p>
                     </div>
                     <div class="pilar-item">
                         <i class="fas fa-microchip"></i>
                         <h5>Digital Literacy</h5>
+                        <p>Understand how algorithms, platforms, and digital recruitment work.</p>
                     </div>
                     <div class="pilar-item">
                         <i class="fas fa-heart"></i>
                         <h5>Human Awareness</h5>
+                        <p>Use technology without losing identity, purpose, and authenticity.</p>
                     </div>
                 </div>
 
@@ -575,6 +650,19 @@
 
                     <div class="narrative-highlight">
                         "If you're looking for shortcuts, I'm not the right person. If you're looking for structured thinking, critical vision, and real transformation, you're in the right place."
+                    </div>
+                </div>
+
+                <!-- CTA Block -->
+                <div class="sobre-cta">
+                    <p>Want to understand how your profile or CV stands in today's market? Start here.</p>
+                    <div class="cta-buttons">
+                        <a href="/en/cv-analyser" class="cta-btn cta-btn-primary">
+                            <i class="fas fa-file-alt"></i> Analyse my CV
+                        </a>
+                        <a href="/linkedin-roaster" class="cta-btn cta-btn-outline">
+                            <i class="fab fa-linkedin"></i> Analyse my LinkedIn
+                        </a>
                     </div>
                 </div>
 
