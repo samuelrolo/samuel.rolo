@@ -61,6 +61,21 @@
             .nav-links.open { display: flex; }
         }
 
+        
+        /* ── Mega Menu ── */
+        .mega-dropdown { position: relative; }
+        .mega-dropdown > a { cursor: pointer; }
+        .mega-menu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; padding: 1rem 1.5rem; min-width: 200px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); z-index: 200; }
+        .mega-dropdown:hover .mega-menu { display: block; }
+        .mega-col { display: flex; flex-direction: column; gap: 0.5rem; }
+        .mega-link { font-size: 0.75rem !important; font-weight: 400 !important; text-transform: none !important; letter-spacing: 0.5px !important; color: #555 !important; text-decoration: none; padding: 0.3rem 0; transition: color 0.3s; white-space: nowrap; }
+        .mega-link:hover { color: #C9A961 !important; }
+        @media (max-width: 768px) {
+            .mega-menu { position: static; transform: none; box-shadow: none; border: none; min-width: auto; padding: 0.5rem 0 0.5rem 1rem; display: none; }
+            .mega-dropdown:hover .mega-menu { display: block; }
+            .mega-dropdown.open .mega-menu { display: block; }
+        }
+
         /* ── Article Layout ── */
         .article-hero { padding: 130px 2rem 60px; background: #fff; border-bottom: 1px solid rgba(0,0,0,0.04); }
         .article-hero-inner { max-width: 760px; margin: 0 auto; }
