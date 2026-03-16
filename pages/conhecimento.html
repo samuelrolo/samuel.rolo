@@ -662,47 +662,49 @@
 
 <body>
 
-    <!-- ── Navigation ── -->
-    <nav class="navbar navbar-expand-lg sticky-top" style="background: var(--s2i-white); border-bottom: 1px solid var(--s2i-border);">
-        <div class="container">
-            <a class="navbar-brand" href="../index.html">
-                <img loading="lazy" src="../images/logo.webp" alt="Share2Inspire" style="height: 40px;">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="../index.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Início</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/cv-analyser" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">CV Analyser</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/career-path" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Career Path</a></li>
-                    <li class="nav-item mega-dropdown">
-                        <a class="nav-link" href="servicos.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;color:var(--s2i-gold);">Serviços</a>
-                        <div class="mega-menu">
-                            <div class="mega-col">
-                                <a class="mega-link" href="/linkedin-roaster">LinkedIn Roaster</a>
-                                <a class="mega-link" href="https://share2inspire.pt/cv-builder/">CV Maker</a>
-                                <a class="mega-link" href="servicos.html">CV por Especialista</a>
-                                <a class="mega-link" href="servicos.html">KickStart Pro</a>
+    <header class="header">
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="../index.html">
+                    <img fetchpriority="high" src="../images/logo.webp" alt="Share2Inspire Logo" class="logo-img">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="../index.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Início</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/cv-analyser" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">CV Analyser</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/career-path" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Career Path</a></li>
+                        <li class="nav-item mega-dropdown">
+                            <a class="nav-link" href="servicos.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Serviços</a>
+                            <div class="mega-menu">
+                                <div class="mega-col">
+                                    <a class="mega-link" href="/linkedin-roaster">LinkedIn Roaster</a>
+                                    <a class="mega-link" href="https://share2inspire.pt/cv-builder/">CV Maker</a>
+                                    <a class="mega-link" href="servicos.html">CV por Especialista</a>
+                                    <a class="mega-link" href="servicos.html">KickStart Pro</a>
+                                </div>
                             </div>
-                        </div>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="conhecimento.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;color:var(--s2i-gold);">Conhecimento</a></li>
-                    <li class="nav-item"><a class="nav-link" href="sobre.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Sobre</a></li>
-                    <li class="nav-item"><a class="nav-link" href="contactos.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Contactos</a></li>
-                    <li class="nav-item ms-2"><a class="nav-link" href="/area-cliente/" style="background:#BF9A33;color:#0a0a0a!important;padding:0.4rem 1rem;border-radius:4px;font-weight:600;transition:all 0.3s;" onmouseover="this.style.background='#d4af5a'" onmouseout="this.style.background='#BF9A33'">Área de Cliente</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">
-                            <i class="fas fa-globe"></i> PT
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="languageDropdown">
-                            <li><a class="dropdown-item" href="/en/pages/knowledge">EN</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="conhecimento.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;color:var(--s2i-gold);">Conhecimento</a></li>
+                        <li class="nav-item"><a class="nav-link" href="sobre.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Sobre</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/pages/contactos" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Contactos</a></li>
+                        <li class="nav-item ms-2"><a class="nav-link" href="/area-cliente/" style="background:#BF9A33;color:#0a0a0a!important;padding:0.4rem 1rem;border-radius:4px;font-weight:600;transition:all 0.3s;" onmouseover="this.style.background='#d4af5a'" onmouseout="this.style.background='#BF9A33'">Área de Cliente</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">
+                                <i class="fas fa-globe"></i> PT
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                                <li><a class="dropdown-item" href="/en/pages/knowledge">EN</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
     <!-- ── Hero ── -->
     <section class="hero">
@@ -1090,40 +1092,51 @@
     </div>
 
     <!-- ── Footer ── -->
-    <footer class="footer">
-        <div class="footer-inner">
-            <div class="footer-col">
-                <a href="../index.html"><img loading="lazy" src="../images/logo.webp" alt="Share2Inspire" style="height: 32px; filter: brightness(0) invert(1); margin-bottom: 1rem;"></a>
-                <p>Partilhar para inspirar carreiras.</p>
-            </div>
-            <div class="footer-col">
-                <h4>Navegação</h4>
-                <a href="../index.html">Início</a>
-                <a href="sobre.html">Sobre</a>
-                <a href="servicos.html">Serviços</a>
-                <a href="conhecimento.html">Conhecimento</a>
-            </div>
-            <div class="footer-col">
-                <h4>Informação Legal</h4>
-                <a href="politica-privacidade.html">Privacidade</a>
-                <a href="politica-cookies.html">Cookies</a>
-                <a href="informacao-legal.html">Informação Legal</a>
-            </div>
-            <div class="footer-col">
-                <h4>Contacto</h4>
-                <p>srshare2inspire@gmail.com</p>
-                <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-                    <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" style="color: #C9A961;"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://www.instagram.com/share2inspire_/" target="_blank" style="color: #C9A961;"><i class="fab fa-instagram"></i></a>
+    <footer>
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="footer-brand">
+                        <img loading="lazy" src="../images/logo.webp" alt="Samuel Rolo Logo">
+                    </div>
+                    <p class="footer-text">Partilhar para inspirar carreiras.</p>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5 class="footer-title">Navegação</h5>
+                    <a href="../index.html" class="footer-link">Início</a>
+                    <a href="sobre.html" class="footer-link">Sobre</a>
+                    <a href="servicos.html" class="footer-link">Serviços</a>
+                    <a href="conhecimento.html" class="footer-link">Conhecimento</a>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5 class="footer-title">Ferramentas</h5>
+                    <a href="/cv-analyser" class="footer-link">CV Analyser</a>
+                    <a href="/linkedin-roaster" class="footer-link">LinkedIn Roaster</a>
+                    <a href="/career-path" class="footer-link">Career Path</a>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5 class="footer-title">Legal</h5>
+                    <a href="politica-privacidade.html" class="footer-link">Privacidade</a>
+                    <a href="politica-cookies.html" class="footer-link">Cookies</a>
+                    <a href="informacao-legal.html" class="footer-link">Informação Legal</a>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5 class="footer-title">Contacto</h5>
+                    <p class="footer-text small mb-2"><i class="fas fa-envelope text-gold me-2"></i>srshare2inspire@gmail.com</p>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-gold"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="https://www.instagram.com/share2inspire_/" target="_blank" class="text-gold"><i class="fab fa-instagram fa-lg"></i></a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Share2Inspire | Samuel Rolo. Todos os direitos reservados.</p>
+            <div class="footer-bottom">
+                <p class="footer-copy">&copy; 2026 SHARE2INSPIRE | SAMUEL ROLO. TODOS OS DIREITOS RESERVADOS.</p>
+            </div>
         </div>
     </footer>
 
     <!-- ── Scripts ── -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Newsletter Form -->
     <script>
@@ -1207,7 +1220,13 @@
     }, { threshold: 0.1 });
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     </script>
-<script src="../js/hub-widget.js"></script>
+    <script src="../js/ifthenpay-integration.js"></script>
+    <script src="../js/contact-form.js?v=2.0"></script>
+    <script src="../js/brevo-integration.js?v=2.0"></script>
+    <script src="../js/feedback-widget.js?v=2.0"></script>
+    <script src="../js/coupon-system.js"></script>
+    <script src="../js/coupon-handler.js"></script>
+    <script src="../js/hub-widget.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/shared-auth.js"></script>
     <script src="../js/inline-auth.js"></script>
