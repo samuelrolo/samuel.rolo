@@ -14,46 +14,46 @@
     var css = document.createElement('style');
     css.textContent = [
         /* Overlay */
-        '.s2i-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;opacity:0;transition:opacity .25s;pointer-events:none;}',
+        '.s2i-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:9998;opacity:0;transition:opacity .25s;pointer-events:none;}',
         '.s2i-overlay.active{opacity:1;pointer-events:all;}',
 
-        /* Modal */
-        '.s2i-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.95);z-index:9999;background:#111;border:1px solid rgba(191,154,51,.25);border-radius:12px;padding:2.5rem 2rem 2rem;width:380px;max-width:92vw;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;font-family:"Cormorant Garamond",Georgia,serif;}',
+        /* Modal — Light theme */
+        '.s2i-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.95);z-index:9999;background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:2.5rem 2rem 2rem;width:380px;max-width:92vw;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;font-family:"Poppins",sans-serif;box-shadow:0 20px 60px rgba(0,0,0,.12);}',
         '.s2i-modal.active{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:all;}',
         '.s2i-modal-close{position:absolute;top:12px;right:14px;background:none;border:none;color:#999;font-size:1.4rem;cursor:pointer;line-height:1;padding:4px;}',
-        '.s2i-modal-close:hover{color:#fff;}',
-        '.s2i-modal h3{margin:0 0 .25rem;color:#BF9A33;font-size:1.35rem;font-weight:600;text-align:center;}',
-        '.s2i-modal p.subtitle{margin:0 0 1.5rem;color:#888;font-size:.85rem;text-align:center;font-family:Inter,sans-serif;}',
-        '.s2i-modal label{display:block;margin-bottom:.35rem;color:#ccc;font-size:.8rem;font-family:Inter,sans-serif;letter-spacing:.3px;}',
-        '.s2i-modal input{width:100%;padding:.6rem .75rem;background:#1a1a1a;border:1px solid #333;border-radius:6px;color:#eee;font-size:.9rem;font-family:Inter,sans-serif;outline:none;transition:border-color .2s;box-sizing:border-box;}',
-        '.s2i-modal input:focus{border-color:#BF9A33;}',
+        '.s2i-modal-close:hover{color:#333;}',
+        '.s2i-modal h3{margin:0 0 .25rem;color:#1A1A1A;font-size:1.25rem;font-weight:600;text-align:center;}',
+        '.s2i-modal p.subtitle{margin:0 0 1.5rem;color:#999;font-size:.82rem;text-align:center;font-family:"Poppins",sans-serif;}',
+        '.s2i-modal label{display:block;margin-bottom:.35rem;color:#555;font-size:.78rem;font-family:"Poppins",sans-serif;letter-spacing:.3px;font-weight:500;}',
+        '.s2i-modal input{width:100%;padding:.6rem .75rem;background:#fafafa;border:1px solid #e0e0e0;border-radius:6px;color:#1A1A1A;font-size:.88rem;font-family:"Poppins",sans-serif;outline:none;transition:border-color .2s;box-sizing:border-box;}',
+        '.s2i-modal input:focus{border-color:#C9A961;background:#fff;}',
         '.s2i-modal .field{margin-bottom:1rem;}',
-        '.s2i-modal .s2i-btn{display:block;width:100%;padding:.7rem;background:#BF9A33;color:#0a0a0a;border:none;border-radius:6px;font-size:.95rem;font-weight:600;cursor:pointer;transition:background .2s;font-family:Inter,sans-serif;}',
-        '.s2i-modal .s2i-btn:hover{background:#d4af5a;}',
+        '.s2i-modal .s2i-btn{display:block;width:100%;padding:.7rem;background:#C9A961;color:#fff;border:none;border-radius:6px;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s;font-family:"Poppins",sans-serif;}',
+        '.s2i-modal .s2i-btn:hover{background:#A88B4E;}',
         '.s2i-modal .s2i-btn:disabled{opacity:.5;cursor:not-allowed;}',
-        '.s2i-modal .toggle-link{display:block;margin-top:1rem;text-align:center;color:#BF9A33;font-size:.82rem;cursor:pointer;font-family:Inter,sans-serif;text-decoration:none;}',
+        '.s2i-modal .toggle-link{display:block;margin-top:1rem;text-align:center;color:#C9A961;font-size:.82rem;cursor:pointer;font-family:"Poppins",sans-serif;text-decoration:none;}',
         '.s2i-modal .toggle-link:hover{text-decoration:underline;}',
-        '.s2i-modal .error-msg{color:#ef4444;font-size:.8rem;margin-top:.5rem;text-align:center;font-family:Inter,sans-serif;min-height:1.2em;}',
-        '.s2i-modal .success-msg{color:#22c55e;font-size:.8rem;margin-top:.5rem;text-align:center;font-family:Inter,sans-serif;}',
-        '.s2i-modal .forgot-link{display:inline-block;margin-top:.25rem;color:#888;font-size:.75rem;cursor:pointer;font-family:Inter,sans-serif;}',
-        '.s2i-modal .forgot-link:hover{color:#BF9A33;}',
+        '.s2i-modal .error-msg{color:#ef4444;font-size:.8rem;margin-top:.5rem;text-align:center;font-family:"Poppins",sans-serif;min-height:1.2em;}',
+        '.s2i-modal .success-msg{color:#22c55e;font-size:.8rem;margin-top:.5rem;text-align:center;font-family:"Poppins",sans-serif;}',
+        '.s2i-modal .forgot-link{display:inline-block;margin-top:.25rem;color:#999;font-size:.75rem;cursor:pointer;font-family:"Poppins",sans-serif;}',
+        '.s2i-modal .forgot-link:hover{color:#C9A961;}',
         '.s2i-modal .name-row{display:flex;gap:.75rem;}',
         '.s2i-modal .name-row .field{flex:1;}',
 
         /* User dropdown na nav */
         '.s2i-user-nav{position:relative;display:flex;align-items:center;gap:8px;cursor:pointer;padding:.35rem .75rem;border-radius:6px;transition:background .2s;}',
-        '.s2i-user-nav:hover{background:rgba(191,154,51,.1);}',
-        '.s2i-user-avatar{width:32px;height:32px;border-radius:50%;background:#BF9A33;color:#0a0a0a;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;font-family:Inter,sans-serif;flex-shrink:0;}',
-        '.s2i-user-name{color:#fff;font-size:.85rem;font-weight:600;font-family:Inter,sans-serif;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.5);}',
-        '.s2i-user-chevron{color:#888;font-size:.65rem;transition:transform .2s;}',
+        '.s2i-user-nav:hover{background:rgba(201,169,97,.1);}',
+        '.s2i-user-avatar{width:32px;height:32px;border-radius:50%;background:#C9A961;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;font-family:"Poppins",sans-serif;flex-shrink:0;}',
+        '.s2i-user-name{color:#1A1A1A;font-size:.85rem;font-weight:600;font-family:"Poppins",sans-serif;white-space:nowrap;}',
+        '.s2i-user-chevron{color:#999;font-size:.65rem;transition:transform .2s;}',
         '.s2i-user-chevron.open{transform:rotate(180deg);}',
 
-        /* Dropdown menu */
-        '.s2i-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:#111;border:1px solid rgba(191,154,51,.2);border-radius:8px;min-width:200px;padding:.5rem 0;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:9997;box-shadow:0 8px 24px rgba(0,0,0,.4);}',
+        /* Dropdown menu — Light theme */
+        '.s2i-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid #e8e8e8;border-radius:8px;min-width:200px;padding:.5rem 0;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:9997;box-shadow:0 8px 24px rgba(0,0,0,.1);}',
         '.s2i-dropdown.active{opacity:1;transform:translateY(0);pointer-events:all;}',
-        '.s2i-dropdown a,.s2i-dropdown button{display:flex;align-items:center;gap:10px;width:100%;padding:.6rem 1rem;background:none;border:none;color:#ccc;font-size:.85rem;font-family:Inter,sans-serif;cursor:pointer;text-decoration:none;transition:background .15s,color .15s;text-align:left;}',
-        '.s2i-dropdown a:hover,.s2i-dropdown button:hover{background:rgba(191,154,51,.08);color:#BF9A33;}',
-        '.s2i-dropdown .sep{height:1px;background:#222;margin:.4rem 0;}',
+        '.s2i-dropdown a,.s2i-dropdown button{display:flex;align-items:center;gap:10px;width:100%;padding:.6rem 1rem;background:none;border:none;color:#555;font-size:.85rem;font-family:"Poppins",sans-serif;cursor:pointer;text-decoration:none;transition:background .15s,color .15s;text-align:left;}',
+        '.s2i-dropdown a:hover,.s2i-dropdown button:hover{background:rgba(201,169,97,.08);color:#C9A961;}',
+        '.s2i-dropdown .sep{height:1px;background:#f0f0f0;margin:.4rem 0;}',
         '.s2i-dropdown svg{width:16px;height:16px;flex-shrink:0;opacity:.7;}',
 
         /* Mobile */
