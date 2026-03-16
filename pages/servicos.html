@@ -674,7 +674,7 @@
                                     <li>Posicionamento de valor real</li>
                                 </ul>
                                 <div class="svc-detail-footer">
-                                    <button class="svc-btn" data-bs-toggle="modal" data-bs-target="#cvReviewModal">Pedir</button>
+                                    <button class="svc-btn" onclick="event.stopPropagation();new bootstrap.Modal(document.getElementById('cvReviewModal')).show();">Pedir</button>
                                 </div>
                             </div>
                         </div>
@@ -734,7 +734,7 @@
                                     <li>Acompanhamento pós-sessão</li>
                                 </ul>
                                 <div class="svc-detail-footer">
-                                    <button class="svc-btn btn-muted" data-bs-toggle="modal" data-bs-target="#kickstartModal">Agendar</button>
+                                    <button class="svc-btn btn-muted" onclick="event.stopPropagation();new bootstrap.Modal(document.getElementById('kickstartModal')).show();">Agendar</button>
                                 </div>
                             </div>
                         </div>

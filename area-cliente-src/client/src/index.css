@@ -1,0 +1,234 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-gold: oklch(0.74 0.10 85);
+  --color-gold-light: oklch(0.82 0.08 85);
+  --color-gold-dark: oklch(0.58 0.10 85);
+}
+
+/* Light theme as default */
+:root {
+  --radius: 0.5rem;
+  --primary: oklch(0.74 0.10 85);
+  --primary-foreground: oklch(0.98 0.005 85);
+  --background: oklch(0.99 0.002 85);
+  --foreground: oklch(0.15 0.005 85);
+  --card: oklch(1.00 0 0);
+  --card-foreground: oklch(0.15 0.005 85);
+  --popover: oklch(1.00 0 0);
+  --popover-foreground: oklch(0.15 0.005 85);
+  --secondary: oklch(0.96 0.003 85);
+  --secondary-foreground: oklch(0.25 0.005 85);
+  --muted: oklch(0.95 0.003 85);
+  --muted-foreground: oklch(0.45 0.01 85);
+  --accent: oklch(0.96 0.003 85);
+  --accent-foreground: oklch(0.15 0.005 85);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.90 0.005 85);
+  --input: oklch(0.93 0.005 85);
+  --ring: oklch(0.74 0.10 85);
+  --chart-1: oklch(0.74 0.10 85);
+  --chart-2: oklch(0.64 0.08 85);
+  --chart-3: oklch(0.54 0.06 85);
+  --chart-4: oklch(0.44 0.05 85);
+  --chart-5: oklch(0.82 0.08 85);
+  --sidebar: oklch(0.97 0.003 85);
+  --sidebar-foreground: oklch(0.15 0.005 85);
+  --sidebar-primary: oklch(0.74 0.10 85);
+  --sidebar-primary-foreground: oklch(0.98 0.005 85);
+  --sidebar-accent: oklch(0.95 0.003 85);
+  --sidebar-accent-foreground: oklch(0.15 0.005 85);
+  --sidebar-border: oklch(0.90 0.005 85);
+  --sidebar-ring: oklch(0.74 0.10 85);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  a[href],
+  select:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    @apply cursor-pointer;
+  }
+}
+
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+      max-width: 1280px;
+    }
+  }
+
+  .gold-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, oklch(0.74 0.10 85), transparent);
+  }
+
+  .gold-glow {
+    box-shadow: 0 0 20px oklch(0.74 0.10 85 / 0.15);
+  }
+
+  .gold-text {
+    color: oklch(0.74 0.10 85);
+  }
+
+  .gold-gradient {
+    background: linear-gradient(135deg, oklch(0.74 0.10 85), oklch(0.82 0.08 85));
+  }
+}
+
+/* Styles for rendered analysis HTML from external tools — LIGHT THEME */
+.s2i-results-render {
+  font-family: 'Poppins', system-ui, sans-serif;
+  color: #444;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.s2i-results-render h1,
+.s2i-results-render h2,
+.s2i-results-render h3,
+.s2i-results-render h4 {
+  color: #1a1a1a;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+}
+.s2i-results-render h1 { font-size: 1.3em; }
+.s2i-results-render h2 { font-size: 1.15em; }
+.s2i-results-render h3 { font-size: 1.05em; }
+.s2i-results-render p {
+  margin-bottom: 0.6em;
+  color: #555;
+}
+.s2i-results-render ul,
+.s2i-results-render ol {
+  padding-left: 1.2em;
+  margin-bottom: 0.6em;
+}
+.s2i-results-render li {
+  margin-bottom: 0.3em;
+  color: #666;
+}
+.s2i-results-render strong,
+.s2i-results-render b {
+  color: oklch(0.58 0.10 85);
+  font-weight: 600;
+}
+.s2i-results-render a {
+  color: oklch(0.58 0.10 85);
+  text-decoration: underline;
+}
+.s2i-results-render img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 0.5em 0;
+}
+.s2i-results-render table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5em 0;
+}
+.s2i-results-render th,
+.s2i-results-render td {
+  padding: 6px 10px;
+  border: 1px solid #e5e5e5;
+  text-align: left;
+  font-size: 12px;
+}
+.s2i-results-render th {
+  background: #f5f5f4;
+  color: #555;
+  font-weight: 500;
+}
+.s2i-results-render .score-ring,
+.s2i-results-render [class*="score"],
+.s2i-results-render [class*="Score"] {
+  color: oklch(0.58 0.10 85);
+}
+.s2i-results-render svg {
+  max-width: 100%;
+}
+/* Custom scrollbar for the results container */
+.s2i-results-render::-webkit-scrollbar {
+  width: 4px;
+}
+.s2i-results-render::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+.s2i-results-render::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 2px;
+}

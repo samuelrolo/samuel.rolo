@@ -322,7 +322,7 @@
                                     <li>Real value positioning</li>
                                 </ul>
                                 <div class="svc-detail-footer">
-                                    <button class="svc-btn" data-bs-toggle="modal" data-bs-target="#cvReviewModal">Request</button>
+                                    <button class="svc-btn" onclick="event.stopPropagation();new bootstrap.Modal(document.getElementById('cvReviewModal')).show();">Request</button>
                                 </div>
                             </div>
                         </div>
@@ -382,7 +382,7 @@
                                     <li>Post-session follow-up</li>
                                 </ul>
                                 <div class="svc-detail-footer">
-                                    <button class="svc-btn btn-muted" data-bs-toggle="modal" data-bs-target="#kickstartModal">Schedule</button>
+                                    <button class="svc-btn btn-muted" onclick="event.stopPropagation();new bootstrap.Modal(document.getElementById('kickstartModal')).show();">Schedule</button>
                                 </div>
                             </div>
                         </div>
