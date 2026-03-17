@@ -36,7 +36,7 @@
     <loc>https://www.share2inspire.pt/pages/conhecimento</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/conhecimento" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/knowledge" />
-    <lastmod>2026-03-16</lastmod>
+    <lastmod>2026-03-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -223,6 +223,15 @@
     <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  
+  <!-- VIDEOS -->
+  
+  <url>
+    <loc>https://www.share2inspire.pt/videos/como-criar-cv-ats-friendly</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   
   <!-- PAGINAS LEGAIS -->
