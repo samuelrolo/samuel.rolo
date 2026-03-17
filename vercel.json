@@ -123,6 +123,10 @@
       "destination": "/cv-analyser/index.html"
     },
     {
+      "source": "/career-path/example",
+      "destination": "/career-path/example/index.html"
+    },
+    {
       "source": "/career-path",
       "destination": "/career-path/index.html"
     },
@@ -137,6 +141,10 @@
     {
       "source": "/en/cv-analyser/(.*)",
       "destination": "/en/cv-analyser/index.html"
+    },
+    {
+      "source": "/en/career-path/example",
+      "destination": "/en/career-path/example/index.html"
     },
     {
       "source": "/en/career-path",
