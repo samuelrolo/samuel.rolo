@@ -213,7 +213,7 @@ function switchTab(name, btn) {
 
     // Lazy render on first visit
     if (name === 'funnel') renderFunnel();
-    if (name === 'crm') { renderCRM(); renderNurturingSegments(); }
+    if (name === 'crm') { renderCRM(); renderAutoEmailsMonitoring(); renderNurturingSegments(); }
     if (name === 'analyses') renderAnalyses();
     if (name === 'vouchers') renderVouchers();
     if (name === 'history') renderEmailHistory();
@@ -830,6 +830,96 @@ function renderFunnel() {
 // ═══════════════════════════════════════════════════════════════
 //  CRM / LEADS
 // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  CRM INTELLIGENCE HELPERS
+// ═══════════════════════════════════════════════════════════════
+function getCRMActionsTaken(p) {
+    const actions = [];
+    const emailsSent = allEmailHistory.filter(e => e.recipient_email?.toLowerCase() === p.email);
+    const autoEmails = emailsSent.filter(e => e.email_type === 'upsell_auto_2h' || e.email_type === 'upsell_auto_7d');
+    const manualEmails = emailsSent.filter(e => e.email_type !== 'upsell_auto_2h' && e.email_type !== 'upsell_auto_7d');
+    const freeCount = p.analyses.filter(a => getAnalysisType(a) === 'free').length;
+    const paidCount = p.purchases.length;
+    if (freeCount > 0) actions.push(`<span class="badge badge-secondary">${freeCount}x Análise Free</span>`);
+    if (paidCount > 0) actions.push(`<span class="badge badge-paid">${paidCount}x Compra</span>`);
+    if (autoEmails.length > 0) actions.push(`<span class="badge badge-teal">${autoEmails.length}x Email Auto</span>`);
+    if (manualEmails.length > 0) actions.push(`<span class="badge badge-purple">${manualEmails.length}x Email Manual</span>`);
+    return actions.length ? actions.join(' ') : '<span style="color:var(--text-muted);">Nenhuma</span>';
+}
+function getCRMSuggestion(p) {
+    const emailsSent = allEmailHistory.filter(e => e.recipient_email?.toLowerCase() === p.email);
+    const hasAutoUpsell2h = emailsSent.some(e => e.email_type === 'upsell_auto_2h');
+    const hasAutoUpsell7d = emailsSent.some(e => e.email_type === 'upsell_auto_7d');
+    const hasPurchase = p.purchases.length > 0;
+    const hasCareerPath = p.purchases.some(a => a.analysis_type === 'career_path');
+    const hasCVPaid = p.purchases.some(a => a.analysis_type !== 'career_path');
+    const avgScore = p.analyses.filter(a => a.score > 0).length ? Math.round(p.analyses.filter(a => a.score > 0).reduce((s, a) => s + a.score, 0) / p.analyses.filter(a => a.score > 0).length) : 0;
+    if (hasPurchase && !hasCareerPath) return '<span style="color:var(--blue);"><i class="fas fa-bullseye"></i> Oferecer Career Path</span>';
+    if (hasPurchase && hasCareerPath && !hasCVPaid) return '<span style="color:var(--blue);"><i class="fas fa-bullseye"></i> Oferecer CV Analyser</span>';
+    if (hasPurchase && hasCareerPath && hasCVPaid) return '<span style="color:var(--green);"><i class="fas fa-star"></i> Pedir testemunho</span>';
+    if (hasAutoUpsell7d && !hasPurchase) return '<span style="color:var(--orange);"><i class="fas fa-phone"></i> Contacto directo</span>';
+    if (hasAutoUpsell2h && !hasPurchase) return '<span style="color:var(--text-muted);"><i class="fas fa-clock"></i> Aguardar follow-up 7d</span>';
+    if (avgScore > 0 && avgScore < 60) return '<span style="color:var(--red);"><i class="fas fa-fire"></i> Score baixo — upsell urgente</span>';
+    if (avgScore >= 60 && avgScore < 80) return '<span style="color:var(--orange);"><i class="fas fa-chart-line"></i> Mostrar benefícios premium</span>';
+    return '<span style="color:var(--text-muted);"><i class="fas fa-hourglass-half"></i> Aguardar email auto 2h</span>';
+}
+function getCRMPlannedAction(p) {
+    const emailsSent = allEmailHistory.filter(e => e.recipient_email?.toLowerCase() === p.email);
+    const hasAutoUpsell2h = emailsSent.some(e => e.email_type === 'upsell_auto_2h');
+    const hasAutoUpsell7d = emailsSent.some(e => e.email_type === 'upsell_auto_7d');
+    const hasPurchase = p.purchases.length > 0;
+    if (hasPurchase) return '<span style="color:var(--green);"><i class="fas fa-check-circle"></i> Convertido</span>';
+    if (hasAutoUpsell7d) return '<span style="color:var(--red);"><i class="fas fa-ban"></i> Seq. completa — acção manual</span>';
+    if (hasAutoUpsell2h) {
+        const upsell2hDate = new Date(emailsSent.find(e => e.email_type === 'upsell_auto_2h')?.sent_at);
+        const followUpDate = new Date(upsell2hDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+        const daysLeft = Math.ceil((followUpDate - new Date()) / (1000 * 60 * 60 * 24));
+        if (daysLeft > 0) return `<span style="color:var(--purple);"><i class="fas fa-calendar"></i> Follow-up 7d em ${daysLeft}d</span>`;
+        return '<span style="color:var(--purple);"><i class="fas fa-paper-plane"></i> Follow-up 7d iminente</span>';
+    }
+    const lastFreeAnalysis = p.analyses.filter(a => getAnalysisType(a) === 'free').sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
+    if (lastFreeAnalysis) {
+        const analysisDate = new Date(lastFreeAnalysis.created_at);
+        const upsellDate = new Date(analysisDate.getTime() + 2 * 60 * 60 * 1000);
+        const hoursLeft = Math.ceil((upsellDate - new Date()) / (1000 * 60 * 60));
+        if (hoursLeft > 0) return `<span style="color:var(--blue);"><i class="fas fa-clock"></i> Upsell 2h em ${hoursLeft}h</span>`;
+        return '<span style="color:var(--blue);"><i class="fas fa-paper-plane"></i> Upsell 2h iminente</span>';
+    }
+    return '<span style="color:var(--text-muted);">—</span>';
+}
+function renderAutoEmailsMonitoring() {
+    const autoEmails = allEmailHistory.filter(e => e.email_type === 'upsell_auto_2h' || e.email_type === 'upsell_auto_7d');
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const recent = autoEmails.filter(e => new Date(e.sent_at) > thirtyDaysAgo);
+    const upsell2h = recent.filter(e => e.email_type === 'upsell_auto_2h').length;
+    const upsell7d = recent.filter(e => e.email_type === 'upsell_auto_7d').length;
+    // Count conversions: users who received auto email AND later purchased
+    const autoRecipients = [...new Set(autoEmails.map(e => e.recipient_email?.toLowerCase()))];
+    const conversions = autoRecipients.filter(email => {
+        const emailDate = autoEmails.find(e => e.recipient_email?.toLowerCase() === email)?.sent_at;
+        return allAnalyses.some(a => a.user_email?.toLowerCase() === email && getAnalysisType(a) === 'paid' && new Date(a.created_at) > new Date(emailDate));
+    }).length;
+    const convRate = autoRecipients.length > 0 ? ((conversions / autoRecipients.length) * 100).toFixed(1) + '%' : '0%';
+    setText('autoUpsell2h', upsell2h);
+    setText('autoUpsell7d', upsell7d);
+    setText('autoConversions', conversions);
+    setText('autoConvRate', convRate);
+    // Render recent auto emails table
+    const tbody = document.getElementById('autoEmailsTable');
+    if (!tbody) return;
+    const recentAuto = autoEmails.sort((a, b) => new Date(b.sent_at) - new Date(a.sent_at)).slice(0, 15);
+    if (!recentAuto.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted);">Nenhum email automático enviado ainda</td></tr>';
+        return;
+    }
+    tbody.innerHTML = recentAuto.map(e => {
+        const date = new Date(e.sent_at).toLocaleDateString('pt-PT') + ' ' + new Date(e.sent_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
+        const typeBadge = e.email_type === 'upsell_auto_2h' ? '<span class="badge badge-teal">Upsell 2h</span>' : '<span class="badge badge-purple">Follow-up 7d</span>';
+        const converted = allAnalyses.some(a => a.user_email?.toLowerCase() === e.recipient_email?.toLowerCase() && getAnalysisType(a) === 'paid' && new Date(a.created_at) > new Date(e.sent_at));
+        const convBadge = converted ? '<span class="badge badge-paid">Sim</span>' : '<span class="badge badge-secondary">Não</span>';
+        return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td style="font-size:12px;">${e.recipient_email || '—'}</td><td>${typeBadge}</td><td><span class="badge badge-success">Enviado</span></td><td>${convBadge}</td></tr>`;
+    }).join('');
+}
 function buildCRMProfiles() {
     // Agrupa análises por email para criar perfil único por utilizador
     const profileMap = {};
@@ -946,9 +1036,13 @@ function renderCRM() {
 
     tbody.innerHTML = page.map(p => {
         const initials = (p.name || p.email).slice(0, 2).toUpperCase();
-        const productsUsed  = [...new Set(p.analyses.map(a => a.analysis_type === 'career_path' ? 'Career Path' : 'CV Analyser'))].join(', ');
-        const productsBought = [...new Set(p.purchases.map(a => a.analysis_type === 'career_path' ? 'Career Path' : 'CV Analyser'))].join(', ') || '—';
         const lastDate = new Date(p.lastInteraction).toLocaleDateString('pt-PT');
+        // Acção Tomada - what has been done for this contact
+        const actionsTaken = getCRMActionsTaken(p);
+        // Sugestão - AI-driven next best action
+        const suggestion = getCRMSuggestion(p);
+        // Acção Planeada - next automated action
+        const plannedAction = getCRMPlannedAction(p);
         return `
         <tr>
             <td>
@@ -961,19 +1055,19 @@ function renderCRM() {
                 </div>
             </td>
             <td style="font-size:12px;">${p.professional_area || '—'}</td>
-            <td style="font-size:12px;">${p.seniority || '—'}</td>
-            <td style="font-size:12px;">${productsUsed}</td>
-            <td style="font-size:12px;">${productsBought}</td>
+            <td>${getStageBadge(p.stage)}</td>
+            <td style="font-size:11px;">${actionsTaken}</td>
+            <td style="font-size:11px;">${suggestion}</td>
+            <td style="font-size:11px;">${plannedAction}</td>
             <td style="font-size:12px;font-weight:600;color:var(--gold);">${p.totalSpent > 0 ? p.totalSpent.toFixed(2) + '€' : '—'}</td>
             <td style="font-size:12px;color:var(--text-muted);">${lastDate}</td>
-            <td>${getStageBadge(p.stage)}</td>
             <td>
                 <div style="display:flex;gap:4px;">
                     <button class="btn-icon" title="Ver Perfil" onclick="showUserProfile('${p.email}')"><i class="fas fa-eye"></i></button>
-                    <button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${p.email}','${(p.name||'').replace(/'/g,"\\'")}')"><i class="fas fa-envelope"></i></button>
+                    <button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${p.email}','${(p.name||'').replace(/'/g,"\\\'")}')">
+<i class="fas fa-envelope"></i></button>
                 </div>
-            </td>
-        </tr>`;
+            </td>       </tr>`;
     }).join('');
 
     renderPagination('crmPagination', crmPage, totalPages, (p) => { crmPage = p; renderCRM(); });
