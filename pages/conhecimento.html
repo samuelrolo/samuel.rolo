@@ -3,30 +3,29 @@
 
 <head>
     <meta charset="utf-8" />
-    <!-- Preconnect hints para CDNs -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Conhecimento | Recursos Gratuitos de Carreira | Share2Inspire</title>
-    <meta name="description" content="E-books, artigos e ferramentas gratuitas para a tua carreira. Gestão da mudança, liderança e energia profissional, por Samuel Rolo e Share2Inspire.">
+    <title>Knowledge Hub | Recursos de Carreira | Share2Inspire</title>
+    <meta name="description" content="Artigos, vídeos, podcast e ferramentas gratuitas para a tua carreira. Guias sobre CV, ATS, LinkedIn, entrevistas e desenvolvimento profissional por Samuel Rolo.">
     <meta name="author" content="Samuel Rolo">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.share2inspire.pt/pages/conhecimento">
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.share2inspire.pt/pages/conhecimento">
-    <meta property="og:title" content="Conhecimento | E-books e Recursos Gratuitos de Carreira">
-    <meta property="og:description" content="E-books gratuitos, artigos e recursos sobre gestão da mudança, liderança e desenvolvimento profissional.">
+    <meta property="og:title" content="Knowledge Hub | Recursos de Carreira">
+    <meta property="og:description" content="Artigos, vídeos, podcast e ferramentas gratuitas sobre CV, ATS, LinkedIn, entrevistas e desenvolvimento profissional.">
     <meta property="og:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
     <meta property="og:locale" content="pt_PT">
     <meta property="og:site_name" content="Share2Inspire">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Conhecimento | E-books e Recursos Gratuitos">
-    <meta name="twitter:description" content="E-books gratuitos, artigos e recursos sobre carreira e liderança.">
+    <meta name="twitter:title" content="Knowledge Hub | Recursos de Carreira">
+    <meta name="twitter:description" content="Artigos, vídeos, podcast e ferramentas gratuitas sobre carreira e desenvolvimento profissional.">
     <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
     <!-- Favicon -->
     <link rel="icon" href="../images/favicon.png" type="image/png">
@@ -40,13 +39,7 @@
     <style>
         /* ── Reset & Base ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #fff;
-            color: #1a1a2e;
-            -webkit-font-smoothing: antialiased;
-        }
+        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; }
 
         /* ── Hide Vercel widget ── */
         iframe[src*="vercel-insights"], iframe[src*="_vercel"],
@@ -57,71 +50,27 @@
         }
 
         /* ── Navigation ── */
-        .nav-bar {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            background: rgba(255,255,255,0.97);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0,0,0,0.04);
-        }
-        .nav-inner {
-            max-width: 1100px; margin: 0 auto;
-            padding: 0 2rem;
-            display: flex; align-items: center; justify-content: space-between;
-            height: 70px;
-        }
+        .nav-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.04); }
+        .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 70px; }
         .nav-logo img { height: 36px; }
         .nav-links { display: flex; gap: 2rem; align-items: center; }
-        .nav-links a {
-            font-size: 0.75rem; font-weight: 500;
-            text-transform: uppercase; letter-spacing: 1.5px;
-            color: #1a1a2e; text-decoration: none;
-            transition: color 0.3s;
-        }
+        .nav-links a { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #1a1a2e; text-decoration: none; transition: color 0.3s; }
         .nav-links a:hover, .nav-links a.active { color: #C9A961; }
-
-        /* Language dropdown */
-        .lang-switch {
-            font-size: 0.75rem; font-weight: 500;
-            text-transform: uppercase; letter-spacing: 1.5px;
-            color: #1a1a2e; text-decoration: none;
-            cursor: pointer; position: relative;
-        }
+        .lang-switch { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #1a1a2e; text-decoration: none; cursor: pointer; position: relative; }
         .lang-switch:hover { color: #C9A961; }
-
-        /* Mobile menu */
         .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
         .nav-toggle span { display: block; width: 22px; height: 2px; background: #1a1a2e; margin: 5px 0; transition: 0.3s; }
-
         @media (max-width: 768px) {
             .nav-toggle { display: block; }
-            .nav-links {
-                display: none; position: absolute; top: 70px; left: 0; right: 0;
-                background: #fff; flex-direction: column;
-                padding: 2rem; gap: 1.5rem;
-                border-bottom: 1px solid rgba(0,0,0,0.04);
-            }
+            .nav-links { display: none; position: absolute; top: 70px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.06); }
             .nav-links.open { display: flex; }
         }
-
-        /* ── Hero ── */
-        .hero {
-            min-height: 50vh;
-            display: flex; align-items: center; justify-content: center;
-            text-align: center;
-            padding: 140px 2rem 80px;
-            background: #fff;
-        }
-        .hero h1 {
-            font-size: clamp(2rem, 5vw, 3.2rem);
-            font-weight: 300; line-height: 1.2;
-            color: #1a1a2e; margin-bottom: 1.5rem;
-        }
-        .hero h1 strong { font-weight: 600; }
-        .hero p {
-            font-size: 1rem; font-weight: 300;
-            color: #666; max-width: 550px; margin: 0 auto;
-            line-height: 1.8;
-        }
+        .nav-item { position: relative; }
+        .mega-dropdown .mega-menu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid #f0f0f0; box-shadow: 0 12px 40px rgba(0,0,0,0.08); padding: 16px 20px; min-width: 360px; z-index: 1050; }
+        .nav-item.mega-dropdown:hover .mega-menu, .nav-item.mega-dropdown .mega-menu:hover { display: block; }
+        .mega-menu .mega-link { display: block; padding: 3px 0; font-size: 0.8rem; font-weight: 400; color: #555; text-decoration: none; transition: color 0.2s; }
+        .mega-menu .mega-link:hover { color: #C9A961; }
+        @media(max-width:991px) { .mega-menu { position: static; transform: none; box-shadow: none; border: none; min-width: auto; padding: 8px 12px; background: #fafafa; } }
 
         /* ── Sections ── */
         .section { padding: 80px 2rem; max-width: 1100px; margin: 0 auto; }
@@ -129,506 +78,130 @@
         .section-dark .section-inner { max-width: 1100px; margin: 0 auto; }
         .section-light { background: #fafaf8; padding: 80px 2rem; }
         .section-light .section-inner { max-width: 1100px; margin: 0 auto; }
-
-        .section-label {
-            font-size: 0.65rem; text-transform: uppercase;
-            letter-spacing: 3px; color: #C9A961;
-            font-weight: 600; margin-bottom: 1rem;
-        }
-        .section-title {
-            font-size: clamp(1.6rem, 3vw, 2.2rem);
-            font-weight: 300; margin-bottom: 1rem;
-            line-height: 1.3;
-        }
+        .section-label { display: block; font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; color: #C9A961; margin-bottom: 0.5rem; }
+        .section-title { font-size: 1.8rem; font-weight: 300; color: #1a1a2e; margin-bottom: 0.5rem; }
         .section-title strong { font-weight: 600; }
-        .section-desc {
-            font-size: 0.95rem; color: #666;
-            line-height: 1.8; max-width: 600px;
+        .section-desc { font-size: 0.9rem; color: #666; line-height: 1.7; max-width: 600px; margin-bottom: 2rem; }
+        .divider { width: 40px; height: 2px; background: #C9A961; margin: 1rem 0 2rem; }
+
+        /* ── Hero ── */
+        .hero { padding: 160px 2rem 80px; text-align: center; background: #fafaf8; }
+        .hero h1 { font-size: 2.2rem; font-weight: 300; color: #1a1a2e; margin-bottom: 1rem; }
+        .hero h1 strong { font-weight: 600; }
+        .hero p { font-size: 0.95rem; color: #666; max-width: 560px; margin: 0 auto 2rem; line-height: 1.8; }
+        .hero-nav { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .hero-nav a { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #1a1a2e; text-decoration: none; padding: 0.6rem 1.2rem; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; transition: all 0.3s; }
+        .hero-nav a:hover { border-color: #C9A961; color: #C9A961; }
+
+        /* ── Articles Grid ── */
+        .articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .article-card { background: #fff; border: 1px solid rgba(0,0,0,0.06); padding: 1.8rem; transition: all 0.4s ease; border-radius: 6px; display: flex; flex-direction: column; }
+        .article-card:hover { border-color: #C9A961; box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
+        .article-card .tag { display: inline-block; font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; margin-bottom: 0.6rem; }
+        .article-card h3 { font-size: 1rem; font-weight: 500; color: #1a1a2e; line-height: 1.4; margin-bottom: 0.6rem; }
+        .article-card p { color: #666; font-size: 0.82rem; font-weight: 300; line-height: 1.6; margin-bottom: 1rem; flex: 1; }
+        .article-card .meta { color: #999; font-size: 0.68rem; font-weight: 300; letter-spacing: 0.5px; margin-bottom: 0.8rem; }
+        .article-card .read-link { display: inline-block; font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; text-decoration: none; transition: color 0.3s; }
+        .article-card .read-link:hover { color: #1a1a2e; }
+        @media (max-width: 520px) { .articles-grid { grid-template-columns: 1fr; } }
+
+        /* ── Study Card ── */
+        .study-highlight { background: #1a1a2e; border-radius: 8px; padding: 2.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; margin-top: 2rem; }
+        .study-highlight .study-left { color: #fff; }
+        .study-highlight .study-tag { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: #C9A961; margin-bottom: 0.8rem; }
+        .study-highlight h3 { font-size: 1.3rem; font-weight: 300; color: #fff; margin-bottom: 0.5rem; }
+        .study-highlight h3 strong { font-weight: 600; color: #C9A961; }
+        .study-highlight .study-desc { font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.7; margin-bottom: 1.5rem; }
+        .study-highlight .study-link { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; text-decoration: none; transition: color 0.3s; }
+        .study-highlight .study-link:hover { color: #fff; }
+        .study-kpis { display: flex; gap: 1.5rem; }
+        .study-kpi-card { text-align: center; flex: 1; }
+        .study-kpi-card .kpi-val { font-size: 1.6rem; font-weight: 600; color: #C9A961; line-height: 1; margin-bottom: 0.3rem; }
+        .study-kpi-card .kpi-label { font-size: 0.65rem; color: rgba(255,255,255,0.4); line-height: 1.4; }
+        @media (max-width: 768px) {
+            .study-highlight { grid-template-columns: 1fr; text-align: center; }
+            .study-kpis { justify-content: center; }
         }
 
-        .divider {
-            width: 40px; height: 2px;
-            background: #C9A961;
-            margin: 1.5rem 0;
-        }
+        /* ── Featured Video ── */
+        .featured-video-section { background: #fafaf8; border-radius: 8px; padding: 2rem; border: 1px solid rgba(0,0,0,0.04); margin-top: 2rem; }
+        .fv-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: #C9A961; font-weight: 600; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+        .fv-label i { font-size: 0.7rem; }
+        .fv-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: center; }
+        .video-embed-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; background: #000; }
+        .video-embed-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .fv-info h3 { font-size: 1.1rem; font-weight: 500; color: #1a1a2e; margin-bottom: 0.5rem; }
+        .fv-info p { font-size: 0.82rem; color: #666; line-height: 1.7; margin-bottom: 1rem; }
+        .fv-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .fv-links a { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; color: #C9A961; text-decoration: none; }
+        .fv-links a:hover { color: #1a1a2e; }
+        @media (max-width: 768px) { .fv-grid { grid-template-columns: 1fr; } }
 
-        /* ── E-book Section ── */
-        .ebook-section {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 4rem; align-items: center;
-        }
+        /* ── Podcast ── */
+        .podcast-embed { margin-top: 1.5rem; border-radius: 12px; overflow: hidden; }
+
+        /* ── E-book ── */
+        .ebook-section { display: grid; grid-template-columns: auto 1fr; gap: 3rem; align-items: center; }
         .ebook-cover { text-align: center; }
-        .ebook-cover img {
-            max-width: 320px; width: 100%;
-            border-radius: 8px;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.4);
-        }
+        .ebook-cover img { max-height: 320px; border-radius: 8px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
         .ebook-info { color: #fff; }
-        .ebook-info .badge-free {
-            display: inline-block;
-            font-size: 0.6rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 2px;
-            color: #C9A961; margin-bottom: 1rem;
-        }
-        .ebook-info h2 {
-            font-size: 1.8rem; font-weight: 300;
-            color: #fff; margin-bottom: 0.5rem;
-        }
+        .ebook-info .badge-free { display: inline-block; font-size: 0.55rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: #C9A961; border: 1px solid rgba(201,169,97,0.3); padding: 4px 12px; border-radius: 20px; margin-bottom: 1rem; }
+        .ebook-info h2 { font-size: 1.5rem; font-weight: 300; color: #fff; margin-bottom: 0.3rem; }
         .ebook-info h2 strong { font-weight: 600; color: #C9A961; }
-        .ebook-info .subtitle {
-            font-size: 0.9rem; color: #C9A961;
-            font-style: italic; margin-bottom: 1rem;
-        }
-        .ebook-info .desc {
-            font-size: 0.85rem; color: rgba(255,255,255,0.6);
-            line-height: 1.8; margin-bottom: 0.5rem;
-        }
-        .ebook-info .authors {
-            font-size: 0.75rem; color: rgba(255,255,255,0.4);
-            margin-bottom: 2rem;
-        }
+        .ebook-info .subtitle { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-bottom: 1rem; }
+        .ebook-info .desc { font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.7; margin-bottom: 1rem; }
+        .ebook-info .authors { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-bottom: 1.5rem; }
         .ebook-info .authors strong { color: #fff; }
-
-        /* E-book actions */
         .ebook-actions { display: flex; flex-direction: column; gap: 1rem; max-width: 400px; margin-top: 0.5rem; }
-        .ebook-actions .btn-preview {
-            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-            padding: 12px 24px;
-            background: transparent; color: #C9A961;
-            border: 1px solid #C9A961; border-radius: 6px;
-            font-size: 0.8rem; font-weight: 600;
-            font-family: 'Poppins', sans-serif;
-            text-transform: uppercase; letter-spacing: 1px;
-            cursor: pointer; transition: all 0.3s;
-            text-decoration: none;
-        }
+        .ebook-actions .btn-preview { display: inline-flex; align-items: center; gap: 0.5rem; padding: 10px 20px; border: 1px solid rgba(201,169,97,0.3); border-radius: 6px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #C9A961; text-decoration: none; transition: all 0.3s; background: transparent; }
         .ebook-actions .btn-preview:hover { background: rgba(201,169,97,0.1); transform: translateY(-1px); }
-        .ebook-actions .btn-buy {
-            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-            padding: 12px 24px;
-            background: #C9A961; color: #1a1a2e;
-            border: none; border-radius: 6px;
-            font-size: 0.8rem; font-weight: 600;
-            font-family: 'Poppins', sans-serif;
-            text-transform: uppercase; letter-spacing: 1px;
-            cursor: pointer; transition: all 0.3s;
-            text-decoration: none;
-        }
+        .ebook-actions .btn-buy { display: inline-flex; align-items: center; gap: 0.5rem; padding: 10px 20px; border: none; border-radius: 6px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; background: #C9A961; color: #1a1a2e; text-decoration: none; transition: all 0.3s; }
         .ebook-actions .btn-buy:hover { background: #d4af37; transform: translateY(-1px); }
-        .ebook-actions .btn-buy.coming-soon {
-            opacity: 0.5; pointer-events: none;
-        }
-        .ebook-actions .buy-note {
-            font-size: 0.68rem; color: rgba(255,255,255,0.35);
-            font-style: italic;
-        }
-
+        .ebook-actions .buy-note { font-size: 0.65rem; color: rgba(255,255,255,0.3); }
         @media (max-width: 768px) {
             .ebook-section { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
             .ebook-actions { margin: 0 auto; align-items: center; }
         }
 
-        /* ── Podcast ── */
-        .podcast-embed {
-            border-radius: 12px; margin-top: 2rem;
-            overflow: hidden;
-        }
-
-        /* ── Blog article items (Share2Inspire articles with summary toggle) ── */
-        .blog-article-item {
-            padding: 2rem 0;
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-        }
-        .blog-article-item:last-child { border-bottom: none; }
-        .blog-article-header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-        .blog-article-header > div:first-child { flex: 1; }
-        .blog-article-header .source {
-            font-size: 0.6rem; text-transform: uppercase;
-            letter-spacing: 2px; color: #C9A961;
-            font-weight: 600; margin-bottom: 0.4rem;
-        }
-        .blog-article-header h3 {
-            font-size: 1.05rem; font-weight: 500;
-            color: #1a1a2e; margin-bottom: 0;
-            line-height: 1.4;
-        }
-        .blog-article-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex-shrink: 0;
-            padding-top: 1.4rem;
-        }
-        .btn-ver-resumo {
-            font-size: 0.65rem; color: #C9A961;
-            font-weight: 600; text-transform: uppercase;
-            letter-spacing: 1.5px; cursor: pointer;
-            border: none; background: none;
-            padding: 0; font-family: 'Poppins', sans-serif;
-            white-space: nowrap;
-        }
-        .btn-ver-resumo .arrow { display: inline-block; transition: transform 0.3s; font-size: 0.65rem; }
-        .btn-ver-resumo.open .arrow { transform: rotate(90deg); }
-        .btn-ver-artigo {
-            font-size: 0.65rem; text-transform: uppercase;
-            letter-spacing: 1.5px; font-weight: 600;
-            color: #1a1a2e; text-decoration: none;
-            border: 1px solid #1a1a2e; padding: 6px 14px;
-            border-radius: 4px; white-space: nowrap;
-            transition: all 0.2s;
-        }
-        .btn-ver-artigo:hover { background: #1a1a2e; color: #fff; }
-        .blog-article-summary {
-            max-height: 0; overflow: hidden;
-            transition: max-height 0.5s ease;
-            margin-top: 0;
-        }
-        .blog-article-summary.open {
-            max-height: 5000px;
-            margin-top: 1.5rem;
-        }
-        .blog-article-summary p {
-            font-size: 0.85rem; color: #555;
-            line-height: 1.8; margin-bottom: 0.9rem;
-        }
-        .blog-cta-light {
-            border: 1px solid #e8dfc8;
-            border-left: 3px solid #C9A961;
-            background: #faf8f3;
-            border-radius: 0 6px 6px 0;
-            padding: 1.2rem 1.5rem;
-            margin: 1.5rem 0 1rem;
-        }
-        .blog-cta-light p {
-            font-size: 0.82rem; color: #555;
-            margin-bottom: 0.6rem !important;
-        }
-        .blog-cta-light a {
-            font-size: 0.7rem; text-transform: uppercase;
-            letter-spacing: 1.5px; font-weight: 600;
-            color: #C9A961; text-decoration: none;
-        }
-        .blog-cta-light a:hover { color: #1a1a2e; }
-        .blog-article-footer-link {
-            text-align: right;
-            margin-top: 0.5rem;
-        }
-        .blog-article-footer-link a {
-            font-size: 0.7rem; text-transform: uppercase;
-            letter-spacing: 1.5px; font-weight: 600;
-            color: #C9A961; text-decoration: none;
-        }
-        .blog-article-footer-link a:hover { color: #1a1a2e; }
-        @media (max-width: 768px) {
-            .blog-article-header { flex-direction: column; gap: 0.8rem; }
-            .blog-article-actions { padding-top: 0; flex-wrap: wrap; }
-        }
-
-        /* ── Article items ── */
-        .article-item {
-            padding: 2rem 0;
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-        }
-        .article-item:last-child { border-bottom: none; }
-        .article-item .source {
-            font-size: 0.6rem; text-transform: uppercase;
-            letter-spacing: 2px; color: #C9A961;
-            font-weight: 600; margin-bottom: 0.5rem;
-        }
-        .article-item h3 {
-            font-size: 1.1rem; font-weight: 500;
-            color: #1a1a2e; margin-bottom: 0.5rem;
-        }
-        .article-item p {
-            font-size: 0.85rem; color: #666;
-            line-height: 1.7; margin-bottom: 0.8rem;
-            max-width: 700px;
-        }
-        .article-item a {
-            font-size: 0.7rem; text-transform: uppercase;
-            letter-spacing: 1.5px; font-weight: 600;
-            color: #C9A961; text-decoration: none;
-        }
-        .article-item a:hover { color: #1a1a2e; }
-
-        /* ── Exclusive articles ── */
-        .exclusive-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-        }
-        .exclusive-item .tag {
-            font-size: 0.55rem; text-transform: uppercase;
-            letter-spacing: 2px; color: #C9A961;
-            font-weight: 700; margin-bottom: 0.8rem;
-        }
-        .exclusive-item h3 {
-            font-size: 1.05rem; font-weight: 500;
-            color: #1a1a2e; margin-bottom: 0.8rem;
-            line-height: 1.4;
-        }
-        .exclusive-item blockquote {
-            font-size: 0.85rem; font-style: italic;
-            color: #666; line-height: 1.7;
-            border-left: 2px solid #C9A961;
-            padding-left: 1rem; margin: 0 0 1rem 0;
-        }
-        .exclusive-item .meta {
-            font-size: 0.7rem; color: #999;
-        }
-
-        /* ── Accordion for exclusive items ── */
-        .exclusive-item { cursor: pointer; transition: all 0.3s; }
-        .exclusive-item:hover { opacity: 0.85; }
-        .exclusive-item .accordion-toggle {
-            display: flex; align-items: center; gap: 0.5rem;
-            font-size: 0.65rem; color: #C9A961;
-            font-weight: 600; text-transform: uppercase;
-            letter-spacing: 1.5px; margin-top: 0.8rem;
-            cursor: pointer; border: none; background: none;
-            padding: 0; font-family: 'Poppins', sans-serif;
-        }
-        .exclusive-item .accordion-toggle .arrow {
-            display: inline-block; transition: transform 0.3s;
-            font-size: 0.7rem;
-        }
-        .exclusive-item.open .accordion-toggle .arrow { transform: rotate(90deg); }
-        .exclusive-item .accordion-content {
-            max-height: 0; overflow: hidden;
-            transition: max-height 0.5s ease;
-            margin-top: 0;
-        }
-        .exclusive-item.open .accordion-content {
-            max-height: 5000px;
-            margin-top: 1.5rem;
-        }
-        .accordion-content p {
-            font-size: 0.85rem; color: #555;
-            line-height: 1.8; margin-bottom: 1rem;
-        }
-        .accordion-content .study-kpi-row {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 1rem; margin: 1.5rem 0;
-        }
-        .accordion-content .study-kpi {
-            text-align: center; padding: 1.2rem;
-            background: #fafaf8; border-radius: 8px;
-            border: 1px solid rgba(0,0,0,0.04);
-        }
-        .accordion-content .study-kpi .value {
-            font-size: 1.8rem; font-weight: 600; color: #1a1a2e;
-        }
-        .accordion-content .study-kpi .value span {
-            font-size: 0.9rem; font-weight: 300;
-        }
-        .accordion-content .study-kpi .label {
-            font-size: 0.65rem; color: #999;
-            text-transform: uppercase; letter-spacing: 1px;
-            margin-top: 0.3rem;
-        }
-        .accordion-content .study-table {
-            width: 100%; border-collapse: collapse;
-            margin: 1.5rem 0; font-size: 0.8rem;
-        }
-        .accordion-content .study-table th {
-            text-align: left; padding: 0.6rem 1rem;
-            font-size: 0.65rem; text-transform: uppercase;
-            letter-spacing: 1px; color: #999;
-            border-bottom: 2px solid #C9A961;
-        }
-        .accordion-content .study-table td {
-            padding: 0.6rem 1rem;
-            border-bottom: 1px solid rgba(0,0,0,0.04);
-            color: #555;
-        }
-        .accordion-content .study-insight {
-            background: #fafaf8; border-left: 3px solid #C9A961;
-            padding: 1.2rem 1.5rem; margin: 1.5rem 0;
-            border-radius: 0 6px 6px 0;
-        }
-        .accordion-content .study-insight .insight-label {
-            font-size: 0.6rem; text-transform: uppercase;
-            letter-spacing: 2px; color: #C9A961;
-            font-weight: 700; margin-bottom: 0.5rem;
-        }
-        .accordion-content .study-insight p {
-            font-size: 0.82rem; color: #555;
-            line-height: 1.7; margin-bottom: 0;
-        }
-        .accordion-content .study-chart {
-            width: 100%; max-width: 600px;
-            margin: 1.5rem auto; display: block;
-            border-radius: 8px;
-        }
-        .accordion-content .study-cta-inline {
-            text-align: center; margin-top: 2rem;
-            padding: 2rem; background: #1a1a2e;
-            border-radius: 8px;
-        }
-        .accordion-content .study-cta-inline h4 {
-            font-size: 1.1rem; font-weight: 300;
-            color: #fff; margin-bottom: 0.5rem;
-        }
-        .accordion-content .study-cta-inline h4 strong { font-weight: 600; }
-        .accordion-content .study-cta-inline p {
-            font-size: 0.8rem; color: rgba(255,255,255,0.5);
-            margin-bottom: 1rem;
-        }
-        .accordion-content .study-cta-inline a {
-            display: inline-block; padding: 10px 24px;
-            background: #C9A961; color: #1a1a2e;
-            border-radius: 6px; font-size: 0.75rem;
-            font-weight: 600; text-decoration: none;
-            text-transform: uppercase; letter-spacing: 1px;
-            transition: background 0.3s;
-        }
-        .accordion-content .study-cta-inline a:hover { background: #d4af37; }
-
-        @media (max-width: 768px) {
-            .exclusive-grid { grid-template-columns: 1fr; gap: 2rem; }
-            .accordion-content .study-kpi-row { grid-template-columns: 1fr; }
-        }
-
         /* ── Newsletter ── */
         .newsletter-box { text-align: center; max-width: 550px; margin: 0 auto; }
-        .newsletter-box h2 {
-            font-size: 1.5rem; font-weight: 300;
-            color: #fff; margin-bottom: 0.5rem;
-        }
+        .newsletter-box h2 { font-size: 1.5rem; font-weight: 300; color: #fff; margin-bottom: 0.5rem; }
         .newsletter-box h2 strong { font-weight: 600; color: #C9A961; }
-        .newsletter-box .sub-desc {
-            font-size: 0.85rem; color: rgba(255,255,255,0.5);
-            margin-bottom: 2rem; line-height: 1.7;
-        }
-        .newsletter-form {
-            display: flex; gap: 0.5rem;
-            justify-content: center; flex-wrap: wrap;
-        }
-        .newsletter-form input {
-            padding: 12px 16px;
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 6px; font-size: 0.85rem;
-            background: rgba(255,255,255,0.06);
-            color: #fff; outline: none;
-            font-family: 'Poppins', sans-serif;
-            min-width: 160px; transition: border-color 0.3s;
-        }
+        .newsletter-box .sub-desc { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-bottom: 2rem; line-height: 1.7; }
+        .newsletter-form { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+        .newsletter-form input { padding: 12px 16px; border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; font-size: 0.85rem; background: rgba(255,255,255,0.06); color: #fff; outline: none; font-family: 'Poppins', sans-serif; min-width: 160px; transition: border-color 0.3s; }
         .newsletter-form input:focus { border-color: #C9A961; }
         .newsletter-form input::placeholder { color: rgba(255,255,255,0.3); }
-        .newsletter-form button {
-            padding: 12px 24px;
-            background: #C9A961; color: #1a1a2e;
-            border: none; border-radius: 6px;
-            font-size: 0.75rem; font-weight: 600;
-            font-family: 'Poppins', sans-serif;
-            text-transform: uppercase; letter-spacing: 1px;
-            cursor: pointer; transition: all 0.3s;
-        }
+        .newsletter-form button { padding: 12px 24px; background: #C9A961; color: #1a1a2e; border: none; border-radius: 6px; font-size: 0.75rem; font-weight: 600; font-family: 'Poppins', sans-serif; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s; }
         .newsletter-form button:hover { background: #d4af37; }
-        .newsletter-note {
-            font-size: 0.65rem; color: rgba(255,255,255,0.3);
-            margin-top: 1rem;
-        }
-        .newsletter-msg {
-            display: none; margin-top: 1rem;
-            padding: 8px 12px; border-radius: 6px;
-            font-size: 0.8rem;
-        }
-
-        /* LinkedIn newsletter link */
-        .linkedin-cta {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            margin-top: 1.5rem;
-            font-size: 0.7rem; text-transform: uppercase;
-            letter-spacing: 1.5px; font-weight: 600;
-            color: rgba(255,255,255,0.4); text-decoration: none;
-            transition: color 0.3s;
-        }
+        .newsletter-note { font-size: 0.65rem; color: rgba(255,255,255,0.3); margin-top: 1rem; }
+        .newsletter-msg { display: none; margin-top: 1rem; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; }
+        .linkedin-cta { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1.5rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.3s; }
         .linkedin-cta:hover { color: #C9A961; }
 
-        /* ── Multimedia ── */
-        .media-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-        }
-        .media-item h3 {
-            font-size: 1.1rem; font-weight: 500;
-            color: #1a1a2e; margin-bottom: 0.5rem;
-        }
-        .media-item p {
-            font-size: 0.85rem; color: #666;
-            line-height: 1.7; margin-bottom: 1rem;
-        }
-        .media-item a {
-            font-size: 0.7rem; text-transform: uppercase;
-            letter-spacing: 1.5px; font-weight: 600;
-            color: #C9A961; text-decoration: none;
-        }
-        .media-item a:hover { color: #1a1a2e; }
-        /* ── Featured Video ── */
-        .featured-video { grid-column: 1 / -1; background: #fafaf8; border-radius: 8px; padding: 1.5rem; border: 1px solid rgba(0,0,0,0.04); }
-        .featured-video-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: #C9A961; font-weight: 600; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
-        .featured-video-label i { font-size: 0.7rem; }
-        .video-embed-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; margin-bottom: 1rem; background: #000; }
-        .video-embed-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        .featured-video h3 { font-size: 1rem; font-weight: 500; color: #1a1a2e; margin-bottom: 0.4rem; }
-        .featured-video p.fv-desc { font-size: 0.8rem; color: #666; line-height: 1.7; margin-bottom: 0.8rem; }
-        .featured-video-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-        .featured-video-links a { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; color: #C9A961; text-decoration: none; }
-        .featured-video-links a:hover { color: #1a1a2e; }
-
-        @media (max-width: 768px) {
-            .media-grid { grid-template-columns: 1fr; gap: 2rem; }
-        }
+        /* ── Other Publications ── */
+        .other-pubs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+        .pub-card { border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; padding: 1.5rem; transition: box-shadow 0.3s; }
+        .pub-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .pub-card .pub-source { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #999; margin-bottom: 0.5rem; }
+        .pub-card h4 { font-size: 0.95rem; font-weight: 500; color: #1a1a2e; margin-bottom: 0.5rem; line-height: 1.4; }
+        .pub-card p { font-size: 0.8rem; color: #666; line-height: 1.6; margin-bottom: 0.8rem; }
+        .pub-card a { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; color: #C9A961; text-decoration: none; }
+        .pub-card a:hover { color: #1a1a2e; }
+        @media (max-width: 520px) { .other-pubs { grid-template-columns: 1fr; } }
 
         /* ── Footer ── */
-        .footer {
-            background: #1a1a2e; padding: 60px 2rem 30px;
-        }
-        .footer-inner {
-            max-width: 1100px; margin: 0 auto;
-            display: flex; justify-content: space-between;
-            flex-wrap: wrap; gap: 2rem;
-        }
-        .footer-col h4 {
-            font-size: 0.65rem; text-transform: uppercase;
-            letter-spacing: 2px; color: #C9A961;
-            font-weight: 600; margin-bottom: 1rem;
-        }
-        .footer-col a {
-            display: block; font-size: 0.8rem;
-            color: rgba(255,255,255,0.5); text-decoration: none;
-            margin-bottom: 0.5rem; transition: color 0.3s;
-        }
+        .footer { background: #1a1a2e; padding: 60px 2rem 30px; }
+        .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
+        .footer-col h4 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; color: #C9A961; font-weight: 600; margin-bottom: 1rem; }
+        .footer-col a { display: block; font-size: 0.8rem; color: rgba(255,255,255,0.5); text-decoration: none; margin-bottom: 0.5rem; transition: color 0.3s; }
         .footer-col a:hover { color: #C9A961; }
-        .footer-col p {
-            font-size: 0.8rem; color: rgba(255,255,255,0.5);
-            line-height: 1.7;
-        }
-        .footer-bottom {
-            max-width: 1100px; margin: 3rem auto 0;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(255,255,255,0.06);
-            text-align: center;
-        }
-        .footer-bottom p {
-            font-size: 0.65rem; color: rgba(255,255,255,0.3);
-            text-transform: uppercase; letter-spacing: 1.5px;
-        }
+        .footer-col p { font-size: 0.8rem; color: rgba(255,255,255,0.5); line-height: 1.7; }
+        .footer-bottom { max-width: 1100px; margin: 3rem auto 0; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); text-align: center; }
+        .footer-bottom p { font-size: 0.65rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1.5px; }
 
-        /* ── Fade-in animation ── */
-        .fade-in {
-            opacity: 0; transform: translateY(30px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
+        /* ── Fade-in ── */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
         .fade-in.visible { opacity: 1; transform: translateY(0); }
     </style>
 
@@ -642,12 +215,12 @@
     </script>
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035" crossorigin="anonymous"></script>
-<script type="application/ld+json">
+    <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
-      "name": "Conhecimento - Share2Inspire",
-      "description": "Recursos de conhecimento sobre carreira, liderança e desenvolvimento profissional. Podcast, e-books, artigos exclusivos e estudos.",
+      "name": "Knowledge Hub - Share2Inspire",
+      "description": "Artigos, vídeos, podcast e ferramentas gratuitas sobre CV, ATS, LinkedIn, entrevistas e desenvolvimento profissional.",
       "url": "https://www.share2inspire.pt/pages/conhecimento",
       "publisher": {
         "@type": "Organization",
@@ -655,24 +228,11 @@
       }
     }
     </script>
-  
-    <style>
-    /* Mega Menu Serviços */
-    .nav-item.mega-dropdown{position:relative}
-    .mega-menu{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #f0f0f0;box-shadow:0 12px 40px rgba(0,0,0,0.08);padding:16px 20px;min-width:360px;z-index:1050}
-    .nav-item.mega-dropdown:hover .mega-menu,.nav-item.mega-dropdown .mega-menu:hover{display:block}
-    .mega-menu .mega-col{margin-bottom:10px}.mega-menu .mega-col:last-child{margin-bottom:0}
-    .mega-menu .mega-step-label{font-size:0.6rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#C9A961;margin-bottom:4px}
-    .mega-menu .mega-link{display:block;padding:3px 0;font-size:0.8rem;font-weight:400;color:#555;text-decoration:none;transition:color 0.2s}
-    .mega-menu .mega-link:hover{color:#C9A961}
-    
-    .mega-menu .mega-divider{height:1px;background:#f0f0f0;margin:8px 0}
-    @media(max-width:991px){.mega-menu{position:static;transform:none;box-shadow:none;border:none;min-width:auto;padding:8px 12px;background:#fafafa}}
-    </style>
 </head>
 
 <body>
 
+    <!-- ── Navigation ── -->
     <header class="header">
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
@@ -699,7 +259,7 @@
                                 </div>
                             </div>
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="conhecimento.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;color:var(--s2i-gold);">Conhecimento</a></li>
+                        <li class="nav-item"><a class="nav-link" href="conhecimento.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;color:var(--s2i-gold);">Knowledge Hub</a></li>
                         <li class="nav-item"><a class="nav-link" href="sobre.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Sobre</a></li>
                         <li class="nav-item"><a class="nav-link" href="/pages/contactos" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Contactos</a></li>
                         <li class="nav-item ms-2"><a class="nav-link" href="/area-cliente/" style="background:#BF9A33;color:#0a0a0a!important;padding:0.4rem 1rem;border-radius:4px;font-weight:600;transition:all 0.3s;" onmouseover="this.style.background='#d4af5a'" onmouseout="this.style.background='#BF9A33'">Área de Cliente</a></li>
@@ -717,16 +277,249 @@
         </nav>
     </header>
 
-    <!-- ── Hero ── -->
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 1. HERO                                        -->
+    <!-- ══════════════════════════════════════════════ -->
     <section class="hero">
         <div>
-            <h1>Onde o estratégico<br>encontra o <strong>humano</strong></h1>
-            <p>Uma curadoria de ideias, artigos e podcasts para quem procura navegar na transformação do trabalho com propósito.</p>
+            <h1>Knowledge <strong>Hub</strong></h1>
+            <p>Artigos, vídeos e ferramentas para quem quer navegar a transformação do trabalho com propósito. Tudo num só lugar.</p>
+            <div class="hero-nav">
+                <a href="#artigos">Artigos</a>
+                <a href="#video">Vídeo</a>
+                <a href="#podcast">Podcast</a>
+                <a href="#ebook">E-book</a>
+                <a href="#newsletter">Newsletter</a>
+            </div>
         </div>
     </section>
 
-    <!-- ── E-book Download ── -->
-    <div class="section-dark" id="ebook-download">
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 2. ARTIGOS (Visual Grid — all articles equal)  -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="section fade-in" id="artigos">
+        <span class="section-label">Blog</span>
+        <h2 class="section-title">Artigos <strong>recomendados</strong></h2>
+        <div class="divider"></div>
+
+        <div class="articles-grid">
+            <!-- Entrevista Presencial vs Remota -->
+            <article class="article-card">
+                <span class="tag">Guia de Carreira</span>
+                <h3>Entrevista Presencial vs. Remota: Guia Completo de Preparação</h3>
+                <p>Dois formatos, regras diferentes. Dicas práticas, tabela comparativa e checklists interativos para causar a melhor impressão.</p>
+                <div class="meta">Samuel Rolo · 7 min de leitura</div>
+                <a href="../blog/artigos/entrevista-presencial-vs-remota.html" class="read-link">Ler artigo &rarr;</a>
+            </article>
+
+            <!-- Guia ATS -->
+            <article class="article-card">
+                <span class="tag">Guia Completo</span>
+                <h3>Guia Definitivo: Como Superar o ATS e Fazer o Teu Currículo Chegar ao Recrutador</h3>
+                <p>Estratégias de palavras-chave, formatação e estrutura para passar nos filtros automáticos ATS.</p>
+                <div class="meta">Samuel Rolo · 8 min de leitura</div>
+                <a href="../blog/artigos/guia-superar-ats-curriculo.html" class="read-link">Ler artigo &rarr;</a>
+            </article>
+
+            <!-- Transformar CV -->
+            <article class="article-card">
+                <span class="tag">Estratégia de Carreira</span>
+                <h3>Como Transformar um CV Ignorado num CV que Gera Entrevistas</h3>
+                <p>De descrição para impacto, de genérico para direcionado. Técnicas para tornar o teu CV irresistível.</p>
+                <div class="meta">Samuel Rolo · 6 min de leitura</div>
+                <a href="../blog/artigos/transformar-cv-ignorado-gerar-entrevistas.html" class="read-link">Ler artigo &rarr;</a>
+            </article>
+
+            <!-- 7 Erros -->
+            <article class="article-card">
+                <span class="tag">Desenvolvimento Profissional</span>
+                <h3>7 Erros no CV que Fazem Muitos Candidatos Serem Rejeitados</h3>
+                <p>Os erros mais comuns que reduzem drasticamente as hipóteses de chegar à fase de entrevista.</p>
+                <div class="meta">Samuel Rolo · 8 min de leitura</div>
+                <a href="../blog/artigos/7-erros-cv-candidatos-rejeitados.html" class="read-link">Ler artigo &rarr;</a>
+            </article>
+
+            <!-- CV ou LinkedIn -->
+            <article class="article-card">
+                <span class="tag">Estratégia de Carreira</span>
+                <h3>CV ou LinkedIn: Qual é Mais Importante para a Tua Carreira?</h3>
+                <p>Ambos são essenciais, mas desempenham funções diferentes. Descobre o equilíbrio ideal.</p>
+                <div class="meta">Samuel Rolo · 7 min de leitura</div>
+                <a href="../blog/artigos/cv-linkedin-importancia.html" class="read-link">Ler artigo &rarr;</a>
+            </article>
+
+            <!-- Melhorar LinkedIn -->
+            <article class="article-card">
+                <span class="tag">Visibilidade Online</span>
+                <h3>Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores</h3>
+                <p>Pequenos ajustes no perfil que podem aumentar significativamente a tua visibilidade.</p>
+                <div class="meta">Samuel Rolo · 9 min de leitura</div>
+                <a href="../blog/artigos/melhorar-linkedin-pesquisas.html" class="read-link">Ler artigo &rarr;</a>
+            </article>
+
+            <!-- Posicionamento no Mercado -->
+            <article class="article-card">
+                <span class="tag">Avaliação de Carreira</span>
+                <h3>Como Saber se Estás Bem Posicionado no Mercado de Trabalho</h3>
+                <p>Indicadores, benchmarks e clareza sobre os próximos passos da tua carreira.</p>
+                <div class="meta">Samuel Rolo · 8 min de leitura</div>
+                <a href="../blog/artigos/posicionamento-mercado.html" class="read-link">Ler artigo &rarr;</a>
+            </article>
+
+            <!-- ATS Guardião Digital -->
+            <article class="article-card">
+                <span class="tag">Literacia Algorítmica</span>
+                <h3>Guia Essencial: O ATS como Guardião Digital da Carreira</h3>
+                <p>O currículo é um objeto técnico que precisa de ser estruturado para ser interpretado por algoritmos de extração.</p>
+                <div class="meta">Samuel Rolo · 12 min de leitura</div>
+                <a href="../blog/artigos/guia-superar-ats-curriculo.html" class="read-link">Ler artigo &rarr;</a>
+            </article>
+
+            <!-- Empregabilidade Algorítmica -->
+            <article class="article-card">
+                <span class="tag">Empregabilidade 2026</span>
+                <h3>O Currículo Não é o Que Parece: 5 Lições sobre Empregabilidade Algorítmica</h3>
+                <p>A empregabilidade moderna exige a passagem da perceção para os dados acionáveis.</p>
+                <div class="meta">Samuel Rolo · 10 min de leitura</div>
+                <a href="../blog/artigos/guia-superar-ats-curriculo.html" class="read-link">Ler artigo &rarr;</a>
+            </article>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 3. ESTUDO LINKEDIN (Highlight card)            -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="section-light">
+        <div class="section-inner fade-in">
+            <span class="section-label">Estudo</span>
+            <h2 class="section-title" style="color:#1a1a2e;">Investigação &amp; <strong>Dados</strong></h2>
+            <div class="divider"></div>
+
+            <div class="study-highlight">
+                <div class="study-left">
+                    <p class="study-tag">Estudo Q1 2026</p>
+                    <h3>O Estado do <strong>LinkedIn</strong> em Portugal</h3>
+                    <p class="study-desc">Uma análise a 500 perfis profissionais revela as oportunidades e os erros mais comuns que ditam o sucesso na maior rede profissional do mundo.</p>
+                    <a href="#" class="study-link" onclick="document.getElementById('study-detail').style.display=document.getElementById('study-detail').style.display==='none'?'block':'none';this.textContent=this.textContent.includes('Ver')?'Fechar estudo':'Ver estudo completo →';return false;">Ver estudo completo &rarr;</a>
+                </div>
+                <div class="study-kpis">
+                    <div class="study-kpi-card">
+                        <div class="kpi-val">4.0/10</div>
+                        <div class="kpi-label">Score médio nacional</div>
+                    </div>
+                    <div class="study-kpi-card">
+                        <div class="kpi-val">74%</div>
+                        <div class="kpi-label">Perfis com score abaixo de 5</div>
+                    </div>
+                    <div class="study-kpi-card">
+                        <div class="kpi-val">0.6%</div>
+                        <div class="kpi-label">Perfis com score acima de 7</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study detail (hidden by default) -->
+            <div id="study-detail" style="display:none;margin-top:2rem;background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:8px;padding:2.5rem;">
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin-bottom:0.8rem;">Sumário Executivo</h4>
+                <p style="font-size:0.85rem;color:#444;line-height:1.8;margin-bottom:1rem;">Este estudo, conduzido pela Share2Inspire com base numa análise de 500 perfis representativos do mercado português, revela uma realidade preocupante: a grande maioria dos profissionais em Portugal não está a tirar partido do potencial do LinkedIn. Com um <strong>score médio de otimização de apenas 4.00 em 10</strong>, os dados indicam que <strong>74% dos perfis tem uma visibilidade considerada "Baixa"</strong> para os algoritmos da plataforma.</p>
+
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:1.5rem 0 0.8rem;">A Anatomia de um Perfil LinkedIn em Portugal</h4>
+                <p style="font-size:0.85rem;color:#444;line-height:1.8;margin-bottom:1rem;">A distribuição dos scores de otimização é fortemente assimétrica, com a grande maioria dos perfis a concentrar-se na faixa inferior da escala. Apenas 0.6% dos profissionais analisados atingem um score superior a 7.</p>
+                <img loading="lazy" src="/images/chart_01_distribuicao_scores.webp" alt="Distribuição de Scores LinkedIn em Portugal" style="width:100%;border-radius:8px;margin-bottom:1rem;">
+
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:1.5rem 0 0.8rem;">Os 7 Erros Mais Comuns</h4>
+                <img loading="lazy" src="/images/chart_02_top_erros.webp" alt="Top 7 Erros Mais Comuns no LinkedIn" style="width:100%;border-radius:8px;margin-bottom:1rem;">
+                <table style="width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:1rem;">
+                    <thead><tr><th style="text-align:left;padding:0.6rem;border-bottom:2px solid #C9A961;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#999;">#</th><th style="text-align:left;padding:0.6rem;border-bottom:2px solid #C9A961;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#999;">Erro</th><th style="text-align:left;padding:0.6rem;border-bottom:2px solid #C9A961;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#999;">Prevalência</th></tr></thead>
+                    <tbody>
+                        <tr><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">1</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">Headline apenas com cargo e empresa atual</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">25.0%</td></tr>
+                        <tr><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">2</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">Secção "Sobre" ausente ou incompleta</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">24.6%</td></tr>
+                        <tr><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">3</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">Headline genérica sem keywords de SEO</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">23.0%</td></tr>
+                        <tr><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">4</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">Secção de Projetos vazia</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">23.0%</td></tr>
+                        <tr><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">5</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">Gaps temporais não explicados na experiência</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">22.6%</td></tr>
+                        <tr><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">6</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">Sem publicações nos últimos 90 dias</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">22.0%</td></tr>
+                        <tr><td style="padding:0.5rem 0.6rem;color:#444;">7</td><td style="padding:0.5rem 0.6rem;color:#444;">Sem certificações complementares</td><td style="padding:0.5rem 0.6rem;color:#444;">22.0%</td></tr>
+                    </tbody>
+                </table>
+
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:1.5rem 0 0.8rem;">Performance por Setor</h4>
+                <p style="font-size:0.85rem;color:#444;line-height:1.8;margin-bottom:1rem;">Vendas e Comercial lideram com 4.33/10, possivelmente por uma maior consciência da importância da rede de contactos. Educação e Formação apresentam o score mais baixo (3.60/10).</p>
+                <img loading="lazy" src="/images/chart_03_score_por_setor.webp" alt="Score Médio por Setor Profissional" style="width:100%;border-radius:8px;margin-bottom:1rem;">
+
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:1.5rem 0 0.8rem;">Performance por Faixa Etária</h4>
+                <p style="font-size:0.85rem;color:#444;line-height:1.8;margin-bottom:1rem;">Os profissionais na faixa dos 31-35 anos apresentam os perfis mais otimizados. Os mais jovens (18-24) e os mais seniores (51+) apresentam scores mais baixos.</p>
+                <img loading="lazy" src="/images/chart_05_score_faixa_etaria.png" alt="Score Médio por Faixa Etária" style="width:100%;border-radius:8px;margin-bottom:1rem;">
+
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:1.5rem 0 0.8rem;">Indicadores Chave</h4>
+                <img loading="lazy" src="/images/chart_04_indicadores_chave.webp" alt="Indicadores Chave do LinkedIn em Portugal" style="width:100%;border-radius:8px;margin-bottom:1rem;">
+
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:1.5rem 0 0.8rem;">Visibilidade para o Algoritmo</h4>
+                <p style="font-size:0.85rem;color:#444;line-height:1.8;margin-bottom:1rem;">Apenas 26% dos perfis atingem uma visibilidade "Média", com os restantes 74% a serem considerados de visibilidade "Baixa". Nenhum perfil da amostra atingiu visibilidade "Alta".</p>
+                <img loading="lazy" src="/images/chart_06_visibilidade_algoritmo.webp" alt="Visibilidade para o Algoritmo LinkedIn" style="width:100%;border-radius:8px;margin-bottom:1rem;">
+
+                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:1.5rem 0 0.8rem;">Conclusão</h4>
+                <p style="font-size:0.85rem;color:#444;line-height:1.8;margin-bottom:1rem;">O ecossistema digital português no LinkedIn está longe de atingir a sua maturidade. A maioria dos profissionais adota uma postura passiva, resultando em perfis invisíveis e oportunidades perdidas. A boa notícia é que a barreira para se destacar é baixa.</p>
+
+                <div style="background:#1a1a2e;border-radius:8px;padding:1.5rem 2rem;text-align:center;margin-top:2rem;">
+                    <h4 style="font-size:1.1rem;font-weight:300;color:#fff;margin-bottom:0.5rem;">Descobre o score do <strong style="font-weight:600;color:#C9A961;">teu perfil</strong></h4>
+                    <p style="font-size:0.8rem;color:rgba(255,255,255,0.5);margin-bottom:1rem;">Análise gratuita em 30 segundos.</p>
+                    <a href="/linkedin-roaster" style="display:inline-block;background:#C9A961;color:#1a1a2e;padding:0.7rem 1.5rem;border-radius:4px;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;text-decoration:none;">Analisar o meu LinkedIn</a>
+                </div>
+
+                <p style="font-size:0.7rem;color:#999;margin-top:1.5rem;font-style:italic;">Este estudo foi realizado com base em dados sintéticos gerados para refletir as tendências do mercado português, analisados pela ferramenta LinkedIn Roaster da Share2Inspire. Amostra: 500 perfis, 13 setores de atividade, período Q1 2026.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 4. VÍDEO EM DESTAQUE                           -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="section fade-in" id="video">
+        <span class="section-label">Vídeo</span>
+        <h2 class="section-title">Em <strong>destaque</strong></h2>
+        <div class="divider"></div>
+
+        <div class="featured-video-section">
+            <p class="fv-label"><i class="fas fa-fire"></i> Novo Vídeo</p>
+            <div class="fv-grid">
+                <div class="video-embed-wrapper">
+                    <iframe src="https://www.youtube.com/embed/6coJJF79Cy0?rel=0&modestbranding=1" title="Como Criar um CV Compatível com ATS em 2026" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="fv-info">
+                    <h3>Como Criar um CV Compatível com ATS em 2026</h3>
+                    <p>Candidatas-te a empregos e nunca tens resposta? O problema pode ser o ATS — o sistema automático que filtra o teu CV antes de qualquer recrutador o ver. Aprende a criar um currículo que passa nos filtros e chega às mãos certas.</p>
+                    <div class="fv-links">
+                        <a href="../videos/como-criar-cv-ats-friendly.html">Como criar CV ATS friendly &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=6coJJF79Cy0" target="_blank">Ver no YouTube &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 5. PODCAST                                     -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="section-light">
+        <div class="section-inner fade-in" id="podcast">
+            <span class="section-label">Podcast</span>
+            <h2 class="section-title" style="color:#1a1a2e;">Humanos e <strong>Máquinas</strong></h2>
+            <p class="section-desc">A interseção entre a inteligência artificial e a essência humana. Como manter a empatia e o pensamento crítico num mundo cada vez mais automatizado.</p>
+
+            <div class="podcast-embed">
+                <iframe style="border-radius:12px"
+                    src="https://open.spotify.com/embed/show/2P09p0F3HIR0jXRdCMPOSe?utm_source=generator&theme=0"
+                    width="100%" height="352" frameBorder="0" allowfullscreen=""
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 6. E-BOOK                                      -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="section-dark" id="ebook">
         <div class="section-inner">
             <div class="ebook-section fade-in">
                 <div class="ebook-cover">
@@ -738,7 +531,6 @@
                     <p class="subtitle">O Guia Prático de Performance Mental e Física</p>
                     <p class="desc">Um guia sobre as quatro dimensões da energia — física, mental, emocional e espiritual — para quem lidera e quer manter a performance de forma sustentável.</p>
                     <p class="authors">Por <strong>Samuel Rolo</strong> &amp; <strong>Marlene Ruivo</strong></p>
-
                     <div class="ebook-actions">
                         <a href="assets/ebooks/Energia_para_Liderar_Preview_PT.pdf" download class="btn-preview">Descarregar preview &rarr;</a>
                         <a href="https://go.hotmart.com/Q104764153P?dp=1" target="_blank" rel="noopener" class="btn-buy">Comprar e-book completo (PT) &rarr;</a>
@@ -749,353 +541,14 @@
         </div>
     </div>
 
-    <!-- ── Podcast ── -->
-    <div class="section fade-in">
-        <span class="section-label">Podcast</span>
-        <h2 class="section-title">Humanos e <strong>Máquinas</strong></h2>
-        <p class="section-desc">A interseção entre a inteligência artificial e a essência humana. Como manter a empatia e o pensamento crítico num mundo cada vez mais automatizado.</p>
-
-        <div class="podcast-embed">
-            <iframe style="border-radius:12px"
-                src="https://open.spotify.com/embed/show/2P09p0F3HIR0jXRdCMPOSe?utm_source=generator&theme=0"
-                width="100%" height="352" frameBorder="0" allowfullscreen=""
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"></iframe>
-        </div>
-
-    </div>
-
-    <!-- ── Artigos ── -->
-    <div class="section-light">
-        <div class="section-inner fade-in">
-            <span class="section-label">Artigos</span>
-            <h2 class="section-title">Leituras <strong>recomendadas</strong></h2>
-            <div class="divider"></div>
-
-            <div class="article-item">
-                <p class="source">RH Magazine</p>
-                <h3>Mudam os Tempos, Mudam as Avaliações</h3>
-                <p>Uma reflexão sobre a evolução dos modelos de avaliação de desempenho e o que realmente importa na gestão de talento.</p>
-                <a href="https://rhmagazine.pt/mudam-os-tempos-mudam-as-avaliacoes/" target="_blank">Ler artigo &rarr;</a>
-            </div>
-
-            <div class="article-item">
-                <p class="source">Dezanove</p>
-                <h3>Enquanto Houver Vento Há Sentimento</h3>
-                <p>Review do livro que explora uma história real de autodescoberta, identidade e resiliência através de várias fases da vida.</p>
-                <a href="https://dezanove.pt/enquanto-houver-vento-ha-sentimento-de-samuel-rolo-2442105/" target="_blank">Ler review &rarr;</a>
-            </div>
-
-            <!-- Artigo NOVO: CV Ignorado → CV que Gera Entrevistas -->
-            <div class="blog-article-item">
-                <div class="blog-article-header">
-                    <div>
-                        <p class="source">Estratégia de Carreira &middot; <span style="color:#999;font-weight:400;">6 min</span></p>
-                        <h3>Como Transformar um CV Ignorado num CV que Gera Entrevistas</h3>
-                    </div>
-                    <div class="blog-article-actions">
-                        <button class="btn-ver-resumo" onclick="toggleBlogSummary(this)">&#9654; Ver resumo</button>
-                        <a href="/blog/artigos/transformar-cv-ignorado-gerar-entrevistas.html" class="btn-ver-artigo">Ler artigo completo &rarr;</a>
-                    </div>
-                </div>
-                <div class="blog-article-summary">
-                    <p>Se envias candidaturas e não tens resposta, o problema raramente é a falta de experiência. Na maioria dos casos, é o modo como essa experiência está apresentada. Um CV não é um registo do passado &mdash; é uma ferramenta de decisão.</p>
-                    <p><strong>De descrição para impacto</strong> &mdash; Em vez de &ldquo;Responsável pela gestão de equipa&rdquo;, escreve &ldquo;Liderança de equipa de 8 pessoas com aumento de 23% na eficiência operacional em 6 meses&rdquo;. Métricas, resultado e contexto fazem a diferença.</p>
-                    <p><strong>De genérico para direcionado</strong> &mdash; Um CV que tenta servir para tudo não serve para nada. Adapta palavras-chave à função e reflete a linguagem do mercado.</p>
-                    <p><strong>De tarefas para proposta de valor</strong> &mdash; Recrutadores não contratam tarefas. Contratam impacto futuro com base em evidência passada. Pergunta-chave: &ldquo;Se eu fosse contratado amanhã, que problema resolvia?&rdquo;</p>
-                    <p><strong>De leitura difícil para decisão rápida</strong> &mdash; Um bom CV é escaneável: bullets claros, estrutura lógica e destaque visual do essencial.</p>
-                    <div class="blog-cta-light">
-                        <p>Descobre como o teu CV se posiciona com o <strong>CV Analyser</strong> &mdash; análise gratuita.</p>
-                        <a href="/cv-analyser">Analisar o meu CV gratuitamente &rarr;</a>
-                    </div>
-                    <div class="blog-article-footer-link">
-                        <a href="/blog/artigos/transformar-cv-ignorado-gerar-entrevistas.html">Ler artigo completo &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Artigo 1: 7 Erros -->
-            <div class="blog-article-item">
-                <div class="blog-article-header">
-                    <div>
-                        <p class="source">Desenvolvimento Profissional &middot; <span style="color:#999;font-weight:400;">8 min</span></p>
-                        <h3>7 Erros no CV que Fazem Muitos Candidatos Serem Rejeitados</h3>
-                    </div>
-                    <div class="blog-article-actions">
-                        <button class="btn-ver-resumo" onclick="toggleBlogSummary(this)">&#9654; Ver resumo</button>
-                        <a href="/blog/artigos/7-erros-cv-candidatos-rejeitados.html" class="btn-ver-artigo">Ler artigo completo &rarr;</a>
-                    </div>
-                </div>
-                <div class="blog-article-summary">
-                    <p>O currículo continua a ser um dos documentos mais importantes no processo de recrutamento. No entanto, muitos profissionais cometem erros simples que podem reduzir drasticamente as suas hipóteses de chegar à fase de entrevista.</p>
-                    <p><strong>1. Resumo genérico</strong> &mdash; Frases como &ldquo;profissional motivado e orientado para resultados&rdquo; aparecem em milhares de currículos. O resumo deve comunicar área, experiência e impacto.</p>
-                    <p><strong>2. Falta de resultados concretos</strong> &mdash; Em vez de &ldquo;Responsável pela gestão de projetos&rdquo;, prefira &ldquo;Coordenei projetos que reduziram custos em 15%&rdquo;.</p>
-                    <p><strong>3. Palavras-chave insuficientes</strong> &mdash; Muitas empresas usam sistemas automáticos (ATS). Sem termos relevantes, o CV pode ser filtrado antes de chegar a um recrutador.</p>
-                    <p><strong>4. Estrutura pouco clara</strong> &mdash; Os recrutadores procuram rapidamente experiência, formação e competências. Se não encontrarem facilmente, passam ao candidato seguinte.</p>
-                    <p><strong>5. Formatação complexa</strong> &mdash; Layouts gráficos nem sempre são bem interpretados por sistemas de recrutamento. Simplicidade e clareza continuam a ser as melhores opções.</p>
-                    <p><strong>6. Experiência vaga</strong> &mdash; Expressões genéricas não diferenciam. Quanto mais concreto for o impacto, maior a probabilidade de despertar interesse.</p>
-                    <p><strong>7. CV demasiado longo</strong> &mdash; Na maioria dos casos, duas páginas são suficientes. Recrutadores passam poucos segundos na primeira leitura.</p>
-                    <div class="blog-cta-light">
-                        <p>Identifica os pontos fracos do teu currículo com o <strong>CV Analyser</strong> da Share2Inspire.</p>
-                        <a href="/cv-analyser">Testar CV Analyser gratuitamente &rarr;</a>
-                    </div>
-                    <div class="blog-article-footer-link">
-                        <a href="/blog/artigos/7-erros-cv-candidatos-rejeitados.html">Ler artigo completo &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Artigo 2: CV ou LinkedIn -->
-            <div class="blog-article-item">
-                <div class="blog-article-header">
-                    <div>
-                        <p class="source">Estratégia de Carreira &middot; <span style="color:#999;font-weight:400;">7 min</span></p>
-                        <h3>CV ou LinkedIn: Qual é Mais Importante para a Tua Carreira?</h3>
-                    </div>
-                    <div class="blog-article-actions">
-                        <button class="btn-ver-resumo" onclick="toggleBlogSummary(this)">&#9654; Ver resumo</button>
-                        <a href="/blog/artigos/cv-linkedin-importancia.html" class="btn-ver-artigo">Ler artigo completo &rarr;</a>
-                    </div>
-                </div>
-                <div class="blog-article-summary">
-                    <p>Nos últimos anos, o perfil de LinkedIn tornou-se quase tão importante quanto o currículo tradicional. A resposta mais honesta é: ambos são essenciais, mas desempenham funções diferentes.</p>
-                    <p><strong>O papel do CV</strong> &mdash; O currículo é o documento principal em processos formais de candidatura. Permite avaliar rapidamente experiência, progressão e competências.</p>
-                    <p><strong>O papel do LinkedIn</strong> &mdash; Funciona como extensão da identidade profissional. Recrutadores usam-no para procurar candidatos, validar experiências e analisar atividade.</p>
-                    <p><strong>O problema mais comum</strong> &mdash; Muitos têm um bom CV mas LinkedIn desatualizado, ou vice-versa. Ambos devem transmitir uma narrativa coerente.</p>
-                    <p><strong>O equilíbrio ideal</strong> &mdash; CV otimizado para candidaturas + LinkedIn preparado para pesquisas de recrutadores = máximas oportunidades.</p>
-                    <div class="blog-cta-light">
-                        <p>Descobre como o teu perfil é avaliado com o <strong>CV Analyser</strong> da Share2Inspire.</p>
-                        <a href="/cv-analyser">Analisar CV gratuitamente &rarr;</a>
-                    </div>
-                    <div class="blog-article-footer-link">
-                        <a href="/blog/artigos/cv-linkedin-importancia.html">Ler artigo completo &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Artigo 3: Melhorar LinkedIn -->
-            <div class="blog-article-item">
-                <div class="blog-article-header">
-                    <div>
-                        <p class="source">Visibilidade Online &middot; <span style="color:#999;font-weight:400;">9 min</span></p>
-                        <h3>Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores</h3>
-                    </div>
-                    <div class="blog-article-actions">
-                        <button class="btn-ver-resumo" onclick="toggleBlogSummary(this)">&#9654; Ver resumo</button>
-                        <a href="/blog/artigos/melhorar-linkedin-pesquisas.html" class="btn-ver-artigo">Ler artigo completo &rarr;</a>
-                    </div>
-                </div>
-                <div class="blog-article-summary">
-                    <p>O LinkedIn tornou-se uma das principais plataformas utilizadas por recrutadores. Pequenos ajustes no perfil podem aumentar significativamente a visibilidade.</p>
-                    <p><strong>1. Headline clara</strong> &mdash; Deve incluir área de especialização, palavras-chave relevantes e proposta de valor profissional.</p>
-                    <p><strong>2. Secção &ldquo;Sobre&rdquo; estruturada</strong> &mdash; Conta a tua história profissional com experiência, especialização e objetivos.</p>
-                    <p><strong>3. Palavras-chave nas experiências</strong> &mdash; Os algoritmos de pesquisa analisam as descrições. Termos relevantes aumentam a visibilidade.</p>
-                    <p><strong>4. Competências relevantes</strong> &mdash; Ajudam os recrutadores a perceber rapidamente o teu posicionamento.</p>
-                    <p><strong>5. Atividade na plataforma</strong> &mdash; Perfis que partilham conteúdo regularmente têm maior visibilidade orgânica.</p>
-                    <div class="blog-cta-light">
-                        <p>Analisa a visibilidade do teu perfil com o <strong>LinkedIn Roaster</strong> da Share2Inspire.</p>
-                        <a href="/linkedin-roaster">Analisar LinkedIn gratuitamente &rarr;</a>
-                    </div>
-                    <div class="blog-article-footer-link">
-                        <a href="/blog/artigos/melhorar-linkedin-pesquisas.html">Ler artigo completo &rarr;</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Artigo 4: Posicionamento no Mercado -->
-            <div class="blog-article-item">
-                <div class="blog-article-header">
-                    <div>
-                        <p class="source">Avaliação de Carreira &middot; <span style="color:#999;font-weight:400;">8 min</span></p>
-                        <h3>Como Saber se Estás Bem Posicionado no Mercado de Trabalho</h3>
-                    </div>
-                    <div class="blog-article-actions">
-                        <button class="btn-ver-resumo" onclick="toggleBlogSummary(this)">&#9654; Ver resumo</button>
-                        <a href="/blog/artigos/posicionamento-mercado.html" class="btn-ver-artigo">Ler artigo completo &rarr;</a>
-                    </div>
-                </div>
-                <div class="blog-article-summary">
-                    <p>Muitos profissionais questionam-se: estou a ganhar abaixo do mercado? O meu perfil é competitivo? Quais são os próximos passos? Responder exige uma análise estruturada.</p>
-                    <p><strong>Avaliar o perfil</strong> &mdash; Indicadores como anos de experiência, especialização, progressão e impacto profissional determinam o posicionamento no mercado.</p>
-                    <p><strong>Comparação com benchmarks</strong> &mdash; Comparar com outros profissionais permite perceber se o perfil está acima da média e onde existem oportunidades de melhoria.</p>
-                    <p><strong>Clareza sobre os próximos passos</strong> &mdash; Uma visão clara dos possíveis caminhos de carreira ajuda a tomar decisões mais informadas.</p>
-                    <p><strong>Começa pelo CV</strong> &mdash; O primeiro passo é analisar objetivamente o teu currículo para perceber como o teu perfil é avaliado no mercado.</p>
-                    <div class="blog-cta-light">
-                        <p>Descobre o teu posicionamento com o <strong>Career Path</strong> da Share2Inspire.</p>
-                        <a href="/career-path">Explorar Career Path &rarr;</a>
-                    </div>
-                    <div class="blog-article-footer-link">
-                        <a href="/blog/artigos/posicionamento-mercado.html">Ler artigo completo &rarr;</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── Conteúdo Exclusivo ── -->
-    <div class="section fade-in" id="artigos-exclusivos">
-        <span class="section-label">Exclusivo</span>
-        <h2 class="section-title">Artigos para <strong>subscritores</strong></h2>
-        <div class="divider"></div>
-
-        <div class="exclusive-grid" style="margin-top: 2rem;">
-            <!-- Artigo 1: ATS -->
-            <div class="exclusive-item" onclick="this.classList.toggle('open')">
-                <p class="tag">Literacia Algorítmica</p>
-                <h3>Guia Essencial: O ATS como Guardião Digital da Carreira</h3>
-                <blockquote>"O currículo deixou de ser apenas uma narrativa de carreira. No ecossistema digital, ele é um objeto técnico — um conjunto de dados que precisa de ser estruturado para ser interpretado com sucesso por algoritmos de extração."</blockquote>
-                <p class="meta">Leitura: 12 min</p>
-                <button class="accordion-toggle"><span class="arrow">&#9654;</span> Ler artigo completo</button>
-                <div class="accordion-content">
-                    <p>No mercado de trabalho atual, o processo de recrutamento começa muito antes da entrevista. Antes de um recrutador humano sequer ver o teu currículo, este passa por um sistema automatizado — o ATS (Applicant Tracking System) — que funciona como um guardião digital.</p>
-                    <p>O ATS analisa o teu CV procurando <strong>keywords específicas</strong>, formatação compatível e estrutura lógica. Se o teu currículo não estiver otimizado para estes sistemas, será automaticamente rejeitado, independentemente da tua experiência ou qualificações.</p>
-                    <p><strong>Os 5 pilares de um CV compatível com ATS:</strong></p>
-                    <p>1. <strong>Formatação limpa</strong> — Sem tabelas, colunas ou gráficos que confundam o parser.<br>
-                    2. <strong>Keywords estratégicas</strong> — Termos extraídos diretamente da descrição da vaga.<br>
-                    3. <strong>Secções standard</strong> — Experiência, Educação, Competências claramente identificadas.<br>
-                    4. <strong>Formato de ficheiro</strong> — PDF ou DOCX, nunca imagens ou formatos proprietários.<br>
-                    5. <strong>Consistência temporal</strong> — Datas claras, sem gaps inexplicados.</p>
-                    <p>A realidade é que <strong>75% dos currículos são rejeitados pelo ATS</strong> antes de chegarem a mãos humanas. Compreender e dominar esta tecnologia não é opcional — é uma competência essencial de empregabilidade no século XXI.</p>
-                </div>
-            </div>
-
-            <!-- Artigo 2: Empregabilidade -->
-            <div class="exclusive-item" onclick="this.classList.toggle('open')">
-                <p class="tag">Empregabilidade 2026</p>
-                <h3>O Currículo Não é o Que Parece: 5 Lições sobre Empregabilidade Algorítmica</h3>
-                <blockquote>"O currículo já não é lido primeiro por pessoas. É processado. A empregabilidade moderna exige a passagem da perceção para os dados acionáveis."</blockquote>
-                <p class="meta">Leitura: 10 min</p>
-                <button class="accordion-toggle"><span class="arrow">&#9654;</span> Ler artigo completo</button>
-                <div class="accordion-content">
-                    <p>O paradigma da empregabilidade mudou radicalmente. O currículo, outrora um documento narrativo desenhado para impressionar um leitor humano, transformou-se num objeto técnico que precisa de ser interpretado por algoritmos.</p>
-                    <p><strong>Lição 1: O teu CV é um dataset, não uma história.</strong><br>
-                    Os sistemas de recrutamento modernos extraem dados estruturados do teu CV. Cada palavra, cada data, cada competência é convertida em campos de uma base de dados. Se a informação não for clara e estruturada, perde-se na tradução.</p>
-                    <p><strong>Lição 2: Keywords não são buzzwords.</strong><br>
-                    Há uma diferença fundamental entre encher o CV de jargão e usar estrategicamente os termos que os recrutadores e os algoritmos procuram. A chave está em alinhar a linguagem do teu CV com a linguagem do mercado.</p>
-                    <p><strong>Lição 3: A consistência entre plataformas é medida.</strong><br>
-                    Recrutadores cruzam o teu CV com o LinkedIn. Inconsistências em datas, cargos ou competências levantam red flags imediatas.</p>
-                    <p><strong>Lição 4: O formato importa tanto como o conteúdo.</strong><br>
-                    Um CV visualmente deslumbrante que não passa pelo ATS é um CV invisível. A forma tem de servir a função.</p>
-                    <p><strong>Lição 5: A empregabilidade é uma competência, não um estado.</strong><br>
-                    Manter-se empregável exige atualização constante — do CV, do LinkedIn, das competências e da rede de contactos. É um processo contínuo, não um evento pontual.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Estudo LinkedIn - full width -->
-        <div class="exclusive-item" style="margin-top: 3rem; cursor: pointer;" onclick="this.classList.toggle('open')">
-            <p class="tag">Estudo Q1 2026</p>
-            <h3>O Estado do LinkedIn em Portugal</h3>
-            <blockquote>"Uma análise a 500 perfis profissionais revela as oportunidades e os erros mais comuns que ditam o sucesso na maior rede profissional do mundo."</blockquote>
-            <p class="meta">Por Samuel Rolo &middot; Share2Inspire &middot; Março 2026</p>
-            <button class="accordion-toggle"><span class="arrow">&#9654;</span> Ver estudo completo</button>
-            <div class="accordion-content">
-                <!-- Sumário Executivo -->
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin-bottom:0.8rem;">Sumário Executivo</h4>
-                <p>Este estudo, conduzido pela Share2Inspire com base numa análise de 500 perfis representativos do mercado português, revela uma realidade preocupante: a grande maioria dos profissionais em Portugal não está a tirar partido do potencial do LinkedIn.</p>
-                <p>Com um <strong>score médio de otimização de apenas 4.00 em 10</strong>, os dados indicam que <strong>74% dos perfis tem uma visibilidade considerada "Baixa"</strong> para os algoritmos da plataforma, limitando drasticamente a sua exposição a recrutadores e oportunidades de negócio.</p>
-
-                <div class="study-kpi-row">
-                    <div class="study-kpi">
-                        <div class="value">4.0<span>/10</span></div>
-                        <div class="label">Score médio nacional</div>
-                    </div>
-                    <div class="study-kpi">
-                        <div class="value">74%</div>
-                        <div class="label">Perfis com score abaixo de 5</div>
-                    </div>
-                    <div class="study-kpi">
-                        <div class="value">0.6%</div>
-                        <div class="label">Perfis com score acima de 7</div>
-                    </div>
-                </div>
-
-                <!-- Anatomia -->
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">A Anatomia de um Perfil LinkedIn em Portugal</h4>
-                <p>A distribuição dos scores de otimização é fortemente assimétrica, com a grande maioria dos perfis a concentrar-se na faixa inferior da escala. Apenas 0.6% dos profissionais analisados atingem um score superior a 7, considerado o patamar mínimo para um perfil competitivo.</p>
-                <img loading="lazy" src="/images/chart_01_distribuicao_scores.webp" alt="Distribuição de Scores LinkedIn em Portugal" class="study-chart">
-                <div class="study-insight">
-                    <div class="insight-label">Insight</div>
-                    <p>A esmagadora maioria dos profissionais está a competir numa zona de perfis mal otimizados. Um pequeno esforço de melhoria pode gerar um impacto desproporcional na visibilidade e atratividade de um perfil.</p>
-                </div>
-
-                <!-- Os 7 Erros -->
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Os 7 Erros Mais Comuns</h4>
-                <p>Identificámos os erros que mais penalizam a performance de um perfil. Surpreendentemente, não são complexos de corrigir, mas a sua prevalência é alarmante.</p>
-                <img loading="lazy" src="/images/chart_02_top_erros.webp" alt="Top 7 Erros Mais Comuns no LinkedIn" class="study-chart">
-                <table class="study-table">
-                    <thead><tr><th>#</th><th>Erro</th><th>Prevalência</th></tr></thead>
-                    <tbody>
-                        <tr><td>1</td><td>Headline apenas com cargo e empresa atual</td><td>25.0%</td></tr>
-                        <tr><td>2</td><td>Secção "Sobre" ausente ou incompleta</td><td>24.6%</td></tr>
-                        <tr><td>3</td><td>Headline genérica sem keywords de SEO</td><td>23.0%</td></tr>
-                        <tr><td>4</td><td>Secção de Projetos vazia</td><td>23.0%</td></tr>
-                        <tr><td>5</td><td>Gaps temporais não explicados na experiência</td><td>22.6%</td></tr>
-                        <tr><td>6</td><td>Sem publicações nos últimos 90 dias</td><td>22.0%</td></tr>
-                        <tr><td>7</td><td>Sem certificações complementares</td><td>22.0%</td></tr>
-                    </tbody>
-                </table>
-                <div class="study-insight">
-                    <div class="insight-label">Insight</div>
-                    <p>O erro mais comum é tratar a headline como um mero título de cargo. Uma headline otimizada deve ser um slogan profissional, rico em keywords que um recrutador usaria para encontrar alguém com aquele perfil.</p>
-                </div>
-
-                <!-- Performance por Setor -->
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Performance por Setor</h4>
-                <p>Existem diferenças notáveis na maturidade digital entre setores. Vendas e Comercial lideram com 4.33/10, possivelmente por uma maior consciência da importância da rede de contactos. Educação e Formação apresentam o score mais baixo (3.60/10).</p>
-                <img loading="lazy" src="/images/chart_03_score_por_setor.webp" alt="Score Médio por Setor Profissional" class="study-chart">
-
-                <!-- Performance por Faixa Etária -->
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Performance por Faixa Etária</h4>
-                <p>Observa-se uma tendência interessante: os profissionais na faixa dos 31-35 anos apresentam os perfis mais otimizados. Os mais jovens (18-24) e os mais seniores (51+) apresentam scores mais baixos, sugerindo diferentes desafios na adaptação à plataforma.</p>
-                <img loading="lazy" src="/images/chart_05_score_faixa_etaria.png" alt="Score Médio por Faixa Etária" class="study-chart">
-
-                <!-- Indicadores Chave -->
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Indicadores Chave</h4>
-                <img loading="lazy" src="/images/chart_04_indicadores_chave.webp" alt="Indicadores Chave do LinkedIn em Portugal" class="study-chart">
-                <table class="study-table">
-                    <thead><tr><th>Indicador</th><th>Valor</th></tr></thead>
-                    <tbody>
-                        <tr><td>Sem foto profissional</td><td><strong>21.2%</strong></td></tr>
-                        <tr><td>Headline genérica ou ausente</td><td><strong>36.8%</strong></td></tr>
-                        <tr><td>Secção "Sobre" fraca ou ausente</td><td><strong>35.4%</strong></td></tr>
-                        <tr><td>Sem publicações nos últimos 30 dias</td><td><strong>36.4%</strong></td></tr>
-                        <tr><td>Sem nenhuma recomendação recebida</td><td><strong>28.0%</strong></td></tr>
-                        <tr><td>Visibilidade "Baixa" para o algoritmo</td><td><strong>74.0%</strong></td></tr>
-                    </tbody>
-                </table>
-
-                <!-- Visibilidade -->
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Visibilidade para o Algoritmo</h4>
-                <p>Apenas 26% dos perfis atingem uma visibilidade "Média", com os restantes 74% a serem considerados de visibilidade "Baixa". Nenhum perfil da amostra atingiu visibilidade "Alta", o que requer um score acima de 7.5.</p>
-                <img loading="lazy" src="/images/chart_06_visibilidade_algoritmo.webp" alt="Visibilidade para o Algoritmo LinkedIn" class="study-chart">
-
-                <!-- Conclusão -->
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:2rem 0 0.8rem;">Conclusão</h4>
-                <p>O ecossistema digital português no LinkedIn está longe de atingir a sua maturidade. A maioria dos profissionais adota uma postura passiva, resultando em perfis invisíveis e oportunidades perdidas.</p>
-                <p>A boa notícia é que a barreira para se destacar é baixa. Corrigir os erros básicos identificados neste estudo, como otimizar a headline, construir uma secção "Sobre" estratégica e manter uma atividade regular, é o primeiro passo para transformar um perfil LinkedIn de um currículo digital para uma poderosa ferramenta de marketing pessoal.</p>
-                <div class="study-insight">
-                    <div class="insight-label">Metodologia</div>
-                    <p>Este estudo foi realizado com base em dados sintéticos gerados para refletir as tendências do mercado português, analisados pela ferramenta LinkedIn Roaster da Share2Inspire. Todos os dados são anónimos e agregados. Amostra: 500 perfis, 13 setores de atividade, período Q1 2026.</p>
-                </div>
-
-                <!-- CTA -->
-                <div class="study-cta-inline">
-                    <h4>Descobre o score do <strong>teu perfil</strong></h4>
-                    <p>Análise gratuita em 30 segundos. Descobre se o teu perfil está a afastar recrutadores.</p>
-                    <a href="/linkedin-roaster">Analisar o meu LinkedIn</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── Newsletter ── -->
-    <div class="section-dark">
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 7. NEWSLETTER                                  -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="section-dark" id="newsletter" style="border-top: 1px solid rgba(255,255,255,0.06);">
         <div class="section-inner fade-in">
             <div class="newsletter-box">
                 <h2>The Mindset <strong>Maverick</strong></h2>
                 <p class="sub-desc">Reflexões sobre a interseção entre tecnologia, estratégia e humanidade. Insights práticos para quem desafia o status quo.</p>
-
                 <form id="newsletterSubscriptionForm" class="newsletter-form">
                     <input type="text" id="subscriberName" placeholder="Nome" required>
                     <input type="email" id="subscriberEmail" placeholder="E-mail" required>
@@ -1103,7 +556,6 @@
                 </form>
                 <div id="subscriptionMessage" class="newsletter-msg"></div>
                 <p class="newsletter-note">Os dados estão protegidos. Cancelamento a qualquer momento.</p>
-
                 <a href="https://www.linkedin.com/build-relation/newsletter-follow?entityUrn=7384145793324085248" target="_blank" class="linkedin-cta">
                     <i class="fab fa-linkedin"></i> Também no LinkedIn &rarr;
                 </a>
@@ -1111,35 +563,26 @@
         </div>
     </div>
 
-    <!-- ── Multimédia ── -->
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 8. OUTRAS PUBLICAÇÕES (bottom, discrete)       -->
+    <!-- ══════════════════════════════════════════════ -->
     <div class="section fade-in">
-        <span class="section-label">Multimédia</span>
-        <h2 class="section-title">Podcast &amp; <strong>Vídeo</strong></h2>
+        <span class="section-label">Outras publicações</span>
+        <h2 class="section-title">Publicações <strong>externas</strong></h2>
         <div class="divider"></div>
 
-        <div class="media-grid" style="margin-top: 2rem;">
-            <!-- Featured Video -->
-            <div class="featured-video">
-                <p class="featured-video-label"><i class="fas fa-fire"></i> Novo Vídeo</p>
-                <div class="video-embed-wrapper">
-                    <iframe src="https://www.youtube.com/embed/6coJJF79Cy0?rel=0&modestbranding=1" title="How to Create an ATS-Friendly CV in 2026" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
-                </div>
-                <h3>Como Criar um CV Compatível com ATS em 2026</h3>
-                <p class="fv-desc">Candidatas-te a empregos e nunca tens resposta? O problema pode ser o ATS. Aprende a criar um CV que passa nos filtros automáticos e chega às mãos do recrutador.</p>
-                <div class="featured-video-links">
-                    <a href="../videos/como-criar-cv-ats-friendly.html">Ver página completa &rarr;</a>
-                    <a href="https://www.youtube.com/watch?v=6coJJF79Cy0" target="_blank">Ver no YouTube &rarr;</a>
-                </div>
+        <div class="other-pubs">
+            <div class="pub-card">
+                <p class="pub-source">RH Magazine</p>
+                <h4>Mudam os Tempos, Mudam as Avaliações</h4>
+                <p>Uma reflexão sobre a evolução dos modelos de avaliação de desempenho e o que realmente importa na gestão de talento.</p>
+                <a href="https://rhmagazine.pt/mudam-os-tempos-mudam-as-avaliacoes/" target="_blank">Ler artigo &rarr;</a>
             </div>
-            <div class="media-item">
-                <h3>Podcast Humanos e Máquinas</h3>
-                <p>Conversas sobre o futuro do trabalho, inteligência artificial e a transformação digital dos Recursos Humanos.</p>
-                <a href="https://open.spotify.com/show/2P09p0F3HIR0jXRdCMPOSe" target="_blank">Ouvir no Spotify &rarr;</a>
-            </div>
-            <div class="media-item">
-                <h3>Canal Share2Inspire</h3>
-                <p>Conteúdo em vídeo sobre desenvolvimento de carreira, análise de CV, estratégias de recrutamento e muito mais.</p>
-                <a href="https://www.youtube.com/@share2inspire/videos" target="_blank">Ver canal &rarr;</a>
+            <div class="pub-card">
+                <p class="pub-source">Dezanove</p>
+                <h4>Enquanto Houver Vento Há Sentimento</h4>
+                <p>Review do livro que explora uma história real de autodescoberta, identidade e resiliência através de várias fases da vida.</p>
+                <a href="https://dezanove.pt/enquanto-houver-vento-ha-sentimento-de-samuel-rolo-2442105/" target="_blank">Ler review &rarr;</a>
             </div>
         </div>
     </div>
@@ -1159,7 +602,7 @@
                     <a href="../index.html" class="footer-link">Início</a>
                     <a href="sobre.html" class="footer-link">Sobre</a>
                     <a href="servicos.html" class="footer-link">Serviços</a>
-                    <a href="conhecimento.html" class="footer-link">Conhecimento</a>
+                    <a href="conhecimento.html" class="footer-link">Knowledge Hub</a>
                 </div>
                 <div class="col-lg-2 col-md-4">
                     <h5 class="footer-title">Ferramentas</h5>
@@ -1213,7 +656,6 @@
                 messageDiv.textContent = data.message || 'Subscrição efetuada com sucesso.';
                 e.target.reset();
                 setTimeout(() => { messageDiv.style.display = 'none'; }, 5000);
-                // Disparar sequência de nurturing do lead magnet LinkedIn (async, non-blocking)
                 fetch('https://share2inspire-beckend.lm.r.appspot.com/api/leadmagnet/start', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1223,7 +665,7 @@
                         source: 'conhecimento',
                         download_link: 'https://share2inspire.pt/assets/downloads/10-erros-linkedin.pdf'
                     })
-                }).catch(() => {}); // Silent fail
+                }).catch(() => {});
             } else {
                 throw new Error(data.error || 'Erro ao processar subscrição');
             }
@@ -1239,26 +681,10 @@
 
     <!-- E-book scroll -->
     <script>
-    if (window.location.hash === '#ebook-download') {
+    if (window.location.hash === '#ebook-download' || window.location.hash === '#ebook') {
         setTimeout(function() {
-            document.getElementById('ebook-download').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('ebook').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 300);
-    }
-    </script>
-
-    <!-- Blog summary toggle -->
-    <script>
-    function toggleBlogSummary(btn) {
-        const item = btn.closest('.blog-article-item');
-        const summary = item.querySelector('.blog-article-summary');
-        const isOpen = summary.classList.contains('open');
-        summary.classList.toggle('open', !isOpen);
-        btn.classList.toggle('open', !isOpen);
-        if (!isOpen) {
-            btn.innerHTML = '&#9654; Fechar resumo';
-        } else {
-            btn.innerHTML = '&#9654; Ver resumo';
-        }
     }
     </script>
 
