@@ -586,7 +586,7 @@ function updateCharts() {
                     { label: 'Voucher', data: voucherData, backgroundColor: '#C9A961', borderRadius: 3 }
                 ]
             },
-            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }, scales: { x: { stacked: true, ticks: { font: { size: 10 } } }, y: { stacked: true, ticks: { font: { size: 10 } } } } }
+            options: { responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }, scales: { x: { stacked: true, ticks: { font: { size: 10 } } }, y: { stacked: true, ticks: { font: { size: 10 } } } } }
         });
     }
 
@@ -603,7 +603,7 @@ function updateCharts() {
                 labels: ['Pago', 'Gratuito', 'Voucher'],
                 datasets: [{ data: [paidCount, freeCount, voucherCount], backgroundColor: ['#10B981', '#E5E7EB', '#C9A961'], borderWidth: 0 }]
             },
-            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+            options: { responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
         });
     }
 
@@ -619,7 +619,7 @@ function updateCharts() {
                 labels: ['🇵🇹 PT', '🇬🇧 EN'],
                 datasets: [{ data: [ptCount, enCount], backgroundColor: ['#166534', '#1E40AF'], borderWidth: 0 }]
             },
-            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+            options: { responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
         });
     }
 
@@ -645,7 +645,7 @@ function updateCharts() {
                 labels: Object.keys(scoreBuckets),
                 datasets: [{ label: 'Utilizadores', data: Object.values(scoreBuckets), backgroundColor: '#C9A961', borderRadius: 4 }]
             },
-            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } }
+            options: { responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { y: { ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } }
         });
     }
 }
@@ -730,6 +730,8 @@ function renderFunnel() {
             options: {
                 indexAxis: 'y',
                 responsive: true,
+                maintainAspectRatio: true,
+                animation: { duration: 0 },
                 plugins: { legend: { display: false } },
                 scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 11 } } } }
             }
@@ -1761,7 +1763,7 @@ function renderHealth() {
                 labels: ttfbData.map(l => new Date(l.checked_at).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })),
                 datasets: [{ label: 'TTFB (ms)', data: ttfbData.map(l => l.ttfb_ms || 0), borderColor: '#C9A961', backgroundColor: 'rgba(201,169,97,.1)', tension: 0.3, pointRadius: 2 }]
             },
-            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 9 }, maxTicksLimit: 10 } } } }
+            options: { responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { y: { ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 9 }, maxTicksLimit: 10 } } } }
         });
     }
 }
@@ -1886,7 +1888,7 @@ function renderJobSearchCharts() {
     if (ctx1) new Chart(ctx1, {
         type: 'bar',
         data: { labels: topRoles.map(r => r[0]), datasets: [{ data: topRoles.map(r => r[1]), backgroundColor: '#C9A961', borderRadius: 3 }] },
-        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
     });
 
     // Seniority
@@ -1896,7 +1898,7 @@ function renderJobSearchCharts() {
     if (ctx2) new Chart(ctx2, {
         type: 'doughnut',
         data: { labels: Object.keys(senCount), datasets: [{ data: Object.values(senCount), backgroundColor: ['#C9A961','#3B82F6','#10B981','#7C3AED','#F59E0B'], borderWidth: 0 }] },
-        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+        options: { responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
     });
 
     // Top Skills
@@ -1910,7 +1912,7 @@ function renderJobSearchCharts() {
     if (ctx3) new Chart(ctx3, {
         type: 'bar',
         data: { labels: topSkills.map(s => s[0]), datasets: [{ data: topSkills.map(s => s[1]), backgroundColor: '#3B82F6', borderRadius: 3 }] },
-        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
     });
 
     // Keyword Gaps
@@ -1924,7 +1926,7 @@ function renderJobSearchCharts() {
     if (ctx4) new Chart(ctx4, {
         type: 'bar',
         data: { labels: topGaps.map(g => g[0]), datasets: [{ data: topGaps.map(g => g[1]), backgroundColor: '#EF4444', borderRadius: 3 }] },
-        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
     });
 }
 
@@ -2021,7 +2023,7 @@ function renderCECharts() {
         ceScoreChart = new Chart(ctx1, {
             type: 'bar',
             data: { labels: Object.keys(buckets), datasets: [{ label: 'Utilizadores', data: Object.values(buckets), backgroundColor: '#C9A961', borderRadius: 4 }] },
-            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } }
+            options: { responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { y: { ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } }
         });
     }
 
@@ -2031,7 +2033,7 @@ function renderCECharts() {
     if (ctx2) new Chart(ctx2, {
         type: 'scatter',
         data: { datasets: [{ label: 'Score vs Felicidade País', data: scatterData, backgroundColor: 'rgba(201,169,97,.6)', pointRadius: 5 }] },
-        options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { title: { display: true, text: 'Felicidade País', font: { size: 10 } }, ticks: { font: { size: 10 } } }, y: { title: { display: true, text: 'Career Energy Score', font: { size: 10 } }, ticks: { font: { size: 10 } } } } }
+        options: { responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { x: { title: { display: true, text: 'Felicidade País', font: { size: 10 } }, ticks: { font: { size: 10 } } }, y: { title: { display: true, text: 'Career Energy Score', font: { size: 10 } }, ticks: { font: { size: 10 } } } } }
     });
 }
 
