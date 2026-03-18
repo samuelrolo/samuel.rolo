@@ -301,9 +301,16 @@
                         els.forEach(function(el) { el.remove(); });
                     } catch(e) {}
                 });
-                // Remove accessibility overlays
-                var tabEls = clone.querySelectorAll('[tabindex="-1"][aria-live]');
-                tabEls.forEach(function(el) { el.remove(); });
+                // Remove accessibility overlays and Sonner notification containers
+                var ariaEls = clone.querySelectorAll('[aria-live], [tabindex="-1"][aria-live]');
+                ariaEls.forEach(function(el) { el.remove(); });
+                // Remove empty section elements (notification containers)
+                var emptySecsCv = clone.querySelectorAll('section');
+                emptySecsCv.forEach(function(el) {
+                    if (!el.querySelector('div, p, h1, h2, h3, h4, h5, h6, span, img, table, ul, ol')) {
+                        el.remove();
+                    }
+                });
                 data.results_html = clone.innerHTML;
             }
             // Also capture JSON data from sessionStorage for structured access
@@ -352,9 +359,16 @@
                         els.forEach(function(el) { el.remove(); });
                     } catch(e) {}
                 });
-                // Also remove any elements with tabindex=-1 (often accessibility overlays)
-                var tabIndexEls = clone2.querySelectorAll('[tabindex="-1"][aria-live]');
-                tabIndexEls.forEach(function(el) { el.remove(); });
+                // Also remove any elements with tabindex=-1 or aria-live (accessibility overlays, Sonner notifications)
+                var ariaLiveEls = clone2.querySelectorAll('[aria-live], [tabindex="-1"][aria-live]');
+                ariaLiveEls.forEach(function(el) { el.remove(); });
+                // Remove any remaining section elements that are not content (e.g. notification containers)
+                var emptySections = clone2.querySelectorAll('section');
+                emptySections.forEach(function(el) {
+                    if (!el.querySelector('div, p, h1, h2, h3, h4, h5, h6, span, img, table, ul, ol')) {
+                        el.remove();
+                    }
+                });
                 data.results_html = clone2.innerHTML;
             }
             // Also capture JSON data from sessionStorage
@@ -368,12 +382,7 @@
             } catch(e) {}
 
         } else if (type === 'linkedin_roaster') {
-            // LinkedIn Roaster is HTML puro - capture #fullResults innerHTML
-            var fullResults = document.getElementById('fullResults');
-            if (fullResults) {
-                data.results_html = fullResults.innerHTML;
-            }
-            // Also capture the success section header (score, archetype)
+            // LinkedIn Roaster is HTML puro - capture the full result card from successSection
             var successSection = document.getElementById('successSection');
             if (successSection) {
                 var resultCard = successSection.querySelector('.result-card');
@@ -383,11 +392,35 @@
                     // Remove the save button from the clone
                     var saveBtn = cardClone.querySelector('#s2i-save-to-account');
                     if (saveBtn) saveBtn.remove();
+                    // Remove any other buttons
+                    var allBtns = cardClone.querySelectorAll('button');
+                    allBtns.forEach(function(b) { b.remove(); });
                     data.results_html = cardClone.innerHTML;
                 }
             }
-            // Capture structured data too
-            if (window.analysisData) {
+            // Fallback: capture just #fullResults if no result-card found
+            if (!data.results_html) {
+                var fullResults = document.getElementById('fullResults');
+                if (fullResults && fullResults.innerHTML.trim()) {
+                    data.results_html = fullResults.innerHTML;
+                }
+            }
+
+            // Extract score from DOM (window.analysisData uses let, not accessible via window)
+            var scoreRingEl = document.querySelector('.score-ring-lg .val');
+            if (scoreRingEl) {
+                var maxEl = document.querySelector('.score-ring-lg .max');
+                var scoreStr = scoreRingEl.textContent.trim();
+                if (maxEl) scoreStr += maxEl.textContent.trim();
+                data.score = scoreStr; // e.g. "8/10"
+            }
+            // Extract archetype from DOM
+            var archetypeEl = document.querySelector('.archetype-name');
+            if (archetypeEl) {
+                data.archetype = archetypeEl.textContent.trim();
+            }
+            // Fallback: try window.analysisData (works if script uses var instead of let)
+            if (!data.score && window.analysisData) {
                 var ad = window.analysisData;
                 data.score = ad.teaser ? ad.teaser.nota_geral : (ad.score || ad.overallScore);
                 data.archetype = ad.teaser ? ad.teaser.archetype : null;

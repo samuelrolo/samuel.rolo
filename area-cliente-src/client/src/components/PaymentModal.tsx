@@ -1,20 +1,21 @@
 /*
  * Design: Consultoria de Luxo Silenciosa
- * Modal de pagamento com integração real ifthenpay: MB WAY + Multibanco
+ * Modal de pagamento com integração real: MB WAY + Cartão (Stripe) + PayPal
  * Backend: share2inspire-beckend.lm.r.appspot.com
+ * Usa as mesmas routes do Career Path
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import {
   X, Smartphone, ArrowRight, ArrowLeft, Check,
-  Copy, Loader2, AlertCircle, CreditCard, Building2,
+  Loader2, AlertCircle, CreditCard, CheckCircle2,
 } from 'lucide-react';
 
 type PlanKey = 'monthly' | 'semiannual' | 'annual';
-type PayMethod = 'mbway' | 'multibanco';
-type Step = 'select' | 'form' | 'processing' | 'waiting' | 'mbref' | 'success' | 'error';
+type PayMethod = 'mbway' | 'stripe' | 'paypal';
+type Step = 'select' | 'form' | 'processing' | 'polling' | 'success' | 'error';
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
@@ -34,14 +35,6 @@ function formatPrice(price: number) {
   return price.toFixed(2).replace('.', ',') + ' €';
 }
 
-function formatPhone(phone: string) {
-  const clean = phone.replace(/\D/g, '');
-  if (clean.length >= 9) {
-    return `${clean.slice(0, 3)} ${clean.slice(3, 6)} ${clean.slice(6, 9)}`;
-  }
-  return phone;
-}
-
 type Props = {
   plan: PlanKey;
   onClose: () => void;
@@ -50,33 +43,35 @@ type Props = {
 export default function PaymentModal({ plan, onClose }: Props) {
   const { t } = useI18n();
   const { user, profile, refreshProfile } = useAuth();
-  const [method, setMethod] = useState<PayMethod | null>(null);
-  const [step, setStep] = useState<Step>('select');
+  const [method, setMethod] = useState<PayMethod>('mbway');
+  const [step, setStep] = useState<Step>('form');
   const [phone, setPhone] = useState('');
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
-  const [copied, setCopied] = useState(false);
-
-  // Multibanco reference data
-  const [mbEntity, setMbEntity] = useState('');
-  const [mbReference, setMbReference] = useState('');
-  const [orderId, setOrderId] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [pollingMsg, setPollingMsg] = useState('');
+  const [pollingExpired, setPollingExpired] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState('');
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const price = planPrices[plan];
 
   // Pre-fill from profile
   useEffect(() => {
     if (profile) {
-      setName(`${profile.first_name || ''} ${profile.last_name || ''}`.trim());
       setEmail(profile.email || user?.email || '');
       if (profile.phone) setPhone(profile.phone);
     } else if (user) {
       setEmail(user.email || '');
-      const meta = user.user_metadata;
-      if (meta?.first_name) setName(`${meta.first_name} ${meta.last_name || ''}`.trim());
     }
   }, [profile, user]);
+
+  // Cleanup polling on unmount
+  useEffect(() => {
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, []);
 
   const planLabels: Record<PlanKey, string> = {
     monthly: t('sub.monthly'),
@@ -84,31 +79,8 @@ export default function PaymentModal({ plan, onClose }: Props) {
     annual: t('sub.annual'),
   };
 
-  const periodLabels: Record<PlanKey, string> = {
-    monthly: t('sub.month'),
-    semiannual: t('sub.semester'),
-    annual: t('sub.year'),
-  };
-
-  function selectMethod(m: PayMethod) {
-    setMethod(m);
-    setStep('form');
-    setError('');
-  }
-
-  function goBack() {
-    if (step === 'form') {
-      setMethod(null);
-      setStep('select');
-      setError('');
-    } else if (step === 'error') {
-      setStep('form');
-      setError('');
-    }
-  }
-
   // Create subscription record in Supabase
-  const createSubscription = useCallback(async (payMethod: string, payRef: string, status: string) => {
+  const createSubscription = async (payMethod: string, payRef: string, status: string) => {
     if (!user) return;
     const now = new Date();
     const endDate = new Date(now.getTime() + planDurations[plan] * 24 * 60 * 60 * 1000);
@@ -123,141 +95,265 @@ export default function PaymentModal({ plan, onClose }: Props) {
       payment_method: payMethod,
       payment_reference: payRef,
     });
-  }, [user, plan, price]);
+  };
 
-  // MB WAY payment
-  async function handleMbWay() {
-    const cleanPhone = phone.replace(/\D/g, '');
-    if (cleanPhone.length < 9) {
-      setError(t('pay.errorPhone'));
-      return;
-    }
-    if (!name.trim()) {
-      setError(t('pay.errorName'));
-      return;
-    }
+  // ── MB WAY Payment ──
+  const handleMBWayPayment = async () => {
+    if (!email) { setError('Introduz o teu email'); return; }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) { setError('Email inválido'); return; }
+    const cleanPhone = phone.replace(/\D/g, '').replace(/^(\+?351)/, '');
+    if (cleanPhone.length < 9) { setError('Número de telemóvel inválido'); return; }
 
-    setStep('processing');
+    setLoading(true);
     setError('');
 
-    const oid = `S2I-MBWAY-${Date.now()}`;
-    setOrderId(oid);
-
     try {
+      const orderId = `S2I-SUB-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      setCurrentOrderId(orderId);
+
       const res = await fetch(`${BACKEND_URL}/api/payment/mbway`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          orderId: oid,
+          email,
+          phone: `351${cleanPhone}`,
+          orderId,
           amount: price.toFixed(2),
-          mobileNumber: cleanPhone.startsWith('351') ? cleanPhone : `351${cleanPhone}`,
-          customerName: name,
-          customerEmail: email,
+          paymentMethod: 'mbway',
           description: `Share2Inspire - Plano ${planLabels[plan]}`,
+          name: email.split('@')[0],
         }),
       });
 
       const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Erro ao iniciar pagamento');
 
-      if (data.success) {
-        setStep('waiting');
-        // Create pending subscription
-        await createSubscription('mbway', oid, 'pending');
+      setStep('polling');
+      setPollingMsg('Confirma o pagamento na app MB WAY do teu telemóvel...');
+      startPolling(orderId);
 
-        // Google Ads conversion tracking
-        if (typeof window !== 'undefined' && (window as any).gtag) {
-          (window as any).gtag('event', 'purchase', {
-            transaction_id: oid,
-            value: price,
-            currency: 'EUR',
-            items: [{ item_name: `Plano ${planLabels[plan]}`, price: price }],
-          });
-        }
-      } else {
-        setError(data.error || data.message || t('pay.errorGeneric'));
-        setStep('error');
+      // Create pending subscription
+      await createSubscription('mbway', orderId, 'pending');
+
+      // Google Ads conversion tracking
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'purchase', {
+          transaction_id: orderId,
+          value: price,
+          currency: 'EUR',
+          items: [{ item_name: `Plano ${planLabels[plan]}`, price }],
+        });
       }
-    } catch {
-      setError(t('pay.errorGeneric'));
+    } catch (err: any) {
+      setError(err.message || 'Erro ao processar pagamento');
       setStep('error');
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
-  // Multibanco payment
-  async function handleMultibanco() {
-    if (!name.trim()) {
-      setError(t('pay.errorName'));
-      return;
-    }
+  // ── Stripe Payment ──
+  const handleStripePayment = async () => {
+    if (!email) { setError('Introduz o teu email'); return; }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) { setError('Email inválido'); return; }
 
-    setStep('processing');
+    setLoading(true);
     setError('');
 
-    const oid = `S2I-MB-${Date.now()}`;
-    setOrderId(oid);
-
     try {
-      const res = await fetch(`${BACKEND_URL}/api/payment/multibanco`, {
+      const orderId = `S2I-SUB-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+      const res = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          orderId: oid,
-          amount: price.toFixed(2),
-          customerName: name,
-          customerEmail: email,
-          description: `Share2Inspire - Plano ${planLabels[plan]}`,
+          email,
+          name: email.split('@')[0],
+          product_type: 'career_path', // uses the same product type for now
+          orderId,
+          language: 'pt',
+          country: '',
+          region: '',
+          currency: 'eur',
+          amount: price,
         }),
       });
 
       const data = await res.json();
+      if (!data.success || !data.url) {
+        throw new Error(data.error || 'Erro ao criar sessão de pagamento');
+      }
 
-      if (data.success && data.entity && data.reference) {
-        setMbEntity(data.entity);
-        setMbReference(data.reference);
-        setStep('mbref');
-        // Create pending subscription
-        await createSubscription('multibanco', `${data.entity}/${data.reference}`, 'pending');
+      // Create pending subscription
+      await createSubscription('stripe', orderId, 'pending');
 
-        // Google Ads conversion tracking
-        if (typeof window !== 'undefined' && (window as any).gtag) {
-          (window as any).gtag('event', 'purchase', {
-            transaction_id: oid,
-            value: price,
-            currency: 'EUR',
-            items: [{ item_name: `Plano ${planLabels[plan]}`, price: price }],
-          });
+      // Google Ads conversion tracking
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'purchase', {
+          transaction_id: orderId,
+          value: price,
+          currency: 'EUR',
+          items: [{ item_name: `Plano ${planLabels[plan]}`, price }],
+        });
+      }
+
+      // Redirect to Stripe
+      window.location.href = data.url;
+    } catch (err: any) {
+      setError(err.message || 'Erro ao processar pagamento');
+      setStep('error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── PayPal Payment ──
+  const handlePayPalPayment = async () => {
+    if (!email) { setError('Introduz o teu email'); return; }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) { setError('Email inválido'); return; }
+
+    const orderId = `S2I-SUB-PAYPAL-${Date.now()}`;
+
+    // Create pending subscription
+    await createSubscription('paypal', orderId, 'pending');
+
+    // Google Ads conversion tracking
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'purchase', {
+        transaction_id: orderId,
+        value: price,
+        currency: 'EUR',
+        items: [{ item_name: `Plano ${planLabels[plan]}`, price }],
+      });
+    }
+
+    window.open(`https://paypal.me/SamuelRolo/${price}EUR`, '_blank');
+    setStep('success');
+  };
+
+  // ── Polling for MB WAY status ──
+  const startPolling = (orderId: string) => {
+    if (pollingRef.current) clearInterval(pollingRef.current);
+
+    let attempts = 0;
+    const maxAttempts = 60;
+    let consecutiveErrors = 0;
+    const startTime = Date.now();
+    const MIN_BEFORE_EXPIRED = 90000;
+    setPollingExpired(false);
+
+    pollingRef.current = setInterval(async () => {
+      attempts++;
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId }),
+        });
+
+        if (!res.ok) {
+          consecutiveErrors++;
+          if (consecutiveErrors >= 8) {
+            if (pollingRef.current) clearInterval(pollingRef.current);
+            setPollingExpired(true);
+            setPollingMsg('Não foi possível verificar. Usa o botão "Já paguei".');
+          }
+          return;
         }
+
+        consecutiveErrors = 0;
+        const data = await res.json();
+
+        if (data.paid) {
+          if (pollingRef.current) clearInterval(pollingRef.current);
+          handlePaymentConfirmed(orderId);
+          return;
+        }
+
+        const elapsed = Date.now() - startTime;
+        if (data.expired) {
+          if (elapsed < MIN_BEFORE_EXPIRED) {
+            setPollingMsg('A verificar pagamento... Confirma na app MB WAY.');
+          } else {
+            if (pollingRef.current) clearInterval(pollingRef.current);
+            setPollingExpired(true);
+            setPollingMsg('O pagamento expirou. Usa o botão abaixo se já pagaste.');
+          }
+          return;
+        }
+
+        if (elapsed < 30000) {
+          setPollingMsg('Confirma o pagamento na app MB WAY do teu telemóvel...');
+        } else if (elapsed < 60000) {
+          setPollingMsg('Ainda a aguardar... Verifica a app MB WAY.');
+        } else {
+          setPollingMsg('A aguardar confirmação... Se já aprovaste, aguarda mais uns segundos.');
+        }
+
+        if (attempts >= maxAttempts) {
+          if (pollingRef.current) clearInterval(pollingRef.current);
+          setPollingExpired(true);
+          setPollingMsg('Tempo esgotado. Se já pagaste, usa o botão abaixo.');
+        }
+      } catch {
+        consecutiveErrors++;
+      }
+    }, 5000);
+  };
+
+  // ── Manual check ──
+  const handleManualCheck = async () => {
+    if (!currentOrderId) return;
+    setPollingMsg('A verificar pagamento...');
+    setPollingExpired(false);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: currentOrderId }),
+      });
+      const data = await res.json();
+      if (data.paid) {
+        handlePaymentConfirmed(currentOrderId);
       } else {
-        setError(data.error || data.message || t('pay.errorGeneric'));
-        setStep('error');
+        setPollingExpired(true);
+        setPollingMsg('Pagamento ainda não confirmado. Aguarda uns segundos e tenta novamente.');
+        startPolling(currentOrderId);
       }
     } catch {
-      setError(t('pay.errorGeneric'));
-      setStep('error');
+      setPollingExpired(true);
+      setPollingMsg('Erro ao verificar. Tenta novamente em alguns segundos.');
     }
-  }
+  };
 
+  // ── Payment confirmed ──
+  const handlePaymentConfirmed = async (orderId: string) => {
+    // Update subscription to active
+    if (user) {
+      const now = new Date();
+      const endDate = new Date(now.getTime() + planDurations[plan] * 24 * 60 * 60 * 1000);
+      await supabase
+        .from('subscriptions')
+        .update({
+          status: 'active',
+          started_at: now.toISOString(),
+          expires_at: endDate.toISOString(),
+        })
+        .eq('payment_reference', orderId)
+        .eq('user_id', user.id);
+    }
+    await refreshProfile();
+    setStep('success');
+  };
+
+  // ── Handle confirm button ──
   function handleConfirm() {
-    if (method === 'mbway') handleMbWay();
-    else if (method === 'multibanco') handleMultibanco();
-  }
-
-  async function copyReference() {
-    try {
-      await navigator.clipboard.writeText(mbReference);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // fallback
-      const input = document.createElement('input');
-      input.value = mbReference;
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand('copy');
-      document.body.removeChild(input);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
+    if (method === 'mbway') handleMBWayPayment();
+    else if (method === 'stripe') handleStripePayment();
+    else if (method === 'paypal') handlePayPalPayment();
   }
 
   return (
@@ -270,8 +366,8 @@ export default function PaymentModal({ plan, onClose }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e5e5e5]">
           <div className="flex items-center gap-3">
-            {(step === 'form' || step === 'error') && (
-              <button onClick={goBack} className="text-[#999] hover:text-[#1a1a1a]/60 transition-colors">
+            {step === 'error' && (
+              <button onClick={() => { setStep('form'); setError(''); }} className="text-[#999] hover:text-[#1a1a1a]/60 transition-colors">
                 <ArrowLeft className="w-4 h-4" />
               </button>
             )}
@@ -289,7 +385,6 @@ export default function PaymentModal({ plan, onClose }: Props) {
             <span className="text-sm text-[#1a1a1a] font-medium">{planLabels[plan]}</span>
             <div className="text-right">
               <span className="text-lg font-semibold text-gold">{formatPrice(price)}</span>
-              <span className="text-xs text-[#999] font-light ml-1">{periodLabels[plan]}</span>
             </div>
           </div>
         </div>
@@ -297,205 +392,130 @@ export default function PaymentModal({ plan, onClose }: Props) {
         {/* Content */}
         <div className="px-6 py-6">
 
-          {/* ── Step: Method Selection ── */}
-          {step === 'select' && (
-            <div className="space-y-3">
-              <p className="text-xs text-[#888] font-light mb-4">{t('pay.method')}</p>
-
-              {/* MB WAY */}
-              <button
-                onClick={() => selectMethod('mbway')}
-                className="w-full flex items-center gap-4 p-4 border border-[#e5e5e5] rounded hover:border-gold/20 transition-all duration-300 group"
-              >
-                <div className="w-10 h-10 bg-[#E4002B]/10 rounded flex items-center justify-center">
-                  <Smartphone className="w-5 h-5 text-[#E4002B]" />
-                </div>
-                <div className="text-left flex-1">
-                  <span className="text-sm text-[#1a1a1a] font-medium group-hover:text-gold transition-colors">{t('pay.mbway')}</span>
-                  <p className="text-[10px] text-[#999] font-light">Pagamento instantâneo</p>
-                </div>
-                <ArrowRight className="w-3.5 h-3.5 text-[#ccc] group-hover:text-gold/50 transition-colors" />
-              </button>
-
-              {/* Multibanco */}
-              <button
-                onClick={() => selectMethod('multibanco')}
-                className="w-full flex items-center gap-4 p-4 border border-[#e5e5e5] rounded hover:border-gold/20 transition-all duration-300 group"
-              >
-                <div className="w-10 h-10 bg-[#003087]/10 rounded flex items-center justify-center">
-                  <Building2 className="w-5 h-5 text-[#003087]" />
-                </div>
-                <div className="text-left flex-1">
-                  <span className="text-sm text-[#1a1a1a] font-medium group-hover:text-gold transition-colors">{t('pay.multibanco')}</span>
-                  <p className="text-[10px] text-[#999] font-light">Referência multibanco / homebanking</p>
-                </div>
-                <ArrowRight className="w-3.5 h-3.5 text-[#ccc] group-hover:text-gold/50 transition-colors" />
-              </button>
-            </div>
-          )}
-
-          {/* ── Step: Form (MB WAY or Multibanco) ── */}
+          {/* ── Step: Payment Form ── */}
           {step === 'form' && (
             <div className="space-y-4">
-              {/* Name */}
-              <div>
-                <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1.5">{t('pay.name')}</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-[#f7f7f6] border border-[#e5e5e5] rounded px-4 py-2.5 text-sm text-[#1a1a1a] placeholder:text-[#bbb] focus:border-gold/30 focus:outline-none transition-colors"
-                  placeholder="João Silva"
-                />
+              {/* Payment Method Selector */}
+              <div className="space-y-2">
+                <p className="text-xs text-[#888] font-light">{t('pay.method')}</p>
+                <div className="flex gap-2">
+                  {(['mbway', 'stripe', 'paypal'] as const).map((m) => (
+                    <button
+                      key={m}
+                      onClick={() => setMethod(m)}
+                      className={`flex-1 p-3 rounded border-2 text-xs font-medium transition-all duration-300 ${
+                        method === m
+                          ? 'border-gold bg-gold/5 text-[#1a1a1a]'
+                          : 'border-[#e5e5e5] text-[#999] hover:border-gold/30'
+                      }`}
+                    >
+                      {m === 'mbway' ? 'MB WAY' : m === 'stripe' ? 'Cartão' : 'PayPal'}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Email */}
-              <div>
-                <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1.5">{t('pay.email')}</label>
+              <div className="space-y-1">
+                <label className="text-xs text-[#888] font-light">Email</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#f7f7f6] border border-[#e5e5e5] rounded px-4 py-2.5 text-sm text-[#1a1a1a] placeholder:text-[#bbb] focus:border-gold/30 focus:outline-none transition-colors"
-                  placeholder="joao@email.com"
+                  placeholder="email@exemplo.com"
+                  className="w-full px-3 py-2.5 border border-[#e5e5e5] rounded bg-white text-sm text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-gold/40 transition-colors"
                 />
               </div>
 
               {/* Phone (MB WAY only) */}
               {method === 'mbway' && (
-                <div>
-                  <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1.5">{t('pay.mbwayPhone')}</label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-[#888] font-light">+351</span>
-                    <input
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value.replace(/[^\d\s]/g, ''))}
-                      maxLength={12}
-                      className="flex-1 bg-[#f7f7f6] border border-[#e5e5e5] rounded px-4 py-2.5 text-sm text-[#1a1a1a] placeholder:text-[#bbb] focus:border-gold/30 focus:outline-none transition-colors"
-                      placeholder={t('pay.mbwayPhonePlaceholder')}
-                    />
-                  </div>
+                <div className="space-y-1">
+                  <label className="text-xs text-[#888] font-light">Telemóvel (MB WAY)</label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="9XXXXXXXX"
+                    className="w-full px-3 py-2.5 border border-[#e5e5e5] rounded bg-white text-sm text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-gold/40 transition-colors"
+                  />
                 </div>
               )}
 
               {/* Error */}
               {error && (
-                <div className="flex items-center gap-2 text-red-400 text-xs">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                  <span>{error}</span>
-                </div>
+                <p className="text-xs text-red-500 flex items-center gap-1.5">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />{error}
+                </p>
               )}
 
-              {/* Confirm button */}
-              <button
-                onClick={handleConfirm}
-                className="w-full py-3 bg-gold text-[#1a1a1a] text-sm font-semibold rounded hover:bg-gold-light transition-all duration-300 flex items-center justify-center gap-2 mt-2"
-              >
-                {t('pay.confirm')}
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              {/* Buttons */}
+              <div className="flex gap-2 pt-2">
+                <button
+                  onClick={onClose}
+                  className="flex-1 px-4 py-2.5 border border-[#e5e5e5] text-[#999] text-sm font-light rounded hover:border-[#ddd] hover:text-[#666] transition-all duration-300"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleConfirm}
+                  disabled={loading}
+                  className={`flex-1 px-4 py-2.5 text-sm font-semibold rounded transition-all duration-300 ${
+                    method === 'stripe'
+                      ? 'bg-[#635BFF] hover:bg-[#5046E5] text-white'
+                      : 'bg-gold hover:bg-gold-light text-[#1a1a1a]'
+                  }`}
+                >
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin mx-auto" />
+                  ) : (
+                    `Pagar ${formatPrice(price)}`
+                  )}
+                </button>
+              </div>
             </div>
           )}
 
           {/* ── Step: Processing ── */}
           {step === 'processing' && (
-            <div className="py-12 text-center space-y-4">
-              <Loader2 className="w-10 h-10 text-gold animate-spin mx-auto" />
-              <p className="text-sm text-[#555] font-light">{t('pay.processing')}</p>
-            </div>
-          )}
-
-          {/* ── Step: Waiting MB WAY ── */}
-          {step === 'waiting' && (
             <div className="py-8 text-center space-y-4">
-              <div className="w-16 h-16 bg-[#E4002B]/10 border border-[#E4002B]/20 rounded-full flex items-center justify-center mx-auto">
-                <Smartphone className="w-7 h-7 text-[#E4002B]" />
-              </div>
-              <div>
-                <p className="text-lg font-semibold text-[#1a1a1a] mb-2">{t('pay.mbwaySent')}</p>
-                <p className="text-xs text-[#888] font-light leading-relaxed max-w-xs mx-auto">
-                  {t('pay.mbwaySentDesc')}
-                </p>
-                {phone && (
-                  <p className="text-sm text-gold font-medium mt-3">+351 {formatPhone(phone)}</p>
-                )}
-              </div>
-              <div className="pt-4">
-                <div className="flex items-center justify-center gap-2 text-[#aaa] text-xs">
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                  <span>{t('pay.waiting')}</span>
-                </div>
-              </div>
-              <div className="pt-2">
-                <p className="text-[10px] text-[#bbb] font-light">
-                  A subscrição será ativada automaticamente após confirmação do pagamento.
-                </p>
-              </div>
+              <Loader2 className="w-10 h-10 text-gold/60 animate-spin mx-auto" />
+              <p className="text-sm text-[#555] font-light">A processar pagamento...</p>
             </div>
           )}
 
-          {/* ── Step: Multibanco Reference ── */}
-          {step === 'mbref' && (
-            <div className="py-4 space-y-5">
-              <div className="text-center mb-2">
-                <div className="w-14 h-14 bg-[#003087]/10 border border-[#003087]/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Building2 className="w-6 h-6 text-[#003087]" />
-                </div>
-                <p className="text-sm font-medium text-[#1a1a1a]">Referência Multibanco</p>
-              </div>
-
-              {/* Reference details */}
-              <div className="bg-[#f7f7f6] border border-[#e5e5e5] rounded-lg p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-[#999] uppercase tracking-wider">{t('pay.mbEntity')}</span>
-                  <span className="text-lg font-mono font-semibold text-[#1a1a1a] tracking-wider">{mbEntity}</span>
-                </div>
-                <div className="border-t border-[#e5e5e5]" />
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-[#999] uppercase tracking-wider">{t('pay.mbReference')}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-mono font-semibold text-[#1a1a1a] tracking-wider">{mbReference}</span>
-                    <button
-                      onClick={copyReference}
-                      className="text-[#aaa] hover:text-gold transition-colors"
-                      title={t('pay.copyRef')}
-                    >
-                      {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-                <div className="border-t border-[#e5e5e5]" />
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-[#999] uppercase tracking-wider">{t('pay.mbAmount')}</span>
-                  <span className="text-lg font-semibold text-gold">{formatPrice(price)}</span>
-                </div>
-              </div>
-
-              <p className="text-[11px] text-[#999] font-light leading-relaxed text-center">
-                {t('pay.mbInstructions')}
-              </p>
-
-              <button
-                onClick={onClose}
-                className="w-full py-2.5 border border-[#ddd] text-[#555] text-sm font-light rounded hover:border-gold/30 hover:text-[#1a1a1a] transition-all duration-300"
-              >
-                Fechar
-              </button>
+          {/* ── Step: Polling (MB WAY) ── */}
+          {step === 'polling' && (
+            <div className="py-8 text-center space-y-4">
+              {!pollingExpired ? (
+                <Loader2 className="w-10 h-10 animate-spin text-gold mx-auto" />
+              ) : (
+                <AlertCircle className="w-10 h-10 text-amber-500 mx-auto" />
+              )}
+              <p className="text-sm font-medium text-[#1a1a1a]">{pollingMsg}</p>
+              {!pollingExpired && (
+                <p className="text-xs text-[#999] font-light">A aguardar confirmação do pagamento...</p>
+              )}
+              {pollingExpired && (
+                <button
+                  onClick={handleManualCheck}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-gold text-[#1a1a1a] text-sm font-semibold rounded hover:bg-gold-light transition-all duration-300"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  Já paguei — verificar novamente
+                </button>
+              )}
             </div>
           )}
 
           {/* ── Step: Success ── */}
           {step === 'success' && (
             <div className="py-8 text-center space-y-4">
-              <div className="w-14 h-14 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center mx-auto">
-                <Check className="w-7 h-7 text-green-400" />
+              <div className="w-14 h-14 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center mx-auto">
+                <Check className="w-7 h-7 text-emerald-500" />
               </div>
               <div>
-                <p className="text-lg font-semibold text-[#1a1a1a] mb-2">{t('pay.success')}</p>
-                <p className="text-xs text-[#888] font-light leading-relaxed max-w-xs mx-auto">
-                  {t('pay.successDesc')}
-                </p>
+                <p className="text-lg font-semibold text-[#1a1a1a] mb-1">Pagamento confirmado!</p>
+                <p className="text-xs text-[#888] font-light">A tua subscrição está agora ativa.</p>
               </div>
               <button
                 onClick={() => { onClose(); window.location.href = '/area-cliente/membro'; }}
@@ -520,7 +540,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
                 </p>
               </div>
               <button
-                onClick={goBack}
+                onClick={() => { setStep('form'); setError(''); }}
                 className="inline-flex items-center gap-2 px-6 py-2.5 border border-[#ddd] text-[#555] text-sm font-light rounded hover:border-gold/30 hover:text-[#1a1a1a] transition-all duration-300"
               >
                 <ArrowLeft className="w-4 h-4" />

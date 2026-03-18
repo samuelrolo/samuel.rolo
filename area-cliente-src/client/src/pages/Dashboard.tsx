@@ -192,6 +192,20 @@ export default function Dashboard() {
     return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
   }
 
+  // Sanitize captured HTML to remove notification/toast elements and debug attributes
+  function sanitizeResultsHtml(html: string): string {
+    if (!html) return '';
+    let clean = html;
+    // Remove Sonner/Toast notification sections
+    clean = clean.replace(/<section[^>]*aria-label=["']Notifications[^"']*["'][^>]*>[\s\S]*?<\/section>/gi, '');
+    clean = clean.replace(/<section[^>]*aria-live=["']polite["'][^>]*>[\s\S]*?<\/section>/gi, '');
+    // Remove React debug data-loc attributes
+    clean = clean.replace(/\s*data-loc="[^"]*"/g, '');
+    // Remove empty sections left behind
+    clean = clean.replace(/<section[^>]*>\s*<\/section>/gi, '');
+    return clean.trim();
+  }
+
   function getAnalysisSummary(analysis: SavedAnalysis): string {
     const data = analysis.data;
     if (!data) return '';
@@ -212,7 +226,10 @@ export default function Dashboard() {
     if (analysis.analysis_type === 'career_path') {
       if (data.career_path?.title) return data.career_path.title;
       if (data.career_path?.summary) return data.career_path.summary.substring(0, 80) + '...';
-      if (data.results_html) return stripHtml(data.results_html).substring(0, 80) + '...';
+      if (data.results_html) {
+        const cleanText = stripHtml(sanitizeResultsHtml(data.results_html));
+        return cleanText.substring(0, 80) + (cleanText.length > 80 ? '...' : '');
+      }
     }
     if (analysis.analysis_type === 'career_energy') {
       if (data.total_score) return `Score: ${data.total_score}${data.level ? ` — ${data.level}` : ''}`;
@@ -429,7 +446,7 @@ export default function Dashboard() {
                                     <div
                                       className="s2i-results-render rounded-lg overflow-hidden bg-[#F0F0EE] border border-[#e5e5e5] p-4"
                                       style={{ maxHeight: '600px', overflowY: 'auto' }}
-                                      dangerouslySetInnerHTML={{ __html: analysis.data.results_html }}
+                                      dangerouslySetInnerHTML={{ __html: sanitizeResultsHtml(analysis.data.results_html) }}
                                     />
                                   </div>
                                 )}
