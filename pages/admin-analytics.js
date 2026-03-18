@@ -1550,32 +1550,52 @@ function selectOnlyUnsent() {
     renderRecipientList();
 }
 
+let isSendingBulk = false;
 async function sendBulkEmail() {
+    if (isSendingBulk) { showToast('Envio em curso, aguarda...', 'warning'); return; }
     if (!ensureBrevoKey()) return;
     const subject = document.getElementById('emailSubject')?.value;
     const body    = document.getElementById('emailBody')?.value;
     if (!subject || !body) { showToast('Assunto e corpo são obrigatórios', 'danger'); return; }
 
-    const toSend = nurturingRecipients.filter(r => r.checked !== false);
-    if (!toSend.length) { showToast('Nenhum destinatário selecionado', 'danger'); return; }
+    const toSend = nurturingRecipients.filter(r => r.checked !== false && !r.sent);
+    if (!toSend.length) { showToast('Nenhum destinatário selecionado (ou todos já enviados)', 'danger'); return; }
 
-    let sent = 0;
-    for (const r of toSend) {
-        const personalizedBody = body.replace(/\{\{nome\}\}/g, r.name || 'Olá');
-        const ok = await sendBrevoEmail(r.email, subject, personalizedBody);
-        if (ok) {
-            sent++;
-            await supaInsert('email_history', {
-                recipient_email: r.email, subject, email_type: nurturingSegment || 'custom',
-                status: 'sent', sent_at: new Date().toISOString()
-            });
-            r.sent = true;
+    isSendingBulk = true;
+    const btn = document.querySelector('[onclick="sendBulkEmail()"]');
+    const btnOriginal = btn ? btn.innerHTML : '';
+    if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A enviar...'; btn.disabled = true; }
+
+    let sent = 0, errors = 0;
+    try {
+        for (const r of toSend) {
+            try {
+                const personalizedBody = body.replace(/\{\{nome\}\}/g, r.name || 'Olá');
+                const ok = await sendBrevoEmail(r.email, subject, personalizedBody);
+                if (ok) {
+                    sent++;
+                    await supaInsert('email_history', {
+                        recipient_email: r.email, subject, email_type: nurturingSegment || 'custom',
+                        status: 'sent', sent_at: new Date().toISOString()
+                    });
+                    r.sent = true;
+                } else { errors++; }
+                // Rate limit
+                await new Promise(resolve => setTimeout(resolve, 300));
+            } catch (e) { console.error('Erro ao enviar para', r.email, e); errors++; }
         }
+        if (sent > 0) showToast(`${sent} email(s) enviado(s) com sucesso!${errors ? ` (${errors} falharam)` : ''}`, 'success');
+        else showToast(`Nenhum email enviado. ${errors} erro(s).`, 'danger');
+        await loadEmailHistory();
+        renderRecipientList();
+        renderNurturingSegments();
+    } catch (e) {
+        console.error('Erro no envio em massa:', e);
+        showToast('Erro inesperado no envio: ' + e.message, 'danger');
+    } finally {
+        isSendingBulk = false;
+        if (btn) { btn.innerHTML = btnOriginal; btn.disabled = false; }
     }
-    showToast(`${sent} email(s) enviado(s) com sucesso!`, 'success');
-    await loadEmailHistory();
-    renderRecipientList();
-    renderNurturingSegments();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1608,16 +1628,27 @@ async function sendSingleEmail() {
     const body    = document.getElementById('modalEmailBody')?.value;
     if (!to || !subject || !body) { showToast('Preenche todos os campos', 'danger'); return; }
 
-    const ok = await sendBrevoEmail(to, subject, body);
-    if (ok) {
-        await supaInsert('email_history', {
-            recipient_email: to, subject,
-            email_type: document.getElementById('modalEmailTemplate')?.value || 'custom',
-            status: 'sent', sent_at: new Date().toISOString()
-        });
-        showToast('Email enviado!', 'success');
-        closeEmailModal();
-        await loadEmailHistory();
+    const btn = document.querySelector('[onclick="sendSingleEmail()"]');
+    const btnOriginal = btn ? btn.innerHTML : '';
+    if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A enviar...'; btn.disabled = true; }
+
+    try {
+        const ok = await sendBrevoEmail(to, subject, body);
+        if (ok) {
+            await supaInsert('email_history', {
+                recipient_email: to, subject,
+                email_type: document.getElementById('modalEmailTemplate')?.value || 'custom',
+                status: 'sent', sent_at: new Date().toISOString()
+            });
+            showToast('Email enviado!', 'success');
+            closeEmailModal();
+            await loadEmailHistory();
+        }
+    } catch (e) {
+        console.error('Erro ao enviar email individual:', e);
+        showToast('Erro ao enviar: ' + e.message, 'danger');
+    } finally {
+        if (btn) { btn.innerHTML = btnOriginal; btn.disabled = false; }
     }
 }
 
