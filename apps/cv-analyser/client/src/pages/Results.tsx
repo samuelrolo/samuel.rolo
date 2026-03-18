@@ -2006,7 +2006,7 @@ export default function Results() {
                 </div>
                 <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20">
                   <p className="text-sm text-foreground font-medium">
-                    {isEN ? '🎯 Estimated score after improvements: ' : '🎯 Score estimado após melhorias: '}<strong className="text-[#C9A961]">{Math.min(100, Math.round(avgScore) + (analysisData.improvementActions?.reduce((sum: number, a: any) => sum + (a.impact || 0), 0) || 0))}/100</strong>
+                    {isEN ? '🎯 Estimated score after improvements: ' : '🎯 Score estimado após melhorias: '}<strong className="text-[#C9A961]">{Math.min(100, Math.round(avgScore) + (analysisData.improvementActions?.reduce((sum: number, a: any) => sum + (a.impact === 'Alto' || a.impact === 'High' ? 8 : a.impact === 'M\u00e9dio' || a.impact === 'Medium' ? 5 : typeof a.impact === 'number' ? a.impact : 3), 0) || 0))}/100</strong>
                   </p>
                 </div>
               </div>
