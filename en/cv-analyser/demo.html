@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV Analyser — Full Report | Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #B8973A;
+    --gold-light: #D4AF55;
+    --gold-pale: #F5EDD0;
+    --green: #2E7D52;
+    --green-light: #E8F5EE;
+    --orange: #C4530A;
+    --orange-light: #FEF0E6;
+    --red: #B91C1C;
+    --red-light: #FEE2E2;
+    --gray-50: #FAFAFA;
+    --gray-100: #F4F4F5;
+    --gray-200: #E4E4E7;
+    --gray-300: #D1D1D6;
+    --gray-400: #A0A0AB;
+    --gray-600: #52525B;
+    --gray-700: #3F3F46;
+    --gray-800: #27272A;
+    --gray-900: #18181B;
+    --white: #FFFFFF;
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Top nav */
+  .topnav {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topnav-left { display: flex; align-items: center; gap: 12px; color: var(--gray-500); font-size: 13px; }
+  .topnav-left a { color: var(--gray-600); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+  .topnav-brand { display: flex; align-items: center; gap: 6px; font-weight: 600; color: var(--gray-800); font-size: 14px; }
+  .topnav-brand svg { color: var(--gold); }
+  .topnav-right { color: var(--gold); font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+
+  /* Layout */
+  .page { max-width: 780px; margin: 0 auto; padding: 32px 20px 80px; }
+  .report-header { margin-bottom: 24px; }
+  .report-header p { font-size: 12px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 4px; }
+  .report-header h1 { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--gray-900); }
+
+  /* Cards */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label.orange { color: var(--orange); }
+  .section-label.gold { color: var(--gold); }
+  .section-label.green { color: var(--green); }
+  .section-label.gray { color: var(--gray-600); }
+
+  /* ATS Score */
+  .ats-score-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+  .ats-score-big { font-size: 40px; font-weight: 700; color: var(--gray-900); line-height: 1; }
+  .ats-score-big span { font-size: 18px; color: var(--gray-400); }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-orange { background: var(--orange-light); color: var(--orange); }
+  .badge-gray { background: var(--gray-100); color: var(--gray-600); }
+
+  .ats-desc { color: var(--gray-600); font-size: 13px; margin-bottom: 16px; }
+
+  .warn-item {
+    display: flex; gap: 8px; align-items: flex-start;
+    background: var(--orange-light);
+    border-left: 3px solid var(--orange);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--orange);
+    margin-bottom: 8px;
+  }
+  .warn-item svg { flex-shrink: 0; margin-top: 2px; }
+
+  /* ATS Compat grid */
+  .ats-compat-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 16px 0;
+  }
+  .ats-compat-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 12px; background: var(--gray-50); border-radius: 8px;
+    border: 1px solid var(--gray-200);
+  }
+  .ats-compat-row span:first-child { font-weight: 500; color: var(--gray-700); }
+  .ats-compat-row .boa { color: var(--green); font-weight: 600; }
+  .ats-compat-row .excelente { color: var(--gold); font-weight: 600; }
+
+  .howto-list { list-style: none; margin-top: 12px; }
+  .howto-list li {
+    display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-700);
+    padding: 5px 0;
+  }
+  .howto-list li::before { content: '✓'; color: var(--green); font-weight: 700; }
+
+  /* Critical issues */
+  .issue-item { margin-bottom: 20px; }
+  .issue-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%; background: var(--orange);
+    color: white; font-size: 11px; font-weight: 700; margin-right: 8px;
+  }
+  .issue-title { font-weight: 600; color: var(--gray-900); font-size: 14px; }
+  .issue-sub { color: var(--gray-500); font-size: 13px; margin: 4px 0 12px 30px; }
+
+  .issue-section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gray-400); margin-bottom: 6px; margin-top: 12px;
+  }
+  .issue-text { font-size: 13px; color: var(--gray-600); line-height: 1.7; }
+
+  .code-block {
+    background: var(--gray-100); border: 1px solid var(--gray-200); border-radius: 8px;
+    padding: 12px 14px; font-size: 12px; font-family: 'DM Mono', 'Courier New', monospace;
+    color: var(--gray-700); margin: 8px 0; line-height: 1.7;
+  }
+
+  .suggestion-block {
+    background: #EEF7F2; border: 1px solid #C6E3D3; border-radius: 8px;
+    padding: 12px 14px; font-size: 13px; color: var(--green); margin: 8px 0;
+    line-height: 1.6;
+  }
+
+  hr.issue-divider { border: none; border-top: 1px solid var(--gray-100); margin: 20px 0; }
+
+  /* Quadrant scores */
+  .quadrant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .quadrant-cell {
+    border: 1px solid var(--gray-200); border-radius: 10px; padding: 20px; text-align: center;
+  }
+  .quadrant-label { font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 12px; text-align: left; }
+  .quadrant-sub { font-size: 11px; color: var(--gray-400); text-align: left; margin-bottom: 12px; }
+
+  .donut-container { position: relative; width: 80px; height: 80px; margin: 0 auto 8px; }
+  .donut-container svg { transform: rotate(-90deg); }
+  .donut-val {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    font-size: 22px; font-weight: 700; color: var(--gray-900);
+  }
+  .benchmark-tag { font-size: 11px; color: var(--gray-400); }
+  .benchmark-tag span { color: var(--green); font-weight: 600; }
+
+  /* Factor bars */
+  .factor-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .factor-name { width: 90px; font-weight: 600; font-size: 13px; color: var(--gray-700); flex-shrink: 0; }
+  .factor-sub { font-size: 11px; color: var(--gray-400); }
+  .factor-bar-wrap { flex: 1; position: relative; }
+  .factor-bar-bg { height: 8px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+  .factor-bar-fill { height: 100%; border-radius: 99px; background: var(--gold); }
+  .factor-score { width: 28px; text-align: right; font-weight: 700; font-size: 14px; color: var(--gray-800); flex-shrink: 0; }
+
+  /* Recruiter perception */
+  .tags-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .tag {
+    padding: 5px 12px; border-radius: 99px; background: var(--gold-pale);
+    color: var(--gold); font-size: 12px; font-weight: 600;
+    border: 1px solid #E2C96A;
+  }
+  .profile-line { font-size: 13px; color: var(--gray-700); margin-bottom: 6px; }
+  .profile-line strong { color: var(--gray-900); }
+
+  .attention-list { list-style: none; counter-reset: attn; margin: 12px 0; }
+  .attention-list li {
+    counter-increment: attn; display: flex; gap: 10px;
+    font-size: 13px; color: var(--gray-600); padding: 6px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .attention-list li::before {
+    content: counter(attn); display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%; background: var(--gold-pale);
+    color: var(--gold); font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+
+  .message-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+  .message-item::before { content: '→'; color: var(--gold); font-weight: 700; }
+
+  /* Salary */
+  .salary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .salary-cell { text-align: center; padding: 14px 8px; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-200); }
+  .salary-cell .label { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+  .salary-cell .amount { font-size: 18px; font-weight: 700; color: var(--gray-900); }
+  .salary-cell .amount.highlight { color: var(--gold); }
+  .salary-cell .period { font-size: 10px; color: var(--gray-400); }
+
+  .benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+  .benefit-item { display: flex; gap: 6px; align-items: flex-start; font-size: 12px; color: var(--gray-600); }
+  .benefit-item::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+  .salary-source { font-size: 11px; color: var(--gray-400); font-style: italic; }
+
+  /* Market position */
+  .market-stats { display: flex; gap: 24px; margin-bottom: 20px; }
+  .market-stat { text-align: center; }
+  .market-stat .val { font-size: 28px; font-weight: 700; color: var(--gray-900); }
+  .market-stat .sub { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; }
+  .market-stat .val.accent { color: var(--gold); }
+
+  .bell-curve-wrap { position: relative; text-align: center; margin: 16px 0; }
+
+  .market-items { margin-top: 12px; }
+  .market-item { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+  .market-item::before { content: '→'; color: var(--gold); font-weight: 700; }
+
+  /* AI Risk */
+  .risk-bar-wrap { margin: 16px 0; }
+  .risk-bar-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400); margin-bottom: 6px; }
+  .risk-bar-bg { height: 10px; border-radius: 99px; background: linear-gradient(to right, var(--green-light), #FEF3C7, var(--red-light)); position: relative; }
+  .risk-marker {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 20px; height: 20px; border-radius: 50%; background: var(--gold); border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2); left: 20%; margin-left: -10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .risk-tag { color: var(--green); font-weight: 700; font-size: 13px; text-align: center; margin: 8px 0; }
+  .risk-desc { font-size: 13px; color: var(--gray-600); margin-bottom: 12px; }
+  .risk-recs { margin-top: 12px; }
+  .risk-rec { display: flex; gap: 8px; font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+  .risk-rec::before { content: '→'; color: var(--gray-400); }
+
+  /* Detailed analysis */
+  .dim-row { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--gray-100); }
+  .dim-row:last-child { border-bottom: none; }
+  .dim-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .dim-name { font-weight: 600; color: var(--gray-800); font-size: 14px; }
+  .dim-score { font-weight: 700; color: var(--gray-900); font-size: 14px; }
+  .dim-benchmark { font-size: 12px; color: var(--green); font-weight: 600; margin-left: 8px; }
+  .dim-item { display: flex; gap: 8px; font-size: 13px; margin-bottom: 5px; align-items: flex-start; }
+  .dim-item.ok { color: var(--green); }
+  .dim-item.warn { color: var(--orange); }
+  .dim-item .icon { flex-shrink: 0; }
+
+  /* Priority matrix */
+  .priority-row {
+    display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+    background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; margin-bottom: 8px;
+  }
+  .priority-num { font-size: 11px; color: var(--gray-400); font-weight: 700; width: 24px; }
+  .priority-name { font-weight: 600; color: var(--gray-700); flex: 1; }
+  .priority-scores { font-size: 12px; color: var(--gray-500); margin-right: 8px; }
+
+  /* Actions before/after */
+  .action-card {
+    border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; margin-bottom: 12px;
+  }
+  .action-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; background: var(--gray-50); border-bottom: 1px solid var(--gray-200);
+  }
+  .action-num { font-size: 11px; color: var(--gray-400); margin-right: 8px; }
+  .action-title { font-weight: 600; font-size: 13px; color: var(--gray-700); }
+  .action-impact { font-size: 12px; color: var(--gold); font-weight: 600; }
+  .action-body { display: grid; grid-template-columns: 1fr 1fr; }
+  .action-col { padding: 14px 16px; }
+  .action-col.before { border-right: 1px solid var(--gray-100); }
+  .action-col-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+  .action-col.before .action-col-label { color: var(--red); }
+  .action-col.after .action-col-label { color: var(--green); }
+  .action-score { font-size: 13px; color: var(--gray-600); }
+
+  /* Action plan */
+  .week-block { margin-bottom: 20px; }
+  .week-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--gold); margin-bottom: 10px;
+  }
+  .week-title { font-weight: 600; color: var(--gray-800); margin-left: 8px; }
+  .week-item { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--gray-600); padding: 6px 0; }
+  .week-check {
+    width: 16px; height: 16px; border: 2px solid var(--gray-300); border-radius: 50%; flex-shrink: 0;
+  }
+
+  /* LinkedIn post */
+  .linkedin-post {
+    background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 10px;
+    padding: 16px; font-size: 13px; color: var(--gray-700); line-height: 1.8; margin-bottom: 16px;
+  }
+
+  /* Demo banner */
+  .demo-banner {
+    background: linear-gradient(135deg, var(--gold-pale), #FFF8E6);
+    border: 1px solid #E2C96A; border-radius: 10px;
+    padding: 14px 20px; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13px; color: var(--gold);
+  }
+  .demo-banner strong { font-weight: 700; }
+
+  @media (max-width: 600px) {
+    .quadrant-grid { grid-template-columns: 1fr; }
+    .salary-grid { grid-template-columns: 1fr 1fr; }
+    .action-body { grid-template-columns: 1fr; }
+    .action-col.before { border-right: none; border-bottom: 1px solid var(--gray-100); }
+    .market-stats { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <a href="#">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back
+    </a>
+    <span style="color:var(--gray-300)">|</span>
+    <div class="topnav-brand">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+      CV Analyser
+    </div>
+  </div>
+  <div class="topnav-right">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+    Full Report
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="demo-banner">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+    <div><strong>Demo Version</strong> — This report uses fictitious data for demonstration purposes. Names, companies, and dates have been anonymized.</div>
+  </div>
+
+  <div class="report-header">
+    <p>Share2Inspire · CV Analyser</p>
+    <h1>Full Report — All sections unlocked</h1>
+  </div>
+
+  <div class="card">
+    <div class="section-label orange">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      ATS Automatic Rejection Estimate
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+    </div>
+    <div class="ats-score-row">
+      <div class="ats-score-big">15<span>%</span></div>
+      <div>
+        <div style="font-size:13px;color:var(--gray-500);margin-bottom:4px;">probability</div>
+        <span class="badge badge-green">Low</span>
+      </div>
+    </div>
+    <p class="ats-desc">Based on parsing, keywords, and structure.</p>
+
+    <div class="warn-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      Clarify the dates of overlapping experiences to avoid confusion in ATS systems.
+    </div>
+
+    <p style="font-size:13px;color:var(--gray-600);margin:16px 0 8px;">Your CV has <strong>excellent compatibility</strong> with ATS systems. With only a 15% probability of automatic rejection, your CV passes through most filters without issues, reaching the hands of human recruiters in the vast majority of online applications.</p>
+
+    <p style="font-size:12px;font-weight:600;color:var(--gray-600);margin:16px 0 8px;">Factors affecting compatibility:</p>
+    <ol style="padding-left:18px;font-size:13px;color:var(--gray-600);line-height:2;">
+      <li>Clarify the dates of overlapping experiences to avoid confusion.</li>
+      <li>Clarify the dates of overlapping experiences to avoid confusion.</li>
+      <li>Detail the nature and status of your own project in your professional trajectory.</li>
+      <li>Add more metrics and quantifiable results to demonstrate the impact of your projects.</li>
+    </ol>
+
+    <p style="font-size:12px;font-weight:600;color:var(--gray-600);margin:16px 0 8px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      Compatibility by ATS system:
+    </p>
+    <div class="ats-compat-grid">
+      <div class="ats-compat-row"><span>Workday</span><span class="boa">Good</span></div>
+      <div class="ats-compat-row"><span>SAP SF</span><span class="boa">Good</span></div>
+      <div class="ats-compat-row"><span>Taleo</span><span class="boa">Good</span></div>
+      <div class="ats-compat-row"><span>Greenhouse</span><span class="excelente">Excellent</span></div>
+    </div>
+
+    <p style="font-size:12px;font-weight:600;color:var(--gray-600);margin:16px 0 8px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      How to reduce this rate in 48h:
+    </p>
+    <ul class="howto-list">
+      <li>Keep the current structure — it's well optimized</li>
+      <li>Customize keywords for each specific application</li>
+      <li>Regularly update with new industry terms</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="section-label orange">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      Critical Issues Detected
+    </div>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">3 specific issues that are harming your CV</p>
+
+    <div class="issue-item">
+      <p><span class="issue-num">1</span><span class="issue-title">Overlapping Experience Dates</span></p>
+      <p class="issue-sub">The CV presents professional experiences with overlapping dates, which can generate confusion about the candidate's current experience.</p>
+      <div class="issue-section-label">Full Explanation</div>
+      <p class="issue-text">The entries for Company A (Jan 2025 – May 2025) and Personal Project (2025 – Present) indicate that these activities haven't started yet or are future projections. This may lead the recruiter to question the validity of the experience or assume the CV is not up to date, which is crucial for credibility.</p>
+      <div class="issue-section-label">Correction Example</div>
+      <div class="code-block">
+        <strong>Before:</strong> Company A | Consultant – HR Transformation | Jan 2025 – May 2025<br>
+        <strong>After:</strong> Company A | Consultant – HR Transformation | Jan 2024 – May 2024
+      </div>
+      <div class="issue-section-label">Rewrite Suggestion</div>
+      <div class="suggestion-block">
+        Company A | Consultant – HR Transformation | January 2024 – May 2024 (or the actual completion date of the experience, if it has already occurred).
+      </div>
+    </div>
+
+    <hr class="issue-divider">
+
+    <div class="issue-item">
+      <p><span class="issue-num">2</span><span class="issue-title">Ambiguity in Personal Project Role</span></p>
+      <p class="issue-sub">The description of your personal project does not make it clear whether it is a paid professional activity, a personal project, or independent consulting.</p>
+      <div class="issue-section-label">Full Explanation</div>
+      <p class="issue-text">Although it is an interesting initiative that demonstrates proactivity and thought leadership, its placement and description (especially with future dates) might confuse the recruiter. It is important to clarify whether this is your own consulting firm, a knowledge-sharing platform, or a side project, and what its current status and impact on your main career are.</p>
+      <div class="issue-section-label">Correction Example</div>
+      <div class="code-block">
+        <strong>Before:</strong> Personal Project | 2025 – Present | - Established professional community...<br>
+        <strong>After:</strong> Personal Project (Thought Leadership and Coaching Platform) | Founder | 2023 – Present | - Created and managed a professional community...
+      </div>
+      <div class="issue-section-label">Rewrite Suggestion</div>
+      <div class="suggestion-block">
+        Personal Project (Thought Leadership and Professional Development Initiative) | Founder | 2023 – Present | Established and developed a professional community focused on organizational transformation, leadership, and change, offering insights and coaching.
+      </div>
+    </div>
+
+    <hr class="issue-divider">
+
+    <div class="issue-item">
+      <p><span class="issue-num">3</span><span class="issue-title">Opportunities to Quantify Results</span></p>
+      <p class="issue-sub">While the CV mentions impact, there are few quantitative metrics that demonstrate the success and scale of the projects and responsibilities.</p>
+      <div class="issue-section-label">Full Explanation</div>
+      <p class="issue-text">The CV claims "driving measurable business impact" and "consistently exceeding client satisfaction and revenue targets", but these statements are not backed by concrete numbers. Adding improvement percentages, monetary values of managed projects, the number of people impacted, or the scale of the implemented transformations would make the CV much more impactful and credible.</p>
+      <div class="issue-section-label">Correction Example</div>
+      <div class="code-block">
+        <strong>Before:</strong> "Directed Human Capital practice, managing multi-million-euro projects..."<br>
+        <strong>After:</strong> "Directed Human Capital practice, managing a project portfolio valued at over €15M annually, resulting in a 10% increase in client satisfaction and a 5% increase in revenue."
+      </div>
+      <div class="issue-section-label">Rewrite Suggestion</div>
+      <div class="suggestion-block">
+        Directed Human Capital practice, managing multi-million-euro projects (e.g., €X million) in HRIS implementation and workforce transformation, resulting in a Y% improvement in operational efficiency and a Z% increase in client satisfaction.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 12h18M12 3v18"/></svg>
+      Quadrant Analysis
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+    </div>
+    <div class="quadrant-grid">
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Content</div>
+        <div class="quadrant-sub">→ Quality and relevance of content</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10"
+              stroke-dasharray="188.5" stroke-dashoffset="20.7" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">89</div>
+        </div>
+        <div class="benchmark-tag">Benchmark: 72 <span>(+17)</span></div>
+      </div>
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Experience</div>
+        <div class="quadrant-sub">→ Professional experience</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10"
+              stroke-dasharray="188.5" stroke-dashoffset="22.6" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">88</div>
+        </div>
+        <div class="benchmark-tag">Benchmark: 70 <span>(+18)</span></div>
+      </div>
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Structure</div>
+        <div class="quadrant-sub">→ Organization and clarity of the CV</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10"
+              stroke-dasharray="188.5" stroke-dashoffset="32.0" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">83</div>
+        </div>
+        <div class="benchmark-tag">Benchmark: 70 <span>(+13)</span></div>
+      </div>
+      <div class="quadrant-cell">
+        <div class="quadrant-label">Education</div>
+        <div class="quadrant-sub">→ Academic and continuous education</div>
+        <div class="donut-container">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gray-100)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="var(--gold)" stroke-width="10"
+              stroke-dasharray="188.5" stroke-dashoffset="45.2" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-val">77</div>
+        </div>
+        <div class="benchmark-tag">Benchmark: 65 <span>(+12)</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <p style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-400);margin-bottom:16px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><rect x="2" y="3" width="6" height="18"/><rect x="9" y="8" width="6" height="13"/><rect x="16" y="5" width="6" height="16"/></svg>
+        Evaluation Factors
+      </p>
+      <div class="factor-row">
+        <div><div class="factor-name">Content</div><div class="factor-sub">→ Quality and relevance of content</div></div>
+        <div class="factor-bar-wrap"><div class="factor-bar-bg"><div class="factor-bar-fill" style="width:89%"></div></div></div>
+        <div class="factor-score">89</div>
+      </div>
+      <div class="factor-row">
+        <div><div class="factor-name">Experience</div><div class="factor-sub">→ Professional experience</div></div>
+        <div class="factor-bar-wrap"><div class="factor-bar-bg"><div class="factor-bar-fill" style="width:88%"></div></div></div>
+        <div class="factor-score">88</div>
+      </div>
+      <div class="factor-row">
+        <div><div class="factor-name">Structure</div><div class="factor-sub">→ Organization and clarity of the CV</div></div>
+        <div class="factor-bar-wrap"><div class="factor-bar-bg"><div class="factor-bar-fill" style="width:83%"></div></div></div>
+        <div class="factor-score">83</div>
+      </div>
+      <div class="factor-row">
+        <div><div class="factor-name">Education</div><div class="factor-sub">→ Academic and continuous education</div></div>
+        <div class="factor-bar-wrap"><div class="factor-bar-bg"><div class="factor-bar-fill" style="width:77%"></div></div></div>
+        <div class="factor-score">77</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gray">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      Recruiter Perception
+    </div>
+
+    <p style="font-size:12px;font-weight:600;color:var(--gray-500);margin-bottom:10px;">First 5 seconds of reading — What a recruiter retains from your CV</p>
+    <div class="tags-row">
+      <span class="tag">Management Consulting</span>
+      <span class="tag">Organizational Transformation</span>
+      <span class="tag">HR Digitalization</span>
+      <span class="tag">Organizational Design</span>
+      <span class="tag">Change Management</span>
+      <span class="tag">Business Strategy</span>
+    </div>
+
+    <div class="profile-line">→ Profile perceived as: <strong>Management Consultant / Organizational Transformation (Senior)</strong></div>
+    <div class="profile-line">→ The recruiter identifies <strong>6 key skills</strong> in the first 5 seconds</div>
+
+    <p style="font-size:12px;font-weight:600;color:var(--gray-600);margin:16px 0 8px;">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Attention map for the first 30 seconds:
+    </p>
+    <ul class="attention-list">
+      <li>Name and professional title (0–2 seconds)</li>
+      <li>Most recent experience (2–5 seconds)</li>
+      <li>Academic education (5–8 seconds)</li>
+      <li>Key skills and certifications (8–15 seconds)</li>
+      <li>Overall coherence and formatting (15–30 seconds)</li>
+    </ul>
+
+    <p style="font-size:12px;font-weight:600;color:var(--orange);margin:16px 0 8px;">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      Reading friction points:
+    </p>
+    <div class="warn-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      Clarify the dates of overlapping experiences to avoid confusion.
+    </div>
+    <div class="warn-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      Detail the nature and status of your personal project in your professional trajectory.
+    </div>
+
+    <p style="font-size:12px;font-weight:600;color:var(--gray-600);margin:16px 0 8px;">Messages your CV conveys:</p>
+    <div class="message-item">Professional with a consistent trajectory and career progression</div>
+    <div class="message-item">Results-oriented profile with diversified experience</div>
+    <div class="message-item">Candidate with leadership potential and strategic vision</div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v2m0 4h.01M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/></svg>
+      Salary Estimate
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+    </div>
+    <p style="font-size:12px;color:var(--gray-400);margin-bottom:16px;">Based on profile (Senior) and the Portuguese market</p>
+
+    <div class="salary-grid">
+      <div class="salary-cell">
+        <div class="label">25th Percentile</div>
+        <div class="amount">€2.800</div>
+        <div class="period">/month (gross)</div>
+      </div>
+      <div class="salary-cell">
+        <div class="label">Median</div>
+        <div class="amount highlight">€3.800</div>
+        <div class="period">/month (gross)</div>
+      </div>
+      <div class="salary-cell">
+        <div class="label">75th Percentile</div>
+        <div class="amount">€5.200</div>
+        <div class="period">/month (gross)</div>
+      </div>
+      <div class="salary-cell">
+        <div class="label">Top (Top Profiles)</div>
+        <div class="amount">€7.500</div>
+        <div class="period">/month (gross)</div>
+      </div>
+    </div>
+
+    <p style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:10px;">Typical benefits for Seniors in the industry:</p>
+    <div class="benefits-grid">
+      <div class="benefit-item">Premium health plan (household)</div>
+      <div class="benefit-item">Retirement plan/PPR</div>
+      <div class="benefit-item">Company car or allowance</div>
+      <div class="benefit-item">Mobile phone and communications</div>
+      <div class="benefit-item">Executive training (3–8% of annual salary)</div>
+      <div class="benefit-item">Annual bonus (15–30%)</div>
+      <div class="benefit-item">Flexible benefits (childcare vouchers, gym, etc.)</div>
+      <div class="benefit-item">Stock options or profit sharing</div>
+    </div>
+    <p class="salary-source">Benchmark values for Senior profiles in the Portuguese market. The total compensation package can represent 20–40% above the base salary, depending on the sector and company size.<br>Source: Aggregated data from the Portuguese market (Hays, Michael Page, Robert Walters, Mercer 2024/2025)</p>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg>
+      Market Position
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+    </div>
+
+    <div class="market-stats">
+      <div class="market-stat"><div class="val accent">80%</div><div class="sub">Percentile</div></div>
+      <div class="market-stat"><div class="val">Top 20%</div><div class="sub">Position</div></div>
+      <div class="market-stat"><div class="val">84/100</div><div class="sub">Global Score</div></div>
+    </div>
+
+    <p style="font-size:13px;color:var(--gray-600);margin-bottom:12px;">→ You are in the <strong>80th percentile</strong>, which means your CV is better than 80% of the CVs analyzed in the market.</p>
+
+    <div class="bell-curve-wrap">
+      <svg viewBox="0 0 500 140" width="100%" height="120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bellGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="var(--gold)" stop-opacity="0.1"/>
+            <stop offset="80%" stop-color="var(--gold)" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="var(--gold)" stop-opacity="0.1"/>
+          </linearGradient>
+        </defs>
+        <path d="M20,120 Q80,118 120,80 Q180,10 250,8 Q320,10 380,80 Q420,118 480,120 Z" fill="url(#bellGrad)" stroke="var(--gold)" stroke-width="1.5" fill-opacity="0.5"/>
+        <line x1="0" y1="122" x2="500" y2="122" stroke="var(--gray-200)" stroke-width="1"/>
+        <text x="20" y="136" font-size="11" fill="var(--gray-400)" font-family="DM Sans">0%</text>
+        <text x="225" y="136" font-size="11" fill="var(--gray-400)" font-family="DM Sans">Average</text>
+        <text x="460" y="136" font-size="11" fill="var(--gray-400)" font-family="DM Sans">100%</text>
+        <circle cx="410" cy="78" r="8" fill="var(--gold)" stroke="white" stroke-width="2"/>
+        <text x="390" y="65" font-size="11" fill="var(--gold)" font-weight="bold" font-family="DM Sans">You (80%)</text>
+      </svg>
+    </div>
+
+    <p style="font-size:13px;color:var(--gray-600);margin-bottom:10px;">With a score in the 80th percentile, your CV ranks above the vast majority of candidates. In a process with 100 candidates, you would outperform 80 of them. You are 10 percentage points away from the top 10% — small adjustments in the identified areas can make the difference to achieve excellence.</p>
+
+    <div class="market-item">Your CV is above the global market average (84 vs 69)</div>
+    <div class="market-item">Cross-analysis between dimensions and impact on the global score</div>
+    <div class="market-item">Specific recommendations for each dimension</div>
+    <div class="market-item">Comparison with profiles of the same seniority level</div>
+    <p style="font-size:13px;color:var(--gray-600);margin-top:10px;">→ To level up, you need to increase your overall score by approximately <strong>5–8 points</strong>.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-label gray">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      AI Replacement Potential
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+    </div>
+    <p style="font-size:12px;color:var(--gray-400);margin-bottom:16px;">Risk of automation of your role in the next 5–10 years</p>
+
+    <div class="risk-bar-wrap">
+      <div class="risk-bar-labels"><span>Low risk</span><span>High risk</span></div>
+      <div class="risk-bar-bg">
+        <div class="risk-marker"></div>
+      </div>
+    </div>
+    <div class="risk-tag">Low — 25%</div>
+
+    <p class="risk-desc">Senior management and consulting profiles have a low risk of automation. Analytical, relational, and complex problem-solving skills remain relevant.</p>
+
+    <p style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:8px;">Recommendations to mitigate risk:</p>
+    <div class="risk-recs">
+      <div class="risk-rec">Reinforce people management skills</div>
+      <div class="risk-rec">Integrate AI tools into your daily routine to increase productivity</div>
+      <div class="risk-rec">Develop expertise in emerging areas of the sector</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="6" height="18"/><rect x="9" y="8" width="6" height="13"/><rect x="16" y="5" width="6" height="16"/></svg>
+      Detailed Dimension Analysis
+    </div>
+
+    <div class="dim-row">
+      <div class="dim-header">
+        <span class="dim-name">Content</span>
+        <span><span class="dim-score">89/100</span><span class="dim-benchmark">+17 vs benchmark</span></span>
+      </div>
+      <div class="dim-item ok"><span class="icon">✅</span> Strong point. You are 17 points above the benchmark (72).</div>
+      <div class="dim-item ok"><span class="icon">✅</span> Proven expertise in HR digitalization, organizational design, and large-scale change management.</div>
+      <div class="dim-item warn"><span class="icon">⚠️</span> Detail the nature and status of your personal project in your professional trajectory.</div>
+    </div>
+    <div class="dim-row">
+      <div class="dim-header">
+        <span class="dim-name">Experience</span>
+        <span><span class="dim-score">88/100</span><span class="dim-benchmark">+18 vs benchmark</span></span>
+      </div>
+      <div class="dim-item ok"><span class="icon">✅</span> Strong point. You are 18 points above the benchmark (70).</div>
+      <div class="dim-item ok"><span class="icon">✅</span> Ability to advise C-suite leaders and drive measurable business impact.</div>
+    </div>
+    <div class="dim-row">
+      <div class="dim-header">
+        <span class="dim-name">Structure</span>
+        <span><span class="dim-score">83/100</span><span class="dim-benchmark">+13 vs benchmark</span></span>
+      </div>
+      <div class="dim-item ok"><span class="icon">✅</span> Strong point. You are 13 points above the benchmark (70).</div>
+      <div class="dim-item ok"><span class="icon">✅</span> Vast experience in management consulting and transformation (12+ years) in multinational companies.</div>
+      <div class="dim-item warn"><span class="icon">⚠️</span> Clarify the dates of overlapping experiences to avoid confusion.</div>
+    </div>
+    <div class="dim-row">
+      <div class="dim-header">
+        <span class="dim-name">Education</span>
+        <span><span class="dim-score">77/100</span><span class="dim-benchmark">+12 vs benchmark</span></span>
+      </div>
+      <div class="dim-item ok"><span class="icon">✅</span> Strong point. You are 12 points above the benchmark (65).</div>
+      <div class="dim-item ok"><span class="icon">✅</span> Recognized as a thought leader, with publications, a newsletter, and an international presence.</div>
+      <div class="dim-item warn"><span class="icon">⚠️</span> Add more metrics and quantifiable results to demonstrate the impact of your projects.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gray">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      Priority Matrix
+    </div>
+    <p style="font-size:12px;color:var(--gray-400);margin-bottom:14px;">Dimensions ordered by urgency of improvement (larger gap = higher priority):</p>
+    <div class="priority-row">
+      <div class="priority-num">#1</div>
+      <div class="priority-name">Education</div>
+      <div class="priority-scores">77/65</div>
+      <span class="badge badge-green">Low</span>
+    </div>
+    <div class="priority-row">
+      <div class="priority-num">#2</div>
+      <div class="priority-name">Structure</div>
+      <div class="priority-scores">83/70</div>
+      <span class="badge badge-green">Low</span>
+    </div>
+    <div class="priority-row">
+      <div class="priority-num">#3</div>
+      <div class="priority-name">Content</div>
+      <div class="priority-scores">89/72</div>
+      <span class="badge badge-green">Low</span>
+    </div>
+    <div class="priority-row">
+      <div class="priority-num">#4</div>
+      <div class="priority-name">Experience</div>
+      <div class="priority-scores">88/70</div>
+      <span class="badge badge-green">Low</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gold">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22V12m0 0L7 7m5 5l5-5"/><path d="M20 17v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2"/></svg>
+      Improvement Actions — Before vs After
+    </div>
+    <p style="font-size:12px;color:var(--gray-400);margin-bottom:16px;">Concrete actions to improve your CV, with the estimated impact of each:</p>
+
+    <div class="action-card">
+      <div class="action-header">
+        <div><span class="action-num">#1</span><span class="action-title">Clarify the dates of overlapping experiences to avoid confusion.</span></div>
+        <span class="action-impact">+Medium points</span>
+      </div>
+      <div class="action-body">
+        <div class="action-col before">
+          <div class="action-col-label">❌ Before</div>
+          <div class="action-score">Current score: 83/100 (above benchmark of 70)</div>
+        </div>
+        <div class="action-col after">
+          <div class="action-col-label">✅ After</div>
+          <div class="action-score">Estimated score after improvement: 91/100</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-card">
+      <div class="action-header">
+        <div><span class="action-num">#2</span><span class="action-title">Detail the nature and status of your personal project in your professional trajectory.</span></div>
+        <span class="action-impact">+Medium points</span>
+      </div>
+      <div class="action-body">
+        <div class="action-col before">
+          <div class="action-col-label">❌ Before</div>
+          <div class="action-score">Current score: 89/100 (above benchmark of 72)</div>
+        </div>
+        <div class="action-col after">
+          <div class="action-col-label">✅ After</div>
+          <div class="action-score">Estimated score after improvement: 97/100</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-card">
+      <div class="action-header">
+        <div><span class="action-num">#3</span><span class="action-title">Add more metrics and quantifiable results to demonstrate the impact of your projects.</span></div>
+        <span class="action-impact">+Medium points</span>
+      </div>
+      <div class="action-body">
+        <div class="action-col before">
+          <div class="action-col-label">❌ Before</div>
+          <div class="action-score">Current score: 77/100 (above benchmark of 65)</div>
+        </div>
+        <div class="action-col after">
+          <div class="action-col-label">✅ After</div>
+          <div class="action-score">Estimated score after improvement: 85/100</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--gold-pale);border:1px solid #E2C96A;border-radius:8px;padding:12px 16px;text-align:center;margin-top:8px;">
+      <span style="font-size:14px;font-weight:700;color:var(--gold);">🎯 Estimated score after improvements: 91/100</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gray">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      30-Day Action Plan
+    </div>
+
+    <div class="week-block">
+      <div class="week-label">Week 1–2 <span class="week-title">Content Optimization</span></div>
+      <div class="week-item"><div class="week-check"></div>Rewrite professional summary with impact metrics</div>
+      <div class="week-item"><div class="week-check"></div>Add quantifiable results to each experience</div>
+      <div class="week-item"><div class="week-check"></div>Align keywords with target roles</div>
+    </div>
+    <div class="week-block">
+      <div class="week-label">Week 3 <span class="week-title">Structure and Formatting</span></div>
+      <div class="week-item"><div class="week-check"></div>Optimize visual hierarchy and spacing</div>
+      <div class="week-item"><div class="week-check"></div>Ensure ATS compatibility (format, fonts, sections)</div>
+      <div class="week-item"><div class="week-check"></div>Add missing sections (certifications, languages, etc.)</div>
+    </div>
+    <div class="week-block">
+      <div class="week-label">Week 4 <span class="week-title">Validation and Adjustments</span></div>
+      <div class="week-item"><div class="week-check"></div>Ask for feedback from 2–3 professionals in the field</div>
+      <div class="week-item"><div class="week-check"></div>Test across different ATS systems</div>
+      <div class="week-item"><div class="week-check"></div>Customize versions for specific applications</div>
+    </div>
+  </div>
+
+  <div class="card" style="background:linear-gradient(135deg,#1A1209,#2C1F08);border-color:#5A3E10;">
+    <div style="display:flex;align-items:flex-start;gap:14px;">
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div>
+        <p style="font-weight:700;color:white;font-size:15px;margin-bottom:4px;">What is your next career step?</p>
+        <p style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:14px;">The Career Path creates a personalized roadmap with the concrete steps to get where you want to go</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px;">
+          <div style="display:flex;gap:6px;font-size:12px;color:rgba(255,255,255,0.7);align-items:flex-start;">
+            <span style="color:var(--gold);">🗺</span> Next 3 recommended roles with a roadmap</div>
+          <div style="display:flex;gap:6px;font-size:12px;color:rgba(255,255,255,0.7);align-items:flex-start;">
+            <span style="color:var(--gold);">🎓</span> Recommended training and certifications</div>
+          <div style="display:flex;gap:6px;font-size:12px;color:rgba(255,255,255,0.7);align-items:flex-start;">
+            <span style="color:var(--gold);">🌐</span> Visibility and online presence exercises</div>
+          <div style="display:flex;gap:6px;font-size:12px;color:rgba(255,255,255,0.7);align-items:flex-start;">
+            <span style="color:var(--gold);">🤝</span> Networking strategy and communities</div>
+          <div style="display:flex;gap:6px;font-size:12px;color:rgba(255,255,255,0.7);align-items:flex-start;">
+            <span style="color:var(--gold);">📊</span> CV vs LinkedIn cross-match</div>
+          <div style="display:flex;gap:6px;font-size:12px;color:rgba(255,255,255,0.7);align-items:flex-start;">
+            <span style="color:var(--gold);">⚡</span> Immediate actions for 30, 60, and 90 days</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:20px;font-weight:700;color:white;">€10.00 <span style="font-size:13px;font-weight:400;color:rgba(255,255,255,0.5);">/ analysis</span></span>
+          <button style="background:var(--gold);color:white;border:none;padding:10px 20px;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Try Career Path</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label gray">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      Post Preview
+    </div>
+
+    <div class="linkedin-post">
+      Do you know if your CV passes through automatic recruitment filters (ATS)?<br><br>
+      I tested mine in a tool that simulates these filters and the result surprised me.<br><br>
+      ✅ ATS Compatibility Score: 85%<br>
+      ✅ Global Score: 84/100 (80th Percentile)<br>
+      ✅ Strengths: Content and Experience<br><br>
+      Most CVs are rejected before a human even reads them. This analysis showed me exactly what to fix — and what was already working.<br><br>
+      🔗 https://share2inspire.pt/cv-analyser<br><br>
+      What would your CV's score be?<br><br>
+      #CVAnalysis #ATS #Career #Share2Inspire
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button style="flex:1;padding:10px;border:1px solid var(--gray-200);border-radius:8px;background:var(--gray-50);color:var(--gray-600);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Copy LinkedIn Post</button>
+      <button style="flex:1;padding:10px;border:1px solid var(--gray-200);border-radius:8px;background:var(--gray-50);color:var(--gray-600);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Download Certification Image</button>
+    </div>
+    <p style="font-size:11px;color:var(--gray-400);text-align:center;margin-top:8px;">The certification image is optimized for LinkedIn posts (1200×630px)</p>
+  </div>
+
+  <div class="card" style="text-align:center;padding:28px 24px;">
+    <div style="width:40px;height:40px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    </div>
+    <p style="font-weight:600;color:var(--gray-800);margin-bottom:4px;">Receive Report by Email</p>
+    <p style="font-size:13px;color:var(--gray-500);margin-bottom:14px;">Send the full report to your email</p>
+    <div style="display:flex;gap:8px;max-width:360px;margin:0 auto;">
+      <input type="email" placeholder="your@email.com" style="flex:1;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;outline:none;font-family:'DM Sans',sans-serif;">
+      <button style="padding:10px 16px;background:var(--gold);color:white;border:none;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Send</button>
+    </div>
+    <div style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;color:var(--green);">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Report sent successfully! Check your inbox (and spam folder).
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

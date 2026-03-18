@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Blog | Articles on Career and Professional Development | Share2Inspire</title>
+    <meta name="description" content="Read articles on career development, CV optimisation, LinkedIn and professional strategies. Free content by Samuel Rolo.">
+    <meta name="keywords" content="blog, career, CV, LinkedIn, professional development, articles, Share2Inspire">
+    <meta name="author" content="Samuel Rolo">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.share2inspire.pt/blog">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.share2inspire.pt/blog">
+    <meta property="og:title" content="Blog | Articles on Career and Professional Development">
+    <meta property="og:description" content="Read articles on career development, CV optimisation, LinkedIn and professional strategies.">
+    <meta property="og:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Share2Inspire">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Blog | Articles on Career and Professional Development">
+    <meta name="twitter:description" content="Read articles on career development, CV optimisation, LinkedIn and professional strategies.">
+    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="../images/logo.png" type="image/png">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- Consolidated Styles -->
+    <link href="../css/consolidated-styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/side-widgets.css">
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; }
+
+        /* ── Navigation ── */
+        .nav-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.04); }
+        .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 70px; }
+        .nav-logo img { height: 36px; }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #1a1a2e; text-decoration: none; transition: color 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: #C9A961; }
+        .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+        .nav-toggle span { display: block; width: 22px; height: 2px; background: #1a1a2e; margin: 5px 0; transition: 0.3s; }
+        @media (max-width: 768px) {
+            .nav-toggle { display: block; }
+            .nav-links { display: none; position: absolute; top: 70px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.04); }
+            .nav-links.open { display: flex; }
+        }
+
+        /* ── Mega Menu ── */
+        .mega-dropdown { position: relative; }
+        .mega-dropdown > a { cursor: pointer; }
+        .mega-menu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; padding: 1rem 1.5rem; min-width: 200px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); z-index: 200; }
+        .mega-dropdown:hover .mega-menu { display: block; }
+        .mega-col { display: flex; flex-direction: column; gap: 0.5rem; }
+        .mega-link { font-size: 0.75rem !important; font-weight: 400 !important; text-transform: none !important; letter-spacing: 0.5px !important; color: #555 !important; text-decoration: none; padding: 0.3rem 0; transition: color 0.3s; white-space: nowrap; }
+        .mega-link:hover { color: #C9A961 !important; }
+        @media (max-width: 768px) {
+            .mega-menu { position: static; transform: none; box-shadow: none; border: none; min-width: auto; padding: 0.5rem 0 0.5rem 1rem; display: none; }
+            .mega-dropdown:hover .mega-menu { display: block; }
+            .mega-dropdown.open .mega-menu { display: block; }
+        }
+
+        /* ── Blog Layout ── */
+        .blog-hero { padding: 130px 2rem 60px; background: #faf8f4; border-bottom: 1px solid rgba(0,0,0,0.04); text-align: center; }
+        .blog-hero h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 300; color: #1a1a2e; margin-bottom: 0.5rem; }
+        .blog-hero h1 strong { font-weight: 600; }
+        .blog-hero p { font-size: 1rem; color: #666; font-weight: 300; }
+
+        .blog-container { max-width: 1000px; margin: 0 auto; padding: 3rem 2rem; }
+
+        .breadcrumb { margin-bottom: 2rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        .breadcrumb a { color: #C9A961; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { color: #999; margin: 0 0.4rem; }
+
+        .articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+
+        .article-card { background: #fff; border: 1px solid rgba(0,0,0,0.06); padding: 2rem; transition: all 0.4s ease; }
+        .article-card:hover { border-color: #C9A961; box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
+        .article-card .tag { display: inline-block; font-size: 0.65rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; margin-bottom: 0.75rem; }
+        .article-card h3 { font-size: 1.1rem; font-weight: 500; color: #1a1a2e; line-height: 1.4; margin-bottom: 0.75rem; }
+        .article-card p { color: #666; font-size: 0.85rem; font-weight: 300; line-height: 1.6; margin-bottom: 1rem; }
+        .article-card .meta { color: #999; font-size: 0.7rem; font-weight: 300; letter-spacing: 0.5px; margin-bottom: 1rem; }
+        .article-card .read-link { display: inline-block; font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; text-decoration: none; transition: color 0.3s; }
+        .article-card .read-link:hover { color: #1a1a2e; }
+
+        /* ── Footer ── */
+        .blog-footer { background: #1a1a2e; color: rgba(255,255,255,0.6); padding: 3rem 2rem; text-align: center; font-size: 0.8rem; }
+        .blog-footer a { color: #C9A961; text-decoration: none; }
+        .blog-footer a:hover { text-decoration: underline; }
+    </style>
+    
+    <!-- Schema Markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Blog",
+        "name": "Share2Inspire Blog",
+        "description": "Articles on career development, CV optimisation, LinkedIn and professional strategies.",
+        "url": "https://www.share2inspire.pt/blog",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Share2Inspire",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://www.share2inspire.pt/images/logo.png"
+            }
+        }
+    }
+    </script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <a href="/en/blog/" class="nav-logo">
+                <img loading="lazy" src="../images/logo.webp" alt="Share2Inspire">
+            </a>
+            <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="nav-links">
+                <a href="/en/blog/">Home</a>
+                <a href="/en/cv-analyser">CV Analyser</a>
+                <a href="/en/career-path">Career Path</a>
+                <div class="mega-dropdown" style="position:relative;">
+                    <a href="/en/pages/services/">Services</a>
+                    <div class="mega-menu">
+                        <div class="mega-col">
+                            <a class="mega-link" href="/en/linkedin-roaster">LinkedIn Roaster</a>
+                            <a class="mega-link" href="https://share2inspire.pt/cv-builder/">CV Maker</a>
+                            <a class="mega-link" href="/en/pages/services/">CV by Expert</a>
+                            <a class="mega-link" href="/en/pages/services/">KickStart Pro</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="../pages/conhecimento.html" class="active">Knowledge</a>
+                <a href="/en/pages/about/">About</a>
+                <a href="/en/pages/contact/">Contacts</a>
+                <a href="/area-cliente/" style="background:#BF9A33;color:#0a0a0a!important;padding:0.3rem 0.8rem;border-radius:4px;font-weight:600;">Client Area</a>
+                <a href="../en/pages/home/" class="lang-switch">EN</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="blog-hero">
+        <h1>Blog <strong>Share2Inspire</strong></h1>
+        <p>Articles on career development, CV optimisation, LinkedIn and professional strategies</p>
+    </header>
+
+    <div class="blog-container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="/en/blog/">Home</a>
+            <span>›</span>
+            <a href="../pages/conhecimento.html">Knowledge</a>
+            <span>›</span>
+            <span style="color:#1a1a2e;">Blog</span>
+        </div>
+        
+        <!-- Articles Grid -->
+        <div class="articles-grid">
+            <!-- Article: AI Career Path vs Traditional Coaching -->
+            <article class="article-card">
+                <span class="tag">Career Development</span>
+                <h3>AI Career Path vs Traditional Coaching: Why You're Overpaying</h3>
+                <p>Discover how AI is revolutionising career planning. Compare traditional career coaching costs with instant, data-driven AI career paths.</p>
+                <div class="meta">Samuel Rolo · 4 min read</div>
+                <a href="/en/blog/artigos/ai-career-path-vs-traditional-coaching.html" class="read-link">Read article →</a>
+            </article>
+
+            <!-- Article: In-Person vs Remote Interview -->
+            <article class="article-card">
+                <span class="tag">Career Guide</span>
+                <h3>In-Person vs. Remote Interview: Complete Preparation Guide</h3>
+                <p>Two formats, different rules. Practical tips, comparison table and interactive checklists to make the best impression in any interview.</p>
+                <div class="meta">Samuel Rolo · 7 min read</div>
+                <a href="/en/blog/artigos/entrevista-presencial-vs-remota.html" class="read-link">Read article →</a>
+            </article>
+
+            <!-- Article: ATS Guide -->
+            <article class="article-card">
+                <span class="tag">Complete Guide</span>
+                <h3>The Definitive Guide: How to Beat ATS and Get Your CV to the Recruiter</h3>
+                <p>Complete guide on how to optimise your CV to pass automatic ATS filters. Keyword strategies, formatting and structure.</p>
+                <div class="meta">Samuel Rolo · 8 min read</div>
+                <a href="/en/blog/artigos/guia-superar-ats-curriculo.html" class="read-link">Read article →</a>
+            </article>
+            
+            <!-- Article 1 -->
+            <article class="article-card">
+                <span class="tag">Professional Development</span>
+                <h3>7 CV Mistakes That Cause Many Candidates to Be Rejected</h3>
+                <p>Discover the 7 most common CV mistakes that drastically reduce your chances of reaching the interview stage.</p>
+                <div class="meta">Samuel Rolo · 8 min read</div>
+                <a href="/en/blog/artigos/7-erros-cv-candidatos-rejeitados.html" class="read-link">Read article →</a>
+            </article>
+            
+            <!-- Article 2 -->
+            <article class="article-card">
+                <span class="tag">Career Strategy</span>
+                <h3>CV or LinkedIn: Which Is More Important for Your Career?</h3>
+                <p>Discover which is more important: CV or LinkedIn. Complete guide on how to use both strategically.</p>
+                <div class="meta">Samuel Rolo · 7 min read</div>
+                <a href="/en/blog/artigos/cv-linkedin-importancia.html" class="read-link">Read article →</a>
+            </article>
+            
+            <!-- Article 3 -->
+            <article class="article-card">
+                <span class="tag">Online Visibility</span>
+                <h3>How to Improve Your LinkedIn to Appear in Recruiter Searches</h3>
+                <p>Learn 5 practical strategies to optimise your LinkedIn profile and increase your visibility.</p>
+                <div class="meta">Samuel Rolo · 9 min read</div>
+                <a href="/en/blog/artigos/melhorar-linkedin-pesquisas.html" class="read-link">Read article →</a>
+            </article>
+            
+            <!-- Article 4 -->
+            <article class="article-card">
+                <span class="tag">Career Assessment</span>
+                <h3>How to Know If You're Well Positioned in the Job Market</h3>
+                <p>Discover how to evaluate your professional positioning in the job market. Complete guide with benchmarks.</p>
+                <div class="meta">Samuel Rolo · 8 min read</div>
+                <a href="/en/blog/artigos/posicionamento-mercado.html" class="read-link">Read article →</a>
+            </article>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="blog-footer">
+        <p>&copy; 2026 Share2Inspire. All rights reserved. · <a href="/en/pages/privacy-policy/">Privacy</a> · <a href="/en/pages/privacy-policy/">Cookies</a></p>
+    </footer>
+
+    <script>
+        document.querySelector('.nav-toggle').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('open');
+        });
+    </script>
+</body>
+
+</html>

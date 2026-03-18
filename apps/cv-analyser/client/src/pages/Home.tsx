@@ -1288,6 +1288,15 @@ export default function Home() {
           <p className="text-sm md:text-lg text-muted-foreground max-w-2xl mx-auto">
             Análise gratuita em 30 segundos. Descobre se o teu CV passa nos sistemas de recrutamento.
           </p>
+          <a
+            href="/cv-analyser/demo.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-all text-sm font-medium text-[#C9A961] hover:scale-105"
+          >
+            <Eye className="w-4 h-4" />
+            Vê o que vais receber
+          </a>
         </div>
 
         {/* Upload Card */}
