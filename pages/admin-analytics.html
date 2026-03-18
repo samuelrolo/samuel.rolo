@@ -45,6 +45,12 @@
         .tab-btn { padding:12px 18px; font-size:13px; font-weight:500; color:var(--text-secondary); background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; transition:all .15s; white-space:nowrap; display:flex; align-items:center; gap:7px; }
         .tab-btn:hover { color:var(--dark); }
         .tab-btn.active { color:var(--gold); border-bottom-color:var(--gold); }
+        .crm-subnav { display:flex; gap:0; margin-bottom:20px; border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--bg); }
+        .crm-subtab { flex:1; padding:10px 16px; font-size:13px; font-weight:500; color:var(--text-secondary); background:none; border:none; cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; gap:6px; border-right:1px solid var(--border); }
+        .crm-subtab:last-child { border-right:none; }
+        .crm-subtab:hover { background:rgba(0,0,0,.03); color:var(--dark); }
+        .crm-subtab.active { background:var(--gold); color:#fff; font-weight:600; }
+        .crm-subtab i { font-size:12px; }
         .tab-btn i { font-size:13px; }
 
         /* ── MAIN ── */
@@ -569,14 +575,14 @@
      TAB: CRM / LEADS
 ══════════════════════════════════════════════ -->
 <div id="tab-crm" style="display:none;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <div class="section-header" style="margin:0;">
             <h2>CRM · Gestão de Leads</h2>
             <p>Visão completa de cada utilizador e a sua posição no funil</p>
         </div>
     </div>
 
-    <!-- CRM KPIs -->
+    <!-- Pipeline KPIs -->
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
         <div class="kpi-card" style="border-top:3px solid #F59E0B;">
             <div class="kpi-label">Novas Leads</div>
@@ -600,76 +606,77 @@
         </div>
     </div>
 
-    <!-- CRM Filters -->
-    <div class="filter-bar">
-        <label>Etapa</label>
-        <select class="form-select" id="crmFilterStage" onchange="renderCRM()">
-            <option value="all">Todas</option>
-            <option value="lead">Novas Leads</option>
-            <option value="nurturing">Em Nurturing</option>
-            <option value="client">Clientes</option>
-            <option value="recurring">Recorrentes</option>
-        </select>
-        <div class="filter-divider"></div>
-        <label>Produto</label>
-        <select class="form-select" id="crmFilterProduct" onchange="renderCRM()">
-            <option value="all">Todos</option>
-            <option value="cv_free">CV Grátis</option>
-            <option value="cv_paid">CV Pago</option>
-            <option value="career_path">Career Path</option>
-        </select>
-        <div class="filter-divider"></div>
-        <label>Senioridade</label>
-        <select class="form-select" id="crmFilterSeniority" onchange="renderCRM()">
-            <option value="all">Todas</option>
-        </select>
-        <div class="filter-divider"></div>
-        <label>Área</label>
-        <select class="form-select" id="crmFilterArea" onchange="renderCRM()">
-            <option value="all">Todas</option>
-        </select>
-        <div class="filter-divider"></div>
-        <input class="form-input" type="text" id="crmSearch" placeholder="Pesquisar nome ou email..." oninput="renderCRM()" style="width:200px;">
-        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-            <span style="font-size:12px;color:var(--text-muted);" id="crmCount">-- leads</span>
-            <button class="btn btn-outline btn-sm" onclick="exportCRMCSV()"><i class="fas fa-download"></i> CSV</button>
-        </div>
+    <!-- CRM Sub-navigation -->
+    <div class="crm-subnav">
+        <button class="crm-subtab active" onclick="switchCrmSubtab('contacts',this)"><i class="fas fa-address-book"></i> Contactos</button>
+        <button class="crm-subtab" onclick="switchCrmSubtab('automation',this)"><i class="fas fa-robot"></i> Automação</button>
+        <button class="crm-subtab" onclick="switchCrmSubtab('campaigns',this)"><i class="fas fa-paper-plane"></i> Campanhas</button>
     </div>
 
-    <!-- CRM Table -->
-    <div class="card">
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Utilizador</th>
-                        <th>Área</th>
-                        <th>Etapa</th>
-                        <th>Acção Tomada</th>
-                        <th>Sugestão</th>
-                        <th>Acção Planeada</th>
-                        <th>Valor</th>
-                        <th>Última Interação</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="crmTable">
-                    <tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="pagination" id="crmPagination"></div>
-
-    <!-- ── Automação de Emails ── -->
-    <div style="margin-top:32px;border-top:1px solid var(--border);padding-top:24px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-            <div>
-                <h3 style="font-size:16px;font-weight:600;margin:0;"><i class="fas fa-robot" style="color:var(--gold);margin-right:8px;"></i>Automação de Emails</h3>
-                <p style="font-size:12px;color:var(--text-muted);margin:4px 0 0;">Emails automáticos de upsell enviados pelo sistema</p>
+    <!-- ═══ SUB-TAB: Contactos ═══ -->
+    <div id="crm-sub-contacts">
+        <div class="filter-bar">
+            <label>Etapa</label>
+            <select class="form-select" id="crmFilterStage" onchange="renderCRM()">
+                <option value="all">Todas</option>
+                <option value="lead">Novas Leads</option>
+                <option value="nurturing">Em Nurturing</option>
+                <option value="client">Clientes</option>
+                <option value="recurring">Recorrentes</option>
+            </select>
+            <div class="filter-divider"></div>
+            <label>Produto</label>
+            <select class="form-select" id="crmFilterProduct" onchange="renderCRM()">
+                <option value="all">Todos</option>
+                <option value="cv_free">CV Grátis</option>
+                <option value="cv_paid">CV Pago</option>
+                <option value="career_path">Career Path</option>
+            </select>
+            <div class="filter-divider"></div>
+            <label>Senioridade</label>
+            <select class="form-select" id="crmFilterSeniority" onchange="renderCRM()">
+                <option value="all">Todas</option>
+            </select>
+            <div class="filter-divider"></div>
+            <label>Área</label>
+            <select class="form-select" id="crmFilterArea" onchange="renderCRM()">
+                <option value="all">Todas</option>
+            </select>
+            <div class="filter-divider"></div>
+            <input class="form-input" type="text" id="crmSearch" placeholder="Pesquisar nome ou email..." oninput="renderCRM()" style="width:200px;">
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+                <span style="font-size:12px;color:var(--text-muted);" id="crmCount">-- contactos</span>
+                <button class="btn btn-outline btn-sm" onclick="exportCRMCSV()"><i class="fas fa-download"></i> CSV</button>
             </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;">
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Utilizador</th>
+                            <th>Área Profissional</th>
+                            <th>Senioridade</th>
+                            <th>Produtos Usados</th>
+                            <th>Produtos Comprados</th>
+                            <th>Valor Total</th>
+                            <th>Última Interação</th>
+                            <th>Etapa</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="crmTable">
+                        <tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="pagination" id="crmPagination"></div>
+    </div>
+
+    <!-- ═══ SUB-TAB: Automação ═══ -->
+    <div id="crm-sub-automation" style="display:none;">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
             <div class="kpi-card" style="border-top:3px solid var(--blue);">
                 <div class="kpi-label">Upsell 2h Enviados</div>
                 <div class="kpi-value blue" id="autoUpsell2h">--</div>
@@ -704,8 +711,8 @@
         </div>
     </div>
 
-    <!-- ── Follow-up & Nurturing (merged) ── -->
-    <div style="margin-top:32px;border-top:1px solid var(--border);padding-top:24px;">
+    <!-- ═══ SUB-TAB: Campanhas ═══ -->
+    <div id="crm-sub-campaigns" style="display:none;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
             <div>
                 <h3 style="font-size:16px;font-weight:600;margin:0;"><i class="fas fa-paper-plane" style="color:var(--gold);margin-right:8px;"></i>Follow-up & Nurturing</h3>
@@ -716,8 +723,6 @@
                 <button onclick="setNurturingLang('en',this)">EN</button>
             </div>
         </div>
-
-        <!-- Segmentos -->
         <div class="segment-cards">
             <div class="segment-card" onclick="prepareNurturing('upsell')">
                 <div class="segment-count" id="upsellCount">--</div>
@@ -740,8 +745,6 @@
                 <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Anónimos recentes (email desconhecido)</div>
             </div>
         </div>
-
-        <!-- Composer -->
         <div id="emailComposer" style="display:none;">
             <div class="card">
                 <div class="card-header">
@@ -867,84 +870,7 @@
     </div>
 </div>
 
-<!-- Old Follow-up tab removed (merged into CRM) -->
-<div id="tab-nurturing" style="display:none;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <div class="section-header" style="margin:0;">
-            <h2>Follow-up & Nurturing</h2>
-            <p>Segmentos automáticos para campanhas de email</p>
-        </div>
-        <div class="lang-toggle" id="nurturingLangToggle">
-            <button class="active" onclick="setNurturingLang('pt',this)">🇵🇹 PT</button>
-            <button onclick="setNurturingLang('en',this)">🇬🇧 EN</button>
-        </div>
-    </div>
-
-    <!-- Segmentos -->
-    <div class="segment-cards">
-        <div class="segment-card" onclick="prepareNurturing('upsell')">
-            <div class="segment-count" id="upsellCount">--</div>
-            <div class="segment-label">Upsell — Análise Completa</div>
-            <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Fizeram análise gratuita, não compraram</div>
-        </div>
-        <div class="segment-card" onclick="prepareNurturing('feedback')">
-            <div class="segment-count" id="feedbackCount">--</div>
-            <div class="segment-label">Pedir Feedback</div>
-            <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Compraram mas não avaliaram</div>
-        </div>
-        <div class="segment-card" onclick="prepareNurturing('careerpath')">
-            <div class="segment-count" id="careerpathCount">--</div>
-            <div class="segment-label">Upsell — Career Path</div>
-            <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Compraram CV, sem Career Path</div>
-        </div>
-        <div class="segment-card" onclick="prepareNurturing('abandoned')">
-            <div class="segment-count" id="abandonedCount">--</div>
-            <div class="segment-label">Recuperar Abandono</div>
-            <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Anónimos recentes (email desconhecido)</div>
-        </div>
-    </div>
-
-    <!-- Composer -->
-    <div id="emailComposer" style="display:none;">
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title" id="composerTitle"><i class="fas fa-paper-plane"></i> Compor Email</div>
-            </div>
-            <div class="card-body">
-                <div class="grid-2">
-                    <div>
-                        <div class="form-group">
-                            <label class="form-label">Assunto</label>
-                            <input class="form-input" type="text" id="emailSubject" style="width:100%;">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Corpo do Email (HTML)</label>
-                            <textarea class="form-textarea" id="emailBody" style="min-height:200px;"></textarea>
-                        </div>
-                        <div style="display:flex;gap:8px;">
-                            <button class="btn btn-gold" onclick="sendBulkEmail()"><i class="fas fa-paper-plane"></i> Enviar Selecionados</button>
-                            <button class="btn btn-outline" onclick="selectOnlyUnsent()"><i class="fas fa-filter"></i> Só Não Enviados</button>
-                            <button class="btn btn-outline" onclick="toggleAllRecipients(true)">Todos</button>
-                            <button class="btn btn-outline" onclick="toggleAllRecipients(false)">Nenhum</button>
-                        </div>
-                        <div style="margin-top:8px;font-size:12px;color:var(--text-muted);" id="selectedCount">(0 selecionados)</div>
-                    </div>
-                    <div>
-                        <div style="display:flex;gap:8px;margin-bottom:10px;">
-                            <input class="form-input" type="text" id="recipientSearch" placeholder="Filtrar email..." oninput="filterRecipientList()" style="flex:1;">
-                            <select class="form-select" id="recipientFilter" onchange="filterRecipientList()">
-                                <option value="all">Todos</option>
-                                <option value="unsent">Não enviados</option>
-                                <option value="sent">Enviados</option>
-                            </select>
-                        </div>
-                        <div id="recipientList" style="max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Old tab-nurturing removed (merged into CRM sub-tabs) -->
 
 <!-- ══════════════════════════════════════════════
      TAB: HISTÓRICO DE EMAILS

@@ -226,6 +226,17 @@ function switchTab(name, btn) {
     if (name === 'users') renderUsers();
 }
 
+function switchCrmSubtab(name, btn) {
+    document.querySelectorAll('[id^="crm-sub-"]').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.crm-subtab').forEach(b => b.classList.remove('active'));
+    const sub = document.getElementById('crm-sub-' + name);
+    if (sub) sub.style.display = '';
+    if (btn) btn.classList.add('active');
+    if (name === 'contacts') renderCRM();
+    if (name === 'automation') renderAutoEmailsMonitoring();
+    if (name === 'campaigns') renderNurturingSegments();
+}
+
 // ═══════════════════════════════════════════════════════════════
 //  GLOBAL LANGUAGE FILTER
 // ═══════════════════════════════════════════════════════════════
@@ -1039,12 +1050,8 @@ function renderCRM() {
     tbody.innerHTML = page.map(p => {
         const initials = (p.name || p.email).slice(0, 2).toUpperCase();
         const lastDate = new Date(p.lastInteraction).toLocaleDateString('pt-PT');
-        // Acção Tomada - what has been done for this contact
-        const actionsTaken = getCRMActionsTaken(p);
-        // Sugestão - AI-driven next best action
-        const suggestion = getCRMSuggestion(p);
-        // Acção Planeada - next automated action
-        const plannedAction = getCRMPlannedAction(p);
+        const productsUsed = [...new Set(p.analyses.map(a => a.analysis_type === 'career_path' ? 'Career Path' : a.analysis_type === 'linkedin_roaster' ? 'LinkedIn Roaster' : 'CV Analyser'))].join(', ');
+        const productsBought = p.purchases.length > 0 ? [...new Set(p.purchases.map(a => a.analysis_type === 'career_path' ? 'Career Path' : a.analysis_type === 'linkedin_roaster' ? 'LinkedIn Roaster' : 'CV Analyser'))].join(', ') : '—';
         return `
         <tr>
             <td>
@@ -1057,19 +1064,20 @@ function renderCRM() {
                 </div>
             </td>
             <td style="font-size:12px;">${p.professional_area || '—'}</td>
-            <td>${getStageBadge(p.stage)}</td>
-            <td style="font-size:11px;">${actionsTaken}</td>
-            <td style="font-size:11px;">${suggestion}</td>
-            <td style="font-size:11px;">${plannedAction}</td>
+            <td style="font-size:12px;">${p.seniority || '—'}</td>
+            <td style="font-size:12px;">${productsUsed}</td>
+            <td style="font-size:12px;">${productsBought}</td>
             <td style="font-size:12px;font-weight:600;color:var(--gold);">${p.totalSpent > 0 ? p.totalSpent.toFixed(2) + '€' : '—'}</td>
             <td style="font-size:12px;color:var(--text-muted);">${lastDate}</td>
+            <td>${getStageBadge(p.stage)}</td>
             <td>
                 <div style="display:flex;gap:4px;">
                     <button class="btn-icon" title="Ver Perfil" onclick="showUserProfile('${p.email}')"><i class="fas fa-eye"></i></button>
                     <button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${p.email}','${(p.name||'').replace(/'/g,"\\\'")}')">
 <i class="fas fa-envelope"></i></button>
                 </div>
-            </td>       </tr>`;
+            </td>
+        </tr>`;
     }).join('');
 
     renderPagination('crmPagination', crmPage, totalPages, (p) => { crmPage = p; renderCRM(); });
