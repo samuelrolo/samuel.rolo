@@ -88,20 +88,34 @@
 
     function injectForCVAnalyser() {
         // CV Analyser is a React build - look for action buttons in results
+        // The results page has buttons like:
+        //   PT: "Partilhar Resultado Profissional", "Descarregar Imagem de Certificação", "← Voltar"
+        //   EN: "Share Your Professional Result", "Download Certification Image", "Back"
         var buttons = document.querySelectorAll('button');
+        var actionKeywords = [
+            'Partilhar', 'Descarregar', 'Certificação', 'Resultado',
+            'Share', 'Download', 'Certification', 'Result',
+            'Enviar', 'PDF', 'E-mail', 'Send', 'Report', 'Relatório'
+        ];
         for (var i = 0; i < buttons.length; i++) {
             var text = (buttons[i].textContent || '').trim();
-            if ((text.indexOf('Enviar') !== -1 || text.indexOf('Download') !== -1 || text.indexOf('PDF') !== -1 || text.indexOf('E-mail') !== -1 || text.indexOf('Send') !== -1) && text.length < 50) {
-                var parent = buttons[i].parentElement;
-                if (parent && parent.textContent.length > 50) {
+            if (text.length > 80 || text.length < 3) continue;
+            // Skip navigation buttons
+            if (text === 'Voltar' || text === 'Back' || text === '← Voltar') continue;
+            for (var k = 0; k < actionKeywords.length; k++) {
+                if (text.indexOf(actionKeywords[k]) !== -1) {
                     injectButton(buttons[i], 'cv_analyser');
                     return;
                 }
             }
         }
-        // Fallback: look for score display
+        // Fallback: look for score display (results page detected by content)
         var allText = document.body.innerText || '';
-        if (allText.match(/\d{1,3}\s*\/\s*100/) || allText.indexOf('Score ATS') !== -1 || allText.indexOf('ATS Score') !== -1) {
+        var isResultsPage = allText.match(/\d{1,3}\s*\/\s*100/) || allText.indexOf('Score ATS') !== -1 || allText.indexOf('ATS Score') !== -1;
+        // Also check URL for /results path (React SPA routing)
+        if (!isResultsPage && window.location.pathname.indexOf('/results') !== -1) isResultsPage = true;
+        if (isResultsPage) {
+            // Try to find any action button area in the results
             var scoreElements = document.querySelectorAll('h1, h2, h3, [class*="score"], [class*="Score"]');
             for (var j = 0; j < scoreElements.length; j++) {
                 var t = (scoreElements[j].textContent || '').trim();
@@ -116,16 +130,45 @@
                     }
                 }
             }
+            // Last resort: inject after the last button on the page that is NOT a nav button
+            var allBtns = document.querySelectorAll('#root button');
+            for (var m = allBtns.length - 1; m >= 0; m--) {
+                var btnText = (allBtns[m].textContent || '').trim();
+                if (btnText !== 'Voltar' && btnText !== 'Back' && btnText !== '← Voltar' && btnText.length > 2 && btnText.length < 80) {
+                    injectButton(allBtns[m], 'cv_analyser');
+                    return;
+                }
+            }
         }
     }
 
     function injectForCareerPath() {
         var buttons = document.querySelectorAll('button');
+        var actionKeywords = [
+            'Partilhar', 'Descarregar', 'Certificação', 'Resultado',
+            'Share', 'Download', 'Certification', 'Result',
+            'Enviar', 'PDF', 'E-mail', 'Send', 'Report', 'Relatório'
+        ];
         for (var i = 0; i < buttons.length; i++) {
             var text = (buttons[i].textContent || '').trim();
-            if ((text.indexOf('Enviar') !== -1 || text.indexOf('Download') !== -1 || text.indexOf('PDF') !== -1 || text.indexOf('Send') !== -1) && text.length < 50) {
-                injectButton(buttons[i], 'career_path');
-                return;
+            if (text.length > 80 || text.length < 3) continue;
+            if (text === 'Voltar' || text === 'Back' || text === '← Voltar') continue;
+            for (var k = 0; k < actionKeywords.length; k++) {
+                if (text.indexOf(actionKeywords[k]) !== -1) {
+                    injectButton(buttons[i], 'career_path');
+                    return;
+                }
+            }
+        }
+        // Fallback: check if we're on results page by URL
+        if (window.location.pathname.indexOf('/results') !== -1) {
+            var allBtns = document.querySelectorAll('#root button');
+            for (var m = allBtns.length - 1; m >= 0; m--) {
+                var btnText = (allBtns[m].textContent || '').trim();
+                if (btnText !== 'Voltar' && btnText !== 'Back' && btnText !== '← Voltar' && btnText.length > 2 && btnText.length < 80) {
+                    injectButton(allBtns[m], 'career_path');
+                    return;
+                }
             }
         }
     }
