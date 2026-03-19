@@ -398,22 +398,16 @@ export default function CareerPathHomeEN() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Promo Banner */}
-      <a
-        href="/en/cv-analyser"
-        className="block bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30 hover:from-[#222] hover:to-[#333] transition-all cursor-pointer"
-      >
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3">
-          <FileText className="w-4 h-4 text-[#C9A961] shrink-0" />
+      {/* Bundle Banner — Main offer */}
+      <div className="bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30">
+        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3 flex-wrap">
+          <span className="text-[10px] bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] text-[#1a1a2e] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase shrink-0">Most popular</span>
           <span className="text-sm text-white">
-            <strong className="text-[#C9A961]">FREE</strong> — Analyse your CV in 30 seconds with AI
+            <strong className="text-[#C9A961]">Bundle</strong> — CV Analyser + Career Path for <strong className="text-white">$24.99</strong> <span className="text-white/40 line-through text-xs">$27.98</span>
           </span>
-          <span className="text-xs bg-[#C9A961] text-white px-2 py-0.5 rounded-full font-semibold shrink-0">
-            Free Analysis
-          </span>
-          <span className="text-[#C9A961] text-sm hidden sm:inline">→</span>
+          <a href="/en/cv-analyser#pricing" className="text-xs bg-[#C9A961] hover:bg-[#B8943D] text-white px-3 py-1 rounded-full font-semibold shrink-0 transition-all">Get Bundle</a>
         </div>
-      </a>
+      </div>
 
       {/* Header */}
       <header className="border-b border-foreground/10 px-6 py-4">
