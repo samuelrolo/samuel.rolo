@@ -284,9 +284,9 @@ const testimonials = [
 const pricingPlans = [
   {
     name: "Essential",
-    price: "5.99",
+    price: "7.99",
     analyses: 1,
-    perUnit: "5.99",
+    perUnit: "7.99",
     popular: false,
     badge: null,
     features: ["Full analysis unlocked", "Normal curve positioning", "Detailed salary estimate", "LinkedIn Certification — share your result", "PDF report via email"],
@@ -294,18 +294,18 @@ const pricingPlans = [
 
   {
     name: "Professional",
-    price: "14.99",
+    price: "19.99",
     analyses: 3,
-    perUnit: "5.00",
+    perUnit: "6.66",
     popular: false,
     badge: null,
     features: ["3 full analyses", "Reusable code for future analyses", "LinkedIn Certification — share your result", "Ideal for testing CV versions", "Priority email support"],
   },
   {
     name: "Premium",
-    price: "24.99",
+    price: "29.99",
     analyses: 5,
-    perUnit: "5.00",
+    perUnit: "6.00",
     popular: false,
     badge: null,
     features: ["5 full analyses", "Reusable code for future analyses", "LinkedIn Certification — share your result", "Best price per analysis", "Share with friends/colleagues"],
@@ -325,7 +325,7 @@ const comparisonFeatures = [
   { feature: "Shareable LinkedIn Certification", us: true, competitor1: false, competitor2: false },
   { feature: "CV vs LinkedIn cross-analysis", us: true, competitor1: false, competitor2: false },
 
-  { feature: "Price", usText: "From $5.99", comp1Text: "$19.99/mo", comp2Text: "$9.99" },
+  { feature: "Price", usText: "From $7.99", comp1Text: "$19.99/mo", comp2Text: "$9.99" },
 ];
 
 export default function HomeEN() {
@@ -991,7 +991,7 @@ export default function HomeEN() {
           <span className="text-sm text-white">
             <strong className="text-[#C9A961]">NEW</strong> — Discover your personalised AI Career Path
           </span>
-          <span className="text-xs bg-[#C9A961] text-white px-2 py-0.5 rounded-full font-semibold shrink-0">From $10</span>
+          <span className="text-xs bg-[#C9A961] text-white px-2 py-0.5 rounded-full font-semibold shrink-0">From $19.99</span>
           <span className="text-[#C9A961] text-sm hidden sm:inline">→</span>
         </div>
       </a>
@@ -1697,7 +1697,7 @@ export default function HomeEN() {
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center"><Award className="w-6 h-6 text-[#C9A961]" /></div>
               <div className="text-left">
                 <h2 className="text-xl font-bold text-foreground">Full Analysis Packages</h2>
-                <p className="text-sm text-muted-foreground">From $5.99 per analysis</p>
+                <p className="text-sm text-muted-foreground">From $7.99 per analysis</p>
               </div>
             </div>
             {pricingOpen ? <ChevronUp className="w-6 h-6 text-muted-foreground" /> : <ChevronDown className="w-6 h-6 text-muted-foreground" />}
@@ -1760,7 +1760,7 @@ export default function HomeEN() {
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center"><Shield className="w-6 h-6 text-[#C9A961]" /></div>
               <h3 className="text-lg font-semibold text-foreground">Fair Price, No Subscription</h3>
-              <p className="text-sm text-muted-foreground">Pay only when you need it. No monthly fees, no commitments. From $5.99 per full analysis.</p>
+              <p className="text-sm text-muted-foreground">Pay only when you need it. No monthly fees, no commitments. From $7.99 per full analysis.</p>
             </div>
           </div>
         </div>

@@ -62,7 +62,7 @@ const testimonials = [
 const pricingPlans = [
   {
     name: "Career Path",
-    price: "12.50",
+    price: "19.99",
     popular: true,
     badge: null,
     description: "Full career analysis with personalised roadmap",
@@ -88,7 +88,7 @@ const comparisonFeatures = [
   { feature: "Instant results (< 1 min)", us: true, competitor1: false, competitor2: true, competitor3: false },
   { feature: "Localised for your market", us: true, competitor1: false, competitor2: false, competitor3: false },
   { feature: "No monthly subscription", us: true, competitor1: false, competitor2: true, competitor3: false },
-  { feature: "Price", usText: "$12.50", comp1Text: "$56-299/session", comp2Text: "$0-20/mo", comp3Text: "$29.99/mo" },
+  { feature: "Price", usText: "$19.99", comp1Text: "$56-299/session", comp2Text: "$0-20/mo", comp3Text: "$29.99/mo" },
 ];
 
 export default function CareerPathHomeEN() {
@@ -146,8 +146,8 @@ export default function CareerPathHomeEN() {
   const [voucherError, setVoucherError] = useState<string | null>(null);
   const [voucherLoading, setVoucherLoading] = useState(false);
 
-  const PRICE = '12.50';
-  const PRICE_NUM = 12.50;
+  const PRICE = '19.99';
+  const PRICE_NUM = 19.99;
   const CUR = '$';
 
   const countryData = countries.find(c => c.country === selectedCountry);
@@ -493,7 +493,7 @@ export default function CareerPathHomeEN() {
                 <Compass className="w-5 h-5 mr-2" />
                 Generate my Career Path
               </Button>
-              <p className="text-xs text-muted-foreground">Full analysis for $12.50 · One-time payment · No subscription</p>
+              <p className="text-xs text-muted-foreground">Full analysis for $19.99 · One-time payment · No subscription</p>
             </div>
 
             {/* Trust Badges */}
@@ -557,7 +557,7 @@ export default function CareerPathHomeEN() {
             {/* Bottom CTA */}
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
               <h2 className="text-2xl font-bold text-foreground">Ready to chart your path?</h2>
-              <p className="text-muted-foreground">Full career roadmap for just $12.50. No commitment.</p>
+              <p className="text-muted-foreground">Full career roadmap for just $19.99. No commitment.</p>
               <Button
                 onClick={() => setStep('upload')}
                 className="px-8 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl transition-all"
@@ -715,7 +715,7 @@ export default function CareerPathHomeEN() {
                 {loading ? (
                   <span className="flex items-center gap-2"><Loader2 className="w-5 h-5 animate-spin" />{loadingMessages[loadingStep]}</span>
                 ) : (
-                  "Analyse Profile — $12.50"
+                  "Analyse Profile — $19.99"
                 )}
               </Button>
 

@@ -505,7 +505,7 @@ const testimonials = [
   {
     name: "Mariana Costa",
     role: "Gestora de Projetos",
-    text: "Valia muito mais do que os €3,99 que paguei. O posicionamento na curva normal foi um eye-opener — percebi que estava no percentil 40 e agora estou no 75.",
+    text: "Valia muito mais do que os €4,99 que paguei. O posicionamento na curva normal foi um eye-opener — percebi que estava no percentil 40 e agora estou no 75.",
     rating: 5,
   },
 ];
@@ -514,9 +514,9 @@ const testimonials = [
 const pricingPlans = [
   {
     name: "Essencial",
-    price: "3,99",
+    price: "4,99",
     analyses: 1,
-    perUnit: "3,99",
+    perUnit: "4,99",
     popular: false,
     badge: null,
     features: ["Análise completa desbloqueada", "Curva normal de posicionamento", "Estimativa salarial detalhada", "Certificação LinkedIn — partilha o teu resultado", "Opção de enviar PDF por email"],
@@ -524,18 +524,18 @@ const pricingPlans = [
 
   {
     name: "Profissional",
-    price: "7,99",
+    price: "11,99",
     analyses: 3,
-    perUnit: "2,66",
+    perUnit: "4,00",
     popular: false,
     badge: null,
     features: ["3 análises completas", "Código reutilizável para futuras análises", "Certificação LinkedIn — partilha o teu resultado", "Ideal para testar versões do CV", "Suporte prioritário por email"],
   },
   {
     name: "Premium",
-    price: "12,99",
+    price: "17,99",
     analyses: 5,
-    perUnit: "2,60",
+    perUnit: "3,60",
     popular: false,
     badge: null,
     features: ["5 análises completas", "Código reutilizável para futuras análises", "Certificação LinkedIn — partilha o teu resultado", "Melhor preço por análise", "Partilha com amigos/colegas"],
@@ -555,7 +555,7 @@ const comparisonFeatures = [
   { feature: "Certificação LinkedIn partilhável", us: true, competitor1: false, competitor2: false },
   { feature: "Cruzamento CV vs LinkedIn", us: true, competitor1: false, competitor2: false },
 
-  { feature: "Preço", usText: "Desde €3,99", comp1Text: "€19,99/mês", comp2Text: "€9,99" },
+  { feature: "Preço", usText: "Desde €4,99", comp1Text: "€19,99/mês", comp2Text: "€9,99" },
 ];
 
 export default function Home() {
@@ -1273,7 +1273,7 @@ export default function Home() {
             <strong className="text-[#C9A961]">NOVO</strong> — Descobre o teu Plano de Carreira personalizado com IA
           </span>
           <span className="text-xs bg-[#C9A961] text-white px-2 py-0.5 rounded-full font-semibold shrink-0">
-            Desde 10€
+            Desde 12€
           </span>
           <span className="text-[#C9A961] text-sm hidden sm:inline">→</span>
         </div>
@@ -2057,7 +2057,7 @@ export default function Home() {
               </div>
               <div className="text-left">
                 <h2 className="text-xl font-bold text-foreground">Pacotes de Análise Completa</h2>
-                <p className="text-sm text-muted-foreground">Desde €3,99 por análise</p>
+                <p className="text-sm text-muted-foreground">Desde €4,99 por análise</p>
               </div>
             </div>
             {pricingOpen ? (
@@ -2172,7 +2172,7 @@ export default function Home() {
               </div>
               <h3 className="text-lg font-semibold text-foreground">Preço Justo, Sem Subscrição</h3>
               <p className="text-sm text-muted-foreground">
-                Paga apenas quando precisas. Sem mensalidades, sem compromissos. A partir de €3,99 por análise completa.
+                Paga apenas quando precisas. Sem mensalidades, sem compromissos. A partir de €4,99 por análise completa.
               </p>
             </div>
           </div>

@@ -1,6 +1,6 @@
 // Career Path — Produto independente Share2Inspire
 // Upload de CV + URL LinkedIn → Pagamento → Análise de carreira com IA
-// Preço: €10,00
+// Preço: €12,00
 
 import { useState, useEffect } from "react";
 import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, XCircle, Minus, ChevronDown, ChevronUp, Linkedin, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, Globe, DollarSign, Zap, Lock, ArrowRight, Shield, Check } from "lucide-react";
@@ -63,7 +63,7 @@ const testimonials = [
 const pricingPlans = [
   {
     name: "Career Path",
-    price: "10,00",
+    price: "12,00",
     popular: true,
     badge: null,
     description: "Análise de carreira completa com roadmap personalizado",
@@ -89,7 +89,7 @@ const comparisonFeatures = [
   { feature: "Resultados imediatos (< 1 min)", us: true, competitor1: false, competitor2: true, competitor3: false },
   { feature: "Análise em Português", us: true, competitor1: false, competitor2: false, competitor3: false },
   { feature: "Sem subscrição mensal", us: true, competitor1: false, competitor2: true, competitor3: false },
-  { feature: "Preço", usText: "€10,00", comp1Text: "€56-299/sessão", comp2Text: "€0-20/mês", comp3Text: "€29,99/mês" },
+  { feature: "Preço", usText: "€12,00", comp1Text: "€56-299/sessão", comp2Text: "€0-20/mês", comp3Text: "€29,99/mês" },
 ];
 
 export default function CareerPathHome() {
@@ -150,8 +150,8 @@ export default function CareerPathHome() {
   const [voucherError, setVoucherError] = useState<string | null>(null);
   const [voucherLoading, setVoucherLoading] = useState(false);
 
-  const PRICE = '10,00';
-  const PRICE_NUM = 10.00;
+  const PRICE = '12,00';
+  const PRICE_NUM = 12.00;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -397,11 +397,11 @@ export default function CareerPathHome() {
     if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
 
     sessionStorage.setItem('cpPaymentEmail', email);
-    trackPaymentStart('career_path', 10.00);
+    trackPaymentStart('career_path', 12.00);
     window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}EUR`, '_blank');
     setPaymentStep('success');
-    trackPurchase('career_path', 10.00, `CP-PAYPAL-${Date.now()}`);
-    trackAffiliateConversion({ product: 'career_path', amount: 10.00, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
+    trackPurchase('career_path', 12.00, `CP-PAYPAL-${Date.now()}`);
+    trackAffiliateConversion({ product: 'career_path', amount: 12.00, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
   };
 
   const handleStripePayment = async () => {
@@ -635,7 +635,7 @@ export default function CareerPathHome() {
                 <Compass className="w-5 h-5 mr-2" />
                 Gerar o meu Career Path
               </Button>
-              <p className="text-xs text-muted-foreground">Análise completa por €10,00 · Pagamento único · Sem subscrição</p>
+              <p className="text-xs text-muted-foreground">Análise completa por €12,00 · Pagamento único · Sem subscrição</p>
             </div>
 
             {/* Trust Badges */}
@@ -699,7 +699,7 @@ export default function CareerPathHome() {
             {/* Bottom CTA */}
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
               <h2 className="text-2xl font-bold text-foreground">Pronto para traçar o teu caminho?</h2>
-              <p className="text-muted-foreground">Roadmap completo por apenas €10,00. Sem compromisso.</p>
+              <p className="text-muted-foreground">Roadmap completo por apenas €12,00. Sem compromisso.</p>
               <Button
                 onClick={() => setStep('upload')}
                 className="px-8 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl transition-all"
@@ -837,7 +837,7 @@ export default function CareerPathHome() {
                     {loadingMessages[loadingStep]}
                   </span>
                 ) : (
-                  "Analisar Perfil — €10,00"
+                  "Analisar Perfil — €12,00"
                 )}
               </Button>
 
