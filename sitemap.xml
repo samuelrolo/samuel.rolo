@@ -492,4 +492,13 @@
         <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/recrutamento-big4-guia-candidatos"/>
     </url>
 
+    <url>
+        <loc>https://www.share2inspire.pt/en/videos/big4-recruitment-guide</loc>
+        <lastmod>2026-03-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/videos/big4-recruitment-guide"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/en/videos/big4-recruitment-guide"/>
+    </url>
+
 </urlset>
