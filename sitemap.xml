@@ -107,7 +107,7 @@
   <!-- PAGINAS PRINCIPAIS (EN) -->
   
   <url>
-    <loc>https://www.share2inspire.pt/en/pages/home/</loc>
+    <loc>https://www.share2inspire.pt/en/pages/home</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/home/" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/" />
@@ -117,7 +117,7 @@
   </url>
   
   <url>
-    <loc>https://www.share2inspire.pt/en/pages/about/</loc>
+    <loc>https://www.share2inspire.pt/en/pages/about</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/about/" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/sobre" />
     <lastmod>2026-03-18</lastmod>
@@ -126,7 +126,7 @@
   </url>
   
   <url>
-    <loc>https://www.share2inspire.pt/en/pages/services/</loc>
+    <loc>https://www.share2inspire.pt/en/pages/services</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/services/" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/servicos" />
     <lastmod>2026-03-18</lastmod>
@@ -145,7 +145,7 @@
   </url>
   
   <url>
-    <loc>https://www.share2inspire.pt/en/pages/contact/</loc>
+    <loc>https://www.share2inspire.pt/en/pages/contact</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/contact/" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/contactos" />
     <lastmod>2026-03-18</lastmod>
@@ -184,7 +184,7 @@
   </url>
   
   <url>
-    <loc>https://www.share2inspire.pt/en/pages/privacy-policy/</loc>
+    <loc>https://www.share2inspire.pt/en/pages/privacy-policy</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/privacy-policy/" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/politica-privacidade" />
     <lastmod>2026-03-18</lastmod>
@@ -195,7 +195,7 @@
   <!-- ESTUDOS / RESEARCH -->
   
   <url>
-    <loc>https://www.share2inspire.pt/estudos/</loc>
+    <loc>https://www.share2inspire.pt/estudos</loc>
     <lastmod>2026-03-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
