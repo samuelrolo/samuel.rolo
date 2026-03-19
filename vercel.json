@@ -39,6 +39,16 @@
       "source": "/cv-builder/:path*",
       "destination": "https://cv-builder.share2inspire.pt/:path*",
       "permanent": true
+    },
+    {
+      "source": "/artigos/como-negociar-salario-portugal",
+      "destination": "/blog/artigos/como-negociar-salario-portugal",
+      "permanent": true
+    },
+    {
+      "source": "/en/artigos/how-to-negotiate-salary",
+      "destination": "/en/blog/artigos/how-to-negotiate-salary",
+      "permanent": true
     }
   ],
   "headers": [
@@ -81,7 +91,6 @@
       "source": "/en/career-path/llms.txt",
       "destination": "/en/career-path/llms.txt"
     },
-
     {
       "source": "/en/pages/about",
       "destination": "/en/pages/about/index.html"
