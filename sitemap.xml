@@ -474,4 +474,22 @@
         <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/como-negociar-salario-portugal"/>
     </url>
 
+    <!-- Big4 Recruitment Articles -->
+    <url>
+        <loc>https://www.share2inspire.pt/blog/artigos/recrutamento-big4-guia-candidatos</loc>
+        <lastmod>2026-03-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/recrutamento-big4-guia-candidatos"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/big4-recruitment-guide-candidates"/>
+    </url>
+    <url>
+        <loc>https://www.share2inspire.pt/en/blog/artigos/big4-recruitment-guide-candidates</loc>
+        <lastmod>2026-03-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/big4-recruitment-guide-candidates"/>
+        <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/recrutamento-big4-guia-candidatos"/>
+    </url>
+
 </urlset>
