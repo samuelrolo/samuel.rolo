@@ -455,4 +455,23 @@
     <priority>0.3</priority>
   </url>
 
+
+    <!-- Salary Negotiation Articles -->
+    <url>
+        <loc>https://www.share2inspire.pt/blog/artigos/como-negociar-salario-portugal</loc>
+        <lastmod>2026-03-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/como-negociar-salario-portugal"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/how-to-negotiate-salary"/>
+    </url>
+    <url>
+        <loc>https://www.share2inspire.pt/en/blog/artigos/how-to-negotiate-salary</loc>
+        <lastmod>2026-03-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/how-to-negotiate-salary"/>
+        <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/como-negociar-salario-portugal"/>
+    </url>
+
 </urlset>
