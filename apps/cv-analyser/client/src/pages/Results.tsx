@@ -2062,11 +2062,11 @@ export default function Results() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border">
                         <div className="p-3">
                           <p className="text-[10px] font-semibold text-red-500 mb-1">{isEN ? '❌ BEFORE' : '❌ ANTES'}</p>
-                          <p className="text-sm text-muted-foreground">{action.before}</p>
+                          <p className="text-sm text-muted-foreground">{typeof action.before === 'object' ? JSON.stringify(action.before) : String(action.before || '')}</p>
                         </div>
                         <div className="p-3">
                           <p className="text-[10px] font-semibold text-green-600 mb-1">{isEN ? '✅ AFTER' : '✅ DEPOIS'}</p>
-                          <p className="text-sm text-muted-foreground">{action.after}</p>
+                          <p className="text-sm text-muted-foreground">{typeof action.after === 'object' ? JSON.stringify(action.after) : String(action.after || '')}</p>
                         </div>
                       </div>
                     </div>
