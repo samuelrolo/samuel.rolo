@@ -1004,7 +1004,7 @@ export default function Results() {
     try {
       const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      const cpAmount = isEN ? '12.50' : '10.00';
+      const cpAmount = isEN ? '19.99' : '12.00';
       const cpCurrencyCode = isEN ? 'usd' : 'eur';
 
       if (careerPathPaymentMethod === 'stripe') {
