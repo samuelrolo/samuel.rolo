@@ -1,6 +1,6 @@
 // Bundle — CV Analyser + Career Path | Share2Inspire
 // Upload CV + LinkedIn → Pagamento → Ambos os motores correm → Resultados
-// Preço PT: €16,99
+// Preço PT: €14,99
 import { useState, useEffect } from "react";
 import { Upload, FileText, Loader2, Compass, Target, TrendingUp, CheckCircle2, Linkedin, CreditCard, AlertCircle, Ticket, Briefcase, Sparkles, Shield, Check, ArrowRight, Lock, BarChart3, Zap, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,9 +20,9 @@ const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
-const PRICE = '16,99';
-const PRICE_NUM = 16.99;
-const ORIGINAL_PRICE = '19,98';
+const PRICE = '14,99';
+const PRICE_NUM = 14.99;
+const ORIGINAL_PRICE = '16,99';
 
 async function extractTextFromPDF(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
@@ -527,7 +527,7 @@ export default function BundleHome() {
             <div className="flex items-center justify-center gap-4">
               <span className="text-slate-400 text-xl line-through">€{ORIGINAL_PRICE}</span>
               <span className="text-4xl font-bold text-slate-900">€{PRICE}</span>
-              <span className="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full">Poupa 15%</span>
+              <span className="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full">Poupa 11%</span>
             </div>
 
             {/* What's included */}

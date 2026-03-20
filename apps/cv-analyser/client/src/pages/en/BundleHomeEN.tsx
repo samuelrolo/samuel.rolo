@@ -22,7 +22,7 @@ const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
 const PRICE = '24.99';
 const PRICE_NUM = 24.99;
-const ORIGINAL_PRICE = '31.98';
+const ORIGINAL_PRICE = '27.98';
 
 async function extractTextFromPDF(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
@@ -325,7 +325,7 @@ export default function BundleHomeEN() {
             <div className="flex items-center justify-center gap-4">
               <span className="text-slate-400 text-xl line-through">${ORIGINAL_PRICE}</span>
               <span className="text-4xl font-bold text-slate-900">${PRICE}</span>
-              <span className="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full">Save 22%</span>
+              <span className="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full">Save 11%</span>
             </div>
             <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mt-8">
               <div className="bg-white border border-slate-200 rounded-2xl p-6 text-left space-y-3">
