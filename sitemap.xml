@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   
   <!-- PAGINAS PRINCIPAIS (PT) -->
   
@@ -380,6 +381,14 @@
     <loc>https://www.share2inspire.pt/videos/como-criar-cv-ats-friendly</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/videos/como-criar-cv-ats-friendly" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/videos/como-criar-cv-ats-friendly" />
+    <video:video>
+      <video:thumbnail_loc>https://img.youtube.com/vi/6coJJF79Cy0/maxresdefault.jpg</video:thumbnail_loc>
+      <video:title>Como Criar um CV Compatível com ATS em 2026 | Guia Passo a Passo</video:title>
+      <video:description>Candidatas-te a empregos e nunca tens resposta? O problema pode ser o ATS. Aprende a criar um CV que passa nos filtros automáticos e chega às mãos do recrutador.</video:description>
+      <video:player_loc>https://www.youtube.com/embed/6coJJF79Cy0</video:player_loc>
+      <video:duration>750</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
     <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -390,6 +399,14 @@
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/videos/como-vencer-filtro-ats" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/videos/como-vencer-filtro-ats" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/videos/como-vencer-filtro-ats" />
+    <video:video>
+      <video:thumbnail_loc>https://img.youtube.com/vi/LhLmgE1noC8/maxresdefault.jpg</video:thumbnail_loc>
+      <video:title>Como Vencer o Filtro ATS: Guia Definitivo para o Teu CV Chegar ao Recrutador</video:title>
+      <video:description>75% dos CVs são rejeitados por software antes de um humano os ver. Aprende a otimizar CV, LinkedIn e carta de apresentação para passar nos filtros ATS.</video:description>
+      <video:player_loc>https://www.youtube.com/embed/LhLmgE1noC8</video:player_loc>
+      <video:duration>329</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
     <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -401,6 +418,14 @@
     <loc>https://www.share2inspire.pt/en/videos/como-criar-cv-ats-friendly</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/videos/como-criar-cv-ats-friendly" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/videos/como-criar-cv-ats-friendly" />
+    <video:video>
+      <video:thumbnail_loc>https://img.youtube.com/vi/6coJJF79Cy0/maxresdefault.jpg</video:thumbnail_loc>
+      <video:title>How to Create an ATS-Friendly CV in 2026 | Step by Step Guide</video:title>
+      <video:description>Applying for jobs and never hearing back? The problem might be the ATS. Learn how to create a CV that passes automatic filters and reaches the recruiter.</video:description>
+      <video:player_loc>https://www.youtube.com/embed/6coJJF79Cy0</video:player_loc>
+      <video:duration>750</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
     <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -411,6 +436,14 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/videos/como-vencer-filtro-ats" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/videos/como-vencer-filtro-ats" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/videos/como-vencer-filtro-ats" />
+    <video:video>
+      <video:thumbnail_loc>https://img.youtube.com/vi/LhLmgE1noC8/maxresdefault.jpg</video:thumbnail_loc>
+      <video:title>How to Beat the ATS Filter: The Ultimate Guide to Getting Your CV Seen by Recruiters</video:title>
+      <video:description>75% of CVs are rejected by software before a human sees them. Learn how to optimize your CV, LinkedIn and cover letter to beat the ATS filter.</video:description>
+      <video:player_loc>https://www.youtube.com/embed/LhLmgE1noC8</video:player_loc>
+      <video:duration>329</video:duration>
+      <video:family_friendly>yes</video:family_friendly>
+    </video:video>
     <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -494,6 +527,14 @@
 
     <url>
         <loc>https://www.share2inspire.pt/en/videos/big4-recruitment-guide</loc>
+        <video:video>
+          <video:thumbnail_loc>https://img.youtube.com/vi/teIBWJiSEFU/maxresdefault.jpg</video:thumbnail_loc>
+          <video:title>How to Land a Big 4 Job (Deloitte, PwC, EY, KPMG): The Ultimate Guide</video:title>
+          <video:description>The acceptance rate at Big 4 firms is only 2-6%. Watch the complete 5-phase playbook to land a job at Deloitte, PwC, EY or KPMG — from CV to partner interview.</video:description>
+          <video:player_loc>https://www.youtube.com/embed/teIBWJiSEFU</video:player_loc>
+          <video:duration>318</video:duration>
+          <video:family_friendly>yes</video:family_friendly>
+        </video:video>
         <lastmod>2026-03-20</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
