@@ -57,7 +57,7 @@
 
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
         /* ── Navigation (same as conhecimento) ── */
         .nav-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.04); }
@@ -70,7 +70,7 @@
         .nav-toggle span { display: block; width: 22px; height: 2px; background: #1a1a2e; margin: 5px 0; transition: 0.3s; }
         @media (max-width: 768px) {
             .nav-toggle { display: block; }
-            .nav-links { display: none; position: absolute; top: 70px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.06); }
+            .nav-links { display: none; position: absolute; top: 70px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.06);  width: 100%; box-sizing: border-box;}
             .nav-links.open { display: flex; }
         }
         .nav-item { position: relative; }
@@ -171,7 +171,7 @@
         .step-content p { font-size: 0.86rem; color: #555; line-height: 1.75; margin: 0; }
 
         /* ── Stats row ── */
-        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 2rem 0; }
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 1rem; margin: 2rem 0; }
         .stat-card { text-align: center; padding: 1.5rem 1rem; background: #1a1a2e; border-radius: 8px; }
         .stat-card .stat-val { font-size: 1.8rem; font-weight: 700; color: #C9A961; line-height: 1; margin-bottom: 0.4rem; }
         .stat-card .stat-desc { font-size: 0.7rem; color: rgba(255,255,255,0.5); line-height: 1.5; }
@@ -202,6 +202,25 @@
         /* ── Footer ── */
         .footer-bottom { background: #1a1a2e; padding: 24px 2rem; text-align: center; }
         .footer-bottom p { font-size: 0.65rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1.5px; }
+    
+        /* ── Mobile Responsive Fixes ── */
+        @media (max-width: 600px) {
+            .article-hero { padding: 100px 1.25rem 40px; }
+            .article-hero-inner { padding: 0; }
+            .article-body { padding: 40px 1.25rem 60px; }
+            .article-body h2 { font-size: 1.2rem; }
+            .article-body h3 { font-size: 1rem; }
+            .article-body p, .article-body li { font-size: 0.9rem; }
+            .related-section { padding: 40px 1.25rem; }
+            .related-grid { grid-template-columns: 1fr; }
+            .blog-container { padding: 2rem 1.25rem; }
+            .articles-grid { grid-template-columns: 1fr; }
+            .article-card { padding: 1.5rem; }
+            .footer-inner { flex-direction: column; gap: 1.5rem; }
+            .footer-col { min-width: unset; width: 100%; }
+            .nav-inner { padding: 0 1.25rem; }
+        }
+    
     </style>
 </head>
 

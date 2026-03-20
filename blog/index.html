@@ -40,7 +40,7 @@
     
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
         /* ── Navigation ── */
         .nav-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.04); }
@@ -53,7 +53,7 @@
         .nav-toggle span { display: block; width: 22px; height: 2px; background: #1a1a2e; margin: 5px 0; transition: 0.3s; }
         @media (max-width: 768px) {
             .nav-toggle { display: block; }
-            .nav-links { display: none; position: absolute; top: 70px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.04); }
+            .nav-links { display: none; position: absolute; top: 70px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.04);  width: 100%; box-sizing: border-box; width: 100%; box-sizing: border-box;}
             .nav-links.open { display: flex; }
         }
 
@@ -84,7 +84,7 @@
         .breadcrumb a:hover { text-decoration: underline; }
         .breadcrumb span { color: #999; margin: 0 0.4rem; }
 
-        .articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 2rem; }
 
         .article-card { background: #fff; border: 1px solid rgba(0,0,0,0.06); padding: 2rem; transition: all 0.4s ease; }
         .article-card:hover { border-color: #C9A961; box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
@@ -99,6 +99,25 @@
         .blog-footer { background: #1a1a2e; color: rgba(255,255,255,0.6); padding: 3rem 2rem; text-align: center; font-size: 0.8rem; }
         .blog-footer a { color: #C9A961; text-decoration: none; }
         .blog-footer a:hover { text-decoration: underline; }
+    
+        /* ── Mobile Responsive Fixes ── */
+        @media (max-width: 600px) {
+            .article-hero { padding: 100px 1.25rem 40px; }
+            .article-hero-inner { padding: 0; }
+            .article-body { padding: 40px 1.25rem 60px; }
+            .article-body h2 { font-size: 1.2rem; }
+            .article-body h3 { font-size: 1rem; }
+            .article-body p, .article-body li { font-size: 0.9rem; }
+            .related-section { padding: 40px 1.25rem; }
+            .related-grid { grid-template-columns: 1fr; }
+            .blog-container { padding: 2rem 1.25rem; }
+            .articles-grid { grid-template-columns: 1fr; }
+            .article-card { padding: 1.5rem; }
+            .footer-inner { flex-direction: column; gap: 1.5rem; }
+            .footer-col { min-width: unset; width: 100%; }
+            .nav-inner { padding: 0 1.25rem; }
+        }
+    
     </style>
     
     <!-- Schema Markup -->

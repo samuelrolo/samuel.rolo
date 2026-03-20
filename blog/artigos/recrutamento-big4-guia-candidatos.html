@@ -69,7 +69,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:'Poppins',sans-serif;background:#fff;color:#1a1a2e;-webkit-font-smoothing:antialiased}
+        body{font-family:'Poppins',sans-serif;background:#fff;color:#1a1a2e;-webkit-font-smoothing:antialiased; overflow-x: hidden;overflow-x:hidden}
         .nav-item{position:relative}
         .mega-dropdown .mega-menu{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #f0f0f0;box-shadow:0 12px 40px rgba(0,0,0,.08);padding:16px 20px;min-width:360px;z-index:1050}
         .nav-item.mega-dropdown:hover .mega-menu,.nav-item.mega-dropdown .mega-menu:hover{display:block}
@@ -140,7 +140,7 @@
         .stat-card .stat-val{font-size:1.5rem;font-weight:700;color:#C9A961;line-height:1;margin-bottom:.4rem}
         .stat-card .stat-label{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.4);margin-bottom:.3rem}
         .stat-card .stat-desc{font-size:.68rem;color:rgba(255,255,255,.5);line-height:1.4}
-        @media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}}
+        @media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}.firm-grid{grid-template-columns:1fr}}
         .firm-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
         .firm-card{border:1px solid rgba(0,0,0,.07);border-radius:8px;padding:1.2rem 1.4rem}
         .firm-card .firm-name{font-size:.78rem;font-weight:700;color:#1a1a2e;margin-bottom:.3rem}
@@ -188,12 +188,31 @@
         .nav-links a:hover,.nav-links a.active{color:#C9A961}
         .nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
         .nav-toggle span{display:block;width:22px;height:2px;background:#1a1a2e;transition:all .3s}
-        @media(max-width:991px){.nav-toggle{display:flex}.nav-links{display:none;position:absolute;top:70px;left:0;right:0;background:#fff;flex-direction:column;padding:2rem;gap:1.5rem;border-bottom:1px solid rgba(0,0,0,0.06)}.nav-links.open{display:flex}}
+        @media(max-width:991px){.nav-toggle{display:flex}.nav-links{display:none;position:absolute;top:70px;left:0;right:0;background:#fff;flex-direction:column;padding:2rem;gap:1.5rem;border-bottom:1px solid rgba(0,0,0,0.06) width: 100%; box-sizing: border-box;}.nav-links.open{display:flex}}
         .mega-menu{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #f0f0f0;box-shadow:0 12px 40px rgba(0,0,0,.08);padding:16px 20px;min-width:200px;z-index:1050}
         .mega-dropdown:hover .mega-menu,.mega-dropdown .mega-menu:hover{display:block}
         .mega-menu a{display:block;padding:4px 0;font-size:.8rem;color:#555;text-decoration:none;transition:color .2s}
         .mega-menu a:hover{color:#C9A961}
         @media(max-width:991px){.mega-menu{position:static;transform:none;box-shadow:none;border:none;padding:8px 12px;background:#fafafa}}
+    
+        /* ── Mobile Responsive Fixes ── */
+        @media (max-width: 600px) {
+            .article-hero { padding: 100px 1.25rem 40px; }
+            .article-hero-inner { padding: 0; }
+            .article-body { padding: 40px 1.25rem 60px; overflow-x: hidden; }
+            .article-body h2 { font-size: 1.2rem; }
+            .article-body h3 { font-size: 1rem; }
+            .article-body p, .article-body li { font-size: 0.9rem; }
+            .related-section { padding: 40px 1.25rem; }
+            .related-grid { grid-template-columns: 1fr; }
+            .blog-container { padding: 2rem 1.25rem; }
+            .articles-grid { grid-template-columns: 1fr; }
+            .article-card { padding: 1.5rem; }
+            .footer-inner { flex-direction: column; gap: 1.5rem; }
+            .footer-col { min-width: unset; width: 100%; }
+            .nav-inner { padding: 0 1.25rem; }
+        }
+    
     </style>
 </head>
 <body>

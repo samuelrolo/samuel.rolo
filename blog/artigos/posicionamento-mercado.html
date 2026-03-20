@@ -90,7 +90,7 @@
     </script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         .nav-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.04); }
         .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 70px; }
         .nav-logo img { height: 36px; }
@@ -101,7 +101,7 @@
         .nav-toggle span { display: block; width: 22px; height: 2px; background: #1a1a2e; margin: 5px 0; transition: 0.3s; }
         @media (max-width: 768px) {
             .nav-toggle { display: block; }
-            .nav-links { display: none; position: absolute; top: 70px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.04); }
+            .nav-links { display: none; position: absolute; top: 70px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.04);  width: 100%; box-sizing: border-box;}
             .nav-links.open { display: flex; }
         }
 
@@ -153,7 +153,7 @@
         .related-title { font-size: 1.4rem; font-weight: 300; color: #1a1a2e; margin-bottom: 0.5rem; }
         .related-title strong { font-weight: 600; }
         .related-divider { width: 40px; height: 2px; background: #C9A961; margin: 1rem 0 2rem; }
-        .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+        .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 1.5rem; }
         .related-card { background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; padding: 1.2rem; transition: box-shadow 0.3s; }
         .related-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .related-card .tag { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; margin-bottom: 0.5rem; }
@@ -168,6 +168,25 @@
         .footer-col p { font-size: 0.8rem; color: rgba(255,255,255,0.5); line-height: 1.7; }
         .footer-bottom { max-width: 1100px; margin: 3rem auto 0; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); }
         .footer-bottom p { font-size: 0.7rem; color: rgba(255,255,255,0.3); }
+    
+        /* ── Mobile Responsive Fixes ── */
+        @media (max-width: 600px) {
+            .article-hero { padding: 100px 1.25rem 40px; }
+            .article-hero-inner { padding: 0; }
+            .article-body { padding: 40px 1.25rem 60px; }
+            .article-body h2 { font-size: 1.2rem; }
+            .article-body h3 { font-size: 1rem; }
+            .article-body p, .article-body li { font-size: 0.9rem; }
+            .related-section { padding: 40px 1.25rem; }
+            .related-grid { grid-template-columns: 1fr; }
+            .blog-container { padding: 2rem 1.25rem; }
+            .articles-grid { grid-template-columns: 1fr; }
+            .article-card { padding: 1.5rem; }
+            .footer-inner { flex-direction: column; gap: 1.5rem; }
+            .footer-col { min-width: unset; width: 100%; }
+            .nav-inner { padding: 0 1.25rem; }
+        }
+    
     </style>
 </head>
 <body>
