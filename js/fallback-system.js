@@ -117,7 +117,7 @@ Enviado via formulário web Share2Inspire
 Data: ${new Date().toLocaleString('pt-PT')}
     `);
 
-    const mailtoLink = `mailto:samuel@share2inspire.pt?subject=${subject}&body=${body}`;
+    const mailtoLink = `mailto:geral@share2inspire.pt?subject=${subject}&body=${body}`;
 
     // Abrir cliente de email
     window.location.href = mailtoLink;
@@ -149,7 +149,7 @@ const PAYMENT_FALLBACK = {
                     amount: amount
                 },
                 contact: {
-                    email: "samuel@share2inspire.pt",
+                    email: "geral@share2inspire.pt",
                     phone: "",
                     whatsapp: ""
                 }

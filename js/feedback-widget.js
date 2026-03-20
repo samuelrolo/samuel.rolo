@@ -159,7 +159,7 @@
 
         const data = {
             name: "Visitante (Feedback)",
-            email: "feedback@share2inspire.pt", // Dummy email as it's anonymous feedback
+            email: "geral@share2inspire.pt", // Dummy email as it's anonymous feedback
             subject: `Feedback Website - ${ratingValue} Estrelas`,
             message: `Classificação: ${ratingValue}/5\n\nComentário:\n${text}`
         };
