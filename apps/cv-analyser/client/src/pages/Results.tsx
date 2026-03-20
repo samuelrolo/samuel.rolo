@@ -500,27 +500,49 @@ export default function Results() {
       sessionStorage.setItem('careerPathIncluded', 'true');
       const bundleLinkedin = sessionStorage.getItem('careerPathLinkedinUrl') || '';
       const bundleEmail = sessionStorage.getItem('paymentEmail') || '';
-      // Set state and trigger generation after a short delay to allow state to settle
       setCareerPathLinkedin(bundleLinkedin);
       setCareerPathEmail(bundleEmail);
       setCareerPathPaymentStep('generating');
       // Remove flag so it doesn't re-trigger on refresh
       sessionStorage.removeItem('careerPathPaid');
+      // DEFINITIVE FIX: Call the Career Path API directly here, reading all data
+      // from sessionStorage (not React state) to avoid race conditions.
+      // We use a self-invoking async function to call the API immediately.
+      (async () => {
+        console.log('[Bundle→CareerPath] Auto-generating Career Path...');
+        try {
+          const cvDataRaw = sessionStorage.getItem('cvAnalysis');
+          const cpResponse = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              mode: 'career_path',
+              cv_text: cvDataRaw || '',
+              linkedin_url: bundleLinkedin || undefined,
+              language: isEN ? 'en' : 'pt',
+              country: sessionStorage.getItem('analysisCountry') || (isEN ? '' : 'Portugal'),
+              region: sessionStorage.getItem('analysisRegion') || '',
+            })
+          });
+          const cpData = await cpResponse.json();
+          console.log('[Bundle→CareerPath] Response:', cpData.success, !!cpData.career_path);
+          if (cpData.success || cpData.career_path) {
+            setCareerPathData(cpData.career_path || cpData);
+            setCareerPathPaymentStep('done');
+          } else {
+            console.error('[Bundle→CareerPath] API error:', cpData.error);
+            setCareerPathError(cpData.error || 'Erro ao gerar Career Path');
+          }
+        } catch (cpErr: any) {
+          console.error('[Bundle→CareerPath] Fetch error:', cpErr);
+          setCareerPathError(cpErr.message || 'Erro ao gerar Career Path');
+        }
+      })();
     }
   }, [setLocation]);
-
-  // Auto-generate Career Path when careerPathPaymentStep becomes 'generating' from bundle
-  // Note: generateCareerPath is defined below but hoisted via closure
-  const autoGenerateRef = useRef<boolean>(false);
-  useEffect(() => {
-    if (careerPathPaymentStep === 'generating' && !careerPathData && !careerPathLoading && !autoGenerateRef.current) {
-      autoGenerateRef.current = true;
-      // Small delay to ensure state is settled
-      setTimeout(() => {
-        generateCareerPath().finally(() => { autoGenerateRef.current = false; });
-      }, 300);
-    }
-  }, [careerPathPaymentStep, careerPathData, careerPathLoading]);
   // Upsell popup removed — only show payment modal when user clicks "Unlock Full Analysis""
 
   const unlockFullReport = useCallback(() => {
@@ -1112,8 +1134,14 @@ export default function Results() {
 
   const generateCareerPath = async () => {
     setCareerPathLoading(true);
+    setCareerPathError(null);
     try {
       const cvData = sessionStorage.getItem('cvAnalysis');
+      // IMPORTANT: Read linkedin from sessionStorage first (reliable for Bundle flow),
+      // fallback to React state (for manual Career Path purchase flow)
+      const linkedinFromStorage = sessionStorage.getItem('careerPathLinkedinUrl') || '';
+      const linkedinUrl = linkedinFromStorage || careerPathLinkedin || '';
+      console.log('[CareerPath] Generating with linkedin:', linkedinUrl, 'country:', sessionStorage.getItem('analysisCountry'));
       const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
         method: 'POST',
         headers: {
@@ -1123,7 +1151,7 @@ export default function Results() {
         body: JSON.stringify({
           mode: 'career_path',
           cv_text: cvData || '',
-          linkedin_url: careerPathLinkedin || undefined,
+          linkedin_url: linkedinUrl || undefined,
           language: isEN ? 'en' : 'pt',
           country: sessionStorage.getItem('analysisCountry') || (isEN ? '' : 'Portugal'),
           region: sessionStorage.getItem('analysisRegion') || '',
@@ -1131,12 +1159,14 @@ export default function Results() {
       });
 
       const data = await response.json();
+      console.log('[CareerPath] Response:', data.success, !!data.career_path);
       if (!data.success && !data.career_path) throw new Error(data.error || (isEN ? 'Error generating Career Path' : 'Erro ao gerar Career Path'));
       
       setCareerPathData(data.career_path || data);
       setCareerPathPaymentStep('done');
       setShowCareerPathModal(false);
     } catch (err: any) {
+      console.error('[CareerPath] Error:', err);
       setCareerPathError(err.message || (isEN ? 'Error generating Career Path' : 'Erro ao gerar Career Path'));
     } finally {
       setCareerPathLoading(false);
@@ -2087,8 +2117,24 @@ export default function Results() {
 
 
 
+        {/* ═══ Career Path Loading (Bundle auto-generation) ═══ */}
+        {careerPathPaymentStep === 'generating' && !careerPathData && (
+          <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-8 text-center space-y-4">
+            <Loader2 className="w-10 h-10 animate-spin text-[#C9A961] mx-auto" />
+            <div>
+              <p className="text-lg font-semibold text-foreground">{isEN ? 'Generating your Career Path...' : 'A gerar o teu Career Path...'}</p>
+              <p className="text-sm text-muted-foreground mt-1">{isEN ? 'Analysing your profile and creating a personalised roadmap. This may take up to 30 seconds.' : 'A analisar o teu perfil e a criar um roadmap personalizado. Isto pode demorar até 30 segundos.'}</p>
+            </div>
+            {careerPathError && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-sm text-red-600">{careerPathError}</p>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* ═══ Career Path Cross-sell (produto independente) ═══ */}
-        {isPaid && (
+        {isPaid && !careerPathData && careerPathPaymentStep !== 'generating' && careerPathPaymentStep !== 'done' && (
           <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-6 sm:p-8 space-y-5">
             <div className="flex items-center gap-3">
               <GoldIcon>
