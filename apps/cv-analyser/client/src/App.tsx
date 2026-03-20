@@ -16,6 +16,8 @@ const CareerPathHome = lazy(() => import("./pages/CareerPathHome"));
 const CareerPathResults = lazy(() => import("./pages/CareerPathResults"));
 const HomeEN = lazy(() => import("./pages/en/HomeEN"));
 const CareerPathHomeEN = lazy(() => import("./pages/en/CareerPathHomeEN"));
+const BundleHome = lazy(() => import("./pages/BundleHome"));
+const BundleHomeEN = lazy(() => import("./pages/en/BundleHomeEN"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -56,6 +58,18 @@ function AppRouter() {
 
   // ─── English International Routes ───
 
+  // EN Bundle: /en/bundle
+  if (pathname.startsWith('/en/bundle')) {
+    return (
+      <Router base="/en/bundle">
+        <Switch>
+          <Route path={"/"} component={BundleHomeEN} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
   // EN Career Path: /en/career-path and /en/career-path/results
   if (pathname.startsWith('/en/career-path')) {
     return (
@@ -84,6 +98,18 @@ function AppRouter() {
   }
 
   // ─── Portuguese Routes (unchanged) ───
+
+  // Bundle PT: /bundle
+  if (pathname.startsWith('/bundle')) {
+    return (
+      <Router base="/bundle">
+        <Switch>
+          <Route path={"/"} component={BundleHome} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
 
   // Career Path product: /career-path and /career-path/results
   if (pathname.startsWith('/career-path')) {

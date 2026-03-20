@@ -405,7 +405,7 @@ export default function CareerPathHomeEN() {
           <span className="text-sm text-white">
             <strong className="text-[#C9A961]">Bundle</strong> — CV Analyser + Career Path for <strong className="text-white">$24.99</strong> <span className="text-white/40 line-through text-xs">$27.98</span>
           </span>
-          <a href="/en/cv-analyser#pricing" className="text-xs bg-[#C9A961] hover:bg-[#B8943D] text-white px-3 py-1 rounded-full font-semibold shrink-0 transition-all">Get Bundle</a>
+          <a href="/en/bundle" className="text-xs bg-[#C9A961] hover:bg-[#B8943D] text-white px-3 py-1 rounded-full font-semibold shrink-0 transition-all">Get Bundle</a>
         </div>
       </div>
 

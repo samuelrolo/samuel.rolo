@@ -1,0 +1,470 @@
+// Bundle EN — CV Analyser + Career Path | Share2Inspire
+// Upload CV + LinkedIn → Payment → Both engines run → Results
+// Price EN: $24.99
+import { useState, useEffect } from "react";
+import { Upload, FileText, Loader2, Compass, Target, TrendingUp, CheckCircle2, Linkedin, CreditCard, AlertCircle, Ticket, Briefcase, Sparkles, Shield, Check, ArrowRight, Lock, BarChart3, Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useLocation } from "wouter";
+import * as pdfjsLib from "pdfjs-dist";
+import mammoth from "mammoth";
+import { trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
+import { trackAffiliateConversion } from "@/lib/affiliate";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+
+const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
+const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+
+const PRICE = '24.99';
+const PRICE_NUM = 24.99;
+const ORIGINAL_PRICE = '31.98';
+
+async function extractTextFromPDF(file: File): Promise<string> {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let text = "";
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    text += content.items.map((item: any) => item.str).join(" ") + "\n";
+  }
+  return text.trim();
+}
+
+async function extractTextFromDOCX(file: File): Promise<string> {
+  const arrayBuffer = await file.arrayBuffer();
+  const result = await mammoth.extractRawText({ arrayBuffer });
+  return result.value.trim();
+}
+
+function transformGeminiResponse(analysis: any): any {
+  return {
+    overall_score: analysis.overall_score ?? analysis.ats_score ?? 0,
+    ats_score: analysis.ats_score ?? analysis.overall_score ?? 0,
+    candidate_profile: analysis.candidate_profile || {},
+    quadrant_scores: analysis.quadrant_scores || {},
+    keyword_analysis: analysis.keyword_analysis || {},
+    improvement_actions: analysis.improvement_actions || [],
+    priority_matrix: analysis.priority_matrix || {},
+    salary_estimate: analysis.salary_estimate || analysis.salary_detailed || {},
+    automation_risk: analysis.automation_risk || {},
+    recruiter_perception: analysis.recruiter_perception || {},
+    detailed_ats_analysis: analysis.detailed_ats_analysis || {},
+    cv_problems: analysis.cv_problems || [],
+    job_match: analysis.job_match || null,
+  };
+}
+
+export default function BundleHomeEN() {
+  useEffect(() => { document.title = "Bundle CV Analyser + Career Path | Share2Inspire"; }, []);
+  const [, setLocation] = useLocation();
+
+  const [file, setFile] = useState<File | null>(null);
+  const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [email, setEmail] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [step, setStep] = useState<'hero' | 'upload' | 'payment' | 'analyzing' | 'done'>('hero');
+
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'paypal'>('stripe');
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [paymentStep, setPaymentStep] = useState<'payment' | 'polling' | 'success'>('payment');
+
+  const [showVoucherModal, setShowVoucherModal] = useState(false);
+  const [voucherCode, setVoucherCode] = useState("");
+  const [voucherError, setVoucherError] = useState<string | null>(null);
+  const [voucherLoading, setVoucherLoading] = useState(false);
+
+  const [analysisProgress, setAnalysisProgress] = useState(0);
+  const [analysisMsg, setAnalysisMsg] = useState("");
+
+  const isValidLinkedinUrl = (url: string) => {
+    const trimmed = url.trim().toLowerCase();
+    return trimmed.includes('linkedin.com/in/') && trimmed.length > 25;
+  };
+
+  const loadingMessages = [
+    "Extracting data from your CV...",
+    "Analysing skills and experience...",
+    "Calculating ATS score...",
+    "Generating salary estimate...",
+    "Mapping your Career Path...",
+    "Creating personalised roadmap...",
+    "Preparing your results..."
+  ];
+
+  const handleProceedToPayment = () => {
+    if (!file) { setError('Upload your CV (PDF or DOCX)'); return; }
+    if (!isValidLinkedinUrl(linkedinUrl)) { setError('Enter a valid LinkedIn URL'); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError('Enter a valid email'); return; }
+    if (!acceptedTerms) { setError('Accept the Privacy Policy'); return; }
+    setError(null);
+    setPaymentStep('payment');
+    setPaymentError(null);
+    setShowPaymentModal(true);
+  };
+
+  const runBothEngines = async () => {
+    setStep('analyzing');
+    setAnalysisProgress(0);
+    setAnalysisMsg(loadingMessages[0]);
+    const msgInterval = setInterval(() => {
+      setAnalysisProgress(prev => {
+        const next = Math.min(prev + 1, loadingMessages.length - 1);
+        setAnalysisMsg(loadingMessages[next]);
+        return next;
+      });
+    }, 4000);
+    try {
+      let cvText = "";
+      if (file!.type === 'application/pdf') {
+        cvText = await extractTextFromPDF(file!);
+      } else {
+        cvText = await extractTextFromDOCX(file!);
+      }
+      const reader = new FileReader();
+      const base64Content = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve((reader.result as string).split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file!);
+      });
+      const useServerExtraction = cvText.length < 50;
+      setAnalysisMsg("Analysing your CV with AI...");
+      let cvResponseData: any = null;
+      const maxRetries = 2;
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000);
+        try {
+          const requestBody: any = { mode: 'cv_extraction' };
+          if (useServerExtraction) {
+            requestBody.file = base64Content;
+            requestBody.filename = file!.name;
+          } else {
+            requestBody.cv_text = cvText.substring(0, 8000);
+          }
+          const response = await fetch(SUPABASE_EDGE_URL, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody),
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+          if (response.ok) {
+            cvResponseData = await response.json();
+            if (cvResponseData.success) break;
+          }
+          if (attempt < maxRetries) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+        } catch (fetchError: any) {
+          clearTimeout(timeoutId);
+          if (attempt < maxRetries && fetchError.name !== 'AbortError') await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+          else throw fetchError;
+        }
+      }
+      if (!cvResponseData?.success) throw new Error('Error analysing CV. Please try again.');
+      const cvAnalysisSource = cvResponseData.analysis || cvResponseData;
+      const cvAnalysisResult = transformGeminiResponse(cvAnalysisSource);
+      sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResult));
+      sessionStorage.setItem('cvFile', base64Content);
+      sessionStorage.setItem('cvFilename', file!.name);
+      sessionStorage.setItem('analysisLang', 'en');
+      sessionStorage.setItem('isPaid', 'true');
+      sessionStorage.setItem('paymentEmail', email.trim().toLowerCase());
+      window.currentReportData = cvAnalysisSource;
+      setAnalysisMsg("Generating your Career Path...");
+      sessionStorage.setItem('careerPathCvAnalysis', JSON.stringify(cvAnalysisSource));
+      sessionStorage.setItem('careerPathCvText', (cvText || '').substring(0, 8000));
+      sessionStorage.setItem('careerPathCvFile', base64Content);
+      sessionStorage.setItem('careerPathCvFilename', file!.name);
+      sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
+      sessionStorage.setItem('careerPathPaid', 'true');
+      trackPurchase('bundle_cv_career', PRICE_NUM, `BUNDLE-${Date.now()}`);
+      trackAffiliateConversion({ product: 'bundle_cv_career', amount: PRICE_NUM, currency: 'USD', payment_method: 'stripe', customer_email: email, transaction_id: `BUNDLE-${Date.now()}` });
+      clearInterval(msgInterval);
+      setAnalysisMsg("All done! Redirecting...");
+      setStep('done');
+      setTimeout(() => { window.location.href = '/en/cv-analyser/results'; }, 1500);
+    } catch (err: any) {
+      clearInterval(msgInterval);
+      setError(err.message || 'Error during analysis. Please try again.');
+      setStep('upload');
+    }
+  };
+
+  const handleStripePayment = async () => {
+    if (!email) { setPaymentError('Enter your email'); return; }
+    setPaymentLoading(true);
+    setPaymentError(null);
+    try {
+      const orderId = `BUNDLE-EN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email, name: email.split('@')[0], amount: PRICE_NUM, currency: 'usd',
+          description: 'Bundle CV Analyser + Career Path — Share2Inspire', orderId,
+          success_url: `${window.location.origin}/en/bundle?paid=true`,
+          cancel_url: `${window.location.origin}/en/bundle`,
+        }),
+      });
+      const data = await response.json();
+      if (data.url) {
+        sessionStorage.setItem('bundlePendingOrderId', orderId);
+        sessionStorage.setItem('bundleEmail', email);
+        window.location.href = data.url;
+      } else { throw new Error(data.error || 'Error creating payment session'); }
+    } catch (err: any) {
+      setPaymentError(err.message || 'Error processing payment');
+    } finally { setPaymentLoading(false); }
+  };
+
+  const handlePayPalPayment = async () => {
+    if (!email) { setPaymentError('Enter your email'); return; }
+    trackPaymentStart('bundle_cv_career', PRICE_NUM);
+    window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}USD`, '_blank');
+    setPaymentStep('success');
+    trackPurchase('bundle_cv_career', PRICE_NUM, `BUNDLE-PAYPAL-${Date.now()}`);
+    trackAffiliateConversion({ product: 'bundle_cv_career', amount: PRICE_NUM, currency: 'USD', payment_method: 'paypal', customer_email: email, transaction_id: `BUNDLE-PAYPAL-${Date.now()}` });
+  };
+
+  const handleVoucher = async () => {
+    if (!voucherCode.trim()) { setVoucherError('Enter the voucher code'); return; }
+    setVoucherLoading(true);
+    setVoucherError(null);
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${voucherCode.trim().toUpperCase()}&is_active=eq.true`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+      });
+      const vouchers = await res.json();
+      if (!vouchers || vouchers.length === 0) { setVoucherError('Invalid or already used code.'); setVoucherLoading(false); return; }
+      const v = vouchers[0];
+      if (v.used_analyses >= v.total_analyses) { setVoucherError('This voucher has been fully used.'); setVoucherLoading(false); return; }
+      setShowVoucherModal(false);
+      if (v.email) sessionStorage.setItem('paymentEmail', v.email);
+      runBothEngines();
+    } catch { setVoucherError('Error verifying voucher. Try again.'); }
+    finally { setVoucherLoading(false); }
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('paid') === 'true') {
+      const savedEmail = sessionStorage.getItem('bundleEmail');
+      if (savedEmail) setEmail(savedEmail);
+      window.history.replaceState({}, '', '/en/bundle');
+      runBothEngines();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (paymentStep === 'success' && step !== 'analyzing' && step !== 'done') {
+      const timer = setTimeout(() => { setShowPaymentModal(false); runBothEngines(); }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [paymentStep]);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+          <a href="/en/home" className="flex items-center gap-2">
+            <img src="https://www.share2inspire.pt/images/logo.webp" alt="Share2Inspire" className="h-8" />
+          </a>
+          <nav className="hidden sm:flex items-center gap-6 text-sm text-slate-600">
+            <a href="/en/cv-analyser" className="hover:text-slate-900 transition-colors">CV Analyser</a>
+            <a href="/en/career-path" className="hover:text-slate-900 transition-colors">Career Path</a>
+            <a href="/en/servicos" className="hover:text-slate-900 transition-colors">Services</a>
+          </nav>
+        </div>
+      </header>
+
+      {step === 'hero' && (
+        <div className="max-w-4xl mx-auto px-6 py-12 md:py-20">
+          <div className="text-center space-y-6">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#C9A961]/10 to-[#C9A961]/5 text-[#C9A961] text-xs font-bold px-4 py-2 rounded-full border border-[#C9A961]/20 uppercase tracking-wider">
+              <Sparkles className="w-4 h-4" /> Most popular bundle
+            </div>
+            <h1 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight">
+              CV Analyser <span className="text-[#C9A961]">+</span> Career Path
+            </h1>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Complete CV diagnosis and personalised career roadmap. Everything in one step, with a single payment.
+            </p>
+            <div className="flex items-center justify-center gap-4">
+              <span className="text-slate-400 text-xl line-through">${ORIGINAL_PRICE}</span>
+              <span className="text-4xl font-bold text-slate-900">${PRICE}</span>
+              <span className="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full">Save 22%</span>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mt-8">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 text-left space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center"><BarChart3 className="w-5 h-5 text-blue-600" /></div>
+                  <h3 className="font-bold text-slate-900">CV Analyser</h3>
+                </div>
+                <ul className="space-y-2 text-sm text-slate-600">
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Full ATS analysis</li>
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Positioning score</li>
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Detailed salary estimate</li>
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Improvement suggestions</li>
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> LinkedIn certification</li>
+                </ul>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 text-left space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center"><Compass className="w-5 h-5 text-[#C9A961]" /></div>
+                  <h3 className="font-bold text-slate-900">Career Path</h3>
+                </div>
+                <ul className="space-y-2 text-sm text-slate-600">
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> 5-year career roadmap</li>
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Recommended next roles</li>
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Suggested training</li>
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Networking strategy</li>
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Skills gap analysis</li>
+                </ul>
+              </div>
+            </div>
+            <Button onClick={() => setStep('upload')} className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all mt-6">
+              Get started <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+            <p className="text-xs text-slate-400">One-time payment · No subscription · Instant results</p>
+          </div>
+        </div>
+      )}
+
+      {step === 'upload' && (
+        <div className="max-w-lg mx-auto px-6 py-10">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-slate-900">Enter your details</h2>
+            <p className="text-sm text-slate-500 mt-1">CV + LinkedIn — once for both engines</p>
+          </div>
+          <div className="space-y-5">
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2"><FileText className="w-4 h-4 inline mr-1" /> CV (PDF or DOCX)</label>
+              <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all ${file ? 'border-green-400 bg-green-50' : 'border-slate-300 hover:border-[#C9A961] bg-white'}`}>
+                <input type="file" accept=".pdf,.docx" className="hidden" onChange={(e) => { if (e.target.files?.[0]) setFile(e.target.files[0]); }} />
+                {file ? (
+                  <div className="flex items-center gap-2 text-green-700"><CheckCircle2 className="w-5 h-5" /><span className="text-sm font-medium">{file.name}</span></div>
+                ) : (
+                  <div className="text-center"><Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" /><p className="text-sm text-slate-500">Click or drag your CV</p></div>
+                )}
+              </label>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2"><Linkedin className="w-4 h-4 inline mr-1" /> LinkedIn Profile</label>
+              <input type="url" placeholder="https://linkedin.com/in/your-profile" value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2"><CreditCard className="w-4 h-4 inline mr-1" /> Email</label>
+              <input type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all" />
+            </div>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input type="checkbox" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 w-4 h-4 rounded border-slate-300 text-[#C9A961] focus:ring-[#C9A961]" />
+              <span className="text-xs text-slate-500">I have read and accept the <a href="/en/pages/privacy-policy" target="_blank" className="text-[#C9A961] underline">Privacy Policy</a> and <a href="/termos-condicoes" target="_blank" className="text-[#C9A961] underline">Terms & Conditions</a>.</span>
+            </label>
+            {error && (<div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-xl"><AlertCircle className="w-4 h-4 shrink-0" />{error}</div>)}
+            <Button onClick={handleProceedToPayment} disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !acceptedTerms} className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 transition-all">
+              Pay and analyse — ${PRICE}
+            </Button>
+            <button onClick={() => { setShowVoucherModal(true); setVoucherCode(''); setVoucherError(null); }} className="w-full text-center text-sm text-slate-500 hover:text-[#C9A961] transition-colors flex items-center justify-center gap-2">
+              <Ticket className="w-4 h-4" /> I have a code
+            </button>
+            <p className="text-center text-xs text-slate-400">Secure payment via Card or PayPal</p>
+            <button onClick={() => setStep('hero')} className="w-full text-center text-sm text-slate-400 hover:text-slate-600 transition-colors">← Back</button>
+          </div>
+        </div>
+      )}
+
+      {(step === 'analyzing' || step === 'done') && (
+        <div className="max-w-md mx-auto px-6 py-20 text-center">
+          <div className="space-y-6">
+            {step === 'analyzing' ? (
+              <>
+                <Loader2 className="w-12 h-12 text-[#C9A961] animate-spin mx-auto" />
+                <h2 className="text-xl font-bold text-slate-900">Processing your Bundle</h2>
+                <p className="text-sm text-slate-500">{analysisMsg}</p>
+                <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div className="bg-[#C9A961] h-2 rounded-full transition-all duration-500" style={{ width: `${((analysisProgress + 1) / loadingMessages.length) * 100}%` }} />
+                </div>
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
+                <h2 className="text-xl font-bold text-slate-900">All done!</h2>
+                <p className="text-sm text-slate-500">Redirecting to your results...</p>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              {paymentStep === 'payment' && 'Payment — Full Bundle'}
+              {paymentStep === 'success' && 'Payment confirmed!'}
+            </DialogTitle>
+          </DialogHeader>
+          {paymentStep === 'payment' && (
+            <div className="space-y-4">
+              <div className="bg-slate-50 rounded-xl p-4 text-center">
+                <p className="text-sm text-slate-600">CV Analyser + Career Path</p>
+                <div className="flex items-center justify-center gap-3 mt-1">
+                  <span className="text-slate-400 line-through text-sm">${ORIGINAL_PRICE}</span>
+                  <span className="text-2xl font-bold text-slate-900">${PRICE}</span>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                {(['stripe', 'paypal'] as const).map(m => (
+                  <button key={m} onClick={() => setPaymentMethod(m)} className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${paymentMethod === m ? 'bg-[#C9A961] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+                    {m === 'stripe' ? 'Card' : 'PayPal'}
+                  </button>
+                ))}
+              </div>
+              {paymentMethod === 'stripe' && (
+                <Button onClick={handleStripePayment} disabled={paymentLoading} className="w-full h-12 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl">
+                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pay $${PRICE} with Card`}
+                </Button>
+              )}
+              {paymentMethod === 'paypal' && (
+                <Button onClick={handlePayPalPayment} className="w-full h-12 bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold rounded-xl">
+                  Pay ${PRICE} with PayPal
+                </Button>
+              )}
+              {paymentError && (<div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-xl"><AlertCircle className="w-4 h-4 shrink-0" />{paymentError}</div>)}
+            </div>
+          )}
+          {paymentStep === 'success' && (
+            <div className="text-center space-y-4 py-4">
+              <CheckCircle2 className="w-10 h-10 text-green-500 mx-auto" />
+              <p className="text-sm text-slate-600">Payment confirmed! Starting analysis...</p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showVoucherModal} onOpenChange={setShowVoucherModal}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle className="text-center">Voucher code</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <input type="text" placeholder="Enter the code" value={voucherCode} onChange={(e) => setVoucherCode(e.target.value.toUpperCase())} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm text-center tracking-widest font-mono focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none" />
+            {voucherError && (<p className="text-red-600 text-sm text-center">{voucherError}</p>)}
+            <Button onClick={handleVoucher} disabled={voucherLoading} className="w-full h-12 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl">
+              {voucherLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Validate code'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <footer className="border-t border-slate-200 mt-16 py-6 text-center text-xs text-slate-400">
+        <p>&copy; {new Date().getFullYear()} Share2Inspire — All rights reserved</p>
+        <p className="mt-1"><a href="/en/pages/privacy-policy" className="hover:text-slate-600">Privacy</a> &middot; <a href="/termos-condicoes" className="hover:text-slate-600">Terms</a> &middot; <a href="/en/pages/contact" className="hover:text-slate-600">Contact</a></p>
+      </footer>
+    </div>
+  );
+}
