@@ -168,6 +168,40 @@ export default function BundleHomeEN() {
       sessionStorage.setItem('careerPathCvFilename', file!.name);
       sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
       sessionStorage.setItem('careerPathPaid', 'true');
+
+      // Save bundle analysis to Supabase (for Admin analytics)
+      try {
+        const cp = cvAnalysisSource?.candidate_profile || {};
+        const detectedName = cp.name || cp.detected_name || null;
+        const detectedPhone = cp.detected_phone && cp.detected_phone !== 'N/A' ? cp.detected_phone : null;
+        const score = cvAnalysisResult.overallScore || cvAnalysisResult.ats_score || 0;
+        const professionalArea = cp.detected_role || cp.primary_role || null;
+        const transactionId = sessionStorage.getItem('transactionId') || `BUNDLE-EN-${Date.now()}`;
+        fetch(`${SUPABASE_URL}/rest/v1/cv_analysis`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Prefer': 'return=representation',
+          },
+          body: JSON.stringify({
+            score,
+            professional_area: professionalArea,
+            analysis_type: 'bundle',
+            analysis_result: JSON.stringify(cvAnalysisSource),
+            cv_text: cvText || null,
+            payment_status: 'paid',
+            payment_amount: PRICE_NUM,
+            transaction_id: transactionId,
+            domain: 'share2inspire.pt',
+            user_name: detectedName,
+            user_email: email.trim().toLowerCase(),
+            user_phone: detectedPhone,
+          }),
+        }).catch(() => {});
+      } catch (_) {}
+
       trackPurchase('bundle_cv_career', PRICE_NUM, `BUNDLE-${Date.now()}`);
       trackAffiliateConversion({ product: 'bundle_cv_career', amount: PRICE_NUM, currency: 'USD', payment_method: 'stripe', customer_email: email, transaction_id: `BUNDLE-${Date.now()}` });
       clearInterval(msgInterval);

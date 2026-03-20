@@ -114,8 +114,9 @@ function getAnalysisType(a) {
         if (a.payment_method === 'voucher') return 'voucher';
         return (a.payment_status === 'paid' || (a.payment_amount && a.payment_amount > 0)) ? 'paid' : 'free';
     }
-    // Career path is always paid
+    // Career path and bundle are always paid
     if (a.analysis_type === 'career_path') return 'paid';
+    if (a.analysis_type === 'bundle') return 'paid';
     // Voucher: only if payment_method explicitly says 'voucher' on THIS analysis
     if (a.payment_method === 'voucher') return 'voucher';
     // Paid: confirmed payment on THIS analysis
@@ -178,6 +179,7 @@ function getLangBadge(lang) {
 }
 function getProductBadge(a) {
     if (a._source === 'linkedin_roaster') return '<span class="badge" style="background:#0077B5;color:#fff;">LinkedIn Roaster</span>';
+    if (a.analysis_type === 'bundle') return '<span class="badge" style="background:var(--gold);color:#1a1a1a;font-weight:600;">Bundle</span>';
     if (a.analysis_type === 'career_path') return '<span class="badge badge-career">Career Path</span>';
     return '<span class="badge badge-cv">CV Analyser</span>';
 }
@@ -1189,7 +1191,8 @@ function renderAnalyses() {
     if (lang !== 'all') data = data.filter(a => detectLanguage(a) === lang);
     if (product !== 'all') {
         if (product === 'linkedin_roaster') data = data.filter(a => a._source === 'linkedin_roaster');
-        else if (product === 'cv') data = data.filter(a => a.analysis_type !== 'career_path' && a._source !== 'linkedin_roaster');
+        else if (product === 'bundle') data = data.filter(a => a.analysis_type === 'bundle');
+        else if (product === 'cv') data = data.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'bundle' && a._source !== 'linkedin_roaster');
         else if (product === 'career_path') data = data.filter(a => a.analysis_type === 'career_path');
     }
     if (email) data = data.filter(a => (a.user_email || '').toLowerCase().includes(email));
