@@ -10,6 +10,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
+import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -40,23 +41,7 @@ async function extractTextFromDOCX(file: File): Promise<string> {
   return result.value.trim();
 }
 
-function transformGeminiResponse(analysis: any): any {
-  return {
-    overall_score: analysis.overall_score ?? analysis.ats_score ?? 0,
-    ats_score: analysis.ats_score ?? analysis.overall_score ?? 0,
-    candidate_profile: analysis.candidate_profile || {},
-    quadrant_scores: analysis.quadrant_scores || {},
-    keyword_analysis: analysis.keyword_analysis || {},
-    improvement_actions: analysis.improvement_actions || [],
-    priority_matrix: analysis.priority_matrix || {},
-    salary_estimate: analysis.salary_estimate || analysis.salary_detailed || {},
-    automation_risk: analysis.automation_risk || {},
-    recruiter_perception: analysis.recruiter_perception || {},
-    detailed_ats_analysis: analysis.detailed_ats_analysis || {},
-    cv_problems: analysis.cv_problems || [],
-    job_match: analysis.job_match || null,
-  };
-}
+// transformGeminiResponse imported from @/lib/transformGeminiResponse
 
 export default function BundleHomeEN() {
   useEffect(() => { document.title = "Bundle CV Analyser + Career Path | Share2Inspire"; }, []);
