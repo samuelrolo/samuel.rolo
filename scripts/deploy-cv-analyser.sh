@@ -27,18 +27,22 @@ echo "📄 Syncing ALL index.html files..."
 
 # Master list of ALL directories that serve the React SPA.
 # If you add a new route/page, ADD IT HERE.
+#
+# ⚠️  DO NOT add static HTML demo/example pages here!
+#     The following are STATIC HTML files (not React SPA) and must NEVER be overwritten:
+#       - cv-analyser/demo.html (PT demo output)
+#       - en/cv-analyser/demo.html (EN demo output)
+#       - career-path/example/index.html (PT example output)
+#       - en/career-path/example/index.html (EN example output)
 TARGETS=(
   "cv-analyser/index.html"
-  "cv-analyser/demo.html"
   "cv-analyser/results/index.html"
   "cv-analyser/test/index.html"
   "en/cv-analyser/index.html"
-  "en/cv-analyser/demo.html"
   "en/cv-analyser/results/index.html"
   "en/cv-analyser/test/index.html"
   "career-path/index.html"
   "career-path/results/index.html"
-  "career-path/example/index.html"
   "en/career-path/index.html"
   "en/career-path/results/index.html"
   "bundle/index.html"

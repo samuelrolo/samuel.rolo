@@ -132,6 +132,14 @@
       "destination": "/cv-analyser/index.html"
     },
     {
+      "source": "/cv-analyser/demo",
+      "destination": "/cv-analyser/demo.html"
+    },
+    {
+      "source": "/en/cv-analyser/demo",
+      "destination": "/en/cv-analyser/demo.html"
+    },
+    {
       "source": "/cv-analyser",
       "destination": "/cv-analyser/index.html"
     },
