@@ -2,7 +2,7 @@
 // Upload CV + LinkedIn → Payment → Both engines run → Results
 // Price EN: $24.99
 import { useState, useEffect } from "react";
-import { Upload, FileText, Loader2, Compass, Target, TrendingUp, CheckCircle2, Linkedin, CreditCard, AlertCircle, Ticket, Briefcase, Sparkles, Shield, Check, ArrowRight, Lock, BarChart3, Zap } from "lucide-react";
+import { Upload, FileText, Loader2, Compass, Target, TrendingUp, CheckCircle2, Linkedin, CreditCard, AlertCircle, Ticket, Briefcase, Sparkles, Shield, Check, ArrowRight, Lock, BarChart3, Zap, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLocation } from "wouter";
@@ -11,6 +11,7 @@ import mammoth from "mammoth";
 import { trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
+import { countries } from "./countries";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -52,6 +53,9 @@ export default function BundleHomeEN() {
   const [email, setEmail] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("");
+  const countryData = countries.find(c => c.country === selectedCountry);
   const [step, setStep] = useState<'hero' | 'upload' | 'payment' | 'analyzing' | 'done'>('hero');
 
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -87,6 +91,7 @@ export default function BundleHomeEN() {
     if (!file) { setError('Upload your CV (PDF or DOCX)'); return; }
     if (!isValidLinkedinUrl(linkedinUrl)) { setError('Enter a valid LinkedIn URL'); return; }
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError('Enter a valid email'); return; }
+    if (!selectedCountry) { setError('Please select your country for localised results'); return; }
     if (!acceptedTerms) { setError('Accept the Privacy Policy'); return; }
     setError(null);
     setPaymentStep('payment');
@@ -160,6 +165,9 @@ export default function BundleHomeEN() {
       sessionStorage.setItem('analysisLang', 'en');
       sessionStorage.setItem('isPaid', 'true');
       sessionStorage.setItem('paymentEmail', email.trim().toLowerCase());
+      // Store country/region for Career Path localisation
+      sessionStorage.setItem('analysisCountry', selectedCountry || '');
+      sessionStorage.setItem('analysisRegion', selectedRegion || '');
       window.currentReportData = cvAnalysisSource;
       setAnalysisMsg("Generating your Career Path...");
       sessionStorage.setItem('careerPathCvAnalysis', JSON.stringify(cvAnalysisSource));
@@ -381,12 +389,43 @@ export default function BundleHomeEN() {
               <label className="block text-sm font-semibold text-slate-700 mb-2"><CreditCard className="w-4 h-4 inline mr-1" /> Email</label>
               <input type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all" />
             </div>
+            {/* Country/Region Selector */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-slate-700">
+                <Globe className="w-4 h-4 inline mr-1 text-[#C9A961]" /> Country <span className="text-slate-400 font-normal text-xs">(for localised salary data &amp; recommendations)</span>
+              </label>
+              <div className="grid grid-cols-1 gap-3">
+                <select
+                  value={selectedCountry}
+                  onChange={(e) => { setSelectedCountry(e.target.value); setSelectedRegion(""); }}
+                  className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all bg-white text-slate-700"
+                >
+                  <option value="">Select your country...</option>
+                  {countries.map(c => (
+                    <option key={c.code} value={c.country}>{c.country}</option>
+                  ))}
+                </select>
+                {countryData && countryData.regions.length > 1 && (
+                  <select
+                    value={selectedRegion}
+                    onChange={(e) => setSelectedRegion(e.target.value)}
+                    className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all bg-white text-slate-700"
+                  >
+                    <option value="">Select region (optional)...</option>
+                    {countryData.regions.map(r => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            </div>
+
             <label className="flex items-start gap-3 cursor-pointer">
               <input type="checkbox" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} className="mt-1 w-4 h-4 rounded border-slate-300 text-[#C9A961] focus:ring-[#C9A961]" />
-              <span className="text-xs text-slate-500">I have read and accept the <a href="/en/pages/privacy-policy" target="_blank" className="text-[#C9A961] underline">Privacy Policy</a> and <a href="/termos-condicoes" target="_blank" className="text-[#C9A961] underline">Terms & Conditions</a>.</span>
+              <span className="text-xs text-slate-500">I have read and accept the <a href="/en/pages/privacy-policy" target="_blank" className="text-[#C9A961] underline">Privacy Policy</a> and <a href="/termos-condicoes" target="_blank" className="text-[#C9A961] underline">Terms &amp; Conditions</a>.</span>
             </label>
             {error && (<div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-xl"><AlertCircle className="w-4 h-4 shrink-0" />{error}</div>)}
-            <Button onClick={handleProceedToPayment} disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !acceptedTerms} className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 transition-all">
+            <Button onClick={handleProceedToPayment} disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !selectedCountry || !acceptedTerms} className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 transition-all">
               Pay and analyse — ${PRICE}
             </Button>
             <button onClick={() => { setShowVoucherModal(true); setVoucherCode(''); setVoucherError(null); }} className="w-full text-center text-sm text-slate-500 hover:text-[#C9A961] transition-colors flex items-center justify-center gap-2">

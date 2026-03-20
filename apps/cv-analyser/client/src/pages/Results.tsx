@@ -4,7 +4,7 @@
 // Payment: MB WAY + PayPal options
 // Voucher: Code validation for multi-analysis plans via Supabase
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
 import ATSRejectionBlock from "@/components/ATSRejectionBlock";
 import QuadrantCard from "@/components/QuadrantCard";
@@ -348,8 +348,8 @@ export default function Results() {
   // Currency & pricing: PT = EUR, EN = USD
   const CUR = isEN ? '$' : '€';
   const P = isEN
-    ? { cv: '5.99', cp: '15.00', career: '12.50' }
-    : { cv: '3,99', cp: '12,00', career: '10,00' };
+    ? { cv: '5.99', cp: '19.99', career: '19.99' }
+    : { cv: '3,99', cp: '12,00', career: '12,00' };
   const CURRENCY_CODE = isEN ? 'USD' : 'EUR';
   const [pollingMessage, setPollingMessage] = useState(() => {
     const pEN = window.location.pathname.startsWith('/en/');
@@ -494,9 +494,34 @@ export default function Results() {
         })
         .catch(err => console.error('Stripe verify error:', err));
     }
+    // Auto-generate Career Path when coming from Bundle flow
+    const bundleCareerPathPaid = sessionStorage.getItem('careerPathPaid');
+    if (bundleCareerPathPaid === 'true') {
+      sessionStorage.setItem('careerPathIncluded', 'true');
+      const bundleLinkedin = sessionStorage.getItem('careerPathLinkedinUrl') || '';
+      const bundleEmail = sessionStorage.getItem('paymentEmail') || '';
+      // Set state and trigger generation after a short delay to allow state to settle
+      setCareerPathLinkedin(bundleLinkedin);
+      setCareerPathEmail(bundleEmail);
+      setCareerPathPaymentStep('generating');
+      // Remove flag so it doesn't re-trigger on refresh
+      sessionStorage.removeItem('careerPathPaid');
+    }
   }, [setLocation]);
 
-  // Upsell popup removed — only show payment modal when user clicks "Unlock Full Analysis"
+  // Auto-generate Career Path when careerPathPaymentStep becomes 'generating' from bundle
+  // Note: generateCareerPath is defined below but hoisted via closure
+  const autoGenerateRef = useRef<boolean>(false);
+  useEffect(() => {
+    if (careerPathPaymentStep === 'generating' && !careerPathData && !careerPathLoading && !autoGenerateRef.current) {
+      autoGenerateRef.current = true;
+      // Small delay to ensure state is settled
+      setTimeout(() => {
+        generateCareerPath().finally(() => { autoGenerateRef.current = false; });
+      }, 300);
+    }
+  }, [careerPathPaymentStep, careerPathData, careerPathLoading]);
+  // Upsell popup removed — only show payment modal when user clicks "Unlock Full Analysis""
 
   const unlockFullReport = useCallback(() => {
     setIsPaid(true);

@@ -2,7 +2,7 @@
 // Upload CV + LinkedIn → Pagamento → Ambos os motores correm → Resultados
 // Preço PT: €16,99
 import { useState, useEffect } from "react";
-import { Upload, FileText, Loader2, Compass, Target, TrendingUp, CheckCircle2, Linkedin, CreditCard, AlertCircle, Ticket, Briefcase, Sparkles, Shield, Check, ArrowRight, Lock, BarChart3, Zap } from "lucide-react";
+import { Upload, FileText, Loader2, Compass, Target, TrendingUp, CheckCircle2, Linkedin, CreditCard, AlertCircle, Ticket, Briefcase, Sparkles, Shield, Check, ArrowRight, Lock, BarChart3, Zap, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLocation } from "wouter";
@@ -11,6 +11,7 @@ import mammoth from "mammoth";
 import { trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
+import { countries } from "./en/countries";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -53,6 +54,9 @@ export default function BundleHome() {
   const [email, setEmail] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("");
+  const countryData = countries.find(c => c.country === selectedCountry);
 
   // Steps: hero -> upload -> payment -> analyzing -> done
   const [step, setStep] = useState<'hero' | 'upload' | 'payment' | 'analyzing' | 'done'>('hero');
@@ -97,7 +101,8 @@ export default function BundleHome() {
   const handleProceedToPayment = () => {
     if (!file) { setError('Faz upload do teu CV (PDF ou DOCX)'); return; }
     if (!isValidLinkedinUrl(linkedinUrl)) { setError('Introduz um URL de LinkedIn válido'); return; }
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError('Introduz um email válido'); return; }
+    if (!email || !/^[^s@]+@[^s@]+.[^s@]+$/.test(email)) { setError('Introduz um email válido'); return; }
+    if (!selectedCountry) { setError('Selecciona o teu país para resultados localizados'); return; }
     if (!acceptedTerms) { setError('Aceita a Política de Privacidade'); return; }
     setError(null);
     setPaymentStep('payment');
@@ -191,6 +196,9 @@ export default function BundleHome() {
       sessionStorage.setItem('analysisLang', 'pt');
       sessionStorage.setItem('isPaid', 'true');
       sessionStorage.setItem('paymentEmail', email.trim().toLowerCase());
+      // Store country/region for Career Path localisation
+      sessionStorage.setItem('analysisCountry', selectedCountry || 'Portugal');
+      sessionStorage.setItem('analysisRegion', selectedRegion || '');
       window.currentReportData = cvAnalysisSource;
 
       // ─── ENGINE 2: Career Path ───
@@ -630,6 +638,37 @@ export default function BundleHome() {
               />
             </div>
 
+            {/* Country/Region Selector */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-slate-700">
+                <Globe className="w-4 h-4 inline mr-1 text-[#C9A961]" /> País <span className="text-slate-400 font-normal text-xs">(para dados salariais e recomendações localizadas)</span>
+              </label>
+              <div className="grid grid-cols-1 gap-3">
+                <select
+                  value={selectedCountry}
+                  onChange={(e) => { setSelectedCountry(e.target.value); setSelectedRegion(""); }}
+                  className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all bg-white text-slate-700"
+                >
+                  <option value="">Selecciona o teu país...</option>
+                  {countries.map(c => (
+                    <option key={c.code} value={c.country}>{c.country}</option>
+                  ))}
+                </select>
+                {countryData && countryData.regions.length > 1 && (
+                  <select
+                    value={selectedRegion}
+                    onChange={(e) => setSelectedRegion(e.target.value)}
+                    className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none transition-all bg-white text-slate-700"
+                  >
+                    <option value="">Selecciona a região (opcional)...</option>
+                    {countryData.regions.map(r => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            </div>
+
             {/* Terms */}
             <label className="flex items-start gap-3 cursor-pointer">
               <input
@@ -653,7 +692,7 @@ export default function BundleHome() {
             {/* CTA */}
             <Button
               onClick={handleProceedToPayment}
-              disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !acceptedTerms}
+              disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !selectedCountry || !acceptedTerms}
               className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 transition-all"
             >
               Pagar e analisar — €{PRICE}
