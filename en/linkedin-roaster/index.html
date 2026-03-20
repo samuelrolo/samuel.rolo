@@ -1173,11 +1173,11 @@
 
     // Archetypes for each score level (1-10)
     const ARCHETYPES = {
-        1:  { name: 'The Ghost',              emoji: '\ud83d\udc7b', desc: 'O teu perfil \u00e9 praticamente invis\u00edvel. Os recrutadores n\u00e3o sabem que existes.',                    share: 'I audited my LinkedIn profile and discovered I'm "The Ghost" \ud83d\udc7b \u2014 Score 1/10. Time to change this! \ud83d\ude80' },
-        2:  { name: 'The Wallflower',         emoji: '\ud83d\udd75\ufe0f', desc: 'Tens um perfil, mas ningu\u00e9m o encontra. Precisas de uma transforma\u00e7\u00e3o urgente.',         share: 'I audited my LinkedIn and I'm "The Wallflower" \ud83d\udd75\ufe0f \u2014 Score 2/10. Clearly I have work ahead! \ud83d\udcaa' },
+        1:  { name: 'The Ghost',              emoji: '\ud83d\udc7b', desc: 'O teu perfil \u00e9 praticamente invis\u00edvel. Os recrutadores n\u00e3o sabem que existes.',                    share: 'I audited my LinkedIn profile and discovered I\'m "The Ghost" \ud83d\udc7b \u2014 Score 1/10. Time to change this! \ud83d\ude80' },
+        2:  { name: 'The Wallflower',         emoji: '\ud83d\udd75\ufe0f', desc: 'Tens um perfil, mas ningu\u00e9m o encontra. Precisas de uma transforma\u00e7\u00e3o urgente.',         share: 'I audited my LinkedIn and I\'m "The Wallflower" \ud83d\udd75\ufe0f \u2014 Score 2/10. Clearly I have work ahead! \ud83d\udcaa' },
         3:  { name: 'The Rookie',             emoji: '\ud83d\udcda', desc: 'O teu perfil parece de quem est\u00e1 a come\u00e7ar, mesmo que j\u00e1 tenhas experi\u00eancia.',         share: 'My LinkedIn audit result: "The Rookie" \ud83d\udcda \u2014 Score 3/10. O meu perfil n\u00e3o reflete o meu verdadeiro valor! \ud83c\udfaf' },
-        4:  { name: 'The Builder',            emoji: '\ud83d\udee0\ufe0f', desc: 'Tens o m\u00ednimo, mas falta estrat\u00e9gia. Est\u00e1s a perder oportunidades.',                  share: 'LinkedIn audit: I'm "The Builder" \ud83d\udee0\ufe0f \u2014 Score 4/10. Tenho os fundamentos, mas preciso de estrat\u00e9gia! \ud83d\udca1' },
-        5:  { name: 'The Average Joe',        emoji: '\u2696\ufe0f',  desc: 'Est\u00e1s na m\u00e9dia. N\u00e3o \u00e9 mau, mas tamb\u00e9m n\u00e3o te destaca da multid\u00e3o.',                  share: 'I audited my LinkedIn and I'm "The Average Joe" \u2696\ufe0f \u2014 Score 5/10. Na m\u00e9dia, mas quero mais! \ud83d\ude80' },
+        4:  { name: 'The Builder',            emoji: '\ud83d\udee0\ufe0f', desc: 'Tens o m\u00ednimo, mas falta estrat\u00e9gia. Est\u00e1s a perder oportunidades.',                  share: 'LinkedIn audit: I\'m "The Builder" \ud83d\udee0\ufe0f \u2014 Score 4/10. Tenho os fundamentos, mas preciso de estrat\u00e9gia! \ud83d\udca1' },
+        5:  { name: 'The Average Joe',        emoji: '\u2696\ufe0f',  desc: 'Est\u00e1s na m\u00e9dia. N\u00e3o \u00e9 mau, mas tamb\u00e9m n\u00e3o te destaca da multid\u00e3o.',                  share: 'I audited my LinkedIn and I\'m "The Average Joe" \u2696\ufe0f \u2014 Score 5/10. Na m\u00e9dia, mas quero mais! \ud83d\ude80' },
         6:  { name: 'The Rising Star',        emoji: '\ud83c\udf1f', desc: 'Tens boas bases. Com alguns ajustes estrat\u00e9gicos, podes subir rapidamente.',           share: 'I audited my LinkedIn profile: "The Rising Star" \ud83c\udf1f \u2014 Score 6/10. Boas bases, agora \u00e9 optimizar! \ud83d\udcc8' },
         7:  { name: 'The Standout',           emoji: '\ud83d\udcbc', desc: 'Perfil s\u00f3lido. Est\u00e1s acima da m\u00e9dia e os recrutadores j\u00e1 te notam.',                   share: 'Result: "The Standout" \ud83d\udcbc \u2014 Score 7/10 na auditoria LinkedIn! Acima da m\u00e9dia, mas ainda h\u00e1 margem para brilhar \u2728' },
         8:  { name: 'The Strategist',         emoji: '\ud83c\udfaf', desc: 'Perfil bem constru\u00eddo e estrat\u00e9gico. Destacas-te claramente no mercado.',              share: 'Auditoria LinkedIn: "The Strategist" \ud83c\udfaf \u2014 Score 8/10! O meu perfil est\u00e1 a trabalhar para mim \ud83d\udcaa\ud83d\ude80' },
@@ -1337,14 +1337,14 @@
                         cvText = scrapeData.cv_text;
                         console.log('[ROASTER] Step 1 OK: Extracted', cvText.length, 'chars for', scrapeData.profile_name);
                     } else {
-                        const errorMsg = scrapeData?.error || 'Couldn't access the LinkedIn profile.';
+                        const errorMsg = scrapeData?.error || 'Couldn\'t access the LinkedIn profile.';
                         console.error('[ROASTER] Step 1 FAILED:', errorMsg);
-                        throw new Error('Technical error: couldn't extract profile data. <a href="/contactos" style="color:#0073b1;text-decoration:underline">Contact support</a>');
+                        throw new Error('Technical error: couldn\'t extract profile data. <a href="/contactos" style="color:#0073b1;text-decoration:underline">Contact support</a>');
                     }
                 } catch (scrapeErr) {
                     if (scrapeErr.message.includes('Erro técnico')) throw scrapeErr;
                     console.error('[ROASTER] Step 1 FAILED (network):', scrapeErr.message);
-                    throw new Error('Technical error: couldn't access the extraction service. <a href="/contactos" style="color:#0073b1;text-decoration:underline">Contact support</a>');
+                    throw new Error('Technical error: couldn\'t access the extraction service. <a href="/contactos" style="color:#0073b1;text-decoration:underline">Contact support</a>');
                 }
 
                 // ── STEP 2: Send to Edge Function for AI analysis ──
@@ -1396,7 +1396,7 @@
             console.error('Analysis error:', error);
             showSection('inputSection');
             const isHtml = error.message && error.message.includes('<a ');
-            showError('inputSection', error.message || 'Couldn't analyse the profile. Check the URL and try again.', isHtml);
+            showError('inputSection', error.message || 'Couldn\'t analyse the profile. Check the URL and try again.', isHtml);
         }
     }
 
