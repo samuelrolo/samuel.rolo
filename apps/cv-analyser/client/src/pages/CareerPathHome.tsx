@@ -3,7 +3,7 @@
 // Preço: €12,00
 
 import { useState, useEffect } from "react";
-import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, XCircle, Minus, ChevronDown, ChevronUp, Linkedin, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, Globe, DollarSign, Zap, Lock, ArrowRight, Shield, Check } from "lucide-react";
+import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, XCircle, Minus, ChevronDown, ChevronUp, Linkedin, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, Globe, DollarSign, Zap, Lock, ArrowRight, Shield, Check, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLocation } from "wouter";
@@ -591,32 +591,47 @@ export default function CareerPathHome() {
               </p>
             </div>
 
-            {/* 3 Example Result Cards */}
-            <div className="space-y-4">
-              <p className="text-xs font-semibold text-center text-muted-foreground tracking-wider">EXEMPLO DE RESULTADO</p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                  { path: 'People Analytics', match: 84, progression: 'HR Specialist → Head of People Analytics', skills: 'Data storytelling, HR analytics, automação' },
-                  { path: 'HR Digital Transformation', match: 88, progression: 'HR Manager → Chief People Officer', skills: 'Transformação digital, change management, IA' },
-                  { path: 'Talent Strategy', match: 79, progression: 'Recruiter → Director of Talent', skills: 'Employer branding, workforce planning, analytics' },
-                ].map((ex, i) => (
-                  <div key={i} className="p-5 rounded-2xl border-2 border-[#C9A961]/30 bg-gradient-to-b from-[#C9A961]/5 to-transparent space-y-3">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-bold text-foreground">{ex.path}</p>
-                      <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded-full">{ex.match}%</span>
+            {/* ── Showcase: See What You'll Receive ── */}
+            <div className="relative rounded-2xl border-2 border-[#C9A961]/30 bg-gradient-to-b from-[#C9A961]/5 to-transparent overflow-hidden">
+              <div className="p-8 md:p-10 space-y-6">
+                <div className="text-center space-y-3">
+                  <p className="text-xs font-semibold tracking-wider text-[#C9A961] uppercase">Exemplo Real de Resultado</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-foreground">Vê exactamente o que vais receber</h2>
+                  <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+                    Roadmap de carreira personalizado, análise de gaps, cargos recomendados com % de fit, formações, certificações, estratégia de networking e plano de acção imediato.
+                  </p>
+                </div>
+                {/* Preview cards row */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    { icon: <Compass className="w-4 h-4" />, label: "Roadmap de Carreira" },
+                    { icon: <Target className="w-4 h-4" />, label: "Análise de Gaps" },
+                    { icon: <BookOpen className="w-4 h-4" />, label: "Formações & Certificações" },
+                    { icon: <Users className="w-4 h-4" />, label: "Networking & Acções" },
+                  ].map((item, i) => (
+                    <div key={i} className="flex flex-col items-center gap-2 p-3 rounded-xl bg-card/60 border border-border/50 text-center">
+                      <span className="text-[#C9A961]">{item.icon}</span>
+                      <span className="text-xs font-medium text-muted-foreground">{item.label}</span>
                     </div>
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="w-3.5 h-3.5 text-[#C9A961] shrink-0" />
-                        <p className="text-xs text-muted-foreground">{ex.progression}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Target className="w-3.5 h-3.5 text-[#C9A961] shrink-0" />
-                        <p className="text-xs text-muted-foreground">{ex.skills}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                {/* CTA */}
+                <div className="flex flex-col items-center gap-3">
+                  <a
+                    href="/career-path/example/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 h-12 px-8 text-sm font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
+                  >
+                    <Eye className="w-4 h-4" />
+                    Ver Exemplo Completo
+                  </a>
+                  <p className="text-xs text-muted-foreground">Relatório real gerado pela nossa IA — sem compromisso</p>
+                </div>
+                {/* Competitive statement */}
+                <p className="text-center text-sm md:text-base font-medium italic" style={{ color: '#C9A961' }}>
+                  "O que a Alento cobra 600€, a Share2Inspire entrega em 30 segundos por 12€."
+                </p>
               </div>
             </div>
 
@@ -694,6 +709,9 @@ export default function CareerPathHome() {
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
               <h2 className="text-2xl font-bold text-foreground">Pronto para traçar o teu caminho?</h2>
               <p className="text-muted-foreground">Roadmap completo por apenas €12,00. Sem compromisso.</p>
+              <p className="text-sm font-medium italic" style={{ color: '#C9A961' }}>
+                "O que a Alento cobra 600€, a Share2Inspire entrega em 30 segundos por 12€."
+              </p>
               <Button
                 onClick={() => setStep('upload')}
                 className="px-8 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl transition-all"
