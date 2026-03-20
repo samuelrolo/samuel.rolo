@@ -501,4 +501,10 @@
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/en/videos/big4-recruitment-guide"/>
     </url>
 
+  <url>
+    <loc>https://www.share2inspire.pt/blog/artigos/estado-linkedin-portugal-2026</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
