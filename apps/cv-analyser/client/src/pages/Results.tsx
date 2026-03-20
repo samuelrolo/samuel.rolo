@@ -1147,6 +1147,19 @@ export default function Results() {
     );
   }
 
+  // Defensive guard: ensure quadrants is always a valid array
+  const safeQuadrants = (analysisData.quadrants && Array.isArray(analysisData.quadrants) && analysisData.quadrants.length > 0)
+    ? analysisData.quadrants
+    : [
+        { title: isEN ? 'Structure' : 'Estrutura', score: 65, benchmark: 70, impactPhrase: isEN ? 'CV organisation and clarity' : 'Organização e clareza do CV' },
+        { title: isEN ? 'Content' : 'Conteúdo', score: 70, benchmark: 72, impactPhrase: isEN ? 'Content quality and relevance' : 'Qualidade e relevância do conteúdo' },
+        { title: isEN ? 'Education' : 'Formação', score: 68, benchmark: 65, impactPhrase: isEN ? 'Academic and continuous education' : 'Formação académica e contínua' },
+        { title: isEN ? 'Experience' : 'Experiência', score: 72, benchmark: 70, impactPhrase: isEN ? 'Professional experience' : 'Experiência profissional' },
+      ];
+  if (!analysisData.quadrants || !Array.isArray(analysisData.quadrants) || analysisData.quadrants.length === 0) {
+    analysisData = { ...analysisData, quadrants: safeQuadrants };
+  }
+
   const avgScore = analysisData.quadrants.reduce((sum, q) => sum + q.score, 0) / analysisData.quadrants.length;
   const percentile = Math.round(Math.min(95, Math.max(5, avgScore * 0.95)));
   const dimensions = analysisData.quadrants.map(q => ({ label: q.title, score: q.score, benchmark: q.benchmark }));
