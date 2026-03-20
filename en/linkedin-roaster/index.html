@@ -1312,7 +1312,8 @@
                         mode: 'linkedin_roast',
                         file: storedFile,
                         filename: storedFileName,
-                        target_area: targetArea
+                        target_area: targetArea,
+                        language: 'en'
                     })
                 });
                 const data = await response.json();
@@ -1353,7 +1354,8 @@
                     mode: 'linkedin_roast',
                     linkedin_url: linkedinUrl,
                     target_area: targetArea,
-                    cv_text: cvText.substring(0, 8000)
+                    cv_text: cvText.substring(0, 8000),
+                    language: 'en'
                 };
                 const response = await fetch(SUPABASE_EDGE_URL, {
                     method: 'POST',
