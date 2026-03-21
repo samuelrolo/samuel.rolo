@@ -597,18 +597,6 @@ export default function CareerPathHome() {
               </div>
             </div>
 
-            {/* CTA Button */}
-            <div className="text-center space-y-4">
-              <Button
-                onClick={() => setStep('upload')}
-                className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
-              >
-                <Compass className="w-5 h-5 mr-2" />
-                Descobrir os meus 3 caminhos
-              </Button>
-              <p className="text-xs text-muted-foreground">Análise completa por 12€ · Pagamento único · Resultado em &lt; 1 minuto</p>
-            </div>
-
             {/* Trust Badges */}
             <div className="grid grid-cols-3 gap-4">
               {[
