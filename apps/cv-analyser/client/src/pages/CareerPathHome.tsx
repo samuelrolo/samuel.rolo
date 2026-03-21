@@ -80,6 +80,8 @@ export default function CareerPathHome() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [step, setStep] = useState<'hero' | 'upload' | 'preview' | 'analyzing' | 'results'>('hero');
   const [careerGoal, setCareerGoal] = useState<string>('');
+  const [country, setCountry] = useState<string>('Portugal');
+  const [region, setRegion] = useState<string>('');
   const [previewData, setPreviewData] = useState<any>(null);
 
   // Progressive loading messages for Career Path
@@ -392,8 +394,8 @@ export default function CareerPathHome() {
           product_type: 'career_path',
           orderId,
           language: 'pt',
-          country: '',
-          region: '',
+          country,
+          region,
           currency: 'eur',
           amount: PRICE_NUM,
         })
@@ -793,6 +795,56 @@ export default function CareerPathHome() {
                 </div>
               </div>
 
+              {/* País e Região */}
+              <div className="space-y-3">
+                <p className="text-sm font-medium">4. País e região <span className="text-red-500">*</span></p>
+                <div className="grid grid-cols-2 gap-3">
+                  <select
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
+                  >
+                    <option value="Portugal">Portugal</option>
+                    <option value="Brasil">Brasil</option>
+                    <option value="Espanha">Espanha</option>
+                    <option value="França">França</option>
+                    <option value="Alemanha">Alemanha</option>
+                    <option value="Reino Unido">Reino Unido</option>
+                    <option value="Irlanda">Irlanda</option>
+                    <option value="Países Baixos">Países Baixos</option>
+                    <option value="Bélgica">Bélgica</option>
+                    <option value="Suíça">Suíça</option>
+                    <option value="Luxemburgo">Luxemburgo</option>
+                    <option value="Itália">Itália</option>
+                    <option value="Estados Unidos">Estados Unidos</option>
+                    <option value="Canadá">Canadá</option>
+                    <option value="Angola">Angola</option>
+                    <option value="Moçambique">Moçambique</option>
+                    <option value="Cabo Verde">Cabo Verde</option>
+                    <option value="Outro">Outro</option>
+                  </select>
+                  <input
+                    type="text"
+                    placeholder="Região / Cidade"
+                    value={region}
+                    onChange={(e) => setRegion(e.target.value)}
+                    className="h-10 px-3 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
+                  />
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="space-y-2">
+                <p className="text-sm font-medium">5. E-mail <span className="text-red-500">*</span></p>
+                <input
+                  type="email"
+                  placeholder="o-teu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
+                />
+              </div>
+
               {/* Terms */}
               <div className="flex items-start gap-3">
                 <input
@@ -820,7 +872,7 @@ export default function CareerPathHome() {
               {/* Submit */}
               <Button
                 onClick={handleAnalyze}
-                disabled={!file || !acceptedTerms || !isValidLinkedinUrl(linkedinUrl) || loading}
+                disabled={!file || !acceptedTerms || !isValidLinkedinUrl(linkedinUrl) || !email || !country || loading}
                 className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 {loading ? (
@@ -829,7 +881,7 @@ export default function CareerPathHome() {
                     {loadingMessages[loadingStep]}
                   </span>
                 ) : (
-                  "Descobrir os meus 3 caminhos — 12€"
+                  "Iniciar análise"
                 )}
               </Button>
 

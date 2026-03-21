@@ -683,6 +683,18 @@ export default function CareerPathHomeEN() {
                 </div>
               </div>
 
+              {/* Email */}
+              <div className="space-y-2">
+                <p className="text-sm font-medium">5. E-mail <span className="text-red-500">*</span></p>
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
+                />
+              </div>
+
               {/* Terms */}
               <div className="flex items-start gap-3">
                 <input type="checkbox" id="cp-terms" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} disabled={loading} className="mt-0.5 w-4 h-4 rounded border-border accent-[#C9A961]" />
@@ -701,13 +713,13 @@ export default function CareerPathHomeEN() {
               {/* Submit */}
               <Button
                 onClick={handleAnalyze}
-                disabled={!file || !acceptedTerms || !isValidLinkedinUrl(linkedinUrl) || loading || !selectedCountry}
+                disabled={!file || !acceptedTerms || !isValidLinkedinUrl(linkedinUrl) || loading || !selectedCountry || !email}
                 className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 {loading ? (
                   <span className="flex items-center gap-2"><Loader2 className="w-5 h-5 animate-spin" />{loadingMessages[loadingStep]}</span>
                 ) : (
-                  "Discover my 3 career paths — $19.99"
+                  "Start analysis"
                 )}
               </Button>
 

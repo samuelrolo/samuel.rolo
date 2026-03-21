@@ -79,6 +79,8 @@ export default function CareerIntelligenceHomeEN() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [step, setStep] = useState<'hero' | 'upload' | 'preview' | 'analyzing' | 'results'>('hero');
   const [careerGoal, setCareerGoal] = useState<string>('');
+  const [country, setCountry] = useState<string>('Portugal');
+  const [region, setRegion] = useState<string>('');
   const [previewData, setPreviewData] = useState<any>(null);
 
   const loadingMessages = [
@@ -367,7 +369,7 @@ export default function CareerIntelligenceHomeEN() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email, name: email.split('@')[0], product_type: 'career_intelligence_full',
-          orderId, language: 'en', country: '', region: '', currency: 'usd', amount: FINAL_PRICE,
+          orderId, language: 'en', country, region, currency: 'usd', amount: FINAL_PRICE,
         })
       });
       const data = await response.json();
@@ -614,6 +616,58 @@ export default function CareerIntelligenceHomeEN() {
                   ))}
                 </div>
               </div>
+
+              {/* Country & Region */}
+              <div className="space-y-3">
+                <p className="text-sm font-medium">4. Country and region <span className="text-red-500">*</span></p>
+                <div className="grid grid-cols-2 gap-3">
+                  <select
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
+                  >
+                    <option value="Portugal">Portugal</option>
+                    <option value="Brazil">Brazil</option>
+                    <option value="Spain">Spain</option>
+                    <option value="France">France</option>
+                    <option value="Germany">Germany</option>
+                    <option value="United Kingdom">United Kingdom</option>
+                    <option value="Ireland">Ireland</option>
+                    <option value="Netherlands">Netherlands</option>
+                    <option value="Belgium">Belgium</option>
+                    <option value="Switzerland">Switzerland</option>
+                    <option value="Luxembourg">Luxembourg</option>
+                    <option value="Italy">Italy</option>
+                    <option value="United States">United States</option>
+                    <option value="Canada">Canada</option>
+                    <option value="Angola">Angola</option>
+                    <option value="Mozambique">Mozambique</option>
+                    <option value="Cape Verde">Cape Verde</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <input
+                    type="text"
+                    placeholder="Region / City"
+                    value={region}
+                    onChange={(e) => setRegion(e.target.value)}
+                    className="h-10 px-3 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
+                  />
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="space-y-2">
+                <p className="text-sm font-medium">5. E-mail <span className="text-red-500">*</span></p>
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
+                />
+              </div>
+
+              {/* Terms */}
               <div className="flex items-start gap-3">
                 <input type="checkbox" id="ci-terms-en" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} disabled={loading} className="mt-0.5 w-4 h-4 rounded border-border accent-[#C9A961]" />
                 <label htmlFor="ci-terms-en" className="text-sm text-muted-foreground cursor-pointer">
@@ -621,8 +675,8 @@ export default function CareerIntelligenceHomeEN() {
                 </label>
               </div>
               {error && <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>}
-              <Button onClick={handleAnalyze} disabled={!file || !acceptedTerms || !isValidLinkedinUrl(linkedinUrl) || loading} className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all">
-                {loading ? (<span className="flex items-center gap-2"><Loader2 className="w-5 h-5 animate-spin" />{loadingMessages[loadingStep]}</span>) : "Get my recommendation — $39"}
+              <Button onClick={handleAnalyze} disabled={!file || !acceptedTerms || !isValidLinkedinUrl(linkedinUrl) || !email || !country || loading} className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                {loading ? (<span className="flex items-center gap-2"><Loader2 className="w-5 h-5 animate-spin" />{loadingMessages[loadingStep]}</span>) : "Start analysis"}
               </Button>
               {loading && (<div className="space-y-3 animate-in fade-in"><div className="w-full bg-muted rounded-full h-1.5 overflow-hidden"><div className="h-full bg-[#C9A961] rounded-full transition-all duration-1000 ease-out" style={{ width: `${Math.min(((loadingStep + 1) / loadingMessages.length) * 100, 95)}%` }} /></div><p className="text-center text-sm text-muted-foreground animate-pulse">{loadingMessages[loadingStep]}</p></div>)}
               <button onClick={() => setStep('hero')} className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors text-center">← Back</button>
