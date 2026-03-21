@@ -569,13 +569,13 @@ export default function CareerPathHomeEN() {
                 <p className="text-sm text-gray-300 leading-relaxed">
                   You have 3 possible career paths. But which one is actually right for you? Career Intelligence PRO compares all 3 paths, analyses trade-offs and gives you a clear recommendation with full justification.
                 </p>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-lg font-bold text-white">$24</span>
-                    <span className="text-xs text-gray-500 line-through">$39</span>
-                  </div>
-                  <span className="text-[10px] text-[#C9A961] font-medium">available as upgrade after Career Path purchase</span>
-                </div>
+                <p className="text-[11px] text-[#C9A961]/70">Available as upgrade after Career Path analysis</p>
+                <button
+                  onClick={() => setStep('upload')}
+                  className="mt-1 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#1a1a2e] bg-[#C9A961] hover:bg-[#d4b96e] rounded-lg transition-colors"
+                >
+                  Start analysis <ArrowRight className="w-3 h-3" />
+                </button>
               </div>
             </div>
 
