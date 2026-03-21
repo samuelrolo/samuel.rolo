@@ -505,14 +505,13 @@ export default function CareerIntelligenceHomeEN() {
                   ))}
                 </div>
               </div>
-            </div>
-
-            <div className="text-center space-y-4">
-              <Button onClick={() => setStep('upload')} className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all">
-                <Scale className="w-5 h-5 mr-2" />Get my career recommendation
-              </Button>
-              <p className="text-xs text-muted-foreground">Full analysis for $39 · One-time payment · Result in &lt; 1 minute</p>
-              <p className="text-xs text-muted-foreground">Only need the diagnosis? <a href="/en/career-path" className="text-[#C9A961] hover:underline">Career Path for $12 →</a></p>
+              <div className="text-center space-y-4 pt-4">
+                <Button onClick={() => setStep('upload')} className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all">
+                  <Scale className="w-5 h-5 mr-2" />Get my career recommendation
+                </Button>
+                <p className="text-xs text-muted-foreground">Full analysis for $39 · One-time payment · Result in &lt; 1 minute</p>
+                <p className="text-xs text-muted-foreground">Only need the diagnosis? <a href="/en/career-path" className="text-[#C9A961] hover:underline">Career Path for $12 →</a></p>
+              </div>
             </div>
 
             <div className="grid grid-cols-3 gap-4">
