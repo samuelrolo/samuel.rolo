@@ -631,6 +631,7 @@
                 <option value="cv_free">CV Grátis</option>
                 <option value="cv_paid">CV Pago</option>
                 <option value="career_path">Career Path</option>
+                <option value="career_intelligence">Career Intelligence</option>
             </select>
             <div class="filter-divider"></div>
             <label>Senioridade</label>
@@ -739,6 +740,11 @@
                 <div class="segment-label">Upsell — Career Path</div>
                 <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Compraram CV, sem Career Path</div>
             </div>
+            <div class="segment-card" onclick="prepareNurturing('ci_upsell')" style="border-left:3px solid #7C3AED;">
+                <div class="segment-count" id="ciUpsellCount" style="color:#7C3AED;">--</div>
+                <div class="segment-label">Upsell — CI PRO</div>
+                <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">Career Path feito, sem CI PRO upgrade</div>
+            </div>
             <div class="segment-card" onclick="prepareNurturing('abandoned')">
                 <div class="segment-count" id="abandonedCount">--</div>
                 <div class="segment-label">Recuperar Abandono</div>
@@ -812,6 +818,7 @@
             <option value="all">Todos</option>
             <option value="cv">CV Analyser</option>
             <option value="career_path">Career Path</option>
+            <option value="career_intelligence">Career Intelligence</option>
             <option value="bundle">Bundle</option>
             <option value="linkedin_roaster">LinkedIn Roaster</option>
         </select>
@@ -854,6 +861,8 @@
             <option value="all">Todos</option>
             <option value="standard">CV Analyser</option>
             <option value="career_path">Career Path</option>
+            <option value="career_intelligence_pro">CI PRO</option>
+            <option value="career_intelligence_full">CI Full</option>
             <option value="linkedin_roaster">LinkedIn Roaster</option>
         </select>
         <input class="form-input" type="text" id="filterVoucherEmail" placeholder="Pesquisar email..." oninput="filterVouchers()" style="width:180px;">
@@ -1345,6 +1354,8 @@
                 <select class="form-select" id="voucherPlan" style="width:100%;">
                     <option value="CV Analyser|1|4.99|standard|false">CV Analyser — 1 análise (4,99€)</option>
                     <option value="Career Path|1|12.00|career_path|true">Career Path — 1 análise (12,00€)</option>
+                    <option value="CI PRO Upgrade|1|24.00|career_intelligence_pro|false">CI PRO Upgrade — (24,00€)</option>
+                    <option value="Career Intelligence Full|1|39.00|career_intelligence_full|false">Career Intelligence Full — (39,00€)</option>
                     <option value="Bundle CV + Career Path|1|14.99|career_path|true">Bundle CV + Career Path (14,99€)</option>
                     <option value="LinkedIn Roaster|1|1.99|linkedin_roaster|false">LinkedIn Roaster — 1 auditoria (1,99€)</option>
                     <option value="Oferta|1|0|standard|false">Oferta — Gratuito (0€)</option>
@@ -1418,6 +1429,10 @@
                         <span class="badge" style="background:var(--gold);color:#fff;font-size:11px;">Career Path</span>
                     </label>
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="aff-product-cb" value="career-intelligence" onchange="updateAffLinkPreview()">
+                        <span class="badge" style="background:#7C3AED;color:#fff;font-size:11px;">Career Intelligence</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
                         <input type="checkbox" class="aff-product-cb" value="linkedin-roaster" onchange="updateAffLinkPreview()">
                         <span class="badge" style="background:#0077B5;color:#fff;font-size:11px;">LinkedIn Roaster</span>
                     </label>
@@ -1480,6 +1495,14 @@
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
                         <input type="checkbox" class="coupon-product-cb" value="career_path" checked>
                         <span class="badge" style="background:var(--gold);color:#fff;font-size:11px;">Career Path</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="career_intelligence_pro" checked>
+                        <span class="badge" style="background:#7C3AED;color:#fff;font-size:11px;">CI PRO (24€)</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+                        <input type="checkbox" class="coupon-product-cb" value="career_intelligence_full" checked>
+                        <span class="badge" style="background:#5B21B6;color:#fff;font-size:11px;">CI Full (39€)</span>
                     </label>
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
                         <input type="checkbox" class="coupon-product-cb" value="bundle" checked>
