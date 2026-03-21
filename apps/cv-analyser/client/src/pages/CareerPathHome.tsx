@@ -76,6 +76,21 @@ const pricingPlans = [
       "Próximos passos concretos",
     ],
   },
+  {
+    name: "Career Intelligence PRO",
+    price: "24,00",
+    popular: false,
+    badge: "PRO",
+    description: "Tudo do Career Path + análise completa de decisão de carreira",
+    features: [
+      "Tudo incluído no Career Path",
+      "Comparação estratégica dos 3 caminhos",
+      "Trade-offs detalhados por caminho",
+      "Probabilidades de sucesso",
+      "Decisão recomendada com justificação",
+      "Upgrade disponível após compra",
+    ],
+  },
 ];
 
 /* ─── Comparison (benchmark real) ─── */
@@ -681,6 +696,28 @@ export default function CareerPathHome() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Career Intelligence PRO teaser */}
+            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-[#1a1a2e] to-[#16213e] border border-[#C9A961]/30 overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#C9A961]/10 rounded-full blur-3xl" />
+              <div className="relative space-y-4">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-[#C9A961]" />
+                  <span className="text-sm font-bold text-white">Career Intelligence</span>
+                  <span className="text-[10px] font-bold text-[#C9A961] bg-[#C9A961]/15 px-2 py-0.5 rounded-full border border-[#C9A961]/30">PRO</span>
+                </div>
+                <p className="text-sm text-gray-300 leading-relaxed">
+                  Tens 3 caminhos possíveis. Mas qual é realmente o certo para ti? O Career Intelligence PRO compara os 3 caminhos, analisa trade-offs e dá-te uma recomendação final com justificação.
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-lg font-bold text-white">24€</span>
+                    <span className="text-xs text-gray-500 line-through">39€</span>
+                  </div>
+                  <span className="text-[10px] text-[#C9A961] font-medium">upgrade disponível após compra do Career Path</span>
+                </div>
               </div>
             </div>
 
