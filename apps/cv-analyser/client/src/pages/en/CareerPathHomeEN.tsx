@@ -3,7 +3,7 @@
 // Includes country/region selector for geolocalised analysis
 
 import { useState, useEffect } from "react";
-import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, XCircle, ChevronDown, ChevronUp, Linkedin, Globe, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, DollarSign, Zap, Lock, ArrowRight, Shield, Check, Eye } from "lucide-react";
+import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, XCircle, ChevronDown, ChevronUp, Linkedin, Globe, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, DollarSign, Zap, Lock, ArrowRight, Shield, Check, Eye, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLocation } from "wouter";
@@ -60,11 +60,6 @@ const testimonials = [
   },
 ];
 
-/* ─── Pricing (inline) ─── */
-const PRICE_DISPLAY = '$19.99';
-
-/* (comparison table removed — simplifying homepage) */
-
 export default function CareerPathHomeEN() {
   useEffect(() => { document.title = "Career Path — AI-Powered Career Roadmap | Share2Inspire"; }, []);
 
@@ -119,8 +114,8 @@ export default function CareerPathHomeEN() {
   const [voucherError, setVoucherError] = useState<string | null>(null);
   const [voucherLoading, setVoucherLoading] = useState(false);
 
-  const PRICE = '19.99';
-  const PRICE_NUM = 19.99;
+  const PRICE = '12';
+  const PRICE_NUM = 12.00;
   const CUR = '$';
 
   const countryData = countries.find(c => c.country === selectedCountry);
@@ -154,7 +149,6 @@ export default function CareerPathHomeEN() {
     setVoucherError(null);
     try {
       const code = voucherCode.trim().toUpperCase();
-      // 1. Query voucher from Supabase REST API
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`,
         { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
@@ -165,7 +159,6 @@ export default function CareerPathHomeEN() {
       if (!v.is_active) throw new Error('This code has already been used');
       if (v.used_analyses >= v.total_analyses) throw new Error('This code has no remaining uses');
       if (v.voucher_type !== 'career_path' && !v.includes_career_path) throw new Error('This code is not valid for Career Path');
-      // 2. Mark voucher as used
       await fetch(
         `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
         {
@@ -174,7 +167,6 @@ export default function CareerPathHomeEN() {
           body: JSON.stringify({ used_analyses: v.used_analyses + 1, is_active: (v.used_analyses + 1) < v.total_analyses }),
         }
       );
-      // Voucher valid — mark as paid and go to results
       setShowVoucherModal(false);
       sessionStorage.setItem('careerPathPaid', 'true');
       setTimeout(() => { setLocation('/results'); }, 400);
@@ -292,7 +284,6 @@ export default function CareerPathHomeEN() {
         sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
       }
 
-      // Show preview before payment
       const profile = analysisSource.candidate_profile || {};
       setPreviewData({
         name: profile.detected_name || 'N/A',
@@ -373,8 +364,6 @@ export default function CareerPathHomeEN() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Bundle banner removed — one page, one product, one decision */}
-
       {/* Header */}
       <header className="border-b border-foreground/10 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -396,12 +385,13 @@ export default function CareerPathHomeEN() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-16">
+      <main className="max-w-4xl mx-auto px-6 py-12">
 
-        {/* ═══ STEP 1: HERO — Promise + Examples (value-first) ═══ */}
+        {/* ═══ STEP 1: HERO — Compact, conversion-focused ═══ */}
         {step === 'hero' && (
-          <div className="space-y-16 animate-in fade-in">
-            {/* Hero */}
+          <div className="space-y-12 animate-in fade-in">
+
+            {/* ── Hero: Headline + CTA immediately visible ── */}
             <div className="text-center space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/20 text-sm font-medium text-[#C9A961]">
                 <Compass className="w-4 h-4" />
@@ -411,165 +401,172 @@ export default function CareerPathHomeEN() {
                 Your career has <span className="text-[#C9A961]">3 possible paths</span>.<br />Find out which ones.
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Our AI analyses your CV and LinkedIn to identify the 3 career paths with the highest growth potential — in under 1 minute.
+                Upload your CV, get a personalised roadmap with gap analysis, salary estimates, and an action plan — in under 1 minute.
               </p>
+
+              {/* Primary CTA */}
+              <div className="flex flex-col items-center gap-3 pt-2">
+                <Button
+                  onClick={() => setStep('upload')}
+                  className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all shadow-lg shadow-[#C9A961]/20"
+                >
+                  <Compass className="w-5 h-5 mr-2" />
+                  Start my Career Path — {CUR}{PRICE}
+                </Button>
+                <p className="text-xs text-muted-foreground">One-time payment · No subscription · Results in under 1 minute</p>
+              </div>
+
+              {/* Trust badges — inline */}
+              <div className="flex flex-wrap justify-center gap-6 pt-2">
+                {[
+                  { icon: <Shield className="w-4 h-4" />, label: "100% private" },
+                  { icon: <Zap className="w-4 h-4" />, label: "Results in < 1 min" },
+                  { icon: <Award className="w-4 h-4" />, label: "Created by HR experts" },
+                ].map((badge, i) => (
+                  <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <span className="text-[#C9A961]">{badge.icon}</span>
+                    {badge.label}
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* ── Showcase: See What You'll Receive ── */}
-            <div className="relative rounded-2xl border-2 border-[#C9A961]/30 bg-gradient-to-b from-[#C9A961]/5 to-transparent overflow-hidden">
-              <div className="p-8 md:p-10 space-y-6">
-                <div className="text-center space-y-3">
+            {/* ── What you'll receive — compact grid ── */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-center text-foreground">What you'll receive</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {[
+                  { icon: <Compass className="w-4 h-4" />, title: "Career Roadmap", desc: "Step-by-step plan for 1-3 years" },
+                  { icon: <Target className="w-4 h-4" />, title: "Gap Analysis", desc: "Skills for the next level" },
+                  { icon: <DollarSign className="w-4 h-4" />, title: "Salary Estimate", desc: "Progression per stage" },
+                  { icon: <BookOpen className="w-4 h-4" />, title: "Training Plan", desc: "High-impact certifications" },
+                  { icon: <Users className="w-4 h-4" />, title: "Networking Strategy", desc: "Who to meet and how" },
+                  { icon: <Calendar className="w-4 h-4" />, title: "30-60-90 Day Plan", desc: "Concrete actions" },
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-2.5 p-3 rounded-xl bg-card border border-border">
+                    <span className="text-[#C9A961] mt-0.5 shrink-0">{item.icon}</span>
+                    <div>
+                      <p className="font-semibold text-foreground text-xs">{item.title}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Example — kept but compact ── */}
+            <div className="rounded-2xl border border-[#C9A961]/20 bg-gradient-to-b from-[#C9A961]/5 to-transparent overflow-hidden">
+              <div className="p-6 md:p-8 space-y-4">
+                <div className="text-center space-y-2">
                   <p className="text-xs font-semibold tracking-wider text-[#C9A961] uppercase">Real Result Example</p>
-                  <h2 className="text-2xl md:text-3xl font-bold text-foreground">See exactly what you'll receive</h2>
+                  <h2 className="text-xl font-bold text-foreground">See exactly what you'll receive</h2>
                   <p className="text-sm text-muted-foreground max-w-lg mx-auto">
-                    Personalised career roadmap, gap analysis, recommended roles with % fit, training, certifications, networking strategy and immediate action plan.
+                    Personalised career roadmap, gap analysis, recommended roles with % fit, training, certifications, networking strategy and action plan.
                   </p>
                 </div>
-                {/* Preview cards row */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   {[
                     { icon: <Compass className="w-4 h-4" />, label: "Career Roadmap" },
                     { icon: <Target className="w-4 h-4" />, label: "Gap Analysis" },
                     { icon: <BookOpen className="w-4 h-4" />, label: "Training & Certifications" },
                     { icon: <Users className="w-4 h-4" />, label: "Networking & Actions" },
                   ].map((item, i) => (
-                    <div key={i} className="flex flex-col items-center gap-2 p-3 rounded-xl bg-card/60 border border-border/50 text-center">
+                    <div key={i} className="flex flex-col items-center gap-1.5 p-2.5 rounded-xl bg-card/60 border border-border/50 text-center">
                       <span className="text-[#C9A961]">{item.icon}</span>
-                      <span className="text-xs font-medium text-muted-foreground">{item.label}</span>
+                      <span className="text-[11px] font-medium text-muted-foreground">{item.label}</span>
                     </div>
                   ))}
                 </div>
-                {/* CTA */}
-                <div className="flex flex-col items-center gap-3">
+                <div className="flex flex-col items-center gap-2">
                   <a
                     href="/en/career-path/example/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 h-12 px-8 text-sm font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
+                    className="inline-flex items-center gap-2 h-10 px-6 text-sm font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
                   >
                     <Eye className="w-4 h-4" />
                     See Full Example
                   </a>
-                  <p className="text-xs text-muted-foreground">Real report generated by our AI — no commitment</p>
+                  <p className="text-[11px] text-muted-foreground">Real report generated by our AI — no commitment</p>
                 </div>
-                {/* Competitive statement */}
-                <p className="text-center text-sm md:text-base font-medium italic" style={{ color: '#C9A961' }}>
-                  "What others charge €600, Share2Inspire delivers in 30 seconds for $19.99."
-                </p>
               </div>
             </div>
 
-            {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { icon: <Shield className="w-5 h-5" />, label: "100% private data" },
-                { icon: <Zap className="w-5 h-5" />, label: "Results in < 1 minute" },
-                { icon: <Award className="w-5 h-5" />, label: "Created by HR experts" },
-              ].map((badge, i) => (
-                <div key={i} className="flex flex-col items-center gap-2 p-4 rounded-xl bg-muted/30 text-center">
-                  <span className="text-[#C9A961]">{badge.icon}</span>
-                  <span className="text-xs font-medium text-muted-foreground">{badge.label}</span>
+            {/* ── Career Intelligence Upsell — clear options ── */}
+            <div className="rounded-2xl border border-purple-200 bg-gradient-to-br from-purple-50/50 to-[#C9A961]/5 overflow-hidden">
+              <div className="p-6 md:p-8 space-y-4">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <Brain className="w-5 h-5 text-purple-600" />
+                  <h3 className="text-lg font-bold text-foreground">Want more than a roadmap?</h3>
                 </div>
-              ))}
-            </div>
-
-            {/* What's Included — Preview */}
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-center text-foreground">What you'll receive</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {[
-                  { icon: <Compass className="w-4 h-4" />, title: "Career Roadmap", desc: "Step-by-step plan for the next 1-3 years" },
-                  { icon: <Target className="w-4 h-4" />, title: "Gap Analysis", desc: "Skills you need for the next level" },
-                  { icon: <DollarSign className="w-4 h-4" />, title: "Salary Estimate", desc: "Estimated salary progression per stage" },
-                  { icon: <BookOpen className="w-4 h-4" />, title: "Recommended Training", desc: "Certifications with the greatest career impact" },
-                  { icon: <Users className="w-4 h-4" />, title: "Networking Strategy", desc: "Who to meet and how to position yourself" },
-                  { icon: <Calendar className="w-4 h-4" />, title: "30-60-90 Day Plan", desc: "Concrete, time-bound actions" },
-                ].map((item, i) => (
-                  <div key={i} className="flex gap-3 p-4 rounded-xl bg-card border border-border">
-                    <span className="text-[#C9A961] mt-0.5 shrink-0">{item.icon}</span>
-                    <div>
-                      <p className="font-semibold text-foreground text-sm">{item.title}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+                <p className="text-sm text-muted-foreground text-center max-w-xl mx-auto">
+                  <strong className="text-foreground">Career Intelligence</strong> compares your 3 paths side-by-side, analyses trade-offs, and gives you a justified recommendation — so you decide with confidence.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                  {/* Option 1: Upgrade after Career Path */}
+                  <div className="p-4 rounded-xl bg-white border border-border space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded-full tracking-wider">SAVE</span>
+                      <span className="text-sm font-semibold text-foreground">Start with Career Path</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Get your 3 paths for {CUR}{PRICE}, then upgrade to Career Intelligence for {CUR}24.</p>
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-lg font-bold text-[#C9A961]">{CUR}{PRICE}</span>
+                      <span className="text-xs text-muted-foreground">then +{CUR}24 upgrade</span>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* How it works — 3 steps */}
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-center text-foreground">3 steps. 1 minute. 3 paths.</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                  { step: "1", title: "Upload your CV", desc: "Upload your CV and share your LinkedIn profile.", time: "30 sec" },
-                  { step: "2", title: "AI analyses everything", desc: "We cross-reference experience, skills and market data.", time: "30 sec" },
-                  { step: "3", title: "Get your 3 paths", desc: "Full roadmap with gaps, training and action steps.", time: "Instant" },
-                ].map((item, i) => (
-                  <div key={i} className="relative p-5 rounded-xl bg-card border border-border text-center space-y-2">
-                    <div className="w-8 h-8 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/30 flex items-center justify-center mx-auto">
-                      <span className="text-sm font-bold text-[#C9A961]">{item.step}</span>
+                  {/* Option 2: Full Career Intelligence */}
+                  <div className="p-4 rounded-xl bg-white border border-purple-200 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full tracking-wider">FULL</span>
+                      <span className="text-sm font-semibold text-foreground">Career Intelligence</span>
                     </div>
-                    <p className="font-semibold text-foreground text-sm">{item.title}</p>
-                    <p className="text-xs text-muted-foreground">{item.desc}</p>
-                    <span className="text-[10px] text-[#C9A961] font-medium">{item.time}</span>
+                    <p className="text-xs text-muted-foreground">Everything in Career Path + strategic comparison, trade-offs, and final recommendation.</p>
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg font-bold text-purple-600">{CUR}39</span>
+                      <a
+                        href="/en/career-intelligence"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 hover:text-purple-700 transition-colors"
+                      >
+                        Learn more <ArrowRight className="w-3 h-3" />
+                      </a>
+                    </div>
                   </div>
-                ))}
+                </div>
               </div>
             </div>
 
-            {/* Tension — plant the PRO seed */}
-            <div className="space-y-4 p-6 rounded-2xl bg-muted/30 border border-border">
-              <h3 className="text-lg font-bold text-foreground text-center">But knowing the 3 paths is just the beginning.</h3>
-              <div className="space-y-3 text-sm text-muted-foreground text-center max-w-2xl mx-auto leading-relaxed">
-                <p>
-                  Career Path shows you where you can go. But there's a real difference between them. Some will accelerate your career. Others could set you back years.
-                </p>
-                <p>
-                  Which has the highest probability of success? Which requires more effort than it seems? What do you lose by choosing one over another?
-                </p>
-                <p>
-                  Once you have your 3 paths, the real question stops being "where should I go". It becomes: <strong className="text-foreground">what's the best decision right now</strong>.
-                </p>
-                <p>
-                  <strong className="text-foreground">Career Intelligence</strong> helps you answer that. With clear comparison, real trade-offs and a well-founded recommendation — so you decide with confidence, not doubt.
-                </p>
-                <p className="text-xs text-muted-foreground/80 pt-2">
-                  Available as upgrade after the analysis.
-                </p>
-              </div>
-            </div>
-
-            {/* Testimonials */}
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-center text-foreground">What our users say</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* ── Testimonials — compact ── */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-center text-foreground">What our users say</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {testimonials.map((t, i) => (
-                  <div key={i} className="p-5 rounded-xl bg-card border border-border space-y-3">
+                  <div key={i} className="p-4 rounded-xl bg-card border border-border space-y-2">
                     <div className="flex gap-0.5">
                       {Array.from({ length: t.rating }).map((_, j) => (
-                        <Star key={j} className="w-4 h-4 fill-[#C9A961] text-[#C9A961]" />
+                        <Star key={j} className="w-3.5 h-3.5 fill-[#C9A961] text-[#C9A961]" />
                       ))}
                     </div>
-                    <p className="text-sm text-muted-foreground italic">"{t.text}"</p>
+                    <p className="text-xs text-muted-foreground italic leading-relaxed">"{t.text}"</p>
                     <div>
-                      <p className="text-sm font-semibold text-foreground">{t.name}</p>
-                      <p className="text-xs text-muted-foreground">{t.role}</p>
+                      <p className="text-xs font-semibold text-foreground">{t.name}</p>
+                      <p className="text-[11px] text-muted-foreground">{t.role}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Bottom CTA */}
-            <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
-              <h2 className="text-2xl font-bold text-foreground">Start with the diagnosis. The decision comes after.</h2>
-              <p className="text-muted-foreground">Full analysis for $19.99. One-time payment. No subscription. Results in under 1 minute.</p>
+            {/* ── Bottom CTA ── */}
+            <div className="text-center space-y-3 p-6 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
+              <h2 className="text-xl font-bold text-foreground">Ready to discover your 3 career paths?</h2>
+              <p className="text-sm text-muted-foreground">Full analysis for {CUR}{PRICE}. One-time payment. Results in under 1 minute.</p>
               <Button
                 onClick={() => setStep('upload')}
-                className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
+                className="h-12 px-8 text-sm font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
               >
                 <Compass className="w-5 h-5 mr-2" />
-                Discover my 3 career paths
+                Start my Career Path
               </Button>
             </div>
           </div>
@@ -659,7 +656,6 @@ export default function CareerPathHomeEN() {
                     className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] transition-colors text-sm"
                   />
                 </div>
-                {/* Transparency note */}
                 <div className="p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg">
                   <p className="text-xs font-semibold text-blue-600 mb-1.5 flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" /> The system will automatically analyse:</p>
                   <div className="grid grid-cols-2 gap-1">
@@ -757,8 +753,6 @@ export default function CareerPathHomeEN() {
                 ← Back
               </button>
             </div>
-
-            {/* Comparison table removed — simplifying homepage */}
           </div>
         )}
 
@@ -775,13 +769,10 @@ export default function CareerPathHomeEN() {
             </div>
 
             <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
-              {/* Name & Role */}
               <div className="text-center pb-4 border-b border-border">
                 <p className="text-lg font-bold text-foreground">{previewData.name}</p>
                 <p className="text-sm text-[#C9A961] font-semibold">{previewData.role}</p>
               </div>
-
-              {/* Seniority & Experience */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-muted/30 rounded-lg text-center">
                   <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-1">SENIORITY</p>
@@ -792,8 +783,6 @@ export default function CareerPathHomeEN() {
                   <p className="text-sm font-bold text-foreground">{previewData.experience}</p>
                 </div>
               </div>
-
-              {/* Top Skills */}
               <div>
                 <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-2">TOP DETECTED SKILLS</p>
                 <div className="flex flex-wrap gap-2">
@@ -802,8 +791,6 @@ export default function CareerPathHomeEN() {
                   ))}
                 </div>
               </div>
-
-              {/* Next Role - the hook */}
               {previewData.nextRole && (
                 <div className="p-4 bg-gradient-to-r from-[#C9A961]/5 to-[#C9A961]/10 rounded-xl border border-[#C9A961]/20">
                   <p className="text-[10px] font-semibold text-[#C9A961] tracking-wider mb-1">MOST LIKELY NEXT CAREER STEP</p>
@@ -834,7 +821,7 @@ export default function CareerPathHomeEN() {
               </div>
             </div>
 
-            {/* CTA */}
+            {/* Payment CTAs — Career Path + Career Intelligence option */}
             <div className="space-y-3">
               <Button
                 onClick={() => {
@@ -845,9 +832,29 @@ export default function CareerPathHomeEN() {
                 className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
               >
                 <Compass className="w-5 h-5 mr-2" />
-                Unlock Career Path — ${PRICE}
+                Unlock Career Path — {CUR}{PRICE}
               </Button>
-              <p className="text-center text-[10px] text-muted-foreground">Personalised roadmap · Recommended training · Next roles · Networking strategy</p>
+
+              {/* Career Intelligence upsell */}
+              <div className="p-4 rounded-xl border border-purple-200 bg-purple-50/50 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Brain className="w-4 h-4 text-purple-600" />
+                  <span className="text-sm font-semibold text-foreground">Want the full strategic analysis?</span>
+                </div>
+                <p className="text-xs text-muted-foreground">Career Intelligence includes everything in Career Path + side-by-side comparison, trade-offs, and a justified recommendation.</p>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-bold text-purple-600">{CUR}39</span>
+                  <span className="text-xs text-muted-foreground line-through">{CUR}51</span>
+                  <a
+                    href="/en/career-intelligence"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 hover:text-purple-700 transition-colors ml-auto"
+                  >
+                    Get Career Intelligence <ArrowRight className="w-3 h-3" />
+                  </a>
+                </div>
+              </div>
+
+              <p className="text-center text-[10px] text-muted-foreground">Or upgrade to Career Intelligence after your Career Path results for {CUR}24</p>
               <button
                 onClick={() => setStep('upload')}
                 className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors text-center"
@@ -877,7 +884,6 @@ export default function CareerPathHomeEN() {
                 <p className="text-lg font-bold text-[#C9A961]">{CUR}{PRICE}</p>
               </div>
 
-              {/* Email */}
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-foreground">Email</label>
                 <input
@@ -889,7 +895,6 @@ export default function CareerPathHomeEN() {
                 />
               </div>
 
-              {/* Payment method — EN only has Stripe and PayPal */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-foreground">Payment method</label>
                 <div className="grid grid-cols-2 gap-2">
