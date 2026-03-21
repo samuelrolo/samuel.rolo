@@ -114,8 +114,8 @@ export default function CareerPathHomeEN() {
   const [voucherError, setVoucherError] = useState<string | null>(null);
   const [voucherLoading, setVoucherLoading] = useState(false);
 
-  const PRICE = '12';
-  const PRICE_NUM = 12.00;
+  const PRICE = '19.99';
+  const PRICE_NUM = 19.99;
   const CUR = '$';
 
   const countryData = countries.find(c => c.country === selectedCountry);
@@ -352,8 +352,8 @@ export default function CareerPathHomeEN() {
     sessionStorage.setItem('cpPaymentEmail', email);
     window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}USD`, '_blank');
     setPaymentStep('success');
-    trackPurchase('career_path', 12.00, `CP-PAYPAL-${Date.now()}`);
-    trackAffiliateConversion({ product: 'career_path', amount: 12.00, currency: 'USD', payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
+    trackPurchase('career_path', 19.99, `CP-PAYPAL-${Date.now()}`);
+    trackAffiliateConversion({ product: 'career_path', amount: 19.99, currency: 'USD', payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
   };
 
   const handlePaymentSuccess = () => {
@@ -509,7 +509,7 @@ export default function CareerPathHomeEN() {
                       <span className="text-[10px] font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded-full tracking-wider">SAVE</span>
                       <span className="text-sm font-semibold text-foreground">Start with Career Path</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">Get your 3 paths for {CUR}{PRICE}, then upgrade to Career Intelligence for {CUR}24.</p>
+                    <p className="text-xs text-muted-foreground">Get your 3 paths for {CUR}{PRICE}, then upgrade to Career Intelligence for just {CUR}24.</p>
                     <div className="flex items-baseline gap-1.5">
                       <span className="text-lg font-bold text-[#C9A961]">{CUR}{PRICE}</span>
                       <span className="text-xs text-muted-foreground">then +{CUR}24 upgrade</span>
@@ -844,7 +844,7 @@ export default function CareerPathHomeEN() {
                 <p className="text-xs text-muted-foreground">Career Intelligence includes everything in Career Path + side-by-side comparison, trade-offs, and a justified recommendation.</p>
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-bold text-purple-600">{CUR}39</span>
-                  <span className="text-xs text-muted-foreground line-through">{CUR}51</span>
+                  <span className="text-xs text-muted-foreground line-through">{CUR}59.99</span>
                   <a
                     href="/en/career-intelligence"
                     className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 hover:text-purple-700 transition-colors ml-auto"
@@ -854,7 +854,7 @@ export default function CareerPathHomeEN() {
                 </div>
               </div>
 
-              <p className="text-center text-[10px] text-muted-foreground">Or upgrade to Career Intelligence after your Career Path results for {CUR}24</p>
+              <p className="text-center text-[10px] text-muted-foreground">Or upgrade to Career Intelligence after your Career Path results for just {CUR}24</p>
               <button
                 onClick={() => setStep('upload')}
                 className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors text-center"
