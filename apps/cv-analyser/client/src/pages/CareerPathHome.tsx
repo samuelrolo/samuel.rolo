@@ -660,12 +660,23 @@ export default function CareerPathHome() {
             {/* Tensão — plantar semente do PRO */}
             <div className="space-y-4 p-6 rounded-2xl bg-muted/30 border border-border">
               <h3 className="text-lg font-bold text-foreground text-center">Mas saber os 3 caminhos é só o início.</h3>
-              <p className="text-sm text-muted-foreground text-center max-w-xl mx-auto leading-relaxed">
-                O Career Path mostra-te para onde podes ir. Mas qual destes caminhos é realmente o certo para ti? Qual tem maior probabilidade de sucesso? O que perdes ao escolher um em vez de outro?
-              </p>
-              <p className="text-sm text-muted-foreground text-center max-w-xl mx-auto leading-relaxed">
-                Quando tiveres os teus 3 caminhos, vais querer saber qual escolher. O <strong className="text-foreground">Career Intelligence</strong> ajuda-te a decidir — com comparação, trade-offs e uma recomendação final fundamentada. Disponível como upgrade após a análise.
-              </p>
+              <div className="space-y-3 text-sm text-muted-foreground text-center max-w-2xl mx-auto leading-relaxed">
+                <p>
+                  O Career Path mostra-te para onde podes ir. Mas há uma diferença real entre eles. Alguns vão acelerar a tua carreira. Outros podem atrasar-te anos.
+                </p>
+                <p>
+                  Qual tem maior probabilidade de sucesso? Qual exige mais esforço do que parece? O que perdes ao escolher um em vez de outro?
+                </p>
+                <p>
+                  Quando tiveres os teus 3 caminhos, a verdadeira questão deixa de ser "para onde ir". Passa a ser: <strong className="text-foreground">qual é a melhor decisão neste momento</strong>.
+                </p>
+                <p>
+                  O <strong className="text-foreground">Career Intelligence</strong> ajuda-te a responder a isso. Com comparação clara, trade-offs reais e uma recomendação fundamentada — para decidires com confiança, não com dúvida.
+                </p>
+                <p className="text-xs text-muted-foreground/80 pt-2">
+                  Disponível como upgrade após a análise.
+                </p>
+              </div>
             </div>
 
             {/* Testimonials */}

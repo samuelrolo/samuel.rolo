@@ -516,12 +516,23 @@ export default function CareerPathHomeEN() {
             {/* Tension — plant the PRO seed */}
             <div className="space-y-4 p-6 rounded-2xl bg-muted/30 border border-border">
               <h3 className="text-lg font-bold text-foreground text-center">But knowing the 3 paths is just the beginning.</h3>
-              <p className="text-sm text-muted-foreground text-center max-w-xl mx-auto leading-relaxed">
-                Career Path shows you where you can go. But which of these paths is actually right for you? Which has the highest probability of success? What do you lose by choosing one over another?
-              </p>
-              <p className="text-sm text-muted-foreground text-center max-w-xl mx-auto leading-relaxed">
-                Once you have your 3 paths, you'll want to know which one to choose. <strong className="text-foreground">Career Intelligence</strong> helps you decide — with comparison, trade-offs and a final recommendation backed by data. Available as upgrade after the analysis.
-              </p>
+              <div className="space-y-3 text-sm text-muted-foreground text-center max-w-2xl mx-auto leading-relaxed">
+                <p>
+                  Career Path shows you where you can go. But there's a real difference between them. Some will accelerate your career. Others could set you back years.
+                </p>
+                <p>
+                  Which has the highest probability of success? Which requires more effort than it seems? What do you lose by choosing one over another?
+                </p>
+                <p>
+                  Once you have your 3 paths, the real question stops being "where should I go". It becomes: <strong className="text-foreground">what's the best decision right now</strong>.
+                </p>
+                <p>
+                  <strong className="text-foreground">Career Intelligence</strong> helps you answer that. With clear comparison, real trade-offs and a well-founded recommendation — so you decide with confidence, not doubt.
+                </p>
+                <p className="text-xs text-muted-foreground/80 pt-2">
+                  Available as upgrade after the analysis.
+                </p>
+              </div>
             </div>
 
             {/* Testimonials */}
