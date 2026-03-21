@@ -10,6 +10,8 @@ import { useLocation } from "wouter";
 import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { countries } from "./countries";
+import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
+import { trackAffiliateConversion } from "@/lib/affiliate";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -359,6 +361,8 @@ export default function CareerPathHomeEN() {
     sessionStorage.setItem('cpPaymentEmail', email);
     window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}USD`, '_blank');
     setPaymentStep('success');
+    trackPurchase('career_path', 12.00, `CP-PAYPAL-${Date.now()}`);
+    trackAffiliateConversion({ product: 'career_path', amount: 12.00, currency: 'USD', payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
   };
 
   const handlePaymentSuccess = () => {

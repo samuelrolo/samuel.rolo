@@ -1171,6 +1171,75 @@
     let activeCoupon = null; // { code, discount_percent, partner_name }
     const BASE_PRICE = 1.99;
 
+    // ── Affiliate Tracking ──────────────────────────────────
+    (function initAffiliateTracking() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const refCode = params.get('ref') || params.get('aff') || params.get('utm_affiliate');
+        if (!refCode) return;
+        const sessionId = 's_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10);
+        sessionStorage.setItem('affiliate_code', refCode);
+        sessionStorage.setItem('affiliate_session', sessionId);
+        sessionStorage.setItem('affiliate_landing', window.location.pathname);
+        // Resolve affiliate_id and register click
+        fetch(SUPABASE_URL + '/rest/v1/affiliates?code=eq.' + encodeURIComponent(refCode) + '&select=id&limit=1', {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+        }).then(r => r.json()).then(affData => {
+          const clickData = {
+            affiliate_code: refCode,
+            landing_page: window.location.pathname + window.location.search,
+            referrer: document.referrer || null,
+            user_agent: navigator.userAgent,
+            device_type: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : (/Tablet|iPad/i.test(navigator.userAgent) ? 'tablet' : 'desktop'),
+            browser: navigator.userAgent.includes('Firefox') ? 'Firefox' : (navigator.userAgent.includes('Edg/') ? 'Edge' : (navigator.userAgent.includes('Chrome') ? 'Chrome' : (navigator.userAgent.includes('Safari') ? 'Safari' : 'Other'))),
+            os: navigator.userAgent.includes('Windows') ? 'Windows' : (navigator.userAgent.includes('Mac OS') ? 'macOS' : (navigator.userAgent.includes('Android') ? 'Android' : (navigator.userAgent.includes('iPhone') ? 'iOS' : 'Other'))),
+            screen_resolution: window.screen.width + 'x' + window.screen.height,
+            session_id: sessionId,
+          };
+          if (affData && affData.length > 0) clickData.affiliate_id = affData[0].id;
+          fetch(SUPABASE_URL + '/rest/v1/affiliate_clicks', {
+            method: 'POST',
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+            body: JSON.stringify(clickData)
+          }).then(r => r.json()).then(res => {
+            if (res && res.length > 0) sessionStorage.setItem('affiliate_click_id', String(res[0].id));
+          }).catch(() => {});
+        }).catch(() => {});
+        // Clean URL
+        params.delete('ref'); params.delete('aff'); params.delete('utm_affiliate');
+        const cleanUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+        window.history.replaceState({}, '', cleanUrl);
+      } catch (e) { console.debug('[AFFILIATE] init error:', e); }
+    })();
+
+    function trackAffiliateConversion(product, amount, currency, paymentMethod, email, transactionId) {
+      try {
+        const affiliateCode = sessionStorage.getItem('affiliate_code');
+        if (!affiliateCode) return;
+        const clickId = sessionStorage.getItem('affiliate_click_id');
+        fetch(SUPABASE_URL + '/rest/v1/affiliates?code=eq.' + encodeURIComponent(affiliateCode) + '&select=id&limit=1', {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+        }).then(r => r.json()).then(affData => {
+          const convData = {
+            affiliate_code: affiliateCode,
+            product: product,
+            amount: amount,
+            currency: currency,
+            payment_method: paymentMethod,
+            customer_email: email || null,
+            transaction_id: transactionId || null,
+          };
+          if (affData && affData.length > 0) convData.affiliate_id = affData[0].id;
+          if (clickId) convData.click_id = parseInt(clickId, 10);
+          fetch(SUPABASE_URL + '/rest/v1/affiliate_conversions', {
+            method: 'POST',
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+            body: JSON.stringify(convData)
+          }).catch(() => {});
+        }).catch(() => {});
+      } catch (e) { console.debug('[AFFILIATE] conversion error:', e); }
+    }
+
     // Archetypes for each score level (1-10)
     const ARCHETYPES = {
         1:  { name: 'The Ghost',              emoji: '\ud83d\udc7b', desc: 'O teu perfil \u00e9 praticamente invis\u00edvel. Os recrutadores n\u00e3o sabem que existes.',                    share: 'Fiz a auditoria ao meu perfil LinkedIn e descobri que sou "The Ghost" \ud83d\udc7b \u2014 Score 1/10. Hora de mudar isto! \ud83d\ude80' },
@@ -1843,6 +1912,8 @@
             items: [{ item_name: 'LinkedIn Roaster', price: paidAmount }]
         });
         fbq('track', 'Purchase', { value: paidAmount, currency: 'EUR', content_ids: ['linkedin-roast'], content_type: 'product' });
+        // Affiliate conversion tracking
+        trackAffiliateConversion('linkedin_roast', paidAmount, 'EUR', method, email, 'LR-' + Date.now());
     }
 
     function displayFullResults() {
