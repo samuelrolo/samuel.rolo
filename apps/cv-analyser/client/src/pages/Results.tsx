@@ -348,8 +348,8 @@ export default function Results() {
   // Currency & pricing: PT = EUR, EN = USD
   const CUR = isEN ? '$' : '€';
   const P = isEN
-    ? { cv: '5.99', cp: '19.99', career: '19.99' }
-    : { cv: '3,99', cp: '12,00', career: '12,00' };
+    ? { cv: '9.99', cp: '19.99', career: '19.99' }
+    : { cv: '9,99', cp: '19,99', career: '19,99' };
   const CURRENCY_CODE = isEN ? 'USD' : 'EUR';
   const [pollingMessage, setPollingMessage] = useState(() => {
     const pEN = window.location.pathname.startsWith('/en/');
@@ -359,7 +359,7 @@ export default function Results() {
   });
   const [selectedPlan, setSelectedPlan] = useState<{ name: string; price: string; analyses: number; voucher_type?: string; includes_career_path?: boolean }>({
     name: isEN ? 'CV Report' : 'Relatório CV',
-    price: isEN ? '5.99' : '3,99',
+    price: isEN ? '9.99' : '9,99',
     analyses: 1,
     voucher_type: 'standard',
     includes_career_path: false,
@@ -472,9 +472,10 @@ export default function Results() {
           if (data.success && data.paid) {
             setIsPaid(true);
             sessionStorage.setItem('isPaid', 'true');
-            const priceVal = restoredPlan ? parseFloat(String(restoredPlan.price).replace(',', '.')) : 3.99;
+            const priceVal = restoredPlan ? parseFloat(String(restoredPlan.price).replace(',', '.')) : 9.99;
             const productName = restoredPlan?.includes_career_path ? 'bundle' : 'cv_analyser';
             trackPurchase(productName, priceVal, `CV-STRIPE-${sessionId}`);
+            if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: priceVal, currency: isEN ? 'USD' : 'EUR'});
             trackAffiliateConversion({ product: productName, amount: priceVal, currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CV-STRIPE-${sessionId}` });
             updateAnalysisPayment(String(priceVal), 'stripe', `CV-STRIPE-${sessionId}`);
 
@@ -714,6 +715,7 @@ export default function Results() {
       window.open(`https://paypal.me/SamuelRolo/${priceNum}${CURRENCY_CODE}`, '_blank');
       
       // For PayPal, we need manual confirmation - go to success step
+      if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: parseFloat(selectedPlan.price.replace(',', '.')), currency: CURRENCY_CODE});
       setPaymentStep('success');
     } catch (err) {
       setPaymentError(isEN ? 'Error opening PayPal. Try again.' : 'Erro ao abrir PayPal. Tenta novamente.');
@@ -792,6 +794,7 @@ export default function Results() {
             setCareerPathEmail(email);
           }
           
+          if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: parseFloat(selectedPlan.price.replace(',', '.')), currency: CURRENCY_CODE});
           setPaymentStep('success');
           return;
         }
@@ -863,6 +866,7 @@ export default function Results() {
           sessionStorage.setItem('careerPathIncluded', 'true');
           setCareerPathEmail(email);
         }
+        if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: parseFloat(selectedPlan.price.replace(',', '.')), currency: CURRENCY_CODE});
         setPaymentStep('success');
       } else {
         setPollingExpired(true);
@@ -1027,7 +1031,7 @@ export default function Results() {
     try {
       const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      const cpAmount = isEN ? '19.99' : '12.00';
+      const cpAmount = isEN ? '19.99' : '19.99';
       const cpCurrencyCode = isEN ? 'usd' : 'eur';
 
       if (careerPathPaymentMethod === 'stripe') {

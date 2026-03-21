@@ -1,6 +1,6 @@
 // Career Path — Produto independente Share2Inspire
 // Upload de CV + URL LinkedIn → Pagamento → Análise de carreira com IA
-// Preço: €12,00
+// Preço: €19,99
 
 import { useState, useEffect } from "react";
 import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, XCircle, Minus, ChevronDown, ChevronUp, Linkedin, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, Globe, DollarSign, Zap, Lock, ArrowRight, Shield, Check, Eye } from "lucide-react";
@@ -60,7 +60,7 @@ const testimonials = [
 ];
 
 /* ─── Pricing (inline) ─── */
-const PRICE_DISPLAY = '12€';
+const PRICE_DISPLAY = '19,99€';
 
 /* (comparison table removed — simplifying homepage) */
 
@@ -123,8 +123,8 @@ export default function CareerPathHome() {
   const [voucherError, setVoucherError] = useState<string | null>(null);
   const [voucherLoading, setVoucherLoading] = useState(false);
 
-  const PRICE = '12,00';
-  const PRICE_NUM = 12.00;
+  const PRICE = '19,99';
+  const PRICE_NUM = 19.99;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -371,11 +371,12 @@ export default function CareerPathHome() {
     if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
 
     sessionStorage.setItem('cpPaymentEmail', email);
-    trackPaymentStart('career_path', 12.00);
+    trackPaymentStart('career_path', 19.99);
     window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}EUR`, '_blank');
     setPaymentStep('success');
-    trackPurchase('career_path', 12.00, `CP-PAYPAL-${Date.now()}`);
-    trackAffiliateConversion({ product: 'career_path', amount: 12.00, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
+    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: PRICE_NUM, currency: 'EUR'});
+    trackPurchase('career_path', 19.99, `CP-PAYPAL-${Date.now()}`);
+    trackAffiliateConversion({ product: 'career_path', amount: 19.99, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
   };
 
   const handleStripePayment = async () => {
@@ -596,7 +597,7 @@ export default function CareerPathHome() {
                 </div>
                 {/* Competitive statement */}
                 <p className="text-center text-sm md:text-base font-medium italic" style={{ color: '#C9A961' }}>
-                  "O que outros cobram 600€, a Share2Inspire entrega em 30 segundos por 12€."
+                  "O que outros cobram 600€, a Share2Inspire entrega em 30 segundos por 19,99€."
                 </p>
               </div>
             </div>
@@ -705,7 +706,7 @@ export default function CareerPathHome() {
             {/* Bottom CTA */}
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
               <h2 className="text-2xl font-bold text-foreground">Começa pelo diagnóstico. A decisão vem depois.</h2>
-              <p className="text-muted-foreground">Análise completa por 12€. Pagamento único. Sem subscrição. Resultado em menos de 1 minuto.</p>
+              <p className="text-muted-foreground">Análise completa por 19,99€. Pagamento único. Sem subscrição. Resultado em menos de 1 minuto.</p>
               <Button
                 onClick={() => setStep('upload')}
                 className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"

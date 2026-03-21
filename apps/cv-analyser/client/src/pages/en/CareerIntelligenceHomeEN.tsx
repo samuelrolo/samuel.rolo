@@ -353,6 +353,7 @@ export default function CareerIntelligenceHomeEN() {
     trackPaymentStart('career_intelligence_full', FINAL_PRICE);
     window.open(`https://paypal.me/SamuelRolo/${FINAL_PRICE.toFixed(2)}USD`, '_blank');
     setPaymentStep('success');
+    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: FINAL_PRICE, currency: currencyCodeUpper});
     const txId = `CI-PAYPAL-${Date.now()}`;
     trackPurchase('career_intelligence_full', FINAL_PRICE, txId);
     trackAffiliateConversion({ product: 'career_intelligence_full', amount: FINAL_PRICE, currency: currencyCodeUpper, payment_method: 'paypal', customer_email: email, transaction_id: txId });

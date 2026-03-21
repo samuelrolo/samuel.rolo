@@ -1,6 +1,6 @@
 // Bundle — CV Analyser + Career Path | Share2Inspire
 // Upload CV + LinkedIn → Pagamento → Ambos os motores correm → Resultados
-// Preço PT: €14,99
+// Preço PT: €34,00
 import { useState, useEffect } from "react";
 import { Upload, FileText, Loader2, Compass, Target, TrendingUp, CheckCircle2, Linkedin, CreditCard, AlertCircle, Ticket, Briefcase, Sparkles, Shield, Check, ArrowRight, Lock, BarChart3, Zap, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,9 +20,9 @@ const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
-const PRICE = '14,99';
-const PRICE_NUM = 14.99;
-const ORIGINAL_PRICE = '16,99';
+const PRICE = '34,00';
+const PRICE_NUM = 34.00;
+const ORIGINAL_PRICE = '39,99';
 
 async function extractTextFromPDF(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
@@ -247,6 +247,7 @@ export default function BundleHome() {
 
       // Track conversions
       trackPurchase('bundle_cv_career', PRICE_NUM, `BUNDLE-${Date.now()}`);
+      if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: PRICE_NUM, currency: 'EUR'});
       trackAffiliateConversion({
         product: 'bundle_cv_career',
         amount: PRICE_NUM,
@@ -314,6 +315,7 @@ export default function BundleHome() {
     trackPaymentStart('bundle_cv_career', PRICE_NUM);
     window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}EUR`, '_blank');
     setPaymentStep('success');
+    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: PRICE_NUM, currency: 'EUR'});
     trackPurchase('bundle_cv_career', PRICE_NUM, `BUNDLE-PAYPAL-${Date.now()}`);
     trackAffiliateConversion({ product: 'bundle_cv_career', amount: PRICE_NUM, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: `BUNDLE-PAYPAL-${Date.now()}` });
   };

@@ -505,7 +505,7 @@ const testimonials = [
   {
     name: "Mariana Costa",
     role: "Gestora de Projetos",
-    text: "Valia muito mais do que os €4,99 que paguei. O posicionamento na curva normal foi um eye-opener — percebi que estava no percentil 40 e agora estou no 75.",
+    text: "Valia muito mais do que os €9,99 que paguei. O posicionamento na curva normal foi um eye-opener — percebi que estava no percentil 40 e agora estou no 75.",
     rating: 5,
   },
 ];
@@ -514,9 +514,9 @@ const testimonials = [
 const pricingPlans = [
   {
     name: "Essencial",
-    price: "4,99",
+    price: "9,99",
     analyses: 1,
-    perUnit: "4,99",
+    perUnit: "9,99",
     popular: false,
     badge: null,
     features: ["Análise completa desbloqueada", "Curva normal de posicionamento", "Estimativa salarial detalhada", "Certificação LinkedIn — partilha o teu resultado", "Opção de enviar PDF por email"],
@@ -524,18 +524,18 @@ const pricingPlans = [
 
   {
     name: "Profissional",
-    price: "11,99",
+    price: "15,99",
     analyses: 3,
-    perUnit: "4,00",
+    perUnit: "5,33",
     popular: false,
     badge: null,
     features: ["3 análises completas", "Código reutilizável para futuras análises", "Certificação LinkedIn — partilha o teu resultado", "Ideal para testar versões do CV", "Suporte prioritário por email"],
   },
   {
     name: "Premium",
-    price: "17,99",
+    price: "20,49",
     analyses: 5,
-    perUnit: "3,60",
+    perUnit: "4,10",
     popular: false,
     badge: null,
     features: ["5 análises completas", "Código reutilizável para futuras análises", "Certificação LinkedIn — partilha o teu resultado", "Melhor preço por análise", "Partilha com amigos/colegas"],
@@ -555,7 +555,7 @@ const comparisonFeatures = [
   { feature: "Certificação LinkedIn partilhável", us: true, competitor1: false, competitor2: false },
   { feature: "Cruzamento CV vs LinkedIn", us: true, competitor1: false, competitor2: false },
 
-  { feature: "Preço", usText: "Desde €4,99", comp1Text: "€19,99/mês", comp2Text: "€9,99" },
+  { feature: "Preço", usText: "Desde €9,99", comp1Text: "€19,99/mês", comp2Text: "€9,99" },
 ];
 
 export default function Home() {
@@ -1267,7 +1267,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3 flex-wrap">
           <span className="text-[10px] bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] text-[#1a1a2e] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase shrink-0">Mais popular</span>
           <span className="text-sm text-white">
-            <strong className="text-[#C9A961]">Bundle</strong> — CV Analyser + Career Path por <strong className="text-white">€14,99</strong> <span className="text-white/40 line-through text-xs">€16,99</span>
+            <strong className="text-[#C9A961]">Bundle</strong> — CV Analyser + Career Path por <strong className="text-white">€34</strong> <span className="text-white/40 line-through text-xs">€39,99</span>
           </span>
           <a href="/bundle" className="text-xs bg-[#C9A961] hover:bg-[#B8943D] text-white px-3 py-1 rounded-full font-semibold shrink-0 transition-all">Obter Bundle</a>
         </div>
@@ -2051,7 +2051,7 @@ export default function Home() {
               </div>
               <div className="text-left">
                 <h2 className="text-xl font-bold text-foreground">Pacotes de Análise Completa</h2>
-                <p className="text-sm text-muted-foreground">Desde €4,99 por análise</p>
+                <p className="text-sm text-muted-foreground">Desde €9,99 por análise</p>
               </div>
             </div>
             {pricingOpen ? (
@@ -2166,7 +2166,7 @@ export default function Home() {
               </div>
               <h3 className="text-lg font-semibold text-foreground">Preço Justo, Sem Subscrição</h3>
               <p className="text-sm text-muted-foreground">
-                Paga apenas quando precisas. Sem mensalidades, sem compromissos. A partir de €4,99 por análise completa.
+                Paga apenas quando precisas. Sem mensalidades, sem compromissos. A partir de €9,99 por análise completa.
               </p>
             </div>
           </div>

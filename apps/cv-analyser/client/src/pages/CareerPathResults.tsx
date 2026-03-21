@@ -1,5 +1,5 @@
 // Career Path Results — Produto independente Share2Inspire
-// Mostra preview gratuito + desbloqueia roadmap completo por €10,00
+// Mostra preview gratuito + desbloqueia roadmap completo por €19,99
 // Career Path only — no bundle
 
 
@@ -45,7 +45,7 @@ function logCareerPathToSupabase(cpData: any, paymentId?: string, linkedinUrl?: 
         linkedin_url: linkedinUrl || null,
         payment_status: 'paid',
         payment_method: paymentId?.startsWith('CP-STRIPE') ? 'stripe' : paymentId?.startsWith('CP-PAYPAL') ? 'paypal' : paymentId?.startsWith('CP-VOUCHER') ? 'voucher' : 'stripe',
-        payment_amount: paymentId?.startsWith('CP-VOUCHER') ? 0 : 10.00,
+        payment_amount: paymentId?.startsWith('CP-VOUCHER') ? 0 : 19.99,
         transaction_id: paymentId || null,
         domain: 'share2inspire.pt',
       }),
@@ -92,7 +92,7 @@ function LockedPreview({ title, items, isEN = false }: { title: string; items: s
 }
 
 /* ─── Plans ─── */
-function getPlans(en: boolean, cur = en ? '$' : '€', p = en ? { cv: '5.99', cp: '12.50' } : { cv: '3,99', cp: '10,00' }) {
+function getPlans(en: boolean, cur = en ? '$' : '€', p = en ? { cv: '9.99', cp: '19.99' } : { cv: '9,99', cp: '19,99' }) {
   return [
     {
       id: 'career_path',
@@ -208,8 +208,8 @@ export default function CareerPathResults() {
   // Currency & pricing: PT = EUR, EN = USD
   const CUR = isEN ? '$' : '€';
   const P = isEN
-    ? { cv: '5.99', cp: '12.50' }
-    : { cv: '3,99', cp: '10,00' };
+    ? { cv: '9.99', cp: '19.99' }
+    : { cv: '9,99', cp: '19,99' };
   const CURRENCY_CODE = isEN ? 'USD' : 'EUR';
 
   const PLANS = getPlans(isEN, CUR, P);
@@ -290,14 +290,14 @@ export default function CareerPathResults() {
               sessionStorage.setItem('careerIntelligenceProPaid', 'true');
               sessionStorage.setItem('careerIntelligenceFull', 'true');
               setIsProUnlocked(true);
-              trackPurchase('career_intelligence_full', stripeAmount || (isEN ? 39 : 39), `CI-STRIPE-${sessionId}`);
-              trackAffiliateConversion({ product: 'career_intelligence_full', amount: stripeAmount || (isEN ? 39 : 39), currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CI-STRIPE-${sessionId}` });
+              trackPurchase('career_intelligence_full', stripeAmount || (isEN ? 49 : 49), `CI-STRIPE-${sessionId}`);
+              trackAffiliateConversion({ product: 'career_intelligence_full', amount: stripeAmount || (isEN ? 49 : 49), currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CI-STRIPE-${sessionId}` });
             } else if (productType === 'career_intelligence_pro') {
               // Career Intelligence PRO upgrade
               sessionStorage.setItem('careerIntelligenceProPaid', 'true');
               setIsProUnlocked(true);
-              trackPurchase('career_intelligence_pro', stripeAmount || (isEN ? 24 : 24), `CIPRO-STRIPE-${sessionId}`);
-              trackAffiliateConversion({ product: 'career_intelligence_pro', amount: stripeAmount || (isEN ? 24 : 24), currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CIPRO-STRIPE-${sessionId}` });
+              trackPurchase('career_intelligence_pro', stripeAmount || (isEN ? 29 : 29), `CIPRO-STRIPE-${sessionId}`);
+              trackAffiliateConversion({ product: 'career_intelligence_pro', amount: stripeAmount || (isEN ? 29 : 29), currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CIPRO-STRIPE-${sessionId}` });
             } else {
               // Regular Career Path payment
               trackPurchase('career_path', parseFloat(P.cp.replace(',', '.')), `CP-STRIPE-${sessionId}`);
@@ -320,7 +320,7 @@ export default function CareerPathResults() {
         .then(res => res.json())
         .then(data => {
           if (data.success && data.paid) {
-            const stripeAmount = data.amount ? data.amount / 100 : (isEN ? 24 : 24);
+            const stripeAmount = data.amount ? data.amount / 100 : (isEN ? 29 : 29);
             sessionStorage.setItem('careerIntelligenceProPaid', 'true');
             setIsProUnlocked(true);
             trackPurchase('career_intelligence_pro', stripeAmount, `CIPRO-STRIPE-${sessionId}`);
@@ -631,10 +631,10 @@ export default function CareerPathResults() {
   };
 
   /* ─── Career Intelligence PRO payment handlers ─── */
-  const PRO_PRICE = isEN ? 24 : 24;
+  const PRO_PRICE = isEN ? 29 : 29;
   const PRO_PRICE_FINAL = proCouponDiscount > 0 ? Math.round(PRO_PRICE * (100 - proCouponDiscount) / 100 * 100) / 100 : PRO_PRICE;
   const PRO_PRICE_DISPLAY = isEN ? `$${PRO_PRICE_FINAL}` : `${PRO_PRICE_FINAL}€`;
-  const PRO_PRICE_FULL = isEN ? '$39' : '39€';
+  const PRO_PRICE_FULL = isEN ? '$49' : '49€';
 
   const openProPaymentModal = () => {
     setProPaymentStep('payment');

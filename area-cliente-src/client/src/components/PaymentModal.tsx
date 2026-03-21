@@ -233,6 +233,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
     window.open(`https://paypal.me/SamuelRolo/${price}EUR`, '_blank');
     setStep('success');
   };
+    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: price, currency: 'EUR'});
 
   // ── Polling for MB WAY status ──
   const startPolling = (orderId: string) => {

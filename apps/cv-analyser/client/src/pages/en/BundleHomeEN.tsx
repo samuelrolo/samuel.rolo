@@ -213,6 +213,7 @@ export default function BundleHomeEN() {
       } catch (_) {}
 
       trackPurchase('bundle_cv_career', PRICE_NUM, `BUNDLE-${Date.now()}`);
+      if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: PRICE_NUM, currency: currencyCodeUpper});
       trackAffiliateConversion({ product: 'bundle_cv_career', amount: PRICE_NUM, currency: currencyCodeUpper, payment_method: 'stripe', customer_email: email, transaction_id: `BUNDLE-${Date.now()}` });
       clearInterval(msgInterval);
       setAnalysisMsg("All done! Redirecting...");
@@ -258,6 +259,7 @@ export default function BundleHomeEN() {
     trackPaymentStart('bundle_cv_career', PRICE_NUM);
     window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}USD`, '_blank');
     setPaymentStep('success');
+    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: PRICE_NUM, currency: currencyCodeUpper});
     trackPurchase('bundle_cv_career', PRICE_NUM, `BUNDLE-PAYPAL-${Date.now()}`);
     trackAffiliateConversion({ product: 'bundle_cv_career', amount: PRICE_NUM, currency: currencyCodeUpper, payment_method: 'paypal', customer_email: email, transaction_id: `BUNDLE-PAYPAL-${Date.now()}` });
   };

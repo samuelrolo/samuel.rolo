@@ -354,6 +354,7 @@ export default function CareerPathHomeEN() {
     sessionStorage.setItem('cpPaymentEmail', email);
     window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}USD`, '_blank');
     setPaymentStep('success');
+    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: PRICE_NUM, currency: currencyCodeUpper});
     trackPurchase('career_path', 19.99, `CP-PAYPAL-${Date.now()}`);
     trackAffiliateConversion({ product: 'career_path', amount: 19.99, currency: currencyCodeUpper, payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
   };
@@ -525,7 +526,7 @@ export default function CareerPathHomeEN() {
                     </div>
                     <p className="text-xs text-muted-foreground">Everything in Career Path + strategic comparison, trade-offs, and final recommendation.</p>
                     <div className="flex items-center gap-3">
-                      <span className="text-lg font-bold text-purple-600">{CUR}39</span>
+                      <span className="text-lg font-bold text-purple-600">{CUR}49</span>
                       <a
                         href="/en/career-intelligence"
                         className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 hover:text-purple-700 transition-colors"

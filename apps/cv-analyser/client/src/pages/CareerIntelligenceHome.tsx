@@ -1,4 +1,4 @@
-// Career Intelligence — Standalone (39€)
+// Career Intelligence — Standalone (49€)
 // Upload de CV + URL LinkedIn → Pagamento → Análise completa com decisão estratégica
 // Inclui tudo do Career Path + comparação, trade-offs, recomendação final
 
@@ -59,9 +59,9 @@ const testimonials = [
   },
 ];
 
-const PRICE_DISPLAY = '39€';
-const PRICE = '39,00';
-const PRICE_NUM = 39.00;
+const PRICE_DISPLAY = '49€';
+const PRICE = '49,00';
+const PRICE_NUM = 49.00;
 
 export default function CareerIntelligenceHome() {
   useEffect(() => { document.title = "Career Intelligence — Decisão Estratégica de Carreira com IA | Share2Inspire"; }, []);
@@ -389,6 +389,7 @@ export default function CareerIntelligenceHome() {
     trackPaymentStart('career_intelligence_full', FINAL_PRICE);
     window.open(`https://paypal.me/SamuelRolo/${FINAL_PRICE.toFixed(2)}EUR`, '_blank');
     setPaymentStep('success');
+    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: FINAL_PRICE, currency: 'EUR'});
     const txId = `CI-PAYPAL-${Date.now()}`;
     trackPurchase('career_intelligence_full', FINAL_PRICE, txId);
     trackAffiliateConversion({ product: 'career_intelligence_full', amount: FINAL_PRICE, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: txId });
@@ -502,6 +503,7 @@ export default function CareerIntelligenceHome() {
     sessionStorage.setItem('careerIntelligenceProPaid', 'true');
     sessionStorage.setItem('careerIntelligenceFull', 'true');
     trackPurchase('career_intelligence_full', FINAL_PRICE, orderId);
+    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: FINAL_PRICE, currency: 'EUR'});
     trackAffiliateConversion({ product: 'career_intelligence_full', amount: FINAL_PRICE, currency: 'EUR', payment_method: paymentMethod, customer_email: email, transaction_id: orderId });
     setTimeout(() => { setLocation('/results'); }, 400);
   };
@@ -638,9 +640,9 @@ export default function CareerIntelligenceHome() {
                   <Scale className="w-5 h-5 mr-2" />
                   Obter a minha recomendação de carreira
                 </Button>
-                <p className="text-xs text-muted-foreground">Análise completa por 39€ · Pagamento único · Resultado em &lt; 1 minuto</p>
+                <p className="text-xs text-muted-foreground">Análise completa por 49€ · Pagamento único · Resultado em &lt; 1 minuto</p>
                 <p className="text-xs text-muted-foreground">
-                  Só precisas do diagnóstico? <a href="/career-path" className="text-[#C9A961] hover:underline">Career Path por 12€ →</a>
+                  Só precisas do diagnóstico? <a href="/career-path" className="text-[#C9A961] hover:underline">Career Path por 19,99€ →</a>
                 </p>
               </div>
             </div>
@@ -685,7 +687,7 @@ export default function CareerIntelligenceHome() {
               <Scale className="w-8 h-8 text-[#C9A961] mx-auto" />
               <h3 className="text-lg font-bold text-white">O equivalente a uma sessão de coaching estratégico.</h3>
               <p className="text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-                Um coach de carreira cobra entre 300€ e 600€ por sessão para te ajudar a decidir. O Career Intelligence entrega a mesma análise — com dados objectivos, comparação estruturada e recomendação fundamentada — por <strong className="text-[#C9A961]">39€</strong>.
+                Um coach de carreira cobra entre 300€ e 600€ por sessão para te ajudar a decidir. O Career Intelligence entrega a mesma análise — com dados objectivos, comparação estruturada e recomendação fundamentada — por <strong className="text-[#C9A961]">49€</strong>.
               </p>
             </div>
 
@@ -713,7 +715,7 @@ export default function CareerIntelligenceHome() {
             {/* Bottom CTA */}
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
               <h2 className="text-2xl font-bold text-foreground">Não precisas de mais opções. Precisas de saber qual escolher.</h2>
-              <p className="text-muted-foreground">Diagnóstico completo + decisão estratégica por 39€. Pagamento único. Sem subscrição.</p>
+              <p className="text-muted-foreground">Diagnóstico completo + decisão estratégica por 49€. Pagamento único. Sem subscrição.</p>
               <Button
                 onClick={() => setStep('upload')}
                 className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
@@ -722,7 +724,7 @@ export default function CareerIntelligenceHome() {
                 Obter a minha recomendação de carreira
               </Button>
               <p className="text-xs text-muted-foreground">
-                Só precisas do diagnóstico? <a href="/career-path" className="text-[#C9A961] hover:underline">Career Path por 12€ →</a>
+                Só precisas do diagnóstico? <a href="/career-path" className="text-[#C9A961] hover:underline">Career Path por 19,99€ →</a>
               </p>
             </div>
           </div>
