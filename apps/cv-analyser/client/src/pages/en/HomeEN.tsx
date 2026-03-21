@@ -991,7 +991,7 @@ export default function HomeEN() {
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3 flex-wrap">
           <span className="text-[10px] bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] text-[#1a1a2e] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase shrink-0">Most popular</span>
           <span className="text-sm text-white">
-            <strong className="text-[#C9A961]">Bundle</strong> — CV Analyser + Career Path for <strong className="text-white">{CUR}34</strong> <span className="text-white/40 line-through text-xs">{CUR}68.99</span>
+            <strong className="text-[#C9A961]">Bundle</strong> — CV Analyser + Career Path for <strong className="text-white">{CUR}29</strong> <span className="text-white/40 line-through text-xs">{CUR}29.99</span>
           </span>
           <a href="/en/bundle" className="text-xs bg-[#C9A961] hover:bg-[#B8943D] text-white px-3 py-1 rounded-full font-semibold shrink-0 transition-all">Get Bundle</a>
         </div>
