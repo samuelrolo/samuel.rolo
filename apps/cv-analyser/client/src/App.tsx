@@ -18,6 +18,8 @@ const HomeEN = lazy(() => import("./pages/en/HomeEN"));
 const CareerPathHomeEN = lazy(() => import("./pages/en/CareerPathHomeEN"));
 const BundleHome = lazy(() => import("./pages/BundleHome"));
 const BundleHomeEN = lazy(() => import("./pages/en/BundleHomeEN"));
+const CareerIntelligenceHome = lazy(() => import("./pages/CareerIntelligenceHome"));
+const CareerIntelligenceHomeEN = lazy(() => import("./pages/en/CareerIntelligenceHomeEN"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -36,8 +38,10 @@ function usePageTitle() {
   useEffect(() => {
     const pathname = window.location.pathname;
     const titles: Record<string, string> = {
+      '/en/career-intelligence': 'Share2Inspire — Career Intelligence',
       '/en/career-path': 'Share2Inspire — Career Path',
       '/en/cv-analyser': 'Share2Inspire — CV Analyser (EN)',
+      '/career-intelligence': 'Share2Inspire — Career Intelligence',
       '/career-path': 'Share2Inspire — Career Path',
       '/cv-analyser': 'Share2Inspire — CV Analyser',
     };
@@ -64,6 +68,19 @@ function AppRouter() {
       <Router base="/en/bundle">
         <Switch>
           <Route path={"/"} component={BundleHomeEN} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // EN Career Intelligence: /en/career-intelligence
+  if (pathname.startsWith('/en/career-intelligence')) {
+    return (
+      <Router base="/en/career-intelligence">
+        <Switch>
+          <Route path={"/"} component={CareerIntelligenceHomeEN} />
+          <Route path={"/results"} component={CareerPathResults} />
           <Route component={NotFound} />
         </Switch>
       </Router>
@@ -105,6 +122,19 @@ function AppRouter() {
       <Router base="/bundle">
         <Switch>
           <Route path={"/"} component={BundleHome} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // Career Intelligence PT: /career-intelligence
+  if (pathname.startsWith('/career-intelligence')) {
+    return (
+      <Router base="/career-intelligence">
+        <Switch>
+          <Route path={"/"} component={CareerIntelligenceHome} />
+          <Route path={"/results"} component={CareerPathResults} />
           <Route component={NotFound} />
         </Switch>
       </Router>
