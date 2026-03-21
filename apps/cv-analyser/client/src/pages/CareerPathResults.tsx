@@ -148,6 +148,17 @@ export default function CareerPathResults() {
   const [proPollingExpired, setProPollingExpired] = useState(false);
   const [proCurrentOrderId, setProCurrentOrderId] = useState<string | null>(null);
 
+  // PRO voucher & coupon state
+  const [proCouponCode, setProCouponCode] = useState('');
+  const [proCouponDiscount, setProCouponDiscount] = useState(0);
+  const [proCouponLoading, setProCouponLoading] = useState(false);
+  const [proCouponError, setProCouponError] = useState<string | null>(null);
+  const [proCouponValid, setProCouponValid] = useState(false);
+  const [showProVoucher, setShowProVoucher] = useState(false);
+  const [proVoucherCode, setProVoucherCode] = useState('');
+  const [proVoucherError, setProVoucherError] = useState<string | null>(null);
+  const [proVoucherLoading, setProVoucherLoading] = useState(false);
+
   const genMessagesPT = [
     "A analisar o teu perfil profissional...",
     "A mapear compet\u00eancias e experi\u00eancia...",
@@ -583,14 +594,89 @@ export default function CareerPathResults() {
 
   /* ─── Career Intelligence PRO payment handlers ─── */
   const PRO_PRICE = isEN ? 24 : 24;
-  const PRO_PRICE_DISPLAY = isEN ? '$24' : '24€';
+  const PRO_PRICE_FINAL = proCouponDiscount > 0 ? Math.round(PRO_PRICE * (100 - proCouponDiscount) / 100 * 100) / 100 : PRO_PRICE;
+  const PRO_PRICE_DISPLAY = isEN ? `$${PRO_PRICE_FINAL}` : `${PRO_PRICE_FINAL}€`;
   const PRO_PRICE_FULL = isEN ? '$39' : '39€';
 
   const openProPaymentModal = () => {
     setProPaymentStep('payment');
     setProPaymentError(null);
     setProPaymentMethod(isEN ? 'stripe' : 'mbway');
+    setProCouponCode('');
+    setProCouponDiscount(0);
+    setProCouponValid(false);
+    setProCouponError(null);
+    setShowProVoucher(false);
+    setProVoucherCode('');
+    setProVoucherError(null);
     setShowProPaymentModal(true);
+  };
+
+  /* ─── PRO coupon validation ─── */
+  const handleProCouponValidate = async () => {
+    if (!proCouponCode.trim()) { setProCouponError(isEN ? 'Enter a discount code' : 'Introduz um código de desconto'); return; }
+    setProCouponLoading(true);
+    setProCouponError(null);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/payment/validate-coupon`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: proCouponCode.trim().toUpperCase(), product: 'career_intelligence_pro' }),
+      });
+      const data = await res.json();
+      if (data.valid && data.discount_percent > 0) {
+        setProCouponDiscount(data.discount_percent);
+        setProCouponValid(true);
+        setProCouponError(null);
+      } else {
+        setProCouponError(data.error || (isEN ? 'Invalid or expired code' : 'Código inválido ou expirado'));
+        setProCouponDiscount(0);
+        setProCouponValid(false);
+      }
+    } catch {
+      setProCouponError(isEN ? 'Error validating code' : 'Erro ao validar código');
+    } finally {
+      setProCouponLoading(false);
+    }
+  };
+
+  /* ─── PRO voucher validation ─── */
+  const handleProVoucherSubmit = async () => {
+    if (!proVoucherCode.trim()) { setProVoucherError(isEN ? 'Enter a voucher code' : 'Introduz um código de voucher'); return; }
+    setProVoucherLoading(true);
+    setProVoucherError(null);
+    try {
+      const code = proVoucherCode.trim().toUpperCase();
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`,
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+      );
+      const rows = await res.json();
+      if (!rows || rows.length === 0) throw new Error(isEN ? 'Invalid voucher code' : 'Código de voucher inválido');
+      const v = rows[0];
+      if (!v.is_active) throw new Error(isEN ? 'This code has already been used' : 'Este código já foi utilizado');
+      if (v.used_analyses >= v.total_analyses) throw new Error(isEN ? 'This code has no remaining uses' : 'Este código já não tem utilizações disponíveis');
+      if (v.voucher_type !== 'career_intelligence_pro' && v.voucher_type !== 'complete' && !v.includes_career_intelligence_pro) {
+        throw new Error(isEN ? 'This code is not valid for Career Intelligence PRO' : 'Este código não é válido para o Career Intelligence PRO');
+      }
+      // Mark voucher as used
+      await fetch(
+        `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
+        {
+          method: 'PATCH',
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+          body: JSON.stringify({ used_analyses: (v.used_analyses || 0) + 1, is_active: ((v.used_analyses || 0) + 1) < v.total_analyses }),
+        }
+      );
+      // Unlock PRO
+      trackPurchase('career_intelligence_pro', 0, `CI-VOUCHER-${code}`);
+      trackAffiliateConversion({ product: 'career_intelligence_pro', amount: 0, currency: isEN ? 'USD' : 'EUR', payment_method: 'voucher', transaction_id: `CI-VOUCHER-${code}` });
+      unlockPro();
+    } catch (err: any) {
+      setProVoucherError(err.message || (isEN ? 'Error validating voucher' : 'Erro ao validar voucher'));
+    } finally {
+      setProVoucherLoading(false);
+    }
   };
 
   const handleProMBWay = async () => {
@@ -608,7 +694,7 @@ export default function CareerPathResults() {
           email,
           phone: (() => { const p = phone.replace(/\D/g, '').replace(/^(\+?351)/, ''); return `351${p}`; })(),
           orderId,
-          amount: PRO_PRICE.toFixed(2),
+          amount: PRO_PRICE_FINAL.toFixed(2),
           paymentMethod: 'mbway',
           description: 'Share2Inspire - Career Intelligence PRO',
           name: email.split('@')[0],
@@ -642,7 +728,7 @@ export default function CareerPathResults() {
           orderId,
           language: isEN ? 'en' : 'pt',
           currency: CURRENCY_CODE.toLowerCase(),
-          amount: PRO_PRICE,
+          amount: PRO_PRICE_FINAL,
         }),
       });
       const data = await response.json();
@@ -659,7 +745,7 @@ export default function CareerPathResults() {
 
   const handleProPayPal = async () => {
     if (!email) { setProPaymentError(isEN ? 'Enter your email' : 'Introduz o teu email'); return; }
-    window.open(`https://paypal.me/SamuelRolo/${PRO_PRICE}${CURRENCY_CODE}`, '_blank');
+    window.open(`https://paypal.me/SamuelRolo/${PRO_PRICE_FINAL}${CURRENCY_CODE}`, '_blank');
     setProPaymentStep('success');
   };
 
@@ -724,8 +810,8 @@ export default function CareerPathResults() {
     setIsProUnlocked(true);
     setShowProPaymentModal(false);
     sessionStorage.setItem('careerIntelligenceProPaid', 'true');
-    trackPurchase('career_intelligence_pro', PRO_PRICE, sessionStorage.getItem('ciOrderId') || '');
-    trackAffiliateConversion({ product: 'career_intelligence_pro', amount: PRO_PRICE, currency: isEN ? 'USD' : 'EUR', payment_method: proPaymentMethod, transaction_id: sessionStorage.getItem('ciOrderId') || '' });
+    trackPurchase('career_intelligence_pro', PRO_PRICE_FINAL, sessionStorage.getItem('ciOrderId') || '');
+    trackAffiliateConversion({ product: 'career_intelligence_pro', amount: PRO_PRICE_FINAL, currency: isEN ? 'USD' : 'EUR', payment_method: proPaymentMethod, transaction_id: sessionStorage.getItem('ciOrderId') || '' });
   };
 
   const handleProPaymentSuccess = () => {
@@ -2437,14 +2523,50 @@ export default function CareerPathResults() {
               <div className="p-4 bg-gradient-to-r from-[#C9A961]/10 to-[#C9A961]/5 rounded-xl border border-[#C9A961]/20">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-foreground">{isEN ? 'Complete career decision analysis' : 'An\u00e1lise completa de decis\u00e3o de carreira'}</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{isEN ? 'Comparison + Trade-offs + Recommendation' : 'Compara\u00e7\u00e3o + Trade-offs + Recomenda\u00e7\u00e3o'}</p>
+                    <p className="text-sm font-semibold text-foreground">{isEN ? 'Complete career decision analysis' : 'Análise completa de decisão de carreira'}</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{isEN ? 'Comparison + Trade-offs + Recommendation' : 'Comparação + Trade-offs + Recomendação'}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-[#C9A961]">{PRO_PRICE_DISPLAY}</p>
-                    <p className="text-xs text-muted-foreground line-through">{PRO_PRICE_FULL}</p>
+                    {proCouponDiscount > 0 ? (
+                      <p className="text-xs text-muted-foreground"><span className="line-through">{isEN ? `$${PRO_PRICE}` : `${PRO_PRICE}€`}</span> <span className="text-green-600 font-semibold">-{proCouponDiscount}%</span></p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground line-through">{PRO_PRICE_FULL}</p>
+                    )}
                   </div>
                 </div>
+              </div>
+
+              {/* Discount coupon */}
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-foreground">{isEN ? 'Discount code (optional)' : 'Código de desconto (opcional)'}</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={proCouponCode}
+                    onChange={(e) => { setProCouponCode(e.target.value.toUpperCase()); if (proCouponValid) { setProCouponValid(false); setProCouponDiscount(0); } }}
+                    placeholder={isEN ? 'PROMO20' : 'PROMO20'}
+                    disabled={proCouponValid}
+                    className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
+                    onKeyDown={(e) => e.key === 'Enter' && !proCouponValid && handleProCouponValidate()}
+                  />
+                  {proCouponValid ? (
+                    <Button variant="outline" onClick={() => { setProCouponCode(''); setProCouponDiscount(0); setProCouponValid(false); setProCouponError(null); }} className="text-xs">
+                      {isEN ? 'Remove' : 'Remover'}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      onClick={handleProCouponValidate}
+                      disabled={proCouponLoading || !proCouponCode.trim()}
+                      className="text-xs"
+                    >
+                      {proCouponLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : (isEN ? 'Apply' : 'Aplicar')}
+                    </Button>
+                  )}
+                </div>
+                {proCouponError && <p className="text-xs text-red-500">{proCouponError}</p>}
+                {proCouponValid && <p className="text-xs text-green-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" />{isEN ? `${proCouponDiscount}% discount applied!` : `Desconto de ${proCouponDiscount}% aplicado!`}</p>}
               </div>
 
               {/* Email */}
@@ -2541,6 +2663,42 @@ export default function CareerPathResults() {
                 >
                   {proPaymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>{isEN ? `Pay ${PRO_PRICE_DISPLAY}` : `Pagar ${PRO_PRICE_DISPLAY}`}</>}
                 </Button>
+              </div>
+
+              {/* Voucher link & input */}
+              <div className="text-center pt-1">
+                {!showProVoucher ? (
+                  <button
+                    onClick={() => setShowProVoucher(true)}
+                    className="text-sm text-[#C9A961] hover:underline flex items-center gap-1 mx-auto"
+                  >
+                    <Ticket className="w-4 h-4" />
+                    {isEN ? 'I have a voucher code' : 'Já tenho um código de voucher'}
+                  </button>
+                ) : (
+                  <div className="space-y-2 p-3 border border-[#C9A961]/20 rounded-lg bg-[#C9A961]/5">
+                    <input
+                      type="text"
+                      value={proVoucherCode}
+                      onChange={(e) => setProVoucherCode(e.target.value.toUpperCase())}
+                      placeholder="Ex: CI-XXXXX-XXXXX"
+                      className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
+                      onKeyDown={(e) => e.key === 'Enter' && handleProVoucherSubmit()}
+                    />
+                    {proVoucherError && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3 shrink-0" />{proVoucherError}
+                      </p>
+                    )}
+                    <Button
+                      onClick={handleProVoucherSubmit}
+                      disabled={proVoucherLoading || !proVoucherCode.trim()}
+                      className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold text-sm"
+                    >
+                      {proVoucherLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Unlock className="w-4 h-4 mr-2" />{isEN ? 'Validate Voucher' : 'Validar Voucher'}</>}
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           )}
