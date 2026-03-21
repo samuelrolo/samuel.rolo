@@ -10,7 +10,7 @@
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Serviços | CV com IA, Career Path e Coaching | Share2Inspire</title>
-        <meta name="description" content="Análise de CV gratuita com IA, Career Path desde 12€, coaching executivo e Kickstart Pro. Dá o próximo passo na tua carreira com a Share2Inspire.">
+    <meta name="description" content="Análise de CV gratuita com IA, Career Path desde 12€, coaching executivo e Kickstart Pro. Dá o próximo passo na tua carreira com a Share2Inspire.">
     <meta name="author" content="Samuel Rolo">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://www.share2inspire.pt/pages/servicos">
@@ -42,6 +42,7 @@
         "itemListElement": [
           {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "CV Analyser"}, "price": "4.99", "priceCurrency": "EUR"},
           {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Career Path"}, "price": "12.00", "priceCurrency": "EUR"},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Career Intelligence"}, "price": "39.00", "priceCurrency": "EUR"},
           {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Kickstart Pro"}, "price": "35.00", "priceCurrency": "EUR"},
           {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "LinkedIn Roaster"}, "price": "1.99", "priceCurrency": "EUR"}
         ]
@@ -61,442 +62,412 @@
         iframe[src*="vercel-insights"],iframe[src*="_vercel"],div[id*="vercel-live-feedback-button"],.__vercel-live-feedback-button,#vercel-live-feedback-button{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
 
         /* ============================================
-           SERVICES PAGE — JORNADA HORIZONTAL
+           SERVICES PAGE — REDESIGN 2026
            ============================================ */
+        :root {
+            --gold: #C9A961;
+            --gold-light: rgba(201,169,97,0.08);
+            --gold-border: rgba(201,169,97,0.2);
+            --dark: #1A1A1A;
+            --muted: #777;
+            --light-bg: #fafafa;
+            --card-border: #eee;
+        }
 
         /* --- Hero --- */
         .svc-hero {
-            padding: 140px 0 50px;
+            padding: 130px 0 60px;
             text-align: center;
         }
         .svc-hero h1 {
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: 300;
-            color: #1A1A1A;
+            color: var(--dark);
             letter-spacing: -0.3px;
+            margin-bottom: 0.8rem;
         }
         .svc-hero h1 strong { font-weight: 600; }
         .svc-hero .hero-desc {
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             font-weight: 300;
-            color: #777;
-            line-height: 1.9;
-            max-width: 600px;
+            color: var(--muted);
+            line-height: 1.8;
+            max-width: 520px;
             margin: 0 auto;
         }
         .gold-line {
             width: 40px;
             height: 2px;
-            background: #C9A961;
-            margin: 1.2rem auto 2rem;
+            background: var(--gold);
+            margin: 1rem auto 1.5rem;
         }
 
-        /* --- Journey Horizontal --- */
-        .journey-horizontal {
-            padding: 30px 0 80px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* Steps row */
-        .steps-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 0;
-            position: relative;
-        }
-
-        /* Connector line between steps */
-        .steps-row::before {
-            content: '';
-            position: absolute;
-            top: 22px;
-            left: calc(16.66% + 30px);
-            right: calc(16.66% + 30px);
-            height: 1px;
-            background: linear-gradient(to right, #C9A961, #e8d5a8, #C9A961);
-            z-index: 0;
-        }
-
-        /* Step column */
-        .step-col {
-            padding: 0 28px;
-            position: relative;
-        }
-        .step-col:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: 70px;
-            bottom: 0;
-            width: 1px;
-            background: linear-gradient(to bottom, #f0f0f0, transparent);
-        }
-
-        /* Step header */
-        .step-header {
+        /* --- Journey Steps (horizontal indicator) --- */
+        .journey-steps {
             display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 32px;
+            justify-content: center;
+            gap: 0;
+            margin: 2.5rem auto 0;
+            max-width: 600px;
+            position: relative;
+        }
+        .journey-steps::before {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 80px;
+            right: 80px;
+            height: 1px;
+            background: linear-gradient(to right, var(--gold), #e8d5a8, var(--gold));
+        }
+        .journey-step {
+            flex: 1;
+            text-align: center;
             position: relative;
             z-index: 1;
+            cursor: pointer;
+            transition: opacity 0.2s;
         }
-        .step-dot {
-            width: 44px;
-            height: 44px;
+        .journey-step:hover { opacity: 0.8; }
+        .journey-step .step-num {
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            border: 1.5px solid #C9A961;
+            border: 1.5px solid var(--gold);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gold);
+            background: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .journey-step .step-label {
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--muted);
+            display: block;
+        }
+
+        /* --- Section blocks --- */
+        .svc-section {
+            padding: 60px 0;
+            scroll-margin-top: 80px;
+        }
+        .svc-section:nth-child(even) {
+            background: var(--light-bg);
+        }
+        .svc-section-header {
+            margin-bottom: 2.5rem;
+        }
+        .svc-section-header .step-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.8rem;
+        }
+        .svc-section-header .step-indicator .num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1.5px solid var(--gold);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             font-weight: 600;
-            color: #C9A961;
-            flex-shrink: 0;
-            background: #fff;
+            color: var(--gold);
         }
-        .step-header h2 {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: #1A1A1A;
-            margin: 0;
-            letter-spacing: -0.2px;
-        }
-        .step-header .step-sub {
+        .svc-section-header .step-indicator span {
             font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .svc-section-header h2 {
+            font-size: 1.5rem;
             font-weight: 300;
-            color: #999;
-            display: block;
-            margin-top: 2px;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        .svc-section-header h2 strong { font-weight: 600; }
+        .svc-section-header p {
+            font-size: 0.88rem;
+            color: var(--muted);
+            max-width: 500px;
+            line-height: 1.7;
         }
 
-        /* Service card */
-        .svc-card {
-            border: 1px solid #eee;
-            border-radius: 10px;
-            margin-bottom: 18px;
+        /* --- Service cards (new) --- */
+        .svc-card-new {
             background: #fff;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            overflow: hidden;
-        }
-        .svc-card:hover {
-            border-color: #e8d5a8;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        /* Highlighted card (Career Path) */
-        .svc-card.highlighted {
-            border-color: #C9A961;
-            box-shadow: 0 4px 20px rgba(201,169,97,0.12);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 2rem;
+            height: 100%;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+            display: flex;
+            flex-direction: column;
             position: relative;
         }
-        .svc-card.highlighted::before {
-            content: 'RECOMENDADO';
+        .svc-card-new:hover {
+            border-color: #e8d5a8;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            transform: translateY(-2px);
+        }
+        .svc-card-new.featured {
+            border-color: var(--gold);
+            box-shadow: 0 4px 24px rgba(201,169,97,0.12);
+        }
+        .svc-card-new .card-badge {
             position: absolute;
-            top: 0;
-            right: 0;
-            background: #C9A961;
-            color: #fff;
+            top: -1px;
+            right: 16px;
             font-size: 0.5rem;
             font-weight: 700;
             letter-spacing: 1.5px;
-            padding: 3px 10px;
-            border-radius: 0 6px 0 6px;
-            z-index: 1;
-        }
-
-        .svc-card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 22px 26px;
-            cursor: pointer;
-            user-select: none;
-            min-height: 70px;
-        }
-        .svc-card-header:hover .svc-card-name {
-            color: #C9A961;
-        }
-        .svc-card-name {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #1A1A1A;
-            transition: color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-shrink: 1;
-            min-width: 0;
-        }
-        .svc-badge {
-            font-size: 0.5rem;
-            font-weight: 600;
-            letter-spacing: 1.5px;
             text-transform: uppercase;
             color: #fff;
-            background: #C9A961;
-            padding: 2px 7px;
-            border-radius: 2px;
+            background: var(--gold);
+            padding: 4px 10px;
+            border-radius: 0 0 6px 6px;
         }
-        .svc-badge.blue { background: #0A66C2; }
-        .svc-badge.grey { background: #888; }
-        .svc-badge.green { background: #2E7D32; }
-
-        .svc-card-price {
-            font-size: 0.82rem;
-            font-weight: 300;
-            color: #aaa;
-            margin-right: 12px;
-            white-space: nowrap;
-        }
-        .svc-card-price strong {
-            font-weight: 600;
-            color: #555;
-        }
-
-        .svc-toggle {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 1px solid #ddd;
-            background: #fff;
+        .svc-card-new .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-bottom: 1.2rem;
             font-size: 1.1rem;
-            font-weight: 300;
-            color: #999;
-            transition: all 0.25s ease;
-            flex-shrink: 0;
-            cursor: pointer;
         }
-        .svc-toggle:hover {
-            border-color: #C9A961;
-            color: #C9A961;
-        }
-        .svc-card.open .svc-toggle {
-            transform: rotate(45deg);
-            border-color: #C9A961;
-            color: #C9A961;
-        }
+        .svc-card-new .card-icon.gold { background: var(--gold-light); color: var(--gold); }
+        .svc-card-new .card-icon.blue { background: rgba(10,102,194,0.08); color: #0A66C2; }
+        .svc-card-new .card-icon.green { background: rgba(46,125,50,0.08); color: #2E7D32; }
+        .svc-card-new .card-icon.purple { background: rgba(124,58,237,0.08); color: #7C3AED; }
 
-        /* Expandable detail */
-        .svc-detail {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease, opacity 0.3s ease;
-            opacity: 0;
-        }
-        .svc-card.open .svc-detail {
-            max-height: 500px;
-            opacity: 1;
-            overflow: visible;
-        }
-        .svc-detail-inner {
-            padding: 0 26px 22px;
-        }
-        .svc-detail-inner p {
-            font-size: 0.82rem;
-            font-weight: 300;
-            color: #666;
-            line-height: 1.8;
-            margin-bottom: 10px;
-        }
-        .svc-detail-inner ul {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 14px;
-        }
-        .svc-detail-inner ul li {
-            font-size: 0.78rem;
-            font-weight: 300;
-            color: #555;
-            padding: 3px 0;
+        .svc-card-new h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.3rem;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .svc-detail-inner ul li::before {
+        .svc-card-new h3 .badge-sm {
+            font-size: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #fff;
+        }
+        .svc-card-new .card-desc {
+            font-size: 0.85rem;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            flex: 1;
+        }
+        .svc-card-new .card-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.2rem;
+        }
+        .svc-card-new .card-features li {
+            font-size: 0.8rem;
+            color: #555;
+            padding: 0.3rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .svc-card-new .card-features li::before {
             content: '';
             width: 4px;
             height: 4px;
             border-radius: 50%;
-            background: #C9A961;
+            background: var(--gold);
             flex-shrink: 0;
+            margin-top: 7px;
         }
-        .svc-detail-footer {
-            padding-top: 10px;
-            border-top: 1px solid #f5f5f5;
-            text-align: right;
+        .svc-card-new .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+            margin-top: auto;
+        }
+        .svc-card-new .card-price {
+            font-size: 0.82rem;
+            color: var(--muted);
+        }
+        .svc-card-new .card-price strong {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
         }
 
         /* Buttons */
-        .svc-btn {
-            display: inline-block;
+        .btn-gold {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--gold);
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 600;
             padding: 8px 18px;
-            font-size: 0.68rem;
-            font-weight: 500;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
+            border-radius: 8px;
             text-decoration: none;
-            color: #1A1A1A;
-            border: 1px solid #1A1A1A;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
+            border: none;
+        }
+        .btn-gold:hover { background: #b8943d; color: #fff; }
+        .btn-outline-gold {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             background: transparent;
-            cursor: pointer;
+            color: var(--gold);
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 1px solid var(--gold-border);
         }
-        .svc-btn:hover {
-            background: #1A1A1A;
-            color: #fff;
+        .btn-outline-gold:hover { background: var(--gold-light); color: var(--gold); }
+
+        /* --- Bundle banner --- */
+        .bundle-banner {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 14px;
+            padding: 2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            position: relative;
+            overflow: hidden;
         }
-        /* Primary button (Career Path) */
-        .svc-btn.btn-primary-gold {
-            background: #C9A961;
-            color: #fff;
-            border-color: #C9A961;
-            padding: 10px 22px;
-            font-size: 0.72rem;
+        .bundle-banner::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(201,169,97,0.1) 0%, transparent 70%);
+            border-radius: 50%;
         }
-        .svc-btn.btn-primary-gold:hover {
-            background: #A88B4E;
-            border-color: #A88B4E;
+        @media (max-width: 640px) {
+            .bundle-banner {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+                gap: 1.2rem;
+            }
         }
-        /* Entry button (CV Analyser) */
-        .svc-btn.btn-gold {
-            background: #C9A961;
-            color: #fff;
-            border-color: #C9A961;
+
+        /* --- CI Upsell card --- */
+        .ci-upsell {
+            background: linear-gradient(135deg, rgba(201,169,97,0.06), rgba(201,169,97,0.02));
+            border: 1px solid var(--gold-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
         }
-        .svc-btn.btn-gold:hover {
-            background: #A88B4E;
-            border-color: #A88B4E;
+
+        /* --- Stats --- */
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            flex-wrap: wrap;
         }
-        /* Secondary/muted button */
-        .svc-btn.btn-muted {
-            color: #888;
-            border-color: #ddd;
-            font-size: 0.65rem;
+        .stat-item {
+            text-align: center;
         }
-        .svc-btn.btn-muted:hover {
-            background: #f5f5f5;
+        .stat-item .stat-num {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .stat-item .stat-label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* --- Testimonials --- */
+        .testi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.2rem;
+        }
+        .testi-card {
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+        .testi-stars {
+            color: var(--gold);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.8rem;
+        }
+        .testi-text {
+            font-size: 0.82rem;
             color: #555;
-            border-color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+        .testi-author {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .testi-author span {
+            font-weight: 400;
+            color: #999;
         }
 
         /* --- Responsive --- */
-        @media (max-width: 991px) {
-            .steps-row {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-            .steps-row::before { display: none; }
-            .step-col:not(:last-child)::after { display: none; }
-            .step-col { padding: 0; }
-            .svc-hero { padding: 100px 0 30px; }
+        @media (max-width: 768px) {
+            .svc-hero { padding: 110px 0 40px; }
             .svc-hero h1 { font-size: 1.6rem; }
-            .journey-horizontal { padding: 20px 20px 60px; }
-            .svc-card-header { padding: 20px 22px; min-height: 64px; }
-            .svc-card-name { font-size: 0.95rem; }
-            .svc-card-price { font-size: 0.8rem; }
-            .svc-toggle { width: 30px; height: 30px; }
-            .step-header h2 { font-size: 1rem; }
-            .step-dot { width: 40px; height: 40px; font-size: 0.85rem; }
-        }
-        @media (max-width: 576px) {
-            .svc-hero { padding: 90px 0 20px; }
-            .svc-hero h1 { font-size: 1.35rem; }
-            .svc-hero .hero-desc { font-size: 0.85rem; }
-            .journey-horizontal { padding: 16px 16px 50px; }
-            .svc-card-header { padding: 18px 18px; min-height: 58px; }
-            .svc-card-name { font-size: 0.9rem; gap: 8px; }
-            .svc-badge { font-size: 0.48rem; padding: 2px 6px; }
-            .svc-detail-inner { padding: 16px 18px 20px; }
-            .svc-detail-inner p { font-size: 0.84rem; }
-            .svc-detail-inner ul li { font-size: 0.82rem; }
+            .svc-section { padding: 40px 0; }
+            .svc-section-header h2 { font-size: 1.3rem; }
+            .journey-steps { gap: 0; margin-top: 2rem; }
+            .stats-row { gap: 2rem; }
         }
 
-        /* --- Fade-up --- */
-        .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
-        .fade-up.visible { opacity: 1; transform: translateY(0); }
-
-        /* --- Mega Menu Serviços --- */
-        .nav-item.mega-dropdown { position: relative; }
-        .mega-menu {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #fff;
-            border: 1px solid #f0f0f0;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
-            padding: 28px 32px;
-            min-width: 520px;
-            z-index: 1050;
+        /* Fade animation */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
-        .nav-item.mega-dropdown:hover .mega-menu,
-        .nav-item.mega-dropdown .mega-menu:hover {
-            display: block;
-        }
-        .mega-menu .mega-col { margin-bottom: 20px; }
-        .mega-menu .mega-col:last-child { margin-bottom: 0; }
-        .mega-menu .mega-step-label {
-            font-size: 0.6rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #C9A961;
-            margin-bottom: 8px;
-        }
-        .mega-menu .mega-link {
-            display: block;
-            padding: 5px 0;
-            font-size: 0.82rem;
-            font-weight: 400;
-            color: #555;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .mega-menu .mega-link:hover { color: #C9A961; }
-        .mega-menu .mega-link small {
-            display: block;
-            font-size: 0.7rem;
-            font-weight: 300;
-            color: #aaa;
-            margin-top: 1px;
-        }
-        .mega-menu .mega-divider {
-            height: 1px;
-            background: #f0f0f0;
-            margin: 12px 0;
-        }
-        @media (max-width: 991px) {
-            .mega-menu {
-                position: static;
-                transform: none;
-                box-shadow: none;
-                border: none;
-                min-width: auto;
-                padding: 12px 16px;
-                background: #fafafa;
-            }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','AW-17015553005');</script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035" crossorigin="anonymous"></script>
-    <link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/servicos">
-    <link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/services">
-    <link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/pages/servicos">
 </head>
 
 <body>
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8GQ1KM9FQS"></script>
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-8GQ1KM9FQS');</script>
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg sticky-top" style="background: var(--s2i-white); border-bottom: 1px solid var(--s2i-border);">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top" style="box-shadow: 0 1px 3px rgba(0,0,0,0.04); padding: 12px 0;">
         <div class="container">
             <a class="navbar-brand" href="../index.html">
                 <img loading="lazy" src="../images/logo.webp" alt="Share2Inspire" style="height: 40px;">
@@ -505,52 +476,100 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="../index.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Início</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/cv-analyser" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">CV Analyser</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/career-path" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Career Path</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/pages/servicos.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Serviços</a></li>
-                        <li class="nav-item"><a class="nav-link" href="conhecimento.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Knowledge Hub</a></li>
-                        <li class="nav-item"><a class="nav-link" href="sobre.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Sobre</a></li>
-                        <li class="nav-item"><a class="nav-link" href="contactos.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Contactos</a></li>
-                        <li class="nav-item ms-2"><a class="nav-link" href="/area-cliente/" style="background:#BF9A33;color:#0a0a0a!important;padding:0.4rem 1rem;border-radius:4px;font-weight:600;transition:all 0.3s;" onmouseover="this.style.background='#d4af5a'" onmouseout="this.style.background='#BF9A33'">Área de Cliente</a></li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">
-                                <i class="fas fa-globe"></i> PT
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="languageDropdown">
-                                <li><a class="dropdown-item" href="/en/pages/home">EN</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Início</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/cv-analyser" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">CV Analyser</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/career-path" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Career Path</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/pages/servicos.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Serviços</a></li>
+                    <li class="nav-item"><a class="nav-link" href="conhecimento.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Knowledge Hub</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sobre.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Sobre</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contactos.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Contactos</a></li>
+                    <li class="nav-item ms-2"><a class="nav-link" href="/area-cliente/" style="background:#BF9A33;color:#0a0a0a!important;padding:0.4rem 1rem;border-radius:4px;font-weight:600;transition:all 0.3s;" onmouseover="this.style.background='#d4af5a'" onmouseout="this.style.background='#BF9A33'">Área de Cliente</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">
+                            <i class="fas fa-globe"></i> PT
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                            <li><a class="dropdown-item" href="/en/pages/services/">EN</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
-        </nav>
+        </div>
+    </nav>
 
     <!-- Hero -->
     <section class="svc-hero fade-up">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-7">
-                    <h1>A tua <strong>jornada profissional</strong></h1>
-                    <div class="gold-line"></div>
-                    <p class="hero-desc">Três etapas claras para evoluíres na tua carreira. Do diagnóstico à ação, com ferramentas de IA e acompanhamento humano.</p>
-                    <!-- Bundle Banner — integrado no hero -->
-                    <div style="max-width:640px;margin:2.5rem auto 0;">
-                        <div style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border-radius:14px;padding:1.4rem 1.8rem;display:flex;align-items:center;justify-content:space-between;gap:1.2rem;flex-wrap:wrap;position:relative;overflow:hidden;">
-                            <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(201,169,97,0.12) 0%,transparent 70%);border-radius:50%;"></div>
-                            <div style="flex:1;min-width:220px;position:relative;z-index:1;text-align:left;">
-                                <span style="display:inline-block;background:linear-gradient(135deg,#C9A961,#E8D5A3);color:#1a1a2e;font-size:0.55rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border-radius:12px;margin-bottom:0.4rem;">Mais popular</span>
-                                <h3 style="color:#fff;font-size:1.05rem;font-weight:400;margin:0 0 0.2rem;line-height:1.3;">CV Analyser <span style="color:#C9A961;font-weight:600;">+</span> Career Path</h3>
-                                <p style="color:rgba(255,255,255,0.55);font-size:0.75rem;margin:0;">Diagnóstico + roadmap num só passo. Poupa em vez de comprar separado.</p>
-                            </div>
-                            <div style="text-align:center;position:relative;z-index:1;">
-                                <div style="display:flex;align-items:baseline;gap:0.4rem;justify-content:center;">
-                                    <span style="color:rgba(255,255,255,0.35);font-size:0.8rem;text-decoration:line-through;">€16,99</span>
-                                    <span style="color:#fff;font-size:1.3rem;font-weight:600;">€14,99</span>
-                                </div>
-                                <a href="/bundle" style="display:inline-block;margin-top:0.5rem;background:linear-gradient(135deg,#C9A961,#B8943D);color:#fff;font-size:0.75rem;font-weight:600;padding:7px 20px;border-radius:7px;text-decoration:none;transition:all 0.3s;">Obter Bundle</a>
-                            </div>
+            <h1>A tua <strong>jornada profissional</strong></h1>
+            <div class="gold-line"></div>
+            <p class="hero-desc">Do diagnóstico à decisão. Ferramentas de IA e acompanhamento humano para cada etapa da tua carreira.</p>
+
+            <!-- Journey steps indicator -->
+            <div class="journey-steps">
+                <a href="#etapa1" class="journey-step" style="text-decoration:none;">
+                    <div class="step-num">1</div>
+                    <span class="step-label">Diagnosticar</span>
+                </a>
+                <a href="#etapa2" class="journey-step" style="text-decoration:none;">
+                    <div class="step-num">2</div>
+                    <span class="step-label">Construir</span>
+                </a>
+                <a href="#etapa3" class="journey-step" style="text-decoration:none;">
+                    <div class="step-num">3</div>
+                    <span class="step-label">Decidir</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ETAPA 1 — DIAGNOSTICAR ========== -->
+    <section class="svc-section fade-up" id="etapa1">
+        <div class="container" style="max-width:960px;">
+            <div class="svc-section-header">
+                <div class="step-indicator">
+                    <div class="num">1</div>
+                    <span>Etapa</span>
+                </div>
+                <h2>Percebe <strong>onde estás</strong></h2>
+                <p>Antes de traçar um caminho, precisas de saber o ponto de partida. Estas ferramentas dão-te essa clareza.</p>
+            </div>
+
+            <div class="row g-4">
+                <!-- CV Analyser -->
+                <div class="col-md-6">
+                    <div class="svc-card-new">
+                        <div class="card-icon gold"><i class="fas fa-file-alt"></i></div>
+                        <h3>CV Analyser <span class="badge-sm" style="background:var(--gold);">Começa Grátis</span></h3>
+                        <p class="card-desc">Diagnóstico instantâneo do teu CV com IA. Score de maturidade, taxa ATS e recomendações concretas.</p>
+                        <ul class="card-features">
+                            <li>Score de maturidade 0-100</li>
+                            <li>Relatório PDF com 15+ recomendações</li>
+                            <li>Taxa de rejeição ATS</li>
+                            <li>Análise gratuita + relatório completo 4,99€</li>
+                        </ul>
+                        <div class="card-footer">
+                            <div class="card-price">Grátis <span style="color:#aaa;">/ completo</span> <strong>4,99€</strong></div>
+                            <a href="/cv-analyser" class="btn-gold">Analisar CV <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LinkedIn Roaster -->
+                <div class="col-md-6">
+                    <div class="svc-card-new">
+                        <div class="card-icon blue"><i class="fab fa-linkedin-in"></i></div>
+                        <h3>LinkedIn Roaster <span class="badge-sm" style="background:#0A66C2;">Novo</span></h3>
+                        <p class="card-desc">Auditoria completa do teu perfil LinkedIn. Score de visibilidade, erros críticos e palavras-chave SEO.</p>
+                        <ul class="card-features">
+                            <li>Score de visibilidade 0-10</li>
+                            <li>Erros críticos identificados</li>
+                            <li>Headlines e palavras-chave SEO</li>
+                            <li>Recomendação prioritária</li>
+                        </ul>
+                        <div class="card-footer">
+                            <div class="card-price"><strong>1,99€</strong></div>
+                            <a href="/linkedin-roaster" class="btn-outline-gold">Auditar perfil <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
                         </div>
                     </div>
                 </div>
@@ -558,239 +577,215 @@
         </div>
     </section>
 
-    <!-- ========== JORNADA HORIZONTAL ==========-->
-    <div class="journey-horizontal fade-up">
-        <div class="container">
-            <div class="steps-row">
+    <!-- ========== ETAPA 2 — CONSTRUIR ========== -->
+    <section class="svc-section fade-up" id="etapa2">
+        <div class="container" style="max-width:960px;">
+            <div class="svc-section-header">
+                <div class="step-indicator">
+                    <div class="num">2</div>
+                    <span>Etapa</span>
+                </div>
+                <h2>Prepara as tuas <strong>ferramentas</strong></h2>
+                <p>Com o diagnóstico feito, é hora de construir os materiais que te representam no mercado.</p>
+            </div>
 
-                <!-- ETAPA 1 — O teu diagnóstico -->
-                <div class="step-col">
-                    <div class="step-header">
-                        <div class="step-dot">1</div>
-                        <div>
-                            <h2>O teu diagnóstico</h2>
-                            <span class="step-sub">Percebe onde estás</span>
-                        </div>
-                    </div>
-
-                    <!-- CV Analyser (porta de entrada — primeiro) -->
-                    <div class="svc-card">
-                        <div class="svc-card-header" onclick="this.parentElement.classList.toggle('open')">
-                            <span class="svc-card-name">CV Analyser</span>
-                            <div style="display:flex;align-items:center;gap:6px;">
-                                <span class="svc-card-price"><strong>4,99&euro;</strong> <span style="display:inline-block;background:#C9A961;color:#fff;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:4px;vertical-align:middle;">Começa Grátis</span></span>
-                                <span class="svc-toggle">+</span>
-                            </div>
-                        </div>
-                        <div class="svc-detail">
-                            <div class="svc-detail-inner">
-                                <p>Diagnóstico inteligente e instantâneo baseado em 6 dimensões críticas do mercado de trabalho.</p>
-                                <ul>
-                                    <li>Score de maturidade 0-100</li>
-                                    <li>Relatório PDF aprofundado</li>
-                                    <li>15+ recomendações específicas</li>
-                                    <li>Taxa de rejeição ATS</li>
-                                </ul>
-                                <div class="svc-detail-footer">
-                                    <a href="/cv-analyser" class="svc-btn btn-gold">Analisar CV</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Roaster -->
-                    <div class="svc-card">
-                        <div class="svc-card-header" onclick="this.parentElement.classList.toggle('open')">
-                            <span class="svc-card-name">LinkedIn Roaster <span class="svc-badge blue">Novo</span></span>
-                            <div style="display:flex;align-items:center;gap:6px;">
-                                <span class="svc-card-price"><strong>1,99&euro;</strong></span>
-                                <span class="svc-toggle">+</span>
-                            </div>
-                        </div>
-                        <div class="svc-detail">
-                            <div class="svc-detail-inner">
-                                <p>Análise completa do teu perfil LinkedIn com IA. Score de visibilidade, erros críticos e recomendações concretas.</p>
-                                <ul>
-                                    <li>Score de visibilidade 0-10</li>
-                                    <li>Erros críticos identificados</li>
-                                    <li>Headlines e palavras-chave SEO</li>
-                                    <li>Recomendação prioritária</li>
-                                </ul>
-                                <div class="svc-detail-footer">
-                                    <a href="/linkedin-roaster" class="svc-btn">Auditar perfil</a>
-                                </div>
-                            </div>
+            <div class="row g-4">
+                <!-- CV Maker -->
+                <div class="col-md-6">
+                    <div class="svc-card-new">
+                        <div class="card-icon green"><i class="fas fa-pen-fancy"></i></div>
+                        <h3>CV Maker <span class="badge-sm" style="background:#888;">Beta</span></h3>
+                        <p class="card-desc">Cria o teu currículo profissional em minutos com templates modernos e ATS-friendly.</p>
+                        <ul class="card-features">
+                            <li>12 templates modernos</li>
+                            <li>Importação automática do LinkedIn</li>
+                            <li>Exportação PDF e Word</li>
+                        </ul>
+                        <div class="card-footer">
+                            <div class="card-price">desde <strong>2,99€</strong></div>
+                            <a href="https://share2inspire.pt/cv-builder/" class="btn-outline-gold">Criar CV <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
                         </div>
                     </div>
                 </div>
 
-                <!-- ETAPA 2 — Construir o teu perfil -->
-                <div class="step-col">
-                    <div class="step-header">
-                        <div class="step-dot">2</div>
-                        <div>
-                            <h2>Construir o teu perfil</h2>
-                            <span class="step-sub">Prepara as tuas ferramentas</span>
-                        </div>
-                    </div>
-
-                    <!-- CV Maker -->
-                    <div class="svc-card">
-                        <div class="svc-card-header" onclick="this.parentElement.classList.toggle('open')">
-                            <span class="svc-card-name">CV Maker <span class="svc-badge grey">Beta</span></span>
-                            <div style="display:flex;align-items:center;gap:6px;">
-                                <span class="svc-card-price">desde <strong>2,99&euro;</strong></span>
-                                <span class="svc-toggle">+</span>
-                            </div>
-                        </div>
-                        <div class="svc-detail">
-                            <div class="svc-detail-inner">
-                                <p>Cria o teu currículo profissional em minutos com ferramentas simples e eficazes.</p>
-                                <ul>
-                                    <li>12 templates modernos ATS-friendly</li>
-                                    <li>Importação automática do LinkedIn</li>
-                                    <li>Exportação para PDF e Word</li>
-                                </ul>
-                                <div class="svc-detail-footer">
-                                    <a href="https://share2inspire.pt/cv-builder/" class="svc-btn">Criar CV</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- CV por Especialista -->
-                    <div class="svc-card">
-                        <div class="svc-card-header" onclick="this.parentElement.classList.toggle('open')">
-                            <span class="svc-card-name">CV por Especialista</span>
-                            <div style="display:flex;align-items:center;gap:6px;">
-                                <span class="svc-card-price">desde <strong>25&euro;</strong></span>
-                                <span class="svc-toggle">+</span>
-                            </div>
-                        </div>
-                        <div class="svc-detail">
-                            <div class="svc-detail-inner">
-                                <p>Análise humana e estratégica para garantir o máximo impacto junto de recrutadores.</p>
-                                <ul>
-                                    <li>Optimização para leitura humana</li>
-                                    <li>Feedback escrito estratégico</li>
-                                    <li>Posicionamento de valor real</li>
-                                </ul>
-                                <div class="svc-detail-footer">
-                                    <button class="svc-btn" onclick="event.stopPropagation();new bootstrap.Modal(document.getElementById('cvReviewModal')).show();">Pedir</button>
-                                </div>
-                            </div>
+                <!-- CV por Especialista -->
+                <div class="col-md-6">
+                    <div class="svc-card-new">
+                        <div class="card-icon gold"><i class="fas fa-user-tie"></i></div>
+                        <h3>CV por Especialista</h3>
+                        <p class="card-desc">Análise humana e estratégica do teu CV por um especialista. Feedback escrito e versão optimizada.</p>
+                        <ul class="card-features">
+                            <li>Optimização para leitura humana</li>
+                            <li>Feedback escrito estratégico</li>
+                            <li>Posicionamento de valor real</li>
+                        </ul>
+                        <div class="card-footer">
+                            <div class="card-price">desde <strong>25€</strong></div>
+                            <button class="btn-outline-gold" onclick="new bootstrap.Modal(document.getElementById('cvReviewModal')).show();">Pedir revisão <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></button>
                         </div>
                     </div>
                 </div>
-
-                <!-- ETAPA 3 — Evoluir na carreira -->
-                <div class="step-col">
-                    <div class="step-header">
-                        <div class="step-dot">3</div>
-                        <div>
-                            <h2>Evoluir na carreira</h2>
-                            <span class="step-sub">Define o teu rumo</span>
-                        </div>
-                    </div>
-
-                    <!-- Career Path (PRODUTO ESTRATÉGICO — destacado) -->
-                    <div class="svc-card highlighted">
-                        <div class="svc-card-header" onclick="this.parentElement.classList.toggle('open')">
-                            <span class="svc-card-name">Career Path</span>
-                            <div style="display:flex;align-items:center;gap:6px;">
-                                <span class="svc-card-price">desde <strong>12&euro;</strong></span>
-                                <span class="svc-toggle">+</span>
-                            </div>
-                        </div>
-                        <div class="svc-detail">
-                            <div class="svc-detail-inner">
-                                <p>O cérebro da plataforma. Roadmap personalizado com passos concretos para atingires os teus objectivos profissionais.</p>
-                                <ul>
-                                    <li>Roadmap de carreira personalizado</li>
-                                    <li>Análise de gaps de competências</li>
-                                    <li>Cruzamento CV vs LinkedIn</li>
-                                    <li>Cursos gratuitos recomendados</li>
-                                </ul>
-                                <div class="svc-detail-footer">
-                                    <a href="/career-path" class="svc-btn btn-primary-gold">Traçar caminho</a>
-                                </div>
-                                <!-- Career Intelligence PRO upsell -->
-                                <div style="margin-top:1rem;padding:1rem;background:linear-gradient(135deg,rgba(201,169,97,0.08),rgba(201,169,97,0.02));border:1px solid rgba(201,169,97,0.25);border-radius:12px;">
-                                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:0.5rem;">
-                                        <span style="font-size:0.65rem;font-weight:700;color:#C9A961;background:rgba(201,169,97,0.15);padding:2px 8px;border-radius:8px;letter-spacing:1px;">PRO</span>
-                                        <span style="font-size:0.85rem;font-weight:600;color:#1a1a2e;">Career Intelligence</span>
-                                    </div>
-                                    <p style="font-size:0.78rem;color:#555;margin:0 0 0.5rem;line-height:1.5;">Comparação estratégica dos 3 caminhos, trade-offs detalhados e recomendação final com justificação &mdash; para decidires com confiança.</p>
-                                    <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:0.6rem;">
-                                        <span style="font-size:0.95rem;font-weight:700;color:#C9A961;">24&euro;</span>
-                                        <span style="font-size:0.75rem;color:#999;text-decoration:line-through;">39&euro;</span>
-                                        <span style="font-size:0.65rem;color:#C9A961;font-weight:600;">upgrade após Career Path</span>
-                                    </div>
-                                    <a href="/career-path" style="display:inline-block;font-size:0.72rem;font-weight:600;color:#C9A961;text-decoration:none;border-bottom:1px solid rgba(201,169,97,0.3);padding-bottom:1px;transition:all 0.2s;">Começar Career Path &rarr;</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Career Intelligence (standalone) -->
-                    <div class="svc-card" style="border-color:#C9A961;border-width:1px;">
-                        <div class="svc-card-header" onclick="this.parentElement.classList.toggle('open')">
-                            <span class="svc-card-name">Career Intelligence</span>
-                            <div style="display:flex;align-items:center;gap:6px;">
-                                <span style="font-size:0.55rem;font-weight:700;color:#C9A961;background:rgba(201,169,97,0.15);padding:2px 6px;border-radius:6px;letter-spacing:1px;">PRO</span>
-                                <span class="svc-card-price"><strong>39&euro;</strong></span>
-                                <span class="svc-toggle">+</span>
-                            </div>
-                        </div>
-                        <div class="svc-detail">
-                            <div class="svc-detail-inner">
-                                <p>Tudo do Career Path + decisão estratégica. 3 caminhos comparados, trade-offs e recomendação final com justificação.</p>
-                                <ul>
-                                    <li>Tudo do Career Path (12€) incluído</li>
-                                    <li>3 caminhos com probabilidade de sucesso</li>
-                                    <li>Comparação estratégica lado a lado</li>
-                                    <li>Trade-offs: o que ganhas vs o que abdicas</li>
-                                    <li>Recomendação final com justificação</li>
-                                    <li>Plano de acção por caminho</li>
-                                    <li>Contexto de mercado (empresas, procura)</li>
-                                </ul>
-                                <div class="svc-detail-footer">
-                                    <a href="/career-intelligence" class="svc-btn btn-primary-gold">Obter recomendação &rarr;</a>
-                                </div>
-                                <p style="font-size:0.72rem;color:#888;margin-top:0.5rem;">Ou começa pelo <a href="/career-path" style="color:#C9A961;font-weight:600;">Career Path (12€)</a> e faz upgrade por 24€.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- KickStart Pro (premium — secundário) -->
-                    <div class="svc-card">
-                        <div class="svc-card-header" onclick="this.parentElement.classList.toggle('open')">
-                            <span class="svc-card-name">KickStart Pro</span>
-                            <div style="display:flex;align-items:center;gap:6px;">
-                                <span class="svc-card-price">desde <strong>35&euro;</strong></span>
-                                <span class="svc-toggle">+</span>
-                            </div>
-                        </div>
-                        <div class="svc-detail">
-                            <div class="svc-detail-inner">
-                                <p>Acompanhamento individual focado em follow-up e clarificação de rumo profissional.</p>
-                                <ul>
-                                    <li>Plano de acção com 3-5 acções concretas</li>
-                                    <li>Plano implementável</li>
-                                    <li>Acompanhamento pós-sessão</li>
-                                </ul>
-                                <div class="svc-detail-footer">
-                                    <button class="svc-btn btn-muted" onclick="event.stopPropagation();new bootstrap.Modal(document.getElementById('kickstartModal')).show();">Agendar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
-    </div>
+    </section>
 
+    <!-- ========== ETAPA 3 — DECIDIR ========== -->
+    <section class="svc-section fade-up" id="etapa3">
+        <div class="container" style="max-width:960px;">
+            <div class="svc-section-header">
+                <div class="step-indicator">
+                    <div class="num">3</div>
+                    <span>Etapa</span>
+                </div>
+                <h2>Define o teu <strong>rumo</strong></h2>
+                <p>Sabe para onde ir, compara opções e toma a melhor decisão para a tua carreira.</p>
+            </div>
+
+            <div class="row g-4">
+                <!-- Career Path -->
+                <div class="col-md-6">
+                    <div class="svc-card-new featured">
+                        <span class="card-badge">Recomendado</span>
+                        <div class="card-icon gold"><i class="fas fa-route"></i></div>
+                        <h3>Career Path</h3>
+                        <p class="card-desc">Roadmap personalizado com 3 caminhos estratégicos, gaps de competências, formações e plano de acção.</p>
+                        <ul class="card-features">
+                            <li>3 caminhos de carreira personalizados</li>
+                            <li>Análise de gaps de competências</li>
+                            <li>Estimativa salarial por etapa</li>
+                            <li>Formações recomendadas</li>
+                            <li>Plano 30-60-90 dias</li>
+                        </ul>
+                        <div class="card-footer">
+                            <div class="card-price"><strong>12€</strong></div>
+                            <a href="/career-path" class="btn-gold">Traçar caminho <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
+                        </div>
+
+                        <!-- CI Upsell -->
+                        <div class="ci-upsell">
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.5rem;">
+                                <span style="font-size:0.55rem;font-weight:700;color:var(--gold);background:var(--gold-light);padding:3px 8px;border-radius:6px;letter-spacing:1px;">PRO</span>
+                                <span style="font-size:0.88rem;font-weight:600;color:var(--dark);">Career Intelligence</span>
+                            </div>
+                            <p style="font-size:0.78rem;color:#555;margin:0 0 0.5rem;line-height:1.5;">Comparação estratégica dos 3 caminhos, trade-offs e recomendação final — para decidires com confiança.</p>
+                            <div style="display:flex;align-items:baseline;gap:6px;">
+                                <span style="font-size:0.9rem;font-weight:700;color:var(--gold);">24€</span>
+                                <span style="font-size:0.72rem;color:#999;text-decoration:line-through;">39€</span>
+                                <span style="font-size:0.65rem;color:var(--gold);font-weight:500;">upgrade após Career Path</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Career Intelligence (standalone) -->
+                <div class="col-md-6">
+                    <div class="svc-card-new" style="border-color:var(--gold-border);">
+                        <div class="card-icon purple"><i class="fas fa-brain"></i></div>
+                        <h3>Career Intelligence <span class="badge-sm" style="background:#7C3AED;">Full</span></h3>
+                        <p class="card-desc">Tudo do Career Path + decisão estratégica. Comparação dos 3 caminhos, trade-offs e recomendação fundamentada.</p>
+                        <ul class="card-features">
+                            <li>Tudo do Career Path incluído</li>
+                            <li>3 caminhos com probabilidade de sucesso</li>
+                            <li>Comparação lado a lado</li>
+                            <li>Trade-offs: o que ganhas vs o que abdicas</li>
+                            <li>Recomendação final com justificação</li>
+                            <li>Contexto de mercado (empresas, procura)</li>
+                        </ul>
+                        <div class="card-footer">
+                            <div class="card-price"><strong>39€</strong></div>
+                            <a href="/career-intelligence" class="btn-gold">Obter recomendação <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
+                        </div>
+                        <p style="font-size:0.72rem;color:#888;margin-top:0.8rem;">Ou começa pelo <a href="/career-path" style="color:var(--gold);font-weight:600;">Career Path (12€)</a> e faz upgrade por 24€.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KickStart Pro -->
+            <div class="row g-4 mt-2">
+                <div class="col-12">
+                    <div class="svc-card-new" style="flex-direction:row;align-items:center;gap:2rem;flex-wrap:wrap;">
+                        <div style="flex:1;min-width:240px;">
+                            <div class="card-icon gold" style="margin-bottom:0.8rem;"><i class="fas fa-rocket"></i></div>
+                            <h3>KickStart Pro</h3>
+                            <p class="card-desc" style="margin-bottom:0.5rem;">Sessão individual de 30 minutos com plano de acção concreto. Ideal para quem precisa de clareza e direcção imediata.</p>
+                            <ul class="card-features" style="margin-bottom:0;">
+                                <li>Plano de acção com 3-5 acções concretas</li>
+                                <li>Acompanhamento pós-sessão</li>
+                            </ul>
+                        </div>
+                        <div style="text-align:center;">
+                            <div class="card-price" style="margin-bottom:0.8rem;">desde <strong style="font-size:1.3rem;">35€</strong></div>
+                            <button class="btn-gold" onclick="new bootstrap.Modal(document.getElementById('kickstartModal')).show();">Agendar sessão <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== BUNDLE BANNER ========== -->
+    <section style="padding:50px 0;" class="fade-up">
+        <div class="container" style="max-width:720px;">
+            <div class="bundle-banner">
+                <div style="flex:1;min-width:200px;position:relative;z-index:1;">
+                    <span style="display:inline-block;background:linear-gradient(135deg,#C9A961,#E8D5A3);color:#1a1a2e;font-size:0.55rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:2px 8px;border-radius:12px;margin-bottom:0.5rem;">Mais popular</span>
+                    <h3 style="color:#fff;font-size:1.1rem;font-weight:400;margin:0 0 0.3rem;line-height:1.3;">CV Analyser <span style="color:#C9A961;font-weight:600;">+</span> Career Path</h3>
+                    <p style="color:rgba(255,255,255,0.55);font-size:0.78rem;margin:0;">Diagnóstico + roadmap num só passo. Poupa em vez de comprar separado.</p>
+                </div>
+                <div style="text-align:center;position:relative;z-index:1;">
+                    <div style="display:flex;align-items:baseline;gap:0.4rem;justify-content:center;">
+                        <span style="color:rgba(255,255,255,0.35);font-size:0.85rem;text-decoration:line-through;">€16,99</span>
+                        <span style="color:#fff;font-size:1.4rem;font-weight:600;">€14,99</span>
+                    </div>
+                    <a href="/bundle" class="btn-gold" style="margin-top:0.6rem;">Obter Bundle</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SOCIAL PROOF ========== -->
+    <section style="padding:50px 0;background:var(--light-bg);" class="fade-up">
+        <div class="container" style="max-width:960px;">
+            <div class="stats-row" style="margin-bottom:3rem;">
+                <div class="stat-item">
+                    <div class="stat-num">+500</div>
+                    <div class="stat-label">Profissionais ajudados</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">5<span style="font-size:1.1rem;">&#9733;</span></div>
+                    <div class="stat-label">Avaliação média</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">98%</div>
+                    <div class="stat-label">Taxa de satisfação</div>
+                </div>
+            </div>
+
+            <h3 style="text-align:center;font-size:1.05rem;font-weight:400;color:#555;margin-bottom:1.5rem;">O que dizem os nossos clientes</h3>
+            <div class="testi-grid">
+                <div class="testi-card">
+                    <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testi-text">&ldquo;O Career Path deu-me uma visão clara do próximo passo. Recomendo a qualquer profissional em transição.&rdquo;</p>
+                    <div class="testi-author">Ana M. &mdash; <span>Senior Manager</span></div>
+                </div>
+                <div class="testi-card">
+                    <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testi-text">&ldquo;O CV Analyser identificou pontos que eu nunca teria visto. Gratuito e extremamente útil.&rdquo;</p>
+                    <div class="testi-author">Ricardo P. &mdash; <span>Consultor</span></div>
+                </div>
+                <div class="testi-card">
+                    <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testi-text">&ldquo;A sessão KickStart Pro foi transformadora. Em 30 minutos tinha um plano de acção concreto.&rdquo;</p>
+                    <div class="testi-author">Marta S. &mdash; <span>HR Director</span></div>
+                </div>
+                <div class="testi-card">
+                    <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testi-text">&ldquo;O LinkedIn Roaster mudou a forma como me apresento. Recebi 3 contactos na semana seguinte.&rdquo;</p>
+                    <div class="testi-author">João F. &mdash; <span>Tech Lead</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Kickstart Modal -->
     <div class="modal fade" id="kickstartModal" tabindex="-1" aria-labelledby="kickstartModalLabel" aria-hidden="true">
@@ -844,9 +839,9 @@
                                         </label>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-dark w-100 py-2 mt-2" style="border-radius:6px;font-size:0.95rem;">Agendar Sessão</button>
-                                <div id="kickstartFormMessage" class="mt-3 small"></div>
+                                <button type="submit" class="btn w-100 py-2 rounded-pill fw-bold" style="background-color:#C9A961;color:#fff;font-size:0.9rem;">Agendar Sessão</button>
                             </form>
+                            <div id="kickstartFormMessage" class="mt-3"></div>
                         </div>
                     </div>
                 </div>
@@ -893,7 +888,7 @@
                             <label class="form-label" style="font-weight:500;font-size:0.9rem;">Notas <span class="text-muted small">(Opcional)</span></label>
                             <textarea class="form-control" id="cvReviewInstructions" rows="2" placeholder="Indique aspetos específicos que gostaria de melhorar..." style="border:1px solid #dee2e6;border-radius:6px;padding:0.6rem;"></textarea>
                         </div>
-                        <button type="submit" class="btn w-100 py-3 rounded-pill fw-bold" style="background-color:#C9A961;color:#fff;">Receber Confirmação e Link de Pagamento</button>
+                        <button type="submit" class="btn w-100 py-2 rounded-pill fw-bold" style="background-color:#C9A961;color:#fff;font-size:0.9rem;">Receber Confirmação e Link de Pagamento</button>
                     </form>
                     <div id="cvReviewFormMessage" class="mt-3"></div>
                 </div>
@@ -901,144 +896,8 @@
         </div>
     </div>
 
-    <!-- Social Proof + Testimonials -->
-    <section style="padding:60px 0 40px;background:#fafafa;">
-        <div class="container" style="max-width:960px;">
-            <!-- Stats -->
-            <div style="display:flex;justify-content:center;gap:60px;margin-bottom:48px;flex-wrap:wrap;">
-                <div style="text-align:center;">
-                    <div style="font-size:2.2rem;font-weight:700;color:#C9A961;">+500</div>
-                    <div style="font-size:0.85rem;color:#777;margin-top:4px;">Profissionais ajudados</div>
-                </div>
-                <div style="text-align:center;">
-                    <div style="font-size:2.2rem;font-weight:700;color:#C9A961;">5<span style="font-size:1.2rem;">&#9733;</span></div>
-                    <div style="font-size:0.85rem;color:#777;margin-top:4px;">Avaliação média</div>
-                </div>
-                <div style="text-align:center;">
-                    <div style="font-size:2.2rem;font-weight:700;color:#C9A961;">98%</div>
-                    <div style="font-size:0.85rem;color:#777;margin-top:4px;">Taxa de satisfação</div>
-                </div>
-            </div>
-
-            <!-- Testimonials Carousel -->
-            <h3 style="text-align:center;font-size:1.1rem;font-weight:400;color:#555;margin-bottom:28px;">O que dizem os nossos clientes</h3>
-            <div style="position:relative;overflow:hidden;">
-                <div id="testimonialTrack" style="display:flex;gap:24px;transition:transform 0.5s ease;">
-                    <div class="testi-card">
-                        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        <p class="testi-text">&ldquo;O Career Path deu-me uma visão clara do próximo passo. Recomendo a qualquer profissional em transição.&rdquo;</p>
-                        <div class="testi-author">Ana M. &mdash; <span>Senior Manager</span></div>
-                    </div>
-                    <div class="testi-card">
-                        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        <p class="testi-text">&ldquo;O CV Analyser identificou pontos que eu nunca teria visto. Gratuito e extremamente útil.&rdquo;</p>
-                        <div class="testi-author">Ricardo P. &mdash; <span>Consultor</span></div>
-                    </div>
-                    <div class="testi-card">
-                        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        <p class="testi-text">&ldquo;A sessão KickStart Pro foi transformadora. Em 45 minutos tinha um plano de acção concreto.&rdquo;</p>
-                        <div class="testi-author">Marta S. &mdash; <span>HR Director</span></div>
-                    </div>
-                    <div class="testi-card">
-                        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        <p class="testi-text">&ldquo;O LinkedIn Roaster mudou completamente a forma como me apresento. Recebi 3 contactos na semana seguinte.&rdquo;</p>
-                        <div class="testi-author">João F. &mdash; <span>Tech Lead</span></div>
-                    </div>
-                    <div class="testi-card">
-                        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        <p class="testi-text">&ldquo;O CV por Especialista superou as minhas expectativas. Feedback estratégico e detalhado.&rdquo;</p>
-                        <div class="testi-author">Sofia L. &mdash; <span>Project Manager</span></div>
-                    </div>
-                    <div class="testi-card">
-                        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        <p class="testi-text">&ldquo;Plataforma incrível. Usei o CV Maker e o Career Path — juntos são imbatíveis.&rdquo;</p>
-                        <div class="testi-author">Pedro C. &mdash; <span>Business Analyst</span></div>
-                    </div>
-                </div>
-                <!-- Nav arrows -->
-                <button onclick="scrollTestimonials(-1)" style="position:absolute;left:0;top:50%;transform:translateY(-50%);background:white;border:1px solid #e0e0e0;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-size:1rem;color:#555;">&lsaquo;</button>
-                <button onclick="scrollTestimonials(1)" style="position:absolute;right:0;top:50%;transform:translateY(-50%);background:white;border:1px solid #e0e0e0;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-size:1rem;color:#555;">&rsaquo;</button>
-            </div>
-        </div>
-    </section>
-
-    <style>
-        .testi-card {
-            min-width: 280px;
-            max-width: 280px;
-            background: #fff;
-            border: 1px solid #f0f0f0;
-            border-radius: 10px;
-            padding: 24px;
-            flex-shrink: 0;
-        }
-        .testi-stars {
-            color: #C9A961;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            margin-bottom: 12px;
-        }
-        .testi-text {
-            font-size: 0.85rem;
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 16px;
-            font-style: italic;
-        }
-        .testi-author {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #333;
-        }
-        .testi-author span {
-            font-weight: 400;
-            color: #999;
-        }
-        @media (max-width: 768px) {
-            .testi-card { min-width: 240px; max-width: 240px; padding: 18px; }
-        }
-    </style>
-
-    <script>
-    (function(){
-        const track = document.getElementById('testimonialTrack');
-        if(!track) return;
-        let pos = 0;
-        const cardW = 304; // 280 + 24 gap
-        const total = track.children.length;
-        
-        window.scrollTestimonials = function(dir) {
-            const visible = Math.floor(track.parentElement.offsetWidth / cardW);
-            const maxPos = total - visible;
-            pos = Math.max(0, Math.min(maxPos, pos + dir));
-            track.style.transform = 'translateX(-' + (pos * cardW) + 'px)';
-        };
-        
-        // Auto-scroll every 4 seconds
-        let autoInterval = setInterval(function(){
-            const visible = Math.floor(track.parentElement.offsetWidth / cardW);
-            const maxPos = total - visible;
-            pos++;
-            if(pos > maxPos) pos = 0;
-            track.style.transform = 'translateX(-' + (pos * cardW) + 'px)';
-        }, 4000);
-        
-        // Pause on hover
-        track.parentElement.addEventListener('mouseenter', function(){ clearInterval(autoInterval); });
-        track.parentElement.addEventListener('mouseleave', function(){
-            autoInterval = setInterval(function(){
-                const visible = Math.floor(track.parentElement.offsetWidth / cardW);
-                const maxPos = total - visible;
-                pos++;
-                if(pos > maxPos) pos = 0;
-                track.style.transform = 'translateX(-' + (pos * cardW) + 'px)';
-            }, 4000);
-        });
-    })();
-    </script>
-
     <!-- Footer -->
-    <footer style="background:var(--s2i-dark);color:var(--s2i-white);padding:60px 0 30px;">
+    <footer style="background:var(--s2i-dark, #1A1A1A);color:#fff;padding:60px 0 30px;">
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-4">
@@ -1046,7 +905,7 @@
                     <p style="color:rgba(255,255,255,0.7);font-size:0.9rem;line-height:1.7;">Partilhar para inspirar carreiras.</p>
                 </div>
                 <div class="col-lg-2 col-md-4">
-                    <h5 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;color:var(--s2i-gold);">Navegação</h5>
+                    <h5 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;color:var(--gold);">Navegação</h5>
                     <div class="d-flex flex-column gap-2">
                         <a href="../index.html" style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Início</a>
                         <a href="sobre.html" style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Sobre</a>
@@ -1054,31 +913,32 @@
                         <a href="conhecimento.html" style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Knowledge Hub</a>
                     </div>
                 </div>
-                                <div class="col-lg-2 col-md-4">
-                    <h5 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;color:var(--s2i-gold);">Ferramentas</h5>
+                <div class="col-lg-2 col-md-4">
+                    <h5 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;color:var(--gold);">Ferramentas</h5>
                     <div class="d-flex flex-column gap-2">
-                        <a href="pages/cv-analyser.html" style="color:rgba(255,255,255,0.7);font-size:0.85rem;">CV Analyser</a>
-                        <a href="pages/linkedin-roaster.html" style="color:rgba(255,255,255,0.7);font-size:0.85rem;">LinkedIn Roaster</a>
-                        <a href="pages/career-path.html" style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Career Path</a>
+                        <a href="/cv-analyser" style="color:rgba(255,255,255,0.7);font-size:0.85rem;">CV Analyser</a>
+                        <a href="/linkedin-roaster" style="color:rgba(255,255,255,0.7);font-size:0.85rem;">LinkedIn Roaster</a>
+                        <a href="/career-path" style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Career Path</a>
+                        <a href="/career-intelligence" style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Career Intelligence</a>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-4">
-                    <h5 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;color:var(--s2i-gold);">Legal</h5>
+                    <h5 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;color:var(--gold);">Legal</h5>
                     <div class="d-flex flex-column gap-2">
                         <a href="politica-privacidade.html" style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Privacidade</a>
                         <a href="politica-cookies.html" style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Cookies</a>
                         <a href="informacao-legal.html" style="color:rgba(255,255,255,0.7);font-size:0.85rem;">Informação Legal</a>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-4">
-                    <h5 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;color:var(--s2i-gold);">Contacto</h5>
+                <div class="col-lg-2 col-md-4">
+                    <h5 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;color:var(--gold);">Contacto</h5>
                     <p style="color:rgba(255,255,255,0.7);font-size:0.85rem;margin-bottom:15px;">
-                        <i class="fas fa-envelope" style="color:var(--s2i-gold);margin-right:8px;"></i>
+                        <i class="fas fa-envelope" style="color:var(--gold);margin-right:8px;"></i>
                         geral@share2inspire.pt
                     </p>
                     <div class="d-flex gap-3">
-                        <a href="https://www.linkedin.com/in/marlene-ruivo-b2a2104a/" target="_blank" style="color:var(--s2i-gold);"><i class="fab fa-linkedin fa-lg"></i></a>
-                        <a href="https://www.instagram.com/share2inspire_/" target="_blank" style="color:var(--s2i-gold);"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="https://www.linkedin.com/in/marlene-ruivo-b2a2104a/" target="_blank" style="color:var(--gold);"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="https://www.instagram.com/share2inspire_/" target="_blank" style="color:var(--gold);"><i class="fab fa-instagram fa-lg"></i></a>
                     </div>
                 </div>
             </div>
@@ -1106,6 +966,15 @@
             }, { threshold: 0.1 });
             document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
+            // Smooth scroll for journey steps
+            document.querySelectorAll('.journey-step').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
             // Kickstart Pro Form
             const kickstartForm = document.getElementById('kickstartForm');
             if (kickstartForm) {
@@ -1130,7 +999,6 @@
                     try {
                         const result = await window.EmailFlows.sendKickstartConfirmation(email, name, { objectives, phone });
                         if (result.success) {
-                            // Replace form with success confirmation
                             kickstartForm.innerHTML = `
                                 <div style="text-align:center;padding:2rem 1rem;">
                                     <div style="width:56px;height:56px;background:#d4edda;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
@@ -1199,7 +1067,7 @@
     </script>
     <script src="../js/coupon-system.js"></script>
     <script src="../js/coupon-handler.js"></script>
-<script src="../js/hub-widget.js"></script>
+    <script src="../js/hub-widget.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/shared-auth.js"></script>
     <script src="../js/inline-auth.js"></script>
