@@ -12,6 +12,7 @@ import mammoth from "mammoth";
 import { countries } from "./countries";
 import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
+import { useCurrency } from "@/hooks/useCurrency";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -116,7 +117,7 @@ export default function CareerPathHomeEN() {
 
   const PRICE = '19.99';
   const PRICE_NUM = 19.99;
-  const CUR = '$';
+  const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
 
   const countryData = countries.find(c => c.country === selectedCountry);
 
@@ -326,7 +327,7 @@ export default function CareerPathHomeEN() {
           language: 'en',
           country: selectedCountry,
           region: selectedRegion,
-          currency: 'usd',
+          currency: currencyCode,
           amount: PRICE_NUM,
         })
       });
@@ -353,7 +354,7 @@ export default function CareerPathHomeEN() {
     window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}USD`, '_blank');
     setPaymentStep('success');
     trackPurchase('career_path', 19.99, `CP-PAYPAL-${Date.now()}`);
-    trackAffiliateConversion({ product: 'career_path', amount: 19.99, currency: 'USD', payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
+    trackAffiliateConversion({ product: 'career_path', amount: 19.99, currency: currencyCodeUpper, payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
   };
 
   const handlePaymentSuccess = () => {

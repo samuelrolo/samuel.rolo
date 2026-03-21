@@ -15,6 +15,7 @@ import { useLocation } from "wouter";
 import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { countries } from "./countries";
+import { useCurrency } from "@/hooks/useCurrency";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -325,11 +326,12 @@ const comparisonFeatures = [
   { feature: "Shareable LinkedIn Certification", us: true, competitor1: false, competitor2: false },
   { feature: "CV vs LinkedIn cross-analysis", us: true, competitor1: false, competitor2: false },
 
-  { feature: "Price", usText: "From $7.99", comp1Text: "$19.99/mo", comp2Text: "$9.99" },
+  { feature: "Price", usText: "From 7.99", comp1Text: "19.99/mo", comp2Text: "9.99" },
 ];
 
 export default function HomeEN() {
   useEffect(() => { document.title = "CV Analyser — AI-Powered CV Analysis | Share2Inspire"; }, []);
+  const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
 
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);
@@ -761,7 +763,7 @@ export default function HomeEN() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           amount: plan.price,
-          currency: 'usd',
+          currency: currencyCode,
           email: liPaywallEmail,
           product: `CV Analyser - ${plan.name} (LinkedIn)`,
           description: `LinkedIn ${plan.name} - ${plan.analyses} analysis(es)`,
@@ -803,7 +805,7 @@ export default function HomeEN() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           amount: plan.price,
-          currency: 'usd',
+          currency: currencyCode,
           email: voucherEmail,
           product: `CV Analyser - ${plan.name} (Voucher)`,
           description: `Voucher ${plan.name} - ${plan.analyses} analysis(es)`,
@@ -989,7 +991,7 @@ export default function HomeEN() {
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3 flex-wrap">
           <span className="text-[10px] bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] text-[#1a1a2e] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase shrink-0">Most popular</span>
           <span className="text-sm text-white">
-            <strong className="text-[#C9A961]">Bundle</strong> — CV Analyser + Career Path for <strong className="text-white">$24.99</strong> <span className="text-white/40 line-through text-xs">$27.98</span>
+            <strong className="text-[#C9A961]">Bundle</strong> — CV Analyser + Career Path for <strong className="text-white">{CUR}34</strong> <span className="text-white/40 line-through text-xs">{CUR}68.99</span>
           </span>
           <a href="/en/bundle" className="text-xs bg-[#C9A961] hover:bg-[#B8943D] text-white px-3 py-1 rounded-full font-semibold shrink-0 transition-all">Get Bundle</a>
         </div>
@@ -1272,7 +1274,7 @@ export default function HomeEN() {
                             : 'border-border bg-background text-muted-foreground hover:border-[#C9A961]/50'
                         }`}
                       >
-                        <p className="font-semibold">${plan.price}</p>
+                        <p className="font-semibold">{CUR}{plan.price}</p>
                         <p className="text-[10px] text-muted-foreground">{plan.analyses} analysis{plan.analyses > 1 ? 'es' : ''}</p>
                       </button>
                     ))}
@@ -1300,7 +1302,7 @@ export default function HomeEN() {
                     {voucherPaymentLoading ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
                     ) : (
-                      <>Buy Voucher — ${pricingPlans[voucherSelectedPlan].price}</>  
+                      <>Buy Voucher — {CUR}{pricingPlans[voucherSelectedPlan].price}</>  
                     )}
                   </button>
                 </>
@@ -1472,9 +1474,9 @@ export default function HomeEN() {
                         }}
                         className="p-3 rounded-lg border border-white/20 bg-white/5 hover:border-[#C9A961]/50 hover:bg-[#C9A961]/10 transition-all text-center"
                       >
-                        <p className="text-lg font-bold text-[#C9A961]">${plan.price}</p>
+                        <p className="text-lg font-bold text-[#C9A961]">{CUR}{plan.price}</p>
                         <p className="text-xs text-white/60">{plan.analyses} analysis{plan.analyses > 1 ? 'es' : ''}</p>
-                        <p className="text-[10px] text-white/40 mt-0.5">${plan.perUnit}/ea.</p>
+                        <p className="text-[10px] text-white/40 mt-0.5">{CUR}{plan.perUnit}/ea.</p>
                       </button>
                     ))}
                   </div>
@@ -1493,7 +1495,7 @@ export default function HomeEN() {
                       ← Back
                     </button>
                     <span className="text-sm font-semibold text-[#C9A961]">
-                      {pricingPlans[liPaywallPlan].name} — ${pricingPlans[liPaywallPlan].price}
+                      {pricingPlans[liPaywallPlan].name} — {CUR}{pricingPlans[liPaywallPlan].price}
                     </span>
                   </div>
 
@@ -1518,7 +1520,7 @@ export default function HomeEN() {
                     {liPaywallLoading ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting to checkout...</>
                     ) : (
-                      <>Buy & Analyse — ${pricingPlans[liPaywallPlan].price}</>
+                      <>Buy & Analyse — {CUR}{pricingPlans[liPaywallPlan].price}</>
                     )}
                   </button>
                   <p className="text-[10px] text-white/40 text-center">Secure payment via Stripe. Analysis starts automatically.</p>
@@ -1696,7 +1698,7 @@ export default function HomeEN() {
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center"><Award className="w-6 h-6 text-[#C9A961]" /></div>
               <div className="text-left">
                 <h2 className="text-xl font-bold text-foreground">Full Analysis Packages</h2>
-                <p className="text-sm text-muted-foreground">From $7.99 per analysis</p>
+                <p className="text-sm text-muted-foreground">From {CUR}7.99 per analysis</p>
               </div>
             </div>
             {pricingOpen ? <ChevronUp className="w-6 h-6 text-muted-foreground" /> : <ChevronDown className="w-6 h-6 text-muted-foreground" />}
@@ -1715,10 +1717,10 @@ export default function HomeEN() {
                   </div>
                   <div className="space-y-0">
                     <div className="flex items-baseline gap-1">
-                      <span className={`text-4xl font-bold ${plan.popular ? 'text-white' : 'text-foreground'}`}>${plan.price}</span>
+                      <span className={`text-4xl font-bold ${plan.popular ? 'text-white' : 'text-foreground'}`}>{CUR}{plan.price}</span>
                     </div>
                     <p className={`text-sm ${plan.popular ? 'text-white/70' : 'text-muted-foreground'}`}>
-                      {plan.name === 'Complete' ? (<><span className="line-through">$14.98</span> <span className="font-semibold">save $5</span></>) : (<>${plan.perUnit} per analysis</>)}
+                      {plan.name === 'Complete' ? (<><span className="line-through">{CUR}14.98</span> <span className="font-semibold">save {CUR}5</span></>) : (<>{CUR}{plan.perUnit} per analysis</>)}
                     </p>
                   </div>
                   <ul className="space-y-2">
@@ -1759,7 +1761,7 @@ export default function HomeEN() {
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center"><Shield className="w-6 h-6 text-[#C9A961]" /></div>
               <h3 className="text-lg font-semibold text-foreground">Fair Price, No Subscription</h3>
-              <p className="text-sm text-muted-foreground">Pay only when you need it. No monthly fees, no commitments. From $7.99 per full analysis.</p>
+              <p className="text-sm text-muted-foreground">Pay only when you need it. No monthly fees, no commitments. From {CUR}7.99 per full analysis.</p>
             </div>
           </div>
         </div>

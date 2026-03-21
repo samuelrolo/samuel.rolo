@@ -1000,7 +1000,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             <span class="cta-label">Career Path</span>
             <h2>The <strong>right role</strong> is one click away.</h2>
             <p class="cta-subtitle">Personalised roadmap, skills gap and estimated salary, generated with advanced AI from your CV and LinkedIn.</p>
-            <p class="cta-social-proof" style="font-size:0.85rem;color:#C9A961;font-style:italic;margin-top:-0.5rem;margin-bottom:1.5rem;">"What Alento charges 600€, Share2Inspire delivers in 30 seconds for $19.99."</p>
+            <p class="cta-social-proof" style="font-size:0.85rem;color:#C9A961;font-style:italic;margin-top:-0.5rem;margin-bottom:1.5rem;">"What Alento charges 600€, Share2Inspire delivers in 30 seconds for <span class="cur">€</span>19.99."</p>
             <div class="deliverables">
                 <div class="deliverable-item">
                     <div class="deliverable-icon">
@@ -1021,7 +1021,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                     <div class="deliverable-text"><strong>Estimated salary</strong> by role and location, with market benchmark</div>
                 </div>
             </div>
-            <p class="cta-price">One-time payment · <span class="price-value">$19.99</span></p>
+            <p class="cta-price">One-time payment · <span class="price-value"><span class="cur">€</span>19.99</span></p>
             <a href="/en/career-path" class="cta-button">Generate my Career Path</a>
             <p class="cta-note">Results in under 60 seconds · No subscription</p>
             <!-- Career Intelligence PRO mention -->
@@ -1031,7 +1031,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                     <span style="font-size:0.82rem;font-weight:600;color:#1a1a2e;">Career Intelligence</span>
                     <span style="font-size:0.55rem;font-weight:700;color:#C9A961;background:rgba(201,169,97,0.12);padding:2px 6px;border-radius:6px;letter-spacing:1px;">PRO</span>
                 </div>
-                <p style="font-size:0.75rem;color:#666;margin:0 0 0.5rem;line-height:1.5;">Full strategic comparison of all 3 paths, trade-offs and final recommendation. <span style="color:#C9A961;font-weight:500;">$24</span> <span style="color:#999;text-decoration:line-through;font-size:0.7rem;">$39</span> &mdash; upgrade after Career Path.</p>
+                <p style="font-size:0.75rem;color:#666;margin:0 0 0.5rem;line-height:1.5;">Full strategic comparison of all 3 paths, trade-offs and final recommendation. <span style="color:#C9A961;font-weight:500;"><span class="cur">€</span>29</span> <span style="color:#999;text-decoration:line-through;font-size:0.7rem;"><span class="cur">€</span>49</span> &mdash; upgrade after Career Path.</p>
                 <a href="/en/career-path" style="font-size:0.72rem;font-weight:600;color:#C9A961;text-decoration:none;border-bottom:1px solid rgba(201,169,97,0.3);padding-bottom:1px;">Start Career Path &rarr;</a>
             </div>
         </div>
@@ -1050,8 +1050,8 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                     <h3 style="color:#fff;font-size:1.6rem;font-weight:300;margin:0 0 0.5rem;line-height:1.3;">CV Analyser <span style="color:#C9A961;font-weight:600;">+</span> Career Path</h3>
                     <p style="color:rgba(255,255,255,0.6);font-size:0.85rem;margin:0 0 1.5rem;max-width:480px;display:inline-block;">Full CV diagnosis and personalised career roadmap. Everything in one step.</p>
                     <div style="display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
-                        <span style="color:rgba(255,255,255,0.4);font-size:1rem;text-decoration:line-through;">$27.98</span>
-                        <span style="color:#fff;font-size:2rem;font-weight:600;">$24.99</span>
+                        <span style="color:rgba(255,255,255,0.4);font-size:1rem;text-decoration:line-through;"><span class="cur">€</span>68.99</span>
+                        <span style="color:#fff;font-size:2rem;font-weight:600;"><span class="cur">€</span>34</span>
                         <span style="display:inline-block;background:rgba(201,169,97,0.15);color:#C9A961;font-size:0.7rem;font-weight:600;padding:3px 10px;border-radius:12px;">Save 22%</span>
                     </div>
                     <a href="/en/bundle" style="display:inline-block;background:linear-gradient(135deg,#C9A961,#B8943D);color:#fff;font-size:0.9rem;font-weight:600;padding:12px 32px;border-radius:8px;text-decoration:none;transition:all 0.3s;letter-spacing:0.5px;">Get the full Bundle</a>
@@ -2035,7 +2035,19 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../../../js/shared-auth.js"></script>
-    <script src="../../../js/inline-auth.js"></script>
+     <script src="../../../js/inline-auth.js"></script>
+    <script>
+    (function(){
+      var EUR=['AT','BE','CY','EE','FI','FR','DE','GR','IE','IT','LV','LT','LU','MT','NL','PT','SK','SI','ES','HR','AD','MC','SM','VA','ME','XK'];
+      var GBP=['GB','GG','JE','IM'];
+      function sym(cc){if(EUR.indexOf(cc)>-1)return'€';if(GBP.indexOf(cc)>-1)return'£';return'$';}
+      function apply(s){document.querySelectorAll('.cur').forEach(function(el){el.textContent=s;});}
+      try{var sv=localStorage.getItem('s2i_currency');if(sv){var p=JSON.parse(sv);if(p&&p.detected&&p.symbol){apply(p.symbol);return;}}}
+      catch(e){}
+      fetch('https://ipapi.co/json/').then(function(r){return r.json();}).then(function(d){
+        if(d.country_code){var s=sym(d.country_code.toUpperCase());apply(s);localStorage.setItem('s2i_currency',JSON.stringify({symbol:s,code:s==='€'?'eur':s==='£'?'gbp':'usd',codeUpper:s==='€'?'EUR':s==='£'?'GBP':'USD',detected:true}));}
+      }).catch(function(){});
+    })();
+    </script>
 </body>
-
 </html>

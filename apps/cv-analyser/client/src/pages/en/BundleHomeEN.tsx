@@ -1,6 +1,6 @@
 // Bundle EN — CV Analyser + Career Path | Share2Inspire
 // Upload CV + LinkedIn → Payment → Both engines run → Results
-// Price EN: $24.99
+// Price EN: €34
 import { useState, useEffect } from "react";
 import { Upload, FileText, Loader2, Compass, Target, TrendingUp, CheckCircle2, Linkedin, CreditCard, AlertCircle, Ticket, Briefcase, Sparkles, Shield, Check, ArrowRight, Lock, BarChart3, Zap, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
+import { useCurrency } from "@/hooks/useCurrency";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { countries } from "./countries";
 
@@ -20,9 +21,9 @@ const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
-const PRICE = '24.99';
-const PRICE_NUM = 24.99;
-const ORIGINAL_PRICE = '27.98';
+const PRICE = '34';
+const PRICE_NUM = 34.00;
+const ORIGINAL_PRICE = '68.99';
 
 async function extractTextFromPDF(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
@@ -46,6 +47,7 @@ async function extractTextFromDOCX(file: File): Promise<string> {
 
 export default function BundleHomeEN() {
   useEffect(() => { document.title = "Bundle CV Analyser + Career Path | Share2Inspire"; }, []);
+  const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
   const [, setLocation] = useLocation();
 
   const [file, setFile] = useState<File | null>(null);
@@ -211,7 +213,7 @@ export default function BundleHomeEN() {
       } catch (_) {}
 
       trackPurchase('bundle_cv_career', PRICE_NUM, `BUNDLE-${Date.now()}`);
-      trackAffiliateConversion({ product: 'bundle_cv_career', amount: PRICE_NUM, currency: 'USD', payment_method: 'stripe', customer_email: email, transaction_id: `BUNDLE-${Date.now()}` });
+      trackAffiliateConversion({ product: 'bundle_cv_career', amount: PRICE_NUM, currency: currencyCodeUpper, payment_method: 'stripe', customer_email: email, transaction_id: `BUNDLE-${Date.now()}` });
       clearInterval(msgInterval);
       setAnalysisMsg("All done! Redirecting...");
       setStep('done');
@@ -233,7 +235,7 @@ export default function BundleHomeEN() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email, name: email.split('@')[0], amount: PRICE_NUM, currency: 'usd',
+          email, name: email.split('@')[0], amount: PRICE_NUM, currency: currencyCode,
           description: 'Bundle CV Analyser + Career Path — Share2Inspire', orderId,
           success_url: `${window.location.origin}/en/bundle?paid=true`,
           cancel_url: `${window.location.origin}/en/bundle`,
@@ -256,7 +258,7 @@ export default function BundleHomeEN() {
     window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}USD`, '_blank');
     setPaymentStep('success');
     trackPurchase('bundle_cv_career', PRICE_NUM, `BUNDLE-PAYPAL-${Date.now()}`);
-    trackAffiliateConversion({ product: 'bundle_cv_career', amount: PRICE_NUM, currency: 'USD', payment_method: 'paypal', customer_email: email, transaction_id: `BUNDLE-PAYPAL-${Date.now()}` });
+    trackAffiliateConversion({ product: 'bundle_cv_career', amount: PRICE_NUM, currency: currencyCodeUpper, payment_method: 'paypal', customer_email: email, transaction_id: `BUNDLE-PAYPAL-${Date.now()}` });
   };
 
   const handleVoucher = async () => {
@@ -323,8 +325,8 @@ export default function BundleHomeEN() {
               Complete CV diagnosis and personalised career roadmap. Everything in one step, with a single payment.
             </p>
             <div className="flex items-center justify-center gap-4">
-              <span className="text-slate-400 text-xl line-through">${ORIGINAL_PRICE}</span>
-              <span className="text-4xl font-bold text-slate-900">${PRICE}</span>
+              <span className="text-slate-400 text-xl line-through">{CUR}{ORIGINAL_PRICE}</span>
+              <span className="text-4xl font-bold text-slate-900">{CUR}{PRICE}</span>
               <span className="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full">Save 11%</span>
             </div>
             <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mt-8">
@@ -426,7 +428,7 @@ export default function BundleHomeEN() {
             </label>
             {error && (<div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-xl"><AlertCircle className="w-4 h-4 shrink-0" />{error}</div>)}
             <Button onClick={handleProceedToPayment} disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !selectedCountry || !acceptedTerms} className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 transition-all">
-              Pay and analyse — ${PRICE}
+              Pay and analyse — {CUR}{PRICE}
             </Button>
             <button onClick={() => { setShowVoucherModal(true); setVoucherCode(''); setVoucherError(null); }} className="w-full text-center text-sm text-slate-500 hover:text-[#C9A961] transition-colors flex items-center justify-center gap-2">
               <Ticket className="w-4 h-4" /> I have a code
@@ -473,8 +475,8 @@ export default function BundleHomeEN() {
               <div className="bg-slate-50 rounded-xl p-4 text-center">
                 <p className="text-sm text-slate-600">CV Analyser + Career Path</p>
                 <div className="flex items-center justify-center gap-3 mt-1">
-                  <span className="text-slate-400 line-through text-sm">${ORIGINAL_PRICE}</span>
-                  <span className="text-2xl font-bold text-slate-900">${PRICE}</span>
+                  <span className="text-slate-400 line-through text-sm">{CUR}{ORIGINAL_PRICE}</span>
+                  <span className="text-2xl font-bold text-slate-900">{CUR}{PRICE}</span>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -486,12 +488,12 @@ export default function BundleHomeEN() {
               </div>
               {paymentMethod === 'stripe' && (
                 <Button onClick={handleStripePayment} disabled={paymentLoading} className="w-full h-12 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl">
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pay $${PRICE} with Card`}
+                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pay ${CUR}${PRICE} with Card`}
                 </Button>
               )}
               {paymentMethod === 'paypal' && (
                 <Button onClick={handlePayPalPayment} className="w-full h-12 bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold rounded-xl">
-                  Pay ${PRICE} with PayPal
+                  Pay {CUR}{PRICE} with PayPal
                 </Button>
               )}
               {paymentError && (<div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-xl"><AlertCircle className="w-4 h-4 shrink-0" />{paymentError}</div>)}

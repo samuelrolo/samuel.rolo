@@ -1,4 +1,4 @@
-// Career Intelligence — Standalone EN ($39)
+// Career Intelligence — Standalone EN (€49)
 // Upload CV + LinkedIn URL → Payment → Full analysis with strategic decision
 // Includes everything from Career Path + comparison, trade-offs, final recommendation
 
@@ -11,6 +11,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
+import { useCurrency } from "@/hooks/useCurrency";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -58,13 +59,13 @@ const testimonials = [
   },
 ];
 
-const PRICE_DISPLAY = '$39';
-const PRICE = '39.00';
-const PRICE_NUM = 39.00;
-const CURRENCY_CODE = 'usd';
+const PRICE = '49.00';
+const PRICE_NUM = 49.00;
 
 export default function CareerIntelligenceHomeEN() {
   useEffect(() => { document.title = "Career Intelligence — Strategic Career Decision with AI | Share2Inspire"; }, []);
+  const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
+  const PRICE_DISPLAY = `${CUR}49`;
 
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);
@@ -208,7 +209,7 @@ export default function CareerIntelligenceHomeEN() {
       sessionStorage.setItem('careerIntelligenceFull', 'true');
       sessionStorage.setItem('cpOrderId', `CI-VOUCHER-${v.code}`);
       if (v.email) sessionStorage.setItem('cpPaymentEmail', v.email);
-      trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: 'USD', payment_method: 'voucher', customer_email: v.email || '', transaction_id: `CI-VOUCHER-${v.code}` });
+      trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: currencyCodeUpper, payment_method: 'voucher', customer_email: v.email || '', transaction_id: `CI-VOUCHER-${v.code}` });
       setTimeout(() => { setLocation('/en/results'); }, 400);
     } catch (err: any) {
       setVoucherError(err.message || 'Invalid code');
@@ -353,7 +354,7 @@ export default function CareerIntelligenceHomeEN() {
     setPaymentStep('success');
     const txId = `CI-PAYPAL-${Date.now()}`;
     trackPurchase('career_intelligence_full', FINAL_PRICE, txId);
-    trackAffiliateConversion({ product: 'career_intelligence_full', amount: FINAL_PRICE, currency: 'USD', payment_method: 'paypal', customer_email: email, transaction_id: txId });
+    trackAffiliateConversion({ product: 'career_intelligence_full', amount: FINAL_PRICE, currency: currencyCodeUpper, payment_method: 'paypal', customer_email: email, transaction_id: txId });
   };
 
   const handleStripePayment = async () => {
@@ -369,7 +370,7 @@ export default function CareerIntelligenceHomeEN() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email, name: email.split('@')[0], product_type: 'career_intelligence_full',
-          orderId, language: 'en', country, region, currency: 'usd', amount: FINAL_PRICE,
+          orderId, language: 'en', country, region, currency: currencyCode, amount: FINAL_PRICE,
         })
       });
       const data = await response.json();
@@ -422,7 +423,7 @@ export default function CareerIntelligenceHomeEN() {
     sessionStorage.setItem('careerIntelligenceProPaid', 'true');
     sessionStorage.setItem('careerIntelligenceFull', 'true');
     trackPurchase('career_intelligence_full', FINAL_PRICE, orderId);
-    trackAffiliateConversion({ product: 'career_intelligence_full', amount: FINAL_PRICE, currency: 'USD', payment_method: paymentMethod, customer_email: email, transaction_id: orderId });
+    trackAffiliateConversion({ product: 'career_intelligence_full', amount: FINAL_PRICE, currency: currencyCodeUpper, payment_method: paymentMethod, customer_email: email, transaction_id: orderId });
     setTimeout(() => { setLocation('/en/results'); }, 400);
   };
 
@@ -509,8 +510,8 @@ export default function CareerIntelligenceHomeEN() {
                 <Button onClick={() => setStep('upload')} className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all">
                   <Scale className="w-5 h-5 mr-2" />Get my career recommendation
                 </Button>
-                <p className="text-xs text-muted-foreground">Full analysis for $39 · One-time payment · Result in &lt; 1 minute</p>
-                <p className="text-xs text-muted-foreground">Only need the diagnosis? <a href="/en/career-path" className="text-[#C9A961] hover:underline">Career Path for $12 →</a></p>
+                <p className="text-xs text-muted-foreground">Full analysis for {CUR}49 · One-time payment · Result in &lt; 1 minute</p>
+                <p className="text-xs text-muted-foreground">Only need the diagnosis? <a href="/en/career-path" className="text-[#C9A961] hover:underline">Career Path for {CUR}19.99 →</a></p>
               </div>
             </div>
 
@@ -566,11 +567,11 @@ export default function CareerIntelligenceHomeEN() {
 
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
               <h2 className="text-2xl font-bold text-foreground">You don't need more options. You need to know which one to choose.</h2>
-              <p className="text-muted-foreground">Full diagnosis + strategic decision for $39. One-time payment. No subscription.</p>
+              <p className="text-muted-foreground">Full diagnosis + strategic decision for {CUR}49. One-time payment. No subscription.</p>
               <Button onClick={() => setStep('upload')} className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all">
                 <Scale className="w-5 h-5 mr-2" />Get my career recommendation
               </Button>
-              <p className="text-xs text-muted-foreground">Only need the diagnosis? <a href="/en/career-path" className="text-[#C9A961] hover:underline">Career Path for $12 →</a></p>
+              <p className="text-xs text-muted-foreground">Only need the diagnosis? <a href="/en/career-path" className="text-[#C9A961] hover:underline">Career Path for {CUR}19.99 →</a></p>
             </div>
           </div>
         )}
@@ -724,7 +725,7 @@ export default function CareerIntelligenceHomeEN() {
               <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20 flex items-center justify-between">
                 <div><p className="text-sm font-semibold text-foreground">Career Intelligence</p><p className="text-xs text-muted-foreground">Diagnosis + Strategic Decision</p></div>
                 <div className="text-right">
-                  {couponDiscount > 0 ? (<><p className="text-xs text-muted-foreground line-through">{PRICE_DISPLAY}</p><p className="text-lg font-bold text-[#C9A961]">${FINAL_PRICE_DISPLAY}</p><p className="text-[10px] text-green-600 font-semibold">-{couponDiscount}%</p></>) : (<p className="text-lg font-bold text-[#C9A961]">{PRICE_DISPLAY}</p>)}
+                  {couponDiscount > 0 ? (<><p className="text-xs text-muted-foreground line-through">{PRICE_DISPLAY}</p><p className="text-lg font-bold text-[#C9A961]">{CUR}{FINAL_PRICE_DISPLAY}</p><p className="text-[10px] text-green-600 font-semibold">-{couponDiscount}%</p></>) : (<p className="text-lg font-bold text-[#C9A961]">{PRICE_DISPLAY}</p>)}
                 </div>
               </div>
               <div className="space-y-2">
@@ -752,7 +753,7 @@ export default function CareerIntelligenceHomeEN() {
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setShowPaymentModal(false)} className="flex-1">Back</Button>
                 <Button onClick={paymentMethod === 'stripe' ? handleStripePayment : paymentMethod === 'mbway' ? handleMBWayPayment : handlePayPalPayment} disabled={paymentLoading} className={`flex-1 font-semibold text-white ${paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'}`}>
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pay $${FINAL_PRICE_DISPLAY}`}
+                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pay ${CUR}${FINAL_PRICE_DISPLAY}`}
                 </Button>
               </div>
               <button onClick={() => { setShowPaymentModal(false); setTimeout(() => setShowVoucherModal(true), 300); }} className="w-full text-sm text-[#C9A961] hover:underline flex items-center justify-center gap-1 pt-1"><Ticket className="w-4 h-4" />I have a voucher code</button>
