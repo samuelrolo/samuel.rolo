@@ -1248,15 +1248,15 @@ export default function CareerPathResults() {
             )}
 
             {/* CV vs LinkedIn */}
-            {careerPathData.cv_linkedin_cross_analysis?.consistency_score && (
+            {careerPathData.cv_linkedin_cross_analysis?.consistency_score && careerPathData.cv_linkedin_cross_analysis.consistency_score !== 'N/A' && (
               <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-3">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Linkedin className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">CV vs LINKEDIN</p>
                   <span className={`text-xs font-bold px-2 py-0.5 rounded ${
-                    careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Alta'
+                    (careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Alta' || careerPathData.cv_linkedin_cross_analysis.consistency_score === 'High')
                       ? 'bg-green-500/10 text-green-600'
-                      : careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Média'
+                      : (careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Média' || careerPathData.cv_linkedin_cross_analysis.consistency_score === 'Medium')
                       ? 'bg-amber-500/10 text-amber-600'
                       : 'bg-red-500/10 text-red-600'
                   }`}>
