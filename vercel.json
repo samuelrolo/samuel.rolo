@@ -160,6 +160,14 @@
       "destination": "/career-path/index.html"
     },
     {
+      "source": "/career-intelligence",
+      "destination": "/career-intelligence/index.html"
+    },
+    {
+      "source": "/career-intelligence/(.*)",
+      "destination": "/career-intelligence/index.html"
+    },
+    {
       "source": "/en/bundle",
       "destination": "/en/cv-analyser/index.html"
     },
@@ -186,6 +194,14 @@
     {
       "source": "/en/career-path/(.*)",
       "destination": "/en/career-path/index.html"
+    },
+    {
+      "source": "/en/career-intelligence",
+      "destination": "/en/career-intelligence/index.html"
+    },
+    {
+      "source": "/en/career-intelligence/(.*)",
+      "destination": "/en/career-intelligence/index.html"
     },
     {
       "source": "/linkedin-roaster",
