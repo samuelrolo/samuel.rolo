@@ -1704,6 +1704,36 @@ export default function CareerPathResults() {
               </div>
             )}
 
+            {/* ═══ MARKET CONTEXT (moved before paths to provide foundation) ═══ */}
+            {careerPathData.market_context && (
+              <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <GoldIcon size="w-8 h-8"><Globe className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'MARKET CONTEXT' : 'CONTEXTO DE MERCADO'}</p>
+                </div>
+                <div className="space-y-3">
+                  <div className="p-3 bg-muted/20 rounded-lg border border-border">
+                    <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'ALIGNED COMPANIES' : 'EMPRESAS ALINHADAS'}</p>
+                    <p className="text-xs text-muted-foreground">{careerPathData.market_context.aligned_companies}</p>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="p-3 bg-muted/20 rounded-lg border border-border">
+                      <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'DEMAND LEVEL' : 'NÍVEL DE PROCURA'}</p>
+                      <p className="text-xs text-muted-foreground">{careerPathData.market_context.demand_level}</p>
+                    </div>
+                    <div className="p-3 bg-muted/20 rounded-lg border border-border">
+                      <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'COMPETITIVENESS' : 'COMPETITIVIDADE'}</p>
+                      <p className="text-xs text-muted-foreground">{careerPathData.market_context.competitiveness}</p>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-gradient-to-r from-[#C9A961]/5 to-transparent rounded-lg border border-[#C9A961]/20">
+                    <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'WHAT SETS YOU APART' : 'O QUE TE DIFERENCIA'}</p>
+                    <p className="text-xs text-muted-foreground">{careerPathData.market_context.differentiator}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* ═══ STRATEGIC CAREER PATHS (TEASER — sem números) ═══ */}
             {careerPathData.strategic_paths && careerPathData.strategic_paths.length > 0 && (
               <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
@@ -1745,6 +1775,54 @@ export default function CareerPathResults() {
                             {path.associated_roles.map((role: string, j: number) => (
                               <span key={j} className="text-[10px] bg-muted px-2 py-0.5 rounded text-muted-foreground">{role}</span>
                             ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ═══ ACTION PLAN BY PATH (resumido — visível para todos) ═══ */}
+            {careerPathData.action_plan_by_path && careerPathData.action_plan_by_path.length > 0 && (
+              <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <GoldIcon size="w-8 h-8"><Target className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
+                  <div>
+                    <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'ACTION PLAN BY PATH' : 'PLANO DE ACÇÃO POR CAMINHO'}</p>
+                    {!isProUnlocked && <p className="text-[10px] text-muted-foreground mt-0.5">{isEN ? 'First steps for each path' : 'Primeiros passos para cada caminho'}</p>}
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  {careerPathData.action_plan_by_path.map((plan: any, i: number) => (
+                    <div key={i} className="border border-border rounded-xl overflow-hidden">
+                      <div className="p-3 bg-muted/30 flex items-center gap-2">
+                        <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">{isEN ? 'PATH' : 'CAMINHO'} {i + 1}</span>
+                        <span className="text-sm font-semibold text-foreground">{plan.path_name}</span>
+                        {plan.is_recommended && (
+                          <span className="text-[10px] font-bold text-green-600 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">
+                            {isEN ? 'RECOMMENDED' : 'RECOMENDADO'}
+                          </span>
+                        )}
+                      </div>
+                      <div className="p-3 space-y-2">
+                        {plan.actions && (isProUnlocked ? plan.actions : plan.actions.slice(0, 2)).map((action: any, j: number) => (
+                          <div key={j} className="flex items-start gap-3 p-2 border border-border/50 rounded-lg">
+                            <span className="text-[10px] font-bold text-white bg-[#C9A961] px-1.5 py-0.5 rounded shrink-0 mt-0.5">
+                              {action.timeframe}
+                            </span>
+                            <div>
+                              <p className="text-xs font-semibold text-foreground">{action.action}</p>
+                              {action.is_critical === true && action.is_critical !== undefined && (
+                                <span className="text-[10px] text-amber-600 font-semibold bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">{isEN ? 'Key step' : 'Passo-chave'}</span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                        {!isProUnlocked && plan.actions && plan.actions.length > 2 && (
+                          <div className="text-center py-2">
+                            <span className="text-[10px] text-muted-foreground">{isEN ? `+${plan.actions.length - 2} more steps in PRO` : `+${plan.actions.length - 2} passos adicionais no PRO`}</span>
                           </div>
                         )}
                       </div>
@@ -1956,76 +2034,6 @@ export default function CareerPathResults() {
                         <p className="text-xs text-muted-foreground">{careerPathData.decision_recommendation.why_better_than_others}</p>
                       </div>
                     )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* ═══ ACTION PLAN BY PATH ═══ */}
-            {careerPathData.action_plan_by_path && careerPathData.action_plan_by_path.length > 0 && (
-              <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8"><Target className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'ACTION PLAN BY PATH' : 'PLANO DE ACÇÃO POR CAMINHO'}</p>
-                </div>
-                <div className="space-y-4">
-                  {careerPathData.action_plan_by_path.map((plan: any, i: number) => (
-                    <div key={i} className="border border-border rounded-xl overflow-hidden">
-                      <div className="p-3 bg-muted/30 flex items-center gap-2">
-                        <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">{isEN ? 'PATH' : 'CAMINHO'} {i + 1}</span>
-                        <span className="text-sm font-semibold text-foreground">{plan.path_name}</span>
-                        {plan.is_recommended && (
-                          <span className="text-[10px] font-bold text-green-600 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">
-                            {isEN ? 'RECOMMENDED' : 'RECOMENDADO'}
-                          </span>
-                        )}
-                      </div>
-                      <div className="p-3 space-y-2">
-                        {plan.actions && plan.actions.map((action: any, j: number) => (
-                          <div key={j} className="flex items-start gap-3 p-2 border border-border/50 rounded-lg">
-                            <span className="text-[10px] font-bold text-white bg-[#C9A961] px-1.5 py-0.5 rounded shrink-0 mt-0.5">
-                              {action.timeframe}
-                            </span>
-                            <div>
-                              <p className="text-xs font-semibold text-foreground">{action.action}</p>
-                              {action.is_critical && (
-                                <span className="text-[10px] text-red-500 font-semibold">{isEN ? 'Critical' : 'Crítico'}</span>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* ═══ MARKET CONTEXT ═══ */}
-            {careerPathData.market_context && (
-              <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8"><Globe className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'MARKET CONTEXT' : 'CONTEXTO DE MERCADO'}</p>
-                </div>
-                <div className="space-y-3">
-                  <div className="p-3 bg-muted/20 rounded-lg border border-border">
-                    <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'ALIGNED COMPANIES' : 'EMPRESAS ALINHADAS'}</p>
-                    <p className="text-xs text-muted-foreground">{careerPathData.market_context.aligned_companies}</p>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="p-3 bg-muted/20 rounded-lg border border-border">
-                      <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'DEMAND LEVEL' : 'NÍVEL DE PROCURA'}</p>
-                      <p className="text-xs text-muted-foreground">{careerPathData.market_context.demand_level}</p>
-                    </div>
-                    <div className="p-3 bg-muted/20 rounded-lg border border-border">
-                      <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'COMPETITIVENESS' : 'COMPETITIVIDADE'}</p>
-                      <p className="text-xs text-muted-foreground">{careerPathData.market_context.competitiveness}</p>
-                    </div>
-                  </div>
-                  <div className="p-3 bg-gradient-to-r from-[#C9A961]/5 to-transparent rounded-lg border border-[#C9A961]/20">
-                    <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'WHAT SETS YOU APART' : 'O QUE TE DIFERENCIA'}</p>
-                    <p className="text-xs text-muted-foreground">{careerPathData.market_context.differentiator}</p>
                   </div>
                 </div>
               </div>
