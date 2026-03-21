@@ -253,7 +253,7 @@ export default function CareerPathResults() {
 
     if (linkedin) setLinkedinUrl(linkedin);
     // Check if Career Intelligence PRO was already purchased
-    if (sessionStorage.getItem('careerIntelligenceProPaid') === 'true') {
+    if (sessionStorage.getItem('careerIntelligenceProPaid') === 'true' || sessionStorage.getItem('careerIntelligenceFull') === 'true') {
       setIsProUnlocked(true);
     }
     if (paidFlag === 'true' && savedData) {
@@ -281,16 +281,54 @@ export default function CareerPathResults() {
         .then(res => res.json())
         .then(data => {
           if (data.success && data.paid) {
+            const productType = data.product_type || '';
+            const stripeAmount = data.amount ? data.amount / 100 : 0;
             setIsPaid(true);
             sessionStorage.setItem('careerPathPaid', 'true');
-            trackPurchase('career_path', parseFloat(P.cp.replace(',', '.')), `CP-STRIPE-${sessionId}`);
-            trackAffiliateConversion({ product: 'career_path', amount: parseFloat(P.cp.replace(',', '.')), currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CP-STRIPE-${sessionId}` });
+            if (productType === 'career_intelligence_full') {
+              // Career Intelligence Full — unlock PRO automatically
+              sessionStorage.setItem('careerIntelligenceProPaid', 'true');
+              sessionStorage.setItem('careerIntelligenceFull', 'true');
+              setIsProUnlocked(true);
+              trackPurchase('career_intelligence_full', stripeAmount || (isEN ? 39 : 39), `CI-STRIPE-${sessionId}`);
+              trackAffiliateConversion({ product: 'career_intelligence_full', amount: stripeAmount || (isEN ? 39 : 39), currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CI-STRIPE-${sessionId}` });
+            } else if (productType === 'career_intelligence_pro') {
+              // Career Intelligence PRO upgrade
+              sessionStorage.setItem('careerIntelligenceProPaid', 'true');
+              setIsProUnlocked(true);
+              trackPurchase('career_intelligence_pro', stripeAmount || (isEN ? 24 : 24), `CIPRO-STRIPE-${sessionId}`);
+              trackAffiliateConversion({ product: 'career_intelligence_pro', amount: stripeAmount || (isEN ? 24 : 24), currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CIPRO-STRIPE-${sessionId}` });
+            } else {
+              // Regular Career Path payment
+              trackPurchase('career_path', parseFloat(P.cp.replace(',', '.')), `CP-STRIPE-${sessionId}`);
+              trackAffiliateConversion({ product: 'career_path', amount: parseFloat(P.cp.replace(',', '.')), currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CP-STRIPE-${sessionId}` });
+            }
             window.history.replaceState({}, '', window.location.pathname);
             // Auto-generate career path after successful payment
             generateCareerPath();
           }
         })
         .catch(err => console.error('Stripe verify error:', err));
+    }
+    // Also handle pro_success from Career Intelligence PRO upgrade Stripe redirect
+    if (paymentStatus === 'pro_success' && sessionId) {
+      fetch(`${BACKEND_URL}/api/payment/stripe-verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.paid) {
+            const stripeAmount = data.amount ? data.amount / 100 : (isEN ? 24 : 24);
+            sessionStorage.setItem('careerIntelligenceProPaid', 'true');
+            setIsProUnlocked(true);
+            trackPurchase('career_intelligence_pro', stripeAmount, `CIPRO-STRIPE-${sessionId}`);
+            trackAffiliateConversion({ product: 'career_intelligence_pro', amount: stripeAmount, currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CIPRO-STRIPE-${sessionId}` });
+            window.history.replaceState({}, '', window.location.pathname);
+          }
+        })
+        .catch(err => console.error('Stripe PRO verify error:', err));
     }
   }, [setLocation]);
 
