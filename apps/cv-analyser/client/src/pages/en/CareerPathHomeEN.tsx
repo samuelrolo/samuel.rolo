@@ -58,53 +58,10 @@ const testimonials = [
   },
 ];
 
-/* ─── Pricing ─── */
-const pricingPlans = [
-  {
-    name: "Career Path",
-    price: "19.99",
-    popular: true,
-    badge: null,
-    description: "Full career analysis with personalised roadmap",
-    features: [
-      "Personalised career roadmap",
-      "Skills gap analysis",
-      "CV vs LinkedIn cross-analysis",
-      "Recommended training & certifications",
-      "Networking strategy",
-      "Concrete next steps",
-    ],
-  },
-  {
-    name: "Career Intelligence PRO",
-    price: "24.00",
-    popular: false,
-    badge: "PRO",
-    description: "Everything in Career Path + complete career decision analysis",
-    features: [
-      "Everything in Career Path",
-      "Strategic comparison of all 3 paths",
-      "Detailed trade-offs by path",
-      "Success probabilities",
-      "Recommended decision with justification",
-      "Available as upgrade after purchase",
-    ],
-  },
-];
+/* ─── Pricing (inline) ─── */
+const PRICE_DISPLAY = '$19.99';
 
-/* ─── Comparison ─── */
-const comparisonFeatures = [
-  { feature: "Personalised career roadmap", us: true, competitor1: false, competitor2: false, competitor3: false },
-  { feature: "Analysis based on your real CV", us: true, competitor1: false, competitor2: false, competitor3: false },
-  { feature: "CV vs LinkedIn cross-analysis", us: true, competitor1: false, competitor2: false, competitor3: false },
-  { feature: "Skills gap analysis", us: true, competitor1: true, competitor2: false, competitor3: true },
-  { feature: "Recommended training & certifications", us: true, competitor1: false, competitor2: false, competitor3: true },
-  { feature: "Networking strategy", us: true, competitor1: false, competitor2: false, competitor3: true },
-  { feature: "Instant results (< 1 min)", us: true, competitor1: false, competitor2: true, competitor3: false },
-  { feature: "Localised for your market", us: true, competitor1: false, competitor2: false, competitor3: false },
-  { feature: "No monthly subscription", us: true, competitor1: false, competitor2: true, competitor3: false },
-  { feature: "Price", usText: "$19.99", comp1Text: "$56-299/session", comp2Text: "$0-20/mo", comp3Text: "$29.99/mo" },
-];
+/* (comparison table removed — simplifying homepage) */
 
 export default function CareerPathHomeEN() {
   useEffect(() => { document.title = "Career Path — AI-Powered Career Roadmap | Share2Inspire"; }, []);
@@ -120,7 +77,6 @@ export default function CareerPathHomeEN() {
   const [loadingStep, setLoadingStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [pricingOpen, setPricingOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("");
   const [step, setStep] = useState<'hero' | 'upload' | 'preview' | 'analyzing' | 'results'>('hero');
@@ -413,16 +369,7 @@ export default function CareerPathHomeEN() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Bundle Banner — Main offer */}
-      <div className="bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3 flex-wrap">
-          <span className="text-[10px] bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] text-[#1a1a2e] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase shrink-0">Most popular</span>
-          <span className="text-sm text-white">
-            <strong className="text-[#C9A961]">Bundle</strong> — CV Analyser + Career Path for <strong className="text-white">$24.99</strong> <span className="text-white/40 line-through text-xs">$27.98</span>
-          </span>
-          <a href="/en/bundle" className="text-xs bg-[#C9A961] hover:bg-[#B8943D] text-white px-3 py-1 rounded-full font-semibold shrink-0 transition-all">Get Bundle</a>
-        </div>
-      </div>
+      {/* Bundle banner removed — one page, one product, one decision */}
 
       {/* Header */}
       <header className="border-b border-foreground/10 px-6 py-4">
@@ -457,10 +404,10 @@ export default function CareerPathHomeEN() {
                 Powered by Advanced AI
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-                Discover your <span className="text-[#C9A961]">ideal next career move</span>.
+                Your career has <span className="text-[#C9A961]">3 possible paths</span>.<br />Find out which ones.
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Our AI analyses your professional experience and identifies career paths with the highest growth potential.
+                Our AI analyses your CV and LinkedIn to identify the 3 career paths with the highest growth potential — in under 1 minute.
               </p>
             </div>
 
@@ -503,7 +450,7 @@ export default function CareerPathHomeEN() {
                 </div>
                 {/* Competitive statement */}
                 <p className="text-center text-sm md:text-base font-medium italic" style={{ color: '#C9A961' }}>
-                  "What Alento charges €600, Share2Inspire delivers in 30 seconds for $19.99."
+                  "What others charge €600, Share2Inspire delivers in 30 seconds for $19.99."
                 </p>
               </div>
             </div>
@@ -515,9 +462,9 @@ export default function CareerPathHomeEN() {
                 className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
               >
                 <Compass className="w-5 h-5 mr-2" />
-                Generate my Career Path
+                Discover my 3 career paths
               </Button>
-              <p className="text-xs text-muted-foreground">Full analysis for $19.99 · One-time payment · No subscription</p>
+              <p className="text-xs text-muted-foreground">Full analysis for $19.99 · One-time payment · Results in &lt; 1 minute</p>
             </div>
 
             {/* Trust Badges */}
@@ -557,26 +504,36 @@ export default function CareerPathHomeEN() {
               </div>
             </div>
 
-            {/* Career Intelligence PRO teaser */}
-            <div className="relative p-6 rounded-2xl bg-gradient-to-br from-[#1a1a2e] to-[#16213e] border border-[#C9A961]/30 overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#C9A961]/10 rounded-full blur-3xl" />
-              <div className="relative space-y-4">
-                <div className="flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-[#C9A961]" />
-                  <span className="text-sm font-bold text-white">Career Intelligence</span>
-                  <span className="text-[10px] font-bold text-[#C9A961] bg-[#C9A961]/15 px-2 py-0.5 rounded-full border border-[#C9A961]/30">PRO</span>
-                </div>
-                <p className="text-sm text-gray-300 leading-relaxed">
-                  You have 3 possible career paths. But which one is actually right for you? Career Intelligence PRO compares all 3 paths, analyses trade-offs and gives you a clear recommendation with full justification.
-                </p>
-                <p className="text-[11px] text-[#C9A961]/70">Available as upgrade after Career Path analysis</p>
-                <button
-                  onClick={() => setStep('upload')}
-                  className="mt-1 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#1a1a2e] bg-[#C9A961] hover:bg-[#d4b96e] rounded-lg transition-colors"
-                >
-                  Start analysis <ArrowRight className="w-3 h-3" />
-                </button>
+            {/* How it works — 3 steps */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-center text-foreground">3 steps. 1 minute. 3 paths.</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  { step: "1", title: "Upload your CV", desc: "Upload your CV and share your LinkedIn profile.", time: "30 sec" },
+                  { step: "2", title: "AI analyses everything", desc: "We cross-reference experience, skills and market data.", time: "30 sec" },
+                  { step: "3", title: "Get your 3 paths", desc: "Full roadmap with gaps, training and action steps.", time: "Instant" },
+                ].map((item, i) => (
+                  <div key={i} className="relative p-5 rounded-xl bg-card border border-border text-center space-y-2">
+                    <div className="w-8 h-8 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/30 flex items-center justify-center mx-auto">
+                      <span className="text-sm font-bold text-[#C9A961]">{item.step}</span>
+                    </div>
+                    <p className="font-semibold text-foreground text-sm">{item.title}</p>
+                    <p className="text-xs text-muted-foreground">{item.desc}</p>
+                    <span className="text-[10px] text-[#C9A961] font-medium">{item.time}</span>
+                  </div>
+                ))}
               </div>
+            </div>
+
+            {/* Tension — plant the PRO seed */}
+            <div className="space-y-4 p-6 rounded-2xl bg-muted/30 border border-border">
+              <h3 className="text-lg font-bold text-foreground text-center">But knowing the 3 paths is just the beginning.</h3>
+              <p className="text-sm text-muted-foreground text-center max-w-xl mx-auto leading-relaxed">
+                Career Path shows you where you can go. But which of these paths is actually right for you? Which has the highest probability of success? What do you lose by choosing one over another?
+              </p>
+              <p className="text-sm text-muted-foreground text-center max-w-xl mx-auto leading-relaxed">
+                Once you have your 3 paths, you'll want to know which one to choose. <strong className="text-foreground">Career Intelligence</strong> helps you decide — with comparison, trade-offs and a final recommendation backed by data. Available as upgrade after the analysis.
+              </p>
             </div>
 
             {/* Testimonials */}
@@ -602,16 +559,14 @@ export default function CareerPathHomeEN() {
 
             {/* Bottom CTA */}
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
-              <h2 className="text-2xl font-bold text-foreground">Ready to chart your path?</h2>
-              <p className="text-muted-foreground">Full career roadmap for just $19.99. No commitment.</p>
-              <p className="text-sm font-medium italic" style={{ color: '#C9A961' }}>
-                "What Alento charges €600, Share2Inspire delivers in 30 seconds for $19.99."
-              </p>
+              <h2 className="text-2xl font-bold text-foreground">Start with the diagnosis. The decision comes after.</h2>
+              <p className="text-muted-foreground">Full analysis for $19.99. One-time payment. No subscription. Results in under 1 minute.</p>
               <Button
                 onClick={() => setStep('upload')}
-                className="px-8 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl transition-all"
+                className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
               >
-                Generate my Career Path
+                <Compass className="w-5 h-5 mr-2" />
+                Discover my 3 career paths
               </Button>
             </div>
           </div>
@@ -764,7 +719,7 @@ export default function CareerPathHomeEN() {
                 {loading ? (
                   <span className="flex items-center gap-2"><Loader2 className="w-5 h-5 animate-spin" />{loadingMessages[loadingStep]}</span>
                 ) : (
-                  "Analyse Profile — $19.99"
+                  "Discover my 3 career paths — $19.99"
                 )}
               </Button>
 
@@ -788,52 +743,7 @@ export default function CareerPathHomeEN() {
               </button>
             </div>
 
-            {/* Comparison Table */}
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <button onClick={() => setPricingOpen(!pricingOpen)} className="w-full flex items-center justify-between py-2 text-left">
-                <span className="text-sm font-semibold text-foreground flex items-center gap-2">
-                  <Award className="w-4 h-4 text-[#C9A961]" />Career Path vs Other Methods
-                </span>
-                {pricingOpen ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
-              </button>
-              {pricingOpen && (
-                <div className="mt-3 overflow-x-auto rounded-xl border border-border">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-muted/50">
-                        <th className="text-left p-3 font-semibold text-foreground text-xs">Feature</th>
-                        <th className="p-3 text-center"><span className="text-xs font-bold text-[#C9A961]">Career Path</span></th>
-                        <th className="p-3 text-xs font-medium text-muted-foreground text-center">Coaching</th>
-                        <th className="p-3 text-xs font-medium text-muted-foreground text-center">ChatGPT</th>
-                        <th className="p-3 text-xs font-medium text-muted-foreground text-center">LinkedIn</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {comparisonFeatures.map((row, i) => (
-                        <tr key={i} className={`border-t border-border ${i % 2 === 0 ? '' : 'bg-muted/20'}`}>
-                          <td className="p-3 text-xs text-foreground">{row.feature}</td>
-                          {row.usText ? (
-                            <>
-                              <td className="p-3 text-center text-xs font-bold text-[#C9A961]">{row.usText}</td>
-                              <td className="p-3 text-center text-xs text-muted-foreground">{row.comp1Text}</td>
-                              <td className="p-3 text-center text-xs text-muted-foreground">{row.comp2Text}</td>
-                              <td className="p-3 text-center text-xs text-muted-foreground">{row.comp3Text}</td>
-                            </>
-                          ) : (
-                            <>
-                              <td className="p-3 text-center">{row.us ? <CheckCircle2 className="w-4 h-4 text-[#C9A961] mx-auto" /> : <XCircle className="w-4 h-4 text-muted-foreground/40 mx-auto" />}</td>
-                              <td className="p-3 text-center">{row.competitor1 ? <CheckCircle2 className="w-4 h-4 text-muted-foreground/60 mx-auto" /> : <XCircle className="w-4 h-4 text-muted-foreground/40 mx-auto" />}</td>
-                              <td className="p-3 text-center">{row.competitor2 ? <CheckCircle2 className="w-4 h-4 text-muted-foreground/60 mx-auto" /> : <XCircle className="w-4 h-4 text-muted-foreground/40 mx-auto" />}</td>
-                              <td className="p-3 text-center">{row.competitor3 ? <CheckCircle2 className="w-4 h-4 text-muted-foreground/60 mx-auto" /> : <XCircle className="w-4 h-4 text-muted-foreground/40 mx-auto" />}</td>
-                            </>
-                          )}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
+            {/* Comparison table removed — simplifying homepage */}
           </div>
         )}
 
