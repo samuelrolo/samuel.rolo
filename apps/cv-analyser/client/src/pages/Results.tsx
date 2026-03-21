@@ -723,6 +723,7 @@ export default function Results() {
   };
 
   const handlePayment = () => {
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     if (paymentMethod === 'stripe') {
       handleStripePayment();
     } else if (paymentMethod === 'mbway') {

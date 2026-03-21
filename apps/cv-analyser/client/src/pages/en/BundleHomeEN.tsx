@@ -228,6 +228,7 @@ export default function BundleHomeEN() {
   const handleStripePayment = async () => {
     if (!email) { setPaymentError('Enter your email'); return; }
     setPaymentLoading(true);
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
     try {
       const orderId = `BUNDLE-EN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;

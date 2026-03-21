@@ -65,6 +65,7 @@ export default function Checkout() {
     }
 
     setIsProcessing(true);
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
 
     try {
       await createPaymentMutation.mutateAsync({

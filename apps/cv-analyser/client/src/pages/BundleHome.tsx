@@ -277,6 +277,7 @@ export default function BundleHome() {
     if (!email) { setPaymentError('Introduz o teu email'); return; }
     if (!phone) { setPaymentError('Introduz o teu número de telemóvel'); return; }
     setPaymentLoading(true);
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
     try {
       const cleanPhone = phone.replace(/\s/g, '').replace(/\D/g, '');
@@ -320,6 +321,7 @@ export default function BundleHome() {
   const handleStripePayment = async () => {
     if (!email) { setPaymentError('Introduz o teu email'); return; }
     setPaymentLoading(true);
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
     try {
       const orderId = `BUNDLE-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;

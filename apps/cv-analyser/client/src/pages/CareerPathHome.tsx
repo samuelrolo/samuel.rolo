@@ -330,6 +330,7 @@ export default function CareerPathHome() {
     if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
 
     setPaymentLoading(true);
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
 
     try {
@@ -382,6 +383,7 @@ export default function CareerPathHome() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
     setPaymentLoading(true);
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
     try {
       const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;

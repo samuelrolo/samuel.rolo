@@ -351,6 +351,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
 
   // ── Handle confirm button ──
   function handleConfirm() {
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     if (method === 'mbway') handleMBWayPayment();
     else if (method === 'stripe') handleStripePayment();
     else if (method === 'paypal') handlePayPalPayment();

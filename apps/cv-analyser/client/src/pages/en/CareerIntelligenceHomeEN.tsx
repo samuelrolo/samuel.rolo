@@ -320,6 +320,7 @@ export default function CareerIntelligenceHomeEN() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError('Invalid email'); return; }
     setPaymentLoading(true);
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
     try {
       const orderId = `CI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -362,6 +363,7 @@ export default function CareerIntelligenceHomeEN() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError('Invalid email'); return; }
     setPaymentLoading(true);
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
     try {
       const orderId = `CI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
