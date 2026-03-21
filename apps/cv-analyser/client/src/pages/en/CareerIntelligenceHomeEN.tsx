@@ -551,7 +551,7 @@ export default function CareerIntelligenceHomeEN() {
               <Scale className="w-8 h-8 text-[#C9A961] mx-auto" />
               <h3 className="text-lg font-bold text-white">The equivalent of a strategic coaching session.</h3>
               <p className="text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-                A career coach charges between $300 and $600 per session to help you decide. Career Intelligence delivers the same analysis — with objective data, structured comparison and a justified recommendation — for <strong className="text-[#C9A961]">$39</strong>.
+                A career coach charges between $300 and $600 per session to help you decide. Career Intelligence delivers the same analysis — with objective data, structured comparison and a justified recommendation — for <strong className="text-[#C9A961]">{CUR}49</strong>.
               </p>
             </div>
 
