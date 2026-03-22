@@ -512,14 +512,14 @@ export default function CareerIntelligenceResults() {
     setReportSending(true);
     setReportError(null);
     try {
-      const cpEmailRoute = isEN ? 'send-career-path-email-en' : 'send-career-path-email';
-      await fetch(`${BACKEND_URL}/api/payment/${cpEmailRoute}`, {
+      const ciEmailRoute = isEN ? 'send-career-intelligence-email-en' : 'send-career-intelligence-email';
+      await fetch(`${BACKEND_URL}/api/payment/${ciEmailRoute}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: targetEmail,
           name: targetEmail.split('@')[0],
-          careerPathData: careerData,
+          careerIntelligenceData: careerData,
         }),
       });
       setReportSent(true);
