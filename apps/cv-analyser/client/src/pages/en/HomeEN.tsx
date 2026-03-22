@@ -1253,37 +1253,36 @@ export default function HomeEN() {
                       </div>
                     </>
                   )}
-                  {!file && savedCvInfo && (
-                    <div className="mt-3 pt-3 border-t border-border/50">
-                      <button
-                        type="button"
-                        onClick={async (e) => {
-                          e.preventDefault(); e.stopPropagation();
-                          try {
-                            const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
-                            const stored = storageKey ? localStorage.getItem(storageKey) : null;
-                            const accessToken = stored ? JSON.parse(stored)?.access_token : null;
-                            const userId = stored ? JSON.parse(stored)?.user?.id : null;
-                            const filePath = `${userId}/cv.pdf`;
-                            const downloadUrl = `${SUPABASE_URL}/storage/v1/object/authenticated/user-cvs/${filePath}`;
-                            const res = await fetch(downloadUrl, {
-                              headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` }
-                            });
-                            if (!res.ok) throw new Error('Download failed');
-                            const blob = await res.blob();
-                            const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
-                            setFile(f);
-                          } catch { setError('Could not load saved CV.'); }
-                        }}
-                        className="text-xs text-[#C9A961] hover:underline font-medium"
-                      >
-                        <FileCheck className="w-3.5 h-3.5 inline mr-1" />
-                        Use saved CV: {savedCvInfo.filename}
-                      </button>
-                    </div>
-                  )}
                 </div>
               </label>
+              {!file && savedCvInfo && (
+                <div className="mt-3 text-center">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+                        const stored = storageKey ? localStorage.getItem(storageKey) : null;
+                        const accessToken = stored ? JSON.parse(stored)?.access_token : null;
+                        const userId = stored ? JSON.parse(stored)?.user?.id : null;
+                        const filePath = `${userId}/cv.pdf`;
+                        const downloadUrl = `${SUPABASE_URL}/storage/v1/object/authenticated/user-cvs/${filePath}`;
+                        const res = await fetch(downloadUrl, {
+                          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` }
+                        });
+                        if (!res.ok) throw new Error('Download failed');
+                        const blob = await res.blob();
+                        const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                        setFile(f);
+                      } catch { setError('Could not load saved CV.'); }
+                    }}
+                    className="text-xs text-[#C9A961] hover:underline font-medium"
+                  >
+                    <FileCheck className="w-3.5 h-3.5 inline mr-1" />
+                    Use saved CV: {savedCvInfo.filename}
+                  </button>
+                </div>
+              )}
             </div>
             <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5 mt-3">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
