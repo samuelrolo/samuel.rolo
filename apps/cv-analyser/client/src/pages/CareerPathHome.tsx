@@ -572,10 +572,10 @@ export default function CareerPathHome() {
                 Powered by IA Avançada
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-                A tua carreira tem <span className="text-[#C9A961]">3 caminhos possíveis</span>.<br />Descobre quais são.
+                O teu próximo passo de carreira <span className="text-[#C9A961]">começa aqui</span>.<br />Descobre o teu Career Path.
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                A nossa IA analisa o teu CV e LinkedIn para identificar os 3 caminhos de carreira com maior potencial de crescimento — em menos de 1 minuto.
+                A nossa IA analisa o teu CV e LinkedIn para traçar o teu roadmap de carreira com maior potencial de crescimento — em menos de 1 minuto.
               </p>
             </div>
 
@@ -607,7 +607,7 @@ export default function CareerPathHome() {
                       className="inline-flex items-center gap-2 h-10 px-5 text-sm font-semibold rounded-lg bg-[#1a1a1a] hover:bg-[#2a2a2a] text-white transition-all"
                     >
                       <Compass className="w-3.5 h-3.5" />
-                      Descobrir os meus 3 caminhos
+                      Descobrir o meu Career Path
                     </button>
                   </div>
                   <p className="text-xs text-muted-foreground">Relatório real gerado pela nossa IA</p>
@@ -658,12 +658,12 @@ export default function CareerPathHome() {
 
             {/* Como funciona — 3 passos */}
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-center text-foreground">3 passos. 1 minuto. 3 caminhos.</h2>
+              <h2 className="text-2xl font-bold text-center text-foreground">3 passos. 1 minuto. O teu Career Path.</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
                   { step: "1", title: "Carrega o teu CV", desc: "Faz upload do CV e partilha o teu LinkedIn.", time: "30 seg" },
                   { step: "2", title: "A IA analisa tudo", desc: "Cruzamos experiência, competências e mercado.", time: "30 seg" },
-                  { step: "3", title: "Recebe os 3 caminhos", desc: "Roadmap completo com gaps, formações e acções.", time: "Imediato" },
+                  { step: "3", title: "Recebe o teu Career Path", desc: "Roadmap completo com gaps, formações e acções.", time: "Imediato" },
                 ].map((item, i) => (
                   <div key={i} className="relative p-5 rounded-xl bg-card border border-border text-center space-y-2">
                     <div className="w-8 h-8 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/30 flex items-center justify-center mx-auto">
@@ -679,7 +679,7 @@ export default function CareerPathHome() {
 
             {/* Tensão — plantar semente do PRO */}
             <div className="space-y-4 p-6 rounded-2xl bg-muted/30 border border-border">
-              <h3 className="text-lg font-bold text-foreground text-center">Mas saber os 3 caminhos é só o início.</h3>
+              <h3 className="text-lg font-bold text-foreground text-center">Mas saber o teu Career Path é só o início.</h3>
               <div className="space-y-3 text-sm text-muted-foreground text-center max-w-2xl mx-auto leading-relaxed">
                 <p>
                   O Career Path mostra-te para onde podes ir. Mas há uma diferença real entre eles. Alguns vão acelerar a tua carreira. Outros podem atrasar-te anos.
@@ -688,7 +688,7 @@ export default function CareerPathHome() {
                   Qual tem maior probabilidade de sucesso? Qual exige mais esforço do que parece? O que perdes ao escolher um em vez de outro?
                 </p>
                 <p>
-                  Quando tiveres os teus 3 caminhos, a verdadeira questão deixa de ser "para onde ir". Passa a ser: <strong className="text-foreground">qual é a melhor decisão neste momento</strong>.
+                  Quando tiveres o teu Career Path, a verdadeira questão deixa de ser "para onde ir". Passa a ser: <strong className="text-foreground">qual é a melhor decisão neste momento</strong>.
                 </p>
                 <p>
                   O <strong className="text-foreground">Career Intelligence</strong> ajuda-te a responder a isso. Com comparação clara, trade-offs reais e uma recomendação fundamentada — para decidires com confiança, não com dúvida.
@@ -729,7 +729,7 @@ export default function CareerPathHome() {
                 className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
               >
                 <Compass className="w-5 h-5 mr-2" />
-                Descobrir os meus 3 caminhos
+                Descobrir o meu Career Path
               </Button>
             </div>
           </div>

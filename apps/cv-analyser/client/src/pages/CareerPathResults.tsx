@@ -945,11 +945,11 @@ export default function CareerPathResults() {
                     <div className="space-y-2">
                       {(isEN ? [
                         'Career energy score',
-                        'Top 3 compatible career paths',
+                        'Top compatible next roles',
                         'Estimated salary progression',
                       ] : [
                         'Energia de carreira',
-                        'Top 3 caminhos de carreira compatíveis',
+                        'Próximos cargos mais compatíveis',
                         'Progressão salarial estimada',
                       ]).map((item, i) => (
                         <div key={i} className="flex items-center gap-3 py-1.5">
@@ -1484,7 +1484,7 @@ export default function CareerPathResults() {
                 </GoldIcon>
                 <div>
                   <p className="text-base font-semibold text-foreground">{isEN ? 'Want a strategic career decision?' : 'Queres uma decisão estratégica de carreira?'}</p>
-                  <p className="text-xs text-muted-foreground">{isEN ? 'Career Intelligence compares 3 career paths with data, trade-offs and a clear recommendation.' : 'O Career Intelligence compara 3 caminhos de carreira com dados, trade-offs e uma recomendação clara.'}</p>
+                  <p className="text-xs text-muted-foreground">{isEN ? 'Career Intelligence compares strategic career directions with data, trade-offs and a clear recommendation.' : 'O Career Intelligence compara direções estratégicas de carreira com dados, trade-offs e uma recomendação clara.'}</p>
                 </div>
               </div>
               <a
