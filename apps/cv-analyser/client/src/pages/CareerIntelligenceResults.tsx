@@ -731,7 +731,7 @@ export default function CareerIntelligenceResults() {
 
         {/* ═══ PAID CONTENT — Career Intelligence Results ═══ */}
         {isPaid && careerData && !isGenerating && (
-          <div className="space-y-6">
+          <div className="career-intelligence-results space-y-6">
 
             {/* Market Context */}
             {careerData.market_context && (

@@ -25,7 +25,7 @@ type SavedAnalysis = {
 const TOOL_CONFIG: Record<string, { label: string; icon: typeof FileSearch; color: string; link: string }> = {
   cv_analyser: { label: 'CV Analyser', icon: FileSearch, color: 'text-blue-400', link: 'https://share2inspire.pt/cv-analyser' },
   career_path: { label: 'Career Path', icon: Compass, color: 'text-emerald-400', link: 'https://share2inspire.pt/career-path' },
-  career_intelligence: { label: 'Career Intelligence', icon: BarChart3, color: 'text-violet-400', link: 'https://share2inspire.pt/career-path' },
+  career_intelligence: { label: 'Career Intelligence', icon: BarChart3, color: 'text-violet-400', link: 'https://share2inspire.pt/career-intelligence' },
   linkedin_roaster: { label: 'LinkedIn Roaster', icon: Linkedin, color: 'text-amber-400', link: 'https://share2inspire.pt/linkedin-roaster' },
   career_energy: { label: 'Career Energy Score', icon: BarChart3, color: 'text-purple-400', link: 'https://share2inspire.pt/#career-energy' },
 };
@@ -254,7 +254,7 @@ export default function Dashboard() {
     { type: 'cv_analyser', label: 'CV Analyser', icon: FileSearch, link: 'https://share2inspire.pt/cv-analyser' },
     { type: 'linkedin_roaster', label: 'LinkedIn Roaster', icon: Linkedin, link: 'https://share2inspire.pt/linkedin-roaster' },
     { type: 'career_path', label: 'Career Path', icon: Compass, link: 'https://share2inspire.pt/career-path' },
-    { type: 'career_intelligence', label: 'Career Intelligence', icon: BarChart3, link: 'https://share2inspire.pt/career-path' },
+    { type: 'career_intelligence', label: 'Career Intelligence', icon: BarChart3, link: 'https://share2inspire.pt/career-intelligence' },
   ];
 
   return (
@@ -504,6 +504,37 @@ export default function Dashboard() {
                                       <p className="text-xs text-[#888] font-light leading-relaxed line-clamp-4">
                                         {analysis.data.career_path_json.summary.substring(0, 400)}
                                       </p>
+                                    )}
+                                  </div>
+                                )}
+
+                                {/* Fallback: Career Intelligence structured data */}
+                                {!analysis.data?.results_html && analysis.analysis_type === 'career_intelligence' && analysis.data?.strategic_paths && (
+                                  <div className="space-y-2">
+                                    {analysis.data.decision_recommendation?.recommended_path && (
+                                      <p className="text-xs text-[#555] font-medium">{analysis.data.decision_recommendation.recommended_path}</p>
+                                    )}
+                                    {analysis.data.decision_recommendation?.justification && (
+                                      <p className="text-xs text-[#888] font-light leading-relaxed line-clamp-3">
+                                        {analysis.data.decision_recommendation.justification.substring(0, 300)}
+                                      </p>
+                                    )}
+                                    {Array.isArray(analysis.data.strategic_paths) && analysis.data.strategic_paths.length > 0 && (
+                                      <div className="space-y-1">
+                                        <span className="text-[10px] text-[#aaa] font-light">{t('dash.paths') || 'Caminhos'}:</span>
+                                        {analysis.data.strategic_paths.map((path: any, i: number) => (
+                                          <div key={i} className="flex items-center gap-2 text-xs">
+                                            <span className="text-[#C9A961] font-medium">#{i+1}</span>
+                                            <span className="text-[#555] font-light">{path.title || path.name || `Caminho ${i+1}`}</span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                    {analysis.data.market_context?.aligned_companies && (
+                                      <div>
+                                        <span className="text-[10px] text-[#aaa] font-light block">{t('dash.companies') || 'Empresas'}:</span>
+                                        <p className="text-xs text-[#888] font-light">{analysis.data.market_context.aligned_companies.substring(0, 200)}</p>
+                                      </div>
                                     )}
                                   </div>
                                 )}

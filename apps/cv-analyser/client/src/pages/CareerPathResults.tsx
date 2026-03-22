@@ -1151,7 +1151,7 @@ export default function CareerPathResults() {
 
         {/* PAID CONTENT — Career Path Results */}
         {isPaid && careerPathData && !isGenerating && (
-          <div className="space-y-6">
+          <div className="career-path-results space-y-6">
             {/* Current Positioning */}
             {careerPathData.current_positioning && (
               <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-6 sm:p-8">
