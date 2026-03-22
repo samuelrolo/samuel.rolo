@@ -14,7 +14,7 @@ import RecruiterPerception from "@/components/RecruiterPerception";
 import LockedSection from "@/components/LockedSection";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Loader2, ArrowLeft, Home as HomeIcon, FileCheck, Lock, TrendingUp, Euro, Info, BarChart3, Grid2x2, Eye, AlertTriangle, Bot, CreditCard, CheckCircle2, Mail, Ticket, Unlock, Target, Sparkles, Calendar, Send, Rocket, GraduationCap, Briefcase, Globe, Users, MapPin, ExternalLink, Linkedin, Compass, Download, Copy, Award, Share2, AlertCircle, Flame, DollarSign, Shield, Star, ChevronRight, Zap, Check } from "lucide-react";
+import { Loader2, ArrowLeft, Home as HomeIcon, FileCheck, Lock, TrendingUp, Euro, Info, BarChart3, Grid2x2, Eye, AlertTriangle, Bot, CreditCard, CheckCircle2, Mail, Ticket, Unlock, Target, Sparkles, Calendar, Send, Rocket, GraduationCap, Briefcase, Globe, Users, MapPin, ExternalLink, Linkedin, Compass, Download, Copy, Award, Share2, AlertCircle, Flame, DollarSign, Shield, Star, ChevronRight, Zap, Check, Save } from "lucide-react";
 import type { AnalysisData } from "@/types/analysis";
 import { trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
@@ -425,6 +425,47 @@ export default function Results() {
   const [reportSent, setReportSent] = useState(false);
   const [postCopied, setPostCopied] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
+
+  // Save to Área de Cliente
+  const [savingToAccount, setSavingToAccount] = useState(false);
+  const [savedToAccount, setSavedToAccount] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if (storageKey) {
+      const stored = localStorage.getItem(storageKey);
+      if (stored) {
+        try { const p = JSON.parse(stored); if (p?.access_token && p?.user?.id) setIsLoggedIn(true); } catch {}
+      }
+    }
+  }, []);
+
+  const handleSaveToAccount = async () => {
+    setSavingToAccount(true);
+    setSaveError(null);
+    try {
+      const cvData = sessionStorage.getItem('cvAnalysis');
+      const parsed = cvData ? JSON.parse(cvData) : {};
+      await saveToUserAnalyses('cv_analyser', {
+        score: parsed.atsScore || parsed.overallScore || parsed.score,
+        analysis: {
+          atsScore: parsed.atsScore,
+          overallScore: parsed.overallScore,
+          keywords: parsed.keywords,
+          recommendations: parsed.recommendations,
+        },
+        results_html: document.querySelector('.results-container')?.innerHTML || '',
+        analysis_id: sessionStorage.getItem('analysisId'),
+      });
+      setSavedToAccount(true);
+    } catch {
+      setSaveError(isEN ? 'Error saving. Try again.' : 'Erro ao guardar. Tenta novamente.');
+    } finally {
+      setSavingToAccount(false);
+    }
+  };
 
   // Career Path state
   const [careerPathData, setCareerPathData] = useState<any>(null);
@@ -2850,6 +2891,48 @@ export default function Results() {
                 {reportSending && (
                   <p className="text-xs text-muted-foreground">{isEN ? 'Sending the report to your email...' : 'A enviar o relatório para o teu email...'}</p>
                 )}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* ═══ Save to Área de Cliente ═══ */}
+        {isPaid && (
+          <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-8 space-y-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#C9A961]/10 flex items-center justify-center">
+                <Save className="w-5 h-5 text-[#C9A961]" />
+              </div>
+              <div>
+                <p className="text-base font-semibold text-foreground">{isEN ? 'Save to My Account' : 'Guardar na Área de Cliente'}</p>
+                <p className="text-xs text-muted-foreground">{isEN ? 'Access your results anytime from your dashboard' : 'Acede aos teus resultados a qualquer momento no teu dashboard'}</p>
+              </div>
+            </div>
+            {!isLoggedIn ? (
+              <div className="flex items-center gap-3 p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
+                <Lock className="w-5 h-5 text-amber-500 shrink-0" />
+                <p className="text-sm text-amber-700">{isEN ? 'Log in to save your results.' : 'Faz login para guardar os teus resultados.'} <a href="/area-cliente/auth" className="underline font-semibold text-[#C9A961] hover:text-[#A88B4E]">{isEN ? 'Log in' : 'Iniciar sessão'}</a></p>
+              </div>
+            ) : savedToAccount ? (
+              <div className="flex items-center gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
+                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                <p className="text-sm text-green-600">{isEN ? 'Saved successfully! View in your dashboard.' : 'Guardado com sucesso! Consulta no teu dashboard.'}</p>
+              </div>
+            ) : (
+              <>
+                <Button
+                  onClick={handleSaveToAccount}
+                  disabled={savingToAccount}
+                  className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold py-3"
+                >
+                  {savingToAccount ? (
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  ) : (
+                    <Save className="w-4 h-4 mr-2" />
+                  )}
+                  {isEN ? 'Save to My Account' : 'Guardar na Minha Conta'}
+                </Button>
+                {saveError && <p className="text-sm text-red-500">{saveError}</p>}
               </>
             )}
           </div>

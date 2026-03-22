@@ -11,7 +11,7 @@ import {
   Lock, Target, Sparkles, Briefcase, Globe, Linkedin,
   ExternalLink, TrendingUp, Award, AlertCircle,
   Zap, BarChart3, Download, Copy, Scale, Compass,
-  Mail, Send, Ticket, Unlock
+  Mail, Send, Ticket, Unlock, Save
 } from "lucide-react";
 import { trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
@@ -78,6 +78,42 @@ export default function CareerIntelligenceResults() {
   const [reportSending, setReportSending] = useState(false);
   const [reportSent, setReportSent] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
+
+  // Save to Área de Cliente
+  const [savingToAccount, setSavingToAccount] = useState(false);
+  const [savedToAccount, setSavedToAccount] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if (storageKey) {
+      const stored = localStorage.getItem(storageKey);
+      if (stored) {
+        try { const p = JSON.parse(stored); if (p?.access_token && p?.user?.id) setIsLoggedIn(true); } catch {}
+      }
+    }
+  }, []);
+
+  const handleSaveToAccount = async () => {
+    setSavingToAccount(true);
+    setSaveError(null);
+    try {
+      await saveToUserAnalyses('career_intelligence', {
+        strategic_paths: careerData?.strategic_paths || [],
+        decision_recommendation: careerData?.decision_recommendation || {},
+        market_context: careerData?.market_context || {},
+        career_potential_score: careerData?.career_potential_score || {},
+        career_goal: sessionStorage.getItem('careerGoal') || '',
+        results_html: document.querySelector('.career-intelligence-results')?.innerHTML || '',
+      });
+      setSavedToAccount(true);
+    } catch {
+      setSaveError(isEN ? 'Error saving. Try again.' : 'Erro ao guardar. Tenta novamente.');
+    } finally {
+      setSavingToAccount(false);
+    }
+  };
 
   const genMessagesPT = [
     "A analisar o teu perfil profissional...",
@@ -971,6 +1007,46 @@ export default function CareerIntelligenceResults() {
                     </Button>
                   </div>
                   {reportError && <p className="text-sm text-red-500">{reportError}</p>}
+                </>
+              )}
+            </div>
+
+            {/* ═══ Save to Área de Cliente ═══ */}
+            <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-8 space-y-5">
+              <div className="flex items-center gap-3">
+                <GoldIcon>
+                  <Save className="w-5 h-5 text-[#C9A961]" />
+                </GoldIcon>
+                <div>
+                  <p className="text-base font-semibold text-foreground">{isEN ? 'Save to My Account' : 'Guardar na Área de Cliente'}</p>
+                  <p className="text-xs text-muted-foreground">{isEN ? 'Access your results anytime from your dashboard' : 'Acede aos teus resultados a qualquer momento no teu dashboard'}</p>
+                </div>
+              </div>
+              {!isLoggedIn ? (
+                <div className="flex items-center gap-3 p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
+                  <Lock className="w-5 h-5 text-amber-500 shrink-0" />
+                  <p className="text-sm text-amber-700">{isEN ? 'Log in to save your results.' : 'Faz login para guardar os teus resultados.'} <a href="/area-cliente/auth" className="underline font-semibold text-[#C9A961] hover:text-[#A88B4E]">{isEN ? 'Log in' : 'Iniciar sessão'}</a></p>
+                </div>
+              ) : savedToAccount ? (
+                <div className="flex items-center gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
+                  <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                  <p className="text-sm text-green-600">{isEN ? 'Saved successfully! View in your dashboard.' : 'Guardado com sucesso! Consulta no teu dashboard.'}</p>
+                </div>
+              ) : (
+                <>
+                  <Button
+                    onClick={handleSaveToAccount}
+                    disabled={savingToAccount}
+                    className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold py-3"
+                  >
+                    {savingToAccount ? (
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    ) : (
+                      <Save className="w-4 h-4 mr-2" />
+                    )}
+                    {isEN ? 'Save to My Account' : 'Guardar na Minha Conta'}
+                  </Button>
+                  {saveError && <p className="text-sm text-red-500">{saveError}</p>}
                 </>
               )}
             </div>
