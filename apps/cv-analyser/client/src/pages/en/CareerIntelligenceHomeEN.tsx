@@ -115,18 +115,15 @@ export default function CareerIntelligenceHomeEN() {
   const [pollingExpired, setPollingExpired] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
 
-  const [showVoucherModal, setShowVoucherModal] = useState(false);
-  const [voucherCode, setVoucherCode] = useState('');
-  const [voucherError, setVoucherError] = useState<string | null>(null);
-  const [voucherLoading, setVoucherLoading] = useState(false);
+  // Unified discount code state (checks discount_coupons then vouchers)
+  const [discountCode, setDiscountCode] = useState('');
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [discountLoading, setDiscountLoading] = useState(false);
+  const [discountError, setDiscountError] = useState<string | null>(null);
+  const [discountValid, setDiscountValid] = useState(false);
+  const [discountType, setDiscountType] = useState<'coupon' | 'voucher' | null>(null);
 
-  const [couponCode, setCouponCode] = useState('');
-  const [couponDiscount, setCouponDiscount] = useState(0);
-  const [couponLoading, setCouponLoading] = useState(false);
-  const [couponError, setCouponError] = useState<string | null>(null);
-  const [couponValid, setCouponValid] = useState(false);
-
-  const FINAL_PRICE = couponDiscount > 0 ? PRICE_NUM * (1 - couponDiscount / 100) : PRICE_NUM;
+  const FINAL_PRICE = discountPercent > 0 ? PRICE_NUM * (1 - discountPercent / 100) : PRICE_NUM;
   const FINAL_PRICE_DISPLAY = FINAL_PRICE.toFixed(2);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,72 +146,64 @@ export default function CareerIntelligenceHomeEN() {
     }
   };
 
-  const handleCouponValidate = async () => {
-    if (!couponCode.trim()) return;
-    setCouponLoading(true);
-    setCouponError(null);
+  /* ─── Unified discount code validation (checks coupons first, then vouchers) ─── */
+  const handleDiscountValidate = async () => {
+    if (!discountCode.trim()) return;
+    setDiscountLoading(true);
+    setDiscountError(null);
+    const code = discountCode.trim().toUpperCase();
     try {
-      const res = await fetch(`${BACKEND_URL}/api/payment/validate-coupon`, {
+      // Step 1: Check discount_coupons via backend
+      const couponRes = await fetch(`${BACKEND_URL}/api/payment/validate-coupon`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: couponCode.trim().toUpperCase(), product: 'career_intelligence_full' }),
+        body: JSON.stringify({ code, product: 'career_intelligence_full' }),
       });
-      const data = await res.json();
-      if (data.valid) {
-        setCouponDiscount(data.discount_percent || 0);
-        setCouponValid(true);
-      } else {
-        setCouponError(data.message || 'Invalid code');
-        setCouponValid(false);
+      const couponData = await couponRes.json();
+      if (couponData.valid && couponData.discount_percent > 0) {
+        setDiscountPercent(couponData.discount_percent);
+        setDiscountValid(true);
+        setDiscountType('coupon');
+        return;
       }
-    } catch {
-      setCouponError('Error validating code');
-    } finally {
-      setCouponLoading(false);
-    }
-  };
 
-  const handleVoucherSubmit = async () => {
-    if (!voucherCode.trim()) {
-      setVoucherError('Enter a voucher code');
-      return;
-    }
-    setVoucherLoading(true);
-    setVoucherError(null);
-    try {
-      const code = voucherCode.trim().toUpperCase();
-      const res = await fetch(
+      // Step 2: Check vouchers table directly
+      const voucherRes = await fetch(
         `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`,
         { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
       );
-      const rows = await res.json();
-      if (!rows.length) throw new Error('Invalid or expired code');
-      const v = rows[0];
-      if (!v.is_active) throw new Error('This code has already been used');
-      if (v.used_analyses >= v.total_analyses) throw new Error('This code has no remaining uses');
-      if (v.voucher_type !== 'career_intelligence_full' && v.voucher_type !== 'career_intelligence_pro' && v.voucher_type !== 'complete' && !v.includes_career_intelligence_pro) {
-        throw new Error('This code is not valid for Career Intelligence');
-      }
-      await fetch(
-        `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
-        {
-          method: 'PATCH',
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-          body: JSON.stringify({ used_analyses: v.used_analyses + 1, is_active: (v.used_analyses + 1) < v.total_analyses }),
+      const rows = await voucherRes.json();
+      if (Array.isArray(rows) && rows.length > 0) {
+        const v = rows[0];
+        if (!v.is_active) { setDiscountError('This code has already been used'); return; }
+        if (v.used_analyses >= v.total_analyses) { setDiscountError('This code has no remaining uses'); return; }
+        if (v.voucher_type !== 'career_intelligence_full' && v.voucher_type !== 'career_intelligence_pro' && v.voucher_type !== 'complete' && !v.includes_career_intelligence_pro) {
+          setDiscountError('This code is not valid for Career Intelligence'); return;
         }
-      );
-      setShowVoucherModal(false);
-      sessionStorage.setItem('careerPathPaid', 'true');
-      sessionStorage.setItem('careerIntelligenceProPaid', 'true');
-      sessionStorage.setItem('careerIntelligenceFull', 'true');
-      sessionStorage.setItem('cpOrderId', `CI-VOUCHER-${v.code}`);
-      if (v.email) sessionStorage.setItem('cpPaymentEmail', v.email);
-      trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: currencyCodeUpper, payment_method: 'voucher', customer_email: v.email || '', transaction_id: `CI-VOUCHER-${v.code}` });
-      setTimeout(() => { setLocation('/en/results'); }, 400);
-    } catch (err: any) {
-      setVoucherError(err.message || 'Invalid code');
+        await fetch(
+          `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
+          {
+            method: 'PATCH',
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+            body: JSON.stringify({ used_analyses: v.used_analyses + 1, is_active: (v.used_analyses + 1) < v.total_analyses }),
+          }
+        );
+        setShowPaymentModal(false);
+        sessionStorage.setItem('careerPathPaid', 'true');
+        sessionStorage.setItem('careerIntelligenceProPaid', 'true');
+        sessionStorage.setItem('careerIntelligenceFull', 'true');
+        sessionStorage.setItem('cpOrderId', `CI-VOUCHER-${v.code}`);
+        if (v.email) sessionStorage.setItem('cpPaymentEmail', v.email);
+        trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: currencyCodeUpper, payment_method: 'voucher', customer_email: v.email || '', transaction_id: `CI-VOUCHER-${v.code}` });
+        setTimeout(() => { setLocation('/en/results'); }, 400);
+        return;
+      }
+
+      setDiscountError('Invalid or expired code');
+    } catch {
+      setDiscountError('Error validating code');
     } finally {
-      setVoucherLoading(false);
+      setDiscountLoading(false);
     }
   };
 
@@ -754,17 +743,17 @@ export default function CareerIntelligenceHomeEN() {
               <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20 flex items-center justify-between">
                 <div><p className="text-sm font-semibold text-foreground">Career Intelligence</p><p className="text-xs text-muted-foreground">Diagnosis + Strategic Decision</p></div>
                 <div className="text-right">
-                  {couponDiscount > 0 ? (<><p className="text-xs text-muted-foreground line-through">{PRICE_DISPLAY}</p><p className="text-lg font-bold text-[#C9A961]">{CUR}{FINAL_PRICE_DISPLAY}</p><p className="text-[10px] text-green-600 font-semibold">-{couponDiscount}%</p></>) : (<p className="text-lg font-bold text-[#C9A961]">{PRICE_DISPLAY}</p>)}
+                  {discountPercent > 0 ? (<><p className="text-xs text-muted-foreground line-through">{PRICE_DISPLAY}</p><p className="text-lg font-bold text-[#C9A961]">{CUR}{FINAL_PRICE_DISPLAY}</p><p className="text-[10px] text-green-600 font-semibold">-{discountPercent}%</p></>) : (<p className="text-lg font-bold text-[#C9A961]">{PRICE_DISPLAY}</p>)}
                 </div>
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-foreground">Discount code (optional)</label>
                 <div className="flex gap-2">
-                  <input type="text" value={couponCode} onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(null); setCouponValid(false); setCouponDiscount(0); }} placeholder="CODE" className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]" />
-                  <Button onClick={handleCouponValidate} disabled={couponLoading || !couponCode.trim() || couponValid} variant="outline" className="text-sm">{couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : couponValid ? <Check className="w-4 h-4 text-green-500" /> : 'Apply'}</Button>
+                  <input type="text" value={discountCode} onChange={(e) => { setDiscountCode(e.target.value.toUpperCase()); setDiscountError(null); setDiscountValid(false); setDiscountPercent(0); setDiscountType(null); }} placeholder="CODE" className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]" onKeyDown={(e) => e.key === 'Enter' && handleDiscountValidate()} />
+                  <Button onClick={handleDiscountValidate} disabled={discountLoading || !discountCode.trim() || discountValid} variant="outline" className="text-sm">{discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : discountValid ? <Check className="w-4 h-4 text-green-500" /> : 'Apply'}</Button>
                 </div>
-                {couponError && <p className="text-xs text-red-500">{couponError}</p>}
-                {couponValid && <p className="text-xs text-green-600 font-semibold">{couponDiscount}% discount applied!</p>}
+                {discountError && <p className="text-xs text-red-500">{discountError}</p>}
+                {discountValid && <p className="text-xs text-green-600 font-semibold">{discountPercent}% discount applied!</p>}
               </div>
               <div className="space-y-1"><label className="text-xs font-semibold text-foreground">Email</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]" /></div>
               <div className="space-y-2">
@@ -785,7 +774,7 @@ export default function CareerIntelligenceHomeEN() {
                   {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pay ${CUR}${FINAL_PRICE_DISPLAY}`}
                 </Button>
               </div>
-              <button onClick={() => { setShowPaymentModal(false); setTimeout(() => setShowVoucherModal(true), 300); }} className="w-full text-sm text-[#C9A961] hover:underline flex items-center justify-center gap-1 pt-1"><Ticket className="w-4 h-4" />I have a voucher code</button>
+
             </div>
           )}
           {paymentStep === 'polling' && (<div className="text-center space-y-4 py-4">{!pollingExpired ? <Loader2 className="w-10 h-10 animate-spin text-[#C9A961] mx-auto" /> : <AlertCircle className="w-10 h-10 text-amber-500 mx-auto" />}<p className="text-sm font-semibold text-foreground">{pollingMsg}</p>{!pollingExpired && <p className="text-xs text-muted-foreground">Waiting for payment confirmation...</p>}{pollingExpired && (<Button onClick={handleManualCheck} className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"><CheckCircle2 className="w-4 h-4 mr-2" />I already paid — check again</Button>)}</div>)}
@@ -793,17 +782,7 @@ export default function CareerIntelligenceHomeEN() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showVoucherModal} onOpenChange={setShowVoucherModal}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle className="flex items-center gap-2"><Ticket className="w-5 h-5 text-[#C9A961]" />Voucher Code</DialogTitle></DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">Enter your voucher code to unlock Career Intelligence.</p>
-            <input type="text" value={voucherCode} onChange={(e) => setVoucherCode(e.target.value.toUpperCase())} placeholder="e.g. CI-XXXXX-XXXXX" className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]" onKeyDown={(e) => e.key === 'Enter' && handleVoucherSubmit()} />
-            {voucherError && (<p className="text-sm text-red-500 flex items-center gap-1"><AlertCircle className="w-4 h-4 shrink-0" />{voucherError}</p>)}
-            <Button onClick={handleVoucherSubmit} disabled={voucherLoading || !voucherCode.trim()} className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold">{voucherLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Unlock className="w-4 h-4 mr-2" />Validate Code</>}</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+
 
       <footer className="border-t border-foreground/10 py-8 px-6 mt-8">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">

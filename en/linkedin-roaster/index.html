@@ -1047,37 +1047,20 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                         <p style="font-size:0.68rem;color:#aaa;margin-top:6px;text-align:center;">You will receive a notification on your phone.</p>
                     </div>
 
-                    <!-- Discount Coupon Section -->
+                    <!-- Unified Discount Code Section -->
                     <div style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb;">
-                        <button class="pay-btn" onclick="toggleCouponForm()" style="background:#f0fdf4;border-color:#16a34a;color:#15803d;">
+                        <button class="pay-btn" onclick="toggleDiscountForm()" style="background:#f0fdf4;border-color:#16a34a;color:#15803d;">
                             <i class="fas fa-percent" style="color:#16a34a;"></i>
                             I have a Discount Code
                         </button>
-                        <div id="couponForm" style="display:none;margin-top:12px;">
-                            <p style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">Enter your discount code:</p>
-                            <input type="text" id="couponCode" placeholder="Enter code" maxlength="30" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;text-transform:uppercase;letter-spacing:2px;text-align:center;">
-                            <button class="btn-primary" onclick="validateCoupon()" id="btnCoupon" style="margin-top:8px;background:#16a34a;border-color:#16a34a;">
-                                Apply Discount
+                        <div id="discountForm" style="display:none;margin-top:12px;">
+                            <p style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">Enter your discount or voucher code:</p>
+                            <input type="text" id="discountCodeInput" placeholder="Enter code" maxlength="30" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;text-transform:uppercase;letter-spacing:2px;text-align:center;">
+                            <button class="btn-primary" onclick="validateDiscountCode()" id="btnDiscount" style="margin-top:8px;background:#16a34a;border-color:#16a34a;">
+                                Apply Code
                             </button>
-                            <div id="couponError" style="display:none;color:#dc2626;font-size:0.78rem;margin-top:8px;text-align:center;"></div>
-                            <div id="couponSuccess" style="display:none;color:#16a34a;font-size:0.78rem;margin-top:8px;text-align:center;"></div>
-                        </div>
-                    </div>
-
-                    <!-- Voucher Section -->
-                    <div style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb;">
-                        <button class="pay-btn" onclick="toggleVoucherForm()" style="background:#fdf8ef;border-color:#C9A961;color:#92750E;">
-                            <i class="fas fa-ticket-alt" style="color:#C9A961;"></i>
-                            I have a Voucher
-                        </button>
-                        <div id="voucherForm" style="display:none;margin-top:12px;">
-                            <p style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">Enter your voucher code:</p>
-                            <input type="text" id="voucherCode" placeholder="S2I-XXXXXX" maxlength="20" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;text-transform:uppercase;letter-spacing:2px;text-align:center;">
-                            <button class="btn-primary" onclick="validateVoucher()" id="btnVoucher" style="margin-top:8px;background:#C9A961;border-color:#C9A961;">
-                                Validate Voucher
-                            </button>
-                            <div id="voucherError" style="display:none;color:#dc2626;font-size:0.78rem;margin-top:8px;text-align:center;"></div>
-                            <div id="voucherSuccess" style="display:none;color:#16a34a;font-size:0.78rem;margin-top:8px;text-align:center;"></div>
+                            <div id="discountError" style="display:none;color:#dc2626;font-size:0.78rem;margin-top:8px;text-align:center;"></div>
+                            <div id="discountSuccess" style="display:none;color:#16a34a;font-size:0.78rem;margin-top:8px;text-align:center;"></div>
                         </div>
                     </div>
 
@@ -1517,13 +1500,14 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     // ============================================
 
     // ============================================
-    // DISCOUNT COUPON HANDLERS (percentage discount)
+    // UNIFIED DISCOUNT CODE HANDLERS
+    // Validates against discount_coupons first, then vouchers
     // ============================================
-    function toggleCouponForm() {
-        const form = document.getElementById('couponForm');
+    function toggleDiscountForm() {
+        const form = document.getElementById('discountForm');
         form.style.display = form.style.display === 'none' ? 'block' : 'none';
         if (form.style.display === 'block') {
-            document.getElementById('couponCode').focus();
+            document.getElementById('discountCodeInput').focus();
         }
     }
 
@@ -1549,17 +1533,17 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         }
     }
 
-    async function validateCoupon() {
-        const code = document.getElementById('couponCode').value.trim().toUpperCase();
-        const errEl = document.getElementById('couponError');
-        const successEl = document.getElementById('couponSuccess');
-        const btn = document.getElementById('btnCoupon');
+    async function validateDiscountCode() {
+        const code = document.getElementById('discountCodeInput').value.trim().toUpperCase();
+        const errEl = document.getElementById('discountError');
+        const successEl = document.getElementById('discountSuccess');
+        const btn = document.getElementById('btnDiscount');
 
         errEl.style.display = 'none';
         successEl.style.display = 'none';
 
         if (!code) {
-            errEl.textContent = 'Introduz um c\u00f3digo de desconto.';
+            errEl.textContent = 'Please enter a code.';
             errEl.style.display = 'block';
             return;
         }
@@ -1568,85 +1552,129 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         btn.textContent = 'Validating...';
 
         try {
-            // Query Supabase directly for the coupon
-            const resp = await fetch(SUPABASE_URL + '/rest/v1/discount_coupons?code=eq.' + encodeURIComponent(code) + '&is_active=eq.true&select=code,discount_percent,partner_name,max_uses,current_uses,valid_from,valid_until,applicable_products', {
+            // \u2500\u2500 Step 1: Check discount_coupons table \u2500\u2500
+            const couponResp = await fetch(SUPABASE_URL + '/rest/v1/discount_coupons?code=eq.' + encodeURIComponent(code) + '&is_active=eq.true&select=code,discount_percent,partner_name,max_uses,current_uses,valid_from,valid_until,applicable_products', {
                 headers: {
                     'apikey': SUPABASE_ANON_KEY,
                     'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
                 }
             });
-            const coupons = await resp.json();
+            const coupons = await couponResp.json();
 
-            if (!Array.isArray(coupons) || coupons.length === 0) {
-                errEl.textContent = 'C\u00f3digo de desconto inv\u00e1lido ou expirado.';
-                errEl.style.display = 'block';
+            if (Array.isArray(coupons) && coupons.length > 0) {
+                const coupon = coupons[0];
+                const now = new Date();
+                if (coupon.valid_from && new Date(coupon.valid_from) > now) {
+                    errEl.textContent = 'This code is not yet active.';
+                    errEl.style.display = 'block';
+                    return;
+                }
+                if (coupon.valid_until && new Date(coupon.valid_until) < now) {
+                    errEl.textContent = 'This code has expired.';
+                    errEl.style.display = 'block';
+                    return;
+                }
+                if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) {
+                    errEl.textContent = 'This code has reached its usage limit.';
+                    errEl.style.display = 'block';
+                    return;
+                }
+                const products = coupon.applicable_products || [];
+                if (products.length > 0 && !products.includes('all') && !products.includes('linkedin_roaster')) {
+                    errEl.textContent = 'This code is not applicable to LinkedIn Roaster.';
+                    errEl.style.display = 'block';
+                    return;
+                }
+                // Coupon is valid \u2014 apply percentage discount
+                activeCoupon = {
+                    code: coupon.code,
+                    discount_percent: coupon.discount_percent,
+                    partner_name: coupon.partner_name
+                };
+                const discounted = getCurrentPrice();
+                if (discounted <= 0) {
+                    successEl.textContent = coupon.discount_percent + '% discount applied! Free analysis.';
+                } else {
+                    successEl.textContent = coupon.discount_percent + '% discount applied! New price: ' + discounted.toFixed(2).replace('.', ',') + '\u20AC';
+                }
+                successEl.style.display = 'block';
+                updatePriceDisplay();
+                gtag('event', 'apply_coupon', { coupon_code: code, discount_percent: coupon.discount_percent, product: 'linkedin_roaster' });
                 return;
             }
 
-            const coupon = coupons[0];
-
-            // Check date validity
-            const now = new Date();
-            if (coupon.valid_from && new Date(coupon.valid_from) > now) {
-                errEl.textContent = 'Este c\u00f3digo de desconto ainda n\u00e3o est\u00e1 ativo.';
-                errEl.style.display = 'block';
-                return;
-            }
-            if (coupon.valid_until && new Date(coupon.valid_until) < now) {
-                errEl.textContent = 'Este c\u00f3digo de desconto j\u00e1 expirou.';
-                errEl.style.display = 'block';
-                return;
-            }
-
-            // Check usage limits
-            if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) {
-                errEl.textContent = 'Este c\u00f3digo atingiu o limite de utiliza\u00e7\u00f5es.';
-                errEl.style.display = 'block';
-                return;
-            }
-
-            // Check product applicability
-            const products = coupon.applicable_products || [];
-            if (products.length > 0 && !products.includes('all') && !products.includes('linkedin_roaster')) {
-                errEl.textContent = 'Este c\u00f3digo n\u00e3o \u00e9 aplic\u00e1vel ao LinkedIn Roaster.';
-                errEl.style.display = 'block';
-                return;
-            }
-
-            // Coupon is valid!
-            activeCoupon = {
-                code: coupon.code,
-                discount_percent: coupon.discount_percent,
-                partner_name: coupon.partner_name
-            };
-
-            const discounted = getCurrentPrice();
-            successEl.textContent = 'Desconto de ' + coupon.discount_percent + '% aplicado! Novo pre\u00e7o: ' + discounted.toFixed(2).replace('.', ',') + '\u20AC';
-            successEl.style.display = 'block';
-
-            updatePriceDisplay();
-
-            // Track coupon application
-            gtag('event', 'apply_coupon', {
-                coupon_code: code,
-                discount_percent: coupon.discount_percent,
-                product: 'linkedin_roaster'
+            // \u2500\u2500 Step 2: Check vouchers table \u2500\u2500
+            const voucherResp = await fetch(SUPABASE_URL + '/rest/v1/vouchers?code=eq.' + encodeURIComponent(code) + '&select=*', {
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                }
             });
+            const vouchers = await voucherResp.json();
+
+            if (Array.isArray(vouchers) && vouchers.length > 0) {
+                const voucher = vouchers[0];
+                if (!voucher.is_active) {
+                    errEl.textContent = 'This code is no longer active.';
+                    errEl.style.display = 'block';
+                    return;
+                }
+                const remaining = (voucher.total_analyses || 0) - (voucher.used_analyses || 0);
+                if (remaining <= 0) {
+                    errEl.textContent = 'This code has no remaining analyses.';
+                    errEl.style.display = 'block';
+                    return;
+                }
+                // Voucher is valid \u2014 mark as used and run analysis
+                await fetch(SUPABASE_URL + '/rest/v1/vouchers?id=eq.' + voucher.id, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                    },
+                    body: JSON.stringify({ used_analyses: (voucher.used_analyses || 0) + 1 })
+                });
+                successEl.textContent = 'Code valid! Starting analysis...';
+                successEl.style.display = 'block';
+                if (analysisId) {
+                    fetch(SUPABASE_URL + '/rest/v1/linkedin_roaster_analyses?id=eq.' + analysisId, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                        },
+                        body: JSON.stringify({ payment_status: 'paid', payment_method: 'voucher', payment_amount: 0, voucher_code: code })
+                    }).catch(e => console.warn('[ROASTER] Voucher update failed:', e));
+                }
+                gtag('event', 'purchase', {
+                    transaction_id: 'LR-V-' + Date.now(),
+                    value: 0,
+                    currency: 'USD',
+                    items: [{ item_name: 'LinkedIn Roaster (Voucher)', price: 0 }]
+                });
+                setTimeout(() => runFullAnalysis(), 500);
+                return;
+            }
+
+            // \u2500\u2500 Not found in either table \u2500\u2500
+            errEl.textContent = 'Invalid code. Please check and try again.';
+            errEl.style.display = 'block';
 
         } catch (error) {
-            console.error('[ROASTER] Coupon validation error:', error);
-            errEl.textContent = 'Erro ao validar c\u00f3digo. Tenta novamente.';
+            console.error('[ROASTER] Discount code validation error:', error);
+            errEl.textContent = 'Error validating code. Please try again.';
             errEl.style.display = 'block';
         } finally {
             btn.disabled = false;
-            btn.textContent = 'Apply Discount';
+            btn.textContent = 'Apply Code';
         }
     }
 
     // Increment coupon usage after successful payment
     async function useCoupon(code) {
         try {
-            // Get current coupon data
             const resp = await fetch(SUPABASE_URL + '/rest/v1/discount_coupons?code=eq.' + encodeURIComponent(code) + '&select=id,current_uses,max_uses', {
                 headers: {
                     'apikey': SUPABASE_ANON_KEY,
@@ -1655,14 +1683,12 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             });
             const coupons = await resp.json();
             if (!Array.isArray(coupons) || coupons.length === 0) return;
-
             const coupon = coupons[0];
             const newUses = (coupon.current_uses || 0) + 1;
             const updateData = { current_uses: newUses, updated_at: new Date().toISOString() };
             if (coupon.max_uses !== null && newUses >= coupon.max_uses) {
                 updateData.is_active = false;
             }
-
             await fetch(SUPABASE_URL + '/rest/v1/discount_coupons?id=eq.' + coupon.id, {
                 method: 'PATCH',
                 headers: {
@@ -1675,107 +1701,6 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             console.log('[ROASTER] Coupon usage incremented:', code, newUses);
         } catch (e) {
             console.warn('[ROASTER] Failed to increment coupon usage:', e);
-        }
-    }
-
-    // ============================================
-    // VOUCHER HANDLERS (full free access)
-    // ============================================
-    function toggleVoucherForm() {
-        const form = document.getElementById('voucherForm');
-        form.style.display = form.style.display === 'none' ? 'block' : 'none';
-        if (form.style.display === 'block') {
-            document.getElementById('voucherCode').focus();
-        }
-    }
-
-    async function validateVoucher() {
-        const code = document.getElementById('voucherCode').value.trim().toUpperCase();
-        const errEl = document.getElementById('voucherError');
-        const successEl = document.getElementById('voucherSuccess');
-        const btn = document.getElementById('btnVoucher');
-
-        errEl.style.display = 'none';
-        successEl.style.display = 'none';
-
-        if (!code) {
-            errEl.textContent = 'Introduz um c\u00f3digo de voucher.';
-            errEl.style.display = 'block';
-            return;
-        }
-
-        btn.disabled = true;
-        btn.textContent = 'Validating...';
-
-        try {
-            const resp = await fetch(SUPABASE_URL + '/rest/v1/vouchers?code=eq.' + encodeURIComponent(code) + '&select=*', {
-                headers: {
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                }
-            });
-            const vouchers = await resp.json();
-
-            if (!Array.isArray(vouchers) || vouchers.length === 0) {
-                errEl.textContent = 'C\u00f3digo inv\u00e1lido. Verifica e tenta novamente.';
-                errEl.style.display = 'block';
-                return;
-            }
-
-            const voucher = vouchers[0];
-            const remaining = (voucher.total_analyses || 0) - (voucher.used_analyses || 0);
-
-            if (remaining <= 0) {
-                errEl.textContent = 'Este voucher j\u00e1 n\u00e3o tem an\u00e1lises dispon\u00edveis.';
-                errEl.style.display = 'block';
-                return;
-            }
-
-            // Voucher is valid! Increment used_analyses
-            await fetch(SUPABASE_URL + '/rest/v1/vouchers?id=eq.' + voucher.id, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                },
-                body: JSON.stringify({ used_analyses: (voucher.used_analyses || 0) + 1 })
-            });
-
-            successEl.textContent = 'Voucher v\u00e1lido! A iniciar an\u00e1lise...';
-            successEl.style.display = 'block';
-
-            // Update analysis record as paid via voucher
-            if (analysisId) {
-                fetch(SUPABASE_URL + '/rest/v1/linkedin_roaster_analyses?id=eq.' + analysisId, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                    },
-                    body: JSON.stringify({ payment_status: 'paid', payment_method: 'voucher', payment_amount: 0, voucher_code: code })
-                }).catch(e => console.warn('[ROASTER] Voucher update failed:', e));
-            }
-
-            // Track events
-            gtag('event', 'purchase', {
-                transaction_id: 'LR-V-' + Date.now(),
-                value: 0,
-                currency: 'USD',
-                items: [{ item_name: 'LinkedIn Roaster (Voucher)', price: 0 }]
-            });
-
-            // Run the analysis directly (skip payment)
-            setTimeout(() => runFullAnalysis(), 500);
-
-        } catch (error) {
-            console.error('[ROASTER] Voucher validation error:', error);
-            errEl.textContent = 'Error validating voucher. Please try again.';
-            errEl.style.display = 'block';
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Validate Voucher';
         }
     }
 

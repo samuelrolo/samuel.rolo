@@ -72,11 +72,11 @@ export default function BundleHome() {
   const [pollingExpired, setPollingExpired] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
 
-  // Voucher
-  const [showVoucherModal, setShowVoucherModal] = useState(false);
-  const [voucherCode, setVoucherCode] = useState("");
-  const [voucherError, setVoucherError] = useState<string | null>(null);
-  const [voucherLoading, setVoucherLoading] = useState(false);
+  // Unified discount code
+  const [showDiscountModal, setShowDiscountModal] = useState(false);
+  const [discountCode, setDiscountCode] = useState("");
+  const [discountError, setDiscountError] = useState<string | null>(null);
+  const [discountLoading, setDiscountLoading] = useState(false);
 
   // Analysis
   const [analysisProgress, setAnalysisProgress] = useState(0);
@@ -437,38 +437,50 @@ export default function BundleHome() {
     }
   };
 
-  /* ─── Voucher Handler ─── */
-  const handleVoucher = async () => {
-    if (!voucherCode.trim()) { setVoucherError('Introduz o código do voucher'); return; }
-    setVoucherLoading(true);
-    setVoucherError(null);
+  /* ─── Unified Discount Code Handler (checks coupons first, then vouchers) ─── */
+  const handleDiscountCode = async () => {
+    if (!discountCode.trim()) { setDiscountError('Introduz um código'); return; }
+    setDiscountLoading(true);
+    setDiscountError(null);
+    const code = discountCode.trim().toUpperCase();
     try {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${voucherCode.trim().toUpperCase()}&is_active=eq.true`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      // Step 1: Check discount_coupons
+      const couponRes = await fetch(`${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+      });
+      const coupons = await couponRes.json();
+      if (Array.isArray(coupons) && coupons.length > 0) {
+        const coupon = coupons[0];
+        const now = new Date();
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError('Este código ainda não está ativo.'); return; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError('Este código já expirou.'); return; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError('Este código atingiu o limite.'); return; }
+        const products = coupon.applicable_products || [];
+        if (products.length > 0 && !products.includes('all') && !products.includes('bundle') && !products.includes('complete')) { setDiscountError('Este código não é aplicável a este pacote.'); return; }
+        if (coupon.discount_percent === 100) {
+          setShowDiscountModal(false);
+          runBothEngines();
+          return;
         }
+        setDiscountError('Este código dá desconto parcial. Usa-o no pagamento.');
+        return;
+      }
+
+      // Step 2: Check vouchers
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&is_active=eq.true`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
       });
       const vouchers = await res.json();
-      if (!vouchers || vouchers.length === 0) {
-        setVoucherError('Código inválido ou já utilizado.');
-        setVoucherLoading(false);
-        return;
-      }
+      if (!vouchers || vouchers.length === 0) { setDiscountError('Código inválido ou já utilizado.'); return; }
       const v = vouchers[0];
-      if (v.used_analyses >= v.total_analyses) {
-        setVoucherError('Este voucher já foi totalmente utilizado.');
-        setVoucherLoading(false);
-        return;
-      }
-      // Valid voucher — proceed
-      setShowVoucherModal(false);
+      if (v.used_analyses >= v.total_analyses) { setDiscountError('Este código já foi totalmente utilizado.'); return; }
+      setShowDiscountModal(false);
       if (v.email) sessionStorage.setItem('paymentEmail', v.email);
       runBothEngines();
     } catch {
-      setVoucherError('Erro ao verificar voucher. Tenta novamente.');
+      setDiscountError('Erro ao verificar código. Tenta novamente.');
     } finally {
-      setVoucherLoading(false);
+      setDiscountLoading(false);
     }
   };
 
@@ -700,12 +712,12 @@ export default function BundleHome() {
               Pagar e analisar — €{PRICE}
             </Button>
 
-            {/* Voucher link */}
+            {/* Discount code link */}
             <button
-              onClick={() => { setShowVoucherModal(true); setVoucherCode(''); setVoucherError(null); }}
+              onClick={() => { setShowDiscountModal(true); setDiscountCode(''); setDiscountError(null); }}
               className="w-full text-center text-sm text-slate-500 hover:text-[#C9A961] transition-colors flex items-center justify-center gap-2"
             >
-              <Ticket className="w-4 h-4" /> Tenho um código
+              <Ticket className="w-4 h-4" /> Tenho um código de desconto
             </button>
 
             <p className="text-center text-xs text-slate-400">Pagamento seguro via MB WAY ou PayPal</p>
@@ -845,29 +857,30 @@ export default function BundleHome() {
         </DialogContent>
       </Dialog>
 
-      {/* ─── Voucher Modal ─── */}
-      <Dialog open={showVoucherModal} onOpenChange={setShowVoucherModal}>
+      {/* ─── Discount Code Modal ─── */}
+      <Dialog open={showDiscountModal} onOpenChange={setShowDiscountModal}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle className="text-center">Código de voucher</DialogTitle>
+            <DialogTitle className="text-center">Código de desconto</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <input
               type="text"
               placeholder="Introduz o código"
-              value={voucherCode}
-              onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
+              value={discountCode}
+              onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
               className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm text-center tracking-widest font-mono focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] outline-none"
+              onKeyDown={(e) => e.key === 'Enter' && handleDiscountCode()}
             />
-            {voucherError && (
-              <p className="text-red-600 text-sm text-center">{voucherError}</p>
+            {discountError && (
+              <p className="text-red-600 text-sm text-center">{discountError}</p>
             )}
             <Button
-              onClick={handleVoucher}
-              disabled={voucherLoading}
+              onClick={handleDiscountCode}
+              disabled={discountLoading}
               className="w-full h-12 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl"
             >
-              {voucherLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Validar código'}
+              {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Validar código'}
             </Button>
           </div>
         </DialogContent>

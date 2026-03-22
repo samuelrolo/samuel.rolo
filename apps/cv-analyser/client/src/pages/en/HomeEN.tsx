@@ -570,16 +570,39 @@ export default function HomeEN() {
     }
   };
 
-  // Validate voucher code against Supabase
+  // Validate discount/voucher code against Supabase (checks discount_coupons first, then vouchers)
   const validateVoucherForLinkedIn = async (code: string): Promise<boolean> => {
     setLinkedInVoucherValidating(true);
     setLinkedInVoucherError(null);
+    const upperCode = code.toUpperCase();
     try {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      // Step 1: Check discount_coupons
+      const couponRes = await fetch(`${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(upperCode)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+      });
+      const coupons = await couponRes.json();
+      if (Array.isArray(coupons) && coupons.length > 0) {
+        const coupon = coupons[0];
+        const now = new Date();
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setLinkedInVoucherError('This code is not yet active.'); return false; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setLinkedInVoucherError('This code has expired.'); return false; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setLinkedInVoucherError('This code has reached its limit.'); return false; }
+        const products = coupon.applicable_products || [];
+        if (products.length > 0 && !products.includes('all') && !products.includes('cv_analyser') && !products.includes('linkedin_roaster')) { setLinkedInVoucherError('This code is not applicable here.'); return false; }
+        if (coupon.discount_percent === 100) {
+          sessionStorage.setItem('isPaid', 'true');
+          sessionStorage.setItem('paymentAmount', '0');
+          sessionStorage.setItem('transactionId', `COUPON-${upperCode}`);
+          setShowLinkedInPaywall(false);
+          return true;
         }
+        setLinkedInVoucherError('This code gives a partial discount. Use it during payment.');
+        return false;
+      }
+
+      // Step 2: Check vouchers
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(upperCode)}&select=*`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
       });
       const vouchers = await res.json();
       if (!Array.isArray(vouchers) || vouchers.length === 0) {
@@ -593,7 +616,7 @@ export default function HomeEN() {
         return false;
       }
       sessionStorage.setItem('isPaid', 'true');
-      sessionStorage.setItem('voucherCode', code);
+      sessionStorage.setItem('voucherCode', upperCode);
       sessionStorage.setItem('voucherId', String(voucher.id));
       sessionStorage.setItem('remainingAnalyses', String(remaining));
       sessionStorage.setItem('paymentAmount', String(voucher.amount_paid || 0));
@@ -1418,9 +1441,9 @@ export default function HomeEN() {
                 <p className="text-sm text-white/70">LinkedIn analysis requires a paid package. Get a complete report with ATS score, salary estimate and personalised recommendations.</p>
               </div>
 
-              {/* Voucher code input */}
+              {/* Discount code input */}
               <div className="space-y-2">
-                <p className="text-xs font-medium text-white/80">Already have a code?</p>
+                <p className="text-xs font-medium text-white/80">Already have a discount code?</p>
                 <div className="flex gap-2">
                   <input
                     type="text"

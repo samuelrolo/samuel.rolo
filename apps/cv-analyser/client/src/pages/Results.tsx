@@ -324,7 +324,7 @@ export default function Results() {
   const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
   const [isPaid, setIsPaid] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [showVoucherModal, setShowVoucherModal] = useState(false);
+  const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
@@ -368,11 +368,11 @@ export default function Results() {
   // Upsell popup state (shown during analysis loading)
 
   
-  // Voucher state
-  const [voucherCode, setVoucherCode] = useState("");
-  const [voucherLoading, setVoucherLoading] = useState(false);
-  const [voucherError, setVoucherError] = useState<string | null>(null);
-  const [voucherSuccess, setVoucherSuccess] = useState<string | null>(null);
+  // Unified discount code state
+  const [discountCode, setDiscountCode] = useState("");
+  const [discountLoading, setDiscountLoading] = useState(false);
+  const [discountError, setDiscountError] = useState<string | null>(null);
+  const [discountSuccess, setDiscountSuccess] = useState<string | null>(null);
 
   // Email report state
   const [reportEmail, setReportEmail] = useState("");
@@ -925,36 +925,55 @@ export default function Results() {
     }
   };
 
-  // Validate voucher code
-  const handleVoucherValidation = async () => {
-    if (!voucherCode.trim()) {
-      setVoucherError(isEN ? 'Enter a voucher code' : 'Introduz um código de voucher');
+  // Validate discount code (checks discount_coupons first, then vouchers)
+  const handleDiscountValidation = async () => {
+    if (!discountCode.trim()) {
+      setDiscountError(isEN ? 'Enter a code' : 'Introduz um código');
       return;
     }
 
-    setVoucherLoading(true);
-    setVoucherError(null);
-    setVoucherSuccess(null);
+    setDiscountLoading(true);
+    setDiscountError(null);
+    setDiscountSuccess(null);
+    const code = discountCode.trim().toUpperCase();
 
     try {
-      const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(voucherCode.trim().toUpperCase())}&is_active=eq.true&select=*`,
-        {
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-          }
-        }
+      // Step 1: Check discount_coupons table
+      const couponRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`,
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
       );
-
-      if (!response.ok) {
-        throw new Error(isEN ? 'Error verifying code' : 'Erro ao verificar código');
+      const coupons = await couponRes.json();
+      if (Array.isArray(coupons) && coupons.length > 0) {
+        const coupon = coupons[0];
+        const now = new Date();
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError(isEN ? 'This code is not yet active.' : 'Este código ainda não está ativo.'); return; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(isEN ? 'This code has expired.' : 'Este código já expirou.'); return; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(isEN ? 'This code has reached its usage limit.' : 'Este código atingiu o limite.'); return; }
+        const products = coupon.applicable_products || [];
+        if (products.length > 0 && !products.includes('all') && !products.includes('cv_analyser') && !products.includes('cv_report')) { setDiscountError(isEN ? 'This code is not applicable here.' : 'Este código não é aplicável aqui.'); return; }
+        if (coupon.discount_percent === 100) {
+          setDiscountSuccess(isEN ? 'Code valid! Analysis unlocked.' : 'Código válido! Análise desbloqueada.');
+          unlockFullReport();
+          updateAnalysisPayment('0', 'coupon', code);
+          setTimeout(() => { setShowDiscountModal(false); setDiscountCode(''); setDiscountSuccess(null); }, 2500);
+          return;
+        }
+        setDiscountError(isEN ? 'This code gives a partial discount. Use it during payment.' : 'Este código dá desconto parcial. Usa-o no pagamento.');
+        return;
       }
 
+      // Step 2: Check vouchers table
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=*`,
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+      );
+
+      if (!response.ok) throw new Error(isEN ? 'Error verifying code' : 'Erro ao verificar código');
       const vouchers = await response.json();
       
       if (vouchers.length === 0) {
-        setVoucherError(isEN ? 'Invalid or already used code' : 'Código inválido ou já utilizado');
+        setDiscountError(isEN ? 'Invalid or already used code' : 'Código inválido ou já utilizado');
         return;
       }
 
@@ -962,53 +981,37 @@ export default function Results() {
       const remaining = voucher.total_analyses - voucher.used_analyses;
 
       if (remaining <= 0) {
-        setVoucherError(isEN ? 'This code has no analyses remaining' : 'Este código já não tem análises disponíveis');
+        setDiscountError(isEN ? 'This code has no analyses remaining' : 'Este código já não tem análises disponíveis');
         return;
       }
 
-      // Use one analysis
       const updateResponse = await fetch(
         `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${voucher.id}`,
         {
           method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'Prefer': 'return=representation'
-          },
-          body: JSON.stringify({
-            used_analyses: voucher.used_analyses + 1,
-            is_active: remaining - 1 > 0,
-            updated_at: new Date().toISOString()
-          })
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' },
+          body: JSON.stringify({ used_analyses: voucher.used_analyses + 1, is_active: remaining - 1 > 0, updated_at: new Date().toISOString() })
         }
       );
 
       if (updateResponse.ok) {
-        setVoucherSuccess(isEN ? `Valid code! Analysis unlocked. ${remaining - 1} use(s) remaining.` : `Código válido! Análise desbloqueada. Restam ${remaining - 1} análise(s).`);
+        setDiscountSuccess(isEN ? `Valid code! Analysis unlocked. ${remaining - 1} use(s) remaining.` : `Código válido! Análise desbloqueada. Restam ${remaining - 1} análise(s).`);
         unlockFullReport();
-        updateAnalysisPayment(selectedPlan.price, 'voucher', voucherCode);
+        updateAnalysisPayment(selectedPlan.price, 'voucher', code);
         
-        // If voucher includes career path, auto-unlock it
         if (voucher.includes_career_path || voucher.voucher_type === 'complete') {
           sessionStorage.setItem('careerPathIncluded', 'true');
-          setVoucherSuccess(isEN ? `Valid code! Analysis + Career Path unlocked. ${remaining - 1} use(s) remaining.` : `Código válido! Análise + Career Path desbloqueados. Restam ${remaining - 1} análise(s).`);
+          setDiscountSuccess(isEN ? `Valid code! Analysis + Career Path unlocked. ${remaining - 1} use(s) remaining.` : `Código válido! Análise + Career Path desbloqueados. Restam ${remaining - 1} análise(s).`);
         }
         
-        // Close modal after 2 seconds
-        setTimeout(() => {
-          setShowVoucherModal(false);
-          setVoucherCode("");
-          setVoucherSuccess(null);
-        }, 2500);
+        setTimeout(() => { setShowDiscountModal(false); setDiscountCode(''); setDiscountSuccess(null); }, 2500);
       } else {
         throw new Error(isEN ? 'Error using code' : 'Erro ao utilizar código');
       }
     } catch (err) {
-      setVoucherError(err instanceof Error ? err.message : (isEN ? 'Error verifying code' : 'Erro ao verificar código'));
+      setDiscountError(err instanceof Error ? err.message : (isEN ? 'Error verifying code' : 'Erro ao verificar código'));
     } finally {
-      setVoucherLoading(false);
+      setDiscountLoading(false);
     }
   };
 
@@ -1296,7 +1299,7 @@ export default function Results() {
             ) : (
               <>
                 <Button
-                  onClick={() => setShowVoucherModal(true)}
+                  onClick={() => setShowDiscountModal(true)}
                   variant="outline"
                   size="sm"
                   className="text-xs sm:text-sm font-medium border-[#C9A961]/30 text-[#C9A961] hover:bg-[#C9A961]/5"
@@ -2848,7 +2851,7 @@ export default function Results() {
                     {isEN ? `Or just the CV Report — ${CUR}${P.cv}` : `Ou apenas o Relatório CV — ${CUR}${P.cv}`}
                   </Button>
                   <Button
-                    onClick={() => setShowVoucherModal(true)}
+                    onClick={() => setShowDiscountModal(true)}
                     variant="outline"
                     size="sm"
                     className="border-[#C9A961]/30 text-[#C9A961] hover:bg-[#C9A961]/5 w-full"
@@ -3252,47 +3255,48 @@ export default function Results() {
         </DialogContent>
       </Dialog>
 
-      {/* ═══ Voucher Modal ═══ */}
-      <Dialog open={showVoucherModal} onOpenChange={setShowVoucherModal}>
+      {/* ═══ Discount Code Modal ═══ */}
+      <Dialog open={showDiscountModal} onOpenChange={setShowDiscountModal}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Ticket className="w-5 h-5 text-[#C9A961]" />
-              {isEN ? 'Enter Code' : 'Inserir Código'}
+              {isEN ? 'Discount Code' : 'Código de Desconto'}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <p className="text-sm text-muted-foreground">
-              {isEN ? 'If you purchased a multi-analysis package, enter the code you received to unlock this analysis.' : 'Se compraste um pacote com múltiplas análises, introduz o código que recebeste para desbloquear esta análise.'}
+              {isEN ? 'Enter your discount or voucher code to unlock this analysis.' : 'Introduz o teu código de desconto ou voucher para desbloquear esta análise.'}
             </p>
             <div className="space-y-2">
               <input
                 type="text"
-                value={voucherCode}
-                onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
-                placeholder="S2I-XXXXXX"
+                value={discountCode}
+                onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                placeholder={isEN ? 'Enter code' : 'Inserir código'}
                 className="w-full px-3 py-3 border border-border rounded-lg bg-background text-foreground text-center text-lg font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-[#C9A961] uppercase"
+                onKeyDown={(e) => e.key === 'Enter' && handleDiscountValidation()}
               />
             </div>
 
-            {voucherError && (
+            {discountError && (
               <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                <p className="text-sm text-red-500">{voucherError}</p>
+                <p className="text-sm text-red-500">{discountError}</p>
               </div>
             )}
 
-            {voucherSuccess && (
+            {discountSuccess && (
               <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                <p className="text-sm text-green-600">{voucherSuccess}</p>
+                <p className="text-sm text-green-600">{discountSuccess}</p>
               </div>
             )}
 
             <Button
-              onClick={handleVoucherValidation}
-              disabled={voucherLoading || !voucherCode.trim()}
+              onClick={handleDiscountValidation}
+              disabled={discountLoading || !discountCode.trim()}
               className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
             >
-              {voucherLoading ? (
+              {discountLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   {isEN ? 'Validating...' : 'A validar...'}

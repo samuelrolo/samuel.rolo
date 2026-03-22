@@ -820,16 +820,43 @@ export default function Home() {
     }
   };
 
-  // Validate voucher code against Supabase
+  // Validate discount code against discount_coupons then vouchers
   const validateVoucherForLinkedIn = async (code: string): Promise<boolean> => {
     setLinkedInVoucherValidating(true);
     setLinkedInVoucherError(null);
     try {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      // Step 1: Check discount_coupons (100% discount = free access)
+      const couponRes = await fetch(`${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,partner_name,max_uses,current_uses,valid_from,valid_until,applicable_products`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+      });
+      const coupons = await couponRes.json();
+      if (Array.isArray(coupons) && coupons.length > 0) {
+        const coupon = coupons[0];
+        const now = new Date();
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setLinkedInVoucherError('Este código ainda não está ativo.'); return false; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setLinkedInVoucherError('Este código já expirou.'); return false; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setLinkedInVoucherError('Este código atingiu o limite de utilizações.'); return false; }
+        const products = coupon.applicable_products || [];
+        if (products.length > 0 && !products.includes('all') && !products.includes('cv_analyser') && !products.includes('linkedin_analysis')) {
+          setLinkedInVoucherError('Este código não é aplicável a esta análise.'); return false;
         }
+        if (coupon.discount_percent === 100) {
+          // 100% discount = free access, same as voucher
+          sessionStorage.setItem('isPaid', 'true');
+          sessionStorage.setItem('voucherCode', code);
+          sessionStorage.setItem('paymentAmount', '0');
+          sessionStorage.setItem('transactionId', `COUPON-${code}`);
+          setShowLinkedInPaywall(false);
+          return true;
+        }
+        // Partial discount not supported for LinkedIn paywall (requires full access)
+        setLinkedInVoucherError('Este código dá um desconto parcial. Usa-o no pagamento.');
+        return false;
+      }
+
+      // Step 2: Check vouchers table
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
       });
       const vouchers = await res.json();
       if (!Array.isArray(vouchers) || vouchers.length === 0) {
@@ -1707,15 +1734,15 @@ export default function Home() {
                 <p className="text-sm text-white/70">A análise via LinkedIn requer um pacote pago. Obtém um relatório completo com score ATS, estimativa salarial e recomendações personalizadas.</p>
               </div>
 
-              {/* Voucher code input */}
+              {/* Discount code input */}
               <div className="space-y-2">
-                <p className="text-xs font-medium text-white/80">Já tens um código?</p>
+                <p className="text-xs font-medium text-white/80">Já tens um código de desconto?</p>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={linkedInVoucherCode}
                     onChange={(e) => setLinkedInVoucherCode(e.target.value.toUpperCase())}
-                    placeholder="Ex: S2I-XXXXXX"
+                    placeholder="Inserir código"
                     className="flex-1 px-3 py-2 rounded-lg border border-white/20 bg-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961] uppercase tracking-wider"
                   />
                   <button

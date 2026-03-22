@@ -148,16 +148,12 @@ export default function CareerPathResults() {
   const [proPollingExpired, setProPollingExpired] = useState(false);
   const [proCurrentOrderId, setProCurrentOrderId] = useState<string | null>(null);
 
-  // PRO voucher & coupon state
-  const [proCouponCode, setProCouponCode] = useState('');
-  const [proCouponDiscount, setProCouponDiscount] = useState(0);
-  const [proCouponLoading, setProCouponLoading] = useState(false);
-  const [proCouponError, setProCouponError] = useState<string | null>(null);
-  const [proCouponValid, setProCouponValid] = useState(false);
-  const [showProVoucher, setShowProVoucher] = useState(false);
-  const [proVoucherCode, setProVoucherCode] = useState('');
-  const [proVoucherError, setProVoucherError] = useState<string | null>(null);
-  const [proVoucherLoading, setProVoucherLoading] = useState(false);
+  // PRO unified discount code state
+  const [proDiscountCode, setProDiscountCode] = useState('');
+  const [proDiscountPercent, setProDiscountPercent] = useState(0);
+  const [proDiscountLoading, setProDiscountLoading] = useState(false);
+  const [proDiscountError, setProDiscountError] = useState<string | null>(null);
+  const [proDiscountValid, setProDiscountValid] = useState(false);
 
   const genMessagesPT = [
     "A analisar o teu perfil profissional...",
@@ -219,12 +215,12 @@ export default function CareerPathResults() {
   const [pollingMsg, setPollingMsg] = useState('');
   const [paymentLoading, setPaymentLoading] = useState(false);
 
-  // Voucher modal
-  const [showVoucherModal, setShowVoucherModal] = useState(false);
-  const [voucherCode, setVoucherCode] = useState('');
-  const [voucherError, setVoucherError] = useState<string | null>(null);
-  const [voucherLoading, setVoucherLoading] = useState(false);
-  const [voucherSuccess, setVoucherSuccess] = useState(false);
+  // Unified discount code modal for Career Path
+  const [showDiscountModal, setShowDiscountModal] = useState(false);
+  const [discountCode, setDiscountCode] = useState('');
+  const [discountError, setDiscountError] = useState<string | null>(null);
+  const [discountLoading, setDiscountLoading] = useState(false);
+  const [discountSuccess, setDiscountSuccess] = useState(false);
 
   // Email report
   const [postCopied, setPostCopied] = useState(false);
@@ -375,17 +371,41 @@ export default function CareerPathResults() {
     }
   }, [linkedinUrl]);
 
-  /* ─── Voucher validation ─── */
-  const handleVoucherSubmit = async () => {
-    if (!voucherCode.trim()) {
-      setVoucherError(isEN ? 'Enter a voucher code' : 'Introduz um código de voucher');
+  /* ─── Unified discount code validation for Career Path ─── */
+  const handleDiscountSubmit = async () => {
+    if (!discountCode.trim()) {
+      setDiscountError(isEN ? 'Enter a code' : 'Introduz um código');
       return;
     }
-    setVoucherLoading(true);
-    setVoucherError(null);
+    setDiscountLoading(true);
+    setDiscountError(null);
+    const code = discountCode.trim().toUpperCase();
     try {
-      const code = voucherCode.trim().toUpperCase();
-      // 1. Query voucher from Supabase REST API
+      // Step 1: Check discount_coupons
+      const couponRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`,
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+      );
+      const coupons = await couponRes.json();
+      if (Array.isArray(coupons) && coupons.length > 0) {
+        const coupon = coupons[0];
+        const now = new Date();
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) throw new Error(isEN ? 'This code is not yet active.' : 'Este código ainda não está ativo.');
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) throw new Error(isEN ? 'This code has expired.' : 'Este código já expirou.');
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) throw new Error(isEN ? 'This code has reached its usage limit.' : 'Este código atingiu o limite.');
+        const products = coupon.applicable_products || [];
+        if (products.length > 0 && !products.includes('all') && !products.includes('career_path')) throw new Error(isEN ? 'This code is not applicable here.' : 'Este código não é aplicável aqui.');
+        if (coupon.discount_percent === 100) {
+          setDiscountSuccess(true);
+          setShowDiscountModal(false);
+          await new Promise(resolve => setTimeout(resolve, 350));
+          await generateCareerPath();
+          return;
+        }
+        throw new Error(isEN ? 'This code gives a partial discount. Use it during payment.' : 'Este código dá desconto parcial. Usa-o no pagamento.');
+      }
+
+      // Step 2: Check vouchers table
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`,
         { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
@@ -396,7 +416,6 @@ export default function CareerPathResults() {
       if (!v.is_active) throw new Error(isEN ? 'This code has already been used' : 'Este código já foi utilizado');
       if (v.used_analyses >= v.total_analyses) throw new Error(isEN ? 'This code has no remaining uses' : 'Este código já não tem utilizações disponíveis');
       if (v.voucher_type !== 'career_path' && !v.includes_career_path) throw new Error(isEN ? 'This code is not valid for Career Path' : 'Este código não é válido para o Career Path');
-      // 2. Mark voucher as used
       await fetch(
         `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
         {
@@ -405,16 +424,14 @@ export default function CareerPathResults() {
           body: JSON.stringify({ used_analyses: v.used_analyses + 1, is_active: (v.used_analyses + 1) < v.total_analyses }),
         }
       );
-      setVoucherSuccess(true);
-      setShowVoucherModal(false);
-      // Wait for Dialog close animation to finish before triggering
-      // re-render via generateCareerPath — prevents React removeChild error
+      setDiscountSuccess(true);
+      setShowDiscountModal(false);
       await new Promise(resolve => setTimeout(resolve, 350));
       await generateCareerPath();
     } catch (err: any) {
-      setVoucherError(err.message || (isEN ? 'Invalid code' : 'Código inválido'));
+      setDiscountError(err.message || (isEN ? 'Invalid code' : 'Código inválido'));
     } finally {
-      setVoucherLoading(false);
+      setDiscountLoading(false);
     }
   };
 
@@ -632,7 +649,7 @@ export default function CareerPathResults() {
 
   /* ─── Career Intelligence PRO payment handlers ─── */
   const PRO_PRICE = isEN ? 29 : 29;
-  const PRO_PRICE_FINAL = proCouponDiscount > 0 ? Math.round(PRO_PRICE * (100 - proCouponDiscount) / 100 * 100) / 100 : PRO_PRICE;
+  const PRO_PRICE_FINAL = proDiscountPercent > 0 ? Math.round(PRO_PRICE * (100 - proDiscountPercent) / 100 * 100) / 100 : PRO_PRICE;
   const PRO_PRICE_DISPLAY = isEN ? `$${PRO_PRICE_FINAL}` : `${PRO_PRICE_FINAL}€`;
 
 
@@ -640,80 +657,93 @@ export default function CareerPathResults() {
     setProPaymentStep('payment');
     setProPaymentError(null);
     setProPaymentMethod(isEN ? 'stripe' : 'mbway');
-    setProCouponCode('');
-    setProCouponDiscount(0);
-    setProCouponValid(false);
-    setProCouponError(null);
-    setShowProVoucher(false);
-    setProVoucherCode('');
-    setProVoucherError(null);
+    setProDiscountCode('');
+    setProDiscountPercent(0);
+    setProDiscountValid(false);
+    setProDiscountError(null);
     setShowProPaymentModal(true);
   };
 
-  /* ─── PRO coupon validation ─── */
-  const handleProCouponValidate = async () => {
-    if (!proCouponCode.trim()) { setProCouponError(isEN ? 'Enter a discount code' : 'Introduz um código de desconto'); return; }
-    setProCouponLoading(true);
-    setProCouponError(null);
+  /* ─── PRO unified discount code validation (checks coupons first, then vouchers) ─── */
+  const handleProDiscountValidate = async () => {
+    if (!proDiscountCode.trim()) { setProDiscountError(isEN ? 'Enter a code' : 'Introduz um código'); return; }
+    setProDiscountLoading(true);
+    setProDiscountError(null);
+    const code = proDiscountCode.trim().toUpperCase();
     try {
-      const res = await fetch(`${BACKEND_URL}/api/payment/validate-coupon`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: proCouponCode.trim().toUpperCase(), product: 'career_intelligence_pro' }),
-      });
-      const data = await res.json();
-      if (data.valid && data.discount_percent > 0) {
-        setProCouponDiscount(data.discount_percent);
-        setProCouponValid(true);
-        setProCouponError(null);
-      } else {
-        setProCouponError(data.error || (isEN ? 'Invalid or expired code' : 'Código inválido ou expirado'));
-        setProCouponDiscount(0);
-        setProCouponValid(false);
+      // Step 1: Check discount_coupons via Supabase REST
+      const couponRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`,
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+      );
+      const coupons = await couponRes.json();
+      if (Array.isArray(coupons) && coupons.length > 0) {
+        const coupon = coupons[0];
+        const now = new Date();
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setProDiscountError(isEN ? 'This code is not yet active.' : 'Este código ainda não está ativo.'); return; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setProDiscountError(isEN ? 'This code has expired.' : 'Este código já expirou.'); return; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setProDiscountError(isEN ? 'This code has reached its usage limit.' : 'Este código atingiu o limite.'); return; }
+        const products = coupon.applicable_products || [];
+        if (products.length > 0 && !products.includes('all') && !products.includes('career_intelligence_pro') && !products.includes('career_intelligence')) { setProDiscountError(isEN ? 'This code is not applicable here.' : 'Este código não é aplicável aqui.'); return; }
+        if (coupon.discount_percent === 100) {
+          // 100% = free, unlock directly
+          trackPurchase('career_intelligence_pro', 0, `COUPON-${code}`);
+          trackAffiliateConversion({ product: 'career_intelligence_pro', amount: 0, currency: isEN ? 'USD' : 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
+          unlockPro();
+          return;
+        }
+        setProDiscountPercent(coupon.discount_percent);
+        setProDiscountValid(true);
+        return;
       }
-    } catch {
-      setProCouponError(isEN ? 'Error validating code' : 'Erro ao validar código');
-    } finally {
-      setProCouponLoading(false);
-    }
-  };
 
-  /* ─── PRO voucher validation ─── */
-  const handleProVoucherSubmit = async () => {
-    if (!proVoucherCode.trim()) { setProVoucherError(isEN ? 'Enter a voucher code' : 'Introduz um código de voucher'); return; }
-    setProVoucherLoading(true);
-    setProVoucherError(null);
-    try {
-      const code = proVoucherCode.trim().toUpperCase();
+      // Step 2: Also try backend validate-coupon endpoint as fallback
+      try {
+        const backendRes = await fetch(`${BACKEND_URL}/api/payment/validate-coupon`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, product: 'career_intelligence_pro' }),
+        });
+        const backendData = await backendRes.json();
+        if (backendData.valid && backendData.discount_percent > 0) {
+          setProDiscountPercent(backendData.discount_percent);
+          setProDiscountValid(true);
+          return;
+        }
+      } catch { /* backend coupon check failed, continue to vouchers */ }
+
+      // Step 3: Check vouchers table
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`,
         { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
       );
       const rows = await res.json();
-      if (!rows || rows.length === 0) throw new Error(isEN ? 'Invalid voucher code' : 'Código de voucher inválido');
-      const v = rows[0];
-      if (!v.is_active) throw new Error(isEN ? 'This code has already been used' : 'Este código já foi utilizado');
-      if (v.used_analyses >= v.total_analyses) throw new Error(isEN ? 'This code has no remaining uses' : 'Este código já não tem utilizações disponíveis');
-      if (v.voucher_type !== 'career_intelligence_pro' && v.voucher_type !== 'complete' && !v.includes_career_intelligence_pro) {
-        throw new Error(isEN ? 'This code is not valid for Career Intelligence PRO' : 'Este código não é válido para o Career Intelligence PRO');
-      }
-      // Mark voucher as used
-      await fetch(
-        `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
-        {
-          method: 'PATCH',
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-          body: JSON.stringify({ used_analyses: (v.used_analyses || 0) + 1, is_active: ((v.used_analyses || 0) + 1) < v.total_analyses }),
+      if (Array.isArray(rows) && rows.length > 0) {
+        const v = rows[0];
+        if (!v.is_active) { setProDiscountError(isEN ? 'This code has already been used' : 'Este código já foi utilizado'); return; }
+        if (v.used_analyses >= v.total_analyses) { setProDiscountError(isEN ? 'This code has no remaining uses' : 'Este código já não tem utilizações disponíveis'); return; }
+        if (v.voucher_type !== 'career_intelligence_pro' && v.voucher_type !== 'complete' && !v.includes_career_intelligence_pro) {
+          setProDiscountError(isEN ? 'This code is not valid for Career Intelligence PRO' : 'Este código não é válido para o Career Intelligence PRO'); return;
         }
-      );
-      // Unlock PRO
-      trackPurchase('career_intelligence_pro', 0, `CI-VOUCHER-${code}`);
-      trackAffiliateConversion({ product: 'career_intelligence_pro', amount: 0, currency: isEN ? 'USD' : 'EUR', payment_method: 'voucher', transaction_id: `CI-VOUCHER-${code}` });
-      unlockPro();
+        await fetch(
+          `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
+          {
+            method: 'PATCH',
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+            body: JSON.stringify({ used_analyses: (v.used_analyses || 0) + 1, is_active: ((v.used_analyses || 0) + 1) < v.total_analyses }),
+          }
+        );
+        trackPurchase('career_intelligence_pro', 0, `CI-VOUCHER-${code}`);
+        trackAffiliateConversion({ product: 'career_intelligence_pro', amount: 0, currency: isEN ? 'USD' : 'EUR', payment_method: 'voucher', transaction_id: `CI-VOUCHER-${code}` });
+        unlockPro();
+        return;
+      }
+
+      setProDiscountError(isEN ? 'Invalid or expired code' : 'Código inválido ou expirado');
     } catch (err: any) {
-      setProVoucherError(err.message || (isEN ? 'Error validating voucher' : 'Erro ao validar voucher'));
+      setProDiscountError(err.message || (isEN ? 'Error validating code' : 'Erro ao validar código'));
     } finally {
-      setProVoucherLoading(false);
+      setProDiscountLoading(false);
     }
   };
 
@@ -953,7 +983,7 @@ export default function CareerPathResults() {
             ) : (
               <>
                 <Button
-                  onClick={() => setShowVoucherModal(true)}
+                  onClick={() => setShowDiscountModal(true)}
                   variant="outline"
                   size="sm"
                   className="text-xs sm:text-sm font-medium border-[#C9A961]/30 text-[#C9A961] hover:bg-[#C9A961]/5"
@@ -2373,11 +2403,11 @@ export default function CareerPathResults() {
 
             <div className="text-center space-y-2">
               <button
-                onClick={() => setShowVoucherModal(true)}
+                onClick={() => setShowDiscountModal(true)}
                 className="text-sm text-[#C9A961] hover:underline flex items-center gap-1 mx-auto"
               >
                 <Ticket className="w-4 h-4" />
-                {isEN ? 'I already have a voucher code' : 'Já tenho um código de voucher'}
+                {isEN ? 'I already have a discount code' : 'Já tenho um código de desconto'}
               </button>
             </div>
           </div>
@@ -2596,43 +2626,43 @@ export default function CareerPathResults() {
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-[#C9A961]">{PRO_PRICE_DISPLAY}</p>
-                    {proCouponDiscount > 0 && (
-                      <p className="text-xs text-muted-foreground"><span className="line-through">{isEN ? `$${PRO_PRICE}` : `${PRO_PRICE}€`}</span> <span className="text-green-600 font-semibold">-{proCouponDiscount}%</span></p>
+                    {proDiscountPercent > 0 && (
+                      <p className="text-xs text-muted-foreground"><span className="line-through">{isEN ? `$${PRO_PRICE}` : `${PRO_PRICE}€`}</span> <span className="text-green-600 font-semibold">-{proDiscountPercent}%</span></p>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* Discount coupon */}
+              {/* Unified discount code */}
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-foreground">{isEN ? 'Discount code (optional)' : 'Código de desconto (opcional)'}</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    value={proCouponCode}
-                    onChange={(e) => { setProCouponCode(e.target.value.toUpperCase()); if (proCouponValid) { setProCouponValid(false); setProCouponDiscount(0); } }}
-                    placeholder={isEN ? 'PROMO20' : 'PROMO20'}
-                    disabled={proCouponValid}
+                    value={proDiscountCode}
+                    onChange={(e) => { setProDiscountCode(e.target.value.toUpperCase()); if (proDiscountValid) { setProDiscountValid(false); setProDiscountPercent(0); } setProDiscountError(null); }}
+                    placeholder={isEN ? 'CODE' : 'CÓDIGO'}
+                    disabled={proDiscountValid}
                     className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                    onKeyDown={(e) => e.key === 'Enter' && !proCouponValid && handleProCouponValidate()}
+                    onKeyDown={(e) => e.key === 'Enter' && !proDiscountValid && handleProDiscountValidate()}
                   />
-                  {proCouponValid ? (
-                    <Button variant="outline" onClick={() => { setProCouponCode(''); setProCouponDiscount(0); setProCouponValid(false); setProCouponError(null); }} className="text-xs">
+                  {proDiscountValid ? (
+                    <Button variant="outline" onClick={() => { setProDiscountCode(''); setProDiscountPercent(0); setProDiscountValid(false); setProDiscountError(null); }} className="text-xs">
                       {isEN ? 'Remove' : 'Remover'}
                     </Button>
                   ) : (
                     <Button
                       variant="outline"
-                      onClick={handleProCouponValidate}
-                      disabled={proCouponLoading || !proCouponCode.trim()}
+                      onClick={handleProDiscountValidate}
+                      disabled={proDiscountLoading || !proDiscountCode.trim()}
                       className="text-xs"
                     >
-                      {proCouponLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : (isEN ? 'Apply' : 'Aplicar')}
+                      {proDiscountLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : (isEN ? 'Apply' : 'Aplicar')}
                     </Button>
                   )}
                 </div>
-                {proCouponError && <p className="text-xs text-red-500">{proCouponError}</p>}
-                {proCouponValid && <p className="text-xs text-green-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" />{isEN ? `${proCouponDiscount}% discount applied!` : `Desconto de ${proCouponDiscount}% aplicado!`}</p>}
+                {proDiscountError && <p className="text-xs text-red-500">{proDiscountError}</p>}
+                {proDiscountValid && <p className="text-xs text-green-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" />{isEN ? `${proDiscountPercent}% discount applied!` : `Desconto de ${proDiscountPercent}% aplicado!`}</p>}
               </div>
 
               {/* Email */}
@@ -2731,41 +2761,7 @@ export default function CareerPathResults() {
                 </Button>
               </div>
 
-              {/* Voucher link & input */}
-              <div className="text-center pt-1">
-                {!showProVoucher ? (
-                  <button
-                    onClick={() => setShowProVoucher(true)}
-                    className="text-sm text-[#C9A961] hover:underline flex items-center gap-1 mx-auto"
-                  >
-                    <Ticket className="w-4 h-4" />
-                    {isEN ? 'I have a voucher code' : 'Já tenho um código de voucher'}
-                  </button>
-                ) : (
-                  <div className="space-y-2 p-3 border border-[#C9A961]/20 rounded-lg bg-[#C9A961]/5">
-                    <input
-                      type="text"
-                      value={proVoucherCode}
-                      onChange={(e) => setProVoucherCode(e.target.value.toUpperCase())}
-                      placeholder="Ex: CI-XXXXX-XXXXX"
-                      className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                      onKeyDown={(e) => e.key === 'Enter' && handleProVoucherSubmit()}
-                    />
-                    {proVoucherError && (
-                      <p className="text-xs text-red-500 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3 shrink-0" />{proVoucherError}
-                      </p>
-                    )}
-                    <Button
-                      onClick={handleProVoucherSubmit}
-                      disabled={proVoucherLoading || !proVoucherCode.trim()}
-                      className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold text-sm"
-                    >
-                      {proVoucherLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Unlock className="w-4 h-4 mr-2" />{isEN ? 'Validate Voucher' : 'Validar Voucher'}</>}
-                    </Button>
-                  </div>
-                )}
-              </div>
+
             </div>
           )}
 
@@ -2806,38 +2802,38 @@ export default function CareerPathResults() {
         </DialogContent>
       </Dialog>
 
-      {/* ─── Voucher Modal ─── */}
-      <Dialog open={showVoucherModal} onOpenChange={setShowVoucherModal}>
+      {/* ─── Discount Code Modal ─── */}
+      <Dialog open={showDiscountModal} onOpenChange={setShowDiscountModal}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Ticket className="w-5 h-5 text-[#C9A961]" />
-              {isEN ? 'Voucher Code' : 'Código de Voucher'}
+              {isEN ? 'Discount Code' : 'Código de Desconto'}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              {isEN ? 'Enter your voucher code to unlock the Career Path.' : 'Introduz o teu código de voucher para desbloquear o Career Path.'}
+              {isEN ? 'Enter your code to unlock the Career Path.' : 'Introduz o teu código para desbloquear o Career Path.'}
             </p>
             <input
               type="text"
-              value={voucherCode}
-              onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
-              placeholder="Ex: CP-XXXXX-XXXXX"
+              value={discountCode}
+              onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+              placeholder={isEN ? 'Enter code' : 'Inserir código'}
               className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-              onKeyDown={(e) => e.key === 'Enter' && handleVoucherSubmit()}
+              onKeyDown={(e) => e.key === 'Enter' && handleDiscountSubmit()}
             />
-            {voucherError && (
+            {discountError && (
               <p className="text-sm text-red-500 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4 shrink-0" />{voucherError}
+                <AlertCircle className="w-4 h-4 shrink-0" />{discountError}
               </p>
             )}
             <Button
-              onClick={handleVoucherSubmit}
-              disabled={voucherLoading || !voucherCode.trim()}
+              onClick={handleDiscountSubmit}
+              disabled={discountLoading || !discountCode.trim()}
               className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
             >
-              {voucherLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Unlock className="w-4 h-4 mr-2" />{isEN ? 'Validate Code' : 'Validar Código'}</>}
+              {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Unlock className="w-4 h-4 mr-2" />{isEN ? 'Validate Code' : 'Validar Código'}</>}
             </Button>
           </div>
         </DialogContent>
