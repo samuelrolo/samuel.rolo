@@ -159,8 +159,8 @@ export default function Dashboard() {
   };
 
   const tabs = [
-    { key: 'analyses' as const, label: 'As minhas análises', icon: BarChart3 },
-    { key: 'resources' as const, label: 'Recursos', icon: BookOpen },
+    { key: 'analyses' as const, label: t('dash.myAnalyses'), icon: BarChart3 },
+    { key: 'resources' as const, label: t('dash.resources'), icon: BookOpen },
     { key: 'profile' as const, label: t('dash.personalInfo'), icon: FileText },
     { key: 'subscription' as const, label: t('dash.subscription'), icon: Compass },
   ];
@@ -222,7 +222,7 @@ export default function Dashboard() {
       if (data.score) return `Score: ${data.score}`;
       if (data.analysis?.teaser?.nota_geral) return `Nota: ${data.analysis.teaser.nota_geral}`;
       if (data.results_text) return data.results_text.substring(0, 80) + '...';
-      if (data.email_used) return `Perfil: ${data.email_used}`;
+      if (data.email_used) return `${t('dash.profile')}: ${data.email_used}`;
     }
     if (analysis.analysis_type === 'career_path') {
       if (data.career_path?.title) return data.career_path.title;
@@ -264,10 +264,10 @@ export default function Dashboard() {
         <div className="mb-8">
           <p className="text-gold text-xs font-light tracking-[0.15em] uppercase mb-2">{t('dash.title')}</p>
           <h1 className="text-2xl font-semibold text-[#1a1a1a]">
-            {profile?.first_name ? `Olá, ${profile.first_name}` : t('dash.title')}
+            {profile?.first_name ? `${t('dash.hello')}, ${profile.first_name}` : t('dash.title')}
           </h1>
           <p className="text-sm text-[#999] font-light mt-1">
-            Aqui encontras todas as tuas análises e informações de conta.
+            {t('dash.subtitle')}
           </p>
         </div>
 
@@ -295,8 +295,8 @@ export default function Dashboard() {
             {/* Explanation */}
             <div className="p-4 bg-gold/5 border border-gold/10 rounded-lg">
               <p className="text-xs text-gold/80 font-light leading-relaxed">
-                A tua conta <span className="font-medium">gratuita</span> guarda todas as análises que fizeres enquanto autenticado.
-                Usa as ferramentas e clica em <span className="font-medium">"Guardar na minha conta"</span> para as ver aqui.
+                {t('dash.freeAccountInfo').split('{free}')[0]}<span className="font-medium">{t('dash.freeLabel')}</span>{t('dash.freeAccountInfo').split('{free}')[1]?.split('{')[0]}
+                {t('dash.saveHint').replace('{save}', t('dash.saveToAccount'))}
               </p>
             </div>
 
@@ -315,7 +315,7 @@ export default function Dashboard() {
                       <div>
                         <h3 className="text-sm font-medium text-[#1a1a1a]">{tool.label}</h3>
                         <p className="text-[10px] text-[#aaa] font-light">
-                          {count > 0 ? `${count} análise${count > 1 ? 's' : ''} guardada${count > 1 ? 's' : ''}` : 'Sem análises'}
+                          {count > 0 ? `${count} ${count > 1 ? t('dash.analysesSaved') : t('dash.analysisSaved')}` : t('dash.noAnalyses')}
                         </p>
                       </div>
                     </div>
@@ -324,7 +324,7 @@ export default function Dashboard() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-1.5 text-xs text-[#999] font-light">
                           <Clock className="w-3 h-3" />
-                          <span>Última: {formatDate(groupedAnalyses[tool.type]?.[0]?.created_at || '')}</span>
+                          <span>{t('dash.last')}: {formatDate(groupedAnalyses[tool.type]?.[0]?.created_at || '')}</span>
                         </div>
                         <button
                           onClick={() => {
@@ -333,17 +333,17 @@ export default function Dashboard() {
                           }}
                           className="flex items-center gap-1.5 text-xs text-gold hover:text-gold-light transition-colors"
                         >
-                          Ver resultados <ArrowRight className="w-3 h-3" />
+                          {t('dash.viewResults')} <ArrowRight className="w-3 h-3" />
                         </button>
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <p className="text-xs text-[#aaa] font-light">Ainda sem análises guardadas</p>
+                        <p className="text-xs text-[#aaa] font-light">{t('dash.noAnalysesYet')}</p>
                         <a
                           href={tool.link}
                           className="inline-flex items-center gap-1.5 text-xs text-gold/60 hover:text-gold transition-colors"
                         >
-                          Fazer análise <ArrowRight className="w-3 h-3" />
+                          {t('dash.doAnalysis')} <ArrowRight className="w-3 h-3" />
                         </a>
                       </div>
                     )}
@@ -356,20 +356,20 @@ export default function Dashboard() {
             {loadingAnalyses ? (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="w-5 h-5 text-gold/40 animate-spin" />
-                <span className="ml-2 text-sm text-[#999] font-light">A carregar análises...</span>
+                <span className="ml-2 text-sm text-[#999] font-light">{t('dash.loadingAnalyses')}</span>
               </div>
             ) : analyses.length > 0 ? (
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-medium text-[#1a1a1a]">
-                    Análises guardadas ({analyses.length})
+                    {t('dash.savedAnalyses')} ({analyses.length})
                   </h2>
                   <button
                     onClick={loadAnalyses}
                     className="flex items-center gap-1.5 text-xs text-[#999] hover:text-gold transition-colors"
                   >
                     <RefreshCw className="w-3 h-3" />
-                    Atualizar
+                    {t('dash.refresh')}
                   </button>
                 </div>
 
@@ -401,7 +401,7 @@ export default function Dashboard() {
                                 </span>
                               </div>
                               <p className="text-sm text-[#333] font-light truncate">
-                                {getAnalysisSummary(analysis) || 'Análise guardada'}
+                                {getAnalysisSummary(analysis) || t('dash.analysisSaved')}
                               </p>
                             </div>
                             <div className="flex items-center gap-2 ml-4">
@@ -412,7 +412,7 @@ export default function Dashboard() {
                                 }}
                                 disabled={deletingId === analysis.id}
                                 className="p-1.5 text-[#aaa] hover:text-red-400 transition-colors"
-                                title="Eliminar análise"
+                                title={t('dash.deleteAnalysis')}
                               >
                                 {deletingId === analysis.id ? (
                                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -435,19 +435,19 @@ export default function Dashboard() {
                                 {/* Score summary line */}
                                 {analysis.data?.score && (
                                   <div className="flex items-center gap-2">
-                                    <span className="text-xs text-[#888] font-light">Score:</span>
+                                    <span className="text-xs text-[#888] font-light">{t('dash.score')}:</span>
                                     <span className="text-sm font-medium text-gold">{analysis.data.score}/100</span>
                                   </div>
                                 )}
                                 {analysis.data?.total_score && (
                                   <div className="flex items-center gap-2">
-                                    <span className="text-xs text-[#888] font-light">Score:</span>
+                                    <span className="text-xs text-[#888] font-light">{t('dash.score')}:</span>
                                     <span className="text-sm font-medium text-gold">{analysis.data.total_score}{analysis.data.level ? ` — ${analysis.data.level}` : ''}</span>
                                   </div>
                                 )}
                                 {analysis.data?.archetype && (
                                   <div className="flex items-center gap-2">
-                                    <span className="text-xs text-[#888] font-light">Arquétipo:</span>
+                                    <span className="text-xs text-[#888] font-light">{t('dash.archetype')}:</span>
                                     <span className="text-sm font-medium text-gold">{analysis.data.archetype}</span>
                                   </div>
                                 )}
@@ -468,7 +468,7 @@ export default function Dashboard() {
                                   <div className="space-y-2">
                                     {analysis.data.analysis.keywords && (
                                       <div>
-                                        <span className="text-xs text-[#888] font-light block mb-1">Palavras-chave:</span>
+                                        <span className="text-xs text-[#888] font-light block mb-1">{t('dash.keywords')}:</span>
                                         <p className="text-xs text-[#666] font-light">
                                           {Array.isArray(analysis.data.analysis.keywords)
                                             ? analysis.data.analysis.keywords.slice(0, 8).join(', ')
@@ -478,7 +478,7 @@ export default function Dashboard() {
                                     )}
                                     {analysis.data.analysis.recommendations && (
                                       <div>
-                                        <span className="text-xs text-[#888] font-light block mb-1">Recomendações:</span>
+                                        <span className="text-xs text-[#888] font-light block mb-1">{t('dash.recommendations')}:</span>
                                         <ul className="space-y-0.5">
                                           {(Array.isArray(analysis.data.analysis.recommendations)
                                             ? analysis.data.analysis.recommendations
@@ -527,7 +527,7 @@ export default function Dashboard() {
                                 {/* Fallback: results_text when no HTML */}
                                 {!analysis.data?.results_html && analysis.data?.results_text && (
                                   <div>
-                                    <span className="text-xs text-[#888] font-light block mb-1">Resumo:</span>
+                                    <span className="text-xs text-[#888] font-light block mb-1">{t('dash.summary')}:</span>
                                     <p className="text-xs text-[#888] font-light leading-relaxed">
                                       {analysis.data.results_text.substring(0, 800)}
                                     </p>
@@ -540,14 +540,14 @@ export default function Dashboard() {
                                     href={config.link}
                                     className="inline-flex items-center gap-1.5 text-xs text-gold/60 hover:text-gold transition-colors mt-2"
                                   >
-                                    Fazer nova análise <ArrowRight className="w-3 h-3" />
+                                    {t('dash.doAnalysis')} <ArrowRight className="w-3 h-3" />
                                   </a>
                                 )}
 
                                 {/* Captured at */}
                                 {analysis.data?.captured_at && (
                                   <p className="text-[10px] text-[#bbb] font-light">
-                                    Capturado: {formatDate(analysis.data.captured_at)}
+                                    {formatDate(analysis.data.captured_at)}
                                   </p>
                                 )}
                               </div>
@@ -562,9 +562,9 @@ export default function Dashboard() {
             ) : (
               <div className="text-center py-12 border border-[#e5e5e5] rounded-lg">
                 <BarChart3 className="w-8 h-8 text-[#ccc] mx-auto mb-3" />
-                <p className="text-sm text-[#999] font-light mb-1">Ainda sem análises guardadas</p>
+                <p className="text-sm text-[#999] font-light mb-1">{t('dash.noAnalysesYet')}</p>
                 <p className="text-xs text-[#bbb] font-light mb-4">
-                  Usa as ferramentas e clica em "Guardar na minha conta" para as ver aqui.
+                  {t('dash.saveHint').replace('{save}', t('dash.saveToAccount'))}
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
                   {allTools.map(tool => (
@@ -588,7 +588,7 @@ export default function Dashboard() {
                 <div className="flex items-center gap-4 flex-wrap">
                   <div className="flex items-center gap-2 text-sm text-[#555]">
                     <FileText className="w-4 h-4 text-gold/60" />
-                    <span className="font-light">{profile.cv_filename || 'CV carregado'}</span>
+                    <span className="font-light">{profile.cv_filename || t('dash.cvUploaded')}</span>
                   </div>
                   <a href={profile.cv_url || profile.cv_file_url} target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-1.5 text-xs text-gold hover:text-gold-light transition-colors">
@@ -624,13 +624,13 @@ export default function Dashboard() {
                     <Compass className="w-5 h-5 text-gold" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">Queres acesso a todas as ferramentas?</h3>
+                    <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('dash.wantAccess')}</h3>
                     <p className="text-xs text-[#999] font-light mb-3">
-                      Com um plano ativo, tens acesso ilimitado ao CV Maker, Career Advisory Bot, LinkedIn Roster, e-books exclusivos e muito mais.
+                      {t('dash.withPlan')}
                     </p>
                     <Link href="/planos"
                       className="inline-flex items-center gap-2 px-4 py-2 bg-gold text-[#1a1a1a] text-sm font-medium rounded hover:bg-gold-light transition-all duration-300">
-                      Ver planos <ArrowRight className="w-3.5 h-3.5" />
+                      {t('dash.seePlans')} <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
                 </div>
@@ -696,7 +696,7 @@ export default function Dashboard() {
               <>
                 <div className="p-4 bg-gold/5 border border-gold/10 rounded-lg">
                   <p className="text-xs text-gold/80 font-light leading-relaxed">
-                    Recursos exclusivos para subscritores. Faz download dos materiais que te ajudam a evoluir na carreira.
+                    {t('dash.exclusiveResources')}. {t('dash.exclusiveResourcesDesc')}
                   </p>
                 </div>
                 <div className="space-y-3">
@@ -739,9 +739,9 @@ export default function Dashboard() {
                 <div className="w-14 h-14 bg-[#f5f5f5] rounded-full flex items-center justify-center mx-auto mb-4">
                   <Lock className="w-6 h-6 text-[#ccc]" />
                 </div>
-                <h3 className="text-base font-semibold text-[#1a1a1a] mb-2">Recursos exclusivos para subscritores</h3>
+                <h3 className="text-base font-semibold text-[#1a1a1a] mb-2">{t('dash.exclusiveResources')}</h3>
                 <p className="text-sm text-[#999] font-light mb-6 max-w-md mx-auto">
-                  Ativa a tua subscrição para aceder a ebooks, guias e materiais exclusivos que te ajudam a evoluir na carreira.
+                  {t('dash.exclusiveResourcesDesc')}
                 </p>
                 <Link href="/planos"
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-gold text-[#1a1a1a] text-sm font-medium rounded hover:bg-gold-light transition-all duration-300">
@@ -775,7 +775,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-xs text-[#999] font-light mb-1">{t('dash.noSubscription')}</p>
                 <p className="text-xs text-[#aaa] font-light mb-4">
-                  A tua conta gratuita permite guardar análises. Para aceder a todas as ferramentas premium, subscreve um plano.
+                  {t('dash.freeAccountInfo').replace('{free}', t('dash.freeLabel'))}
                 </p>
                 <Link href="/planos"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-gold text-[#1a1a1a] text-sm font-medium rounded hover:bg-gold-light transition-all duration-300">
