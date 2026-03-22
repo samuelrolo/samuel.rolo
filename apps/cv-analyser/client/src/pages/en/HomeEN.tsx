@@ -386,18 +386,19 @@ export default function HomeEN() {
       const path = `${userId}/cv.${ext}`;
       fetch(`${SUPABASE_URL}/storage/v1/object/user-cvs/${path}`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${accessToken}`, 'x-upsert': 'true' },
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'x-upsert': 'true' },
         body: blob
       }).then(r => {
         if (r.ok) {
-          const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/user-cvs/${path}`;
+          const storagePath = `${SUPABASE_URL}/storage/v1/object/authenticated/user-cvs/${path}`;
           fetch(`${SUPABASE_URL}/rest/v1/user_profiles?id=eq.${userId}`, {
             method: 'PATCH',
             headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ cv_url: publicUrl, cv_filename: filename, cv_uploaded_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+            body: JSON.stringify({ cv_url: storagePath, cv_filename: filename, cv_uploaded_at: new Date().toISOString(), updated_at: new Date().toISOString() })
           }).catch(() => {});
+          console.log('[S2I] CV saved to storage');
         }
-      }).catch(() => {});
+      }).catch(e => console.warn('[S2I] CV storage error:', e));
     } catch (e) { /* silent */ }
   }
 
@@ -1195,7 +1196,16 @@ export default function HomeEN() {
                 type="button"
                 onClick={async () => {
                   try {
-                    const res = await fetch(savedCvInfo.url);
+                    const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+                    const stored = storageKey ? localStorage.getItem(storageKey) : null;
+                    const accessToken = stored ? JSON.parse(stored)?.access_token : null;
+                    const userId = stored ? JSON.parse(stored)?.user?.id : null;
+                    const filePath = `${userId}/cv.pdf`;
+                    const downloadUrl = `${SUPABASE_URL}/storage/v1/object/authenticated/user-cvs/${filePath}`;
+                    const res = await fetch(downloadUrl, {
+                      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` }
+                    });
+                    if (!res.ok) throw new Error('Download failed');
                     const blob = await res.blob();
                     const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
                     setFile(f);
@@ -1250,7 +1260,16 @@ export default function HomeEN() {
                         onClick={async (e) => {
                           e.preventDefault(); e.stopPropagation();
                           try {
-                            const res = await fetch(savedCvInfo.url);
+                            const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+                            const stored = storageKey ? localStorage.getItem(storageKey) : null;
+                            const accessToken = stored ? JSON.parse(stored)?.access_token : null;
+                            const userId = stored ? JSON.parse(stored)?.user?.id : null;
+                            const filePath = `${userId}/cv.pdf`;
+                            const downloadUrl = `${SUPABASE_URL}/storage/v1/object/authenticated/user-cvs/${filePath}`;
+                            const res = await fetch(downloadUrl, {
+                              headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` }
+                            });
+                            if (!res.ok) throw new Error('Download failed');
                             const blob = await res.blob();
                             const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
                             setFile(f);
