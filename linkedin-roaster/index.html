@@ -1024,6 +1024,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                     </div>
                     <p class="includes">Inclui: Sumário executivo, pontos fortes, áreas de melhoria, headlines sugeridas, análise de formação, SEO e recomendação prioritária.</p>
 
+                    <div id="paymentButtonsGroup">
                     <button class="pay-btn" onclick="showMBWayForm()">
                         <img loading="lazy" src="https://ifthenpay.com/images/mbway.svg" alt="MB WAY" onerror="this.style.display='none'">
                         Pagar com MB WAY
@@ -1035,6 +1036,12 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                     <button class="pay-btn" onclick="payWithPayPal()">
                         <i class="fab fa-paypal" style="color:#003087;"></i>
                         Pagar com PayPal
+                    </button>
+                    </div>
+
+                    <button class="pay-btn" id="btnFreeUnlock" onclick="confirmMBWay()" style="display:none;background:#16a34a;border-color:#16a34a;color:#fff;font-weight:700;font-size:1rem;">
+                        <i class="fas fa-unlock" style="color:#fff;"></i>
+                        Desbloquear Grátis
                     </button>
 
                     <!-- MB WAY Form -->
@@ -1552,15 +1559,28 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     function updatePriceDisplay() {
         const priceEl = document.getElementById('priceDisplay');
         const badgeEl = document.getElementById('discountBadge');
+        const payBtns = document.getElementById('paymentButtonsGroup');
+        const freeBtn = document.getElementById('btnFreeUnlock');
+        const mbwayModal = document.getElementById('mbwayModal');
         if (activeCoupon) {
             const discounted = getCurrentPrice();
             priceEl.style.display = 'none';
             badgeEl.style.display = 'block';
             document.getElementById('discountedPrice').textContent = discounted.toFixed(2).replace('.', ',') + '\u20AC';
             document.getElementById('discountTag').textContent = '-' + activeCoupon.discount_percent + '%';
+            if (discounted <= 0) {
+                payBtns.style.display = 'none';
+                mbwayModal.style.display = 'none';
+                freeBtn.style.display = 'block';
+            } else {
+                payBtns.style.display = 'block';
+                freeBtn.style.display = 'none';
+            }
         } else {
             priceEl.style.display = 'block';
             badgeEl.style.display = 'none';
+            payBtns.style.display = 'block';
+            freeBtn.style.display = 'none';
         }
     }
 
