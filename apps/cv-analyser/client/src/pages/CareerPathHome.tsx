@@ -3,7 +3,7 @@
 // Preço: €19,99
 
 import { useState, useEffect } from "react";
-import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, XCircle, Minus, ChevronDown, ChevronUp, Linkedin, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, Globe, DollarSign, Zap, Lock, ArrowRight, Shield, Check, Eye } from "lucide-react";
+import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, XCircle, Minus, ChevronDown, ChevronUp, Linkedin, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, Globe, DollarSign, Zap, Lock, ArrowRight, Shield, Check, Eye, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLocation } from "wouter";
@@ -568,20 +568,7 @@ export default function CareerPathHome() {
                     Roadmap de carreira personalizado, análise de gaps, cargos recomendados com % de fit, formações, certificações, estratégia de networking e plano de acção imediato.
                   </p>
                 </div>
-                {/* Preview cards row */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {[
-                    { icon: <Compass className="w-4 h-4" />, label: "Roadmap de Carreira" },
-                    { icon: <Target className="w-4 h-4" />, label: "Análise de Gaps" },
-                    { icon: <BookOpen className="w-4 h-4" />, label: "Formações & Certificações" },
-                    { icon: <Users className="w-4 h-4" />, label: "Networking & Acções" },
-                  ].map((item, i) => (
-                    <div key={i} className="flex flex-col items-center gap-2 p-3 rounded-xl bg-card/60 border border-border/50 text-center">
-                      <span className="text-[#C9A961]">{item.icon}</span>
-                      <span className="text-xs font-medium text-muted-foreground">{item.label}</span>
-                    </div>
-                  ))}
-                </div>
+
                 {/* CTA */}
                 <div className="flex flex-col items-center gap-4">
                   <div className="flex flex-col sm:flex-row items-center gap-3">
@@ -589,20 +576,20 @@ export default function CareerPathHome() {
                       href="/career-path/example/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 h-11 px-6 text-sm font-semibold rounded-xl border-2 border-[#C9A961] text-[#C9A961] hover:bg-[#C9A961]/10 transition-all"
+                      className="inline-flex items-center gap-2 h-10 px-5 text-sm font-medium rounded-lg bg-white text-[#9a7d3e] border border-[#C9A961]/30 hover:border-[#C9A961] transition-all"
                     >
-                      <Eye className="w-4 h-4" />
-                      Ver Exemplo Completo
+                      <Eye className="w-3.5 h-3.5" />
+                      Ver Exemplo
                     </a>
                     <button
                       onClick={() => setStep('upload')}
-                      className="inline-flex items-center gap-2 h-11 px-6 text-sm font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all shadow-md shadow-[#C9A961]/20"
+                      className="inline-flex items-center gap-2 h-10 px-5 text-sm font-semibold rounded-lg bg-[#1a1a1a] hover:bg-[#2a2a2a] text-white transition-all"
                     >
-                      <Compass className="w-4 h-4" />
+                      <Compass className="w-3.5 h-3.5" />
                       Descobrir os meus 3 caminhos
                     </button>
                   </div>
-                  <p className="text-xs text-muted-foreground">Relatório real gerado pela nossa IA — sem compromisso</p>
+                  <p className="text-xs text-muted-foreground">Relatório real gerado pela nossa IA</p>
                 </div>
                 {/* Competitive statement */}
                 <p className="text-center text-sm md:text-base font-medium italic" style={{ color: '#C9A961' }}>
