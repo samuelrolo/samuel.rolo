@@ -583,16 +583,25 @@ export default function CareerPathHome() {
                   ))}
                 </div>
                 {/* CTA */}
-                <div className="flex flex-col items-center gap-3">
-                  <a
-                    href="/career-path/example/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 h-12 px-8 text-sm font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
-                  >
-                    <Eye className="w-4 h-4" />
-                    Ver Exemplo Completo
-                  </a>
+                <div className="flex flex-col items-center gap-4">
+                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <a
+                      href="/career-path/example/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 h-11 px-6 text-sm font-semibold rounded-xl border-2 border-[#C9A961] text-[#C9A961] hover:bg-[#C9A961]/10 transition-all"
+                    >
+                      <Eye className="w-4 h-4" />
+                      Ver Exemplo Completo
+                    </a>
+                    <button
+                      onClick={() => setStep('upload')}
+                      className="inline-flex items-center gap-2 h-11 px-6 text-sm font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all shadow-md shadow-[#C9A961]/20"
+                    >
+                      <Compass className="w-4 h-4" />
+                      Descobrir os meus 3 caminhos
+                    </button>
+                  </div>
                   <p className="text-xs text-muted-foreground">Relatório real gerado pela nossa IA — sem compromisso</p>
                 </div>
                 {/* Competitive statement */}
