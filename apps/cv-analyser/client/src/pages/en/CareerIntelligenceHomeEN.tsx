@@ -557,8 +557,8 @@ export default function CareerIntelligenceHomeEN() {
                 </div>
               </div>
               <div className="text-center space-y-4 pt-4">
-                <Button onClick={() => setStep('upload')} className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all">
-                  <Scale className="w-5 h-5 mr-2" />Get my career recommendation
+                <Button onClick={() => setStep('upload')} className="h-auto min-h-[3.5rem] px-4 sm:px-10 py-3 text-sm sm:text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all whitespace-normal">
+                  <Scale className="w-5 h-5 mr-2 flex-shrink-0" />Get my career recommendation
                 </Button>
                 <p className="text-xs text-muted-foreground">Full analysis for {CUR}49 · One-time payment · Result in &lt; 1 minute</p>
                 <p className="text-xs text-muted-foreground">Only need the diagnosis? <a href="/en/career-path" className="text-[#C9A961] hover:underline">Career Path for {CUR}19.99 →</a></p>
@@ -618,8 +618,8 @@ export default function CareerIntelligenceHomeEN() {
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
               <h2 className="text-2xl font-bold text-foreground">You don't need more options. You need to know which one to choose.</h2>
               <p className="text-muted-foreground">Full diagnosis + strategic decision for {CUR}49. One-time payment. No subscription.</p>
-              <Button onClick={() => setStep('upload')} className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all">
-                <Scale className="w-5 h-5 mr-2" />Get my career recommendation
+              <Button onClick={() => setStep('upload')} className="h-auto min-h-[3.5rem] px-4 sm:px-10 py-3 text-sm sm:text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all whitespace-normal">
+                <Scale className="w-5 h-5 mr-2 flex-shrink-0" />Get my career recommendation
               </Button>
               <p className="text-xs text-muted-foreground">Only need the diagnosis? <a href="/en/career-path" className="text-[#C9A961] hover:underline">Career Path for {CUR}19.99 →</a></p>
             </div>
