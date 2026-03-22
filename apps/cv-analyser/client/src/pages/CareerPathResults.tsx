@@ -11,8 +11,8 @@ import {
   Loader2, ArrowLeft, Home as HomeIcon, Compass, Lock, CheckCircle2,
   Ticket, Unlock, Target, Sparkles, Calendar, Rocket, GraduationCap,
   Briefcase, Globe, Users, MapPin, ExternalLink, Linkedin, FileCheck,
-  Mail, Send, Euro, TrendingUp, Award, Info, CreditCard, AlertCircle,
-  Zap, DollarSign, BarChart3, Star, ChevronRight, Download, Copy, Check, Scale
+  Mail, Send, TrendingUp, Award, Info, CreditCard, AlertCircle,
+  Zap, DollarSign, BarChart3, Star, ChevronRight, Download, Copy, Check
 } from "lucide-react";
 import { trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
@@ -164,23 +164,6 @@ export default function CareerPathResults() {
   const [genStep, setGenStep] = useState(0);
   const [generateError, setGenerateError] = useState<string | null>(null);
 
-  // Career Intelligence PRO state
-  const [isProUnlocked, setIsProUnlocked] = useState(false);
-  const [showProPaymentModal, setShowProPaymentModal] = useState(false);
-  const [proPaymentStep, setProPaymentStep] = useState<'payment' | 'polling' | 'success'>('payment');
-  const [proPaymentMethod, setProPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>('mbway');
-  const [proPaymentLoading, setProPaymentLoading] = useState(false);
-  const [proPaymentError, setProPaymentError] = useState<string | null>(null);
-  const [proPollingMsg, setProPollingMsg] = useState('');
-  const [proPollingExpired, setProPollingExpired] = useState(false);
-  const [proCurrentOrderId, setProCurrentOrderId] = useState<string | null>(null);
-
-  // PRO unified discount code state
-  const [proDiscountCode, setProDiscountCode] = useState('');
-  const [proDiscountPercent, setProDiscountPercent] = useState(0);
-  const [proDiscountLoading, setProDiscountLoading] = useState(false);
-  const [proDiscountError, setProDiscountError] = useState<string | null>(null);
-  const [proDiscountValid, setProDiscountValid] = useState(false);
 
   const genMessagesPT = [
     "A analisar o teu perfil profissional...",
@@ -235,6 +218,12 @@ export default function CareerPathResults() {
     : { cv: '9,99', cp: '19,99' };
   const CURRENCY_CODE = isEN ? 'USD' : 'EUR';
 
+  /** Format price with correct symbol position: EN = $19.99, PT = 19,99€ */
+  const fmtPrice = (price: string | number) => isEN ? `$${price}` : `${price}€`;
+
+  /** Strip duplicate currency symbols from a string (e.g. "€€30k" → "€30k", "$$50k" → "$50k") */
+  const cleanCurrency = (s: string) => s?.replace(/€€+/g, '€').replace(/\$\$+/g, '$') || s;
+
   const PLANS = getPlans(isEN, CUR, P);
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -275,10 +264,7 @@ export default function CareerPathResults() {
     }
 
     if (linkedin) setLinkedinUrl(linkedin);
-    // Check if Career Intelligence PRO was already purchased
-    if (sessionStorage.getItem('careerIntelligenceProPaid') === 'true' || sessionStorage.getItem('careerIntelligenceFull') === 'true') {
-      setIsProUnlocked(true);
-    }
+
     if (paidFlag === 'true' && savedData) {
       try {
         setCareerPathData(JSON.parse(savedData));
@@ -304,28 +290,11 @@ export default function CareerPathResults() {
         .then(res => res.json())
         .then(data => {
           if (data.success && data.paid) {
-            const productType = data.product_type || '';
             const stripeAmount = data.amount ? data.amount / 100 : 0;
             setIsPaid(true);
             sessionStorage.setItem('careerPathPaid', 'true');
-            if (productType === 'career_intelligence_full') {
-              // Career Intelligence Full — unlock PRO automatically
-              sessionStorage.setItem('careerIntelligenceProPaid', 'true');
-              sessionStorage.setItem('careerIntelligenceFull', 'true');
-              setIsProUnlocked(true);
-              trackPurchase('career_intelligence_full', stripeAmount || (isEN ? 49 : 49), `CI-STRIPE-${sessionId}`);
-              trackAffiliateConversion({ product: 'career_intelligence_full', amount: stripeAmount || (isEN ? 49 : 49), currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CI-STRIPE-${sessionId}` });
-            } else if (productType === 'career_intelligence_pro') {
-              // Career Intelligence PRO upgrade
-              sessionStorage.setItem('careerIntelligenceProPaid', 'true');
-              setIsProUnlocked(true);
-              trackPurchase('career_intelligence_pro', stripeAmount || (isEN ? 29 : 29), `CIPRO-STRIPE-${sessionId}`);
-              trackAffiliateConversion({ product: 'career_intelligence_pro', amount: stripeAmount || (isEN ? 29 : 29), currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CIPRO-STRIPE-${sessionId}` });
-            } else {
-              // Regular Career Path payment
-              trackPurchase('career_path', parseFloat(P.cp.replace(',', '.')), `CP-STRIPE-${sessionId}`);
-              trackAffiliateConversion({ product: 'career_path', amount: parseFloat(P.cp.replace(',', '.')), currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CP-STRIPE-${sessionId}` });
-            }
+            trackPurchase('career_path', stripeAmount || parseFloat(P.cp.replace(',', '.')), `CP-STRIPE-${sessionId}`);
+            trackAffiliateConversion({ product: 'career_path', amount: stripeAmount || parseFloat(P.cp.replace(',', '.')), currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CP-STRIPE-${sessionId}` });
             window.history.replaceState({}, '', window.location.pathname);
             // Auto-generate career path after successful payment
             generateCareerPath();
@@ -333,26 +302,7 @@ export default function CareerPathResults() {
         })
         .catch(err => console.error('Stripe verify error:', err));
     }
-    // Also handle pro_success from Career Intelligence PRO upgrade Stripe redirect
-    if (paymentStatus === 'pro_success' && sessionId) {
-      fetch(`${BACKEND_URL}/api/payment/stripe-verify`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId })
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success && data.paid) {
-            const stripeAmount = data.amount ? data.amount / 100 : (isEN ? 29 : 29);
-            sessionStorage.setItem('careerIntelligenceProPaid', 'true');
-            setIsProUnlocked(true);
-            trackPurchase('career_intelligence_pro', stripeAmount, `CIPRO-STRIPE-${sessionId}`);
-            trackAffiliateConversion({ product: 'career_intelligence_pro', amount: stripeAmount, currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CIPRO-STRIPE-${sessionId}` });
-            window.history.replaceState({}, '', window.location.pathname);
-          }
-        })
-        .catch(err => console.error('Stripe PRO verify error:', err));
-    }
+
   }, [setLocation]);
 
   const generateCareerPath = useCallback(async () => {
@@ -682,267 +632,6 @@ export default function CareerPathResults() {
     await generateCareerPath();
   };
 
-  /* ─── Career Intelligence PRO payment handlers ─── */
-  const PRO_PRICE = isEN ? 29 : 29;
-  const PRO_PRICE_FINAL = proDiscountPercent > 0 ? Math.round(PRO_PRICE * (100 - proDiscountPercent) / 100 * 100) / 100 : PRO_PRICE;
-  const PRO_PRICE_DISPLAY = isEN ? `$${PRO_PRICE_FINAL}` : `${PRO_PRICE_FINAL}€`;
-
-
-  const openProPaymentModal = () => {
-    setProPaymentStep('payment');
-    setProPaymentError(null);
-    setProPaymentMethod(isEN ? 'stripe' : 'mbway');
-    setProDiscountCode('');
-    setProDiscountPercent(0);
-    setProDiscountValid(false);
-    setProDiscountError(null);
-    setShowProPaymentModal(true);
-  };
-
-  /* ─── PRO unified discount code validation (checks coupons first, then vouchers) ─── */
-  const handleProDiscountValidate = async () => {
-    if (!proDiscountCode.trim()) { setProDiscountError(isEN ? 'Enter a code' : 'Introduz um código'); return; }
-    setProDiscountLoading(true);
-    setProDiscountError(null);
-    const code = proDiscountCode.trim().toUpperCase();
-    try {
-      // Step 1: Check discount_coupons via Supabase REST
-      const couponRes = await fetch(
-        `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`,
-        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
-      );
-      const coupons = await couponRes.json();
-      if (Array.isArray(coupons) && coupons.length > 0) {
-        const coupon = coupons[0];
-        const now = new Date();
-        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setProDiscountError(isEN ? 'This code is not yet active.' : 'Este código ainda não está ativo.'); return; }
-        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setProDiscountError(isEN ? 'This code has expired.' : 'Este código já expirou.'); return; }
-        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setProDiscountError(isEN ? 'This code has reached its usage limit.' : 'Este código atingiu o limite.'); return; }
-        const products = coupon.applicable_products || [];
-        if (products.length > 0 && !products.includes('all') && !products.includes('career_intelligence_pro') && !products.includes('career_intelligence')) { setProDiscountError(isEN ? 'This code is not applicable here.' : 'Este código não é aplicável aqui.'); return; }
-        if (coupon.discount_percent === 100) {
-          // 100% = free, unlock directly
-          trackPurchase('career_intelligence_pro', 0, `COUPON-${code}`);
-          trackAffiliateConversion({ product: 'career_intelligence_pro', amount: 0, currency: isEN ? 'USD' : 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
-          unlockPro();
-          return;
-        }
-        setProDiscountPercent(coupon.discount_percent);
-        setProDiscountValid(true);
-        return;
-      }
-
-      // Step 2: Also try backend validate-coupon endpoint as fallback
-      try {
-        const backendRes = await fetch(`${BACKEND_URL}/api/payment/validate-coupon`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code, product: 'career_intelligence_pro' }),
-        });
-        const backendData = await backendRes.json();
-        if (backendData.valid && backendData.discount_percent > 0) {
-          setProDiscountPercent(backendData.discount_percent);
-          setProDiscountValid(true);
-          return;
-        }
-      } catch { /* backend coupon check failed, continue to vouchers */ }
-
-      // Step 3: Check vouchers table
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`,
-        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
-      );
-      const rows = await res.json();
-      if (Array.isArray(rows) && rows.length > 0) {
-        const v = rows[0];
-        if (!v.is_active) { setProDiscountError(isEN ? 'This code has already been used' : 'Este código já foi utilizado'); return; }
-        if (v.used_analyses >= v.total_analyses) { setProDiscountError(isEN ? 'This code has no remaining uses' : 'Este código já não tem utilizações disponíveis'); return; }
-        if (v.voucher_type !== 'career_intelligence_pro' && v.voucher_type !== 'complete' && !v.includes_career_intelligence_pro) {
-          setProDiscountError(isEN ? 'This code is not valid for Career Intelligence PRO' : 'Este código não é válido para o Career Intelligence PRO'); return;
-        }
-        await fetch(
-          `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
-          {
-            method: 'PATCH',
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-            body: JSON.stringify({ used_analyses: (v.used_analyses || 0) + 1, is_active: ((v.used_analyses || 0) + 1) < v.total_analyses }),
-          }
-        );
-        trackPurchase('career_intelligence_pro', 0, `CI-VOUCHER-${code}`);
-        trackAffiliateConversion({ product: 'career_intelligence_pro', amount: 0, currency: isEN ? 'USD' : 'EUR', payment_method: 'voucher', transaction_id: `CI-VOUCHER-${code}` });
-        unlockPro();
-        return;
-      }
-
-      setProDiscountError(isEN ? 'Invalid or expired code' : 'Código inválido ou expirado');
-    } catch (err: any) {
-      setProDiscountError(err.message || (isEN ? 'Error validating code' : 'Erro ao validar código'));
-    } finally {
-      setProDiscountLoading(false);
-    }
-  };
-
-  const handleProMBWay = async () => {
-    if (!email) { setProPaymentError(isEN ? 'Enter your email' : 'Introduz o teu email'); return; }
-    if (!phone) { setProPaymentError(isEN ? 'Enter your phone number' : 'Introduz o teu número de telemóvel'); return; }
-
-    // If price is 0 (100% discount), skip payment entirely
-    if (PRO_PRICE_FINAL <= 0) {
-      const orderId = `CI-FREE-${Date.now()}`;
-      sessionStorage.setItem('ciOrderId', orderId);
-      handleProPaymentSuccess();
-      return;
-    }
-
-    setProPaymentLoading(true);
-    setProPaymentError(null);
-    try {
-      const orderId = `CI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      sessionStorage.setItem('ciOrderId', orderId);
-      const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          phone: (() => { const p = phone.replace(/\D/g, '').replace(/^(\+?351)/, ''); return `351${p}`; })(),
-          orderId,
-          amount: PRO_PRICE_FINAL.toFixed(2),
-          paymentMethod: 'mbway',
-          description: 'Share2Inspire - Career Intelligence PRO',
-          name: email.split('@')[0],
-        }),
-      });
-      const data = await response.json();
-      if (!data.success) throw new Error(data.error || (isEN ? 'Error initiating payment' : 'Erro ao iniciar pagamento'));
-      setProPaymentStep('polling');
-      setProPollingMsg(isEN ? 'Confirm the payment in the MB WAY app on your phone...' : 'Confirma o pagamento na app MB WAY do teu telemóvel...');
-      startProPolling(orderId);
-    } catch (err: any) {
-      setProPaymentError(err.message);
-    } finally {
-      setProPaymentLoading(false);
-    }
-  };
-
-  const handleProStripe = async () => {
-    if (!email) { setProPaymentError('Please enter your email'); return; }
-
-    // If price is 0 (100% discount), skip payment entirely
-    if (PRO_PRICE_FINAL <= 0) {
-      handleProPaymentSuccess();
-      return;
-    }
-
-    setProPaymentLoading(true);
-    setProPaymentError(null);
-    try {
-      const orderId = `CI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const response = await fetch(`${BACKEND_URL}/api/payment/stripe-checkout`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          name: email.split('@')[0],
-          product_type: 'career_intelligence_pro',
-          orderId,
-          language: isEN ? 'en' : 'pt',
-          currency: CURRENCY_CODE.toLowerCase(),
-          amount: PRO_PRICE_FINAL,
-        }),
-      });
-      const data = await response.json();
-      if (!data.success || !data.url) throw new Error(data.error || 'Error creating checkout session');
-      sessionStorage.setItem('ciOrderId', orderId);
-      sessionStorage.setItem('ciStripeSessionId', data.sessionId);
-      window.location.href = data.url;
-    } catch (err: any) {
-      setProPaymentError(err.message);
-    } finally {
-      setProPaymentLoading(false);
-    }
-  };
-
-  const handleProPayPal = async () => {
-    if (!email) { setProPaymentError(isEN ? 'Enter your email' : 'Introduz o teu email'); return; }
-
-    // If price is 0 (100% discount), skip payment entirely
-    if (PRO_PRICE_FINAL <= 0) {
-      handleProPaymentSuccess();
-      return;
-    }
-
-    window.open(`https://paypal.me/SamuelRolo/${PRO_PRICE_FINAL}${CURRENCY_CODE}`, '_blank');
-    setProPaymentStep('success');
-  };
-
-  const startProPolling = (orderId: string) => {
-    let attempts = 0;
-    setProCurrentOrderId(orderId);
-    setProPollingExpired(false);
-    const startTime = Date.now();
-    const interval = setInterval(async () => {
-      attempts++;
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderId }),
-        });
-        if (!res.ok) { if (attempts >= 60) { clearInterval(interval); setProPollingExpired(true); } return; }
-        const data = await res.json();
-        if (data.paid) {
-          clearInterval(interval);
-          unlockPro();
-          return;
-        }
-        const elapsed = Date.now() - startTime;
-        if (data.expired && elapsed > 90000) {
-          clearInterval(interval);
-          setProPollingExpired(true);
-          setProPollingMsg(isEN ? 'Payment expired. Use the button below if you already paid.' : 'O pagamento expirou. Usa o botão abaixo se já pagaste.');
-          return;
-        }
-        if (elapsed < 30000) setProPollingMsg(isEN ? 'Confirm the payment in the MB WAY app...' : 'Confirma o pagamento na app MB WAY...');
-        else if (elapsed < 60000) setProPollingMsg(isEN ? 'Still waiting... Check the MB WAY app.' : 'Ainda a aguardar... Verifica a app MB WAY.');
-        else setProPollingMsg(isEN ? 'Waiting for confirmation...' : 'A aguardar confirmação...');
-        if (attempts >= 60) { clearInterval(interval); setProPollingExpired(true); }
-      } catch { /* ignore */ }
-    }, 5000);
-  };
-
-  const handleProManualCheck = async () => {
-    if (!proCurrentOrderId) return;
-    setProPollingMsg(isEN ? 'Checking payment...' : 'A verificar pagamento...');
-    setProPollingExpired(false);
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId: proCurrentOrderId }),
-      });
-      const data = await res.json();
-      if (data.paid) { unlockPro(); }
-      else {
-        setProPollingExpired(true);
-        setProPollingMsg(isEN ? 'Payment not yet confirmed. Try again.' : 'Pagamento ainda não confirmado. Tenta novamente.');
-      }
-    } catch {
-      setProPollingExpired(true);
-      setProPollingMsg(isEN ? 'Error checking. Try again.' : 'Erro ao verificar. Tenta novamente.');
-    }
-  };
-
-  const unlockPro = () => {
-    setIsProUnlocked(true);
-    setShowProPaymentModal(false);
-    sessionStorage.setItem('careerIntelligenceProPaid', 'true');
-    trackPurchase('career_intelligence_pro', PRO_PRICE_FINAL, sessionStorage.getItem('ciOrderId') || '');
-    trackAffiliateConversion({ product: 'career_intelligence_pro', amount: PRO_PRICE_FINAL, currency: isEN ? 'USD' : 'EUR', payment_method: proPaymentMethod, transaction_id: sessionStorage.getItem('ciOrderId') || '' });
-  };
-
-  const handleProPaymentSuccess = () => {
-    unlockPro();
-  };
 
   /* ─── Send report by email ─── */
   const handleSendReport = async () => {
@@ -1008,12 +697,7 @@ export default function CareerPathResults() {
                   <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500" />
                   <span className="text-xs sm:text-sm font-semibold text-green-600">{isEN ? 'Full Report' : 'Relatório Completo'}</span>
                 </div>
-                {isProUnlocked && (
-                  <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#C9A961]/10 border border-[#C9A961]/20">
-                    <Zap className="w-3 h-3 text-[#C9A961]" />
-                    <span className="text-[10px] font-bold text-[#C9A961]">PRO</span>
-                  </div>
-                )}
+
               </div>
             ) : (
               <>
@@ -1316,7 +1000,7 @@ export default function CareerPathResults() {
                         onClick={() => openPaymentModal()}
                         className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold py-3 text-base"
                       >
-                        {isEN ? `Unlock Full Career Path — ${CUR}${P.cp}` : `Desbloquear Career Path Completo — ${CUR}${P.cp}`}
+                        {isEN ? `Unlock Full Career Path — ${fmtPrice(P.cp)}` : `Desbloquear Career Path Completo — ${fmtPrice(P.cp)}`}
                       </Button>
                       <p className="text-xs text-muted-foreground text-center">
                         {isEN ? 'Secure payment via Card or PayPal' : 'Pagamento seguro via MB WAY ou PayPal'}
@@ -1514,7 +1198,7 @@ export default function CareerPathResults() {
                         <p className="text-sm text-muted-foreground">{role.why_this_role}</p>
                         {role.salary_range && (
                           <p className="text-xs text-[#C9A961] font-semibold">
-                            <Euro className="w-3 h-3 inline mr-1" />{role.salary_range}
+                            {cleanCurrency(role.salary_range)}
                           </p>
                         )}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
@@ -1792,339 +1476,25 @@ export default function CareerPathResults() {
               </div>
             )}
 
-            {/* ═══ MARKET CONTEXT (moved before paths to provide foundation) ═══ */}
-            {careerPathData.market_context && (
-              <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8"><Globe className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'MARKET CONTEXT' : 'CONTEXTO DE MERCADO'}</p>
-                </div>
-                <div className="space-y-3">
-                  <div className="p-3 bg-muted/20 rounded-lg border border-border">
-                    <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'ALIGNED COMPANIES' : 'EMPRESAS ALINHADAS'}</p>
-                    <p className="text-xs text-muted-foreground">{careerPathData.market_context.aligned_companies}</p>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="p-3 bg-muted/20 rounded-lg border border-border">
-                      <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'DEMAND LEVEL' : 'NÍVEL DE PROCURA'}</p>
-                      <p className="text-xs text-muted-foreground">{careerPathData.market_context.demand_level}</p>
-                    </div>
-                    <div className="p-3 bg-muted/20 rounded-lg border border-border">
-                      <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'COMPETITIVENESS' : 'COMPETITIVIDADE'}</p>
-                      <p className="text-xs text-muted-foreground">{careerPathData.market_context.competitiveness}</p>
-                    </div>
-                  </div>
-                  <div className="p-3 bg-gradient-to-r from-[#C9A961]/5 to-transparent rounded-lg border border-[#C9A961]/20">
-                    <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'WHAT SETS YOU APART' : 'O QUE TE DIFERENCIA'}</p>
-                    <p className="text-xs text-muted-foreground">{careerPathData.market_context.differentiator}</p>
-                  </div>
+            {/* Cross-sell: Career Intelligence */}
+            <div className="bg-card border-2 border-border rounded-2xl p-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <GoldIcon>
+                  <Zap className="w-5 h-5 text-[#C9A961]" />
+                </GoldIcon>
+                <div>
+                  <p className="text-base font-semibold text-foreground">{isEN ? 'Want a strategic career decision?' : 'Queres uma decisão estratégica de carreira?'}</p>
+                  <p className="text-xs text-muted-foreground">{isEN ? 'Career Intelligence compares 3 career paths with data, trade-offs and a clear recommendation.' : 'O Career Intelligence compara 3 caminhos de carreira com dados, trade-offs e uma recomendação clara.'}</p>
                 </div>
               </div>
-            )}
-
-            {/* ═══ STRATEGIC CAREER PATHS (TEASER — sem números) ═══ */}
-            {careerPathData.strategic_paths && careerPathData.strategic_paths.length > 0 && (
-              <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8"><Compass className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <div>
-                    <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'STRATEGIC CAREER PATHS' : 'CAMINHOS ESTRATÉGICOS DE CARREIRA'}</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{isEN ? 'Three distinct paths based on your profile' : 'Três caminhos distintos baseados no teu perfil'}</p>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  {careerPathData.strategic_paths.map((path: any, i: number) => (
-                    <div key={i} className="border border-border rounded-xl overflow-hidden">
-                      <div className="p-3 bg-muted/30 flex items-center justify-between flex-wrap gap-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">{isEN ? 'PATH' : 'CAMINHO'} {i + 1}</span>
-                          <span className="text-sm font-semibold text-foreground">{path.name}</span>
-                        </div>
-                        {/* Teaser: show success % only if PRO unlocked */}
-                        {isProUnlocked && path.success_probability && (
-                          <span className="text-xs font-bold text-green-600 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">
-                            {path.success_probability}% {isEN ? 'success' : 'sucesso'}
-                          </span>
-                        )}
-                        {!isProUnlocked && (
-                          <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded border border-border flex items-center gap-1">
-                            <Lock className="w-3 h-3" /> {isEN ? '% in PRO' : '% no PRO'}
-                          </span>
-                        )}
-                      </div>
-                      <div className="p-3 space-y-2">
-                        <p className="text-sm text-muted-foreground">{path.logic}</p>
-                        <div className="p-2 bg-muted/20 rounded-lg">
-                          <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'IDEAL FOR' : 'IDEAL PARA'}</p>
-                          <p className="text-xs text-muted-foreground">{path.ideal_for}</p>
-                        </div>
-                        {path.associated_roles && path.associated_roles.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {path.associated_roles.map((role: string, j: number) => (
-                              <span key={j} className="text-[10px] bg-muted px-2 py-0.5 rounded text-muted-foreground">{role}</span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* ═══ ACTION PLAN BY PATH (resumido — visível para todos) ═══ */}
-            {careerPathData.action_plan_by_path && careerPathData.action_plan_by_path.length > 0 && (
-              <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <GoldIcon size="w-8 h-8"><Target className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                  <div>
-                    <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'ACTION PLAN BY PATH' : 'PLANO DE ACÇÃO POR CAMINHO'}</p>
-                    {!isProUnlocked && <p className="text-[10px] text-muted-foreground mt-0.5">{isEN ? 'First steps for each path' : 'Primeiros passos para cada caminho'}</p>}
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  {careerPathData.action_plan_by_path.map((plan: any, i: number) => (
-                    <div key={i} className="border border-border rounded-xl overflow-hidden">
-                      <div className="p-3 bg-muted/30 flex items-center gap-2">
-                        <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">{isEN ? 'PATH' : 'CAMINHO'} {i + 1}</span>
-                        <span className="text-sm font-semibold text-foreground">{plan.path_name}</span>
-                        {plan.is_recommended && (
-                          <span className="text-[10px] font-bold text-green-600 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">
-                            {isEN ? 'RECOMMENDED' : 'RECOMENDADO'}
-                          </span>
-                        )}
-                      </div>
-                      <div className="p-3 space-y-2">
-                        {plan.actions && (isProUnlocked ? plan.actions : plan.actions.slice(0, 2)).map((action: any, j: number) => (
-                          <div key={j} className="flex items-start gap-3 p-2 border border-border/50 rounded-lg">
-                            <span className="text-[10px] font-bold text-white bg-[#C9A961] px-1.5 py-0.5 rounded shrink-0 mt-0.5">
-                              {action.timeframe}
-                            </span>
-                            <div>
-                              <p className="text-xs font-semibold text-foreground">{action.action}</p>
-                              {action.is_critical === true && action.is_critical !== undefined && (
-                                <span className="text-[10px] text-amber-600 font-semibold bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">{isEN ? 'Key step' : 'Passo-chave'}</span>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                        {!isProUnlocked && plan.actions && plan.actions.length > 2 && (
-                          <div className="text-center py-2">
-                            <span className="text-[10px] text-muted-foreground">{isEN ? `+${plan.actions.length - 2} more steps in PRO` : `+${plan.actions.length - 2} passos adicionais no PRO`}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* ═══ CAREER INTELLIGENCE PRO — UPSELL CARD ═══ */}
-            {!isProUnlocked && (careerPathData.strategic_paths?.length > 0 || careerPathData.strategic_comparison?.length > 0) && (
-              <div className="relative bg-gradient-to-br from-[#1a1a2e] to-[#16213e] border-2 border-[#C9A961]/40 rounded-2xl p-6 sm:p-8 overflow-hidden">
-                {/* Decorative glow */}
-                <div className="absolute top-0 right-0 w-40 h-40 bg-[#C9A961]/10 rounded-full blur-3xl" />
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#C9A961]/5 rounded-full blur-2xl" />
-                
-                <div className="relative space-y-5">
-                  {/* Header */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-[#C9A961]/20 border border-[#C9A961]/30 flex items-center justify-center">
-                      <Zap className="w-6 h-6 text-[#C9A961]" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <p className="text-lg font-bold text-white">Career Intelligence</p>
-                        <span className="text-[10px] font-bold text-[#C9A961] bg-[#C9A961]/15 px-2 py-0.5 rounded-full border border-[#C9A961]/30">PRO</span>
-                      </div>
-                      <p className="text-xs text-gray-400">{isEN ? 'Complete career decision analysis' : 'Análise completa de decisão de carreira'}</p>
-                    </div>
-                  </div>
-
-                  {/* Value proposition */}
-                  <p className="text-sm text-gray-300 leading-relaxed">
-                    {isEN
-                      ? 'You have 3 possible career paths. But which one is actually right for you? Career Intelligence PRO gives you the numbers, the trade-offs, and a clear recommendation — so you decide with confidence, not doubt.'
-                      : 'Tens 3 caminhos possíveis. Mas qual é realmente o certo para ti? O Career Intelligence PRO dá-te os números, os trade-offs e uma recomendação clara — para decidires com confiança, não com dúvida.'}
-                  </p>
-
-                  {/* What you unlock */}
-                  <div className="space-y-2">
-                    {(isEN ? [
-                      { icon: '📊', text: 'Full comparison table — probability, effort, risk, salary, timeline' },
-                      { icon: '⚖️', text: 'Trade-offs by path — what you gain, what you give up, hidden risks' },
-                      { icon: '🎯', text: 'Recommended decision — which path and why, with full justification' },
-                    ] : [
-                      { icon: '📊', text: 'Tabela comparativa completa — probabilidade, esforço, risco, salário, timeline' },
-                      { icon: '⚖️', text: 'Trade-offs por caminho — o que ganhas, o que abdicas, riscos ocultos' },
-                      { icon: '🎯', text: 'Decisão recomendada — qual caminho e porquê, com justificação completa' },
-                    ]).map((item, i) => (
-                      <div key={i} className="flex items-start gap-3 p-2.5 bg-white/5 rounded-lg border border-white/10">
-                        <span className="text-base shrink-0">{item.icon}</span>
-                        <p className="text-xs text-gray-300">{item.text}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Pricing */}
-                  <div className="flex items-center justify-between p-4 bg-[#C9A961]/10 rounded-xl border border-[#C9A961]/25">
-                    <div>
-                      <p className="text-xs text-gray-400">{isEN ? 'Upgrade price' : 'Preço de upgrade'}</p>
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-bold text-white">{PRO_PRICE_DISPLAY}</span>
-                      </div>
-                      <p className="text-[10px] text-[#C9A961] font-medium mt-0.5">{isEN ? 'Exclusive upgrade after Career Path purchase' : 'Upgrade exclusivo após compra do Career Path'}</p>
-                    </div>
-                    <button
-                      onClick={openProPaymentModal}
-                      className="px-6 py-3 bg-[#C9A961] hover:bg-[#A88B4E] text-white font-bold text-sm rounded-xl transition-all hover:scale-105 shadow-lg shadow-[#C9A961]/20"
-                    >
-                      {isEN ? 'Unlock PRO' : 'Desbloquear PRO'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* ═══ PRO SECTIONS — Blurred preview when locked ═══ */}
-            {/* Strategic Comparison */}
-            {careerPathData.strategic_comparison && careerPathData.strategic_comparison.length > 0 && (
-              <div className="relative">
-                {!isProUnlocked && (
-                  <div className="absolute inset-0 z-10 bg-background/60 backdrop-blur-md rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer" onClick={openProPaymentModal}>
-                    <Lock className="w-6 h-6 text-[#C9A961]" />
-                    <p className="text-sm font-semibold text-foreground">{isEN ? 'Available in Career Intelligence PRO' : 'Disponível no Career Intelligence PRO'}</p>
-                    <p className="text-xs text-[#C9A961] font-medium">{isEN ? 'Unlock for' : 'Desbloqueia por'} {PRO_PRICE_DISPLAY}</p>
-                  </div>
-                )}
-                <div className={!isProUnlocked ? 'select-none pointer-events-none' : ''}>
-                  <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <GoldIcon size="w-8 h-8"><BarChart3 className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                      <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'STRATEGIC COMPARISON' : 'COMPARAÇÃO ESTRATÉGICA'}</p>
-                    </div>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-xs">
-                        <thead>
-                          <tr className="border-b border-border">
-                            <th className="text-left py-2 pr-3 font-semibold text-muted-foreground">{isEN ? 'Criteria' : 'Critério'}</th>
-                            {careerPathData.strategic_comparison.map((item: any, i: number) => (
-                              <th key={i} className="text-center py-2 px-2 font-semibold text-foreground">{item.path_name}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {[
-                            { key: 'success_probability', label: isEN ? 'Success probability' : 'Probabilidade de sucesso', suffix: '%' },
-                            { key: 'estimated_time', label: isEN ? 'Estimated time' : 'Tempo estimado', suffix: '' },
-                            { key: 'effort_level', label: isEN ? 'Effort' : 'Esforço', suffix: '' },
-                            { key: 'risk_level', label: isEN ? 'Risk' : 'Risco', suffix: '' },
-                            { key: 'salary_impact', label: isEN ? 'Salary impact' : 'Impacto salarial', suffix: '' },
-                            { key: 'profile_fit', label: isEN ? 'Profile fit' : 'Alinhamento', suffix: '' },
-                          ].map((row) => (
-                            <tr key={row.key} className="border-b border-border/50">
-                              <td className="py-2 pr-3 text-muted-foreground font-medium">{row.label}</td>
-                              {careerPathData.strategic_comparison.map((item: any, i: number) => (
-                                <td key={i} className="text-center py-2 px-2 text-foreground">
-                                  {item[row.key]}{row.suffix}
-                                </td>
-                              ))}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Trade-offs */}
-            {careerPathData.tradeoffs && careerPathData.tradeoffs.length > 0 && (
-              <div className="relative">
-                {!isProUnlocked && (
-                  <div className="absolute inset-0 z-10 bg-background/60 backdrop-blur-md rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer" onClick={openProPaymentModal}>
-                    <Lock className="w-6 h-6 text-[#C9A961]" />
-                    <p className="text-sm font-semibold text-foreground">{isEN ? 'Trade-offs — Career Intelligence PRO' : 'Trade-offs — Career Intelligence PRO'}</p>
-                  </div>
-                )}
-                <div className={!isProUnlocked ? 'select-none pointer-events-none' : ''}>
-                  <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <GoldIcon size="w-8 h-8"><Scale className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                      <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'TRADE-OFFS BY PATH' : 'TRADE-OFFS POR CAMINHO'}</p>
-                    </div>
-                    <div className="space-y-4">
-                      {careerPathData.tradeoffs.map((t: any, i: number) => (
-                        <div key={i} className="border border-border rounded-xl p-3 space-y-3">
-                          <p className="text-sm font-semibold text-foreground flex items-center gap-2">
-                            <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">{i + 1}</span>
-                            {t.path_name}
-                          </p>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <div className="p-2 bg-green-500/5 rounded-lg border border-green-500/10">
-                              <p className="text-[10px] font-semibold text-green-600 mb-1">{isEN ? 'YOU GAIN' : 'GANHAS'}</p>
-                              <p className="text-xs text-muted-foreground">{t.you_gain}</p>
-                            </div>
-                            <div className="p-2 bg-red-500/5 rounded-lg border border-red-500/10">
-                              <p className="text-[10px] font-semibold text-red-500 mb-1">{isEN ? 'YOU GIVE UP' : 'ABDICAS'}</p>
-                              <p className="text-xs text-muted-foreground">{t.you_give_up}</p>
-                            </div>
-                          </div>
-                          <div className="p-2 bg-amber-500/5 rounded-lg border border-amber-500/10">
-                            <p className="text-[10px] font-semibold text-amber-600 mb-1">{isEN ? 'HIDDEN RISK' : 'RISCO OCULTO'}</p>
-                            <p className="text-xs text-muted-foreground">{t.hidden_risk}</p>
-                          </div>
-                          <div className="p-2 bg-muted/20 rounded-lg">
-                            <p className="text-[10px] font-semibold text-muted-foreground mb-1">{isEN ? 'REAL SCENARIO' : 'CENÁRIO REAL'}</p>
-                            <p className="text-xs text-muted-foreground">{t.real_scenario}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Decision Recommendation */}
-            {careerPathData.decision_recommendation && (
-              <div className="relative">
-                {!isProUnlocked && (
-                  <div className="absolute inset-0 z-10 bg-background/60 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer" onClick={openProPaymentModal}>
-                    <Lock className="w-6 h-6 text-[#C9A961]" />
-                    <p className="text-sm font-semibold text-foreground">{isEN ? 'Your recommended decision — PRO' : 'A tua decisão recomendada — PRO'}</p>
-                  </div>
-                )}
-                <div className={!isProUnlocked ? 'select-none pointer-events-none' : ''}>
-                  <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-6 sm:p-8 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <GoldIcon size="w-8 h-8"><Zap className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
-                      <div>
-                        <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{isEN ? 'RECOMMENDED DECISION' : 'DECISÃO RECOMENDADA'}</p>
-                      </div>
-                    </div>
-                    <div className="p-4 bg-card rounded-xl border border-border">
-                      <p className="text-sm font-bold text-foreground mb-2">{careerPathData.decision_recommendation.recommended_path}</p>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{careerPathData.decision_recommendation.justification}</p>
-                    </div>
-                    {careerPathData.decision_recommendation.when_to_switch && (
-                      <div className="p-3 bg-card rounded-lg border border-border">
-                        <p className="text-[10px] font-semibold text-amber-600 mb-1">{isEN ? 'WHEN TO CONSIDER ANOTHER PATH' : 'QUANDO CONSIDERAR OUTRO CAMINHO'}</p>
-                        <p className="text-xs text-muted-foreground">{careerPathData.decision_recommendation.when_to_switch}</p>
-                      </div>
-                    )}
-                    {careerPathData.decision_recommendation.why_better_than_others && (
-                      <div className="p-3 bg-card rounded-lg border border-border">
-                        <p className="text-[10px] font-semibold text-green-600 mb-1">{isEN ? 'WHY THIS PATH IS BEST FOR YOU' : 'PORQUE ESTE CAMINHO É O MELHOR PARA TI'}</p>
-                        <p className="text-xs text-muted-foreground">{careerPathData.decision_recommendation.why_better_than_others}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
+              <a
+                href={isEN ? '/en/career-intelligence' : '/career-intelligence'}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 transition-colors"
+              >
+                <Zap className="w-4 h-4" />
+                {isEN ? 'Discover Career Intelligence' : 'Descobrir Career Intelligence'}
+              </a>
+            </div>
 
             {/* Cross-sell: CV Analyser */}
             <div className="bg-card border-2 border-border rounded-2xl p-6 space-y-4">
@@ -2392,7 +1762,7 @@ export default function CareerPathResults() {
           <div className="space-y-6">
             <div className="text-center space-y-2">
               <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{isEN ? 'UNLOCK CAREER PATH' : 'DESBLOQUEAR CAREER PATH'}</p>
-              <p className="text-4xl font-bold text-foreground">{`${CUR}${P.cp}`}</p>
+              <p className="text-4xl font-bold text-foreground">{fmtPrice(P.cp)}</p>
               <p className="text-sm text-muted-foreground">{isEN ? 'Full report with personalised roadmap' : 'Relatório completo com roadmap personalizado'}</p>
             </div>
 
@@ -2419,7 +1789,7 @@ export default function CareerPathResults() {
                       <p className="text-xs text-muted-foreground mt-0.5">{plan.description}</p>
                     </div>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-2xl font-bold text-foreground">{CUR}{plan.price}</span>
+                      <span className="text-2xl font-bold text-foreground">{fmtPrice(plan.price)}</span>
                     </div>
                     <Button
                       onClick={(e) => { e.stopPropagation(); openPaymentModal(plan.id); }}
@@ -2478,7 +1848,7 @@ export default function CareerPathResults() {
                         <p className="text-xs text-muted-foreground mt-0.5">{plan.description}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-bold text-foreground">{CUR}{plan.price}</p>
+                        <p className="text-lg font-bold text-foreground">{fmtPrice(plan.price)}</p>
                         {plan.badge && <span className="text-[10px] font-bold text-[#C9A961]">{plan.badge}</span>}
                       </div>
                     </div>
@@ -2489,7 +1859,7 @@ export default function CareerPathResults() {
                 onClick={() => setPaymentStep('payment')}
                 className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
               >
-                {isEN ? `Continue with ${selectedPlan.name} — ${CUR}${selectedPlan.price}` : `Continuar com ${selectedPlan.name} — ${CUR}${selectedPlan.price}`}
+                {isEN ? `Continue with ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}` : `Continuar com ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}`}
               </Button>
             </div>
           )}
@@ -2498,7 +1868,7 @@ export default function CareerPathResults() {
             <div className="space-y-4">
               <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20">
                 <p className="text-sm font-semibold text-foreground">{selectedPlan.name}</p>
-                <p className="text-lg font-bold text-[#C9A961]">{CUR}{selectedPlan.price}</p>
+                <p className="text-lg font-bold text-[#C9A961]">{fmtPrice(selectedPlan.price)}</p>
               </div>
 
               {/* Email */}
@@ -2595,7 +1965,7 @@ export default function CareerPathResults() {
                     paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
                   }`}
                 >
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : isEN ? `Pay ${CUR}${selectedPlan.price}` : `Pagar ${CUR}${selectedPlan.price}`}
+                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : isEN ? `Pay ${fmtPrice(selectedPlan.price)}` : `Pagar ${fmtPrice(selectedPlan.price)}`}
                 </Button>
               </div>
             </div>
@@ -2635,202 +2005,6 @@ export default function CareerPathResults() {
               >
                 <Rocket className="w-4 h-4 mr-2" />
                 {isEN ? 'Generate Career Path' : 'Gerar Career Path'}
-              </Button>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* ─── Career Intelligence PRO Payment Modal ─── */}
-      <Dialog open={showProPaymentModal} onOpenChange={setShowProPaymentModal}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-[#C9A961]" />
-              Career Intelligence PRO
-            </DialogTitle>
-          </DialogHeader>
-
-          {proPaymentStep === 'payment' && (
-            <div className="space-y-4">
-              <div className="p-4 bg-gradient-to-r from-[#C9A961]/10 to-[#C9A961]/5 rounded-xl border border-[#C9A961]/20">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">{isEN ? 'Complete career decision analysis' : 'Análise completa de decisão de carreira'}</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{isEN ? 'Comparison + Trade-offs + Recommendation' : 'Comparação + Trade-offs + Recomendação'}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-[#C9A961]">{PRO_PRICE_DISPLAY}</p>
-                    {proDiscountPercent > 0 && (
-                      <p className="text-xs text-muted-foreground"><span className="line-through">{isEN ? `$${PRO_PRICE}` : `${PRO_PRICE}€`}</span> <span className="text-green-600 font-semibold">-{proDiscountPercent}%</span></p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Unified discount code */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-foreground">{isEN ? 'Discount code (optional)' : 'Código de desconto (opcional)'}</label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={proDiscountCode}
-                    onChange={(e) => { setProDiscountCode(e.target.value.toUpperCase()); if (proDiscountValid) { setProDiscountValid(false); setProDiscountPercent(0); } setProDiscountError(null); }}
-                    placeholder={isEN ? 'CODE' : 'CÓDIGO'}
-                    disabled={proDiscountValid}
-                    className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                    onKeyDown={(e) => e.key === 'Enter' && !proDiscountValid && handleProDiscountValidate()}
-                  />
-                  {proDiscountValid ? (
-                    <Button variant="outline" onClick={() => { setProDiscountCode(''); setProDiscountPercent(0); setProDiscountValid(false); setProDiscountError(null); }} className="text-xs">
-                      {isEN ? 'Remove' : 'Remover'}
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="outline"
-                      onClick={handleProDiscountValidate}
-                      disabled={proDiscountLoading || !proDiscountCode.trim()}
-                      className="text-xs"
-                    >
-                      {proDiscountLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : (isEN ? 'Apply' : 'Aplicar')}
-                    </Button>
-                  )}
-                </div>
-                {proDiscountError && <p className="text-xs text-red-500">{proDiscountError}</p>}
-                {proDiscountValid && <p className="text-xs text-green-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" />{isEN ? `${proDiscountPercent}% discount applied!` : `Desconto de ${proDiscountPercent}% aplicado!`}</p>}
-              </div>
-
-              {/* Email */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-foreground">Email</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={isEN ? 'your@email.com' : 'seu@email.com'}
-                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                />
-              </div>
-
-              {/* Payment method */}
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-foreground">{isEN ? 'Payment method' : 'M\u00e9todo de pagamento'}</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {isEN ? (
-                    <>
-                      <button
-                        onClick={() => setProPaymentMethod('stripe')}
-                        className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                          proPaymentMethod === 'stripe'
-                            ? 'border-[#635BFF] bg-[#635BFF]/5 text-foreground'
-                            : 'border-border text-muted-foreground hover:border-[#635BFF]/50'
-                        }`}
-                      >
-                        Card
-                      </button>
-                      <button
-                        onClick={() => setProPaymentMethod('paypal')}
-                        className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                          proPaymentMethod === 'paypal'
-                            ? 'border-[#0070BA] bg-[#0070BA]/5 text-foreground'
-                            : 'border-border text-muted-foreground hover:border-[#0070BA]/50'
-                        }`}
-                      >
-                        PayPal
-                      </button>
-                    </>
-                  ) : (
-                    <>  
-                      {(['mbway', 'stripe', 'paypal'] as const).map((method) => (
-                        <button
-                          key={method}
-                          onClick={() => setProPaymentMethod(method)}
-                          className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                            proPaymentMethod === method
-                              ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground'
-                              : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
-                          }`}
-                        >
-                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? 'Cart\u00e3o' : 'PayPal'}
-                        </button>
-                      ))}
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {/* Phone (MB WAY only) */}
-              {proPaymentMethod === 'mbway' && (
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-foreground">{isEN ? 'Phone (MB WAY)' : 'Telem\u00f3vel (MB WAY)'}</label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="9XXXXXXXX"
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                  />
-                </div>
-              )}
-
-              {proPaymentError && (
-                <p className="text-sm text-red-500 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4 shrink-0" />{proPaymentError}
-                </p>
-              )}
-
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowProPaymentModal(false)}
-                  className="flex-1"
-                >
-                  {isEN ? 'Back' : 'Voltar'}
-                </Button>
-                <Button
-                  onClick={proPaymentMethod === 'stripe' ? handleProStripe : proPaymentMethod === 'mbway' ? handleProMBWay : handleProPayPal}
-                  disabled={proPaymentLoading}
-                  className="flex-1 font-semibold text-white bg-[#C9A961] hover:bg-[#A88B4E]"
-                >
-                  {proPaymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>{isEN ? `Pay ${PRO_PRICE_DISPLAY}` : `Pagar ${PRO_PRICE_DISPLAY}`}</>}
-                </Button>
-              </div>
-
-
-            </div>
-          )}
-
-          {proPaymentStep === 'polling' && (
-            <div className="text-center space-y-4 py-4">
-              {!proPollingExpired ? (
-                <Loader2 className="w-10 h-10 animate-spin text-[#C9A961] mx-auto" />
-              ) : (
-                <AlertCircle className="w-10 h-10 text-amber-500 mx-auto" />
-              )}
-              <p className="text-sm font-semibold text-foreground">{proPollingMsg}</p>
-              {proPollingExpired && (
-                <Button
-                  onClick={handleProManualCheck}
-                  className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
-                >
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
-                  {isEN ? 'I already paid \u2014 check again' : 'J\u00e1 paguei \u2014 verificar novamente'}
-                </Button>
-              )}
-            </div>
-          )}
-
-          {proPaymentStep === 'success' && (
-            <div className="text-center space-y-4 py-4">
-              <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
-              <p className="text-base font-bold text-foreground">{isEN ? 'Payment confirmed!' : 'Pagamento confirmado!'}</p>
-              <p className="text-sm text-muted-foreground">{isEN ? 'Career Intelligence PRO is now unlocked!' : 'O Career Intelligence PRO est\u00e1 agora desbloqueado!'}</p>
-              <Button
-                onClick={handleProPaymentSuccess}
-                className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
-              >
-                <Zap className="w-4 h-4 mr-2" />
-                {isEN ? 'View Full Analysis' : 'Ver An\u00e1lise Completa'}
               </Button>
             </div>
           )}

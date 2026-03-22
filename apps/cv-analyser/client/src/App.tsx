@@ -20,6 +20,7 @@ const BundleHome = lazy(() => import("./pages/BundleHome"));
 const BundleHomeEN = lazy(() => import("./pages/en/BundleHomeEN"));
 const CareerIntelligenceHome = lazy(() => import("./pages/CareerIntelligenceHome"));
 const CareerIntelligenceHomeEN = lazy(() => import("./pages/en/CareerIntelligenceHomeEN"));
+const CareerIntelligenceResults = lazy(() => import("./pages/CareerIntelligenceResults"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -80,7 +81,7 @@ function AppRouter() {
       <Router base="/en/career-intelligence">
         <Switch>
           <Route path={"/"} component={CareerIntelligenceHomeEN} />
-          <Route path={"/results"} component={CareerPathResults} />
+          <Route path={"/results"} component={CareerIntelligenceResults} />
           <Route component={NotFound} />
         </Switch>
       </Router>
@@ -134,7 +135,7 @@ function AppRouter() {
       <Router base="/career-intelligence">
         <Switch>
           <Route path={"/"} component={CareerIntelligenceHome} />
-          <Route path={"/results"} component={CareerPathResults} />
+          <Route path={"/results"} component={CareerIntelligenceResults} />
           <Route component={NotFound} />
         </Switch>
       </Router>
