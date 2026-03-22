@@ -1011,7 +1011,7 @@ export default function CareerPathHomeEN() {
                       sessionStorage.setItem('careerPathPaid', 'true');
                       sessionStorage.setItem('cpOrderId', `CP-FREE-${discountCode || 'PROMO'}`);
                       if (email) sessionStorage.setItem('cpPaymentEmail', email);
-                      setLocation('/en/results');
+                      setLocation('/results');
                     }}
                     className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"
                   >

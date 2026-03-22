@@ -322,6 +322,8 @@ export default function CareerIntelligenceHome() {
       sessionStorage.setItem('careerPathCvFile', base64Content);
       sessionStorage.setItem('careerPathCvFilename', file.name);
       sessionStorage.setItem('analysisLang', 'pt');
+      sessionStorage.setItem('analysisCountry', country);
+      if (region) sessionStorage.setItem('analysisRegion', region);
       if (linkedinUrl) sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
 
       const profile = analysisSource.candidate_profile || {};
@@ -1188,7 +1190,7 @@ export default function CareerIntelligenceHome() {
                       sessionStorage.setItem('careerIntelligenceFull', 'true');
                       sessionStorage.setItem('cpOrderId', `CI-FREE-${discountCode || 'PROMO'}`);
                       if (email) sessionStorage.setItem('cpPaymentEmail', email);
-                      setLocation('/career-intelligence/results');
+                      setLocation('/results');
                     }}
                     className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"
                   >

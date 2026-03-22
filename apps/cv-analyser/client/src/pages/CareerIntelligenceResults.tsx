@@ -117,6 +117,21 @@ export default function CareerIntelligenceResults() {
   const CUR = isEN ? '$' : '€';
   const CURRENCY_CODE = isEN ? 'USD' : 'EUR';
 
+  /** Clean currency in salary strings: strip duplicates, convert $ to € in PT, fix symbol position */
+  const cleanCurrency = (s: string) => {
+    if (!s) return s;
+    let cleaned = s.replace(/€€+/g, '€').replace(/\$\$+/g, '$');
+    if (!isEN) {
+      cleaned = cleaned.replace(/\$/g, '€');
+      cleaned = cleaned.replace(/USD/gi, 'EUR');
+    } else {
+      cleaned = cleaned.replace(/€/g, '$');
+      cleaned = cleaned.replace(/EUR/gi, 'USD');
+    }
+    cleaned = cleaned.replace(/€€+/g, '€').replace(/\$\$+/g, '$');
+    return cleaned;
+  };
+
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
 
@@ -175,7 +190,7 @@ export default function CareerIntelligenceResults() {
     // Handle cancelled payment — clean URL and redirect to home
     if (paymentStatus === 'cancelled') {
       window.history.replaceState({}, '', window.location.pathname);
-      setLocation(isEN ? '/en/career-intelligence' : '/career-intelligence');
+      setLocation('/');
       return;
     }
 
@@ -826,7 +841,7 @@ export default function CareerIntelligenceResults() {
                           <td className="py-2 pr-3 text-muted-foreground font-medium">{row.label}</td>
                           {careerData.strategic_comparison.map((item: any, i: number) => (
                             <td key={i} className="text-center py-2 px-2 text-foreground">
-                              {item[row.key]}{row.suffix}
+                              {row.key === 'salary_impact' ? cleanCurrency(String(item[row.key] || '')) : item[row.key]}{row.suffix}
                             </td>
                           ))}
                         </tr>

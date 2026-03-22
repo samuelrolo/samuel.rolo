@@ -221,8 +221,24 @@ export default function CareerPathResults() {
   /** Format price with correct symbol position: EN = $19.99, PT = 19,99€ */
   const fmtPrice = (price: string | number) => isEN ? `$${price}` : `${price}€`;
 
-  /** Strip duplicate currency symbols from a string (e.g. "€€30k" → "€30k", "$$50k" → "$50k") */
-  const cleanCurrency = (s: string) => s?.replace(/€€+/g, '€').replace(/\$\$+/g, '$') || s;
+  /** Clean currency in salary strings: strip duplicates, convert $ to € in PT, fix symbol position */
+  const cleanCurrency = (s: string) => {
+    if (!s) return s;
+    let cleaned = s.replace(/€€+/g, '€').replace(/\$\$+/g, '$');
+    if (!isEN) {
+      // PT context: convert any USD references to EUR
+      cleaned = cleaned.replace(/\$/g, '€');
+      cleaned = cleaned.replace(/USD/gi, 'EUR');
+      // Fix numbers that look American (e.g. 150,000) — keep as-is since they're salary figures
+    } else {
+      // EN context: convert any EUR references to USD
+      cleaned = cleaned.replace(/€/g, '$');
+      cleaned = cleaned.replace(/EUR/gi, 'USD');
+    }
+    // Remove duplicate symbols again after conversion
+    cleaned = cleaned.replace(/€€+/g, '€').replace(/\$\$+/g, '$');
+    return cleaned;
+  };
 
   const PLANS = getPlans(isEN, CUR, P);
   const [email, setEmail] = useState('');
@@ -285,7 +301,7 @@ export default function CareerPathResults() {
     // Handle cancelled payment — clean URL and redirect to home
     if (paymentStatus === 'cancelled') {
       window.history.replaceState({}, '', window.location.pathname);
-      setLocation(isEN ? '/en/career-path' : '/career-path');
+      setLocation('/');
       return;
     }
 

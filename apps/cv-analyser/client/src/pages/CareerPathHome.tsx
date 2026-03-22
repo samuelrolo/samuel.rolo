@@ -326,6 +326,8 @@ export default function CareerPathHome() {
       sessionStorage.setItem('careerPathCvFile', base64Content);
       sessionStorage.setItem('careerPathCvFilename', file.name);
       sessionStorage.setItem('analysisLang', 'pt');
+      sessionStorage.setItem('analysisCountry', country);
+      if (region) sessionStorage.setItem('analysisRegion', region);
       if (linkedinUrl) {
         sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
       }
