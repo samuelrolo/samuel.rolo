@@ -11,6 +11,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
+import { countries } from "./en/countries";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -82,6 +83,7 @@ export default function CareerPathHome() {
   const [careerGoal, setCareerGoal] = useState<string>('');
   const [country, setCountry] = useState<string>('Portugal');
   const [region, setRegion] = useState<string>('');
+  const countryData = countries.find(c => c.country === country);
   const [previewData, setPreviewData] = useState<any>(null);
 
   // Progressive loading messages for Career Path
@@ -172,6 +174,14 @@ export default function CareerPathHome() {
         if (products.length > 0 && !products.includes('all') && !products.includes('career_path')) { setDiscountError('Este código não é aplicável ao Career Path.'); return; }
         setDiscountPercent(coupon.discount_percent);
         setDiscountValid(true);
+        // If 100% discount, unlock immediately
+        if (coupon.discount_percent === 100) {
+          setShowPaymentModal(false);
+          sessionStorage.setItem('careerPathPaid', 'true');
+          sessionStorage.setItem('cpOrderId', `CP-COUPON-${code}`);
+          if (email) sessionStorage.setItem('cpPaymentEmail', email);
+          setTimeout(() => { setLocation('/results'); }, 400);
+        }
         return;
       }
 
@@ -366,7 +376,7 @@ export default function CareerPathHome() {
           email,
           phone: (() => { const p = phone.replace(/\D/g, '').replace(/^(\+?351)/, ''); return `351${p}`; })(),
           orderId,
-          amount: PRICE_NUM.toFixed(2),
+          amount: FINAL_PRICE.toFixed(2),
           paymentMethod: 'mbway',
           description: 'Share2Inspire - Career Path',
           name: email.split('@')[0],
@@ -392,12 +402,12 @@ export default function CareerPathHome() {
     if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
 
     sessionStorage.setItem('cpPaymentEmail', email);
-    trackPaymentStart('career_path', 19.99);
-    window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}EUR`, '_blank');
+    trackPaymentStart('career_path', FINAL_PRICE);
+    window.open(`https://paypal.me/SamuelRolo/${FINAL_PRICE}EUR`, '_blank');
     setPaymentStep('success');
-    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: PRICE_NUM, currency: 'EUR'});
-    trackPurchase('career_path', 19.99, `CP-PAYPAL-${Date.now()}`);
-    trackAffiliateConversion({ product: 'career_path', amount: 19.99, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
+    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: FINAL_PRICE, currency: 'EUR'});
+    trackPurchase('career_path', FINAL_PRICE, `CP-PAYPAL-${Date.now()}`);
+    trackAffiliateConversion({ product: 'career_path', amount: FINAL_PRICE, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
   };
 
   const handleStripePayment = async () => {
@@ -421,7 +431,7 @@ export default function CareerPathHome() {
           country,
           region,
           currency: 'eur',
-          amount: PRICE_NUM,
+          amount: FINAL_PRICE,
         })
       });
       const data = await response.json();
@@ -829,38 +839,29 @@ export default function CareerPathHome() {
               {/* País e Região */}
               <div className="space-y-3">
                 <p className="text-sm font-medium">4. País e região <span className="text-red-500">*</span></p>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3">
                   <select
                     value={country}
-                    onChange={(e) => setCountry(e.target.value)}
+                    onChange={(e) => { setCountry(e.target.value); setRegion(''); }}
                     className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
                   >
-                    <option value="Portugal">Portugal</option>
-                    <option value="Brasil">Brasil</option>
-                    <option value="Espanha">Espanha</option>
-                    <option value="França">França</option>
-                    <option value="Alemanha">Alemanha</option>
-                    <option value="Reino Unido">Reino Unido</option>
-                    <option value="Irlanda">Irlanda</option>
-                    <option value="Países Baixos">Países Baixos</option>
-                    <option value="Bélgica">Bélgica</option>
-                    <option value="Suíça">Suíça</option>
-                    <option value="Luxemburgo">Luxemburgo</option>
-                    <option value="Itália">Itália</option>
-                    <option value="Estados Unidos">Estados Unidos</option>
-                    <option value="Canadá">Canadá</option>
-                    <option value="Angola">Angola</option>
-                    <option value="Moçambique">Moçambique</option>
-                    <option value="Cabo Verde">Cabo Verde</option>
-                    <option value="Outro">Outro</option>
+                    <option value="">Selecciona o teu país...</option>
+                    {countries.map(c => (
+                      <option key={c.code} value={c.country}>{c.country}</option>
+                    ))}
                   </select>
-                  <input
-                    type="text"
-                    placeholder="Região / Cidade"
-                    value={region}
-                    onChange={(e) => setRegion(e.target.value)}
-                    className="h-10 px-3 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
-                  />
+                  {countryData && countryData.regions.length > 1 && (
+                    <select
+                      value={region}
+                      onChange={(e) => setRegion(e.target.value)}
+                      className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
+                    >
+                      <option value="">Selecciona a região (opcional)...</option>
+                      {countryData.regions.map(r => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
+                  )}
                 </div>
               </div>
 
@@ -1023,7 +1024,7 @@ export default function CareerPathHome() {
                 className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
               >
                 <Compass className="w-5 h-5 mr-2" />
-                Desbloquear Career Path — €{PRICE}
+                Desbloquear Career Path — {PRICE}€
               </Button>
               <p className="text-center text-[10px] text-muted-foreground">Roadmap personalizado · Formações recomendadas · Próximos cargos · Estratégia de networking</p>
               <button
@@ -1058,12 +1059,12 @@ export default function CareerPathHome() {
                 <div className="text-right">
                   {discountPercent > 0 ? (
                     <>
-                      <p className="text-xs text-muted-foreground line-through">€{PRICE}</p>
+                      <p className="text-xs text-muted-foreground line-through">{PRICE}€</p>
                       <p className="text-lg font-bold text-[#C9A961]">{FINAL_PRICE_DISPLAY}€</p>
                       <p className="text-[10px] text-green-600 font-semibold">-{discountPercent}%</p>
                     </>
                   ) : (
-                    <p className="text-lg font-bold text-[#C9A961]">€{PRICE}</p>
+                    <p className="text-lg font-bold text-[#C9A961]">{PRICE}€</p>
                   )}
                 </div>
               </div>
@@ -1105,64 +1106,90 @@ export default function CareerPathHome() {
                 />
               </div>
 
-              {/* Payment method */}
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-foreground">Método de pagamento</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {(['mbway', 'stripe', 'paypal'] as const).map((method) => (
-                    <button
-                      key={method}
-                      onClick={() => setPaymentMethod(method)}
-                      className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                        paymentMethod === method
-                          ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground'
-                          : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
+              {FINAL_PRICE > 0 ? (
+                <>
+                  {/* Payment method */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-foreground">Método de pagamento</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {(['mbway', 'stripe', 'paypal'] as const).map((method) => (
+                        <button
+                          key={method}
+                          onClick={() => setPaymentMethod(method)}
+                          className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+                            paymentMethod === method
+                              ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground'
+                              : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
+                          }`}
+                        >
+                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? 'Cartão' : 'PayPal'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Phone (MB WAY only) */}
+                  {paymentMethod === 'mbway' && (
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-foreground">Telemóvel (MB WAY)</label>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="9XXXXXXXX"
+                        className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
+                      />
+                    </div>
+                  )}
+
+                  {paymentError && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4 shrink-0" />{paymentError}
+                    </p>
+                  )}
+
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowPaymentModal(false)}
+                      className="flex-1"
+                    >
+                      Voltar
+                    </Button>
+                    <Button
+                      onClick={paymentMethod === 'stripe' ? handleStripePayment : paymentMethod === 'mbway' ? handleMBWayPayment : handlePayPalPayment}
+                      disabled={paymentLoading}
+                      className={`flex-1 font-semibold text-white ${
+                        paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
                       }`}
                     >
-                      {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? 'Cartão' : 'PayPal'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Phone (MB WAY only) */}
-              {paymentMethod === 'mbway' && (
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-foreground">Telemóvel (MB WAY)</label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="9XXXXXXXX"
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                  />
+                      {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${FINAL_PRICE_DISPLAY}€`}
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowPaymentModal(false)}
+                    className="flex-1"
+                  >
+                    Voltar
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowPaymentModal(false);
+                      sessionStorage.setItem('careerPathPaid', 'true');
+                      sessionStorage.setItem('cpOrderId', `CP-FREE-${discountCode || 'PROMO'}`);
+                      if (email) sessionStorage.setItem('cpPaymentEmail', email);
+                      setLocation('/results');
+                    }}
+                    className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"
+                  >
+                    <Unlock className="w-4 h-4 mr-2" /> Desbloquear grátis
+                  </Button>
                 </div>
               )}
-
-              {paymentError && (
-                <p className="text-sm text-red-500 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4 shrink-0" />{paymentError}
-                </p>
-              )}
-
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowPaymentModal(false)}
-                  className="flex-1"
-                >
-                  Voltar
-                </Button>
-                <Button
-                  onClick={paymentMethod === 'stripe' ? handleStripePayment : paymentMethod === 'mbway' ? handleMBWayPayment : handlePayPalPayment}
-                  disabled={paymentLoading}
-                  className={`flex-1 font-semibold text-white ${
-                    paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
-                  }`}
-                >
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${FINAL_PRICE_DISPLAY}€`}
-                </Button>
-              </div>
 
 
             </div>

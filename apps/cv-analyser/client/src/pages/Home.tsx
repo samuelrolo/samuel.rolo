@@ -2259,13 +2259,13 @@ export default function Home() {
                   </div>
                   <div className="space-y-0">
                     <div className="flex items-baseline gap-1">
-                      <span className={`text-4xl font-bold ${plan.popular ? 'text-white' : 'text-foreground'}`}>€{plan.price}</span>
+                      <span className={`text-4xl font-bold ${plan.popular ? 'text-white' : 'text-foreground'}`}>{plan.price}€</span>
                     </div>
                     <p className={`text-sm ${plan.popular ? 'text-white/70' : 'text-muted-foreground'}`}>
                       {plan.name === 'Completo' ? (
                         <>CV Analyser + Career Path</>
                       ) : (
-                        <>€{plan.perUnit} por análise</>
+                        <>{plan.perUnit}€ por análise</>
                       )}
                     </p>
                   </div>

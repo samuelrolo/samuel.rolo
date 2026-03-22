@@ -11,6 +11,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
+import { countries } from "./en/countries";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -103,6 +104,7 @@ export default function CareerIntelligenceHome() {
   const [careerGoal, setCareerGoal] = useState<string>('');
   const [country, setCountry] = useState<string>('Portugal');
   const [region, setRegion] = useState<string>('');
+  const countryData = countries.find(c => c.country === country);
   const [previewData, setPreviewData] = useState<any>(null);
 
   const loadingMessages = [
@@ -866,38 +868,29 @@ export default function CareerIntelligenceHome() {
               {/* País e Região */}
               <div className="space-y-3">
                 <p className="text-sm font-medium">4. País e região <span className="text-red-500">*</span></p>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3">
                   <select
                     value={country}
-                    onChange={(e) => setCountry(e.target.value)}
+                    onChange={(e) => { setCountry(e.target.value); setRegion(''); }}
                     className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
                   >
-                    <option value="Portugal">Portugal</option>
-                    <option value="Brasil">Brasil</option>
-                    <option value="Espanha">Espanha</option>
-                    <option value="França">França</option>
-                    <option value="Alemanha">Alemanha</option>
-                    <option value="Reino Unido">Reino Unido</option>
-                    <option value="Irlanda">Irlanda</option>
-                    <option value="Países Baixos">Países Baixos</option>
-                    <option value="Bélgica">Bélgica</option>
-                    <option value="Suíça">Suíça</option>
-                    <option value="Luxemburgo">Luxemburgo</option>
-                    <option value="Itália">Itália</option>
-                    <option value="Estados Unidos">Estados Unidos</option>
-                    <option value="Canadá">Canadá</option>
-                    <option value="Angola">Angola</option>
-                    <option value="Moçambique">Moçambique</option>
-                    <option value="Cabo Verde">Cabo Verde</option>
-                    <option value="Outro">Outro</option>
+                    <option value="">Selecciona o teu país...</option>
+                    {countries.map(c => (
+                      <option key={c.code} value={c.country}>{c.country}</option>
+                    ))}
                   </select>
-                  <input
-                    type="text"
-                    placeholder="Região / Cidade"
-                    value={region}
-                    onChange={(e) => setRegion(e.target.value)}
-                    className="h-10 px-3 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
-                  />
+                  {countryData && countryData.regions.length > 1 && (
+                    <select
+                      value={region}
+                      onChange={(e) => setRegion(e.target.value)}
+                      className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
+                    >
+                      <option value="">Selecciona a região (opcional)...</option>
+                      {countryData.regions.map(r => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
+                  )}
                 </div>
               </div>
 
@@ -1048,7 +1041,7 @@ export default function CareerIntelligenceHome() {
                 className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
               >
                 <Scale className="w-5 h-5 mr-2" />
-                Desbloquear Career Intelligence — €{PRICE}
+                Desbloquear Career Intelligence — {PRICE}€
               </Button>
               <p className="text-center text-[10px] text-muted-foreground">Diagnóstico + 3 caminhos + comparação + trade-offs + recomendação final</p>
               <button
@@ -1130,57 +1123,79 @@ export default function CareerIntelligenceHome() {
                 />
               </div>
 
-              {/* Payment method */}
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-foreground">Método de pagamento</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {(['mbway', 'stripe', 'paypal'] as const).map((method) => (
-                    <button
-                      key={method}
-                      onClick={() => setPaymentMethod(method)}
-                      className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                        paymentMethod === method
-                          ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground'
-                          : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
+              {FINAL_PRICE > 0 ? (
+                <>
+                  {/* Payment method */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-foreground">Método de pagamento</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {(['mbway', 'stripe', 'paypal'] as const).map((method) => (
+                        <button
+                          key={method}
+                          onClick={() => setPaymentMethod(method)}
+                          className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+                            paymentMethod === method
+                              ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground'
+                              : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
+                          }`}
+                        >
+                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? 'Cartão' : 'PayPal'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {paymentMethod === 'mbway' && (
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-foreground">Telemóvel (MB WAY)</label>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="9XXXXXXXX"
+                        className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
+                      />
+                    </div>
+                  )}
+
+                  {paymentError && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4 shrink-0" />{paymentError}
+                    </p>
+                  )}
+
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={() => setShowPaymentModal(false)} className="flex-1">Voltar</Button>
+                    <Button
+                      onClick={paymentMethod === 'stripe' ? handleStripePayment : paymentMethod === 'mbway' ? handleMBWayPayment : handlePayPalPayment}
+                      disabled={paymentLoading}
+                      className={`flex-1 font-semibold text-white ${
+                        paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
                       }`}
                     >
-                      {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? 'Cartão' : 'PayPal'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {paymentMethod === 'mbway' && (
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-foreground">Telemóvel (MB WAY)</label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="9XXXXXXXX"
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                  />
+                      {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${FINAL_PRICE_DISPLAY}€`}
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setShowPaymentModal(false)} className="flex-1">Voltar</Button>
+                  <Button
+                    onClick={() => {
+                      setShowPaymentModal(false);
+                      sessionStorage.setItem('careerPathPaid', 'true');
+                      sessionStorage.setItem('careerIntelligenceProPaid', 'true');
+                      sessionStorage.setItem('careerIntelligenceFull', 'true');
+                      sessionStorage.setItem('cpOrderId', `CI-FREE-${discountCode || 'PROMO'}`);
+                      if (email) sessionStorage.setItem('cpPaymentEmail', email);
+                      setLocation('/career-intelligence/results');
+                    }}
+                    className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"
+                  >
+                    <Unlock className="w-4 h-4 mr-2" /> Desbloquear grátis
+                  </Button>
                 </div>
               )}
-
-              {paymentError && (
-                <p className="text-sm text-red-500 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4 shrink-0" />{paymentError}
-                </p>
-              )}
-
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setShowPaymentModal(false)} className="flex-1">Voltar</Button>
-                <Button
-                  onClick={paymentMethod === 'stripe' ? handleStripePayment : paymentMethod === 'mbway' ? handleMBWayPayment : handlePayPalPayment}
-                  disabled={paymentLoading}
-                  className={`flex-1 font-semibold text-white ${
-                    paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
-                  }`}
-                >
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${FINAL_PRICE_DISPLAY}€`}
-                </Button>
-              </div>
 
 
             </div>

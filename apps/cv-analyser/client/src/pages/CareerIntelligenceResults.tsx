@@ -171,6 +171,14 @@ export default function CareerIntelligenceResults() {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentStatus = urlParams.get('payment');
     const sessionId = urlParams.get('session_id');
+
+    // Handle cancelled payment — clean URL and redirect to home
+    if (paymentStatus === 'cancelled') {
+      window.history.replaceState({}, '', window.location.pathname);
+      setLocation(isEN ? '/en/career-intelligence' : '/career-intelligence');
+      return;
+    }
+
     if (paymentStatus === 'success' && sessionId) {
       fetch(`${BACKEND_URL}/api/payment/stripe-verify`, {
         method: 'POST',

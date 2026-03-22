@@ -353,7 +353,7 @@ export default function CareerPathHomeEN() {
           country: selectedCountry,
           region: selectedRegion,
           currency: currencyCode,
-          amount: PRICE_NUM,
+          amount: FINAL_PRICE,
         })
       });
       const data = await response.json();
@@ -376,9 +376,9 @@ export default function CareerPathHomeEN() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError('Invalid email'); return; }
     sessionStorage.setItem('cpPaymentEmail', email);
-    window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}USD`, '_blank');
+    window.open(`https://paypal.me/SamuelRolo/${FINAL_PRICE}USD`, '_blank');
     setPaymentStep('success');
-    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: PRICE_NUM, currency: currencyCodeUpper});
+    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: FINAL_PRICE, currency: currencyCodeUpper});
     trackPurchase('career_path', 19.99, `CP-PAYPAL-${Date.now()}`);
     trackAffiliateConversion({ product: 'career_path', amount: 19.99, currency: currencyCodeUpper, payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
   };
@@ -956,49 +956,69 @@ export default function CareerPathHomeEN() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-foreground">Payment method</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {(['stripe', 'paypal'] as const).map((method) => (
-                    <button
-                      key={method}
-                      onClick={() => setPaymentMethod(method)}
-                      className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                        paymentMethod === method
-                          ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground'
-                          : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
+              {FINAL_PRICE > 0 ? (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-foreground">Payment method</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {(['stripe', 'paypal'] as const).map((method) => (
+                        <button
+                          key={method}
+                          onClick={() => setPaymentMethod(method)}
+                          className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+                            paymentMethod === method
+                              ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground'
+                              : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
+                          }`}
+                        >
+                          {method === 'stripe' ? 'Card' : 'PayPal'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {paymentError && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4 shrink-0" />{paymentError}
+                    </p>
+                  )}
+
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowPaymentModal(false)}
+                      className="flex-1"
+                    >
+                      Back
+                    </Button>
+                    <Button
+                      onClick={paymentMethod === 'stripe' ? handleStripePayment : handlePayPalPayment}
+                      disabled={paymentLoading}
+                      className={`flex-1 font-semibold text-white ${
+                        paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
                       }`}
                     >
-                      {method === 'stripe' ? 'Card' : 'PayPal'}
-                    </button>
-                  ))}
+                      {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pay ${CUR}${FINAL_PRICE_DISPLAY}`}
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setShowPaymentModal(false)} className="flex-1">Back</Button>
+                  <Button
+                    onClick={() => {
+                      setShowPaymentModal(false);
+                      sessionStorage.setItem('careerPathPaid', 'true');
+                      sessionStorage.setItem('cpOrderId', `CP-FREE-${discountCode || 'PROMO'}`);
+                      if (email) sessionStorage.setItem('cpPaymentEmail', email);
+                      setLocation('/en/results');
+                    }}
+                    className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"
+                  >
+                    <Unlock className="w-4 h-4 mr-2" /> Unlock free
+                  </Button>
                 </div>
-              </div>
-
-              {paymentError && (
-                <p className="text-sm text-red-500 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4 shrink-0" />{paymentError}
-                </p>
               )}
-
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowPaymentModal(false)}
-                  className="flex-1"
-                >
-                  Back
-                </Button>
-                <Button
-                  onClick={paymentMethod === 'stripe' ? handleStripePayment : handlePayPalPayment}
-                  disabled={paymentLoading}
-                  className={`flex-1 font-semibold text-white ${
-                    paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
-                  }`}
-                >
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pay ${CUR}${FINAL_PRICE_DISPLAY}`}
-                </Button>
-              </div>
 
 
             </div>

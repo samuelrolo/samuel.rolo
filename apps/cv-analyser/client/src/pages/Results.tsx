@@ -494,6 +494,14 @@ export default function Results() {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentStatus = urlParams.get('payment');
     const sessionId = urlParams.get('session_id');
+
+    // Handle cancelled payment — clean URL and redirect to home
+    if (paymentStatus === 'cancelled') {
+      window.history.replaceState({}, '', window.location.pathname);
+      setLocation(isEN ? '/en' : '/');
+      return;
+    }
+
     if (paymentStatus === 'success' && sessionId) {
       // Restore selectedPlan from sessionStorage (lost during Stripe redirect)
       const savedPlan = sessionStorage.getItem('selectedPlanBeforeStripe');

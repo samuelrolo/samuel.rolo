@@ -12,6 +12,7 @@ import mammoth from "mammoth";
 import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
 import { useCurrency } from "@/hooks/useCurrency";
+import { countries } from "./countries";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -103,6 +104,7 @@ export default function CareerIntelligenceHomeEN() {
   const [careerGoal, setCareerGoal] = useState<string>('');
   const [country, setCountry] = useState<string>('Portugal');
   const [region, setRegion] = useState<string>('');
+  const countryData = countries.find(c => c.country === country);
   const [previewData, setPreviewData] = useState<any>(null);
 
   const loadingMessages = [
@@ -670,38 +672,29 @@ export default function CareerIntelligenceHomeEN() {
               {/* Country & Region */}
               <div className="space-y-3">
                 <p className="text-sm font-medium">4. Country and region <span className="text-red-500">*</span></p>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3">
                   <select
                     value={country}
-                    onChange={(e) => setCountry(e.target.value)}
+                    onChange={(e) => { setCountry(e.target.value); setRegion(''); }}
                     className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
                   >
-                    <option value="Portugal">Portugal</option>
-                    <option value="Brazil">Brazil</option>
-                    <option value="Spain">Spain</option>
-                    <option value="France">France</option>
-                    <option value="Germany">Germany</option>
-                    <option value="United Kingdom">United Kingdom</option>
-                    <option value="Ireland">Ireland</option>
-                    <option value="Netherlands">Netherlands</option>
-                    <option value="Belgium">Belgium</option>
-                    <option value="Switzerland">Switzerland</option>
-                    <option value="Luxembourg">Luxembourg</option>
-                    <option value="Italy">Italy</option>
-                    <option value="United States">United States</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Angola">Angola</option>
-                    <option value="Mozambique">Mozambique</option>
-                    <option value="Cape Verde">Cape Verde</option>
-                    <option value="Other">Other</option>
+                    <option value="">Select your country...</option>
+                    {countries.map(c => (
+                      <option key={c.code} value={c.country}>{c.country}</option>
+                    ))}
                   </select>
-                  <input
-                    type="text"
-                    placeholder="Region / City"
-                    value={region}
-                    onChange={(e) => setRegion(e.target.value)}
-                    className="h-10 px-3 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
-                  />
+                  {countryData && countryData.regions.length > 1 && (
+                    <select
+                      value={region}
+                      onChange={(e) => setRegion(e.target.value)}
+                      className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
+                    >
+                      <option value="">Select region (optional)...</option>
+                      {countryData.regions.map(r => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
+                  )}
                 </div>
               </div>
 
@@ -788,24 +781,46 @@ export default function CareerIntelligenceHomeEN() {
                 {discountValid && <p className="text-xs text-green-600 font-semibold">{discountPercent}% discount applied!</p>}
               </div>
               <div className="space-y-1"><label className="text-xs font-semibold text-foreground">Email</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]" /></div>
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-foreground">Payment method</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {(['stripe', 'paypal', 'mbway'] as const).map((method) => (
-                    <button key={method} onClick={() => setPaymentMethod(method)} className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${paymentMethod === method ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground' : 'border-border text-muted-foreground hover:border-[#C9A961]/50'}`}>
-                      {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? 'Card' : 'PayPal'}
-                    </button>
-                  ))}
+              {FINAL_PRICE > 0 ? (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-foreground">Payment method</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {(['stripe', 'paypal', 'mbway'] as const).map((method) => (
+                        <button key={method} onClick={() => setPaymentMethod(method)} className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${paymentMethod === method ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground' : 'border-border text-muted-foreground hover:border-[#C9A961]/50'}`}>
+                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? 'Card' : 'PayPal'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {paymentMethod === 'mbway' && (<div className="space-y-1"><label className="text-xs font-semibold text-foreground">Phone (MB WAY)</label><input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="9XXXXXXXX" className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]" /></div>)}
+                  {paymentError && (<p className="text-sm text-red-500 flex items-center gap-1"><AlertCircle className="w-4 h-4 shrink-0" />{paymentError}</p>)}
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={() => setShowPaymentModal(false)} className="flex-1">Back</Button>
+                    <Button onClick={paymentMethod === 'stripe' ? handleStripePayment : paymentMethod === 'mbway' ? handleMBWayPayment : handlePayPalPayment} disabled={paymentLoading} className={`flex-1 font-semibold text-white ${paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'}`}>
+                      {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pay ${CUR}${FINAL_PRICE_DISPLAY}`}
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setShowPaymentModal(false)} className="flex-1">Back</Button>
+                  <Button
+                    onClick={() => {
+                      setShowPaymentModal(false);
+                      sessionStorage.setItem('careerPathPaid', 'true');
+                      sessionStorage.setItem('careerIntelligenceProPaid', 'true');
+                      sessionStorage.setItem('careerIntelligenceFull', 'true');
+                      sessionStorage.setItem('cpOrderId', `CI-FREE-${discountCode || 'PROMO'}`);
+                      if (email) sessionStorage.setItem('cpPaymentEmail', email);
+                      setLocation('/en/career-intelligence/results');
+                    }}
+                    className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"
+                  >
+                    <Unlock className="w-4 h-4 mr-2" /> Unlock free
+                  </Button>
                 </div>
-              </div>
-              {paymentMethod === 'mbway' && (<div className="space-y-1"><label className="text-xs font-semibold text-foreground">Phone (MB WAY)</label><input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="9XXXXXXXX" className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]" /></div>)}
-              {paymentError && (<p className="text-sm text-red-500 flex items-center gap-1"><AlertCircle className="w-4 h-4 shrink-0" />{paymentError}</p>)}
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setShowPaymentModal(false)} className="flex-1">Back</Button>
-                <Button onClick={paymentMethod === 'stripe' ? handleStripePayment : paymentMethod === 'mbway' ? handleMBWayPayment : handlePayPalPayment} disabled={paymentLoading} className={`flex-1 font-semibold text-white ${paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'}`}>
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pay ${CUR}${FINAL_PRICE_DISPLAY}`}
-                </Button>
-              </div>
+              )}
 
             </div>
           )}

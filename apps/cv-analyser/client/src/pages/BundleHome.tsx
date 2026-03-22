@@ -572,7 +572,7 @@ export default function BundleHome() {
 
             {/* Price */}
             <div className="flex items-center justify-center gap-4">
-              <span className="text-4xl font-bold text-slate-900">€{PRICE}</span>
+              <span className="text-4xl font-bold text-slate-900">{PRICE}€</span>
             </div>
 
             {/* What's included */}
@@ -740,7 +740,7 @@ export default function BundleHome() {
               disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !selectedCountry || !acceptedTerms}
               className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 transition-all"
             >
-              Pagar e analisar — €{PRICE}
+              Pagar e analisar — {PRICE}€
             </Button>
 
             {/* Discount code link */}
@@ -803,7 +803,7 @@ export default function BundleHome() {
               <div className="bg-slate-50 rounded-xl p-4 text-center">
                 <p className="text-sm text-slate-600">CV Analyser + Career Path</p>
                 <div className="flex items-center justify-center gap-3 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">€{PRICE}</span>
+                  <span className="text-2xl font-bold text-slate-900">{PRICE}€</span>
                 </div>
               </div>
 
@@ -834,7 +834,7 @@ export default function BundleHome() {
                     disabled={paymentLoading}
                     className="w-full h-12 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl"
                   >
-                    {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar €${PRICE} com MB WAY`}
+                    {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${PRICE}€ com MB WAY`}
                   </Button>
                 </div>
               )}
@@ -845,7 +845,7 @@ export default function BundleHome() {
                   disabled={paymentLoading}
                   className="w-full h-12 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl"
                 >
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar €${PRICE} com Cartão`}
+                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${PRICE}€ com Cartão`}
                 </Button>
               )}
 
@@ -854,7 +854,7 @@ export default function BundleHome() {
                   onClick={handlePayPalPayment}
                   className="w-full h-12 bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold rounded-xl"
                 >
-                  Pagar €{PRICE} com PayPal
+                  Pagar {PRICE}€ com PayPal
                 </Button>
               )}
 
