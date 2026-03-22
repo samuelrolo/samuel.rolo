@@ -401,12 +401,15 @@ export default function CareerPathResults() {
       logCareerPathToSupabase(cpData, orderId, cpLinkedin);
 
       // Save to user_analyses for area-cliente
-      saveToUserAnalyses('career_path', {
-        career_path: { title: cpData.title || cpData.career_title, summary: cpData.summary || cpData.executive_summary },
-        career_path_json: cpData,
-        results_html: '',
-        linkedin_url: cpLinkedin,
-      });
+      // Delay to capture HTML after React renders the full results
+      setTimeout(() => {
+        saveToUserAnalyses('career_path', {
+          career_path: { title: cpData.title || cpData.career_title, summary: cpData.summary || cpData.executive_summary },
+          career_path_json: cpData,
+          results_html: document.querySelector('.career-path-results')?.innerHTML || '',
+          linkedin_url: cpLinkedin,
+        });
+      }, 1500);
     } catch (err: any) {
       setGenerateError(err.message || (isEN ? 'Error generating Career Path. Try again.' : 'Erro ao gerar Career Path. Tenta novamente.'));
     } finally {

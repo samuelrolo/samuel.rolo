@@ -644,25 +644,29 @@ export default function Results() {
     setIsPaid(true);
     sessionStorage.setItem('isPaid', 'true');
     // Save to user_analyses for area-cliente dashboard
-    try {
-      const cvData = sessionStorage.getItem('cvAnalysis');
-      if (cvData) {
-        const parsed = JSON.parse(cvData);
-        saveToUserAnalyses('cv_analyser', {
-          score: parsed.atsScore || parsed.overallScore || parsed.score,
-          analysis: {
-            atsScore: parsed.atsScore,
-            overallScore: parsed.overallScore,
-            keywords: parsed.keywords,
-            recommendations: parsed.recommendations,
-          },
-          results_html: document.querySelector('.results-container')?.innerHTML || '',
-          analysis_id: sessionStorage.getItem('analysisId'),
-        });
+    // IMPORTANT: Delay capture until after React re-renders with isPaid=true
+    // so we capture the UNLOCKED content, not the blurred/locked version
+    setTimeout(() => {
+      try {
+        const cvData = sessionStorage.getItem('cvAnalysis');
+        if (cvData) {
+          const parsed = JSON.parse(cvData);
+          saveToUserAnalyses('cv_analyser', {
+            score: parsed.atsScore || parsed.overallScore || parsed.score,
+            analysis: {
+              atsScore: parsed.atsScore,
+              overallScore: parsed.overallScore,
+              keywords: parsed.keywords,
+              recommendations: parsed.recommendations,
+            },
+            results_html: document.querySelector('.results-container')?.innerHTML || '',
+            analysis_id: sessionStorage.getItem('analysisId'),
+          });
+        }
+      } catch (e) {
+        console.warn('[S2I] Error preparing CV analysis for save:', e);
       }
-    } catch (e) {
-      console.warn('[S2I] Error preparing CV analysis for save:', e);
-    }
+    }, 1500); // Wait 1.5s for React to re-render unlocked content
   }, []);
 
   const openPaymentModal = (plan?: { name: string; price: string; analyses: number }) => {

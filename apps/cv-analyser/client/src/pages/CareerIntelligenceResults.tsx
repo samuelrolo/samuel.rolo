@@ -288,13 +288,17 @@ export default function CareerIntelligenceResults() {
       sessionStorage.setItem('careerPathData', JSON.stringify(ciData));
 
       // Save to user_analyses for area-cliente
-      saveToUserAnalyses('career_intelligence', {
-        strategic_paths: ciData.strategic_paths || [],
-        decision_recommendation: ciData.decision_recommendation || {},
-        market_context: ciData.market_context || {},
-        career_potential_score: ciData.career_potential_score || {},
-        career_goal: sessionStorage.getItem('careerGoal') || '',
-      });
+      // Delay to capture HTML after React renders the full results
+      setTimeout(() => {
+        saveToUserAnalyses('career_intelligence', {
+          strategic_paths: ciData.strategic_paths || [],
+          decision_recommendation: ciData.decision_recommendation || {},
+          market_context: ciData.market_context || {},
+          career_potential_score: ciData.career_potential_score || {},
+          career_goal: sessionStorage.getItem('careerGoal') || '',
+          results_html: document.querySelector('.career-intelligence-results')?.innerHTML || '',
+        });
+      }, 1500);
     } catch (err: any) {
       setGenerateError(err.message || (isEN ? 'Error generating Career Intelligence. Try again.' : 'Erro ao gerar Career Intelligence. Tenta novamente.'));
     } finally {
