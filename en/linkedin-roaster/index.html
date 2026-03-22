@@ -1171,6 +1171,29 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     let activeCoupon = null; // { code, discount_percent, partner_name }
     const BASE_PRICE = 3.99;
 
+    // Save to user_analyses for area-cliente dashboard
+    function saveToUserAnalyses(analysisType, data) {
+      try {
+        var storageKey = Object.keys(localStorage).find(function(k) { return k.startsWith('sb-') && k.endsWith('-auth-token'); });
+        if (!storageKey) return;
+        var stored = localStorage.getItem(storageKey);
+        if (!stored) return;
+        var parsed = JSON.parse(stored);
+        var accessToken = parsed && parsed.access_token;
+        var userId = parsed && parsed.user && parsed.user.id;
+        if (!accessToken || !userId) return;
+        var dedupKey = 's2i_saved_' + analysisType + '_' + Date.now();
+        if (sessionStorage.getItem(dedupKey)) return;
+        fetch(SUPABASE_URL + '/rest/v1/user_analyses', {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+          body: JSON.stringify({ user_id: userId, analysis_type: analysisType, data: Object.assign({}, data, { captured_at: new Date().toISOString() }), created_at: new Date().toISOString() })
+        }).then(function(res) {
+          if (res.ok) { sessionStorage.setItem(dedupKey, 'true'); console.log('[S2I] Analysis saved to user_analyses:', analysisType); }
+        }).catch(function(e) { console.warn('[S2I] Error saving to user_analyses:', e); });
+      } catch (e) { console.warn('[S2I] Error saving to user_analyses:', e); }
+    }
+
     // ── Affiliate Tracking ──────────────────────────────────
     (function initAffiliateTracking() {
       try {
@@ -1446,6 +1469,14 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             displayFullResults();
             sendResultsEmail(email);
             document.getElementById('successEmail').textContent = email;
+
+            // Save to user_analyses for area-cliente dashboard
+            saveToUserAnalyses('linkedin_roaster', {
+              analysis: analysisData.teaser || {},
+              results_text: analysisData.analise_completa ? JSON.stringify(analysisData.analise_completa).substring(0, 2000) : '',
+              email_used: email,
+              linkedin_url: linkedinUrl,
+            });
             // Set report date
             const dateEl = document.getElementById('reportDate');
             if (dateEl) {

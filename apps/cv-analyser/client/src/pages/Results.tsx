@@ -23,6 +23,51 @@ const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 
 /**
+ * Save analysis result to user_analyses table if user is authenticated via Supabase.
+ * Checks for existing Supabase session and saves the analysis data.
+ */
+async function saveToUserAnalyses(analysisType: string, data: Record<string, any>) {
+  try {
+    // Try to get Supabase session from localStorage
+    const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if (!storageKey) return;
+    const stored = localStorage.getItem(storageKey);
+    if (!stored) return;
+    const parsed = JSON.parse(stored);
+    const accessToken = parsed?.access_token;
+    const userId = parsed?.user?.id;
+    if (!accessToken || !userId) return;
+
+    // Check if we already saved this analysis (avoid duplicates)
+    const dedupKey = `s2i_saved_${analysisType}_${sessionStorage.getItem('analysisId') || Date.now()}`;
+    if (sessionStorage.getItem(dedupKey)) return;
+
+    const payload = {
+      user_id: userId,
+      analysis_type: analysisType,
+      data: { ...data, captured_at: new Date().toISOString() },
+      created_at: new Date().toISOString()
+    };
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      sessionStorage.setItem(dedupKey, 'true');
+      console.log('[S2I] Analysis saved to user_analyses:', analysisType);
+    }
+  } catch (e) {
+    console.warn('[S2I] Error saving to user_analyses:', e);
+  }
+}
+
+/**
  * Update the cv_analysis record with the user's email.
  * Called when user enters email for payment or report sending.
  */
@@ -549,6 +594,26 @@ export default function Results() {
   const unlockFullReport = useCallback(() => {
     setIsPaid(true);
     sessionStorage.setItem('isPaid', 'true');
+    // Save to user_analyses for area-cliente dashboard
+    try {
+      const cvData = sessionStorage.getItem('cvAnalysis');
+      if (cvData) {
+        const parsed = JSON.parse(cvData);
+        saveToUserAnalyses('cv_analyser', {
+          score: parsed.atsScore || parsed.overallScore || parsed.score,
+          analysis: {
+            atsScore: parsed.atsScore,
+            overallScore: parsed.overallScore,
+            keywords: parsed.keywords,
+            recommendations: parsed.recommendations,
+          },
+          results_html: document.querySelector('.results-container')?.innerHTML || '',
+          analysis_id: sessionStorage.getItem('analysisId'),
+        });
+      }
+    } catch (e) {
+      console.warn('[S2I] Error preparing CV analysis for save:', e);
+    }
   }, []);
 
   const openPaymentModal = (plan?: { name: string; price: string; analyses: number }) => {

@@ -18,6 +18,27 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dis
 const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+
+async function saveToUserAnalyses(analysisType: string, data: Record<string, any>) {
+  try {
+    const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if (!storageKey) return;
+    const stored = localStorage.getItem(storageKey);
+    if (!stored) return;
+    const parsed = JSON.parse(stored);
+    const accessToken = parsed?.access_token;
+    const userId = parsed?.user?.id;
+    if (!accessToken || !userId) return;
+    const dedupKey = `s2i_saved_${analysisType}_${Date.now()}`;
+    if (sessionStorage.getItem(dedupKey)) return;
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+      body: JSON.stringify({ user_id: userId, analysis_type: analysisType, data: { ...data, captured_at: new Date().toISOString() }, created_at: new Date().toISOString() })
+    });
+    if (res.ok) { sessionStorage.setItem(dedupKey, 'true'); console.log('[S2I] Analysis saved to user_analyses:', analysisType); }
+  } catch (e) { console.warn('[S2I] Error saving to user_analyses:', e); }
+}
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
 const PRICE = '29,00';
@@ -260,6 +281,16 @@ export default function BundleHome() {
       clearInterval(msgInterval);
       setAnalysisMsg("Tudo pronto! A redirecionar...");
       setStep('done');
+
+      // Save to user_analyses for area-cliente dashboard
+      try {
+        const cvScore = cvAnalysisResult.overallScore || cvAnalysisResult.ats_score || 0;
+        saveToUserAnalyses('cv_analyser', {
+          score: cvScore,
+          analysis: { atsScore: cvAnalysisResult.atsScore, overallScore: cvAnalysisResult.overallScore, keywords: cvAnalysisResult.keywords, recommendations: cvAnalysisResult.recommendations },
+          analysis_id: `bundle-${Date.now()}`,
+        });
+      } catch (_) {}
 
       // Redirect to CV Analyser results (which also shows Career Path link)
       setTimeout(() => {

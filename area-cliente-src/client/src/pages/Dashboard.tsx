@@ -25,6 +25,7 @@ type SavedAnalysis = {
 const TOOL_CONFIG: Record<string, { label: string; icon: typeof FileSearch; color: string; link: string }> = {
   cv_analyser: { label: 'CV Analyser', icon: FileSearch, color: 'text-blue-400', link: 'https://share2inspire.pt/cv-analyser' },
   career_path: { label: 'Career Path', icon: Compass, color: 'text-emerald-400', link: 'https://share2inspire.pt/career-path' },
+  career_intelligence: { label: 'Career Intelligence', icon: BarChart3, color: 'text-violet-400', link: 'https://share2inspire.pt/career-path' },
   linkedin_roaster: { label: 'LinkedIn Roaster', icon: Linkedin, color: 'text-amber-400', link: 'https://share2inspire.pt/linkedin-roaster' },
   career_energy: { label: 'Career Energy Score', icon: BarChart3, color: 'text-purple-400', link: 'https://share2inspire.pt/#career-energy' },
 };
@@ -231,6 +232,16 @@ export default function Dashboard() {
         return cleanText.substring(0, 80) + (cleanText.length > 80 ? '...' : '');
       }
     }
+    if (analysis.analysis_type === 'career_intelligence') {
+      if (data.strategic_paths && Array.isArray(data.strategic_paths)) {
+        return `${data.strategic_paths.length} caminhos estratégicos identificados`;
+      }
+      if (data.decision_recommendation?.recommended_path) return data.decision_recommendation.recommended_path;
+      if (data.results_html) {
+        const cleanText = stripHtml(sanitizeResultsHtml(data.results_html));
+        return cleanText.substring(0, 80) + (cleanText.length > 80 ? '...' : '');
+      }
+    }
     if (analysis.analysis_type === 'career_energy') {
       if (data.total_score) return `Score: ${data.total_score}${data.level ? ` — ${data.level}` : ''}`;
     }
@@ -243,6 +254,7 @@ export default function Dashboard() {
     { type: 'cv_analyser', label: 'CV Analyser', icon: FileSearch, link: 'https://share2inspire.pt/cv-analyser' },
     { type: 'linkedin_roaster', label: 'LinkedIn Roaster', icon: Linkedin, link: 'https://share2inspire.pt/linkedin-roaster' },
     { type: 'career_path', label: 'Career Path', icon: Compass, link: 'https://share2inspire.pt/career-path' },
+    { type: 'career_intelligence', label: 'Career Intelligence', icon: BarChart3, link: 'https://share2inspire.pt/career-path' },
   ];
 
   return (

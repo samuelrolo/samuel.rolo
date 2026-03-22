@@ -338,6 +338,69 @@ export default function HomeEN() {
   const [loading, setLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [savedCvInfo, setSavedCvInfo] = useState<{filename: string; url: string} | null>(null);
+
+  // Load saved CV from user_profiles if logged in
+  useEffect(() => {
+    (async () => {
+      try {
+        const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+        if (!storageKey) return;
+        const stored = localStorage.getItem(storageKey);
+        if (!stored) return;
+        const parsed = JSON.parse(stored);
+        const accessToken = parsed?.access_token;
+        const userId = parsed?.user?.id;
+        if (!accessToken || !userId) return;
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/user_profiles?id=eq.${userId}&select=cv_url,cv_filename,email`, {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` }
+        });
+        if (!res.ok) return;
+        const rows = await res.json();
+        if (rows?.[0]?.cv_url && rows[0].cv_filename) {
+          setSavedCvInfo({ filename: rows[0].cv_filename, url: rows[0].cv_url });
+        }
+        if (rows?.[0]?.email) setAnalysisEmail(rows[0].email);
+      } catch (e) { /* silent */ }
+    })();
+  }, []);
+
+  // Save CV to Supabase Storage after analysis
+  function persistCvToStorage(base64Content: string, filename: string) {
+    try {
+      const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+      if (!storageKey) return;
+      const stored = localStorage.getItem(storageKey);
+      if (!stored) return;
+      const parsed = JSON.parse(stored);
+      const accessToken = parsed?.access_token;
+      const userId = parsed?.user?.id;
+      if (!accessToken || !userId) return;
+      const byteString = atob(base64Content.split(',')[1] || base64Content);
+      const mimeString = base64Content.split(',')[0]?.split(':')[1]?.split(';')[0] || 'application/pdf';
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+      const blob = new Blob([ab], { type: mimeString });
+      const ext = filename.split('.').pop() || 'pdf';
+      const path = `${userId}/cv.${ext}`;
+      fetch(`${SUPABASE_URL}/storage/v1/object/user-cvs/${path}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${accessToken}`, 'x-upsert': 'true' },
+        body: blob
+      }).then(r => {
+        if (r.ok) {
+          const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/user-cvs/${path}`;
+          fetch(`${SUPABASE_URL}/rest/v1/user_profiles?id=eq.${userId}`, {
+            method: 'PATCH',
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cv_url: publicUrl, cv_filename: filename, cv_uploaded_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+          }).catch(() => {});
+        }
+      }).catch(() => {});
+    } catch (e) { /* silent */ }
+  }
+
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [pricingOpen, setPricingOpen] = useState(false);
   const [wantsJobMatch, setWantsJobMatch] = useState(false);
@@ -558,6 +621,30 @@ export default function HomeEN() {
       }
 
       logAnalysisToSupabase(analysisResult, analysisSource, cvText);
+
+      // Persist CV to Supabase Storage for future sessions
+      persistCvToStorage(base64Content, file.name);
+
+      // Save to user_analyses for area-cliente dashboard
+      try {
+        const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+        if (storageKey) {
+          const stored = localStorage.getItem(storageKey);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            const accessToken = parsed?.access_token;
+            const userId = parsed?.user?.id;
+            if (accessToken && userId) {
+              fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
+                method: 'POST',
+                headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+                body: JSON.stringify({ user_id: userId, analysis_type: 'cv_analyser', data: { ...analysisResult, captured_at: new Date().toISOString(), email: analysisEmail }, created_at: new Date().toISOString() })
+              }).catch(() => {});
+            }
+          }
+        }
+      } catch (e) { /* silent */ }
+
       setLocation('/results');
 
     } catch (err: any) {
@@ -1103,6 +1190,23 @@ export default function HomeEN() {
               )}
             </label>
             <p className="text-[11px] text-muted-foreground text-center">PDF, DOCX or Image • Free • Data deleted after analysis</p>
+            {!file && savedCvInfo && (
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    const res = await fetch(savedCvInfo.url);
+                    const blob = await res.blob();
+                    const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                    setFile(f);
+                  } catch { setError('Could not load saved CV.'); }
+                }}
+                className="text-xs text-[#C9A961] hover:underline font-medium text-center w-full mt-1"
+              >
+                <FileCheck className="w-3.5 h-3.5 inline mr-1" />
+                Use saved CV: {savedCvInfo.filename}
+              </button>
+            )}
           </div>
 
           {/* Desktop: Full drag & drop area */}
@@ -1138,6 +1242,26 @@ export default function HomeEN() {
                         <p className="text-xs text-muted-foreground mt-1">PDF, DOCX or Image (max 5MB)</p>
                       </div>
                     </>
+                  )}
+                  {!file && savedCvInfo && (
+                    <div className="mt-3 pt-3 border-t border-border/50">
+                      <button
+                        type="button"
+                        onClick={async (e) => {
+                          e.preventDefault(); e.stopPropagation();
+                          try {
+                            const res = await fetch(savedCvInfo.url);
+                            const blob = await res.blob();
+                            const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                            setFile(f);
+                          } catch { setError('Could not load saved CV.'); }
+                        }}
+                        className="text-xs text-[#C9A961] hover:underline font-medium"
+                      >
+                        <FileCheck className="w-3.5 h-3.5 inline mr-1" />
+                        Use saved CV: {savedCvInfo.filename}
+                      </button>
+                    </div>
                   )}
                 </div>
               </label>
