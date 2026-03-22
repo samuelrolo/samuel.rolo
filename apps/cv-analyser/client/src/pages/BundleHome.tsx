@@ -122,7 +122,7 @@ export default function BundleHome() {
   const handleProceedToPayment = () => {
     if (!file) { setError('Faz upload do teu CV (PDF ou DOCX)'); return; }
     if (!isValidLinkedinUrl(linkedinUrl)) { setError('Introduz um URL de LinkedIn válido'); return; }
-    if (!email || !/^[^s@]+@[^s@]+.[^s@]+$/.test(email)) { setError('Introduz um email válido'); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError('Introduz um email válido'); return; }
     if (!selectedCountry) { setError('Selecciona o teu país para resultados localizados'); return; }
     if (!acceptedTerms) { setError('Aceita a Política de Privacidade'); return; }
     setError(null);
