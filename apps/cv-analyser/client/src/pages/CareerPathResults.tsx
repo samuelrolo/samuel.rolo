@@ -720,6 +720,15 @@ export default function CareerPathResults() {
   const handleProMBWay = async () => {
     if (!email) { setProPaymentError(isEN ? 'Enter your email' : 'Introduz o teu email'); return; }
     if (!phone) { setProPaymentError(isEN ? 'Enter your phone number' : 'Introduz o teu número de telemóvel'); return; }
+
+    // If price is 0 (100% discount), skip payment entirely
+    if (PRO_PRICE_FINAL <= 0) {
+      const orderId = `CI-FREE-${Date.now()}`;
+      sessionStorage.setItem('ciOrderId', orderId);
+      handleProPaymentSuccess();
+      return;
+    }
+
     setProPaymentLoading(true);
     setProPaymentError(null);
     try {
@@ -752,6 +761,13 @@ export default function CareerPathResults() {
 
   const handleProStripe = async () => {
     if (!email) { setProPaymentError('Please enter your email'); return; }
+
+    // If price is 0 (100% discount), skip payment entirely
+    if (PRO_PRICE_FINAL <= 0) {
+      handleProPaymentSuccess();
+      return;
+    }
+
     setProPaymentLoading(true);
     setProPaymentError(null);
     try {
@@ -783,6 +799,13 @@ export default function CareerPathResults() {
 
   const handleProPayPal = async () => {
     if (!email) { setProPaymentError(isEN ? 'Enter your email' : 'Introduz o teu email'); return; }
+
+    // If price is 0 (100% discount), skip payment entirely
+    if (PRO_PRICE_FINAL <= 0) {
+      handleProPaymentSuccess();
+      return;
+    }
+
     window.open(`https://paypal.me/SamuelRolo/${PRO_PRICE_FINAL}${CURRENCY_CODE}`, '_blank');
     setProPaymentStep('success');
   };

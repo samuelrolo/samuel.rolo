@@ -319,6 +319,16 @@ export default function CareerIntelligenceHomeEN() {
     if (!phone) { setPaymentError('Enter your phone number'); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError('Invalid email'); return; }
+
+    // If price is 0 (100% discount), skip payment entirely
+    if (FINAL_PRICE <= 0) {
+      const orderId = `CI-FREE-${Date.now()}`;
+      sessionStorage.setItem('cpOrderId', orderId);
+      sessionStorage.setItem('cpPaymentEmail', email);
+      handlePaymentSuccess();
+      return;
+    }
+
     setPaymentLoading(true);
     if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
@@ -349,6 +359,14 @@ export default function CareerIntelligenceHomeEN() {
     if (!email) { setPaymentError('Enter your email'); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError('Invalid email'); return; }
+
+    // If price is 0 (100% discount), skip payment entirely
+    if (FINAL_PRICE <= 0) {
+      sessionStorage.setItem('cpPaymentEmail', email);
+      handlePaymentSuccess();
+      return;
+    }
+
     sessionStorage.setItem('cpPaymentEmail', email);
     trackPaymentStart('career_intelligence_full', FINAL_PRICE);
     window.open(`https://paypal.me/SamuelRolo/${FINAL_PRICE.toFixed(2)}USD`, '_blank');
@@ -363,6 +381,14 @@ export default function CareerIntelligenceHomeEN() {
     if (!email) { setPaymentError('Enter your email'); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError('Invalid email'); return; }
+
+    // If price is 0 (100% discount), skip payment entirely
+    if (FINAL_PRICE <= 0) {
+      sessionStorage.setItem('cpPaymentEmail', email);
+      handlePaymentSuccess();
+      return;
+    }
+
     setPaymentLoading(true);
     if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);

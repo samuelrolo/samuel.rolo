@@ -1789,6 +1789,12 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         const phone = document.getElementById('mbwayPhone').value.replace(/\s/g, '').replace(/\D/g, '');
         const email = document.getElementById('userEmail').value.trim();
 
+        // If price is 0 (100% discount), skip payment entirely
+        if (getCurrentPrice() <= 0) {
+            onPaymentSuccess(email, 'coupon_100');
+            return;
+        }
+
         if (!phone || phone.length < 9) {
             showError('teaserSection', 'Introduz um número de telemóvel válido.');
             return;
@@ -1850,6 +1856,11 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     async function payWithStripe() {
         const email = document.getElementById('userEmail').value.trim();
         const stripePrice = getCurrentPrice();
+        // If price is 0 (100% discount), skip payment entirely
+        if (stripePrice <= 0) {
+            onPaymentSuccess(email, 'coupon_100');
+            return;
+        }
         fbq('track', 'InitiateCheckout', { value: stripePrice, currency: 'EUR', content_ids: ['linkedin-roast'], content_type: 'product' });
         try {
             const response = await fetch(BACKEND_URL + '/api/payment/stripe-checkout', {
@@ -1881,6 +1892,11 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     function payWithPayPal() {
         const email = document.getElementById('userEmail').value.trim();
         const paypalPrice = getCurrentPrice();
+        // If price is 0 (100% discount), skip payment entirely
+        if (paypalPrice <= 0) {
+            onPaymentSuccess(email, 'coupon_100');
+            return;
+        }
         fbq('track', 'InitiateCheckout', { value: paypalPrice, currency: 'EUR', content_ids: ['linkedin-roast'], content_type: 'product' });
         const paypalUrl = 'https://www.paypal.com/cgi-bin/webscr?cmd=_xclick' +
             '&business=geral@share2inspire.pt' +
