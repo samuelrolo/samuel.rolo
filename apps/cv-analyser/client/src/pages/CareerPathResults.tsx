@@ -634,7 +634,7 @@ export default function CareerPathResults() {
   const PRO_PRICE = isEN ? 29 : 29;
   const PRO_PRICE_FINAL = proCouponDiscount > 0 ? Math.round(PRO_PRICE * (100 - proCouponDiscount) / 100 * 100) / 100 : PRO_PRICE;
   const PRO_PRICE_DISPLAY = isEN ? `$${PRO_PRICE_FINAL}` : `${PRO_PRICE_FINAL}€`;
-  const PRO_PRICE_FULL = isEN ? '$49' : '49€';
+
 
   const openProPaymentModal = () => {
     setProPaymentStep('payment');
@@ -1885,7 +1885,6 @@ export default function CareerPathResults() {
                       <p className="text-xs text-gray-400">{isEN ? 'Upgrade price' : 'Preço de upgrade'}</p>
                       <div className="flex items-baseline gap-2">
                         <span className="text-2xl font-bold text-white">{PRO_PRICE_DISPLAY}</span>
-                        <span className="text-sm text-gray-500 line-through">{PRO_PRICE_FULL}</span>
                       </div>
                       <p className="text-[10px] text-[#C9A961] font-medium mt-0.5">{isEN ? 'Exclusive upgrade after Career Path purchase' : 'Upgrade exclusivo após compra do Career Path'}</p>
                     </div>
@@ -1908,7 +1907,7 @@ export default function CareerPathResults() {
                   <div className="absolute inset-0 z-10 bg-background/60 backdrop-blur-md rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer" onClick={openProPaymentModal}>
                     <Lock className="w-6 h-6 text-[#C9A961]" />
                     <p className="text-sm font-semibold text-foreground">{isEN ? 'Available in Career Intelligence PRO' : 'Disponível no Career Intelligence PRO'}</p>
-                    <p className="text-xs text-[#C9A961] font-medium">{isEN ? 'Unlock for' : 'Desbloqueia por'} {PRO_PRICE_DISPLAY} <span className="text-muted-foreground line-through">{PRO_PRICE_FULL}</span></p>
+                    <p className="text-xs text-[#C9A961] font-medium">{isEN ? 'Unlock for' : 'Desbloqueia por'} {PRO_PRICE_DISPLAY}</p>
                   </div>
                 )}
                 <div className={!isProUnlocked ? 'select-none pointer-events-none' : ''}>
@@ -2574,10 +2573,8 @@ export default function CareerPathResults() {
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-[#C9A961]">{PRO_PRICE_DISPLAY}</p>
-                    {proCouponDiscount > 0 ? (
+                    {proCouponDiscount > 0 && (
                       <p className="text-xs text-muted-foreground"><span className="line-through">{isEN ? `$${PRO_PRICE}` : `${PRO_PRICE}€`}</span> <span className="text-green-600 font-semibold">-{proCouponDiscount}%</span></p>
-                    ) : (
-                      <p className="text-xs text-muted-foreground line-through">{PRO_PRICE_FULL}</p>
                     )}
                   </div>
                 </div>

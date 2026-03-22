@@ -23,7 +23,7 @@ const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
 const PRICE = '29';
 const PRICE_NUM = 29.00;
-const ORIGINAL_PRICE = '29.99';
+
 
 async function extractTextFromPDF(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
@@ -328,9 +328,7 @@ export default function BundleHomeEN() {
               Complete CV diagnosis and personalised career roadmap. Everything in one step, with a single payment.
             </p>
             <div className="flex items-center justify-center gap-4">
-              <span className="text-slate-400 text-xl line-through">{CUR}{ORIGINAL_PRICE}</span>
               <span className="text-4xl font-bold text-slate-900">{CUR}{PRICE}</span>
-              <span className="bg-green-100 text-green-700 text-sm font-semibold px-3 py-1 rounded-full">Save 11%</span>
             </div>
             <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mt-8">
               <div className="bg-white border border-slate-200 rounded-2xl p-6 text-left space-y-3">
@@ -478,7 +476,6 @@ export default function BundleHomeEN() {
               <div className="bg-slate-50 rounded-xl p-4 text-center">
                 <p className="text-sm text-slate-600">CV Analyser + Career Path</p>
                 <div className="flex items-center justify-center gap-3 mt-1">
-                  <span className="text-slate-400 line-through text-sm">{CUR}{ORIGINAL_PRICE}</span>
                   <span className="text-2xl font-bold text-slate-900">{CUR}{PRICE}</span>
                 </div>
               </div>

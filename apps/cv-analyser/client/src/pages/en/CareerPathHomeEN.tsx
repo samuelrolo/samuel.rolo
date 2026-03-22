@@ -847,7 +847,6 @@ export default function CareerPathHomeEN() {
                 <p className="text-xs text-muted-foreground">Career Intelligence includes everything in Career Path + side-by-side comparison, trade-offs, and a justified recommendation.</p>
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-bold text-purple-600">{CUR}49</span>
-                  <span className="text-xs text-muted-foreground line-through">{CUR}29.99</span>
                   <a
                     href="/en/career-intelligence"
                     className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 hover:text-purple-700 transition-colors ml-auto"
