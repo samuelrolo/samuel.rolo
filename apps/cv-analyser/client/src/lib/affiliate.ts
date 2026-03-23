@@ -234,13 +234,30 @@ export async function trackAffiliateConversion(params: {
   }
 }
 
+const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+
 /**
  * Increment the current_uses counter of a discount coupon after successful use.
+ * Uses the backend /use-coupon endpoint (primary) with direct Supabase PATCH as fallback.
  * Call this after a coupon is successfully applied (100% discount or partial discount payment).
  */
 export async function incrementCouponUsage(couponCode: string): Promise<void> {
   try {
-    // First get current value
+    // Primary: use backend endpoint (handles deactivation when max_uses reached)
+    const backendRes = await fetch(`${BACKEND_URL}/use-coupon`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: couponCode }),
+    });
+    
+    if (backendRes.ok) {
+      const result = await backendRes.json();
+      console.debug(`[COUPON] Usage incremented via backend for ${couponCode}: ${result.current_uses}`);
+      return;
+    }
+    
+    // Fallback: direct Supabase PATCH if backend fails
+    console.debug(`[COUPON] Backend failed (${backendRes.status}), falling back to direct Supabase PATCH`);
     const getRes = await fetch(
       `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(couponCode)}&select=id,current_uses`,
       { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
@@ -251,8 +268,7 @@ export async function incrementCouponUsage(couponCode: string): Promise<void> {
     const coupon = coupons[0];
     const newUses = (coupon.current_uses || 0) + 1;
     
-    // Update the counter
-    const patchRes = await fetch(
+    await fetch(
       `${SUPABASE_URL}/rest/v1/discount_coupons?id=eq.${coupon.id}`,
       {
         method: 'PATCH',
@@ -267,12 +283,7 @@ export async function incrementCouponUsage(couponCode: string): Promise<void> {
         }),
       }
     );
-    
-    if (patchRes.ok) {
-      console.debug(`[COUPON] Usage incremented for ${couponCode}: ${newUses}`);
-    } else {
-      console.debug(`[COUPON] Failed to increment usage for ${couponCode}:`, patchRes.status);
-    }
+    console.debug(`[COUPON] Usage incremented via Supabase for ${couponCode}: ${newUses}`);
   } catch (err) {
     console.debug('[COUPON] Increment error:', err);
   }
