@@ -119,15 +119,15 @@
     },
     {
       "source": "/en/pages/about",
-      "destination": "/en/pages/about/index.html"
+      "destination": "/en/pages/about"
     },
     {
       "source": "/en/home",
-      "destination": "/en/pages/home/index.html"
+      "destination": "/en/pages/home"
     },
     {
       "source": "/en/pages/home",
-      "destination": "/en/pages/home/index.html"
+      "destination": "/en/pages/home"
     },
     {
       "source": "/en/pages/knowledge",
@@ -139,15 +139,15 @@
     },
     {
       "source": "/en/pages/services",
-      "destination": "/en/pages/services/index.html"
+      "destination": "/en/pages/services"
     },
     {
       "source": "/en/pages/privacy-policy",
-      "destination": "/en/pages/privacy-policy/index.html"
+      "destination": "/en/pages/privacy-policy"
     },
     {
       "source": "/en/pages/contact",
-      "destination": "/en/pages/contact/index.html"
+      "destination": "/en/pages/contact"
     },
     {
       "source": "/bundle",
@@ -343,15 +343,15 @@
     },
     {
       "source": "/en/sobre",
-      "destination": "/en/pages/about/index.html"
+      "destination": "/en/pages/about"
     },
     {
       "source": "/en/servicos",
-      "destination": "/en/pages/services/index.html"
+      "destination": "/en/pages/services"
     },
     {
       "source": "/en/contactos",
-      "destination": "/en/pages/contact/index.html"
+      "destination": "/en/pages/contact"
     }
   ]
 }
