@@ -22,30 +22,44 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
 /** Save analysis to user_analyses for area-cliente dashboard */
-async function saveToUserAnalyses(analysisType: string, data: Record<string, any>) {
-  try {
-    const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
-    if (!storageKey) return;
-    const stored = localStorage.getItem(storageKey);
-    if (!stored) return;
-    const parsed = JSON.parse(stored);
-    const accessToken = parsed?.access_token;
-    const userId = parsed?.user?.id;
-    if (!accessToken || !userId) return;
-    const dedupKey = `s2i_saved_${analysisType}_${Date.now()}`;
-    if (sessionStorage.getItem(dedupKey)) return;
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
+async function saveToUserAnalyses(analysisType: string, data: Record<string, any>): Promise<boolean> {
+  const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+  if (!storageKey) throw new Error('NOT_LOGGED_IN');
+  const stored = localStorage.getItem(storageKey);
+  if (!stored) throw new Error('NOT_LOGGED_IN');
+  const parsed = JSON.parse(stored);
+  let accessToken = parsed?.access_token;
+  const refreshToken = parsed?.refresh_token;
+  const userId = parsed?.user?.id;
+  if (!accessToken || !userId) throw new Error('NOT_LOGGED_IN');
+  const dedupKey = `s2i_saved_${analysisType}_${Date.now()}`;
+  if (sessionStorage.getItem(dedupKey)) return true;
+  const payload = { user_id: userId, analysis_type: analysisType, data: { ...data, captured_at: new Date().toISOString() }, created_at: new Date().toISOString() };
+  let res = await fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+    body: JSON.stringify(payload)
+  });
+  if (res.status === 401 && refreshToken) {
+    console.log('[S2I] Access token expired, attempting refresh...');
+    const refreshRes = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
       method: 'POST',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify({ user_id: userId, analysis_type: analysisType, data: { ...data, captured_at: new Date().toISOString() }, created_at: new Date().toISOString() })
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: refreshToken })
     });
-    if (res.ok) { sessionStorage.setItem(dedupKey, 'true'); console.log('[S2I] Analysis saved to user_analyses:', analysisType); }
-  } catch (e) { console.warn('[S2I] Error saving to user_analyses:', e); }
+    if (refreshRes.ok) {
+      const newSession = await refreshRes.json();
+      accessToken = newSession.access_token;
+      localStorage.setItem(storageKey, JSON.stringify(newSession));
+      res = await fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+        body: JSON.stringify(payload)
+      });
+    } else { throw new Error('SESSION_EXPIRED'); }
+  }
+  if (res.ok) { sessionStorage.setItem(dedupKey, 'true'); console.log('[S2I] Analysis saved:', analysisType); return true; }
+  throw new Error(res.status === 401 ? 'SESSION_EXPIRED' : `SAVE_FAILED_${res.status}`);
 }
 
 /**
@@ -288,8 +302,13 @@ export default function CareerPathResults() {
         linkedin_url: sessionStorage.getItem('careerPathLinkedinUrl') || '',
       });
       setSavedToAccount(true);
-    } catch {
-      setSaveError(isEN ? 'Error saving. Try again.' : 'Erro ao guardar. Tenta novamente.');
+    } catch (err: any) {
+      if (err?.message === 'SESSION_EXPIRED' || err?.message === 'NOT_LOGGED_IN') {
+        setSaveError(isEN ? 'Session expired. Please log in again in your Account area and return here.' : 'Sessão expirada. Faz login novamente na Área de Cliente e volta aqui.');
+        setIsLoggedIn(false);
+      } else {
+        setSaveError(isEN ? 'Error saving. Try again.' : 'Erro ao guardar. Tenta novamente.');
+      }
     } finally {
       setSavingToAccount(false);
     }
@@ -402,13 +421,18 @@ export default function CareerPathResults() {
 
       // Save to user_analyses for area-cliente
       // Delay to capture HTML after React renders the full results
-      setTimeout(() => {
-        saveToUserAnalyses('career_path', {
-          career_path: { title: cpData.title || cpData.career_title, summary: cpData.summary || cpData.executive_summary },
-          career_path_json: cpData,
-          results_html: document.querySelector('.career-path-results')?.innerHTML || '',
-          linkedin_url: cpLinkedin,
-        });
+      setTimeout(async () => {
+        try {
+          await saveToUserAnalyses('career_path', {
+            career_path: { title: cpData.title || cpData.career_title, summary: cpData.summary || cpData.executive_summary },
+            career_path_json: cpData,
+            results_html: document.querySelector('.career-path-results')?.innerHTML || '',
+            linkedin_url: cpLinkedin,
+          });
+          setSavedToAccount(true);
+        } catch (e: any) {
+          console.warn('[S2I] Auto-save after generation failed:', e?.message);
+        }
       }, 1500);
     } catch (err: any) {
       setGenerateError(err.message || (isEN ? 'Error generating Career Path. Try again.' : 'Erro ao gerar Career Path. Tenta novamente.'));

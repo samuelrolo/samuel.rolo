@@ -26,44 +26,92 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
  * Save analysis result to user_analyses table if user is authenticated via Supabase.
  * Checks for existing Supabase session and saves the analysis data.
  */
-async function saveToUserAnalyses(analysisType: string, data: Record<string, any>) {
-  try {
-    // Try to get Supabase session from localStorage
-    const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
-    if (!storageKey) return;
-    const stored = localStorage.getItem(storageKey);
-    if (!stored) return;
-    const parsed = JSON.parse(stored);
-    const accessToken = parsed?.access_token;
-    const userId = parsed?.user?.id;
-    if (!accessToken || !userId) return;
+async function saveToUserAnalyses(analysisType: string, data: Record<string, any>): Promise<boolean> {
+  // Try to get Supabase session from localStorage
+  const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+  if (!storageKey) {
+    console.warn('[S2I] No Supabase auth token found in localStorage');
+    throw new Error('NOT_LOGGED_IN');
+  }
+  const stored = localStorage.getItem(storageKey);
+  if (!stored) throw new Error('NOT_LOGGED_IN');
+  const parsed = JSON.parse(stored);
+  let accessToken = parsed?.access_token;
+  const refreshToken = parsed?.refresh_token;
+  const userId = parsed?.user?.id;
+  if (!accessToken || !userId) throw new Error('NOT_LOGGED_IN');
 
-    // Check if we already saved this analysis (avoid duplicates)
-    const dedupKey = `s2i_saved_${analysisType}_${sessionStorage.getItem('analysisId') || Date.now()}`;
-    if (sessionStorage.getItem(dedupKey)) return;
+  // Check if we already saved this analysis (avoid duplicates)
+  const dedupKey = `s2i_saved_${analysisType}_${sessionStorage.getItem('analysisId') || Date.now()}`;
+  if (sessionStorage.getItem(dedupKey)) return true; // Already saved
 
-    const payload = {
-      user_id: userId,
-      analysis_type: analysisType,
-      data: { ...data, captured_at: new Date().toISOString() },
-      created_at: new Date().toISOString()
-    };
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify(payload)
-    });
-    if (res.ok) {
-      sessionStorage.setItem(dedupKey, 'true');
-      console.log('[S2I] Analysis saved to user_analyses:', analysisType);
+  const payload = {
+    user_id: userId,
+    analysis_type: analysisType,
+    data: { ...data, captured_at: new Date().toISOString() },
+    created_at: new Date().toISOString()
+  };
+
+  // First attempt with current access token
+  let res = await fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  // If 401, try to refresh the token and retry
+  if (res.status === 401 && refreshToken) {
+    console.log('[S2I] Access token expired, attempting refresh...');
+    try {
+      const refreshRes = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ refresh_token: refreshToken })
+      });
+      if (refreshRes.ok) {
+        const newSession = await refreshRes.json();
+        accessToken = newSession.access_token;
+        // Update localStorage with new session
+        localStorage.setItem(storageKey, JSON.stringify(newSession));
+        console.log('[S2I] Token refreshed successfully, retrying save...');
+        // Retry the save with new token
+        res = await fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify(payload)
+        });
+      } else {
+        console.warn('[S2I] Token refresh failed:', refreshRes.status);
+        throw new Error('SESSION_EXPIRED');
+      }
+    } catch (refreshErr: any) {
+      if (refreshErr.message === 'SESSION_EXPIRED') throw refreshErr;
+      console.warn('[S2I] Token refresh error:', refreshErr);
+      throw new Error('SESSION_EXPIRED');
     }
-  } catch (e) {
-    console.warn('[S2I] Error saving to user_analyses:', e);
+  }
+
+  if (res.ok) {
+    sessionStorage.setItem(dedupKey, 'true');
+    console.log('[S2I] Analysis saved to user_analyses:', analysisType);
+    return true;
+  } else {
+    const errText = await res.text().catch(() => '');
+    console.error('[S2I] Save failed:', res.status, errText);
+    throw new Error(res.status === 401 ? 'SESSION_EXPIRED' : `SAVE_FAILED_${res.status}`);
   }
 }
 
@@ -460,8 +508,13 @@ export default function Results() {
         analysis_id: sessionStorage.getItem('analysisId'),
       });
       setSavedToAccount(true);
-    } catch {
-      setSaveError(isEN ? 'Error saving. Try again.' : 'Erro ao guardar. Tenta novamente.');
+    } catch (err: any) {
+      if (err?.message === 'SESSION_EXPIRED' || err?.message === 'NOT_LOGGED_IN') {
+        setSaveError(isEN ? 'Session expired. Please log in again in your Account area and return here.' : 'Sessão expirada. Faz login novamente na Área de Cliente e volta aqui.');
+        setIsLoggedIn(false);
+      } else {
+        setSaveError(isEN ? 'Error saving. Try again.' : 'Erro ao guardar. Tenta novamente.');
+      }
     } finally {
       setSavingToAccount(false);
     }
@@ -646,12 +699,12 @@ export default function Results() {
     // Save to user_analyses for area-cliente dashboard
     // IMPORTANT: Delay capture until after React re-renders with isPaid=true
     // so we capture the UNLOCKED content, not the blurred/locked version
-    setTimeout(() => {
+    setTimeout(async () => {
       try {
         const cvData = sessionStorage.getItem('cvAnalysis');
         if (cvData) {
           const parsed = JSON.parse(cvData);
-          saveToUserAnalyses('cv_analyser', {
+          await saveToUserAnalyses('cv_analyser', {
             score: parsed.atsScore || parsed.overallScore || parsed.score,
             analysis: {
               atsScore: parsed.atsScore,
@@ -662,9 +715,11 @@ export default function Results() {
             results_html: document.querySelector('.results-container')?.innerHTML || '',
             analysis_id: sessionStorage.getItem('analysisId'),
           });
+          setSavedToAccount(true);
         }
-      } catch (e) {
-        console.warn('[S2I] Error preparing CV analysis for save:', e);
+      } catch (e: any) {
+        console.warn('[S2I] Auto-save after payment failed:', e?.message);
+        // Don't block the user - they can still manually save later
       }
     }, 1500); // Wait 1.5s for React to re-render unlocked content
   }, []);
