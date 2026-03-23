@@ -584,6 +584,20 @@ export default function Results() {
       setIsPaid(true);
     }
 
+    // Restore Career Path data from sessionStorage (survives page refresh)
+    const savedCareerPathData = sessionStorage.getItem('careerPathData');
+    if (savedCareerPathData) {
+      try {
+        const cpParsed = JSON.parse(savedCareerPathData);
+        setCareerPathData(cpParsed);
+        setCareerPathPaymentStep('done');
+        sessionStorage.setItem('careerPathIncluded', 'true');
+        console.log('[Results] Restored Career Path data from sessionStorage');
+      } catch (e) {
+        console.warn('[Results] Error restoring Career Path data:', e);
+      }
+    }
+
     // Check for Stripe payment return
     const urlParams = new URLSearchParams(window.location.search);
     const paymentStatus = urlParams.get('payment');
@@ -659,7 +673,10 @@ export default function Results() {
       (async () => {
         console.log('[Bundle→CareerPath] Auto-generating Career Path...');
         try {
-          const cvDataRaw = sessionStorage.getItem('cvAnalysis');
+          // Use the actual CV text stored by BundleHome, NOT the transformed analysis JSON
+          const cvTextForCP = sessionStorage.getItem('careerPathCvText') || '';
+          const linkedinForCP = sessionStorage.getItem('careerPathLinkedinUrl') || bundleLinkedin || '';
+          console.log('[Bundle→CareerPath] cv_text length:', cvTextForCP.length, 'linkedin:', linkedinForCP ? 'yes' : 'no');
           const cpResponse = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
             method: 'POST',
             headers: {
@@ -668,8 +685,8 @@ export default function Results() {
             },
             body: JSON.stringify({
               mode: 'career_path',
-              cv_text: cvDataRaw || '',
-              linkedin_url: bundleLinkedin || undefined,
+              cv_text: cvTextForCP,
+              linkedin_url: linkedinForCP || undefined,
               language: isEN ? 'en' : 'pt',
               country: sessionStorage.getItem('analysisCountry') || (isEN ? '' : 'Portugal'),
               region: sessionStorage.getItem('analysisRegion') || '',
@@ -678,8 +695,11 @@ export default function Results() {
           const cpData = await cpResponse.json();
           console.log('[Bundle→CareerPath] Response:', cpData.success, !!cpData.career_path);
           if (cpData.success || cpData.career_path) {
-            setCareerPathData(cpData.career_path || cpData);
+            const cpResult = cpData.career_path || cpData;
+            setCareerPathData(cpResult);
             setCareerPathPaymentStep('done');
+            // Also persist to sessionStorage so it survives page refresh
+            sessionStorage.setItem('careerPathData', JSON.stringify(cpResult));
           } else {
             console.error('[Bundle→CareerPath] API error:', cpData.error);
             setCareerPathError(cpData.error || 'Erro ao gerar Career Path');
