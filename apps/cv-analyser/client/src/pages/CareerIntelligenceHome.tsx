@@ -688,6 +688,18 @@ export default function CareerIntelligenceHome() {
                   Obter a minha recomendação de carreira
                 </Button>
                 <p className="text-xs text-muted-foreground">Análise completa por 49€ · Pagamento único · Resultado em &lt; 1 minuto</p>
+                {/* Demo button */}
+                <a
+                  href="/career-intelligence/demo"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-[#C9A961]/60 hover:bg-[#C9A961]/10 text-[#C9A961] font-semibold text-sm transition-all group"
+                  style={{ background: 'rgba(201,169,97,0.07)' }}
+                >
+                  <Eye className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  Vê o que vais receber
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </a>
                 <p className="text-xs text-muted-foreground">
                   Só precisas do diagnóstico? <a href="/career-path" className="text-[#C9A961] hover:underline">Career Path por 19,99€ →</a>
                 </p>
