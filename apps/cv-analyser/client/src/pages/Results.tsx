@@ -17,7 +17,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Loader2, ArrowLeft, Home as HomeIcon, FileCheck, Lock, TrendingUp, Euro, Info, BarChart3, Grid2x2, Eye, AlertTriangle, Bot, CreditCard, CheckCircle2, Mail, Ticket, Unlock, Target, Sparkles, Calendar, Send, Rocket, GraduationCap, Briefcase, Globe, Users, MapPin, ExternalLink, Linkedin, Compass, Download, Copy, Award, Share2, AlertCircle, Flame, DollarSign, Shield, Star, ChevronRight, Zap, Check, Save } from "lucide-react";
 import type { AnalysisData } from "@/types/analysis";
 import { trackPurchase } from "@/lib/gtag";
-import { trackAffiliateConversion } from "@/lib/affiliate";
+import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -1129,6 +1129,10 @@ export default function Results() {
           setDiscountSuccess(isEN ? 'Code valid! Analysis unlocked.' : 'Código válido! Análise desbloqueada.');
           unlockFullReport();
           updateAnalysisPayment('0', 'coupon', code);
+          // Increment coupon usage counter
+          incrementCouponUsage(code);
+          // Track affiliate conversion even for free coupons
+          trackAffiliateConversion({ product: 'cv_analyser', amount: 0, currency: isEN ? 'USD' : 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
           setTimeout(() => { setShowDiscountModal(false); setDiscountCode(''); setDiscountSuccess(null); }, 2500);
           return;
         }

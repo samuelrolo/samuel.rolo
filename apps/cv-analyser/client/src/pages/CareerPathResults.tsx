@@ -15,7 +15,7 @@ import {
   Zap, DollarSign, BarChart3, Star, ChevronRight, Download, Copy, Check, Save
 } from "lucide-react";
 import { trackPurchase } from "@/lib/gtag";
-import { trackAffiliateConversion } from "@/lib/affiliate";
+import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -466,6 +466,8 @@ export default function CareerPathResults() {
         const products = coupon.applicable_products || [];
         if (products.length > 0 && !products.includes('all') && !products.includes('career_path')) throw new Error(isEN ? 'This code is not applicable here.' : 'Este código não é aplicável aqui.');
         if (coupon.discount_percent === 100) {
+          incrementCouponUsage(code);
+          trackAffiliateConversion({ product: 'career_path', amount: 0, currency: isEN ? 'USD' : 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
           setDiscountSuccess(true);
           setShowDiscountModal(false);
           await new Promise(resolve => setTimeout(resolve, 350));

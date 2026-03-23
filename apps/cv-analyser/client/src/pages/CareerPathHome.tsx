@@ -10,7 +10,7 @@ import { useLocation } from "wouter";
 import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
-import { trackAffiliateConversion } from "@/lib/affiliate";
+import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 import { countries } from "./en/countries";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -176,6 +176,8 @@ export default function CareerPathHome() {
         setDiscountValid(true);
         // If 100% discount, unlock immediately
         if (coupon.discount_percent === 100) {
+          incrementCouponUsage(code);
+          trackAffiliateConversion({ product: 'career_path', amount: 0, currency: 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
           setShowPaymentModal(false);
           sessionStorage.setItem('careerPathPaid', 'true');
           sessionStorage.setItem('cpOrderId', `CP-COUPON-${code}`);

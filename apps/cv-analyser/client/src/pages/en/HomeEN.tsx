@@ -682,6 +682,9 @@ export default function HomeEN() {
           sessionStorage.setItem('paymentAmount', '0');
           sessionStorage.setItem('transactionId', `COUPON-${upperCode}`);
           setShowLinkedInPaywall(false);
+          // Increment coupon usage counter
+          const { incrementCouponUsage } = await import('@/lib/affiliate');
+          incrementCouponUsage(upperCode);
           return true;
         }
         setLinkedInVoucherError('This code gives a partial discount. Use it during payment.');

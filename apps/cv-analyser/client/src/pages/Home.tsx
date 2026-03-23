@@ -934,6 +934,9 @@ export default function Home() {
           sessionStorage.setItem('paymentAmount', '0');
           sessionStorage.setItem('transactionId', `COUPON-${code}`);
           setShowLinkedInPaywall(false);
+          // Increment coupon usage counter
+          const { incrementCouponUsage } = await import('@/lib/affiliate');
+          incrementCouponUsage(code);
           return true;
         }
         // Partial discount not supported for LinkedIn paywall (requires full access)

@@ -9,7 +9,7 @@ import { useLocation } from "wouter";
 import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
-import { trackAffiliateConversion } from "@/lib/affiliate";
+import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 import { useCurrency } from "@/hooks/useCurrency";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { countries } from "./countries";
@@ -314,6 +314,8 @@ export default function BundleHomeEN() {
         const products = coupon.applicable_products || [];
         if (products.length > 0 && !products.includes('all') && !products.includes('bundle') && !products.includes('complete')) { setDiscountError('This code is not applicable to this package.'); return; }
         if (coupon.discount_percent === 100) {
+          incrementCouponUsage(code);
+          trackAffiliateConversion({ product: 'bundle', amount: 0, currency: 'USD', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
           setShowDiscountModal(false);
           runBothEngines();
           return;

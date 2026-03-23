@@ -1,6 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 //  Share2Inspire · Affiliate Tracking Module
 //  Captura UTM ?ref=CODE, regista cliques detalhados e conversões
+//  + Incrementa current_uses dos cupões de desconto
 // ═══════════════════════════════════════════════════════════════
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
@@ -61,7 +62,7 @@ async function getGeoLocation(): Promise<{ country: string | null; city: string 
 /**
  * Initialise affiliate tracking on page load.
  * Reads ?ref=CODE (or ?aff=CODE, ?utm_affiliate=CODE) from URL,
- * stores in sessionStorage, and fires a click event to Supabase.
+ * stores in localStorage (survives Stripe redirects), and fires a click event to Supabase.
  * Should be called once in App.tsx or main.tsx.
  */
 export async function initAffiliateTracking(): Promise<void> {
@@ -71,7 +72,14 @@ export async function initAffiliateTracking(): Promise<void> {
 
     if (refCode) {
       // Store affiliate code + session for later conversion attribution
+      // Using localStorage so it survives Stripe/PayPal redirects
       const sessionId = generateSessionId();
+      localStorage.setItem('affiliate_code', refCode);
+      localStorage.setItem('affiliate_session', sessionId);
+      localStorage.setItem('affiliate_landing', window.location.pathname);
+      localStorage.setItem('affiliate_timestamp', String(Date.now()));
+
+      // Also keep in sessionStorage for backward compat
       sessionStorage.setItem('affiliate_code', refCode);
       sessionStorage.setItem('affiliate_session', sessionId);
       sessionStorage.setItem('affiliate_landing', window.location.pathname);
@@ -120,6 +128,7 @@ export async function initAffiliateTracking(): Promise<void> {
       });
       const clickResult = await clickRes.json();
       if (clickResult && clickResult.length > 0) {
+        localStorage.setItem('affiliate_click_id', String(clickResult[0].id));
         sessionStorage.setItem('affiliate_click_id', String(clickResult[0].id));
       }
 
@@ -137,10 +146,29 @@ export async function initAffiliateTracking(): Promise<void> {
 }
 
 /**
- * Get the current affiliate code from sessionStorage (if any).
+ * Get the current affiliate code from storage (if any).
+ * Checks localStorage first (survives redirects), then sessionStorage.
+ * Expires after 24 hours to avoid stale attribution.
  */
 export function getAffiliateCode(): string | null {
-  return sessionStorage.getItem('affiliate_code');
+  const code = localStorage.getItem('affiliate_code') || sessionStorage.getItem('affiliate_code');
+  if (!code) return null;
+  
+  // Check if affiliate code is still fresh (24h window)
+  const timestamp = localStorage.getItem('affiliate_timestamp');
+  if (timestamp) {
+    const age = Date.now() - parseInt(timestamp, 10);
+    if (age > 24 * 60 * 60 * 1000) {
+      // Expired — clean up
+      localStorage.removeItem('affiliate_code');
+      localStorage.removeItem('affiliate_session');
+      localStorage.removeItem('affiliate_landing');
+      localStorage.removeItem('affiliate_click_id');
+      localStorage.removeItem('affiliate_timestamp');
+      return null;
+    }
+  }
+  return code;
 }
 
 /**
@@ -156,10 +184,10 @@ export async function trackAffiliateConversion(params: {
   transaction_id?: string;
 }): Promise<void> {
   try {
-    const affiliateCode = sessionStorage.getItem('affiliate_code');
+    const affiliateCode = getAffiliateCode();
     if (!affiliateCode) return; // No affiliate — nothing to track
 
-    const clickId = sessionStorage.getItem('affiliate_click_id');
+    const clickId = localStorage.getItem('affiliate_click_id') || sessionStorage.getItem('affiliate_click_id');
 
     // Resolve affiliate_id
     let affiliateId: string | null = null;
@@ -185,7 +213,7 @@ export async function trackAffiliateConversion(params: {
     if (affiliateId) conversionData.affiliate_id = affiliateId;
     if (clickId) conversionData.click_id = parseInt(clickId, 10);
 
-    await fetch(`${SUPABASE_URL}/rest/v1/affiliate_conversions`, {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/affiliate_conversions`, {
       method: 'POST',
       headers: {
         'apikey': SUPABASE_ANON_KEY,
@@ -194,7 +222,58 @@ export async function trackAffiliateConversion(params: {
       },
       body: JSON.stringify(conversionData),
     });
+    
+    if (res.ok) {
+      console.debug('[AFFILIATE] Conversion tracked successfully:', affiliateCode, params.product, params.amount);
+    } else {
+      const errText = await res.text();
+      console.debug('[AFFILIATE] Conversion tracking failed:', res.status, errText);
+    }
   } catch (err) {
     console.debug('[AFFILIATE] Conversion tracking error:', err);
+  }
+}
+
+/**
+ * Increment the current_uses counter of a discount coupon after successful use.
+ * Call this after a coupon is successfully applied (100% discount or partial discount payment).
+ */
+export async function incrementCouponUsage(couponCode: string): Promise<void> {
+  try {
+    // First get current value
+    const getRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(couponCode)}&select=id,current_uses`,
+      { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+    );
+    const coupons = await getRes.json();
+    if (!Array.isArray(coupons) || coupons.length === 0) return;
+    
+    const coupon = coupons[0];
+    const newUses = (coupon.current_uses || 0) + 1;
+    
+    // Update the counter
+    const patchRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/discount_coupons?id=eq.${coupon.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          current_uses: newUses,
+          updated_at: new Date().toISOString()
+        }),
+      }
+    );
+    
+    if (patchRes.ok) {
+      console.debug(`[COUPON] Usage incremented for ${couponCode}: ${newUses}`);
+    } else {
+      console.debug(`[COUPON] Failed to increment usage for ${couponCode}:`, patchRes.status);
+    }
+  } catch (err) {
+    console.debug('[COUPON] Increment error:', err);
   }
 }

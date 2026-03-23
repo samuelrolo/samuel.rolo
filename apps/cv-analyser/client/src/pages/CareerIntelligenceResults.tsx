@@ -14,7 +14,7 @@ import {
   Mail, Send, Ticket, Unlock, Save
 } from "lucide-react";
 import { trackPurchase } from "@/lib/gtag";
-import { trackAffiliateConversion } from "@/lib/affiliate";
+import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -356,6 +356,7 @@ export default function CareerIntelligenceResults() {
         if (coupon.discount_percent === 100) {
           trackPurchase('career_intelligence_full', 0, `COUPON-${code}`);
           trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: isEN ? 'USD' : 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
+          incrementCouponUsage(code);
           sessionStorage.setItem('careerPathPaid', 'true');
           sessionStorage.setItem('careerIntelligenceProPaid', 'true');
           sessionStorage.setItem('careerIntelligenceFull', 'true');
