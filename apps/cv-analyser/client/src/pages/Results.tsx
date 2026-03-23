@@ -466,6 +466,19 @@ export default function Results() {
   const [discountLoading, setDiscountLoading] = useState(false);
   const [discountError, setDiscountError] = useState<string | null>(null);
   const [discountSuccess, setDiscountSuccess] = useState<string | null>(null);
+  // Applied partial discount coupon
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
+  const getDiscountedPrice = (price: string) => {
+    if (!appliedCoupon) return price;
+    const num = parseFloat(price.replace(',', '.'));
+    const discounted = Math.round(num * (1 - appliedCoupon.percent / 100) * 100) / 100;
+    return isEN ? discounted.toFixed(2) : discounted.toFixed(2).replace('.', ',');
+  };
+  const getDiscountedPriceNum = (price: string) => {
+    const num = parseFloat(price.replace(',', '.'));
+    if (!appliedCoupon) return num;
+    return Math.round(num * (1 - appliedCoupon.percent / 100) * 100) / 100;
+  };
 
   // Email report state
   const [reportEmail, setReportEmail] = useState("");
@@ -582,6 +595,24 @@ export default function Results() {
     const paidStatus = sessionStorage.getItem('isPaid');
     if (paidStatus === 'true') {
       setIsPaid(true);
+    }
+
+    // Restore applied coupon from sessionStorage (set by Home.tsx / HomeEN.tsx)
+    const savedCouponCode = sessionStorage.getItem('appliedCouponCode');
+    const savedCouponPercent = sessionStorage.getItem('appliedCouponPercent');
+    if (savedCouponCode && savedCouponPercent) {
+      setAppliedCoupon({ code: savedCouponCode, percent: parseInt(savedCouponPercent, 10) });
+      // Clean up so it's not re-applied on next visit
+      sessionStorage.removeItem('appliedCouponCode');
+      sessionStorage.removeItem('appliedCouponPercent');
+    }
+    // Also restore coupon from Stripe redirect
+    const stripeCoupon = sessionStorage.getItem('appliedCouponBeforeStripe');
+    if (stripeCoupon) {
+      try {
+        setAppliedCoupon(JSON.parse(stripeCoupon));
+        sessionStorage.removeItem('appliedCouponBeforeStripe');
+      } catch (_) {}
     }
 
     // Restore Career Path data from sessionStorage (survives page refresh)
@@ -789,7 +820,7 @@ export default function Results() {
           country,
           region,
           currency: CURRENCY_CODE.toLowerCase(),
-          amount: parseFloat(selectedPlan.price.replace(',', '.'))
+          amount: getDiscountedPriceNum(selectedPlan.price)
         })
       });
       const data = await response.json();
@@ -800,8 +831,9 @@ export default function Results() {
       sessionStorage.setItem('paymentEmail', email);
       updateAnalysisEmail(email);
       sessionStorage.setItem('stripeSessionId', data.sessionId);
-      // Save selectedPlan before redirect so it survives page reload
+      // Save selectedPlan and coupon before redirect so it survives page reload
       sessionStorage.setItem('selectedPlanBeforeStripe', JSON.stringify(selectedPlan));
+      if (appliedCoupon) sessionStorage.setItem('appliedCouponBeforeStripe', JSON.stringify(appliedCoupon));
       window.location.href = data.url;
     } catch (err) {
       setPaymentError(err instanceof Error ? err.message : 'Error processing payment');
@@ -839,7 +871,7 @@ export default function Results() {
       }
 
       const parsedAnalysis = JSON.parse(analysisDataStr);
-      const priceNum = parseFloat(selectedPlan.price.replace(',', '.'));
+      const priceNum = getDiscountedPriceNum(selectedPlan.price);
       const orderId = `CVA-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
       const cleanPhone = phone.replace(/\D/g, '').replace(/^(\+?351)/, '');
@@ -853,7 +885,7 @@ export default function Results() {
           orderId: orderId,
           amount: priceNum.toFixed(2),
           paymentMethod: 'mbway',
-          description: `CV Analyser - ${selectedPlan.name}`,
+          description: appliedCoupon ? `CV Analyser - ${selectedPlan.name} (${appliedCoupon.percent}% off)` : `CV Analyser - ${selectedPlan.name}`,
           name: email.split('@')[0],
           analysisData: parsedAnalysis
         })
@@ -900,7 +932,7 @@ export default function Results() {
     setPaymentError(null);
 
     try {
-      const priceNum = parseFloat(selectedPlan.price.replace(',', '.'));
+      const priceNum = getDiscountedPriceNum(selectedPlan.price);
       sessionStorage.setItem('paymentEmail', email);
       updateAnalysisEmail(email);
       
@@ -908,7 +940,7 @@ export default function Results() {
       window.open(`https://paypal.me/SamuelRolo/${priceNum}${CURRENCY_CODE}`, '_blank');
       
       // For PayPal, we need manual confirmation - go to success step
-      if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: parseFloat(selectedPlan.price.replace(',', '.')), currency: CURRENCY_CODE});
+      if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: priceNum, currency: CURRENCY_CODE});
       setPaymentStep('success');
     } catch (err) {
       setPaymentError(isEN ? 'Error opening PayPal. Try again.' : 'Erro ao abrir PayPal. Tenta novamente.');
@@ -1156,7 +1188,11 @@ export default function Results() {
           setTimeout(() => { setShowDiscountModal(false); setDiscountCode(''); setDiscountSuccess(null); }, 2500);
           return;
         }
-        setDiscountError(isEN ? 'This code gives a partial discount. Use it during payment.' : 'Este código dá desconto parcial. Usa-o no pagamento.');
+        // Partial discount — apply it
+        setAppliedCoupon({ code, percent: coupon.discount_percent });
+        incrementCouponUsage(code);
+        setDiscountSuccess(isEN ? `${coupon.discount_percent}% discount applied!` : `Desconto de ${coupon.discount_percent}% aplicado!`);
+        setTimeout(() => { setShowDiscountModal(false); setDiscountCode(''); setDiscountSuccess(null); }, 2000);
         return;
       }
 
@@ -3177,7 +3213,13 @@ export default function Results() {
                             )}
                           </div>
                         </div>
-                        <span className="text-lg font-bold text-[#C9A961]">{CUR}{plan.price}</span>
+                        <span className="text-lg font-bold text-[#C9A961]">
+                          {appliedCoupon ? (
+                            <><span className="text-sm line-through text-slate-400 mr-1">{CUR}{plan.price}</span>{CUR}{getDiscountedPrice(plan.price)}</>
+                          ) : (
+                            <>{CUR}{plan.price}</>
+                          )}
+                        </span>
                       </div>
                       <div className="ml-7 space-y-0.5">
                         {(plan as any).features?.map((f: string, fi: number) => (
@@ -3202,7 +3244,11 @@ export default function Results() {
                 onClick={() => setPaymentStep('payment')}
                 className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
               >
-                {isEN ? `Continue to Payment — ${CUR}${selectedPlan.price}` : `Continuar para Pagamento — ${CUR}${selectedPlan.price}`}
+                {appliedCoupon ? (
+                  isEN ? <>Continue to Payment — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</> : <>Continuar para Pagamento — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>
+                ) : (
+                  isEN ? `Continue to Payment — ${CUR}${selectedPlan.price}` : `Continuar para Pagamento — ${CUR}${selectedPlan.price}`
+                )}
               </Button>
             </div>
           )}
@@ -3306,8 +3352,17 @@ export default function Results() {
               <div className="pt-4 space-y-3">
                 <div className="flex items-center justify-between text-sm border-t border-border pt-3">
                   <span className="text-muted-foreground">Total</span>
-                  <span className="text-lg font-bold text-foreground">{CUR}{selectedPlan.price}</span>
+                  <span className="text-lg font-bold text-foreground">
+                    {appliedCoupon ? (
+                      <><span className="line-through text-muted-foreground mr-2">{CUR}{selectedPlan.price}</span><span className="text-green-600">{CUR}{getDiscountedPrice(selectedPlan.price)}</span></>
+                    ) : (
+                      <>{CUR}{selectedPlan.price}</>
+                    )}
+                  </span>
                 </div>
+                {appliedCoupon && (
+                  <p className="text-xs text-green-600 text-right -mt-2">{appliedCoupon.percent}% {isEN ? 'discount' : 'desconto'} ({appliedCoupon.code})</p>
+                )}
                 <Button
                   onClick={handlePayment}
                   disabled={loading}
@@ -3354,7 +3409,7 @@ export default function Results() {
               <div className="space-y-2">
                 <h3 className="text-lg font-bold text-foreground">{isEN ? 'Request sent to MB WAY' : 'Pedido enviado para MB WAY'}</h3>
                 <p className="text-sm text-muted-foreground">
-                  {isEN ? <>Open the MB WAY app on your phone and approve the payment of <span className="font-semibold text-foreground">{CUR}{selectedPlan.price}</span>.</> : <>Abre a app MB WAY no telemóvel e aprova o pagamento de <span className="font-semibold text-foreground">{CUR}{selectedPlan.price}</span>.</>}
+                  {isEN ? <>Open the MB WAY app on your phone and approve the payment of <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</> : <>Abre a app MB WAY no telemóvel e aprova o pagamento de <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</>}
                 </p>
               </div>
               <div className="bg-muted/30 rounded-lg p-4 space-y-2">

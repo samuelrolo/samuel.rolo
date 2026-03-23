@@ -687,8 +687,14 @@ export default function HomeEN() {
           incrementCouponUsage(upperCode);
           return true;
         }
-        setLinkedInVoucherError('This code gives a partial discount. Use it during payment.');
-        return false;
+        // Partial discount — store it in sessionStorage for the Results page payment modal
+        sessionStorage.setItem('appliedCouponCode', upperCode);
+        sessionStorage.setItem('appliedCouponPercent', String(coupon.discount_percent));
+        const { incrementCouponUsage: incUsage } = await import('@/lib/affiliate');
+        incUsage(upperCode);
+        setLinkedInVoucherError(`${coupon.discount_percent}% discount applied! It will be used at payment.`);
+        setTimeout(() => { setShowLinkedInPaywall(false); }, 1500);
+        return true;
       }
 
       // Step 2: Check vouchers

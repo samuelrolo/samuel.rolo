@@ -939,9 +939,15 @@ export default function Home() {
           incrementCouponUsage(code);
           return true;
         }
-        // Partial discount not supported for LinkedIn paywall (requires full access)
-        setLinkedInVoucherError('Este código dá um desconto parcial. Usa-o no pagamento.');
-        return false;
+        // Partial discount — store it in sessionStorage for the Results page payment modal
+        sessionStorage.setItem('appliedCouponCode', code);
+        sessionStorage.setItem('appliedCouponPercent', String(coupon.discount_percent));
+        const { incrementCouponUsage } = await import('@/lib/affiliate');
+        incrementCouponUsage(code);
+        setLinkedInVoucherError(`Desconto de ${coupon.discount_percent}% aplicado! Será usado no pagamento.`);
+        // Close paywall after a brief delay to show the message
+        setTimeout(() => { setShowLinkedInPaywall(false); }, 1500);
+        return true;
       }
 
       // Step 2: Check vouchers table

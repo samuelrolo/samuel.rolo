@@ -267,6 +267,17 @@ export default function CareerPathResults() {
   const [discountError, setDiscountError] = useState<string | null>(null);
   const [discountLoading, setDiscountLoading] = useState(false);
   const [discountSuccess, setDiscountSuccess] = useState(false);
+  // Applied partial discount coupon
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
+  const getDiscountedPriceNum = (price: string) => {
+    const num = parseFloat(price.replace(',', '.'));
+    if (!appliedCoupon) return num;
+    return Math.round(num * (1 - appliedCoupon.percent / 100) * 100) / 100;
+  };
+  const fmtDiscountedPrice = (price: string) => {
+    const discounted = getDiscountedPriceNum(price);
+    return isEN ? discounted.toFixed(2) : discounted.toFixed(2).replace('.', ',');
+  };
 
   // Email report
   const [postCopied, setPostCopied] = useState(false);
@@ -474,7 +485,11 @@ export default function CareerPathResults() {
           await generateCareerPath();
           return;
         }
-        throw new Error(isEN ? 'This code gives a partial discount. Use it during payment.' : 'Este código dá desconto parcial. Usa-o no pagamento.');
+        // Partial discount — apply it
+        setAppliedCoupon({ code, percent: coupon.discount_percent });
+        incrementCouponUsage(code);
+        setShowDiscountModal(false);
+        return;
       }
 
       // Step 2: Check vouchers table
@@ -538,9 +553,9 @@ export default function CareerPathResults() {
           email,
           phone: (() => { const p = phone.replace(/\D/g, '').replace(/^(\+?351)/, ''); return `351${p}`; })(),
           orderId,
-          amount: selectedPlan.priceNum.toFixed(2),
+          amount: getDiscountedPriceNum(selectedPlan.price).toFixed(2),
           paymentMethod: 'mbway',
-          description: `Share2Inspire - ${selectedPlan.name}`,
+          description: appliedCoupon ? `Share2Inspire - ${selectedPlan.name} (${appliedCoupon.percent}% off)` : `Share2Inspire - ${selectedPlan.name}`,
           name: email.split('@')[0],
         }),
       });
@@ -564,7 +579,7 @@ export default function CareerPathResults() {
     if (!emailRegex.test(email)) { setPaymentError(isEN ? 'Invalid email' : 'Email inválido'); return; }
 
     sessionStorage.setItem('cpPaymentEmail', email);
-    window.open(`https://paypal.me/SamuelRolo/${selectedPlan.priceNum}${CURRENCY_CODE}`, '_blank');
+    window.open(`https://paypal.me/SamuelRolo/${getDiscountedPriceNum(selectedPlan.price)}${CURRENCY_CODE}`, '_blank');
     setPaymentStep('success');
   };
 
@@ -590,7 +605,7 @@ export default function CareerPathResults() {
           country,
           region,
           currency: CURRENCY_CODE.toLowerCase(),
-          amount: parseFloat(selectedPlan.price.replace(',', '.'))
+          amount: getDiscountedPriceNum(selectedPlan.price)
         })
       });
       const data = await response.json();
@@ -600,6 +615,7 @@ export default function CareerPathResults() {
       sessionStorage.setItem('cpOrderId', orderId);
       sessionStorage.setItem('cpPaymentEmail', email);
       sessionStorage.setItem('stripeSessionId', data.sessionId);
+      if (appliedCoupon) sessionStorage.setItem('cpAppliedCoupon', JSON.stringify(appliedCoupon));
       window.location.href = data.url;
     } catch (err: any) {
       setPaymentError(err.message || 'Error processing payment');
@@ -1975,7 +1991,14 @@ export default function CareerPathResults() {
                         <p className="text-xs text-muted-foreground mt-0.5">{plan.description}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-bold text-foreground">{fmtPrice(plan.price)}</p>
+                        {appliedCoupon ? (
+                          <>
+                            <p className="text-sm line-through text-muted-foreground">{fmtPrice(plan.price)}</p>
+                            <p className="text-lg font-bold text-green-600">{fmtPrice(fmtDiscountedPrice(plan.price))}</p>
+                          </>
+                        ) : (
+                          <p className="text-lg font-bold text-foreground">{fmtPrice(plan.price)}</p>
+                        )}
                         {plan.badge && <span className="text-[10px] font-bold text-[#C9A961]">{plan.badge}</span>}
                       </div>
                     </div>
@@ -1986,7 +2009,11 @@ export default function CareerPathResults() {
                 onClick={() => setPaymentStep('payment')}
                 className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
               >
-                {isEN ? `Continue with ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}` : `Continuar com ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}`}
+                {appliedCoupon ? (
+                  isEN ? <>Continue with {selectedPlan.name} — <span className="line-through text-slate-400 mr-1">{fmtPrice(selectedPlan.price)}</span> {fmtPrice(fmtDiscountedPrice(selectedPlan.price))}</> : <>Continuar com {selectedPlan.name} — <span className="line-through text-slate-400 mr-1">{fmtPrice(selectedPlan.price)}</span> {fmtPrice(fmtDiscountedPrice(selectedPlan.price))}</>
+                ) : (
+                  isEN ? `Continue with ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}` : `Continuar com ${selectedPlan.name} — ${fmtPrice(selectedPlan.price)}`
+                )}
               </Button>
             </div>
           )}
@@ -1995,7 +2022,15 @@ export default function CareerPathResults() {
             <div className="space-y-4">
               <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20">
                 <p className="text-sm font-semibold text-foreground">{selectedPlan.name}</p>
-                <p className="text-lg font-bold text-[#C9A961]">{fmtPrice(selectedPlan.price)}</p>
+                {appliedCoupon ? (
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm line-through text-muted-foreground">{fmtPrice(selectedPlan.price)}</p>
+                    <p className="text-lg font-bold text-green-600">{fmtPrice(fmtDiscountedPrice(selectedPlan.price))}</p>
+                    <span className="text-xs text-green-600">(-{appliedCoupon.percent}%)</span>
+                  </div>
+                ) : (
+                  <p className="text-lg font-bold text-[#C9A961]">{fmtPrice(selectedPlan.price)}</p>
+                )}
               </div>
 
               {/* Email */}
@@ -2092,7 +2127,11 @@ export default function CareerPathResults() {
                     paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
                   }`}
                 >
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : isEN ? `Pay ${fmtPrice(selectedPlan.price)}` : `Pagar ${fmtPrice(selectedPlan.price)}`}
+                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : appliedCoupon ? (
+                    isEN ? `Pay ${fmtPrice(fmtDiscountedPrice(selectedPlan.price))}` : `Pagar ${fmtPrice(fmtDiscountedPrice(selectedPlan.price))}`
+                  ) : (
+                    isEN ? `Pay ${fmtPrice(selectedPlan.price)}` : `Pagar ${fmtPrice(selectedPlan.price)}`
+                  )}
                 </Button>
               </div>
             </div>

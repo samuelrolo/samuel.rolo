@@ -91,6 +91,9 @@ export default function BundleHomeEN() {
   const [discountCode, setDiscountCode] = useState("");
   const [discountError, setDiscountError] = useState<string | null>(null);
   const [discountLoading, setDiscountLoading] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
+  const finalPrice = appliedCoupon ? Math.round(PRICE_NUM * (1 - appliedCoupon.percent / 100) * 100) / 100 : PRICE_NUM;
+  const finalPriceStr = finalPrice.toFixed(2);
 
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [analysisMsg, setAnalysisMsg] = useState("");
@@ -223,7 +226,7 @@ export default function BundleHomeEN() {
             analysis_result: JSON.stringify(cvAnalysisSource),
             cv_text: cvText || null,
             payment_status: 'paid',
-            payment_amount: PRICE_NUM,
+            payment_amount: finalPrice,
             transaction_id: transactionId,
             domain: 'share2inspire.pt',
             user_name: detectedName,
@@ -233,9 +236,9 @@ export default function BundleHomeEN() {
         }).catch(() => {});
       } catch (_) {}
 
-      trackPurchase('bundle_cv_career', PRICE_NUM, `BUNDLE-${Date.now()}`);
-      if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: PRICE_NUM, currency: currencyCodeUpper});
-      trackAffiliateConversion({ product: 'bundle_cv_career', amount: PRICE_NUM, currency: currencyCodeUpper, payment_method: 'stripe', customer_email: email, transaction_id: `BUNDLE-${Date.now()}` });
+      trackPurchase('bundle_cv_career', finalPrice, `BUNDLE-${Date.now()}`);
+      if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: finalPrice, currency: currencyCodeUpper});
+      trackAffiliateConversion({ product: 'bundle_cv_career', amount: finalPrice, currency: currencyCodeUpper, payment_method: 'stripe', customer_email: email, transaction_id: `BUNDLE-${Date.now()}` });
       clearInterval(msgInterval);
       setAnalysisMsg("All done! Redirecting...");
       setStep('done');
@@ -267,8 +270,8 @@ export default function BundleHomeEN() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email, name: email.split('@')[0], amount: PRICE_NUM, currency: currencyCode,
-          description: 'Bundle CV Analyser + Career Path — Share2Inspire', orderId,
+          email, name: email.split('@')[0], amount: finalPrice, currency: currencyCode,
+          description: appliedCoupon ? `Bundle CV Analyser + Career Path — Share2Inspire (${appliedCoupon.percent}% off)` : 'Bundle CV Analyser + Career Path — Share2Inspire', orderId,
           success_url: `${window.location.origin}/en/bundle?paid=true`,
           cancel_url: `${window.location.origin}/en/bundle`,
         }),
@@ -286,12 +289,12 @@ export default function BundleHomeEN() {
 
   const handlePayPalPayment = async () => {
     if (!email) { setPaymentError('Enter your email'); return; }
-    trackPaymentStart('bundle_cv_career', PRICE_NUM);
-    window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}USD`, '_blank');
+    trackPaymentStart('bundle_cv_career', finalPrice);
+    window.open(`https://paypal.me/SamuelRolo/${finalPrice}USD`, '_blank');
     setPaymentStep('success');
-    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: PRICE_NUM, currency: currencyCodeUpper});
-    trackPurchase('bundle_cv_career', PRICE_NUM, `BUNDLE-PAYPAL-${Date.now()}`);
-    trackAffiliateConversion({ product: 'bundle_cv_career', amount: PRICE_NUM, currency: currencyCodeUpper, payment_method: 'paypal', customer_email: email, transaction_id: `BUNDLE-PAYPAL-${Date.now()}` });
+    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: finalPrice, currency: currencyCodeUpper});
+    trackPurchase('bundle_cv_career', finalPrice, `BUNDLE-PAYPAL-${Date.now()}`);
+    trackAffiliateConversion({ product: 'bundle_cv_career', amount: finalPrice, currency: currencyCodeUpper, payment_method: 'paypal', customer_email: email, transaction_id: `BUNDLE-PAYPAL-${Date.now()}` });
   };
 
   const handleDiscountCode = async () => {
@@ -320,7 +323,9 @@ export default function BundleHomeEN() {
           runBothEngines();
           return;
         }
-        setDiscountError('This code gives a partial discount. Use it during payment.');
+        setAppliedCoupon({ code, percent: coupon.discount_percent });
+        incrementCouponUsage(code);
+        setShowDiscountModal(false);
         return;
       }
       // Step 2: Check vouchers
@@ -383,7 +388,14 @@ export default function BundleHomeEN() {
               Complete CV diagnosis and personalised career roadmap. Everything in one step, with a single payment.
             </p>
             <div className="flex items-center justify-center gap-4">
-              <span className="text-4xl font-bold text-slate-900">{CUR}{PRICE}</span>
+              {appliedCoupon ? (
+                <>
+                  <span className="text-2xl line-through text-slate-400">{CUR}{PRICE}</span>
+                  <span className="text-4xl font-bold text-green-600">{CUR}{finalPriceStr}</span>
+                </>
+              ) : (
+                <span className="text-4xl font-bold text-slate-900">{CUR}{PRICE}</span>
+              )}
             </div>
             <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mt-8">
               <div className="bg-white border border-slate-200 rounded-2xl p-6 text-left space-y-3">
@@ -484,11 +496,23 @@ export default function BundleHomeEN() {
             </label>
             {error && (<div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-xl"><AlertCircle className="w-4 h-4 shrink-0" />{error}</div>)}
             <Button onClick={handleProceedToPayment} disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !selectedCountry || !acceptedTerms} className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 transition-all">
-              Pay and analyse — {CUR}{PRICE}
+              {appliedCoupon ? (
+                <>Pay and analyse — <span className="line-through text-slate-400 mr-1">{CUR}{PRICE}</span> {CUR}{finalPriceStr}</>
+              ) : (
+                <>Pay and analyse — {CUR}{PRICE}</>
+              )}
             </Button>
-            <button onClick={() => { setShowDiscountModal(true); setDiscountCode(''); setDiscountError(null); }} className="w-full text-center text-sm text-slate-500 hover:text-[#C9A961] transition-colors flex items-center justify-center gap-2">
-              <Ticket className="w-4 h-4" /> I have a discount code
-            </button>
+            {appliedCoupon ? (
+              <div className="w-full text-center text-sm text-green-600 bg-green-50 rounded-xl py-2 px-3 flex items-center justify-center gap-2">
+                <Check className="w-4 h-4" />
+                Coupon <span className="font-bold">{appliedCoupon.code}</span> applied — {appliedCoupon.percent}% off
+                <button onClick={() => setAppliedCoupon(null)} className="ml-2 text-xs text-slate-400 hover:text-red-500 underline">remove</button>
+              </div>
+            ) : (
+              <button onClick={() => { setShowDiscountModal(true); setDiscountCode(''); setDiscountError(null); }} className="w-full text-center text-sm text-slate-500 hover:text-[#C9A961] transition-colors flex items-center justify-center gap-2">
+                <Ticket className="w-4 h-4" /> I have a discount code
+              </button>
+            )}
             <p className="text-center text-xs text-slate-400">Secure payment via Card or PayPal</p>
             <button onClick={() => setStep('hero')} className="w-full text-center text-sm text-slate-400 hover:text-slate-600 transition-colors">← Back</button>
           </div>
@@ -531,8 +555,18 @@ export default function BundleHomeEN() {
               <div className="bg-slate-50 rounded-xl p-4 text-center">
                 <p className="text-sm text-slate-600">CV Analyser + Career Path</p>
                 <div className="flex items-center justify-center gap-3 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">{CUR}{PRICE}</span>
+                  {appliedCoupon ? (
+                    <>
+                      <span className="text-lg line-through text-slate-400">{CUR}{PRICE}</span>
+                      <span className="text-2xl font-bold text-green-600">{CUR}{finalPriceStr}</span>
+                    </>
+                  ) : (
+                    <span className="text-2xl font-bold text-slate-900">{CUR}{PRICE}</span>
+                  )}
                 </div>
+                {appliedCoupon && (
+                  <p className="text-xs text-green-600 mt-1">Coupon {appliedCoupon.code} — {appliedCoupon.percent}% off</p>
+                )}
               </div>
               <div className="flex gap-2">
                 {(['stripe', 'paypal'] as const).map(m => (
@@ -543,12 +577,12 @@ export default function BundleHomeEN() {
               </div>
               {paymentMethod === 'stripe' && (
                 <Button onClick={handleStripePayment} disabled={paymentLoading} className="w-full h-12 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl">
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pay ${CUR}${PRICE} with Card`}
+                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pay ${CUR}${finalPriceStr} with Card`}
                 </Button>
               )}
               {paymentMethod === 'paypal' && (
                 <Button onClick={handlePayPalPayment} className="w-full h-12 bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold rounded-xl">
-                  Pay {CUR}{PRICE} with PayPal
+                  Pay {CUR}{finalPriceStr} with PayPal
                 </Button>
               )}
               {paymentError && (<div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-xl"><AlertCircle className="w-4 h-4 shrink-0" />{paymentError}</div>)}
