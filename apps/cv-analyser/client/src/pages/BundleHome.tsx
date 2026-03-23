@@ -98,6 +98,10 @@ export default function BundleHome() {
   const [discountCode, setDiscountCode] = useState("");
   const [discountError, setDiscountError] = useState<string | null>(null);
   const [discountLoading, setDiscountLoading] = useState(false);
+  // Applied discount state
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
+  const finalPrice = appliedCoupon ? Math.round(PRICE_NUM * (1 - appliedCoupon.percent / 100) * 100) / 100 : PRICE_NUM;
+  const finalPriceStr = finalPrice.toFixed(2).replace('.', ',');
 
   // Analysis
   const [analysisProgress, setAnalysisProgress] = useState(0);
@@ -256,7 +260,7 @@ export default function BundleHome() {
             analysis_result: JSON.stringify(cvAnalysisSource),
             cv_text: cvText || null,
             payment_status: 'paid',
-            payment_amount: PRICE_NUM,
+            payment_amount: finalPrice,
             transaction_id: transactionId,
             domain: 'share2inspire.pt',
             user_name: detectedName,
@@ -267,11 +271,11 @@ export default function BundleHome() {
       } catch (_) {}
 
       // Track conversions
-      trackPurchase('bundle_cv_career', PRICE_NUM, `BUNDLE-${Date.now()}`);
-      if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: PRICE_NUM, currency: 'EUR'});
+      trackPurchase('bundle_cv_career', finalPrice, `BUNDLE-${Date.now()}`);
+      if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: finalPrice, currency: 'EUR'});
       trackAffiliateConversion({
         product: 'bundle_cv_career',
-        amount: PRICE_NUM,
+        amount: finalPrice,
         currency: 'EUR',
         payment_method: 'mbway',
         customer_email: email,
@@ -315,7 +319,7 @@ export default function BundleHome() {
       const cleanPhone = phone.replace(/\s/g, '').replace(/\D/g, '');
       const formattedPhone = cleanPhone.startsWith('351') ? cleanPhone : (cleanPhone.length === 9 ? '351' + cleanPhone : cleanPhone);
       const orderId = `BUNDLE-${Date.now()}`;
-      trackPaymentStart('bundle_cv_career', PRICE_NUM);
+      trackPaymentStart('bundle_cv_career', finalPrice);
       const response = await fetch(`${BACKEND_URL}/api/payment/mbway`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -323,10 +327,10 @@ export default function BundleHome() {
           orderId,
           phone: formattedPhone,
           mobileNumber: formattedPhone,
-          amount: PRICE_NUM.toFixed(2),
+          amount: finalPrice.toFixed(2),
           email,
           product: 'Bundle CV Analyser + Career Path',
-          description: 'Bundle completo — CV Analyser + Career Path',
+          description: appliedCoupon ? `Bundle completo — CV Analyser + Career Path (${appliedCoupon.percent}% desconto: ${appliedCoupon.code})` : 'Bundle completo — CV Analyser + Career Path',
         })
       });
       const data = await response.json();
@@ -343,12 +347,12 @@ export default function BundleHome() {
 
   const handlePayPalPayment = async () => {
     if (!email) { setPaymentError('Introduz o teu email'); return; }
-    trackPaymentStart('bundle_cv_career', PRICE_NUM);
-    window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}EUR`, '_blank');
+    trackPaymentStart('bundle_cv_career', finalPrice);
+    window.open(`https://paypal.me/SamuelRolo/${finalPrice}EUR`, '_blank');
     setPaymentStep('success');
-    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: PRICE_NUM, currency: 'EUR'});
-    trackPurchase('bundle_cv_career', PRICE_NUM, `BUNDLE-PAYPAL-${Date.now()}`);
-    trackAffiliateConversion({ product: 'bundle_cv_career', amount: PRICE_NUM, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: `BUNDLE-PAYPAL-${Date.now()}` });
+    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: finalPrice, currency: 'EUR'});
+    trackPurchase('bundle_cv_career', finalPrice, `BUNDLE-PAYPAL-${Date.now()}`);
+    trackAffiliateConversion({ product: 'bundle_cv_career', amount: finalPrice, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: `BUNDLE-PAYPAL-${Date.now()}` });
   };
 
   const handleStripePayment = async () => {
@@ -364,9 +368,9 @@ export default function BundleHome() {
         body: JSON.stringify({
           email,
           name: email.split('@')[0],
-          amount: PRICE_NUM,
+          amount: finalPrice,
           currency: 'eur',
-          description: 'Bundle CV Analyser + Career Path — Share2Inspire',
+          description: appliedCoupon ? `Bundle CV Analyser + Career Path — Share2Inspire (${appliedCoupon.percent}% desconto)` : 'Bundle CV Analyser + Career Path — Share2Inspire',
           orderId,
           success_url: `${window.location.origin}/bundle?paid=true`,
           cancel_url: `${window.location.origin}/bundle`,
@@ -495,7 +499,10 @@ export default function BundleHome() {
           runBothEngines();
           return;
         }
-        setDiscountError('Este código dá desconto parcial. Usa-o no pagamento.');
+        // Partial discount — apply it and close modal
+        setAppliedCoupon({ code, percent: coupon.discount_percent });
+        incrementCouponUsage(code);
+        setShowDiscountModal(false);
         return;
       }
 
@@ -574,7 +581,14 @@ export default function BundleHome() {
 
             {/* Price */}
             <div className="flex items-center justify-center gap-4">
-              <span className="text-4xl font-bold text-slate-900">{PRICE}€</span>
+              {appliedCoupon ? (
+                <>
+                  <span className="text-2xl line-through text-slate-400">{PRICE}€</span>
+                  <span className="text-4xl font-bold text-green-600">{finalPriceStr}€</span>
+                </>
+              ) : (
+                <span className="text-4xl font-bold text-slate-900">{PRICE}€</span>
+              )}
             </div>
 
             {/* What's included */}
@@ -742,16 +756,28 @@ export default function BundleHome() {
               disabled={!file || !isValidLinkedinUrl(linkedinUrl) || !email || !selectedCountry || !acceptedTerms}
               className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 transition-all"
             >
-              Pagar e analisar — {PRICE}€
+              {appliedCoupon ? (
+                <>Pagar e analisar — <span className="line-through text-slate-400 mr-1">{PRICE}€</span> {finalPriceStr}€</>
+              ) : (
+                <>Pagar e analisar — {PRICE}€</>
+              )}
             </Button>
 
-            {/* Discount code link */}
-            <button
-              onClick={() => { setShowDiscountModal(true); setDiscountCode(''); setDiscountError(null); }}
-              className="w-full text-center text-sm text-slate-500 hover:text-[#C9A961] transition-colors flex items-center justify-center gap-2"
-            >
-              <Ticket className="w-4 h-4" /> Tenho um código de desconto
-            </button>
+            {/* Discount code link / applied badge */}
+            {appliedCoupon ? (
+              <div className="w-full text-center text-sm text-green-600 bg-green-50 rounded-xl py-2 px-3 flex items-center justify-center gap-2">
+                <Check className="w-4 h-4" />
+                Cupão <span className="font-bold">{appliedCoupon.code}</span> aplicado — {appliedCoupon.percent}% desconto
+                <button onClick={() => setAppliedCoupon(null)} className="ml-2 text-xs text-slate-400 hover:text-red-500 underline">remover</button>
+              </div>
+            ) : (
+              <button
+                onClick={() => { setShowDiscountModal(true); setDiscountCode(''); setDiscountError(null); }}
+                className="w-full text-center text-sm text-slate-500 hover:text-[#C9A961] transition-colors flex items-center justify-center gap-2"
+              >
+                <Ticket className="w-4 h-4" /> Tenho um código de desconto
+              </button>
+            )}
 
             <p className="text-center text-xs text-slate-400">Pagamento seguro via MB WAY ou PayPal</p>
 
@@ -805,8 +831,18 @@ export default function BundleHome() {
               <div className="bg-slate-50 rounded-xl p-4 text-center">
                 <p className="text-sm text-slate-600">CV Analyser + Career Path</p>
                 <div className="flex items-center justify-center gap-3 mt-1">
-                  <span className="text-2xl font-bold text-slate-900">{PRICE}€</span>
+                  {appliedCoupon ? (
+                    <>
+                      <span className="text-lg line-through text-slate-400">{PRICE}€</span>
+                      <span className="text-2xl font-bold text-green-600">{finalPriceStr}€</span>
+                    </>
+                  ) : (
+                    <span className="text-2xl font-bold text-slate-900">{PRICE}€</span>
+                  )}
                 </div>
+                {appliedCoupon && (
+                  <p className="text-xs text-green-600 mt-1">Cupão {appliedCoupon.code} — {appliedCoupon.percent}% desconto</p>
+                )}
               </div>
 
               {/* Payment method tabs */}
@@ -836,7 +872,7 @@ export default function BundleHome() {
                     disabled={paymentLoading}
                     className="w-full h-12 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl"
                   >
-                    {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${PRICE}€ com MB WAY`}
+                    {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${finalPriceStr}€ com MB WAY`}
                   </Button>
                 </div>
               )}
@@ -847,7 +883,7 @@ export default function BundleHome() {
                   disabled={paymentLoading}
                   className="w-full h-12 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl"
                 >
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${PRICE}€ com Cartão`}
+                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${finalPriceStr}€ com Cartão`}
                 </Button>
               )}
 
@@ -856,7 +892,7 @@ export default function BundleHome() {
                   onClick={handlePayPalPayment}
                   className="w-full h-12 bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold rounded-xl"
                 >
-                  Pagar {PRICE}€ com PayPal
+                  Pagar {finalPriceStr}€ com PayPal
                 </Button>
               )}
 
