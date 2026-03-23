@@ -49,6 +49,21 @@
       "source": "/en/artigos/how-to-negotiate-salary",
       "destination": "/en/blog/artigos/how-to-negotiate-salary",
       "permanent": true
+    },
+    {
+      "source": "/cv-analyser/assets/index-D65Xdybq.js",
+      "destination": "/cv-analyser/assets/index-5fdt1X3E.js",
+      "statusCode": 301
+    },
+    {
+      "source": "/cv-analyser/assets/index-BLOMyzEu.js",
+      "destination": "/cv-analyser/assets/index-5fdt1X3E.js",
+      "statusCode": 301
+    },
+    {
+      "source": "/cv-analyser/assets/index-Cwo4zGYJ.js",
+      "destination": "/cv-analyser/assets/index-BD1Wmvq_.js",
+      "statusCode": 301
     }
   ],
   "headers": [
