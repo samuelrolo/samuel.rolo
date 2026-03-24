@@ -17,23 +17,30 @@ import {
   Tag, Gift,
 } from 'lucide-react';
 
-type PlanKey = 'monthly' | 'semiannual' | 'annual';
 type PayMethod = 'mbway' | 'stripe' | 'paypal';
 type Step = 'form' | 'processing' | 'polling' | 'success' | 'error';
+type Period = 'monthly' | 'semiannual' | 'annual';
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
-const planPrices: Record<PlanKey, number> = {
-  monthly: 9.90,
-  semiannual: 49,
-  annual: 89,
-};
-
-const planDurations: Record<PlanKey, number> = {
+const periodDurations: Record<Period, number> = {
   monthly: 30,
   semiannual: 180,
   annual: 365,
 };
+
+// Extract period from plan key (e.g. 'essential_monthly' -> 'monthly')
+function getPeriodFromPlan(plan: string): Period {
+  const parts = plan.split('_');
+  const p = parts[parts.length - 1] as Period;
+  if (p === 'monthly' || p === 'semiannual' || p === 'annual') return p;
+  return 'monthly';
+}
+
+// Extract tier from plan key (e.g. 'essential_monthly' -> 'essential')
+function getTierFromPlan(plan: string): string {
+  return plan.split('_')[0] || plan;
+}
 
 function formatPrice(price: number) {
   return price.toFixed(2).replace('.', ',') + ' €';
@@ -86,11 +93,13 @@ function trackAffiliate(orderId: string, amount: number) {
 }
 
 type Props = {
-  plan: PlanKey;
+  plan: string;
+  price: number;
+  planLabel: string;
   onClose: () => void;
 };
 
-export default function PaymentModal({ plan, onClose }: Props) {
+export default function PaymentModal({ plan, price: propPrice, planLabel: propLabel, onClose }: Props) {
   const { t, lang } = useI18n();
   const { user, profile, refreshProfile } = useAuth();
 
@@ -115,16 +124,16 @@ export default function PaymentModal({ plan, onClose }: Props) {
 
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const basePrice = planPrices[plan];
+  const period = getPeriodFromPlan(plan);
+  const tier = getTierFromPlan(plan);
+  const planDuration = periodDurations[period];
+
+  const basePrice = propPrice;
   const finalPrice = discountPercent > 0
     ? Math.round(basePrice * (1 - discountPercent / 100) * 100) / 100
     : basePrice;
 
-  const planLabels: Record<PlanKey, string> = {
-    monthly: t('sub.monthly'),
-    semiannual: t('sub.semiannual'),
-    annual: t('sub.annual'),
-  };
+  const currentPlanLabel = propLabel;
 
   // Pre-fill from profile
   useEffect(() => {
@@ -250,7 +259,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
   const activateFreeSubscription = async (code: string) => {
     if (!user) return;
     const now = new Date();
-    const endDate = new Date(now.getTime() + planDurations[plan] * 24 * 60 * 60 * 1000);
+    const endDate = new Date(now.getTime() + planDuration * 24 * 60 * 60 * 1000);
 
     await supabase.from('subscriptions').insert({
       user_id: user.id,
@@ -276,7 +285,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
   const createSubscription = async (payMethod: string, payRef: string, status: string) => {
     if (!user) return;
     const now = new Date();
-    const endDate = new Date(now.getTime() + planDurations[plan] * 24 * 60 * 60 * 1000);
+    const endDate = new Date(now.getTime() + planDuration * 24 * 60 * 60 * 1000);
 
     await supabase.from('subscriptions').insert({
       user_id: user.id,
@@ -314,7 +323,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
           orderId,
           amount: finalPrice.toFixed(2),
           paymentMethod: 'mbway',
-          description: `Share2Inspire - ${planLabels[plan]}`,
+          description: `Share2Inspire - ${currentPlanLabel}`,
           name: profile?.first_name || email.split('@')[0],
           coupon_code: couponCode || undefined,
           discount_percent: discountPercent || undefined,
@@ -405,7 +414,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
 
     await createSubscription('paypal', orderId, 'pending');
 
-    trackPurchase(orderId, finalPrice, planLabels[plan]);
+    trackPurchase(orderId, finalPrice, currentPlanLabel);
     trackAffiliate(orderId, finalPrice);
 
     window.open(`https://paypal.me/SamuelRolo/${finalPrice.toFixed(2)}EUR`, '_blank');
@@ -536,7 +545,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
   const handlePaymentConfirmed = async (orderId: string) => {
     if (user) {
       const now = new Date();
-      const endDate = new Date(now.getTime() + planDurations[plan] * 24 * 60 * 60 * 1000);
+      const endDate = new Date(now.getTime() + planDuration * 24 * 60 * 60 * 1000);
       await supabase
         .from('subscriptions')
         .update({
@@ -549,7 +558,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
     }
 
     // Fire purchase tracking
-    trackPurchase(orderId, finalPrice, planLabels[plan]);
+    trackPurchase(orderId, finalPrice, currentPlanLabel);
     trackAffiliate(orderId, finalPrice);
 
     // Increment coupon usage
@@ -588,7 +597,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
         <div className="px-6 py-4 bg-white/[0.02] border-b border-[#e5e5e5]">
           <p className="text-[10px] text-[#999] uppercase tracking-wider mb-1">{t('pay.summary')}</p>
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-[#1a1a1a] font-medium">{planLabels[plan]}</span>
+            <span className="text-sm text-[#1a1a1a] font-medium">{currentPlanLabel}</span>
             <div className="text-right">
               {discountPercent > 0 && discountPercent < 100 ? (
                 <div className="flex items-center gap-2">
