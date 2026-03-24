@@ -566,4 +566,21 @@
         <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/big4-insider-10-anos"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/en/blog/artigos/big4-insider-10-years"/>
     </url>
+
+  <url>
+    <loc>https://www.share2inspire.pt/videos/big4-insider-roi-pos-big4</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/videos/big4-insider-roi-pos-big4"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/videos/big4-insider-roi-post-big4"/>
+  </url>
+  <url>
+    <loc>https://www.share2inspire.pt/en/videos/big4-insider-roi-post-big4</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/videos/big4-insider-roi-pos-big4"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/videos/big4-insider-roi-post-big4"/>
+  </url>
 </urlset>
