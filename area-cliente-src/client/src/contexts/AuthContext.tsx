@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .select('*')
       .eq('user_id', userId)
       .eq('status', 'active')
-      .order('end_date', { ascending: false })
+      .order('expires_at', { ascending: false })
       .limit(1)
       .single();
     setSubscription(data);
@@ -122,7 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   function hasActiveSubscription() {
     if (!subscription) return false;
     if (subscription.status !== 'active') return false;
-    return new Date(subscription.end_date) > new Date();
+    return new Date(subscription.expires_at) > new Date();
   }
 
   return (

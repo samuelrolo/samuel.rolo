@@ -6,6 +6,11 @@
     "trailingSlash": false,
     "redirects": [
         {
+            "source": "/area-cliente/membro",
+            "destination": "/area-cliente/membros",
+            "permanent": true
+        },
+        {
             "source": "/interview-scripts",
             "destination": "/loja#script-entrevistas",
             "permanent": false

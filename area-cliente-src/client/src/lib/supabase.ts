@@ -28,11 +28,14 @@ export type Subscription = {
   id: string;
   user_id: string;
   plan: 'monthly' | 'semiannual' | 'annual';
-  status: 'active' | 'cancelled' | 'expired';
-  amount_paid: number;
-  start_date: string;
-  end_date: string;
+  status: 'active' | 'cancelled' | 'expired' | 'pending';
+  price_eur: number;
+  started_at: string;
+  expires_at: string;
+  payment_method: string;
+  payment_reference: string;
   created_at: string;
+  updated_at: string;
 };
 
 export type MemberContent = {

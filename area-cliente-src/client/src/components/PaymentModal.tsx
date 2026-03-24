@@ -256,9 +256,9 @@ export default function PaymentModal({ plan, onClose }: Props) {
       user_id: user.id,
       plan,
       status: 'active',
-      amount_paid: 0,
-      start_date: now.toISOString(),
-      end_date: endDate.toISOString(),
+      price_eur: 0,
+      started_at: now.toISOString(),
+      expires_at: endDate.toISOString(),
       payment_method: 'coupon',
       payment_reference: code,
     });
@@ -282,9 +282,9 @@ export default function PaymentModal({ plan, onClose }: Props) {
       user_id: user.id,
       plan,
       status,
-      amount_paid: finalPrice,
-      start_date: status === 'active' ? now.toISOString() : null,
-      end_date: status === 'active' ? endDate.toISOString() : null,
+      price_eur: finalPrice,
+      started_at: status === 'active' ? now.toISOString() : null,
+      expires_at: status === 'active' ? endDate.toISOString() : null,
       payment_method: payMethod,
       payment_reference: payRef,
     });
@@ -541,8 +541,8 @@ export default function PaymentModal({ plan, onClose }: Props) {
         .from('subscriptions')
         .update({
           status: 'active',
-          start_date: now.toISOString(),
-          end_date: endDate.toISOString(),
+          started_at: now.toISOString(),
+          expires_at: endDate.toISOString(),
         })
         .eq('payment_reference', orderId)
         .eq('user_id', user.id);

@@ -80,7 +80,7 @@ export default function MemberArea() {
   }, [content, filter, search]);
 
   const daysLeft = subscription
-    ? Math.max(0, Math.ceil((new Date(subscription.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    ? Math.max(0, Math.ceil((new Date(subscription.expires_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : 0;
 
   const filterLabels: Record<string, string> = {
@@ -105,7 +105,7 @@ export default function MemberArea() {
           {subscription && (
             <div className="flex items-center gap-3 text-xs text-[#999] font-light">
               <Clock className="w-3.5 h-3.5" />
-              <span>{t('member.planExpires')} {new Date(subscription.end_date).toLocaleDateString('pt-PT')}</span>
+              <span>{t('member.planExpires')} {new Date(subscription.expires_at).toLocaleDateString('pt-PT')}</span>
               <span className="px-2 py-0.5 bg-gold/10 border border-gold/20 rounded text-gold text-[10px] font-medium">
                 {daysLeft} {t('member.daysLeft')}
               </span>

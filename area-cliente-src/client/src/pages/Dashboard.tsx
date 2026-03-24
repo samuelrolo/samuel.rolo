@@ -796,7 +796,7 @@ export default function Dashboard() {
                   <span className="text-xs text-green-400/80 font-light">{t('dash.active')}</span>
                 </div>
                 <p className="text-xs text-[#999] font-light">
-                  {t('dash.validUntil')}: {new Date(subscription.end_date).toLocaleDateString('pt-PT')}
+                  {t('dash.validUntil')}: {new Date(subscription.expires_at).toLocaleDateString('pt-PT')}
                 </p>
                 <Link href="/membros" className="inline-flex items-center gap-1.5 text-xs text-gold hover:text-gold-light transition-colors mt-2">
                   {t('nav.member')} <ArrowRight className="w-3 h-3" />
