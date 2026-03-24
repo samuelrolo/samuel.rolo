@@ -1,8 +1,11 @@
 /*
  * Design: Consultoria de Luxo Silenciosa
- * Modal de pagamento com integração real: MB WAY + Cartão (Stripe) + PayPal
+ * Modal de pagamento unificado — idêntico ao Career Path / Career Intelligence
+ * Funcionalidades: MB WAY (polling robusto) + Stripe + PayPal
+ *                  Cupões de desconto parcial e 100% (vouchers)
+ *                  Google Ads (AW-17015553005 + G-8GQ1KM9FQS) + Meta Pixel tracking
+ *                  Suporte PT e EN via i18n
  * Backend: share2inspire-beckend.lm.r.appspot.com
- * Usa as mesmas routes do Career Path
  */
 import { useState, useEffect, useRef } from 'react';
 import { useI18n } from '@/lib/i18n';
@@ -11,11 +14,12 @@ import { supabase } from '@/lib/supabase';
 import {
   X, Smartphone, ArrowRight, ArrowLeft, Check,
   Loader2, AlertCircle, CreditCard, CheckCircle2,
+  Tag, Gift,
 } from 'lucide-react';
 
 type PlanKey = 'monthly' | 'semiannual' | 'annual';
 type PayMethod = 'mbway' | 'stripe' | 'paypal';
-type Step = 'select' | 'form' | 'processing' | 'polling' | 'success' | 'error';
+type Step = 'form' | 'processing' | 'polling' | 'success' | 'error';
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
@@ -35,14 +39,61 @@ function formatPrice(price: number) {
   return price.toFixed(2).replace('.', ',') + ' €';
 }
 
+// ── Google Ads + Meta Pixel tracking ──
+function trackPurchase(orderId: string, amount: number, planLabel: string) {
+  try {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'purchase', {
+        send_to: 'AW-17015553005',
+        transaction_id: orderId,
+        value: amount,
+        currency: 'EUR',
+        items: [{ item_name: `Share2Inspire - ${planLabel}`, price: amount }],
+      });
+      (window as any).gtag('event', 'purchase', {
+        send_to: 'G-8GQ1KM9FQS',
+        transaction_id: orderId,
+        value: amount,
+        currency: 'EUR',
+      });
+    }
+  } catch {}
+  try {
+    if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
+      (window as any).fbq('track', 'Purchase', {
+        value: amount,
+        currency: 'EUR',
+        content_name: `Share2Inspire - ${planLabel}`,
+        content_ids: [orderId],
+      });
+    }
+  } catch {}
+}
+
+// ── Affiliate tracking ──
+function trackAffiliate(orderId: string, amount: number) {
+  try {
+    const ref = sessionStorage.getItem('affiliate_ref') || localStorage.getItem('affiliate_ref');
+    if (ref && typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'affiliate_conversion', {
+        affiliate_ref: ref,
+        transaction_id: orderId,
+        value: amount,
+        currency: 'EUR',
+      });
+    }
+  } catch {}
+}
+
 type Props = {
   plan: PlanKey;
   onClose: () => void;
 };
 
 export default function PaymentModal({ plan, onClose }: Props) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { user, profile, refreshProfile } = useAuth();
+
   const [method, setMethod] = useState<PayMethod>('mbway');
   const [step, setStep] = useState<Step>('form');
   const [phone, setPhone] = useState('');
@@ -52,9 +103,28 @@ export default function PaymentModal({ plan, onClose }: Props) {
   const [pollingMsg, setPollingMsg] = useState('');
   const [pollingExpired, setPollingExpired] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState('');
+
+  // Discount / coupon state
+  const [couponCode, setCouponCode] = useState('');
+  const [couponInput, setCouponInput] = useState('');
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState('');
+  const [couponSuccess, setCouponSuccess] = useState('');
+  const [showCouponInput, setShowCouponInput] = useState(false);
+
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const price = planPrices[plan];
+  const basePrice = planPrices[plan];
+  const finalPrice = discountPercent > 0
+    ? Math.round(basePrice * (1 - discountPercent / 100) * 100) / 100
+    : basePrice;
+
+  const planLabels: Record<PlanKey, string> = {
+    monthly: t('sub.monthly'),
+    semiannual: t('sub.semiannual'),
+    annual: t('sub.annual'),
+  };
 
   // Pre-fill from profile
   useEffect(() => {
@@ -73,13 +143,136 @@ export default function PaymentModal({ plan, onClose }: Props) {
     };
   }, []);
 
-  const planLabels: Record<PlanKey, string> = {
-    monthly: t('sub.monthly'),
-    semiannual: t('sub.semiannual'),
-    annual: t('sub.annual'),
+  // ── Coupon validation ──
+  const handleValidateCoupon = async () => {
+    const code = couponInput.trim().toUpperCase();
+    if (!code) return;
+
+    setCouponLoading(true);
+    setCouponError('');
+    setCouponSuccess('');
+
+    try {
+      // Check discount_coupons table
+      const { data: coupon } = await supabase
+        .from('discount_coupons')
+        .select('*')
+        .eq('code', code)
+        .eq('active', true)
+        .maybeSingle();
+
+      if (coupon) {
+        const now = new Date();
+        if (coupon.expires_at && new Date(coupon.expires_at) < now) {
+          setCouponError(lang === 'en' ? 'This coupon has expired.' : 'Este cupão expirou.');
+          return;
+        }
+        if (coupon.max_uses && coupon.current_uses >= coupon.max_uses) {
+          setCouponError(lang === 'en' ? 'This coupon has reached its usage limit.' : 'Este cupão atingiu o limite de utilizações.');
+          return;
+        }
+
+        const pct = coupon.discount_percent ?? 0;
+
+        if (pct >= 100) {
+          // Free access — activate subscription immediately
+          setCouponCode(code);
+          setDiscountPercent(100);
+          setCouponSuccess(lang === 'en'
+            ? `✓ Coupon ${code} — 100% discount. Activating...`
+            : `✓ Cupão ${code} — 100% desconto. A ativar...`);
+          setShowCouponInput(false);
+          await activateFreeSubscription(code);
+          return;
+        }
+
+        setCouponCode(code);
+        setDiscountPercent(pct);
+        const discountedPrice = Math.round(basePrice * (1 - pct / 100) * 100) / 100;
+        setCouponSuccess(lang === 'en'
+          ? `✓ Coupon ${code} applied — ${pct}% discount (${formatPrice(discountedPrice)})`
+          : `✓ Cupão ${code} aplicado — ${pct}% desconto (${formatPrice(discountedPrice)})`);
+        setShowCouponInput(false);
+        return;
+      }
+
+      // Check vouchers table
+      const { data: voucher } = await supabase
+        .from('vouchers')
+        .select('*')
+        .eq('code', code)
+        .eq('used', false)
+        .maybeSingle();
+
+      if (voucher) {
+        const pct = voucher.discount_percent ?? 100;
+
+        if (pct >= 100) {
+          setCouponCode(code);
+          setDiscountPercent(100);
+          setCouponSuccess(lang === 'en'
+            ? `✓ Voucher ${code} — full access activated.`
+            : `✓ Voucher ${code} — acesso completo ativado.`);
+          setShowCouponInput(false);
+          await activateFreeSubscription(code);
+          return;
+        }
+
+        setCouponCode(code);
+        setDiscountPercent(pct);
+        const discountedPrice = Math.round(basePrice * (1 - pct / 100) * 100) / 100;
+        setCouponSuccess(lang === 'en'
+          ? `✓ Voucher ${code} applied — ${pct}% discount (${formatPrice(discountedPrice)})`
+          : `✓ Voucher ${code} aplicado — ${pct}% desconto (${formatPrice(discountedPrice)})`);
+        setShowCouponInput(false);
+        return;
+      }
+
+      setCouponError(lang === 'en' ? 'Invalid or expired coupon.' : 'Cupão inválido ou expirado.');
+    } catch {
+      setCouponError(lang === 'en' ? 'Error validating coupon.' : 'Erro ao validar cupão.');
+    } finally {
+      setCouponLoading(false);
+    }
   };
 
-  // Create subscription record in Supabase
+  // Remove applied coupon
+  const handleRemoveCoupon = () => {
+    setCouponCode('');
+    setCouponInput('');
+    setDiscountPercent(0);
+    setCouponSuccess('');
+    setCouponError('');
+    setShowCouponInput(false);
+  };
+
+  // ── Activate free subscription (100% coupon/voucher) ──
+  const activateFreeSubscription = async (code: string) => {
+    if (!user) return;
+    const now = new Date();
+    const endDate = new Date(now.getTime() + planDurations[plan] * 24 * 60 * 60 * 1000);
+
+    await supabase.from('subscriptions').insert({
+      user_id: user.id,
+      plan,
+      status: 'active',
+      amount_paid: 0,
+      start_date: now.toISOString(),
+      end_date: endDate.toISOString(),
+      payment_method: 'coupon',
+      payment_reference: code,
+    });
+
+    // Mark voucher as used if applicable
+    await supabase.from('vouchers').update({ used: true, used_at: now.toISOString() }).eq('code', code);
+    // Increment coupon usage
+    await supabase.rpc('increment_coupon_usage', { coupon_code: code }).catch(() => {});
+
+    await refreshProfile();
+    setStep('success');
+  };
+
+  // ── Create subscription record in Supabase ──
   const createSubscription = async (payMethod: string, payRef: string, status: string) => {
     if (!user) return;
     const now = new Date();
@@ -87,11 +280,11 @@ export default function PaymentModal({ plan, onClose }: Props) {
 
     await supabase.from('subscriptions').insert({
       user_id: user.id,
-      plan: plan,
-      status: status,
-      price_eur: price,
-      started_at: status === 'active' ? now.toISOString() : null,
-      expires_at: status === 'active' ? endDate.toISOString() : null,
+      plan,
+      status,
+      amount_paid: finalPrice,
+      start_date: status === 'active' ? now.toISOString() : null,
+      end_date: status === 'active' ? endDate.toISOString() : null,
       payment_method: payMethod,
       payment_reference: payRef,
     });
@@ -99,11 +292,11 @@ export default function PaymentModal({ plan, onClose }: Props) {
 
   // ── MB WAY Payment ──
   const handleMBWayPayment = async () => {
-    if (!email) { setError('Introduz o teu email'); return; }
+    if (!email) { setError(t('pay.errorEmail')); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { setError('Email inválido'); return; }
+    if (!emailRegex.test(email)) { setError(t('pay.errorEmail')); return; }
     const cleanPhone = phone.replace(/\D/g, '').replace(/^(\+?351)/, '');
-    if (cleanPhone.length < 9) { setError('Número de telemóvel inválido'); return; }
+    if (cleanPhone.length < 9) { setError(t('pay.errorPhone')); return; }
 
     setLoading(true);
     setError('');
@@ -119,34 +312,30 @@ export default function PaymentModal({ plan, onClose }: Props) {
           email,
           phone: `351${cleanPhone}`,
           orderId,
-          amount: price.toFixed(2),
+          amount: finalPrice.toFixed(2),
           paymentMethod: 'mbway',
-          description: `Share2Inspire - Plano ${planLabels[plan]}`,
-          name: email.split('@')[0],
+          description: `Share2Inspire - ${planLabels[plan]}`,
+          name: profile?.first_name || email.split('@')[0],
+          coupon_code: couponCode || undefined,
+          discount_percent: discountPercent || undefined,
         }),
       });
 
       const data = await res.json();
-      if (!data.success) throw new Error(data.error || 'Erro ao iniciar pagamento');
+      if (!data.success) throw new Error(data.error || t('pay.errorGeneric'));
 
       setStep('polling');
-      setPollingMsg('Confirma o pagamento na app MB WAY do teu telemóvel...');
+      setPollingMsg(t('pay.mbwaySentDesc'));
       startPolling(orderId);
 
-      // Create pending subscription
       await createSubscription('mbway', orderId, 'pending');
 
-      // Google Ads conversion tracking
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'purchase', {
-          transaction_id: orderId,
-          value: price,
-          currency: 'EUR',
-          items: [{ item_name: `Plano ${planLabels[plan]}`, price }],
-        });
+      // Tracking
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'AddPaymentInfo', { value: finalPrice, currency: 'EUR' });
       }
     } catch (err: any) {
-      setError(err.message || 'Erro ao processar pagamento');
+      setError(err.message || t('pay.errorGeneric'));
       setStep('error');
     } finally {
       setLoading(false);
@@ -155,9 +344,9 @@ export default function PaymentModal({ plan, onClose }: Props) {
 
   // ── Stripe Payment ──
   const handleStripePayment = async () => {
-    if (!email) { setError('Introduz o teu email'); return; }
+    if (!email) { setError(t('pay.errorEmail')); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { setError('Email inválido'); return; }
+    if (!emailRegex.test(email)) { setError(t('pay.errorEmail')); return; }
 
     setLoading(true);
     setError('');
@@ -170,39 +359,36 @@ export default function PaymentModal({ plan, onClose }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email,
-          name: email.split('@')[0],
-          product_type: 'career_path', // uses the same product type for now
+          name: profile?.first_name || email.split('@')[0],
+          product_type: 'subscription',
           orderId,
-          language: 'pt',
-          country: '',
-          region: '',
+          language: lang,
           currency: 'eur',
-          amount: price,
+          amount: finalPrice,
+          coupon_code: couponCode || undefined,
+          discount_percent: discountPercent || undefined,
         }),
       });
 
       const data = await res.json();
       if (!data.success || !data.url) {
-        throw new Error(data.error || 'Erro ao criar sessão de pagamento');
+        throw new Error(data.error || t('pay.errorGeneric'));
       }
 
-      // Create pending subscription
       await createSubscription('stripe', orderId, 'pending');
 
-      // Google Ads conversion tracking
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'purchase', {
-          transaction_id: orderId,
-          value: price,
-          currency: 'EUR',
-          items: [{ item_name: `Plano ${planLabels[plan]}`, price }],
-        });
+      // Store orderId for Stripe return
+      sessionStorage.setItem('stripe_order_id', orderId);
+      sessionStorage.setItem('stripe_plan', plan);
+
+      // Tracking
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'InitiateCheckout', { value: finalPrice, currency: 'EUR' });
       }
 
-      // Redirect to Stripe
       window.location.href = data.url;
     } catch (err: any) {
-      setError(err.message || 'Erro ao processar pagamento');
+      setError(err.message || t('pay.errorGeneric'));
       setStep('error');
     } finally {
       setLoading(false);
@@ -211,29 +397,27 @@ export default function PaymentModal({ plan, onClose }: Props) {
 
   // ── PayPal Payment ──
   const handlePayPalPayment = async () => {
-    if (!email) { setError('Introduz o teu email'); return; }
+    if (!email) { setError(t('pay.errorEmail')); return; }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { setError('Email inválido'); return; }
+    if (!emailRegex.test(email)) { setError(t('pay.errorEmail')); return; }
 
     const orderId = `S2I-SUB-PAYPAL-${Date.now()}`;
 
-    // Create pending subscription
     await createSubscription('paypal', orderId, 'pending');
 
-    // Google Ads conversion tracking
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'purchase', {
-        transaction_id: orderId,
-        value: price,
-        currency: 'EUR',
-        items: [{ item_name: `Plano ${planLabels[plan]}`, price }],
-      });
-    }
+    trackPurchase(orderId, finalPrice, planLabels[plan]);
+    trackAffiliate(orderId, finalPrice);
 
-    window.open(`https://paypal.me/SamuelRolo/${price}EUR`, '_blank');
+    window.open(`https://paypal.me/SamuelRolo/${finalPrice.toFixed(2)}EUR`, '_blank');
     setStep('success');
   };
-    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: price, currency: 'EUR'});
+
+  // ── Handle confirm button ──
+  function handleConfirm() {
+    if (method === 'mbway') handleMBWayPayment();
+    else if (method === 'stripe') handleStripePayment();
+    else if (method === 'paypal') handlePayPalPayment();
+  }
 
   // ── Polling for MB WAY status ──
   const startPolling = (orderId: string) => {
@@ -260,7 +444,9 @@ export default function PaymentModal({ plan, onClose }: Props) {
           if (consecutiveErrors >= 8) {
             if (pollingRef.current) clearInterval(pollingRef.current);
             setPollingExpired(true);
-            setPollingMsg('Não foi possível verificar. Usa o botão "Já paguei".');
+            setPollingMsg(lang === 'en'
+              ? 'Could not verify. Use the "I already paid" button.'
+              : 'Não foi possível verificar. Usa o botão "Já paguei".');
           }
           return;
         }
@@ -270,34 +456,46 @@ export default function PaymentModal({ plan, onClose }: Props) {
 
         if (data.paid) {
           if (pollingRef.current) clearInterval(pollingRef.current);
-          handlePaymentConfirmed(orderId);
+          await handlePaymentConfirmed(orderId);
           return;
         }
 
         const elapsed = Date.now() - startTime;
         if (data.expired) {
           if (elapsed < MIN_BEFORE_EXPIRED) {
-            setPollingMsg('A verificar pagamento... Confirma na app MB WAY.');
+            setPollingMsg(lang === 'en'
+              ? 'Verifying payment... Confirm in the MB WAY app.'
+              : 'A verificar pagamento... Confirma na app MB WAY.');
           } else {
             if (pollingRef.current) clearInterval(pollingRef.current);
             setPollingExpired(true);
-            setPollingMsg('O pagamento expirou. Usa o botão abaixo se já pagaste.');
+            setPollingMsg(lang === 'en'
+              ? 'Payment expired. Use the button below if you already paid.'
+              : 'O pagamento expirou. Usa o botão abaixo se já pagaste.');
           }
           return;
         }
 
         if (elapsed < 30000) {
-          setPollingMsg('Confirma o pagamento na app MB WAY do teu telemóvel...');
+          setPollingMsg(lang === 'en'
+            ? 'Confirm the payment in your MB WAY app...'
+            : 'Confirma o pagamento na app MB WAY do teu telemóvel...');
         } else if (elapsed < 60000) {
-          setPollingMsg('Ainda a aguardar... Verifica a app MB WAY.');
+          setPollingMsg(lang === 'en'
+            ? 'Still waiting... Check the MB WAY app.'
+            : 'Ainda a aguardar... Verifica a app MB WAY.');
         } else {
-          setPollingMsg('A aguardar confirmação... Se já aprovaste, aguarda mais uns segundos.');
+          setPollingMsg(lang === 'en'
+            ? 'Waiting for confirmation... If you already approved, wait a few more seconds.'
+            : 'A aguardar confirmação... Se já aprovaste, aguarda mais uns segundos.');
         }
 
         if (attempts >= maxAttempts) {
           if (pollingRef.current) clearInterval(pollingRef.current);
           setPollingExpired(true);
-          setPollingMsg('Tempo esgotado. Se já pagaste, usa o botão abaixo.');
+          setPollingMsg(lang === 'en'
+            ? 'Timeout. If you already paid, use the button below.'
+            : 'Tempo esgotado. Se já pagaste, usa o botão abaixo.');
         }
       } catch {
         consecutiveErrors++;
@@ -308,7 +506,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
   // ── Manual check ──
   const handleManualCheck = async () => {
     if (!currentOrderId) return;
-    setPollingMsg('A verificar pagamento...');
+    setPollingMsg(lang === 'en' ? 'Checking payment...' : 'A verificar pagamento...');
     setPollingExpired(false);
     try {
       const res = await fetch(`${BACKEND_URL}/api/payment/check-payment-status`, {
@@ -318,21 +516,24 @@ export default function PaymentModal({ plan, onClose }: Props) {
       });
       const data = await res.json();
       if (data.paid) {
-        handlePaymentConfirmed(currentOrderId);
+        await handlePaymentConfirmed(currentOrderId);
       } else {
         setPollingExpired(true);
-        setPollingMsg('Pagamento ainda não confirmado. Aguarda uns segundos e tenta novamente.');
+        setPollingMsg(lang === 'en'
+          ? 'Payment not yet confirmed. Wait a few seconds and try again.'
+          : 'Pagamento ainda não confirmado. Aguarda uns segundos e tenta novamente.');
         startPolling(currentOrderId);
       }
     } catch {
       setPollingExpired(true);
-      setPollingMsg('Erro ao verificar. Tenta novamente em alguns segundos.');
+      setPollingMsg(lang === 'en'
+        ? 'Error checking. Try again in a few seconds.'
+        : 'Erro ao verificar. Tenta novamente em alguns segundos.');
     }
   };
 
   // ── Payment confirmed ──
   const handlePaymentConfirmed = async (orderId: string) => {
-    // Update subscription to active
     if (user) {
       const now = new Date();
       const endDate = new Date(now.getTime() + planDurations[plan] * 24 * 60 * 60 * 1000);
@@ -340,23 +541,25 @@ export default function PaymentModal({ plan, onClose }: Props) {
         .from('subscriptions')
         .update({
           status: 'active',
-          started_at: now.toISOString(),
-          expires_at: endDate.toISOString(),
+          start_date: now.toISOString(),
+          end_date: endDate.toISOString(),
         })
         .eq('payment_reference', orderId)
         .eq('user_id', user.id);
     }
+
+    // Fire purchase tracking
+    trackPurchase(orderId, finalPrice, planLabels[plan]);
+    trackAffiliate(orderId, finalPrice);
+
+    // Increment coupon usage
+    if (couponCode) {
+      await supabase.rpc('increment_coupon_usage', { coupon_code: couponCode }).catch(() => {});
+    }
+
     await refreshProfile();
     setStep('success');
   };
-
-  // ── Handle confirm button ──
-  function handleConfirm() {
-    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
-    if (method === 'mbway') handleMBWayPayment();
-    else if (method === 'stripe') handleStripePayment();
-    else if (method === 'paypal') handlePayPalPayment();
-  }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -365,6 +568,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
 
       {/* Modal */}
       <div className="relative w-full max-w-md bg-[#F0F0EE] border border-[#e5e5e5] rounded-lg overflow-hidden">
+
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e5e5e5]">
           <div className="flex items-center gap-3">
@@ -386,9 +590,28 @@ export default function PaymentModal({ plan, onClose }: Props) {
           <div className="flex items-baseline justify-between">
             <span className="text-sm text-[#1a1a1a] font-medium">{planLabels[plan]}</span>
             <div className="text-right">
-              <span className="text-lg font-semibold text-gold">{formatPrice(price)}</span>
+              {discountPercent > 0 && discountPercent < 100 ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-[#bbb] line-through">{formatPrice(basePrice)}</span>
+                  <span className="text-lg font-semibold text-emerald-600">{formatPrice(finalPrice)}</span>
+                </div>
+              ) : (
+                <span className="text-lg font-semibold text-gold">{formatPrice(finalPrice)}</span>
+              )}
             </div>
           </div>
+          {/* Applied coupon badge */}
+          {couponCode && discountPercent > 0 && discountPercent < 100 && (
+            <div className="flex items-center justify-between mt-2 px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-xs">
+              <span className="text-emerald-700 flex items-center gap-1">
+                <Tag className="w-3 h-3" />
+                {lang === 'en' ? `Coupon ${couponCode} — ${discountPercent}% off` : `Cupão ${couponCode} — ${discountPercent}% desconto`}
+              </span>
+              <button onClick={handleRemoveCoupon} className="text-emerald-500 hover:text-red-500 transition-colors text-[10px]">
+                {lang === 'en' ? 'remove' : 'remover'}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Content */}
@@ -397,6 +620,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
           {/* ── Step: Payment Form ── */}
           {step === 'form' && (
             <div className="space-y-4">
+
               {/* Payment Method Selector */}
               <div className="space-y-2">
                 <p className="text-xs text-[#888] font-light">{t('pay.method')}</p>
@@ -411,7 +635,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
                           : 'border-[#e5e5e5] text-[#999] hover:border-gold/30'
                       }`}
                     >
-                      {m === 'mbway' ? 'MB WAY' : m === 'stripe' ? 'Cartão' : 'PayPal'}
+                      {m === 'mbway' ? 'MB WAY' : m === 'stripe' ? (lang === 'en' ? 'Card' : 'Cartão') : 'PayPal'}
                     </button>
                   ))}
                 </div>
@@ -419,7 +643,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
 
               {/* Email */}
               <div className="space-y-1">
-                <label className="text-xs text-[#888] font-light">Email</label>
+                <label className="text-xs text-[#888] font-light">{t('pay.email')}</label>
                 <input
                   type="email"
                   value={email}
@@ -432,15 +656,66 @@ export default function PaymentModal({ plan, onClose }: Props) {
               {/* Phone (MB WAY only) */}
               {method === 'mbway' && (
                 <div className="space-y-1">
-                  <label className="text-xs text-[#888] font-light">Telemóvel (MB WAY)</label>
+                  <label className="text-xs text-[#888] font-light">{t('pay.mbwayPhone')}</label>
                   <input
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="9XXXXXXXX"
+                    placeholder={t('pay.mbwayPhonePlaceholder')}
                     className="w-full px-3 py-2.5 border border-[#e5e5e5] rounded bg-white text-sm text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-gold/40 transition-colors"
                   />
                 </div>
+              )}
+
+              {/* Coupon / Voucher Section */}
+              {!couponCode && (
+                <div>
+                  {!showCouponInput ? (
+                    <button
+                      onClick={() => setShowCouponInput(true)}
+                      className="flex items-center gap-1.5 text-xs text-[#888] hover:text-gold transition-colors"
+                    >
+                      <Gift className="w-3.5 h-3.5" />
+                      {lang === 'en' ? 'Have a coupon or voucher?' : 'Tens um cupão ou voucher?'}
+                    </button>
+                  ) : (
+                    <div className="space-y-2">
+                      <label className="text-xs text-[#888] font-light flex items-center gap-1">
+                        <Tag className="w-3 h-3" />
+                        {lang === 'en' ? 'Coupon / Voucher code' : 'Código de cupão / voucher'}
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={couponInput}
+                          onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                          onKeyDown={(e) => e.key === 'Enter' && handleValidateCoupon()}
+                          placeholder={lang === 'en' ? 'Enter code' : 'Introduz o código'}
+                          className="flex-1 px-3 py-2 border border-[#e5e5e5] rounded bg-white text-sm text-[#1a1a1a] uppercase placeholder:text-[#ccc] placeholder:normal-case focus:outline-none focus:border-gold/40 transition-colors"
+                        />
+                        <button
+                          onClick={handleValidateCoupon}
+                          disabled={couponLoading || !couponInput.trim()}
+                          className="px-3 py-2 bg-gold text-[#1a1a1a] text-xs font-semibold rounded hover:bg-gold-light transition-all disabled:opacity-50"
+                        >
+                          {couponLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : (lang === 'en' ? 'Apply' : 'Aplicar')}
+                        </button>
+                      </div>
+                      {couponError && (
+                        <p className="text-xs text-red-500 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />{couponError}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Coupon success message */}
+              {couponSuccess && (
+                <p className="text-xs text-emerald-600 flex items-center gap-1">
+                  <Check className="w-3 h-3" />{couponSuccess}
+                </p>
               )}
 
               {/* Error */}
@@ -456,7 +731,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
                   onClick={onClose}
                   className="flex-1 px-4 py-2.5 border border-[#e5e5e5] text-[#999] text-sm font-light rounded hover:border-[#ddd] hover:text-[#666] transition-all duration-300"
                 >
-                  Cancelar
+                  {t('pay.cancel')}
                 </button>
                 <button
                   onClick={handleConfirm}
@@ -465,15 +740,20 @@ export default function PaymentModal({ plan, onClose }: Props) {
                     method === 'stripe'
                       ? 'bg-[#635BFF] hover:bg-[#5046E5] text-white'
                       : 'bg-gold hover:bg-gold-light text-[#1a1a1a]'
-                  }`}
+                  } disabled:opacity-60`}
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin mx-auto" />
                   ) : (
-                    `Pagar ${formatPrice(price)}`
+                    `${lang === 'en' ? 'Pay' : 'Pagar'} ${formatPrice(finalPrice)}`
                   )}
                 </button>
               </div>
+
+              {/* Security note */}
+              <p className="text-center text-[10px] text-[#bbb] font-light">
+                {lang === 'en' ? '🔒 Secure payment' : '🔒 Pagamento seguro'}
+              </p>
             </div>
           )}
 
@@ -481,7 +761,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
           {step === 'processing' && (
             <div className="py-8 text-center space-y-4">
               <Loader2 className="w-10 h-10 text-gold/60 animate-spin mx-auto" />
-              <p className="text-sm text-[#555] font-light">A processar pagamento...</p>
+              <p className="text-sm text-[#555] font-light">{t('pay.processing')}</p>
             </div>
           )}
 
@@ -489,22 +769,39 @@ export default function PaymentModal({ plan, onClose }: Props) {
           {step === 'polling' && (
             <div className="py-8 text-center space-y-4">
               {!pollingExpired ? (
-                <Loader2 className="w-10 h-10 animate-spin text-gold mx-auto" />
+                <>
+                  <div className="w-16 h-16 bg-gold/10 border border-gold/20 rounded-full flex items-center justify-center mx-auto">
+                    <Smartphone className="w-8 h-8 text-gold" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-[#1a1a1a]">{t('pay.mbwaySent')}</p>
+                    <p className="text-xs text-[#888] font-light mt-1">{t('pay.mbwaySentDesc')}</p>
+                    {phone && (
+                      <p className="text-sm text-gold font-medium mt-2">+351 {phone.replace(/\D/g, '').replace(/^351/, '')}</p>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-center gap-2 text-xs text-[#999]">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    {pollingMsg || t('pay.waiting')}
+                  </div>
+                  <p className="text-[10px] text-[#bbb]">
+                    {lang === 'en'
+                      ? 'Subscription will be activated automatically after payment confirmation.'
+                      : 'A subscrição será ativada automaticamente após confirmação do pagamento.'}
+                  </p>
+                </>
               ) : (
-                <AlertCircle className="w-10 h-10 text-amber-500 mx-auto" />
-              )}
-              <p className="text-sm font-medium text-[#1a1a1a]">{pollingMsg}</p>
-              {!pollingExpired && (
-                <p className="text-xs text-[#999] font-light">A aguardar confirmação do pagamento...</p>
-              )}
-              {pollingExpired && (
-                <button
-                  onClick={handleManualCheck}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-gold text-[#1a1a1a] text-sm font-semibold rounded hover:bg-gold-light transition-all duration-300"
-                >
-                  <CheckCircle2 className="w-4 h-4" />
-                  Já paguei — verificar novamente
-                </button>
+                <>
+                  <AlertCircle className="w-10 h-10 text-amber-500 mx-auto" />
+                  <p className="text-sm font-medium text-[#1a1a1a]">{pollingMsg}</p>
+                  <button
+                    onClick={handleManualCheck}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 bg-gold text-[#1a1a1a] text-sm font-semibold rounded hover:bg-gold-light transition-all duration-300"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    {lang === 'en' ? 'I already paid — verify' : 'Já paguei — verificar novamente'}
+                  </button>
+                </>
               )}
             </div>
           )}
@@ -516,8 +813,10 @@ export default function PaymentModal({ plan, onClose }: Props) {
                 <Check className="w-7 h-7 text-emerald-500" />
               </div>
               <div>
-                <p className="text-lg font-semibold text-[#1a1a1a] mb-1">Pagamento confirmado!</p>
-                <p className="text-xs text-[#888] font-light">A tua subscrição está agora ativa.</p>
+                <p className="text-lg font-semibold text-[#1a1a1a] mb-1">
+                  {t('pay.success')}
+                </p>
+                <p className="text-xs text-[#888] font-light">{t('pay.successDesc')}</p>
               </div>
               <button
                 onClick={() => { onClose(); window.location.href = '/area-cliente/membro'; }}
@@ -536,7 +835,9 @@ export default function PaymentModal({ plan, onClose }: Props) {
                 <AlertCircle className="w-7 h-7 text-red-400" />
               </div>
               <div>
-                <p className="text-lg font-semibold text-[#1a1a1a] mb-2">Erro no pagamento</p>
+                <p className="text-lg font-semibold text-[#1a1a1a] mb-2">
+                  {lang === 'en' ? 'Payment error' : 'Erro no pagamento'}
+                </p>
                 <p className="text-xs text-red-400/80 font-light leading-relaxed max-w-xs mx-auto">
                   {error || t('pay.errorGeneric')}
                 </p>
@@ -546,10 +847,11 @@ export default function PaymentModal({ plan, onClose }: Props) {
                 className="inline-flex items-center gap-2 px-6 py-2.5 border border-[#ddd] text-[#555] text-sm font-light rounded hover:border-gold/30 hover:text-[#1a1a1a] transition-all duration-300"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Tentar novamente
+                {lang === 'en' ? 'Try again' : 'Tentar novamente'}
               </button>
             </div>
           )}
+
         </div>
       </div>
     </div>
