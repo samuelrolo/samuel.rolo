@@ -1,14 +1,14 @@
 /*
  * Design: Consultoria de Luxo Silenciosa
- * Página de planos de subscrição com pricing cards, benefícios e FAQ
+ * Página de planos de subscrição com pricing cards diferenciados por plano
  * Fluxo: Se não autenticado → redireciona para criar conta/login
- *        Se autenticado → abre modal de pagamento (integração futura)
+ *        Se autenticado → abre modal de pagamento
  */
 import { useState } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLocation } from 'wouter';
-import { Check, ChevronDown, ChevronUp, Sparkles, ArrowRight, Lock } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp, Sparkles, ArrowRight, Lock, X } from 'lucide-react';
 import PaymentModal from '@/components/PaymentModal';
 
 type PlanKey = 'monthly' | 'semiannual' | 'annual';
@@ -20,19 +20,39 @@ const plans: {
   period: string;
   badge?: string;
   highlight?: boolean;
+  tagline: string;
+  benefits: string[];
+  extras?: string[];
 }[] = [
-  { key: 'monthly', price: 9.90, futurePrice: 20, period: 'sub.month' },
-  { key: 'semiannual', price: 49, futurePrice: 90, period: 'sub.semester', badge: 'sub.popular', highlight: true },
-  { key: 'annual', price: 89, futurePrice: 149, period: 'sub.year', badge: 'sub.bestValue' },
-];
-
-const benefits = [
-  'sub.benefit1',
-  'sub.benefit2',
-  'sub.benefit3',
-  'sub.benefit4',
-  'sub.benefit5',
-  'sub.benefit6',
+  {
+    key: 'monthly',
+    price: 9.90,
+    futurePrice: 20,
+    period: 'sub.month',
+    tagline: 'sub.m.tagline',
+    benefits: ['sub.m.b1', 'sub.m.b2', 'sub.m.b3', 'sub.m.b4', 'sub.m.b5'],
+  },
+  {
+    key: 'semiannual',
+    price: 49,
+    futurePrice: 90,
+    period: 'sub.semester',
+    badge: 'sub.popular',
+    highlight: true,
+    tagline: 'sub.s.tagline',
+    benefits: ['sub.s.b1', 'sub.s.b2', 'sub.s.b3', 'sub.s.b4'],
+    extras: ['sub.s.b5'],
+  },
+  {
+    key: 'annual',
+    price: 89,
+    futurePrice: 149,
+    period: 'sub.year',
+    badge: 'sub.bestValue',
+    tagline: 'sub.a.tagline',
+    benefits: ['sub.a.b1', 'sub.a.b2', 'sub.a.b3', 'sub.a.b4'],
+    extras: ['sub.a.b5', 'sub.a.b6'],
+  },
 ];
 
 const faqs = [
@@ -60,11 +80,9 @@ export default function Plans() {
 
   function handleSubscribe(planKey: PlanKey) {
     if (!user) {
-      // Not authenticated → redirect to auth page
       navigate('/auth');
       return;
     }
-    // Authenticated → open payment modal
     setSelectedPlan(planKey);
   }
 
@@ -105,7 +123,7 @@ export default function Plans() {
             return (
               <div
                 key={plan.key}
-                className={`relative p-6 md:p-8 rounded border transition-all duration-500 ${
+                className={`relative p-6 md:p-8 rounded border transition-all duration-500 flex flex-col ${
                   plan.highlight
                     ? 'border-gold/30 bg-[#f7f7f6] shadow-[0_0_30px_oklch(0.74_0.10_85/0.08)]'
                     : 'border-[#e5e5e5] hover:border-[#ddd]'
@@ -120,11 +138,12 @@ export default function Plans() {
                   </div>
                 )}
 
-                {/* Plan name */}
-                <h3 className="text-sm font-medium text-[#2a2a2a] mb-1">{t(`sub.${plan.key}`)}</h3>
+                {/* Plan name + tagline */}
+                <h3 className="text-sm font-medium text-[#2a2a2a] mb-0.5">{t(`sub.${plan.key}`)}</h3>
+                <p className="text-[11px] text-[#999] font-light mb-3 italic">{t(plan.tagline)}</p>
 
                 {/* Price */}
-                <div className="mb-4">
+                <div className="mb-5">
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-3xl font-semibold text-[#1a1a1a]">{formatPrice(plan.price)}</span>
                     <span className="text-xs text-[#999] font-light">{t(plan.period)}</span>
@@ -136,8 +155,8 @@ export default function Plans() {
                 </div>
 
                 {/* Benefits */}
-                <ul className="space-y-2.5 mb-6">
-                  {benefits.map((b) => (
+                <ul className="space-y-2.5 mb-2 flex-1">
+                  {plan.benefits.map((b) => (
                     <li key={b} className="flex items-start gap-2.5">
                       <Check className="w-3.5 h-3.5 text-gold/60 mt-0.5 shrink-0" />
                       <span className="text-xs text-[#666] font-light leading-relaxed">{t(b)}</span>
@@ -145,15 +164,46 @@ export default function Plans() {
                   ))}
                 </ul>
 
+                {/* Extras / Bonus */}
+                {plan.extras && plan.extras.length > 0 && (
+                  <div className="mb-5 pt-3 border-t border-[#eee]">
+                    <span className="text-[10px] text-gold font-medium uppercase tracking-wider">Bónus</span>
+                    <ul className="space-y-2 mt-2">
+                      {plan.extras.map((e) => (
+                        <li key={e} className="flex items-start gap-2.5">
+                          <Sparkles className="w-3 h-3 text-gold/50 mt-0.5 shrink-0" />
+                          <span className="text-xs text-[#555] font-light leading-relaxed">{t(e)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Not included (monthly only) */}
+                {plan.key === 'monthly' && (
+                  <div className="mb-5 pt-3 border-t border-[#eee]">
+                    <ul className="space-y-2">
+                      <li className="flex items-start gap-2.5">
+                        <X className="w-3.5 h-3.5 text-[#ccc] mt-0.5 shrink-0" />
+                        <span className="text-xs text-[#bbb] font-light leading-relaxed">Career Path</span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <X className="w-3.5 h-3.5 text-[#ccc] mt-0.5 shrink-0" />
+                        <span className="text-xs text-[#bbb] font-light leading-relaxed">Career Intelligence</span>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+
                 {/* CTA */}
                 {isCurrent ? (
-                  <div className="w-full py-2.5 text-center text-sm text-gold/60 font-light border border-gold/20 rounded">
+                  <div className="w-full py-2.5 text-center text-sm text-gold/60 font-light border border-gold/20 rounded mt-auto">
                     {t('sub.current')}
                   </div>
                 ) : (
                   <button
                     onClick={() => handleSubscribe(plan.key)}
-                    className={`w-full py-2.5 text-sm font-medium rounded transition-all duration-300 flex items-center justify-center gap-2 ${
+                    className={`w-full py-2.5 text-sm font-medium rounded transition-all duration-300 flex items-center justify-center gap-2 mt-auto ${
                       plan.highlight
                         ? 'bg-gold text-[#1a1a1a] hover:bg-gold-light'
                         : 'border border-[#ddd] text-[#333] hover:border-gold/30 hover:text-[#1a1a1a]'
@@ -202,7 +252,7 @@ export default function Plans() {
         </div>
       </div>
 
-      {/* Payment Modal - only opens if user is authenticated */}
+      {/* Payment Modal */}
       {selectedPlan && user && (
         <PaymentModal
           plan={selectedPlan}
