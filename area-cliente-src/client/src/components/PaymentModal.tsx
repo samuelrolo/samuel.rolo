@@ -819,7 +819,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
                 <p className="text-xs text-[#888] font-light">{t('pay.successDesc')}</p>
               </div>
               <button
-                onClick={() => { onClose(); window.location.href = '/area-cliente/membro'; }}
+                onClick={() => { onClose(); window.location.href = '/area-cliente/membros'; }}
                 className="inline-flex items-center gap-2 px-6 py-2.5 bg-gold text-[#1a1a1a] text-sm font-semibold rounded hover:bg-gold-light transition-all duration-300"
               >
                 {t('pay.goToMember')}
