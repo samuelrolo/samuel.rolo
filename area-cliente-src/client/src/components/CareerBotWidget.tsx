@@ -171,41 +171,12 @@ export default function CareerBotWidget() {
   const handleCoverLetterSubmit = () => {
     if (!company.trim() || !role.trim()) return;
     const profileName = profile ? `${profile.first_name} ${profile.last_name}` : '';
-    const msg = `Escreve uma carta de apresentação profissional e personalizada em Português de Portugal.
+    const msg = `Carta de apresentação em PT-PT. Candidato: ${profileName}. Empresa: ${company}. Função: ${role}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${profile?.cv_filename ? ` CV: ${profile.cv_filename}.` : ''}${coverLetterNotes ? ` Notas: ${coverLetterNotes}.` : ''}
 
-CONTEXTO:
-- Candidato: ${profileName}
-- Empresa-alvo: ${company}
-- Função: ${role}
-${profile?.linkedin_url ? `- LinkedIn: ${profile.linkedin_url}` : ''}
-${profile?.cv_filename ? `- CV guardado: ${profile.cv_filename}` : ''}
-${coverLetterNotes ? `- Notas do candidato: ${coverLetterNotes}` : ''}
-
-INSTRUÇÕES DE QUALIDADE:
-1. ESTRUTURA OBRIGATÓRIA:
-   - Saudação formal e personalizada (Ex: "Exma. Equipa de Recrutamento da ${company}")
-   - Parágrafo de abertura: gancho forte que demonstre conhecimento sobre a empresa e a vaga
-   - Parágrafo de valor: 2-3 realizações concretas e quantificáveis que se alinhem com a função
-   - Parágrafo de fit cultural: porque esta empresa e não outra — demonstrar pesquisa real
-   - Fecho com call-to-action claro e disponibilidade
-   - Despedida formal
-
-2. TOM E ESTILO:
-   - Profissional mas com personalidade — evitar linguagem genérica e clichés
-   - Confiante sem arrogância
-   - Verbos de ação fortes (liderei, implementei, transformei, acelerámos)
-   - Frases curtas e impactantes, sem floreados desnecessários
-   - Português de Portugal rigoroso (não brasileiro)
-
-3. REGRAS:
-   - NÃO usar "Venho por este meio" ou "Serve a presente para"
-   - NÃO usar linguagem genérica que sirva para qualquer empresa
-   - NÃO repetir o CV — complementar com narrativa e contexto
-   - Máximo 400 palavras
-   - Cada parágrafo deve ter um propósito claro
-   - Incluir pelo menos um dado quantificável (%, €, equipas, projetos)
-
-Gera APENAS a carta, sem explicações adicionais.`;
+Estrutura: saudação formal personalizada → abertura com conhecimento da empresa → 2-3 realizações quantificáveis alinhadas com a função → fit cultural (porquê esta empresa) → fecho com call-to-action → despedida.
+Tom: profissional com personalidade, confiante, verbos de ação fortes, PT-PT rigoroso.
+Proibido: "Venho por este meio", linguagem genérica, repetir CV. Máx 400 palavras. Incluir dados quantificáveis.
+Gera APENAS a carta.`;
     const display = `✉️ Gerar carta de apresentação para ${role} na ${company}${coverLetterNotes ? ` (${coverLetterNotes})` : ''}`;
     setView('chat');
     sendMessage(msg, display);
@@ -214,41 +185,12 @@ Gera APENAS a carta, sem explicações adicionais.`;
   const handleNetworkingEmailSubmit = () => {
     if (!netRecipient.trim() || !netPurpose.trim()) return;
     const profileName = profile ? `${profile.first_name} ${profile.last_name}` : '';
-    const msg = `Escreve um e-mail de networking profissional em Português de Portugal.
+    const msg = `E-mail de networking em PT-PT. De: ${profileName}. Para: ${netRecipient}. Objetivo: ${netPurpose}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${netNotes ? ` Contexto: ${netNotes}.` : ''}
 
-CONTEXTO:
-- Remetente: ${profileName}
-- Destinatário: ${netRecipient}
-- Objetivo: ${netPurpose}
-${profile?.linkedin_url ? `- LinkedIn do remetente: ${profile.linkedin_url}` : ''}
-${netNotes ? `- Contexto adicional: ${netNotes}` : ''}
-
-INSTRUÇÕES DE QUALIDADE:
-1. ESTRUTURA OBRIGATÓRIA:
-   - Assunto do e-mail: curto, específico e que gere curiosidade (não genérico)
-   - Saudação personalizada
-   - Frase de abertura: referência concreta ao trabalho/percurso do destinatário (demonstrar que pesquisou)
-   - Corpo: explicar o motivo do contacto de forma clara e direta, com contexto profissional relevante
-   - Pedido específico: o que pretende exatamente (15 min de conversa, conselho sobre X, etc.)
-   - Fecho: facilitar a resposta ("Tenho disponibilidade na próxima semana" ou "Posso adaptar-me ao seu horário")
-   - Assinatura profissional
-
-2. TOM E ESTILO:
-   - Respeitoso mas não subserviente
-   - Direto e objetivo — respeitar o tempo do destinatário
-   - Mostrar valor mútuo (o que o remetente também pode oferecer)
-   - Autêntico e humano, não robótico
-   - Português de Portugal rigoroso
-
-3. REGRAS:
-   - NÃO usar "Espero que este e-mail o encontre bem" ou fórmulas genéricas
-   - NÃO ser vago sobre o que pretende
-   - NÃO escrever mais de 200 palavras no corpo
-   - NÃO pedir desculpa por contactar
-   - Incluir uma razão concreta para o contacto (artigo que leu, palestra, projeto, mudança de setor)
-   - O e-mail deve poder ser lido em menos de 1 minuto
-
-Gera APENAS o e-mail completo (com assunto), sem explicações adicionais.`;
+Estrutura: assunto curto e específico → saudação → referência concreta ao trabalho do destinatário → motivo do contacto direto → pedido específico (15min conversa, conselho) → facilitar resposta → assinatura.
+Tom: respeitoso sem ser subserviente, direto, valor mútuo, autêntico, PT-PT rigoroso.
+Proibido: "Espero que o encontre bem", ser vago, pedir desculpa por contactar. Máx 200 palavras no corpo. Incluir razão concreta para o contacto.
+Gera APENAS o e-mail com assunto.`;
     const display = `🤝 Gerar e-mail de networking para ${netRecipient} — ${netPurpose}${netNotes ? ` (${netNotes})` : ''}`;
     setView('chat');
     sendMessage(msg, display);
@@ -265,43 +207,12 @@ Gera APENAS o e-mail completo (com assunto), sem explicações adicionais.`;
       'casual e autêntico': 'Casual e autêntico, como se falasse com um amigo próximo',
     };
     const toneDesc = toneDescriptions[liTone] || liTone;
-    const msg = `Escreve um post para LinkedIn em Português de Portugal a anunciar uma mudança profissional.
+    const msg = `Post LinkedIn em PT-PT a anunciar mudança profissional. Autor: ${profileName}. Nova empresa: ${liNewCompany}. Nova função: ${liNewRole}. Tom: ${toneDesc}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${liNotes ? ` Notas: ${liNotes}.` : ''}
 
-CONTEXTO:
-- Autor: ${profileName}
-- Nova empresa: ${liNewCompany}
-- Nova função: ${liNewRole}
-- Tom desejado: ${toneDesc}
-${profile?.linkedin_url ? `- LinkedIn: ${profile.linkedin_url}` : ''}
-${liNotes ? `- Notas do autor: ${liNotes}` : ''}
-
-INSTRUÇÕES DE QUALIDADE:
-1. ESTRUTURA OBRIGATÓRIA:
-   - Primeira linha: gancho forte que prenda a atenção (o LinkedIn só mostra as primeiras 2 linhas antes do "ver mais")
-   - Contexto: breve referência ao percurso anterior e o que aprendeu
-   - Anúncio: a nova posição e o que o motiva neste desafio
-   - Reflexão: uma lição ou insight genuino sobre transições de carreira
-   - Agradecimento: reconhecer pessoas ou experiências específicas (não genérico)
-   - Call-to-action: convidar a rede a interagir (pergunta, partilha de experiência)
-   - Hashtags: 3-5 hashtags relevantes e estratégicas no final
-
-2. TOM E ESTILO:
-   - ${toneDesc}
-   - Autêntico e pessoal — deve soar como a pessoa real, não como um template
-   - Usar parágrafos curtos (1-2 frases) para facilitar a leitura mobile
-   - Incluir pelo menos um momento de vulnerabilidade ou honestidade
-   - Português de Portugal rigoroso
-
-3. REGRAS:
-   - NÃO começar com "Tenho o prazer de anunciar" ou "É com enorme satisfação" (clichés do LinkedIn)
-   - NÃO usar emojis em excesso (máximo 3-4 no post inteiro, e apenas se fizerem sentido)
-   - NÃO fazer o post parecer um comunicado de imprensa
-   - NÃO usar mais de 5 hashtags
-   - Entre 150-250 palavras (ideal para engagement no LinkedIn)
-   - Cada parágrafo deve ter espaçamento (linha em branco entre eles)
-   - O post deve gerar comentários, não apenas likes
-
-Gera APENAS o post, sem explicações adicionais.`;
+Estrutura: gancho forte na 1ª linha (LinkedIn mostra só 2 linhas antes do "ver mais") → percurso anterior → anúncio da nova posição → reflexão genuína sobre transições → agradecimento específico → call-to-action → 3-5 hashtags.
+Tom: ${toneDesc}. Autêntico, parágrafos curtos (1-2 frases), momento de vulnerabilidade, PT-PT rigoroso.
+Proibido: "Tenho o prazer de anunciar", emojis em excesso (máx 3), comunicado de imprensa. 150-250 palavras. Espaçamento entre parágrafos.
+Gera APENAS o post.`;
     const display = `📢 Gerar post LinkedIn: ${liNewRole} na ${liNewCompany} (tom: ${liTone})${liNotes ? ` — ${liNotes}` : ''}`;
     setView('chat');
     sendMessage(msg, display);
