@@ -17,6 +17,7 @@ import {
   Globe, MapPin, Headphones, Play, Mail, MessageSquare, Megaphone
 } from 'lucide-react';
 import CareerProgress from '@/components/CareerProgress';
+import VagasFeed from '@/components/VagasFeed';
 import AnalysisResultsFull from '@/components/AnalysisResults';
 import { transformGeminiResponse } from '@/lib/transformGeminiResponse';
 import * as pdfjsLib from 'pdfjs-dist';
@@ -1458,6 +1459,9 @@ export default function MemberArea() {
           </p>
           <CareerProgress variant="compact" />
         </section>
+
+        {/* Vagas Feed — Highlighted section */}
+        <VagasFeed lang={lang} />
 
         {/* Tools */}
         <section className="mb-16">
