@@ -713,7 +713,7 @@ export default function MemberArea() {
 
   // ─── Helper: build API request body with server-side fallback ───────────
   const buildCvRequestBody = (cvData: { text: string; base64?: string; filename?: string }, mode: string, extra?: Record<string, any>): any => {
-    const body: any = { mode };
+    const body: any = { mode, lang };
     const useServerExtraction = cvData.text.trim().length < 50 && cvData.base64;
     if (useServerExtraction) {
       body.file = cvData.base64;
@@ -847,7 +847,7 @@ export default function MemberArea() {
       // Also get CV data if available for richer analysis
       const cvData = await getCvData();
 
-      const body: any = { mode: 'cv_extraction', linkedin_url: linkedinUrl };
+      const body: any = { mode: 'cv_extraction', linkedin_url: linkedinUrl, lang };
       if (cvData && (cvData.text.trim().length >= 50 || cvData.base64)) {
         if (cvData.text.trim().length < 50 && cvData.base64) {
           body.file = cvData.base64;
@@ -1239,7 +1239,7 @@ export default function MemberArea() {
           </div>
 
           {/* Country & Region dropdowns */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">
                 <Globe className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'País' : 'Country'}
@@ -1330,7 +1330,7 @@ export default function MemberArea() {
           </div>
 
           {/* Country & Region dropdowns */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">
                 <Globe className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'País' : 'Country'}
@@ -1393,7 +1393,7 @@ export default function MemberArea() {
             </h1>
           </div>
           {subscription && (
-            <div className="flex items-center gap-3 text-xs text-[#999] font-light flex-wrap">
+            <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-[#999] font-light flex-wrap">
               <span className={`px-2.5 py-1 rounded text-[10px] font-semibold uppercase tracking-wider ${
                 planTier === 'pro' ? 'bg-violet-100 text-violet-700 border border-violet-200' :
                 planTier === 'growth' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
@@ -1417,7 +1417,7 @@ export default function MemberArea() {
               <div className="flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-gold" />
                 <span className="text-xs font-medium text-[#1a1a1a]">
-                  {lang === 'pt' ? 'Análises esta semana' : 'Analyses this week'}
+                  {t('member.analysesThisWeek')}
                 </span>
                 <span className="text-[10px] text-[#aaa] font-light">
                   (CV Analyser + LinkedIn Roaster)
@@ -1435,10 +1435,7 @@ export default function MemberArea() {
             </div>
             {remainingAnalyses > 0 && (
               <p className="text-[10px] text-[#999] mt-1.5">
-                {lang === 'pt'
-                  ? `${remainingAnalyses} análise${remainingAnalyses !== 1 ? 's' : ''} restante${remainingAnalyses !== 1 ? 's' : ''} esta semana`
-                  : `${remainingAnalyses} analysis${remainingAnalyses !== 1 ? 'es' : ''} remaining this week`
-                }
+                {`${remainingAnalyses} ${t('member.remaining')}`}
               </p>
             )}
             {remainingAnalyses === 0 && (
@@ -1452,10 +1449,10 @@ export default function MemberArea() {
         {/* Career Progress */}
         <section className="mb-12">
           <h2 className="text-sm font-medium text-[#1a1a1a] mb-1">
-            {lang === 'pt' ? 'O Meu Perfil de Carreira' : 'My Career Profile'}
+            {t('member.myCareerProfile')}
           </h2>
           <p className="text-xs text-[#999] font-light mb-4">
-            {lang === 'pt' ? 'Acompanha o teu progresso e desbloqueia novos níveis.' : 'Track your progress and unlock new levels.'}
+            {t('member.myCareerProfileDesc')}
           </p>
           <CareerProgress variant="compact" />
         </section>
@@ -1474,13 +1471,13 @@ export default function MemberArea() {
               <div key={tool.key} className="border border-[#e5e5e5] rounded-lg overflow-hidden hover:border-gold/20 transition-all duration-500">
                 {/* External link tool */}
                 {tool.type === 'external' && (
-                  <a href={tool.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 p-5">
-                    <div className={`w-10 h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color}`}>
-                      <tool.icon className="w-4.5 h-4.5 text-[#333]" />
+                  <a href={tool.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-5">
+                    <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}>
+                      <tool.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#333]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
-                      <p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
+                      <h3 className="text-xs sm:text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
+                      <p className="text-[10px] sm:text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
                     </div>
                     <ExternalLink className="w-3.5 h-3.5 text-[#ccc] group-hover:text-gold/50 transition-colors shrink-0" />
                   </a>
@@ -1494,14 +1491,14 @@ export default function MemberArea() {
                         window.dispatchEvent(new Event('open-career-bot'));
                       }
                     }}
-                    className="group flex items-center gap-4 p-5 w-full text-left"
+                    className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-5 w-full text-left"
                   >
-                    <div className={`w-10 h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color}`}>
-                      <tool.icon className="w-4.5 h-4.5 text-[#333]" />
+                    <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}>
+                      <tool.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#333]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
-                      <p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
+                      <h3 className="text-xs sm:text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
+                      <p className="text-[10px] sm:text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
                     </div>
                     <ExternalLink className="w-3.5 h-3.5 text-[#ccc] group-hover:text-gold/50 transition-colors shrink-0" />
                   </button>
@@ -1509,13 +1506,13 @@ export default function MemberArea() {
 
                 {/* Locked tool */}
                 {tool.type === 'locked' && (
-                  <div className="flex items-center gap-4 p-5 opacity-50">
-                    <div className={`w-10 h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color}`}>
-                      <tool.icon className="w-4.5 h-4.5 text-[#333]" />
+                  <div className="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 opacity-50">
+                    <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}>
+                      <tool.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#333]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-[#1a1a1a]">{tool.label}</h3>
-                      <p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
+                      <h3 className="text-xs sm:text-sm font-medium text-[#1a1a1a]">{tool.label}</h3>
+                      <p className="text-[10px] sm:text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
                     </div>
                     <Lock className="w-3.5 h-3.5 text-[#ccc] shrink-0" />
                   </div>
@@ -1523,15 +1520,17 @@ export default function MemberArea() {
 
                 {/* Discount tool (external link + discount badge) */}
                 {tool.type === 'discount' && (
-                  <a href={tool.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 p-5">
-                    <div className={`w-10 h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color}`}>
-                      <tool.icon className="w-4.5 h-4.5 text-[#333]" />
+                  <a href={tool.url} target="_blank" rel="noopener noreferrer" className="group flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-4 sm:p-5">
+                    <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                      <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}>
+                        <tool.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#333]" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-xs sm:text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
+                        <p className="text-[10px] sm:text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
-                      <p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0 ml-12 sm:ml-0">
                       {tool.discountOriginal && (
                         <span className="text-[10px] text-[#bbb] line-through">{tool.discountOriginal}</span>
                       )}
@@ -1546,27 +1545,27 @@ export default function MemberArea() {
                 {/* Inline expandable tool */}
                 {tool.type === 'inline' && (
                   <>
-                    <button onClick={() => toggleTool(tool.key)} className="group flex items-center gap-4 p-5 w-full text-left">
-                      <div className={`w-10 h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color}`}>
-                        <tool.icon className="w-4.5 h-4.5 text-[#333]" />
+                    <button onClick={() => toggleTool(tool.key)} className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-5 w-full text-left">
+                      <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}>
+                        <tool.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#333]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
-                        <p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
+                        <h3 className="text-xs sm:text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
+                        <p className="text-[10px] sm:text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
                       </div>
                       {tool.action === 'careerPath' && planTier === 'pro' && (
                         <span className="px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium shrink-0 mr-2">
                           {monthlyCareerPathUsed < 1
-                            ? (lang === 'pt' ? '1 incluído/mês' : '1 included/month')
-                            : (lang === 'pt' ? 'Utilizado' : 'Used')
+                            ? `1 ${t('member.includedMonth')}`
+                            : t('member.used')
                           }
                         </span>
                       )}
                       {tool.action === 'careerIntelligence' && planTier === 'pro' && (
                         <span className="px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium shrink-0 mr-2">
                           {monthlyCareerIntelUsed < 1
-                            ? (lang === 'pt' ? '1 incluído/mês' : '1 included/month')
-                            : (lang === 'pt' ? 'Utilizado' : 'Used')
+                            ? `1 ${t('member.includedMonth')}`
+                            : t('member.used')
                           }
                         </span>
                       )}
@@ -1625,15 +1624,15 @@ export default function MemberArea() {
           <p className="text-xs text-[#999] font-light mb-6">{t('member.contentDesc')}</p>
 
           {/* AI Templates — Career Bot powered */}
-          <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="mb-6 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
             {[
               {
                 icon: FileText,
                 color: 'from-gold/20 to-gold/5',
                 event: 'open-career-bot-cover-letter',
-                title: lang === 'pt' ? 'Carta de Apresentação' : 'Cover Letter',
-                desc: lang === 'pt' ? 'Gera cartas personalizadas com base no teu CV e LinkedIn.' : 'Generate personalised cover letters based on your CV and LinkedIn.',
-                cta: lang === 'pt' ? 'Gerar' : 'Generate',
+                title: t('member.coverLetter'),
+                desc: t('member.coverLetterDesc'),
+                cta: t('member.generate'),
                 btnStyle: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)',
                 ctaIcon: 'bot',
               },
@@ -1641,9 +1640,9 @@ export default function MemberArea() {
                 icon: Mail,
                 color: 'from-blue-500/15 to-blue-500/5',
                 event: 'open-career-bot-networking-email',
-                title: lang === 'pt' ? 'E-mail de Networking' : 'Networking Email',
-                desc: lang === 'pt' ? 'Cria e-mails profissionais para contactar a tua rede.' : 'Create professional emails to reach out to your network.',
-                cta: lang === 'pt' ? 'Gerar' : 'Generate',
+                title: t('member.networkingEmail'),
+                desc: t('member.networkingEmailDesc'),
+                cta: t('member.generate'),
                 btnStyle: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)',
                 ctaIcon: 'bot',
               },
@@ -1651,9 +1650,9 @@ export default function MemberArea() {
                 icon: Megaphone,
                 color: 'from-sky-500/15 to-sky-500/5',
                 event: 'open-career-bot-linkedin-post',
-                title: lang === 'pt' ? 'Post LinkedIn' : 'LinkedIn Post',
-                desc: lang === 'pt' ? 'Anuncia a tua mudança de emprego com um post profissional.' : 'Announce your job change with a professional post.',
-                cta: lang === 'pt' ? 'Gerar' : 'Generate',
+                title: t('member.linkedinPost'),
+                desc: t('member.linkedinPostDesc'),
+                cta: t('member.generate'),
                 btnStyle: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)',
                 ctaIcon: 'bot',
               },
@@ -1661,19 +1660,19 @@ export default function MemberArea() {
                 icon: Linkedin,
                 color: 'from-[#0A66C2]/15 to-[#0A66C2]/5',
                 event: 'open-headline-generator',
-                title: lang === 'pt' ? 'Headline LinkedIn' : 'LinkedIn Headline',
-                desc: lang === 'pt' ? 'Gera headlines otimizadas para o teu perfil LinkedIn.' : 'Generate optimised headlines for your LinkedIn profile.',
-                cta: lang === 'pt' ? 'Gerar Headlines' : 'Generate Headlines',
+                title: t('member.linkedinHeadline'),
+                desc: t('member.linkedinHeadlineDesc'),
+                cta: t('member.generateHeadlines'),
                 btnStyle: 'linear-gradient(135deg, #0A66C2 0%, #004182 100%)',
                 ctaIcon: 'sparkle',
               },
             ].map((tpl) => (
-              <div key={tpl.event} className="p-4 border border-[#e5e5e5] rounded-lg hover:border-gold/30 transition-all group">
-                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${tpl.color} flex items-center justify-center mb-3`}>
+              <div key={tpl.event} className="p-3 sm:p-4 border border-[#e5e5e5] rounded-lg hover:border-gold/30 transition-all group">
+                <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br ${tpl.color} flex items-center justify-center mb-2 sm:mb-3`}>
                   <tpl.icon className="w-4.5 h-4.5 text-[#333]" />
                 </div>
-                <h3 className="text-sm font-semibold text-[#1a1a1a] mb-1 group-hover:text-gold transition-colors">{tpl.title}</h3>
-                <p className="text-[11px] text-[#999] font-light leading-relaxed mb-3">{tpl.desc}</p>
+                <h3 className="text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1 group-hover:text-gold transition-colors">{tpl.title}</h3>
+                <p className="text-[10px] sm:text-[11px] text-[#999] font-light leading-relaxed mb-2 sm:mb-3 line-clamp-2 sm:line-clamp-none">{tpl.desc}</p>
                 <button
                   onClick={() => window.dispatchEvent(new Event(tpl.event))}
                   className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded text-xs font-medium text-white transition-all hover:opacity-90"
@@ -1687,8 +1686,8 @@ export default function MemberArea() {
           </div>
 
           {/* Filters */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
-            <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="flex flex-col gap-3 mb-6">
+            <div className="flex gap-2 flex-wrap">
               {contentTypes.map((type) => (
                 <button
                   key={type}
@@ -1703,14 +1702,14 @@ export default function MemberArea() {
                 </button>
               ))}
             </div>
-            <div className="relative sm:ml-auto">
+            <div className="relative w-full sm:w-auto sm:ml-auto">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#aaa]" />
               <input
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder={t('member.search')}
-                className="pl-8 pr-3 py-2 bg-[#f7f7f6] border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] placeholder-[#aaa] focus:border-gold/30 focus:outline-none transition-colors w-56"
+                className="pl-8 pr-3 py-2 bg-[#f7f7f6] border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] placeholder-[#aaa] focus:border-gold/30 focus:outline-none transition-colors w-full sm:w-56"
               />
             </div>
           </div>
@@ -1818,7 +1817,7 @@ export default function MemberArea() {
                         {item.description}
                       </p>
                       <div className="mt-3 flex items-center gap-1 text-[11px] text-gold/50 group-hover:text-gold transition-colors">
-                        <span>{lang === 'pt' ? 'Aceder' : 'Access'}</span>
+                        <span>{t('member.access')}</span>
                         <ArrowRight className="w-3 h-3" />
                       </div>
                     </div>

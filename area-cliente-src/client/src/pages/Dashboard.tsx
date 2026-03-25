@@ -200,7 +200,7 @@ export default function Dashboard() {
 
   const tabs = [
     { key: 'analyses' as const, label: t('dash.myAnalyses'), icon: BarChart3 },
-    { key: 'progress' as const, label: 'Progresso', icon: BarChart3 },
+    { key: 'progress' as const, label: t('dash.progress'), icon: BarChart3 },
     { key: 'profile' as const, label: t('dash.personalInfo'), icon: FileText },
     { key: 'subscription' as const, label: t('dash.subscription'), icon: Compass },
   ];
@@ -209,8 +209,8 @@ export default function Dashboard() {
   const resources = [
     {
       id: 'ebook-cv-vencedor',
-      title: 'Ebook: Como Criar um CV Vencedor',
-      description: 'Guia completo com dicas práticas para construíres um CV que se destaca no mercado de trabalho.',
+      title: t('res.ebookCv'),
+      description: t('res.ebookCvDesc'),
       type: 'PDF',
       size: '155 KB',
       url: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/Ebook_Como_Criar_um_CV_Vencedor_861d8b44.pdf',
@@ -218,8 +218,8 @@ export default function Dashboard() {
     },
     {
       id: 'energia-para-liderar',
-      title: 'Energia para Liderar (Premium)',
-      description: 'Guia premium sobre como gerir a tua energia para liderar com impacto e consistência.',
+      title: t('res.energiaLiderar'),
+      description: t('res.energiaLiderarDesc'),
       type: 'PDF',
       size: '23 MB',
       url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/Energia_para_Liderar_Premium.pdf',
@@ -227,8 +227,8 @@ export default function Dashboard() {
     },
     {
       id: '10-erros-linkedin',
-      title: '10 Erros no LinkedIn',
-      description: 'Os 10 erros mais comuns no LinkedIn que podem estar a prejudicar a tua visibilidade profissional.',
+      title: t('res.errosLinkedin'),
+      description: t('res.errosLinkedinDesc'),
       type: 'PDF',
       size: '109 KB',
       url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/10-erros-linkedin.pdf',
@@ -236,8 +236,8 @@ export default function Dashboard() {
     },
     {
       id: 'script-entrevistas',
-      title: 'Script de Entrevistas Share2Inspire',
-      description: 'Guia prático com scripts e dicas para te preparares para entrevistas de emprego com confiança.',
+      title: t('res.scriptEntrevistas'),
+      description: t('res.scriptEntrevistasDesc'),
       type: 'PDF',
       size: '165 KB',
       url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/Script_de_Entrevistas_Share2Inspire.pdf',
@@ -339,12 +339,12 @@ export default function Dashboard() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-8 border-b border-[#e5e5e5]">
+        <div className="flex gap-1 mb-8 border-b border-[#e5e5e5] overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-light transition-all duration-300 border-b-2 -mb-[1px] ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-3 text-xs sm:text-sm font-light transition-all duration-300 border-b-2 -mb-[1px] whitespace-nowrap ${
                 activeTab === tab.key
                   ? 'border-gold text-gold'
                   : 'border-transparent text-[#999] hover:text-[#1a1a1a]/60'

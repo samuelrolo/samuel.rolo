@@ -79,7 +79,7 @@ export default function Header() {
             className="flex items-center gap-1 px-2 py-1 rounded text-xs font-light text-[#888] hover:text-[#555] hover:bg-[#f0f0ef] transition-all duration-300"
           >
             <Globe className="w-3.5 h-3.5" />
-            {lang === 'pt' ? 'EN' : 'PT'}
+            {lang === 'pt' ? 'PT' : 'EN'}
           </button>
 
           {user ? (
@@ -167,7 +167,7 @@ export default function Header() {
                 className="flex items-center gap-1.5 text-xs text-[#888]"
               >
                 <Globe className="w-3.5 h-3.5" />
-                {lang === 'pt' ? 'English' : 'Português'}
+                {lang === 'pt' ? 'Português' : 'English'}
               </button>
               {user ? (
                 <button
