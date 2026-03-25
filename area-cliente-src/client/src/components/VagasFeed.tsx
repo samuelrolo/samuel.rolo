@@ -5,12 +5,7 @@
  * Fully i18n-aware via useI18n hook
  */
 import { useState, useEffect, useCallback } from 'react';
-<<<<<<< HEAD
 import { Briefcase, RefreshCw, ExternalLink } from 'lucide-react';
-=======
-import { Briefcase, MapPin, RefreshCw, ExternalLink, Search } from 'lucide-react';
-import { useI18n } from '@/lib/i18n';
->>>>>>> 7abaf5d8b4769e45fddeb5980476368884d68e99
 
 // ─── Pre-configured Adzuna credentials ──────────────────────────────────────
 const S2I_APP_ID  = '6c8e3465';
