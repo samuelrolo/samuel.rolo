@@ -215,6 +215,33 @@ export default function Dashboard() {
       url: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/Ebook_Como_Criar_um_CV_Vencedor_861d8b44.pdf',
       icon: FileText,
     },
+    {
+      id: 'energia-para-liderar',
+      title: 'Energia para Liderar (Premium)',
+      description: 'Guia premium sobre como gerir a tua energia para liderar com impacto e consistência.',
+      type: 'PDF',
+      size: '23 MB',
+      url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/Energia_para_Liderar_Premium.pdf',
+      icon: BookOpen,
+    },
+    {
+      id: '10-erros-linkedin',
+      title: '10 Erros no LinkedIn',
+      description: 'Os 10 erros mais comuns no LinkedIn que podem estar a prejudicar a tua visibilidade profissional.',
+      type: 'PDF',
+      size: '109 KB',
+      url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/10-erros-linkedin.pdf',
+      icon: Linkedin,
+    },
+    {
+      id: 'script-entrevistas',
+      title: 'Script de Entrevistas Share2Inspire',
+      description: 'Guia prático com scripts e dicas para te preparares para entrevistas de emprego com confiança.',
+      type: 'PDF',
+      size: '165 KB',
+      url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/Script_de_Entrevistas_Share2Inspire.pdf',
+      icon: FileSearch,
+    },
   ];
 
   function formatDate(dateStr: string) {
