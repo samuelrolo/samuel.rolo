@@ -1087,7 +1087,7 @@ export default function MemberArea() {
       color: 'from-purple-500/15 to-purple-500/5',
       type: 'widget',
       action: 'openCareerBot',
-      label: 'Career Advisory Bot',
+      label: 'Career Advisory',
       desc: lang === 'pt' ? 'Assistente pessoal de carreira com IA' : 'Personal AI career assistant',
     },
     {

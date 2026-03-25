@@ -75,7 +75,7 @@ export default function Home() {
                 ferramentas certas.
               </motion.h1>
               <motion.p variants={fadeUp} custom={2} className="text-[#666] font-light text-lg max-w-lg mx-auto">
-                Acesso ilimitado a CV Maker, CV Analyzer, Career Path, LinkedIn Roster, e-books exclusivos e o Career Advisory Bot.
+                Acesso ilimitado a CV Maker, CV Analyzer, Career Path, LinkedIn Roster, e-books exclusivos e o Career Advisory.
               </motion.p>
               <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
