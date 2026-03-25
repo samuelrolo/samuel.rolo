@@ -15,10 +15,9 @@ export type UserProfile = {
   address: string;
   linkedin_url: string;
   avatar_url: string;
-  cv_url: string;         // actual DB column name
-  cv_filename: string;    // original file name
-  cv_uploaded_at: string; // upload timestamp
-  // legacy alias kept for backward compat
+  cv_url: string;
+  cv_filename: string;
+  cv_uploaded_at: string;
   cv_file_url?: string;
   created_at: string;
   updated_at: string;
@@ -27,7 +26,7 @@ export type UserProfile = {
 export type Subscription = {
   id: string;
   user_id: string;
-  plan: string; // e.g. 'essential_monthly', 'growth_semiannual', 'pro_annual', or legacy 'monthly'/'semiannual'/'annual'
+  plan: string;
   status: 'active' | 'cancelled' | 'expired' | 'pending';
   price_eur: number;
   started_at: string;
