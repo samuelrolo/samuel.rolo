@@ -234,8 +234,11 @@ export default function CareerBotWidget() {
       console.log('[Headline] Raw reply:', data.reply);
       if (data.success && data.reply) {
         let headlines: string[] = [];
+        // Handle reply that might be string or object
+        let replyStr = typeof data.reply === 'object' ? JSON.stringify(data.reply) : String(data.reply);
+        
         // Clean markdown code blocks and extra whitespace
-        let raw = data.reply
+        let raw = replyStr
           .replace(/```json\s*/gi, '')
           .replace(/```\s*/g, '')
           .replace(/^\s*\n/gm, '')
@@ -249,7 +252,6 @@ export default function CareerBotWidget() {
             const parsed = JSON.parse(str);
             if (Array.isArray(parsed?.headlines)) return parsed.headlines;
             if (Array.isArray(parsed)) return parsed;
-            // If it's an object with any array property, use the first array
             for (const key of Object.keys(parsed || {})) {
               if (Array.isArray(parsed[key])) return parsed[key];
             }
@@ -276,21 +278,47 @@ export default function CareerBotWidget() {
           }
         }
 
-        // Strategy 4: Split by numbered lines or newlines
+        // Strategy 4: Extract quoted strings from truncated/partial JSON
+        // This handles cases where the API response is cut off mid-JSON
+        if (headlines.length === 0) {
+          const quotedStrings: string[] = [];
+          const quoteRegex = /"([^"]{15,220})"/g;
+          let m;
+          while ((m = quoteRegex.exec(raw)) !== null) {
+            const val = m[1].trim();
+            // Skip JSON keys like "headlines"
+            if (val === 'headlines' || val.length < 15) continue;
+            quotedStrings.push(val);
+          }
+          if (quotedStrings.length > 0) {
+            headlines = quotedStrings.slice(0, parseInt(hlNum));
+          }
+        }
+
+        // Strategy 5: Split by numbered lines or newlines
         if (headlines.length === 0) {
           const lines = raw.split(/\n/)
-            .map((l: string) => l.replace(/^\d+[\.\)\-:\s]+/, '').replace(/^"|"$/g, '').replace(/^[\-\*]\s*/, '').trim())
+            .map((l: string) => l.replace(/^\d+[\.)\-:\s]+/, '').replace(/^"|"$/g, '').replace(/^[\-\*]\s*/, '').trim())
             .filter((l: string) => l.length > 15 && l.length <= 250 && !l.startsWith('{') && !l.startsWith('['));
           headlines = lines.slice(0, parseInt(hlNum));
         }
 
-        // Clean up: remove surrounding quotes, numbering, JSON artifacts
+        // Strategy 6: Split by comma for flat comma-separated headlines
+        if (headlines.length === 0) {
+          const cleaned = raw.replace(/[{}\[\]"]/g, '').replace(/^headlines\s*:?\s*/i, '').trim();
+          const parts = cleaned.split(/,\s*/).filter((p: string) => p.trim().length > 15);
+          if (parts.length >= 2) {
+            headlines = parts.slice(0, parseInt(hlNum));
+          }
+        }
+
+        // Clean up: remove surrounding quotes, numbering, but preserve | and · separators
         headlines = headlines
-          .map((h: any) => String(h).replace(/^"|"$/g, '').replace(/^\d+[\.\)\-]\s*/, '').replace(/[\[\]{}"]/g, '').trim())
-          .filter((h: string) => h.length > 10 && !h.startsWith('headlines'));
+          .map((h: any) => String(h).replace(/^"|"$/g, '').replace(/^\d+[\.)\-]\s*/, '').replace(/[\[\]{}]/g, '').replace(/^"|"$/g, '').replace(/,\s*$/, '').trim())
+          .filter((h: string) => h.length > 10 && h.toLowerCase() !== 'headlines');
         
         console.log('[Headline] Parsed headlines:', headlines);
-        setHlResults(headlines.length > 0 ? headlines : [raw.replace(/[{}\[\]"]/g, '').substring(0, 220)]);
+        setHlResults(headlines.length > 0 ? headlines : ['Erro ao gerar headlines. Tenta novamente com menos headlines ou um cargo mais curto.']);
       }
     } catch {
       setHlResults([]);
@@ -347,9 +375,10 @@ export default function CareerBotWidget() {
       {isOpen && (
         <div className={`fixed z-50 bg-white shadow-2xl flex flex-col overflow-hidden border border-gray-200 transition-all duration-300 ${
           isFullscreen
-            ? 'inset-4 md:inset-8 lg:inset-12 rounded-2xl w-auto h-auto max-w-[1200px] mx-auto'
+            ? 'inset-0 sm:inset-4 md:inset-8 lg:inset-12 rounded-none sm:rounded-2xl'
             : 'bottom-6 right-6 w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-3rem)] rounded-2xl'
-        }`}>
+        }`}
+        style={isFullscreen ? { maxWidth: '900px', margin: '0 auto', left: 0, right: 0 } : undefined}>
           {/* Header */}
           <div className="px-4 py-3 flex items-center justify-between shrink-0" style={{ background: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' }}>
             <div className="flex items-center gap-3">
@@ -785,7 +814,7 @@ export default function CareerBotWidget() {
 
               {/* Input Area */}
               <div className="p-3 border-t border-gray-100 shrink-0">
-                <div className="flex items-center gap-2">
+                <div className={`flex items-center gap-2 ${isFullscreen ? 'max-w-4xl mx-auto w-full' : ''}`}>
                   <input
                     ref={inputRef}
                     type="text"
