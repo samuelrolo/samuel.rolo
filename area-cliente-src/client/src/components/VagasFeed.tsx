@@ -4,12 +4,15 @@
  * Credenciais pré-configuradas; pesquisa personalizável
  */
 import { useState, useEffect, useCallback } from 'react';
-import { Briefcase, MapPin, RefreshCw, ExternalLink, Search } from 'lucide-react';
+import { Briefcase, RefreshCw, ExternalLink } from 'lucide-react';
 
 // ─── Pre-configured Adzuna credentials ──────────────────────────────────────
 const S2I_APP_ID  = '6c8e3465';
 const S2I_APP_KEY = 'fb7bb5f2f64806f6454c9bedbe3e1f01';
 const S2I_QUERY   = 'recursos humanos carreira coaching';
+
+// Adzuna base URL for Portugal searches
+const ADZUNA_SEARCH_BASE = 'https://www.adzuna.com/search?loc=Portugal';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 interface Vaga {
@@ -21,19 +24,23 @@ interface Vaga {
   tags: string[];
   match: number;
   key: string;
-  url?: string;
+  url: string;
 }
+
+// Helper to build an Adzuna search URL for a given query
+const adzunaSearchUrl = (query: string) =>
+  `${ADZUNA_SEARCH_BASE}&q=${encodeURIComponent(query)}`;
 
 // ─── Demo/fallback data ─────────────────────────────────────────────────────
 const DEMO_VAGAS: Vaga[] = [
-  { title: "Career Coach & Trainer",       company: "Fundação EDP",       location: "Lisboa",          salary: "2.800–3.800€", remote: false, tags: ["Coaching", "Formação"],  match: 95, key: "rh lisboa" },
-  { title: "HR Business Partner",          company: "NOS Comunicações",   location: "Lisboa",          salary: "3.200–4.200€", remote: false, tags: ["RH", "Estratégia"],     match: 88, key: "rh lisboa" },
-  { title: "Talent Acquisition Specialist",company: "Farfetch",           location: "Porto / Remoto",  salary: "2.600–3.400€", remote: true,  tags: ["Recrutamento"],          match: 82, key: "rh remote" },
-  { title: "People & Culture Manager",     company: "Revolut Portugal",   location: "Lisboa",          salary: "4.000–5.500€", remote: true,  tags: ["RH", "Cultura"],         match: 90, key: "rh lisboa remote" },
-  { title: "Marketing & Brand Manager",    company: "Super Bock Group",   location: "Porto",           salary: "3.000–4.000€", remote: false, tags: ["Marketing"],             match: 74, key: "marketing" },
-  { title: "Content & Community Manager",  company: "Deco Proteste",      location: "Lisboa / Remoto", salary: "2.200–3.000€", remote: true,  tags: ["Marketing"],             match: 79, key: "marketing remote lisboa" },
-  { title: "Learning & Development Lead",  company: "Jerónimo Martins",   location: "Lisboa",          salary: "3.800–5.000€", remote: false, tags: ["L&D", "Formação"],       match: 91, key: "rh lisboa" },
-  { title: "Employer Branding Specialist", company: "Accenture Portugal", location: "Lisboa / Remoto", salary: "2.800–3.600€", remote: true,  tags: ["Employer Branding"],     match: 85, key: "rh remote lisboa" },
+  { title: "Career Coach & Trainer",       company: "Fundação EDP",       location: "Lisboa",          salary: "2.800–3.800€", remote: false, tags: ["Coaching", "Formação"],  match: 95, key: "rh lisboa",        url: adzunaSearchUrl("career coach trainer Lisboa") },
+  { title: "HR Business Partner",          company: "NOS Comunicações",   location: "Lisboa",          salary: "3.200–4.200€", remote: false, tags: ["RH", "Estratégia"],     match: 88, key: "rh lisboa",        url: adzunaSearchUrl("HR business partner Lisboa") },
+  { title: "Talent Acquisition Specialist",company: "Farfetch",           location: "Porto / Remoto",  salary: "2.600–3.400€", remote: true,  tags: ["Recrutamento"],          match: 82, key: "rh remote",        url: adzunaSearchUrl("talent acquisition specialist Porto") },
+  { title: "People & Culture Manager",     company: "Revolut Portugal",   location: "Lisboa",          salary: "4.000–5.500€", remote: true,  tags: ["RH", "Cultura"],         match: 90, key: "rh lisboa remote", url: adzunaSearchUrl("people culture manager Lisboa") },
+  { title: "Marketing & Brand Manager",    company: "Super Bock Group",   location: "Porto",           salary: "3.000–4.000€", remote: false, tags: ["Marketing"],             match: 74, key: "marketing",        url: adzunaSearchUrl("marketing brand manager Porto") },
+  { title: "Content & Community Manager",  company: "Deco Proteste",      location: "Lisboa / Remoto", salary: "2.200–3.000€", remote: true,  tags: ["Marketing"],             match: 79, key: "marketing remote lisboa", url: adzunaSearchUrl("content community manager Lisboa") },
+  { title: "Learning & Development Lead",  company: "Jerónimo Martins",   location: "Lisboa",          salary: "3.800–5.000€", remote: false, tags: ["L&D", "Formação"],       match: 91, key: "rh lisboa",        url: adzunaSearchUrl("learning development lead Lisboa") },
+  { title: "Employer Branding Specialist", company: "Accenture Portugal", location: "Lisboa / Remoto", salary: "2.800–3.600€", remote: true,  tags: ["Employer Branding"],     match: 85, key: "rh remote lisboa", url: adzunaSearchUrl("employer branding specialist Lisboa") },
 ];
 
 type FilterType = 'todas' | 'remote' | 'lisboa' | 'rh' | 'marketing';
@@ -68,7 +75,7 @@ export default function VagasFeed({ lang = 'pt' }: { lang?: string }) {
           tags:     j.category?.label ? [j.category.label] : [],
           match:    Math.floor(70 + Math.random() * 25),
           key:      (j.category?.label || '').toLowerCase(),
-          url:      j.redirect_url,
+          url:      j.redirect_url || adzunaSearchUrl(j.title),
         }));
         setVagas(mapped);
         setIsApiData(true);
@@ -173,10 +180,12 @@ export default function VagasFeed({ lang = 'pt' }: { lang?: string }) {
                 : 'bg-[#fff3cd] text-[#856404]';
 
               return (
-                <div
+                <a
                   key={idx}
-                  onClick={() => v.url && window.open(v.url, '_blank')}
-                  className={`px-4 py-3.5 border-b border-[#e9ecef] last:border-b-0 transition-colors duration-150 ${v.url ? 'cursor-pointer hover:bg-[#fdf8ed]' : ''}`}
+                  href={v.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block px-4 py-3.5 border-b border-[#e9ecef] last:border-b-0 transition-colors duration-150 cursor-pointer hover:bg-[#fdf8ed] no-underline"
                 >
                   <div className="flex items-start gap-2.5 mb-2">
                     <div className="w-9 h-9 rounded-lg bg-[#f8f9fa] border border-[#e9ecef] flex items-center justify-center text-[11px] font-bold text-[#6c757d] flex-shrink-0 uppercase">
@@ -186,9 +195,15 @@ export default function VagasFeed({ lang = 'pt' }: { lang?: string }) {
                       <div className="text-[13px] font-semibold text-[#2c3e50] leading-tight">{v.title}</div>
                       <div className="text-[11px] text-[#6c757d] mt-0.5">{v.company}</div>
                     </div>
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${matchClass}`}>
-                      {v.match}% match
-                    </span>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${matchClass}`}>
+                        {v.match}% match
+                      </span>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold text-[#a57b0a] bg-[#BF9A33]/10 border border-[#BF9A33]/20 hover:bg-[#BF9A33]/20 transition-colors">
+                        {lang === 'pt' ? 'Ver vaga' : 'View job'}
+                        <ExternalLink className="w-2.5 h-2.5" />
+                      </span>
+                    </div>
                   </div>
                   <div className="flex gap-1.5 flex-wrap">
                     <span className="text-[10px] px-2 py-0.5 rounded bg-[#f8f9fa] border border-[#e9ecef] text-[#6c757d] font-medium">
@@ -210,7 +225,7 @@ export default function VagasFeed({ lang = 'pt' }: { lang?: string }) {
                       </span>
                     ))}
                   </div>
-                </div>
+                </a>
               );
             })
           )}
@@ -219,7 +234,7 @@ export default function VagasFeed({ lang = 'pt' }: { lang?: string }) {
         {/* Footer */}
         <div className="px-4 py-3 border-t border-[#e9ecef] bg-[#f8f9fa] text-center">
           <a
-            href="https://www.adzuna.pt"
+            href={adzunaSearchUrl(S2I_QUERY)}
             target="_blank"
             rel="noopener noreferrer"
             className="text-[12px] text-[#a57b0a] font-semibold hover:text-[#BF9A33] inline-flex items-center gap-1"
