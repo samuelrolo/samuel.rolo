@@ -6,6 +6,7 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { Briefcase, RefreshCw, ExternalLink } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 // ─── Pre-configured Adzuna credentials ──────────────────────────────────────
 const S2I_APP_ID  = '6c8e3465';
