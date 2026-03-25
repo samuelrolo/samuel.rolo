@@ -1,16 +1,16 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useI18n } from '@/contexts/I18nContext';
+import { useI18n } from '@/lib/i18n';
 
 const HYPER_TASK_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
 
 type Message = {
   role: 'user' | 'assistant';
   content: string;
-  type?: 'chat' | 'cover_letter';
+  type?: 'chat' | 'cover_letter' | 'networking_email' | 'linkedin_post';
 };
 
-type WidgetView = 'chat' | 'cover_letter';
+type WidgetView = 'chat' | 'cover_letter' | 'networking_email' | 'linkedin_post';
 
 export default function CareerBotWidget() {
   const { user, profile, subscription, hasActiveSubscription } = useAuth();
@@ -21,9 +21,23 @@ export default function CareerBotWidget() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Cover letter fields
   const [company, setCompany] = useState('');
   const [role, setRole] = useState('');
   const [coverLetterNotes, setCoverLetterNotes] = useState('');
+
+  // Networking email fields
+  const [netRecipient, setNetRecipient] = useState('');
+  const [netPurpose, setNetPurpose] = useState('');
+  const [netNotes, setNetNotes] = useState('');
+
+  // LinkedIn post fields
+  const [liNewCompany, setLiNewCompany] = useState('');
+  const [liNewRole, setLiNewRole] = useState('');
+  const [liTone, setLiTone] = useState('profissional');
+  const [liNotes, setLiNotes] = useState('');
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -49,7 +63,6 @@ export default function CareerBotWidget() {
     return {
       profile_name: profile ? `${profile.first_name} ${profile.last_name}` : '',
       profile_linkedin: profile?.linkedin_url || '',
-      // CV text will be fetched from profile if available
     };
   }, [profile]);
 
@@ -57,32 +70,29 @@ export default function CareerBotWidget() {
     const msg = overrideMessage || input.trim();
     if (!msg && view === 'chat') return;
 
-    const userMsg: Message = { role: 'user', content: msg || `Carta de apresentação para ${company} — ${role}` };
+    const userMsg: Message = { role: 'user', content: msg || '...' };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
     setLoading(true);
 
     try {
       const profileCtx = getProfileContext();
-      const isCoverLetter = view === 'cover_letter' && company && role;
-
       const body: any = {
         mode: 'career_coach',
-        message: msg || undefined,
+        message: msg,
         history: messages.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content })),
         ...profileCtx,
       };
 
-      if (isCoverLetter) {
+      // Cover letter mode
+      if (view === 'cover_letter' && company && role && !overrideMessage?.startsWith('__SKIP__')) {
         body.cover_letter = true;
         body.target_company = company;
         body.target_role = role;
-        if (!msg) {
-          body.message = coverLetterNotes
-            ? `Gera uma carta de apresentação para a empresa ${company}, para a vaga de ${role}. Notas adicionais: ${coverLetterNotes}`
-            : `Gera uma carta de apresentação para a empresa ${company}, para a vaga de ${role}. Usa o meu perfil profissional para personalizar.`;
-        }
       }
+
+      // Note: networking_email and linkedin_post are handled via the message content
+      // The full prompt is already in the message field, so the career_coach mode processes it correctly
 
       const response = await fetch(HYPER_TASK_URL, {
         method: 'POST',
@@ -123,12 +133,29 @@ export default function CareerBotWidget() {
 
   const handleCoverLetterSubmit = () => {
     if (!company.trim() || !role.trim()) return;
+    const msg = coverLetterNotes
+      ? `Gera uma carta de apresentação para a empresa ${company}, para a vaga de ${role}. Notas: ${coverLetterNotes}`
+      : `Gera uma carta de apresentação para a empresa ${company}, para a vaga de ${role}.`;
     setView('chat');
-    sendMessage(
-      coverLetterNotes
-        ? `Gera uma carta de apresentação para a empresa ${company}, para a vaga de ${role}. Notas: ${coverLetterNotes}`
-        : `Gera uma carta de apresentação para a empresa ${company}, para a vaga de ${role}.`
-    );
+    sendMessage(msg);
+  };
+
+  const handleNetworkingEmailSubmit = () => {
+    if (!netRecipient.trim() || !netPurpose.trim()) return;
+    const msg = netNotes
+      ? `Gera um e-mail de networking profissional para ${netRecipient}. Objetivo: ${netPurpose}. Notas: ${netNotes}`
+      : `Gera um e-mail de networking profissional para ${netRecipient}. Objetivo: ${netPurpose}. Usa o meu perfil profissional para personalizar.`;
+    setView('chat');
+    sendMessage(msg);
+  };
+
+  const handleLinkedinPostSubmit = () => {
+    if (!liNewCompany.trim() || !liNewRole.trim()) return;
+    const msg = liNotes
+      ? `Gera um post para o LinkedIn a anunciar a minha mudança de emprego para ${liNewCompany} como ${liNewRole}. Tom: ${liTone}. Notas: ${liNotes}`
+      : `Gera um post para o LinkedIn a anunciar a minha mudança de emprego para ${liNewCompany} como ${liNewRole}. Tom: ${liTone}. Usa o meu perfil profissional para personalizar.`;
+    setView('chat');
+    sendMessage(msg);
   };
 
   const copyToClipboard = (text: string) => {
@@ -138,30 +165,38 @@ export default function CareerBotWidget() {
   const resetChat = () => {
     setMessages([]);
     setView('chat');
-    setCompany('');
-    setRole('');
-    setCoverLetterNotes('');
+    setCompany(''); setRole(''); setCoverLetterNotes('');
+    setNetRecipient(''); setNetPurpose(''); setNetNotes('');
+    setLiNewCompany(''); setLiNewRole(''); setLiTone('profissional'); setLiNotes('');
   };
 
-  // Open widget directly in cover letter mode (for external trigger)
+  // External event listeners
   useEffect(() => {
-    const handler = () => {
-      setIsOpen(true);
-      setView('cover_letter');
+    const openCoverLetter = () => { setIsOpen(true); setView('cover_letter'); };
+    const openChat = () => { setIsOpen(true); setView('chat'); };
+    const openNetworkingEmail = () => { setIsOpen(true); setView('networking_email'); };
+    const openLinkedinPost = () => { setIsOpen(true); setView('linkedin_post'); };
+
+    window.addEventListener('open-career-bot', openChat);
+    window.addEventListener('open-career-bot-cover-letter', openCoverLetter);
+    window.addEventListener('open-career-bot-networking-email', openNetworkingEmail);
+    window.addEventListener('open-career-bot-linkedin-post', openLinkedinPost);
+
+    return () => {
+      window.removeEventListener('open-career-bot', openChat);
+      window.removeEventListener('open-career-bot-cover-letter', openCoverLetter);
+      window.removeEventListener('open-career-bot-networking-email', openNetworkingEmail);
+      window.removeEventListener('open-career-bot-linkedin-post', openLinkedinPost);
     };
-    window.addEventListener('open-career-bot-cover-letter', handler);
-    return () => window.removeEventListener('open-career-bot-cover-letter', handler);
   }, []);
 
-  // Open widget in chat mode (for external trigger)
-  useEffect(() => {
-    const handler = () => {
-      setIsOpen(true);
-      setView('chat');
-    };
-    window.addEventListener('open-career-bot', handler);
-    return () => window.removeEventListener('open-career-bot', handler);
-  }, []);
+  // Tab labels for the view switcher
+  const tabs: { key: WidgetView; label: string; icon: string }[] = [
+    { key: 'chat', label: 'Chat', icon: '💬' },
+    { key: 'cover_letter', label: 'Carta', icon: '✉️' },
+    { key: 'networking_email', label: 'Networking', icon: '🤝' },
+    { key: 'linkedin_post', label: 'Post LinkedIn', icon: '📢' },
+  ];
 
   return (
     <>
@@ -176,7 +211,6 @@ export default function CareerBotWidget() {
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
           </svg>
-          {/* Pulse indicator */}
           <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-green-500 border-2 border-white animate-pulse" />
         </button>
       )}
@@ -199,21 +233,13 @@ export default function CareerBotWidget() {
               </div>
             </div>
             <div className="flex items-center gap-1">
-              <button
-                onClick={resetChat}
-                className="p-1.5 rounded-lg hover:bg-white/20 transition-colors"
-                title="Nova conversa"
-              >
+              <button onClick={resetChat} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors" title="Nova conversa">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
                   <path d="M3 3v5h5" />
                 </svg>
               </button>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-white/20 transition-colors"
-                title="Minimizar"
-              >
+              <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors" title="Minimizar">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M6 9l6 6 6-6" />
                 </svg>
@@ -222,86 +248,161 @@ export default function CareerBotWidget() {
           </div>
 
           {/* Tab Switcher */}
-          <div className="flex border-b border-gray-100 shrink-0">
-            <button
-              onClick={() => setView('chat')}
-              className={`flex-1 py-2.5 text-xs font-medium transition-colors ${
-                view === 'chat'
-                  ? 'text-[#BFA14A] border-b-2 border-[#BFA14A]'
-                  : 'text-gray-400 hover:text-gray-600'
-              }`}
-            >
-              💬 Chat
-            </button>
-            <button
-              onClick={() => setView('cover_letter')}
-              className={`flex-1 py-2.5 text-xs font-medium transition-colors ${
-                view === 'cover_letter'
-                  ? 'text-[#BFA14A] border-b-2 border-[#BFA14A]'
-                  : 'text-gray-400 hover:text-gray-600'
-              }`}
-            >
-              ✉️ Carta de Apresentação
-            </button>
+          <div className="flex border-b border-gray-100 shrink-0 overflow-x-auto">
+            {tabs.map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setView(tab.key)}
+                className={`flex-1 py-2 text-[10px] font-medium transition-colors whitespace-nowrap px-1 ${
+                  view === tab.key
+                    ? 'text-[#BFA14A] border-b-2 border-[#BFA14A]'
+                    : 'text-gray-400 hover:text-gray-600'
+                }`}
+              >
+                {tab.icon} {tab.label}
+              </button>
+            ))}
           </div>
 
           {/* Cover Letter Form */}
           {view === 'cover_letter' && (
             <div className="p-4 flex-1 overflow-y-auto">
               <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Gera uma carta de apresentação personalizada com base no teu perfil profissional (CV + LinkedIn).
-                  </p>
-                </div>
+                <p className="text-sm text-gray-600 mb-2">
+                  Gera uma carta de apresentação personalizada com base no teu perfil profissional (CV + LinkedIn).
+                </p>
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Empresa *</label>
-                  <input
-                    type="text"
-                    value={company}
-                    onChange={e => setCompany(e.target.value)}
+                  <input type="text" value={company} onChange={e => setCompany(e.target.value)}
                     placeholder="Ex: Google, Deloitte, AstraZeneca..."
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]"
-                  />
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Vaga / Função *</label>
-                  <input
-                    type="text"
-                    value={role}
-                    onChange={e => setRole(e.target.value)}
+                  <input type="text" value={role} onChange={e => setRole(e.target.value)}
                     placeholder="Ex: Product Manager, HR Business Partner..."
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]"
-                  />
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Notas adicionais (opcional)</label>
-                  <textarea
-                    value={coverLetterNotes}
-                    onChange={e => setCoverLetterNotes(e.target.value)}
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Notas adicionais</label>
+                  <textarea value={coverLetterNotes} onChange={e => setCoverLetterNotes(e.target.value)}
                     placeholder="Ex: Quero destacar a minha experiência em transformação digital..."
                     rows={3}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] resize-none"
-                  />
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] resize-none" />
                 </div>
-                <button
-                  onClick={handleCoverLetterSubmit}
+                <button onClick={handleCoverLetterSubmit}
                   disabled={!company.trim() || !role.trim() || loading}
                   className="w-full py-2.5 rounded-lg text-white text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ background: company.trim() && role.trim() ? 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' : '#ccc' }}
-                >
-                  {loading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-                      A gerar...
-                    </span>
-                  ) : '✉️ Gerar Carta de Apresentação'}
+                  style={{ background: company.trim() && role.trim() ? 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' : '#ccc' }}>
+                  {loading ? <span className="flex items-center justify-center gap-2"><LoadingSpinner /> A gerar...</span> : '✉️ Gerar Carta de Apresentação'}
                 </button>
                 {profile && (
                   <p className="text-xs text-gray-400 text-center">
-                    Será personalizada com base no perfil de {profile.first_name} {profile.last_name}
+                    Personalizada com base no perfil de {profile.first_name} {profile.last_name}
                     {profile.linkedin_url ? ' e LinkedIn' : ''}
                     {profile.cv_filename ? ` e CV (${profile.cv_filename})` : ''}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Networking Email Form */}
+          {view === 'networking_email' && (
+            <div className="p-4 flex-1 overflow-y-auto">
+              <div className="space-y-4">
+                <p className="text-sm text-gray-600 mb-2">
+                  Cria um e-mail profissional para contactar alguém da tua rede. Ideal para pedir conselhos, marcar cafés virtuais ou explorar oportunidades.
+                </p>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Destinatário *</label>
+                  <input type="text" value={netRecipient} onChange={e => setNetRecipient(e.target.value)}
+                    placeholder="Ex: João Silva, Diretor de RH na Deloitte"
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Objetivo *</label>
+                  <select value={netPurpose} onChange={e => setNetPurpose(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] bg-white">
+                    <option value="">Selecionar objetivo...</option>
+                    <option value="pedir conselho sobre carreira">Pedir conselho sobre carreira</option>
+                    <option value="marcar um café virtual">Marcar um café virtual</option>
+                    <option value="explorar oportunidades na empresa">Explorar oportunidades na empresa</option>
+                    <option value="pedir referência ou recomendação">Pedir referência ou recomendação</option>
+                    <option value="reconectar após longo período">Reconectar após longo período</option>
+                    <option value="agradecer por ajuda ou mentoria">Agradecer por ajuda ou mentoria</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Contexto adicional</label>
+                  <textarea value={netNotes} onChange={e => setNetNotes(e.target.value)}
+                    placeholder="Ex: Conhecemo-nos no evento X, quero mudar para a área de dados..."
+                    rows={3}
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] resize-none" />
+                </div>
+                <button onClick={handleNetworkingEmailSubmit}
+                  disabled={!netRecipient.trim() || !netPurpose.trim() || loading}
+                  className="w-full py-2.5 rounded-lg text-white text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: netRecipient.trim() && netPurpose.trim() ? 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' : '#ccc' }}>
+                  {loading ? <span className="flex items-center justify-center gap-2"><LoadingSpinner /> A gerar...</span> : '🤝 Gerar E-mail de Networking'}
+                </button>
+                {profile && (
+                  <p className="text-xs text-gray-400 text-center">
+                    Personalizado com base no perfil de {profile.first_name} {profile.last_name}
+                    {profile.linkedin_url ? ' e LinkedIn' : ''}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* LinkedIn Post Form */}
+          {view === 'linkedin_post' && (
+            <div className="p-4 flex-1 overflow-y-auto">
+              <div className="space-y-4">
+                <p className="text-sm text-gray-600 mb-2">
+                  Gera um post para o LinkedIn a anunciar a tua mudança de emprego. Personalizado com o teu tom de voz e contexto profissional.
+                </p>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Nova empresa *</label>
+                  <input type="text" value={liNewCompany} onChange={e => setLiNewCompany(e.target.value)}
+                    placeholder="Ex: Microsoft, Farfetch, Siemens..."
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Nova função *</label>
+                  <input type="text" value={liNewRole} onChange={e => setLiNewRole(e.target.value)}
+                    placeholder="Ex: Senior Data Engineer, Head of People..."
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Tom</label>
+                  <select value={liTone} onChange={e => setLiTone(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] bg-white">
+                    <option value="profissional">Profissional</option>
+                    <option value="entusiasmado">Entusiasmado</option>
+                    <option value="humilde e grato">Humilde e grato</option>
+                    <option value="inspirador">Inspirador</option>
+                    <option value="casual e autêntico">Casual e autêntico</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Notas adicionais</label>
+                  <textarea value={liNotes} onChange={e => setLiNotes(e.target.value)}
+                    placeholder="Ex: Quero agradecer à equipa anterior, mencionar o que aprendi..."
+                    rows={3}
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] resize-none" />
+                </div>
+                <button onClick={handleLinkedinPostSubmit}
+                  disabled={!liNewCompany.trim() || !liNewRole.trim() || loading}
+                  className="w-full py-2.5 rounded-lg text-white text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: liNewCompany.trim() && liNewRole.trim() ? 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' : '#ccc' }}>
+                  {loading ? <span className="flex items-center justify-center gap-2"><LoadingSpinner /> A gerar...</span> : '📢 Gerar Post LinkedIn'}
+                </button>
+                {profile && (
+                  <p className="text-xs text-gray-400 text-center">
+                    Personalizado com base no perfil de {profile.first_name} {profile.last_name}
+                    {profile.linkedin_url ? ' e LinkedIn' : ''}
                   </p>
                 )}
               </div>
@@ -329,12 +430,12 @@ export default function CareerBotWidget() {
                         { icon: '🎯', label: 'Estratégia de carreira', msg: 'Quero definir a minha estratégia de carreira' },
                         { icon: '📝', label: 'Preparar entrevista', msg: 'Ajuda-me a preparar para uma entrevista' },
                         { icon: '💰', label: 'Negociar salário', msg: 'Como negociar o meu salário?' },
-                        { icon: '✉️', label: 'Carta de apresentação', msg: '__COVER_LETTER__' },
+                        { icon: '✉️', label: 'Templates', msg: '__TEMPLATES__' },
                       ].map((item) => (
                         <button
                           key={item.label}
                           onClick={() => {
-                            if (item.msg === '__COVER_LETTER__') {
+                            if (item.msg === '__TEMPLATES__') {
                               setView('cover_letter');
                             } else {
                               sendMessage(item.msg);
@@ -357,15 +458,16 @@ export default function CareerBotWidget() {
                         ? 'bg-[#BFA14A] text-white rounded-br-md'
                         : 'bg-gray-100 text-gray-800 rounded-bl-md'
                     }`}>
-                      {msg.type === 'cover_letter' && msg.role === 'assistant' && (
+                      {(msg.type === 'cover_letter' || msg.type === 'networking_email' || msg.type === 'linkedin_post') && msg.role === 'assistant' && (
                         <div className="flex items-center gap-1.5 mb-2 pb-2 border-b border-gray-200/50">
-                          <span className="text-xs">✉️</span>
-                          <span className="text-xs font-medium opacity-70">Carta de Apresentação</span>
-                          <button
-                            onClick={() => copyToClipboard(msg.content)}
-                            className="ml-auto p-1 rounded hover:bg-black/10 transition-colors"
-                            title="Copiar"
-                          >
+                          <span className="text-xs">
+                            {msg.type === 'cover_letter' ? '✉️' : msg.type === 'networking_email' ? '🤝' : '📢'}
+                          </span>
+                          <span className="text-xs font-medium opacity-70">
+                            {msg.type === 'cover_letter' ? 'Carta de Apresentação' : msg.type === 'networking_email' ? 'E-mail de Networking' : 'Post LinkedIn'}
+                          </span>
+                          <button onClick={() => copyToClipboard(msg.content)}
+                            className="ml-auto p-1 rounded hover:bg-black/10 transition-colors" title="Copiar">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
@@ -374,12 +476,9 @@ export default function CareerBotWidget() {
                         </div>
                       )}
                       <div className="whitespace-pre-wrap">{msg.content}</div>
-                      {msg.role === 'assistant' && msg.type !== 'cover_letter' && (
-                        <button
-                          onClick={() => copyToClipboard(msg.content)}
-                          className="mt-1.5 p-1 rounded hover:bg-black/10 transition-colors opacity-40 hover:opacity-70"
-                          title="Copiar"
-                        >
+                      {msg.role === 'assistant' && !msg.type && (
+                        <button onClick={() => copyToClipboard(msg.content)}
+                          className="mt-1.5 p-1 rounded hover:bg-black/10 transition-colors opacity-40 hover:opacity-70" title="Copiar">
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
@@ -436,5 +535,14 @@ export default function CareerBotWidget() {
         </div>
       )}
     </>
+  );
+}
+
+function LoadingSpinner() {
+  return (
+    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+    </svg>
   );
 }

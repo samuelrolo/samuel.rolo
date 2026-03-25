@@ -14,7 +14,7 @@ import {
   FileText, BarChart3, Route, Linkedin, Bot, BookOpen,
   ExternalLink, Search, Clock, ArrowRight, ChevronDown, ChevronUp,
   Loader2, AlertCircle, CheckCircle, Upload, Lock, Sparkles, Tag,
-  Globe, MapPin, Headphones, Play
+  Globe, MapPin, Headphones, Play, Mail, MessageSquare, Megaphone
 } from 'lucide-react';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -70,7 +70,7 @@ const WEEKLY_LIMITS: Record<string, number> = {
   pro: 10,
 };
 
-const contentTypes = ['all', 'ebook', 'article', 'template', 'video', 'podcast'] as const;
+const contentTypes = ['all', 'ebook', 'article', 'video', 'podcast'] as const;
 
 // ─── Blog RSS Feed ───────────────────────────────────────────────────────────
 const BLOG_ARTICLES = [
@@ -504,7 +504,6 @@ export default function MemberArea() {
     all: t('member.allTypes'),
     ebook: t('member.ebooks'),
     article: t('member.articles'),
-    template: t('member.templates'),
     video: t('member.videos'),
     podcast: 'Podcast',
   };
@@ -1445,30 +1444,50 @@ export default function MemberArea() {
           <h2 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('member.content')}</h2>
           <p className="text-xs text-[#999] font-light mb-6">{t('member.contentDesc')}</p>
 
-          {/* Highlighted: Cover Letter Generator */}
-          <div className="mb-6 p-4 border border-gold/20 rounded-lg bg-gradient-to-r from-gold/5 to-transparent">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-gold/20 to-gold/5 flex items-center justify-center shrink-0">
-                <FileText className="w-5 h-5 text-gold" />
+          {/* AI Templates — Career Bot powered */}
+          <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              {
+                icon: FileText,
+                color: 'from-gold/20 to-gold/5',
+                event: 'open-career-bot-cover-letter',
+                title: lang === 'pt' ? 'Carta de Apresentação' : 'Cover Letter',
+                desc: lang === 'pt' ? 'Gera cartas personalizadas com base no teu CV e LinkedIn.' : 'Generate personalised cover letters based on your CV and LinkedIn.',
+                cta: lang === 'pt' ? 'Gerar' : 'Generate',
+              },
+              {
+                icon: Mail,
+                color: 'from-blue-500/15 to-blue-500/5',
+                event: 'open-career-bot-networking-email',
+                title: lang === 'pt' ? 'E-mail de Networking' : 'Networking Email',
+                desc: lang === 'pt' ? 'Cria e-mails profissionais para contactar a tua rede.' : 'Create professional emails to reach out to your network.',
+                cta: lang === 'pt' ? 'Gerar' : 'Generate',
+              },
+              {
+                icon: Megaphone,
+                color: 'from-sky-500/15 to-sky-500/5',
+                event: 'open-career-bot-linkedin-post',
+                title: lang === 'pt' ? 'Post LinkedIn' : 'LinkedIn Post',
+                desc: lang === 'pt' ? 'Anuncia a tua mudança de emprego com um post profissional.' : 'Announce your job change with a professional post.',
+                cta: lang === 'pt' ? 'Gerar' : 'Generate',
+              },
+            ].map((tpl) => (
+              <div key={tpl.event} className="p-4 border border-[#e5e5e5] rounded-lg hover:border-gold/30 transition-all group">
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${tpl.color} flex items-center justify-center mb-3`}>
+                  <tpl.icon className="w-4.5 h-4.5 text-[#333]" />
+                </div>
+                <h3 className="text-sm font-semibold text-[#1a1a1a] mb-1 group-hover:text-gold transition-colors">{tpl.title}</h3>
+                <p className="text-[11px] text-[#999] font-light leading-relaxed mb-3">{tpl.desc}</p>
+                <button
+                  onClick={() => window.dispatchEvent(new Event(tpl.event))}
+                  className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded text-xs font-medium text-white transition-all hover:opacity-90"
+                  style={{ background: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' }}
+                >
+                  <Bot className="w-3.5 h-3.5" />
+                  {tpl.cta}
+                </button>
               </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold text-[#1a1a1a] mb-0.5">
-                  {lang === 'pt' ? '✉️ Gerador de Cartas de Apresentação' : '✉️ Cover Letter Generator'}
-                </h3>
-                <p className="text-xs text-[#777] font-light">
-                  {lang === 'pt'
-                    ? 'Gera cartas de apresentação personalizadas com base no teu CV e LinkedIn. Indica a empresa e a vaga e o nosso AI faz o resto.'
-                    : 'Generate personalised cover letters based on your CV and LinkedIn. Just provide the company and role.'}
-                </p>
-              </div>
-              <button
-                onClick={() => window.dispatchEvent(new Event('open-career-bot-cover-letter'))}
-                className="shrink-0 px-4 py-2 rounded-lg text-white text-xs font-medium transition-all hover:opacity-90"
-                style={{ background: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' }}
-              >
-                {lang === 'pt' ? 'Gerar Carta' : 'Generate Letter'}
-              </button>
-            </div>
+            ))}
           </div>
 
           {/* Filters */}
