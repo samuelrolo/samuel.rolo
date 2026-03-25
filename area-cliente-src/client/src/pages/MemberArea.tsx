@@ -17,6 +17,8 @@ import {
   Globe, MapPin, Headphones, Play, Mail, MessageSquare, Megaphone
 } from 'lucide-react';
 import CareerProgress from '@/components/CareerProgress';
+import AnalysisResultsFull from '@/components/AnalysisResults';
+import { transformGeminiResponse } from '@/lib/transformGeminiResponse';
 import * as pdfjsLib from 'pdfjs-dist';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -634,28 +636,58 @@ export default function MemberArea() {
   const downloadProfileCv = useCallback(async (): Promise<{ text: string; base64?: string; filename?: string } | null> => {
     if (!profile?.cv_url) return null;
     try {
-      const { data } = await supabase.storage
-        .from('user-cvs')
-        .download(profile.cv_url);
-      if (data) {
-        const isPdf = profile.cv_url.toLowerCase().endsWith('.pdf') || data.type === 'application/pdf';
+      // cv_url may be a full public URL or a storage path
+      // Dashboard saves it as: https://xxx.supabase.co/storage/v1/object/public/user-cvs/userId/cv.pdf
+      // But .download() expects just the path: userId/cv.pdf
+      let storagePath = profile.cv_url;
+      const bucketMarker = '/user-cvs/';
+      const markerIndex = storagePath.indexOf(bucketMarker);
+      if (markerIndex !== -1) {
+        storagePath = storagePath.substring(markerIndex + bucketMarker.length);
+        console.log('[CV] Extracted storage path from public URL:', storagePath);
+      }
+
+      let blob: Blob | null = null;
+
+      // Try storage download with extracted path
+      try {
+        const { data } = await supabase.storage
+          .from('user-cvs')
+          .download(storagePath);
+        if (data) blob = data;
+      } catch (storageErr) {
+        console.warn('[CV] Storage download failed, trying direct fetch...', storageErr);
+      }
+
+      // Fallback: fetch directly from the public URL
+      if (!blob && profile.cv_url.startsWith('http')) {
+        try {
+          const resp = await fetch(profile.cv_url);
+          if (resp.ok) blob = await resp.blob();
+        } catch (fetchErr) {
+          console.warn('[CV] Direct fetch also failed:', fetchErr);
+        }
+      }
+
+      if (blob) {
+        const isPdf = profile.cv_url.toLowerCase().endsWith('.pdf') || blob.type === 'application/pdf';
         let text = '';
 
         if (isPdf) {
           try {
-            const arrayBuffer = await data.arrayBuffer();
+            const arrayBuffer = await blob.arrayBuffer();
             text = await extractPdfText(arrayBuffer);
           } catch (e) {
             console.warn('[CV] Profile PDF text extraction failed:', e);
           }
         } else {
-          text = await data.text();
+          text = await blob.text();
         }
 
         // If text is too short and it's a PDF, prepare base64 for server-side extraction
         if (text.trim().length < 50 && isPdf) {
           console.log('[CV] Profile CV texto insuficiente (' + text.length + ' chars). A preparar base64...');
-          const base64 = await toBase64(data);
+          const base64 = await toBase64(blob);
           const filename = profile.cv_url.split('/').pop() || 'cv.pdf';
           return { text, base64, filename };
         }
@@ -768,7 +800,10 @@ export default function MemberArea() {
       const body = buildCvRequestBody(cvData, 'cv_extraction');
       const result = await fetchWithRetry(body);
 
-      setAnalysisResult(result);
+      // Transform raw analysis into enriched report (quadrants, ATS, salary, etc.)
+      const rawAnalysis = result?.analysis || result;
+      const enriched = transformGeminiResponse(rawAnalysis);
+      setAnalysisResult({ ...result, _enriched: enriched });
 
       await supabase.from('user_analyses').insert({
         user_id: user.id,
@@ -1552,7 +1587,24 @@ export default function MemberArea() {
 
                         {/* Result */}
                         {analysisResult && (
-                          <AnalysisResult data={analysisResult} onClose={() => setAnalysisResult(null)} lang={lang} />
+                          analysisResult._enriched ? (
+                            <div className="mt-4 border border-gold/20 rounded-lg bg-[#fafaf9] p-4 animate-in fade-in duration-500">
+                              <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-2">
+                                  <CheckCircle className="w-4 h-4 text-emerald-600" />
+                                  <h4 className="text-sm font-semibold text-[#1a1a1a]">
+                                    {lang === 'pt' ? 'Análise concluída' : 'Analysis complete'}
+                                  </h4>
+                                </div>
+                                <button onClick={() => setAnalysisResult(null)} className="text-xs text-[#999] hover:text-[#1a1a1a] transition-colors">
+                                  {lang === 'pt' ? 'Fechar' : 'Close'}
+                                </button>
+                              </div>
+                              <AnalysisResultsFull data={analysisResult._enriched} />
+                            </div>
+                          ) : (
+                            <AnalysisResult data={analysisResult} onClose={() => setAnalysisResult(null)} lang={lang} />
+                          )
                         )}
                       </div>
                     )}
