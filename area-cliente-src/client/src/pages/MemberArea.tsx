@@ -713,7 +713,7 @@ export default function MemberArea() {
 
   // ─── Helper: build API request body with server-side fallback ───────────
   const buildCvRequestBody = (cvData: { text: string; base64?: string; filename?: string }, mode: string, extra?: Record<string, any>): any => {
-    const body: any = { mode };
+    const body: any = { mode, lang };
     const useServerExtraction = cvData.text.trim().length < 50 && cvData.base64;
     if (useServerExtraction) {
       body.file = cvData.base64;
@@ -847,7 +847,7 @@ export default function MemberArea() {
       // Also get CV data if available for richer analysis
       const cvData = await getCvData();
 
-      const body: any = { mode: 'cv_extraction', linkedin_url: linkedinUrl };
+      const body: any = { mode: 'cv_extraction', linkedin_url: linkedinUrl, lang };
       if (cvData && (cvData.text.trim().length >= 50 || cvData.base64)) {
         if (cvData.text.trim().length < 50 && cvData.base64) {
           body.file = cvData.base64;
