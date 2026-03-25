@@ -27,7 +27,7 @@ export type UserProfile = {
 export type Subscription = {
   id: string;
   user_id: string;
-  plan: 'monthly' | 'semiannual' | 'annual';
+  plan: string; // e.g. 'essential_monthly', 'growth_semiannual', 'pro_annual', or legacy 'monthly'/'semiannual'/'annual'
   status: 'active' | 'cancelled' | 'expired' | 'pending';
   price_eur: number;
   started_at: string;
