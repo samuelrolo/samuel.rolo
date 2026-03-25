@@ -17,6 +17,9 @@ import {
   Globe, MapPin, Headphones, Play, Mail, MessageSquare, Megaphone
 } from 'lucide-react';
 import CareerProgress from '@/components/CareerProgress';
+import * as pdfjsLib from 'pdfjs-dist';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const HYPER_TASK_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -564,42 +567,71 @@ export default function MemberArea() {
     podcast: 'Podcast',
   };
 
-  // ─── Extract text from PDF using pdfjs-dist ───────────────────────────
+  // ─── Extract text from PDF (same pattern as BundleHome) ─────────────
   const extractPdfText = useCallback(async (arrayBuffer: ArrayBuffer): Promise<string> => {
-    const pdfjsLib = await import('pdfjs-dist');
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    const pages: string[] = [];
+    let text = '';
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
-      const text = content.items.map((item: any) => item.str).join(' ');
-      pages.push(text);
+      text += content.items.map((item: any) => item.str).join(' ') + '\n';
     }
-    return pages.join('\n\n').substring(0, 8000);
+    return text.trim().substring(0, 8000);
   }, []);
 
-  // ─── Read CV text from file ─────────────────────────────────────────────
-  const readCvText = useCallback(async (file: File): Promise<string> => {
-    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-    if (isPdf) {
-      const arrayBuffer = await file.arrayBuffer();
-      return extractPdfText(arrayBuffer);
-    }
-    // For .txt, .docx fallback to text
+  // ─── Convert file/blob to base64 ────────────────────────────────────────
+  const toBase64 = useCallback((blob: Blob): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = () => {
-        const text = reader.result as string;
-        resolve(text.substring(0, 8000));
-      };
-      reader.onerror = () => reject(new Error('Erro ao ler o ficheiro.'));
-      reader.readAsText(file);
+      reader.onload = () => resolve((reader.result as string).split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
     });
-  }, [extractPdfText]);
+  }, []);
+
+  // ─── Read CV text from file (with base64 fallback for server-side extraction) ──
+  const readCvText = useCallback(async (file: File): Promise<{ text: string; base64?: string; filename?: string }> => {
+    let text = '';
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    const isDocx = file.name.toLowerCase().endsWith('.docx');
+
+    if (isPdf) {
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        text = await extractPdfText(arrayBuffer);
+      } catch (e) {
+        console.warn('[CV] PDF text extraction failed:', e);
+      }
+    } else if (isDocx) {
+      try {
+        const mammoth = await import('mammoth');
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await mammoth.extractRawText({ arrayBuffer });
+        text = result.value;
+      } catch (e) {
+        console.warn('[CV] DOCX extraction failed:', e);
+      }
+    } else {
+      text = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error('Erro ao ler o ficheiro.'));
+        reader.readAsText(file);
+      });
+    }
+
+    // If text is too short, prepare base64 for server-side Gemini Vision extraction
+    if (text.trim().length < 50 && isPdf) {
+      console.log('[CV] Texto insuficiente (' + text.length + ' chars). A preparar base64 para extração server-side...');
+      const base64 = await toBase64(file);
+      return { text, base64, filename: file.name };
+    }
+
+    return { text: text.substring(0, 8000) };
+  }, [extractPdfText, toBase64]);
 
   // ─── Download CV from profile ───────────────────────────────────────────
-  const downloadProfileCv = useCallback(async (): Promise<string | null> => {
+  const downloadProfileCv = useCallback(async (): Promise<{ text: string; base64?: string; filename?: string } | null> => {
     if (!profile?.cv_url) return null;
     try {
       const { data } = await supabase.storage
@@ -607,18 +639,106 @@ export default function MemberArea() {
         .download(profile.cv_url);
       if (data) {
         const isPdf = profile.cv_url.toLowerCase().endsWith('.pdf') || data.type === 'application/pdf';
+        let text = '';
+
         if (isPdf) {
-          const arrayBuffer = await data.arrayBuffer();
-          return extractPdfText(arrayBuffer);
+          try {
+            const arrayBuffer = await data.arrayBuffer();
+            text = await extractPdfText(arrayBuffer);
+          } catch (e) {
+            console.warn('[CV] Profile PDF text extraction failed:', e);
+          }
+        } else {
+          text = await data.text();
         }
-        const text = await data.text();
-        return text.substring(0, 8000);
+
+        // If text is too short and it's a PDF, prepare base64 for server-side extraction
+        if (text.trim().length < 50 && isPdf) {
+          console.log('[CV] Profile CV texto insuficiente (' + text.length + ' chars). A preparar base64...');
+          const base64 = await toBase64(data);
+          const filename = profile.cv_url.split('/').pop() || 'cv.pdf';
+          return { text, base64, filename };
+        }
+
+        return { text: text.substring(0, 8000) };
       }
     } catch (e) {
       console.error('Error downloading CV:', e);
     }
     return null;
-  }, [profile?.cv_url, extractPdfText]);
+  }, [profile?.cv_url, extractPdfText, toBase64]);
+
+  // ─── Helper: get CV data (text + optional base64 for server fallback) ─────
+  const getCvData = useCallback(async (): Promise<{ text: string; base64?: string; filename?: string } | null> => {
+    if (cvFile) {
+      return readCvText(cvFile);
+    } else if (profile?.cv_url) {
+      return downloadProfileCv();
+    }
+    return null;
+  }, [cvFile, profile?.cv_url, readCvText, downloadProfileCv]);
+
+  // ─── Helper: build API request body with server-side fallback ───────────
+  const buildCvRequestBody = (cvData: { text: string; base64?: string; filename?: string }, mode: string, extra?: Record<string, any>): any => {
+    const body: any = { mode };
+    const useServerExtraction = cvData.text.trim().length < 50 && cvData.base64;
+    if (useServerExtraction) {
+      body.file = cvData.base64;
+      body.filename = cvData.filename;
+      console.log(`[${mode}] A enviar PDF para extração via Gemini Vision...`);
+    } else {
+      body.cv_text = cvData.text.substring(0, 8000);
+    }
+    if (extra) Object.assign(body, extra);
+    return body;
+  };
+
+  // ─── Helper: fetch with retry (same as standalone) ──────────────────────
+  const fetchWithRetry = useCallback(async (body: any, timeoutMs = 120000, maxRetries = 2): Promise<any> => {
+    let response: Response | null = null;
+    let responseData: any = null;
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+      try {
+        response = await fetch(HYPER_TASK_URL, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          responseData = await response.json();
+          if (responseData.success) return responseData;
+        }
+
+        if (attempt < maxRetries) {
+          console.warn(`[API] Tentativa ${attempt + 1} falhou (status: ${response?.status}). A tentar novamente...`);
+          await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+        }
+      } catch (fetchError: any) {
+        clearTimeout(timeoutId);
+        if (attempt < maxRetries && fetchError.name !== 'AbortError') {
+          console.warn(`[API] Tentativa ${attempt + 1} falhou (${fetchError.message}). A tentar novamente...`);
+          await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+        } else {
+          throw fetchError;
+        }
+      }
+    }
+
+    if (!response?.ok) throw new Error('Erro na análise IA. Tenta novamente.');
+    if (!responseData?.success) throw new Error(responseData?.error || 'Erro na análise IA.');
+    return responseData;
+  }, []);
 
   // ─── Run CV Analysis ────────────────────────────────────────────────────
   const runCvAnalysis = useCallback(async () => {
@@ -635,14 +755,9 @@ export default function MemberArea() {
     setAnalysisResult(null);
 
     try {
-      let cvText: string | null = null;
-      if (cvFile) {
-        cvText = await readCvText(cvFile);
-      } else if (profile?.cv_url) {
-        cvText = await downloadProfileCv();
-      }
+      const cvData = await getCvData();
 
-      if (!cvText || cvText.trim().length < 50) {
+      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) {
         setAnalysisError(lang === 'pt'
           ? 'Não foi possível ler o CV. Carrega um ficheiro ou atualiza o teu CV no perfil.'
           : 'Could not read CV. Upload a file or update your CV in your profile.');
@@ -650,25 +765,8 @@ export default function MemberArea() {
         return;
       }
 
-      const body: any = { mode: 'cv_extraction', cv_text: cvText.substring(0, 8000) };
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 120000);
-
-      const response = await fetch(HYPER_TASK_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeout);
-      if (!response.ok) throw new Error('Erro na análise IA. Tenta novamente.');
-
-      const result = await response.json();
-      if (!result?.success) throw new Error(result?.error || 'Erro na análise IA.');
+      const body = buildCvRequestBody(cvData, 'cv_extraction');
+      const result = await fetchWithRetry(body);
 
       setAnalysisResult(result);
 
@@ -685,7 +783,7 @@ export default function MemberArea() {
     } finally {
       setAnalyzing(false);
     }
-  }, [user?.id, subscription, weeklyUsage, weeklyLimit, cvFile, profile, planTier, lang, readCvText, downloadProfileCv]);
+  }, [user?.id, subscription, weeklyUsage, weeklyLimit, planTier, lang, getCvData, fetchWithRetry]);
 
   // ─── Run LinkedIn Analysis ──────────────────────────────────────────────
   const runLinkedinAnalysis = useCallback(async () => {
@@ -700,8 +798,8 @@ export default function MemberArea() {
     const linkedinUrl = profile?.linkedin_url;
     if (!linkedinUrl || !linkedinUrl.includes('linkedin.com/in/')) {
       setAnalysisError(lang === 'pt'
-        ? 'Adiciona o teu URL do LinkedIn no perfil para usar esta ferramenta.'
-        : 'Add your LinkedIn URL in your profile to use this tool.');
+        ? 'Adiciona o teu perfil LinkedIn nas definições do perfil.'
+        : 'Add your LinkedIn profile URL in your profile settings.');
       return;
     }
 
@@ -710,51 +808,34 @@ export default function MemberArea() {
     setAnalysisResult(null);
 
     try {
-      // Step 1: Scrape LinkedIn
-      const scrapeRes = await fetch(`${BACKEND_URL}/api/services/scrape-linkedin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ linkedin_url: linkedinUrl }),
-      });
+      // Also get CV data if available for richer analysis
+      const cvData = await getCvData();
 
-      if (!scrapeRes.ok) throw new Error('Erro ao extrair dados do LinkedIn.');
-      const scrapeData = await scrapeRes.json();
-      if (!scrapeData?.success || !scrapeData?.cv_text) {
-        throw new Error(scrapeData?.error || 'Não foi possível extrair dados do LinkedIn.');
+      const body: any = { mode: 'cv_extraction', linkedin_url: linkedinUrl };
+      if (cvData && (cvData.text.trim().length >= 50 || cvData.base64)) {
+        if (cvData.text.trim().length < 50 && cvData.base64) {
+          body.file = cvData.base64;
+          body.filename = cvData.filename;
+        } else {
+          body.cv_text = cvData.text.substring(0, 8000);
+        }
       }
 
-      // Step 2: Analyze
-      const body = {
-        mode: 'cv_extraction',
-        cv_text: scrapeData.cv_text.substring(0, 8000),
-        linkedin_url: linkedinUrl,
-      };
-
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 120000);
-
-      const response = await fetch(HYPER_TASK_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeout);
-      if (!response.ok) throw new Error('Erro na análise IA. Tenta novamente.');
-
-      const result = await response.json();
-      if (!result?.success) throw new Error(result?.error || 'Erro na análise IA.');
+      const result = await fetchWithRetry(body);
 
       setAnalysisResult(result);
 
       await supabase.from('user_analyses').insert({
         user_id: user.id,
         analysis_type: 'linkedin_roaster',
-        data: { source: 'member_area', plan: subscription.plan, tier: planTier, linkedin_url: linkedinUrl, captured_at: new Date().toISOString(), email: profile?.email },
+        data: {
+          source: 'member_area',
+          plan: subscription.plan,
+          tier: planTier,
+          linkedin_url: linkedinUrl,
+          captured_at: new Date().toISOString(),
+          email: profile?.email,
+        },
       });
       setWeeklyUsage(prev => prev + 1);
     } catch (err: any) {
@@ -764,15 +845,16 @@ export default function MemberArea() {
     } finally {
       setAnalyzing(false);
     }
-  }, [user?.id, subscription, weeklyUsage, weeklyLimit, profile, planTier, lang]);
+  }, [user?.id, subscription, weeklyUsage, weeklyLimit, planTier, lang, profile, getCvData, fetchWithRetry]);
 
-  // ─── Run Career Path (Pro only - 1/month included) ─────────────────────
+  // ─── Run Career Path ───────────────────────────────────────────────────
   const runCareerPath = useCallback(async () => {
-    if (!user?.id || !subscription || planTier !== 'pro') return;
-    if (monthlyCareerPathUsed >= 1) {
+    if (!user?.id || !subscription) return;
+    const limit = planTier === 'pro' ? 1 : planTier === 'elite' ? 3 : 0;
+    if (monthlyCareerPathUsed >= limit) {
       setAnalysisError(lang === 'pt'
-        ? 'Já utilizaste o teu Career Path incluído este mês.'
-        : 'You have already used your included Career Path this month.');
+        ? `Atingiste o limite mensal de Career Path (${limit}/mês).`
+        : `You reached the monthly Career Path limit (${limit}/month).`);
       return;
     }
 
@@ -781,14 +863,9 @@ export default function MemberArea() {
     setAnalysisResult(null);
 
     try {
-      let cvText: string | null = null;
-      if (cvFile) {
-        cvText = await readCvText(cvFile);
-      } else if (profile?.cv_url) {
-        cvText = await downloadProfileCv();
-      }
+      const cvData = await getCvData();
 
-      if (!cvText || cvText.trim().length < 50) {
+      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) {
         setAnalysisError(lang === 'pt'
           ? 'Não foi possível ler o CV. Carrega um ficheiro ou atualiza o teu CV no perfil.'
           : 'Could not read CV. Upload a file or update your CV in your profile.');
@@ -796,33 +873,24 @@ export default function MemberArea() {
         return;
       }
 
-      const body: any = {
+      // First get CV extraction
+      const extractionBody = buildCvRequestBody(cvData, 'cv_extraction');
+      const extractionResult = await fetchWithRetry(extractionBody);
+      const analysisSource = extractionResult.analysis || extractionResult;
+      const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
+
+      // Now run career path with the extracted data
+      const careerPathBody: any = {
         mode: 'career_path',
-        cv_text: cvText.substring(0, 8000),
-        linkedin_url: profile?.linkedin_url || undefined,
-        language: lang,
-        country: cpCountry || 'Portugal',
-        region: cpRegion || undefined,
+        cv_text: cvText,
+        cv_analysis: JSON.stringify(analysisSource),
+        linkedin_url: profile?.linkedin_url || '',
+        country: cpCountry,
+        region: cpRegion,
+        lang: lang,
       };
 
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 180000);
-
-      const response = await fetch(HYPER_TASK_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeout);
-      if (!response.ok) throw new Error('Erro na análise Career Path. Tenta novamente.');
-
-      const result = await response.json();
-      if (!result?.success) throw new Error(result?.error || 'Erro na análise Career Path.');
+      const result = await fetchWithRetry(careerPathBody);
 
       setAnalysisResult(result);
 
@@ -840,30 +908,6 @@ export default function MemberArea() {
         },
       });
 
-      try {
-        await fetch(`${TOOLS_SUPABASE_URL}/rest/v1/cv_analysis`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'Prefer': 'return=minimal',
-          },
-          body: JSON.stringify({
-            user_email: profile?.email,
-            analysis_type: 'career_path',
-            career_path_purchased: true,
-            career_path_data: JSON.stringify(result),
-            career_path_payment_id: `CP-SUB-PRO-${Date.now()}`,
-            linkedin_url: profile?.linkedin_url || null,
-            payment_status: 'paid',
-            payment_method: 'subscription_pro',
-          }),
-        });
-      } catch (e) {
-        console.error('Error saving to cv_analysis:', e);
-      }
-
       setMonthlyCareerPathUsed(prev => prev + 1);
     } catch (err: any) {
       setAnalysisError(err.name === 'AbortError'
@@ -872,15 +916,16 @@ export default function MemberArea() {
     } finally {
       setAnalyzing(false);
     }
-  }, [user?.id, subscription, planTier, monthlyCareerPathUsed, cvFile, profile, cpCountry, cpRegion, lang, readCvText, downloadProfileCv]);
+  }, [user?.id, subscription, planTier, monthlyCareerPathUsed, profile, cpCountry, cpRegion, lang, getCvData, fetchWithRetry]);
 
-  // ─── Run Career Intelligence (Pro only - 1/month included) ─────────────
+  // ─── Run Career Intelligence ───────────────────────────────────────────
   const runCareerIntelligence = useCallback(async () => {
-    if (!user?.id || !subscription || planTier !== 'pro') return;
-    if (monthlyCareerIntelUsed >= 1) {
+    if (!user?.id || !subscription) return;
+    const limit = planTier === 'pro' ? 1 : planTier === 'elite' ? 3 : 0;
+    if (monthlyCareerIntelUsed >= limit) {
       setAnalysisError(lang === 'pt'
-        ? 'Já utilizaste o teu Career Intelligence incluído este mês.'
-        : 'You have already used your included Career Intelligence this month.');
+        ? `Atingiste o limite mensal de Career Intelligence (${limit}/mês).`
+        : `You reached the monthly Career Intelligence limit (${limit}/month).`);
       return;
     }
 
@@ -889,14 +934,9 @@ export default function MemberArea() {
     setAnalysisResult(null);
 
     try {
-      let cvText: string | null = null;
-      if (cvFile) {
-        cvText = await readCvText(cvFile);
-      } else if (profile?.cv_url) {
-        cvText = await downloadProfileCv();
-      }
+      const cvData = await getCvData();
 
-      if (!cvText || cvText.trim().length < 50) {
+      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) {
         setAnalysisError(lang === 'pt'
           ? 'Não foi possível ler o CV. Carrega um ficheiro ou atualiza o teu CV no perfil.'
           : 'Could not read CV. Upload a file or update your CV in your profile.');
@@ -904,33 +944,24 @@ export default function MemberArea() {
         return;
       }
 
-      const body: any = {
+      // First get CV extraction
+      const extractionBody = buildCvRequestBody(cvData, 'cv_extraction');
+      const extractionResult = await fetchWithRetry(extractionBody);
+      const analysisSource = extractionResult.analysis || extractionResult;
+      const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
+
+      // Now run career intelligence
+      const ciBody: any = {
         mode: 'career_intelligence',
-        cv_text: cvText.substring(0, 8000),
-        linkedin_url: profile?.linkedin_url || undefined,
-        language: lang,
-        country: cpCountry || 'Portugal',
-        region: cpRegion || undefined,
+        cv_text: cvText,
+        cv_analysis: JSON.stringify(analysisSource),
+        linkedin_url: profile?.linkedin_url || '',
+        country: cpCountry,
+        region: cpRegion,
+        lang: lang,
       };
 
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 180000);
-
-      const response = await fetch(HYPER_TASK_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeout);
-      if (!response.ok) throw new Error('Erro na análise Career Intelligence. Tenta novamente.');
-
-      const result = await response.json();
-      if (!result?.success) throw new Error(result?.error || 'Erro na análise Career Intelligence.');
+      const result = await fetchWithRetry(ciBody);
 
       setAnalysisResult(result);
 
@@ -956,7 +987,7 @@ export default function MemberArea() {
     } finally {
       setAnalyzing(false);
     }
-  }, [user?.id, subscription, planTier, monthlyCareerIntelUsed, cvFile, profile, cpCountry, cpRegion, lang, readCvText, downloadProfileCv]);
+  }, [user?.id, subscription, planTier, monthlyCareerIntelUsed, profile, cpCountry, cpRegion, lang, getCvData, fetchWithRetry]);
 
   // ─── Toggle tool panel ──────────────────────────────────────────────────
   const toggleTool = (key: string) => {
