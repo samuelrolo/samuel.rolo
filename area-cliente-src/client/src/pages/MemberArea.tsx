@@ -1,10 +1,10 @@
-/*
+/**
  * Design: Consultoria de Luxo Silenciosa
  * Área de Membro com ferramentas inline, conteúdos exclusivos e estado da subscrição
  * Ferramentas executam diretamente via edge function hyper-task
  * Controlo de limites semanais por plano (combinado CV Analyser + LinkedIn Roaster)
  * Career Path inline para Pro (1 incluído/mês), desconto para Growth
- * Career Intelligence desconto para Pro
+ * Career Intelligence inline para Pro (1 incluído/mês)
  */
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useI18n } from '@/lib/i18n';
@@ -14,7 +14,7 @@ import {
   FileText, BarChart3, Route, Linkedin, Bot, BookOpen,
   ExternalLink, Search, Clock, ArrowRight, ChevronDown, ChevronUp,
   Loader2, AlertCircle, CheckCircle, Upload, Lock, Sparkles, Tag,
-  Globe, MapPin
+  Globe, MapPin, Headphones, Play
 } from 'lucide-react';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -22,6 +22,35 @@ const HYPER_TASK_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hy
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const TOOLS_SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+
+// ─── Country/Region Data ─────────────────────────────────────────────────────
+interface CountryRegion {
+  country: string;
+  code: string;
+  currency: string;
+  regions: string[];
+}
+
+const countries: CountryRegion[] = [
+  { country: "Portugal", code: "PT", currency: "EUR", regions: ["Lisboa", "Porto", "Algarve", "Coimbra", "Other"] },
+  { country: "United States", code: "US", currency: "USD", regions: ["California", "New York", "Texas", "Florida", "Illinois", "Massachusetts", "Washington", "Colorado", "Georgia", "Other"] },
+  { country: "United Kingdom", code: "GB", currency: "GBP", regions: ["London", "South East", "North West", "Scotland", "West Midlands", "Yorkshire", "East of England", "Other"] },
+  { country: "Germany", code: "DE", currency: "EUR", regions: ["Bavaria", "Berlin", "Hamburg", "North Rhine-Westphalia", "Baden-Württemberg", "Hesse", "Other"] },
+  { country: "France", code: "FR", currency: "EUR", regions: ["Île-de-France (Paris)", "Auvergne-Rhône-Alpes", "Provence-Alpes-Côte d'Azur", "Occitanie", "Nouvelle-Aquitaine", "Other"] },
+  { country: "Netherlands", code: "NL", currency: "EUR", regions: ["Randstad (Amsterdam/Rotterdam/The Hague)", "North Brabant", "Gelderland", "Other"] },
+  { country: "Spain", code: "ES", currency: "EUR", regions: ["Madrid", "Catalonia (Barcelona)", "Andalusia", "Valencia", "Basque Country", "Other"] },
+  { country: "Switzerland", code: "CH", currency: "CHF", regions: ["Zurich", "Geneva", "Basel", "Bern", "Lausanne", "Other"] },
+  { country: "Canada", code: "CA", currency: "CAD", regions: ["Ontario (Toronto)", "British Columbia (Vancouver)", "Quebec (Montreal)", "Alberta (Calgary)", "Other"] },
+  { country: "Australia", code: "AU", currency: "AUD", regions: ["New South Wales (Sydney)", "Victoria (Melbourne)", "Queensland (Brisbane)", "Western Australia (Perth)", "Other"] },
+  { country: "Ireland", code: "IE", currency: "EUR", regions: ["Dublin", "Cork", "Galway", "Limerick", "Other"] },
+  { country: "Brazil", code: "BR", currency: "BRL", regions: ["São Paulo", "Rio de Janeiro", "Minas Gerais", "Paraná", "Other"] },
+  { country: "Italy", code: "IT", currency: "EUR", regions: ["Lombardy (Milan)", "Lazio (Rome)", "Veneto", "Piedmont (Turin)", "Other"] },
+  { country: "Sweden", code: "SE", currency: "SEK", regions: ["Stockholm", "Gothenburg", "Malmö", "Other"] },
+  { country: "Singapore", code: "SG", currency: "SGD", regions: ["Central", "East", "West", "Other"] },
+  { country: "UAE", code: "AE", currency: "AED", regions: ["Dubai", "Abu Dhabi", "Sharjah", "Other"] },
+  { country: "India", code: "IN", currency: "INR", regions: ["Bangalore", "Mumbai", "Delhi NCR", "Hyderabad", "Pune", "Chennai", "Other"] },
+  { country: "Other", code: "XX", currency: "USD", regions: ["Other"] },
+];
 
 // Plan tier detection from subscription plan field
 function getPlanTier(plan: string | undefined): 'essential' | 'growth' | 'pro' {
@@ -41,7 +70,21 @@ const WEEKLY_LIMITS: Record<string, number> = {
   pro: 10,
 };
 
-const contentTypes = ['all', 'ebook', 'article', 'template', 'video'] as const;
+const contentTypes = ['all', 'ebook', 'article', 'template', 'video', 'podcast'] as const;
+
+// ─── Blog RSS Feed ───────────────────────────────────────────────────────────
+const BLOG_ARTICLES = [
+  { title: 'AI Career Path: Como a Inteligência Artificial Está a Transformar Carreiras', url: 'https://www.share2inspire.pt/blog/artigos/ai-career-path', desc: 'A inteligência artificial está a redefinir o mercado de trabalho. Descobre como posicionar a tua carreira na era da IA.' },
+  { title: 'Entrevista Presencial vs Remota: Guia Completo', url: 'https://www.share2inspire.pt/blog/artigos/entrevista-presencial-vs-remota', desc: 'Dicas práticas para te destacares tanto em entrevistas presenciais como remotas.' },
+  { title: 'Como Vencer o Filtro ATS: Guia Definitivo', url: 'https://www.share2inspire.pt/blog/artigos/como-vencer-filtro-ats', desc: '75% dos currículos são rejeitados automaticamente. Aprende a passar nos filtros ATS.' },
+  { title: '7 Erros Fatais no CV que Estão a Sabotar a Tua Carreira', url: 'https://www.share2inspire.pt/blog/artigos/7-erros-fatais-cv', desc: 'Os erros mais comuns que impedem o teu CV de chegar às mãos certas.' },
+  { title: 'CV vs LinkedIn: Como Alinhar os Dois para Maximizar Oportunidades', url: 'https://www.share2inspire.pt/blog/artigos/cv-vs-linkedin', desc: 'Estratégias para manter consistência entre o teu CV e perfil LinkedIn.' },
+  { title: 'LinkedIn para Recrutadores: O Que Eles Realmente Procuram', url: 'https://www.share2inspire.pt/blog/artigos/linkedin-recrutadores', desc: 'Descobre como os recrutadores usam o LinkedIn e otimiza o teu perfil.' },
+  { title: 'Posicionamento Profissional: Como Destacar-te no Mercado', url: 'https://www.share2inspire.pt/blog/artigos/posicionamento-profissional', desc: 'Técnicas de posicionamento para te diferenciares da concorrência.' },
+  { title: 'Como Negociar Salário: Guia Prático', url: 'https://www.share2inspire.pt/blog/artigos/negociar-salario', desc: 'Estratégias comprovadas para negociar o salário que mereces.' },
+  { title: 'Big 4 Recrutamento: Como Entrar nas Maiores Consultoras', url: 'https://www.share2inspire.pt/blog/artigos/big4-recrutamento', desc: 'O guia completo para entrares nas Big 4: Deloitte, PwC, EY e KPMG.' },
+  { title: 'Big 4 por Dentro: A Realidade de Trabalhar nas Maiores Consultoras', url: 'https://www.share2inspire.pt/blog/artigos/big4-por-dentro', desc: 'Salários, cultura, progressão e a verdade sobre trabalhar nas Big 4.' },
+];
 
 // ─── Analysis Result Display ─────────────────────────────────────────────────
 function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => void; lang: string }) {
@@ -51,6 +94,10 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
   // Career Path has a different structure
   const isCareerPath = data?.career_paths || data?.market_analysis || analysis?.career_paths;
   const cpData = isCareerPath ? (data?.career_paths ? data : analysis) : null;
+
+  // LinkedIn Roaster / CV Extraction has candidate_profile + global_summary
+  const isLinkedInFormat = analysis?.candidate_profile || data?.candidate_profile;
+  const linkedinData = isLinkedInFormat ? (data?.candidate_profile ? data : analysis) : null;
 
   return (
     <div className="mt-4 border border-gold/20 rounded-lg bg-[#fafaf9] p-6 animate-in fade-in duration-500">
@@ -113,8 +160,111 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
         </div>
       )}
 
-      {/* Standard analysis rendering (CV/LinkedIn) */}
-      {!cpData && (
+      {/* LinkedIn Roaster / CV Extraction format (candidate_profile + global_summary) */}
+      {linkedinData && !cpData && (
+        <div className="space-y-4">
+          {/* Profile overview */}
+          {linkedinData.candidate_profile && (
+            <div>
+              <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-3">
+                {lang === 'pt' ? 'Perfil Detetado' : 'Detected Profile'}
+              </h5>
+              <div className="grid grid-cols-2 gap-2">
+                {linkedinData.candidate_profile.detected_name && linkedinData.candidate_profile.detected_name !== 'N/A' && (
+                  <div className="p-2 bg-white border border-[#e5e5e5] rounded">
+                    <p className="text-[10px] text-[#999] uppercase">{lang === 'pt' ? 'Nome' : 'Name'}</p>
+                    <p className="text-xs font-medium text-[#1a1a1a]">{linkedinData.candidate_profile.detected_name}</p>
+                  </div>
+                )}
+                {linkedinData.candidate_profile.detected_role && linkedinData.candidate_profile.detected_role !== 'N/A' && (
+                  <div className="p-2 bg-white border border-[#e5e5e5] rounded">
+                    <p className="text-[10px] text-[#999] uppercase">{lang === 'pt' ? 'Função' : 'Role'}</p>
+                    <p className="text-xs font-medium text-[#1a1a1a]">{linkedinData.candidate_profile.detected_role}</p>
+                  </div>
+                )}
+                {linkedinData.candidate_profile.seniority && linkedinData.candidate_profile.seniority !== 'N/A' && (
+                  <div className="p-2 bg-white border border-[#e5e5e5] rounded">
+                    <p className="text-[10px] text-[#999] uppercase">{lang === 'pt' ? 'Senioridade' : 'Seniority'}</p>
+                    <p className="text-xs font-medium text-[#1a1a1a]">{linkedinData.candidate_profile.seniority}</p>
+                  </div>
+                )}
+                {linkedinData.candidate_profile.total_years_exp && linkedinData.candidate_profile.total_years_exp !== 'N/A' && (
+                  <div className="p-2 bg-white border border-[#e5e5e5] rounded">
+                    <p className="text-[10px] text-[#999] uppercase">{lang === 'pt' ? 'Experiência' : 'Experience'}</p>
+                    <p className="text-xs font-medium text-[#1a1a1a]">{linkedinData.candidate_profile.total_years_exp}</p>
+                  </div>
+                )}
+              </div>
+              {linkedinData.candidate_profile.key_skills && linkedinData.candidate_profile.key_skills.length > 0 && (
+                <div className="mt-3">
+                  <p className="text-[10px] text-[#999] uppercase mb-1.5">{lang === 'pt' ? 'Competências-chave' : 'Key Skills'}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {linkedinData.candidate_profile.key_skills.map((skill: string, i: number) => (
+                      <span key={i} className="px-2 py-0.5 bg-gold/5 border border-gold/20 rounded text-[10px] text-gold font-medium">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Global Summary */}
+          {linkedinData.global_summary && (
+            <div>
+              {linkedinData.global_summary.strengths && linkedinData.global_summary.strengths.length > 0 && (
+                <div className="mb-4">
+                  <h5 className="text-xs font-medium text-emerald-700 uppercase tracking-wider mb-2">
+                    {lang === 'pt' ? 'Pontos Fortes' : 'Strengths'}
+                  </h5>
+                  <ul className="space-y-1">
+                    {linkedinData.global_summary.strengths.map((s: string, i: number) => (
+                      <li key={i} className="text-sm text-[#333] flex items-start gap-2">
+                        <span className="text-emerald-500 mt-0.5">+</span>
+                        <span>{s}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {linkedinData.global_summary.gaps && linkedinData.global_summary.gaps.length > 0 && (
+                <div className="mb-4">
+                  <h5 className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">
+                    {lang === 'pt' ? 'Áreas a Melhorar' : 'Areas to Improve'}
+                  </h5>
+                  <ul className="space-y-1">
+                    {linkedinData.global_summary.gaps.map((s: string, i: number) => (
+                      <li key={i} className="text-sm text-[#333] flex items-start gap-2">
+                        <span className="text-amber-500 mt-0.5">!</span>
+                        <span>{s}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {linkedinData.global_summary.recommendations && linkedinData.global_summary.recommendations.length > 0 && (
+                <div>
+                  <h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2">
+                    {lang === 'pt' ? 'Recomendações' : 'Recommendations'}
+                  </h5>
+                  <ul className="space-y-1">
+                    {linkedinData.global_summary.recommendations.map((s: string, i: number) => (
+                      <li key={i} className="text-sm text-[#333] flex items-start gap-2">
+                        <span className="text-blue-500 mt-0.5">→</span>
+                        <span>{s}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Standard analysis rendering (CV with score/summary/strengths) */}
+      {!cpData && !linkedinData && (
         <>
           {analysis.score !== undefined && (
             <div className="mb-4 flex items-center gap-3">
@@ -185,7 +335,7 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
             </div>
           )}
 
-          {!analysis.score && !analysis.summary && !analysis.strengths && (
+          {!analysis.score && !analysis.summary && !analysis.strengths && !analysis.candidate_profile && (
             <div className="bg-white border border-[#e5e5e5] rounded p-4 max-h-96 overflow-auto">
               <pre className="text-xs text-[#333] whitespace-pre-wrap">{JSON.stringify(analysis, null, 2)}</pre>
             </div>
@@ -194,6 +344,12 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
       )}
     </div>
   );
+}
+
+// ─── YouTube Video ID extractor ──────────────────────────────────────────────
+function getYouTubeId(url: string): string | null {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return match ? match[1] : null;
 }
 
 // ─── Main Component ──────────────────────────────────────────────────────────
@@ -219,9 +375,16 @@ export default function MemberArea() {
   const [cpRegion, setCpRegion] = useState('');
   const [monthlyCareerPathUsed, setMonthlyCareerPathUsed] = useState(0);
 
+  // Career Intelligence states
+  const [monthlyCareerIntelUsed, setMonthlyCareerIntelUsed] = useState(0);
+
   const planTier = getPlanTier(subscription?.plan);
   const weeklyLimit = WEEKLY_LIMITS[planTier] || 2;
   const isProPlan = planTier === 'pro';
+
+  // Get regions for selected country
+  const selectedCountryData = countries.find(c => c.country === cpCountry);
+  const availableRegions = selectedCountryData?.regions || [];
 
   // ─── Fetch content ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -229,7 +392,7 @@ export default function MemberArea() {
       const { data } = await supabase
         .from('member_content')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('sort_order', { ascending: true });
       setContent(data || []);
       setLoading(false);
     }
@@ -280,13 +443,54 @@ export default function MemberArea() {
     fetchCpUsage();
   }, [user?.id, planTier, analysisResult]);
 
+  // ─── Fetch monthly Career Intelligence usage (Pro only) ─────────────────
+  useEffect(() => {
+    if (!user?.id || planTier !== 'pro') return;
+    async function fetchCiUsage() {
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+      const { data, error } = await supabase
+        .from('user_analyses')
+        .select('id')
+        .eq('user_id', user!.id)
+        .eq('analysis_type', 'career_intelligence')
+        .gte('created_at', monthStart.toISOString());
+
+      if (!error && data) {
+        setMonthlyCareerIntelUsed(data.length);
+      }
+    }
+    fetchCiUsage();
+  }, [user?.id, planTier, analysisResult]);
+
   const filtered = useMemo(() => {
-    let items = content;
+    let items = [...content];
+
+    // Add blog articles as virtual content when filter is 'all' or 'article'
+    if (filter === 'all' || filter === 'article') {
+      const blogItems: MemberContent[] = BLOG_ARTICLES.map((article, i) => ({
+        id: `blog-${i}`,
+        title: article.title,
+        description: article.desc,
+        content_type: 'article' as const,
+        file_url: article.url,
+        thumbnail_url: null,
+        tags: null,
+        is_published: true,
+        required_plan: 'monthly' as const,
+        sort_order: 100 + i,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }));
+      items = [...items, ...blogItems];
+    }
+
     if (filter !== 'all') items = items.filter(c => c.content_type === filter);
     if (search.trim()) {
       const q = search.toLowerCase();
       items = items.filter(c =>
-        c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q)
+        c.title.toLowerCase().includes(q) || c.description?.toLowerCase().includes(q)
       );
     }
     return items;
@@ -302,6 +506,7 @@ export default function MemberArea() {
     article: t('member.articles'),
     template: t('member.templates'),
     video: t('member.videos'),
+    podcast: 'Podcast',
   };
 
   // ─── Read CV text from file ─────────────────────────────────────────────
@@ -520,7 +725,7 @@ export default function MemberArea() {
       };
 
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 180000); // 3 min for career path
+      const timeout = setTimeout(() => controller.abort(), 180000);
 
       const response = await fetch(HYPER_TASK_URL, {
         method: 'POST',
@@ -540,7 +745,6 @@ export default function MemberArea() {
 
       setAnalysisResult(result);
 
-      // Log usage in user_analyses
       await supabase.from('user_analyses').insert({
         user_id: user.id,
         analysis_type: 'career_path',
@@ -555,7 +759,6 @@ export default function MemberArea() {
         },
       });
 
-      // Also save in cv_analysis table (like the external tool does)
       try {
         await fetch(`${TOOLS_SUPABASE_URL}/rest/v1/cv_analysis`, {
           method: 'POST',
@@ -589,6 +792,90 @@ export default function MemberArea() {
       setAnalyzing(false);
     }
   }, [user?.id, subscription, planTier, monthlyCareerPathUsed, cvFile, profile, cpCountry, cpRegion, lang, readCvText, downloadProfileCv]);
+
+  // ─── Run Career Intelligence (Pro only - 1/month included) ─────────────
+  const runCareerIntelligence = useCallback(async () => {
+    if (!user?.id || !subscription || planTier !== 'pro') return;
+    if (monthlyCareerIntelUsed >= 1) {
+      setAnalysisError(lang === 'pt'
+        ? 'Já utilizaste o teu Career Intelligence incluído este mês.'
+        : 'You have already used your included Career Intelligence this month.');
+      return;
+    }
+
+    setAnalyzing(true);
+    setAnalysisError(null);
+    setAnalysisResult(null);
+
+    try {
+      let cvText: string | null = null;
+      if (cvFile) {
+        cvText = await readCvText(cvFile);
+      } else if (profile?.cv_url) {
+        cvText = await downloadProfileCv();
+      }
+
+      if (!cvText || cvText.trim().length < 50) {
+        setAnalysisError(lang === 'pt'
+          ? 'Não foi possível ler o CV. Carrega um ficheiro ou atualiza o teu CV no perfil.'
+          : 'Could not read CV. Upload a file or update your CV in your profile.');
+        setAnalyzing(false);
+        return;
+      }
+
+      const body: any = {
+        mode: 'career_intelligence',
+        cv_text: cvText.substring(0, 8000),
+        linkedin_url: profile?.linkedin_url || undefined,
+        language: lang,
+        country: cpCountry || 'Portugal',
+        region: cpRegion || undefined,
+      };
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 180000);
+
+      const response = await fetch(HYPER_TASK_URL, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeout);
+      if (!response.ok) throw new Error('Erro na análise Career Intelligence. Tenta novamente.');
+
+      const result = await response.json();
+      if (!result?.success) throw new Error(result?.error || 'Erro na análise Career Intelligence.');
+
+      setAnalysisResult(result);
+
+      await supabase.from('user_analyses').insert({
+        user_id: user.id,
+        analysis_type: 'career_intelligence',
+        data: {
+          source: 'member_area_pro',
+          plan: subscription.plan,
+          tier: planTier,
+          country: cpCountry,
+          region: cpRegion,
+          captured_at: new Date().toISOString(),
+          email: profile?.email,
+        },
+      });
+
+      setMonthlyCareerIntelUsed(prev => prev + 1);
+    } catch (err: any) {
+      setAnalysisError(err.name === 'AbortError'
+        ? (lang === 'pt' ? 'A análise demorou demasiado. Tenta novamente.' : 'Analysis took too long. Please try again.')
+        : (err.message || 'Erro inesperado.'));
+    } finally {
+      setAnalyzing(false);
+    }
+  }, [user?.id, subscription, planTier, monthlyCareerIntelUsed, cvFile, profile, cpCountry, cpRegion, lang, readCvText, downloadProfileCv]);
 
   // ─── Toggle tool panel ──────────────────────────────────────────────────
   const toggleTool = (key: string) => {
@@ -626,7 +913,7 @@ export default function MemberArea() {
       color: 'from-gold/20 to-gold/5',
       type: 'external',
       url: 'https://share2inspire.pt/cv-builder/',
-      label: lang === 'pt' ? 'CV Maker' : 'CV Maker',
+      label: 'CV Maker',
       desc: lang === 'pt' ? 'Cria CVs profissionais com templates otimizados' : 'Create professional CVs with optimized templates',
     },
     {
@@ -635,7 +922,7 @@ export default function MemberArea() {
       color: 'from-blue-500/15 to-blue-500/5',
       type: 'inline',
       action: 'cv',
-      label: lang === 'pt' ? 'CV Analyser' : 'CV Analyser',
+      label: 'CV Analyser',
       desc: lang === 'pt' ? 'Análise completa e detalhada do teu CV com IA' : 'Complete AI-powered analysis of your CV',
     },
     {
@@ -644,7 +931,7 @@ export default function MemberArea() {
       color: 'from-sky-500/15 to-sky-500/5',
       type: 'inline',
       action: 'linkedin',
-      label: lang === 'pt' ? 'LinkedIn Roaster' : 'LinkedIn Roaster',
+      label: 'LinkedIn Roaster',
       desc: lang === 'pt' ? 'Otimiza o teu perfil LinkedIn com feedback IA' : 'Optimize your LinkedIn profile with AI feedback',
     },
     {
@@ -653,7 +940,7 @@ export default function MemberArea() {
       color: 'from-purple-500/15 to-purple-500/5',
       type: 'external',
       url: 'https://share2inspire.pt/career-bot/',
-      label: lang === 'pt' ? 'Career Advisory Bot' : 'Career Advisory Bot',
+      label: 'Career Advisory Bot',
       desc: lang === 'pt' ? 'Assistente pessoal de carreira com IA' : 'Personal AI career assistant',
     },
     {
@@ -665,18 +952,16 @@ export default function MemberArea() {
       url: 'https://share2inspire.pt/career-path/',
       discount: planTier === 'growth' ? '14€' : null,
       discountOriginal: planTier === 'growth' ? '19€' : null,
-      label: lang === 'pt' ? 'Career Path' : 'Career Path',
+      label: 'Career Path',
       desc: lang === 'pt' ? 'Planeamento estratégico da tua carreira' : 'Strategic career planning',
     },
     {
       key: 'careerIntelligence',
       icon: Sparkles,
       color: 'from-violet-500/15 to-violet-500/5',
-      type: planTier === 'pro' ? 'discount' : 'locked',
-      url: 'https://share2inspire.pt/linkedin-roaster/',
-      discount: planTier === 'pro' ? '19€' : null,
-      discountOriginal: planTier === 'pro' ? '29€' : null,
-      label: lang === 'pt' ? 'Career Intelligence' : 'Career Intelligence',
+      type: planTier === 'pro' ? 'inline' : 'locked',
+      action: 'careerIntelligence',
+      label: 'Career Intelligence',
       desc: lang === 'pt' ? 'Análise avançada de mercado e posicionamento' : 'Advanced market analysis and positioning',
     },
   ];
@@ -805,31 +1090,36 @@ export default function MemberArea() {
             </button>
           </div>
 
-          {/* Country & Region */}
+          {/* Country & Region dropdowns */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">
                 <Globe className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'País' : 'Country'}
               </label>
-              <input
-                type="text"
+              <select
                 value={cpCountry}
-                onChange={e => setCpCountry(e.target.value)}
-                className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none"
-                placeholder="Portugal"
-              />
+                onChange={e => { setCpCountry(e.target.value); setCpRegion(''); }}
+                className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"
+              >
+                {countries.map(c => (
+                  <option key={c.code} value={c.country}>{c.country}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">
                 <MapPin className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'Região' : 'Region'}
               </label>
-              <input
-                type="text"
+              <select
                 value={cpRegion}
                 onChange={e => setCpRegion(e.target.value)}
-                className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none"
-                placeholder={lang === 'pt' ? 'Lisboa, Porto...' : 'Lisbon, Porto...'}
-              />
+                className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"
+              >
+                <option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>
+                {availableRegions.map(r => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -843,6 +1133,97 @@ export default function MemberArea() {
               <><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar Career Path...' : 'Generating Career Path...'}</>
             ) : (
               <><Route className="w-4 h-4" />{lang === 'pt' ? 'Gerar Career Path' : 'Generate Career Path'}</>
+            )}
+          </button>
+        </div>
+      );
+    }
+
+    if (tool.action === 'careerIntelligence') {
+      const ciAvailable = monthlyCareerIntelUsed < 1;
+      return (
+        <div className="space-y-4">
+          {/* Pro included badge */}
+          <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-3 py-2">
+            <CheckCircle className="w-3.5 h-3.5" />
+            <span>{lang === 'pt' ? '1 Career Intelligence incluído por mês no plano Pro' : '1 Career Intelligence included per month on Pro plan'}</span>
+            {!ciAvailable && (
+              <span className="ml-auto text-amber-600 font-medium">
+                {lang === 'pt' ? '(já utilizado este mês)' : '(already used this month)'}
+              </span>
+            )}
+          </div>
+
+          {/* CV source */}
+          <div>
+            {profile?.cv_url ? (
+              <div className="flex items-center gap-2 text-xs text-emerald-700/70 bg-emerald-50/50 border border-emerald-200/50 rounded px-3 py-2">
+                <CheckCircle className="w-3.5 h-3.5" />
+                <span>{lang === 'pt' ? 'CV do perfil' : 'Profile CV'}: {profile.cv_filename || 'CV'}</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+                <AlertCircle className="w-3.5 h-3.5" />
+                <span>{lang === 'pt' ? 'Sem CV no perfil. Carrega um ficheiro.' : 'No CV in profile. Upload a file.'}</span>
+              </div>
+            )}
+          </div>
+
+          {/* File upload */}
+          <div>
+            <input ref={fileInputRef} type="file" accept=".pdf,.docx,.txt" onChange={(e) => setCvFile(e.target.files?.[0] || null)} className="hidden" />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#ccc] rounded text-xs text-[#666] hover:border-gold/40 hover:text-gold transition-colors"
+            >
+              <Upload className="w-3.5 h-3.5" />
+              {cvFile ? cvFile.name : (lang === 'pt' ? 'Ou carrega outro CV' : 'Or upload another CV')}
+            </button>
+          </div>
+
+          {/* Country & Region dropdowns */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">
+                <Globe className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'País' : 'Country'}
+              </label>
+              <select
+                value={cpCountry}
+                onChange={e => { setCpCountry(e.target.value); setCpRegion(''); }}
+                className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"
+              >
+                {countries.map(c => (
+                  <option key={c.code} value={c.country}>{c.country}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">
+                <MapPin className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'Região' : 'Region'}
+              </label>
+              <select
+                value={cpRegion}
+                onChange={e => setCpRegion(e.target.value)}
+                className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"
+              >
+                <option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>
+                {availableRegions.map(r => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Execute */}
+          <button
+            onClick={runCareerIntelligence}
+            disabled={analyzing || !ciAvailable || (!profile?.cv_url && !cvFile)}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#1a1a1a] text-white text-sm font-medium rounded hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+          >
+            {analyzing ? (
+              <><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar análise...' : 'Generating analysis...'}</>
+            ) : (
+              <><Sparkles className="w-4 h-4" />{lang === 'pt' ? 'Gerar Career Intelligence' : 'Generate Career Intelligence'}</>
             )}
           </button>
         </div>
@@ -895,10 +1276,7 @@ export default function MemberArea() {
                 </span>
               </div>
               <span className="text-xs text-[#999]">
-                {isProPlan
-                  ? (lang === 'pt' ? 'Uso contínuo e regular' : 'Continuous regular use')
-                  : `${weeklyUsage}/${weeklyLimit}`
-                }
+                {`${weeklyUsage}/${weeklyLimit}`}
               </span>
             </div>
             <div className="w-full h-1.5 bg-[#e5e5e5] rounded-full overflow-hidden">
@@ -907,7 +1285,7 @@ export default function MemberArea() {
                 style={{ width: `${Math.min(100, (weeklyUsage / weeklyLimit) * 100)}%` }}
               />
             </div>
-            {!isProPlan && remainingAnalyses > 0 && (
+            {remainingAnalyses > 0 && (
               <p className="text-[10px] text-[#999] mt-1.5">
                 {lang === 'pt'
                   ? `${remainingAnalyses} análise${remainingAnalyses !== 1 ? 's' : ''} restante${remainingAnalyses !== 1 ? 's' : ''} esta semana`
@@ -915,7 +1293,7 @@ export default function MemberArea() {
                 }
               </p>
             )}
-            {!isProPlan && remainingAnalyses === 0 && (
+            {remainingAnalyses === 0 && (
               <p className="text-[10px] text-amber-600 mt-1.5">
                 {lang === 'pt' ? 'Limite semanal atingido. Renova na próxima semana.' : 'Weekly limit reached. Resets next week.'}
               </p>
@@ -1001,6 +1379,14 @@ export default function MemberArea() {
                           }
                         </span>
                       )}
+                      {tool.action === 'careerIntelligence' && planTier === 'pro' && (
+                        <span className="px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium shrink-0 mr-2">
+                          {monthlyCareerIntelUsed < 1
+                            ? (lang === 'pt' ? '1 incluído/mês' : '1 included/month')
+                            : (lang === 'pt' ? 'Utilizado' : 'Used')
+                          }
+                        </span>
+                      )}
                       {expandedTool === tool.key ? (
                         <ChevronUp className="w-4 h-4 text-gold shrink-0" />
                       ) : (
@@ -1079,42 +1465,104 @@ export default function MemberArea() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filtered.map((item) => (
-                <a
-                  key={item.id}
-                  href={item.file_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group border border-[#e5e5e5] rounded overflow-hidden hover:border-gold/20 transition-all duration-500"
-                >
-                  {item.thumbnail_url && (
-                    <div className="aspect-[16/9] bg-white/[0.02] overflow-hidden">
-                      <img
-                        src={item.thumbnail_url}
-                        alt={item.title}
-                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
-                      />
+              {filtered.map((item) => {
+                const isVideo = item.content_type === 'video';
+                const isPodcast = item.content_type === 'podcast';
+                const youtubeId = isVideo && item.file_url ? getYouTubeId(item.file_url) : null;
+
+                // Podcast card with Spotify embed
+                if (isPodcast) {
+                  return (
+                    <div key={item.id} className="border border-[#e5e5e5] rounded overflow-hidden col-span-1 sm:col-span-2 lg:col-span-3">
+                      <div className="p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[10px] text-[#999] uppercase tracking-wider flex items-center gap-1">
+                            <Headphones className="w-3 h-3" />
+                            podcast
+                          </span>
+                        </div>
+                        <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{item.title}</h3>
+                        <p className="text-[11px] text-[#999] font-light leading-relaxed mb-3">{item.description}</p>
+                        <iframe
+                          style={{ borderRadius: '12px' }}
+                          src={item.file_url}
+                          width="100%"
+                          height="352"
+                          frameBorder="0"
+                          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                          loading="lazy"
+                        />
+                      </div>
                     </div>
-                  )}
-                  <div className="p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[10px] text-[#999] uppercase tracking-wider">
-                        {item.content_type}
-                      </span>
+                  );
+                }
+
+                // Video card with YouTube embed
+                if (isVideo && youtubeId) {
+                  return (
+                    <div key={item.id} className="border border-[#e5e5e5] rounded overflow-hidden hover:border-gold/20 transition-all duration-500">
+                      <div className="aspect-video bg-black">
+                        <iframe
+                          src={`https://www.youtube.com/embed/${youtubeId}`}
+                          title={item.title}
+                          className="w-full h-full"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      </div>
+                      <div className="p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[10px] text-[#999] uppercase tracking-wider flex items-center gap-1">
+                            <Play className="w-3 h-3" />
+                            video
+                          </span>
+                        </div>
+                        <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{item.title}</h3>
+                        <p className="text-[11px] text-[#999] font-light line-clamp-2 leading-relaxed">{item.description}</p>
+                      </div>
                     </div>
-                    <h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors mb-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-[11px] text-[#999] font-light line-clamp-2 leading-relaxed">
-                      {item.description}
-                    </p>
-                    <div className="mt-3 flex items-center gap-1 text-[11px] text-gold/50 group-hover:text-gold transition-colors">
-                      <span>{lang === 'pt' ? 'Aceder' : 'Access'}</span>
-                      <ArrowRight className="w-3 h-3" />
+                  );
+                }
+
+                // Standard content card (ebook, article, template)
+                return (
+                  <a
+                    key={item.id}
+                    href={item.file_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group border border-[#e5e5e5] rounded overflow-hidden hover:border-gold/20 transition-all duration-500"
+                  >
+                    {item.thumbnail_url && (
+                      <div className="aspect-[16/9] bg-white/[0.02] overflow-hidden">
+                        <img
+                          src={item.thumbnail_url}
+                          alt={item.title}
+                          className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                        />
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[10px] text-[#999] uppercase tracking-wider">
+                          {item.content_type}
+                        </span>
+                      </div>
+                      <h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors mb-1">
+                        {item.title}
+                      </h3>
+                      <p className="text-[11px] text-[#999] font-light line-clamp-2 leading-relaxed">
+                        {item.description}
+                      </p>
+                      <div className="mt-3 flex items-center gap-1 text-[11px] text-gold/50 group-hover:text-gold transition-colors">
+                        <span>{lang === 'pt' ? 'Aceder' : 'Access'}</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </div>
                     </div>
-                  </div>
-                </a>
-              ))}
+                  </a>
+                );
+              })}
             </div>
           )}
         </section>

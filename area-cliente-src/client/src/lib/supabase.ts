@@ -41,7 +41,7 @@ export type MemberContent = {
   id: string;
   title: string;
   description: string;
-  content_type: 'ebook' | 'article' | 'template' | 'video' | 'tool';
+  content_type: 'ebook' | 'article' | 'template' | 'video' | 'tool' | 'podcast';
   file_url: string;
   thumbnail_url: string | null;
   tags: string[] | null;
