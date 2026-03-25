@@ -16,6 +16,7 @@ import {
   Loader2, AlertCircle, CheckCircle, Upload, Lock, Sparkles, Tag,
   Globe, MapPin, Headphones, Play, Mail, MessageSquare, Megaphone
 } from 'lucide-react';
+import CareerProgress from '@/components/CareerProgress';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const HYPER_TASK_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -1300,6 +1301,17 @@ export default function MemberArea() {
           </div>
         )}
 
+        {/* Career Progress */}
+        <section className="mb-12">
+          <h2 className="text-sm font-medium text-[#1a1a1a] mb-1">
+            {lang === 'pt' ? 'O Meu Perfil de Carreira' : 'My Career Profile'}
+          </h2>
+          <p className="text-xs text-[#999] font-light mb-4">
+            {lang === 'pt' ? 'Acompanha o teu progresso e desbloqueia novos níveis.' : 'Track your progress and unlock new levels.'}
+          </p>
+          <CareerProgress />
+        </section>
+
         {/* Tools */}
         <section className="mb-16">
           <h2 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('member.tools')}</h2>
@@ -1445,7 +1457,7 @@ export default function MemberArea() {
           <p className="text-xs text-[#999] font-light mb-6">{t('member.contentDesc')}</p>
 
           {/* AI Templates — Career Bot powered */}
-          <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {[
               {
                 icon: FileText,
@@ -1454,6 +1466,8 @@ export default function MemberArea() {
                 title: lang === 'pt' ? 'Carta de Apresentação' : 'Cover Letter',
                 desc: lang === 'pt' ? 'Gera cartas personalizadas com base no teu CV e LinkedIn.' : 'Generate personalised cover letters based on your CV and LinkedIn.',
                 cta: lang === 'pt' ? 'Gerar' : 'Generate',
+                btnStyle: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)',
+                ctaIcon: 'bot',
               },
               {
                 icon: Mail,
@@ -1462,6 +1476,8 @@ export default function MemberArea() {
                 title: lang === 'pt' ? 'E-mail de Networking' : 'Networking Email',
                 desc: lang === 'pt' ? 'Cria e-mails profissionais para contactar a tua rede.' : 'Create professional emails to reach out to your network.',
                 cta: lang === 'pt' ? 'Gerar' : 'Generate',
+                btnStyle: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)',
+                ctaIcon: 'bot',
               },
               {
                 icon: Megaphone,
@@ -1470,6 +1486,18 @@ export default function MemberArea() {
                 title: lang === 'pt' ? 'Post LinkedIn' : 'LinkedIn Post',
                 desc: lang === 'pt' ? 'Anuncia a tua mudança de emprego com um post profissional.' : 'Announce your job change with a professional post.',
                 cta: lang === 'pt' ? 'Gerar' : 'Generate',
+                btnStyle: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)',
+                ctaIcon: 'bot',
+              },
+              {
+                icon: Linkedin,
+                color: 'from-[#0A66C2]/15 to-[#0A66C2]/5',
+                event: 'open-headline-generator',
+                title: lang === 'pt' ? 'Headline LinkedIn' : 'LinkedIn Headline',
+                desc: lang === 'pt' ? 'Gera headlines otimizadas para o teu perfil LinkedIn.' : 'Generate optimised headlines for your LinkedIn profile.',
+                cta: lang === 'pt' ? 'Gerar Headlines' : 'Generate Headlines',
+                btnStyle: 'linear-gradient(135deg, #0A66C2 0%, #004182 100%)',
+                ctaIcon: 'sparkle',
               },
             ].map((tpl) => (
               <div key={tpl.event} className="p-4 border border-[#e5e5e5] rounded-lg hover:border-gold/30 transition-all group">
@@ -1481,9 +1509,9 @@ export default function MemberArea() {
                 <button
                   onClick={() => window.dispatchEvent(new Event(tpl.event))}
                   className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded text-xs font-medium text-white transition-all hover:opacity-90"
-                  style={{ background: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' }}
+                  style={{ background: tpl.btnStyle }}
                 >
-                  <Bot className="w-3.5 h-3.5" />
+                  {tpl.ctaIcon === 'sparkle' ? <Sparkles className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
                   {tpl.cta}
                 </button>
               </div>

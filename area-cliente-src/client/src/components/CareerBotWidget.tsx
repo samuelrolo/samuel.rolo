@@ -10,7 +10,7 @@ type Message = {
   type?: 'chat' | 'cover_letter' | 'networking_email' | 'linkedin_post';
 };
 
-type WidgetView = 'chat' | 'cover_letter' | 'networking_email' | 'linkedin_post';
+type WidgetView = 'chat' | 'cover_letter' | 'networking_email' | 'linkedin_post' | 'headline_generator';
 
 export default function CareerBotWidget() {
   const { user, profile, subscription, hasActiveSubscription } = useAuth();
@@ -38,11 +38,21 @@ export default function CareerBotWidget() {
   const [liTone, setLiTone] = useState('profissional');
   const [liNotes, setLiNotes] = useState('');
 
+  // Headline generator fields
+  const [hlCargo, setHlCargo] = useState('');
+  const [hlArea, setHlArea] = useState('');
+  const [hlAnos, setHlAnos] = useState('');
+  const [hlValor, setHlValor] = useState('');
+  const [hlPublico, setHlPublico] = useState('');
+  const [hlKeywords, setHlKeywords] = useState('');
+  const [hlTone, setHlTone] = useState('profissional');
+  const [hlLang, setHlLang] = useState('pt');
+  const [hlNum, setHlNum] = useState('5');
+  const [hlResults, setHlResults] = useState<string[]>([]);
+  const [hlCopied, setHlCopied] = useState<number | null>(null);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // Don't render if no active subscription
-  if (!user || !hasActiveSubscription()) return null;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -65,6 +75,32 @@ export default function CareerBotWidget() {
       profile_linkedin: profile?.linkedin_url || '',
     };
   }, [profile]);
+
+  // External event listeners
+  useEffect(() => {
+    const openCoverLetter = () => { setIsOpen(true); setView('cover_letter'); };
+    const openChat = () => { setIsOpen(true); setView('chat'); };
+    const openNetworkingEmail = () => { setIsOpen(true); setView('networking_email'); };
+    const openLinkedinPost = () => { setIsOpen(true); setView('linkedin_post'); };
+    const openHeadlineGenerator = () => { setIsOpen(true); setView('headline_generator'); };
+
+    window.addEventListener('open-career-bot', openChat);
+    window.addEventListener('open-career-bot-cover-letter', openCoverLetter);
+    window.addEventListener('open-career-bot-networking-email', openNetworkingEmail);
+    window.addEventListener('open-career-bot-linkedin-post', openLinkedinPost);
+    window.addEventListener('open-headline-generator', openHeadlineGenerator);
+
+    return () => {
+      window.removeEventListener('open-career-bot', openChat);
+      window.removeEventListener('open-career-bot-cover-letter', openCoverLetter);
+      window.removeEventListener('open-career-bot-networking-email', openNetworkingEmail);
+      window.removeEventListener('open-career-bot-linkedin-post', openLinkedinPost);
+      window.removeEventListener('open-headline-generator', openHeadlineGenerator);
+    };
+  }, []);
+
+  // Don't render if no active subscription — MUST be after all hooks
+  if (!user || !hasActiveSubscription()) return null;
 
   const sendMessage = async (overrideMessage?: string) => {
     const msg = overrideMessage || input.trim();
@@ -162,33 +198,74 @@ export default function CareerBotWidget() {
     navigator.clipboard.writeText(text);
   };
 
+  const handleHeadlineGenerate = async () => {
+    if (!hlCargo.trim() && !hlArea.trim() && !hlValor.trim()) return;
+    setLoading(true);
+    setHlResults([]);
+
+    const toneMap: Record<string, Record<string, string>> = {
+      profissional: { pt: 'profissional e confiante', en: 'professional and confident' },
+      criativo: { pt: 'criativo e original, com metáforas ou estruturas não convencionais', en: 'creative and original, with unconventional structures' },
+      direto: { pt: 'direto e objetivo, sem floreados', en: 'direct and concise, no fluff' },
+      inspirador: { pt: 'inspirador e com impacto emocional', en: 'inspiring and emotionally impactful' },
+    };
+
+    const langInstruction = hlLang === 'pt'
+      ? 'Escreve TODAS as headlines em Português (Portugal), não em inglês.'
+      : 'Write ALL headlines in English.';
+
+    const prompt = `${langInstruction}\n\nGera exatamente ${hlNum} headlines para perfil LinkedIn. Cada headline deve ter no máximo 220 caracteres (o limite do LinkedIn).\n\nDados da pessoa:\n- Nome: ${profile?.first_name || 'não fornecido'} ${profile?.last_name || ''}\n- Cargo atual: ${hlCargo || 'não fornecido'}\n- Área/Setor: ${hlArea || 'não fornecido'}\n- Experiência: ${hlAnos || 'não fornecido'}\n- O que faz / valor que traz: ${hlValor || 'não fornecido'}\n- Público-alvo: ${hlPublico || 'não fornecido'}\n${hlKeywords ? `- Incluir palavras-chave: ${hlKeywords}` : ''}\n\nTom desejado: ${toneMap[hlTone]?.[hlLang] || hlTone}\n\nInstruções importantes:\n1. Cada headline deve ser única e usar estruturas diferentes\n2. Mistura abordagens: orientada a resultados, focada no cliente, baseada em identidade, focada em transformação\n3. Usa separadores como | · — quando fizer sentido\n4. NÃO incluas o nome da pessoa na headline\n5. NÃO uses clichês como "apaixonado por" ou "guru"\n6. Máximo ABSOLUTO: 220 caracteres por headline\n\nResponde APENAS com um JSON válido neste formato (sem markdown, sem texto extra):\n{"headlines": ["headline 1", "headline 2", "headline 3"]}`;
+
+    try {
+      const response = await fetch(HYPER_TASK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mode: 'career_coach',
+          message: prompt,
+          history: [],
+          profile_name: profile ? `${profile.first_name} ${profile.last_name}` : '',
+          profile_linkedin: profile?.linkedin_url || '',
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success && data.reply) {
+        try {
+          const raw = data.reply.replace(/```json|```/g, '').trim();
+          const match = raw.match(/\{[\s\S]*\}/);
+          const parsed = match ? JSON.parse(match[0]) : JSON.parse(raw);
+          setHlResults(parsed.headlines || []);
+        } catch {
+          // If JSON parsing fails, try to extract lines as headlines
+          const lines = data.reply.split('\n').filter((l: string) => l.trim().length > 10);
+          setHlResults(lines.slice(0, parseInt(hlNum)));
+        }
+      }
+    } catch {
+      setHlResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyHeadline = (idx: number) => {
+    const hl = hlResults[idx];
+    if (!hl) return;
+    navigator.clipboard.writeText(hl);
+    setHlCopied(idx);
+    setTimeout(() => setHlCopied(null), 2000);
+  };
+
   const resetChat = () => {
     setMessages([]);
     setView('chat');
     setCompany(''); setRole(''); setCoverLetterNotes('');
     setNetRecipient(''); setNetPurpose(''); setNetNotes('');
     setLiNewCompany(''); setLiNewRole(''); setLiTone('profissional'); setLiNotes('');
+    setHlCargo(''); setHlArea(''); setHlAnos(''); setHlValor(''); setHlPublico('');
+    setHlKeywords(''); setHlTone('profissional'); setHlLang('pt'); setHlNum('5'); setHlResults([]);
   };
-
-  // External event listeners
-  useEffect(() => {
-    const openCoverLetter = () => { setIsOpen(true); setView('cover_letter'); };
-    const openChat = () => { setIsOpen(true); setView('chat'); };
-    const openNetworkingEmail = () => { setIsOpen(true); setView('networking_email'); };
-    const openLinkedinPost = () => { setIsOpen(true); setView('linkedin_post'); };
-
-    window.addEventListener('open-career-bot', openChat);
-    window.addEventListener('open-career-bot-cover-letter', openCoverLetter);
-    window.addEventListener('open-career-bot-networking-email', openNetworkingEmail);
-    window.addEventListener('open-career-bot-linkedin-post', openLinkedinPost);
-
-    return () => {
-      window.removeEventListener('open-career-bot', openChat);
-      window.removeEventListener('open-career-bot-cover-letter', openCoverLetter);
-      window.removeEventListener('open-career-bot-networking-email', openNetworkingEmail);
-      window.removeEventListener('open-career-bot-linkedin-post', openLinkedinPost);
-    };
-  }, []);
 
   // Tab labels for the view switcher
   const tabs: { key: WidgetView; label: string; icon: string }[] = [
@@ -196,6 +273,7 @@ export default function CareerBotWidget() {
     { key: 'cover_letter', label: 'Carta', icon: '✉️' },
     { key: 'networking_email', label: 'Networking', icon: '🤝' },
     { key: 'linkedin_post', label: 'Post LinkedIn', icon: '📢' },
+    { key: 'headline_generator', label: 'Headline', icon: '✦' },
   ];
 
   return (
@@ -404,6 +482,140 @@ export default function CareerBotWidget() {
                     Personalizado com base no perfil de {profile.first_name} {profile.last_name}
                     {profile.linkedin_url ? ' e LinkedIn' : ''}
                   </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Headline Generator Form */}
+          {view === 'headline_generator' && (
+            <div className="p-4 flex-1 overflow-y-auto">
+              <div className="space-y-3">
+                <p className="text-sm text-gray-600 mb-1">
+                  Gera headlines otimizadas para o teu perfil LinkedIn. Copia a que mais gostas.
+                </p>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1">Cargo atual *</label>
+                    <input type="text" value={hlCargo} onChange={e => setHlCargo(e.target.value)}
+                      placeholder="Ex: HR Manager, Coach"
+                      className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1">Área / Setor *</label>
+                    <input type="text" value={hlArea} onChange={e => setHlArea(e.target.value)}
+                      placeholder="Ex: RH, Marketing"
+                      className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1">Experiência</label>
+                    <select value={hlAnos} onChange={e => setHlAnos(e.target.value)}
+                      className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] bg-white">
+                      <option value="">Selecionar</option>
+                      <option value="Menos de 2 anos">&lt; 2 anos</option>
+                      <option value="2-5 anos">2–5 anos</option>
+                      <option value="5-10 anos">5–10 anos</option>
+                      <option value="10-15 anos">10–15 anos</option>
+                      <option value="Mais de 15 anos">&gt; 15 anos</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1">Público-alvo</label>
+                    <input type="text" value={hlPublico} onChange={e => setHlPublico(e.target.value)}
+                      placeholder="Ex: Recrutadores"
+                      className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-medium text-gray-700 mb-1">O que fazes / valor que trazes</label>
+                  <textarea value={hlValor} onChange={e => setHlValor(e.target.value)}
+                    placeholder="Ex: Ajudo profissionais a reposicionar a sua carreira..."
+                    rows={2}
+                    className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] resize-none" />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-medium text-gray-700 mb-1">Palavras-chave (opcional)</label>
+                  <input type="text" value={hlKeywords} onChange={e => setHlKeywords(e.target.value)}
+                    placeholder="Ex: coaching, liderança, recrutamento"
+                    className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1">Tom</label>
+                    <div className="grid grid-cols-2 gap-1">
+                      {(['profissional', 'criativo', 'direto', 'inspirador'] as const).map(t => (
+                        <button key={t} onClick={() => setHlTone(t)}
+                          className={`px-2 py-1 text-[10px] rounded border transition-all ${
+                            hlTone === t
+                              ? 'border-[#BFA14A] bg-[#BFA14A]/10 text-[#8F7A3A] font-medium'
+                              : 'border-gray-200 text-gray-500 hover:border-[#BFA14A]/30'
+                          }`}>
+                          {t === 'profissional' ? '💼 Prof.' : t === 'criativo' ? '✨ Criativo' : t === 'direto' ? '🎯 Direto' : '🚀 Inspir.'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1">Idioma & Quantidade</label>
+                    <div className="grid grid-cols-2 gap-1">
+                      <button onClick={() => setHlLang(hlLang === 'pt' ? 'en' : 'pt')}
+                        className="px-2 py-1 text-[10px] rounded border border-gray-200 text-gray-600 hover:border-[#BFA14A]/30">
+                        {hlLang === 'pt' ? '🇵🇹 PT' : '🇬🇧 EN'}
+                      </button>
+                      <select value={hlNum} onChange={e => setHlNum(e.target.value)}
+                        className="px-2 py-1 text-[10px] rounded border border-gray-200 text-gray-600 bg-white">
+                        <option value="3">3</option>
+                        <option value="5">5</option>
+                        <option value="7">7</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <button onClick={handleHeadlineGenerate}
+                  disabled={(!hlCargo.trim() && !hlArea.trim() && !hlValor.trim()) || loading}
+                  className="w-full py-2 rounded-lg text-white text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: (hlCargo.trim() || hlArea.trim() || hlValor.trim()) ? 'linear-gradient(135deg, #0A66C2 0%, #004182 100%)' : '#ccc' }}>
+                  {loading ? <span className="flex items-center justify-center gap-2"><LoadingSpinner /> A gerar...</span> : '✦ Gerar Headlines'}
+                </button>
+
+                {/* Results */}
+                {hlResults.length > 0 && (
+                  <div className="mt-2 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{hlResults.length} headlines geradas</span>
+                    </div>
+                    {hlResults.map((hl, i) => {
+                      const charCount = hl.length;
+                      const charColor = charCount <= 180 ? 'text-green-600 bg-green-50' : charCount <= 220 ? 'text-yellow-700 bg-yellow-50' : 'text-red-600 bg-red-50';
+                      return (
+                        <div key={i} className="p-2.5 border border-gray-100 rounded-lg hover:border-[#0A66C2]/20 transition-all">
+                          <div className="flex items-start gap-2">
+                            <span className="w-5 h-5 rounded-full bg-[#0A66C2]/10 text-[#0A66C2] text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
+                            <p className="text-xs text-gray-800 leading-relaxed flex-1">{hl}</p>
+                          </div>
+                          <div className="flex items-center gap-2 mt-2 ml-7">
+                            <span className={`text-[9px] px-1.5 py-0.5 rounded ${charColor} font-medium`}>{charCount}/220</span>
+                            <button onClick={() => copyHeadline(i)}
+                              className={`text-[10px] px-2 py-0.5 rounded border transition-all ${
+                                hlCopied === i
+                                  ? 'border-green-300 text-green-600 bg-green-50'
+                                  : 'border-gray-200 text-gray-500 hover:border-[#0A66C2]/30 hover:text-[#0A66C2]'
+                              }`}>
+                              {hlCopied === i ? '✓ Copiado!' : 'Copiar'}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
             </div>
