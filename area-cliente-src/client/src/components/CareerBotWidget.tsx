@@ -231,46 +231,66 @@ export default function CareerBotWidget() {
       });
 
       const data = await response.json();
+      console.log('[Headline] Raw reply:', data.reply);
       if (data.success && data.reply) {
         let headlines: string[] = [];
-        const raw = data.reply.replace(/```json\s*/gi, '').replace(/```/g, '').trim();
+        // Clean markdown code blocks and extra whitespace
+        let raw = data.reply
+          .replace(/```json\s*/gi, '')
+          .replace(/```\s*/g, '')
+          .replace(/^\s*\n/gm, '')
+          .trim();
         
+        console.log('[Headline] Cleaned raw:', raw);
+
         // Try multiple JSON extraction strategies
-        try {
-          // Strategy 1: Direct parse
-          const parsed = JSON.parse(raw);
-          headlines = Array.isArray(parsed.headlines) ? parsed.headlines : Array.isArray(parsed) ? parsed : [];
-        } catch {
+        const tryParse = (str: string): string[] | null => {
           try {
-            // Strategy 2: Extract JSON object from text
-            const jsonMatch = raw.match(/\{[\s\S]*?"headlines"\s*:\s*\[[\s\S]*?\][\s\S]*?\}/);
-            if (jsonMatch) {
-              const parsed = JSON.parse(jsonMatch[0]);
-              headlines = Array.isArray(parsed.headlines) ? parsed.headlines : [];
+            const parsed = JSON.parse(str);
+            if (Array.isArray(parsed?.headlines)) return parsed.headlines;
+            if (Array.isArray(parsed)) return parsed;
+            // If it's an object with any array property, use the first array
+            for (const key of Object.keys(parsed || {})) {
+              if (Array.isArray(parsed[key])) return parsed[key];
             }
-          } catch {
-            try {
-              // Strategy 3: Extract JSON array directly
-              const arrMatch = raw.match(/\[[\s\S]*?\]/);
-              if (arrMatch) {
-                headlines = JSON.parse(arrMatch[0]);
-              }
-            } catch {
-              // Strategy 4: Extract numbered lines as headlines
-              const lines = raw.split('\n')
-                .map((l: string) => l.replace(/^\d+[\.\)\-]\s*/, '').replace(/^"|"$/g, '').trim())
-                .filter((l: string) => l.length > 10 && l.length <= 250);
-              headlines = lines.slice(0, parseInt(hlNum));
-            }
+          } catch {}
+          return null;
+        };
+
+        // Strategy 1: Direct parse of cleaned text
+        headlines = tryParse(raw) || [];
+
+        // Strategy 2: Find JSON object with array in text
+        if (headlines.length === 0) {
+          const jsonObjMatch = raw.match(/\{[\s\S]*\[[\s\S]*\][\s\S]*\}/);
+          if (jsonObjMatch) {
+            headlines = tryParse(jsonObjMatch[0]) || [];
           }
         }
-        
-        // Clean up: remove surrounding quotes and numbering
+
+        // Strategy 3: Find JSON array directly
+        if (headlines.length === 0) {
+          const arrMatch = raw.match(/\[[\s\S]*\]/);
+          if (arrMatch) {
+            headlines = tryParse(arrMatch[0]) || [];
+          }
+        }
+
+        // Strategy 4: Split by numbered lines or newlines
+        if (headlines.length === 0) {
+          const lines = raw.split(/\n/)
+            .map((l: string) => l.replace(/^\d+[\.\)\-:\s]+/, '').replace(/^"|"$/g, '').replace(/^[\-\*]\s*/, '').trim())
+            .filter((l: string) => l.length > 15 && l.length <= 250 && !l.startsWith('{') && !l.startsWith('['));
+          headlines = lines.slice(0, parseInt(hlNum));
+        }
+
+        // Clean up: remove surrounding quotes, numbering, JSON artifacts
         headlines = headlines
-          .map((h: string) => h.replace(/^"|"$/g, '').replace(/^\d+[\.\)\-]\s*/, '').trim())
-          .filter((h: string) => h.length > 5);
+          .map((h: any) => String(h).replace(/^"|"$/g, '').replace(/^\d+[\.\)\-]\s*/, '').replace(/[\[\]{}"]/g, '').trim())
+          .filter((h: string) => h.length > 10 && !h.startsWith('headlines'));
         
-        setHlResults(headlines.length > 0 ? headlines : [raw.substring(0, 220)]);
+        console.log('[Headline] Parsed headlines:', headlines);
+        setHlResults(headlines.length > 0 ? headlines : [raw.replace(/[{}\[\]"]/g, '').substring(0, 220)]);
       }
     } catch {
       setHlResults([]);
@@ -327,7 +347,7 @@ export default function CareerBotWidget() {
       {isOpen && (
         <div className={`fixed z-50 bg-white shadow-2xl flex flex-col overflow-hidden border border-gray-200 transition-all duration-300 ${
           isFullscreen
-            ? 'inset-0 rounded-none w-full h-full max-w-full max-h-full'
+            ? 'inset-4 md:inset-8 lg:inset-12 rounded-2xl w-auto h-auto max-w-[1200px] mx-auto'
             : 'bottom-6 right-6 w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-3rem)] rounded-2xl'
         }`}>
           {/* Header */}
@@ -392,7 +412,7 @@ export default function CareerBotWidget() {
           {/* Cover Letter Form */}
           {view === 'cover_letter' && (
             <div className="p-4 flex-1 overflow-y-auto">
-              <div className="space-y-4">
+              <div className={`space-y-4 ${isFullscreen ? 'max-w-3xl mx-auto' : ''}`}>
                 <p className="text-sm text-gray-600 mb-2">
                   Gera uma carta de apresentação personalizada com base no teu perfil profissional (CV + LinkedIn).
                 </p>
@@ -435,7 +455,7 @@ export default function CareerBotWidget() {
           {/* Networking Email Form */}
           {view === 'networking_email' && (
             <div className="p-4 flex-1 overflow-y-auto">
-              <div className="space-y-4">
+              <div className={`space-y-4 ${isFullscreen ? 'max-w-3xl mx-auto' : ''}`}>
                 <p className="text-sm text-gray-600 mb-2">
                   Cria um e-mail profissional para contactar alguém da tua rede. Ideal para pedir conselhos, marcar cafés virtuais ou explorar oportunidades.
                 </p>
@@ -484,7 +504,7 @@ export default function CareerBotWidget() {
           {/* LinkedIn Post Form */}
           {view === 'linkedin_post' && (
             <div className="p-4 flex-1 overflow-y-auto">
-              <div className="space-y-4">
+              <div className={`space-y-4 ${isFullscreen ? 'max-w-3xl mx-auto' : ''}`}>
                 <p className="text-sm text-gray-600 mb-2">
                   Gera um post para o LinkedIn a anunciar a tua mudança de emprego. Personalizado com o teu tom de voz e contexto profissional.
                 </p>
@@ -537,7 +557,7 @@ export default function CareerBotWidget() {
           {/* Headline Generator Form */}
           {view === 'headline_generator' && (
             <div className="p-4 flex-1 overflow-y-auto">
-              <div className="space-y-3">
+              <div className={`space-y-3 ${isFullscreen ? 'max-w-3xl mx-auto' : ''}`}>
                 <p className="text-sm text-gray-600 mb-1">
                   Gera headlines otimizadas para o teu perfil LinkedIn. Copia a que mais gostas.
                 </p>
@@ -671,7 +691,7 @@ export default function CareerBotWidget() {
           {/* Chat Messages */}
           {view === 'chat' && (
             <>
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              <div className={`flex-1 overflow-y-auto p-4 space-y-3 ${isFullscreen ? 'max-w-4xl mx-auto w-full' : ''}`}>
                 {messages.length === 0 && (
                   <div className="flex flex-col items-center justify-center h-full text-center px-4">
                     <div className="w-14 h-14 rounded-full flex items-center justify-center mb-3" style={{ background: 'linear-gradient(135deg, #BFA14A20 0%, #8F7A3A20 100%)' }}>
