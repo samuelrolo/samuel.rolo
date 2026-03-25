@@ -509,8 +509,29 @@ export default function MemberArea() {
     podcast: 'Podcast',
   };
 
+  // ─── Extract text from PDF using pdfjs-dist ───────────────────────────
+  const extractPdfText = useCallback(async (arrayBuffer: ArrayBuffer): Promise<string> => {
+    const pdfjsLib = await import('pdfjs-dist');
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const pages: string[] = [];
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      const text = content.items.map((item: any) => item.str).join(' ');
+      pages.push(text);
+    }
+    return pages.join('\n\n').substring(0, 8000);
+  }, []);
+
   // ─── Read CV text from file ─────────────────────────────────────────────
   const readCvText = useCallback(async (file: File): Promise<string> => {
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    if (isPdf) {
+      const arrayBuffer = await file.arrayBuffer();
+      return extractPdfText(arrayBuffer);
+    }
+    // For .txt, .docx fallback to text
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
@@ -520,7 +541,7 @@ export default function MemberArea() {
       reader.onerror = () => reject(new Error('Erro ao ler o ficheiro.'));
       reader.readAsText(file);
     });
-  }, []);
+  }, [extractPdfText]);
 
   // ─── Download CV from profile ───────────────────────────────────────────
   const downloadProfileCv = useCallback(async (): Promise<string | null> => {
@@ -530,6 +551,11 @@ export default function MemberArea() {
         .from('user-cvs')
         .download(profile.cv_url);
       if (data) {
+        const isPdf = profile.cv_url.toLowerCase().endsWith('.pdf') || data.type === 'application/pdf';
+        if (isPdf) {
+          const arrayBuffer = await data.arrayBuffer();
+          return extractPdfText(arrayBuffer);
+        }
         const text = await data.text();
         return text.substring(0, 8000);
       }
@@ -537,7 +563,7 @@ export default function MemberArea() {
       console.error('Error downloading CV:', e);
     }
     return null;
-  }, [profile?.cv_url]);
+  }, [profile?.cv_url, extractPdfText]);
 
   // ─── Run CV Analysis ────────────────────────────────────────────────────
   const runCvAnalysis = useCallback(async () => {
