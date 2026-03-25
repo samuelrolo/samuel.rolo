@@ -864,7 +864,14 @@ export default function MemberArea() {
             </h1>
           </div>
           {subscription && (
-            <div className="flex items-center gap-3 text-xs text-[#999] font-light">
+            <div className="flex items-center gap-3 text-xs text-[#999] font-light flex-wrap">
+              <span className={`px-2.5 py-1 rounded text-[10px] font-semibold uppercase tracking-wider ${
+                planTier === 'pro' ? 'bg-violet-100 text-violet-700 border border-violet-200' :
+                planTier === 'growth' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
+                'bg-gold/10 text-gold border border-gold/20'
+              }`}>
+                {planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'}
+              </span>
               <Clock className="w-3.5 h-3.5" />
               <span>{t('member.planExpires')} {new Date(subscription.expires_at).toLocaleDateString('pt-PT')}</span>
               <span className="px-2 py-0.5 bg-gold/10 border border-gold/20 rounded text-gold text-[10px] font-medium">
@@ -882,6 +889,9 @@ export default function MemberArea() {
                 <Sparkles className="w-3.5 h-3.5 text-gold" />
                 <span className="text-xs font-medium text-[#1a1a1a]">
                   {lang === 'pt' ? 'Análises esta semana' : 'Analyses this week'}
+                </span>
+                <span className="text-[10px] text-[#aaa] font-light">
+                  (CV Analyser + LinkedIn Roaster)
                 </span>
               </div>
               <span className="text-xs text-[#999]">

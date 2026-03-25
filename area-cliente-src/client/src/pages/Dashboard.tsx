@@ -40,6 +40,17 @@ export default function Dashboard() {
   const [phone, setPhone] = useState(profile?.phone || '');
   const [address, setAddress] = useState(profile?.address || '');
   const [linkedin, setLinkedin] = useState(profile?.linkedin_url || '');
+
+  // Sync local state when profile loads asynchronously
+  useEffect(() => {
+    if (profile) {
+      setFirstName(prev => prev || profile.first_name || '');
+      setLastName(prev => prev || profile.last_name || '');
+      setPhone(prev => prev || profile.phone || '');
+      setAddress(prev => prev || profile.address || '');
+      setLinkedin(prev => prev || profile.linkedin_url || '');
+    }
+  }, [profile]);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -152,10 +163,38 @@ export default function Dashboard() {
     }
   }
 
+  // Plan tier detection
+  function getPlanTier(plan: string | undefined): string {
+    if (!plan) return '';
+    const p = plan.toLowerCase();
+    if (p.includes('pro')) return 'Pro';
+    if (p.includes('growth')) return 'Growth';
+    if (p === 'annual') return 'Pro';
+    if (p === 'semiannual') return 'Growth';
+    return 'Essential';
+  }
+
+  function getPlanPeriod(plan: string | undefined): string {
+    if (!plan) return '';
+    const p = plan.toLowerCase();
+    if (p.includes('annual') && !p.includes('semi')) return t('sub.annual');
+    if (p.includes('semiannual')) return t('sub.semiannual');
+    return t('sub.monthly');
+  }
+
   const planLabels: Record<string, string> = {
     monthly: t('sub.monthly'),
     semiannual: t('sub.semiannual'),
     annual: t('sub.annual'),
+    essential_monthly: `Essential · ${t('sub.monthly')}`,
+    essential_semiannual: `Essential · ${t('sub.semiannual')}`,
+    essential_annual: `Essential · ${t('sub.annual')}`,
+    growth_monthly: `Growth · ${t('sub.monthly')}`,
+    growth_semiannual: `Growth · ${t('sub.semiannual')}`,
+    growth_annual: `Growth · ${t('sub.annual')}`,
+    pro_monthly: `Pro · ${t('sub.monthly')}`,
+    pro_semiannual: `Pro · ${t('sub.semiannual')}`,
+    pro_annual: `Pro · ${t('sub.annual')}`,
   };
 
   const tabs = [
@@ -789,11 +828,18 @@ export default function Dashboard() {
             <h2 className="text-sm font-medium text-[#1a1a1a] mb-4">{t('dash.subscription')}</h2>
             {subscription && hasActiveSubscription() ? (
               <div className="space-y-3">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
                   <span className="px-2.5 py-1 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium">
                     {planLabels[subscription.plan] || subscription.plan}
                   </span>
-                  <span className="text-xs text-green-400/80 font-light">{t('dash.active')}</span>
+                  <span className="px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium">
+                    {t('dash.active')}
+                  </span>
+                  {getPlanTier(subscription.plan) && (
+                    <span className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[10px] text-[#666] font-medium">
+                      Tier: {getPlanTier(subscription.plan)}
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-[#999] font-light">
                   {t('dash.validUntil')}: {new Date(subscription.expires_at).toLocaleDateString('pt-PT')}
