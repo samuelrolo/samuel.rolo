@@ -164,10 +164,25 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
       {/* LinkedIn Roaster / CV Extraction format (candidate_profile + global_summary) */}
       {linkedinData && !cpData && (
         <div className="space-y-4">
-          {/* Profile overview */}
+          {/* Score */}
+          {linkedinData.executive_summary?.global_score && (
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-14 h-14 rounded-full border-2 border-gold/30 flex items-center justify-center">
+                <span className="text-lg font-bold text-gold">{linkedinData.executive_summary.global_score}</span>
+              </div>
+              <div>
+                <p className="text-xs text-[#999]">{lang === 'pt' ? 'Pontuação global' : 'Overall score'}</p>
+                <p className="text-sm font-medium text-[#1a1a1a]">{linkedinData.executive_summary.global_score}/100</p>
+                {linkedinData.executive_summary.market_positioning && (
+                  <p className="text-xs text-[#666] mt-0.5">{linkedinData.executive_summary.market_positioning}</p>
+                )}
+              </div>
+            </div>
+          )}
+
           {linkedinData.candidate_profile && (
             <div>
-              <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-3">
+              <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-2">
                 {lang === 'pt' ? 'Perfil Detetado' : 'Detected Profile'}
               </h5>
               <div className="grid grid-cols-2 gap-2">
@@ -229,13 +244,14 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
                   </ul>
                 </div>
               )}
-              {linkedinData.global_summary.gaps && linkedinData.global_summary.gaps.length > 0 && (
+              {/* improvements OR gaps - edge function returns 'improvements' */}
+              {(linkedinData.global_summary.improvements || linkedinData.global_summary.gaps || []).length > 0 && (
                 <div className="mb-4">
                   <h5 className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">
                     {lang === 'pt' ? 'Áreas a Melhorar' : 'Areas to Improve'}
                   </h5>
                   <ul className="space-y-1">
-                    {linkedinData.global_summary.gaps.map((s: string, i: number) => (
+                    {(linkedinData.global_summary.improvements || linkedinData.global_summary.gaps || []).map((s: string, i: number) => (
                       <li key={i} className="text-sm text-[#333] flex items-start gap-2">
                         <span className="text-amber-500 mt-0.5">!</span>
                         <span>{s}</span>
@@ -245,7 +261,7 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
                 </div>
               )}
               {linkedinData.global_summary.recommendations && linkedinData.global_summary.recommendations.length > 0 && (
-                <div>
+                <div className="mb-4">
                   <h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2">
                     {lang === 'pt' ? 'Recomendações' : 'Recommendations'}
                   </h5>
@@ -259,6 +275,45 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
                   </ul>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Priority Recommendations */}
+          {linkedinData.priority_recommendations?.immediate_adjustments && (
+            <div className="p-3 bg-blue-50 border border-blue-100 rounded-lg">
+              <h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-1">
+                {lang === 'pt' ? 'Ajustes Prioritários' : 'Priority Adjustments'}
+              </h5>
+              <p className="text-sm text-[#333] leading-relaxed">{linkedinData.priority_recommendations.immediate_adjustments}</p>
+            </div>
+          )}
+
+          {/* CV Problems / Detailed Issues */}
+          {linkedinData.cv_problems && linkedinData.cv_problems.length > 0 && (
+            <div>
+              <h5 className="text-xs font-medium text-red-700 uppercase tracking-wider mb-3">
+                {lang === 'pt' ? 'Problemas Identificados' : 'Identified Issues'}
+              </h5>
+              <div className="space-y-3">
+                {linkedinData.cv_problems.map((problem: any, i: number) => (
+                  <div key={i} className="p-3 bg-white border border-[#e5e5e5] rounded-lg">
+                    <div className="flex items-start gap-2 mb-1">
+                      <span className="w-5 h-5 rounded-full bg-red-50 text-red-600 text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
+                      <h6 className="text-sm font-medium text-[#1a1a1a]">{problem.title}</h6>
+                    </div>
+                    <p className="text-xs text-[#666] leading-relaxed ml-7 mb-2">{problem.description}</p>
+                    {problem.full_explanation && (
+                      <p className="text-xs text-[#555] leading-relaxed ml-7 mb-2">{problem.full_explanation}</p>
+                    )}
+                    {problem.rewrite_suggestion && (
+                      <div className="ml-7 p-2 bg-emerald-50 border border-emerald-100 rounded">
+                        <p className="text-[10px] text-emerald-700 uppercase font-medium mb-1">{lang === 'pt' ? 'Sugestão de melhoria' : 'Improvement suggestion'}</p>
+                        <p className="text-xs text-emerald-800 leading-relaxed">{problem.rewrite_suggestion}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -1335,7 +1390,7 @@ export default function MemberArea() {
           <p className="text-xs text-[#999] font-light mb-4">
             {lang === 'pt' ? 'Acompanha o teu progresso e desbloqueia novos níveis.' : 'Track your progress and unlock new levels.'}
           </p>
-          <CareerProgress />
+          <CareerProgress variant="compact" />
         </section>
 
         {/* Tools */}

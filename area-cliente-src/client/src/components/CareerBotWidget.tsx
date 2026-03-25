@@ -17,6 +17,7 @@ export default function CareerBotWidget() {
   const { t } = useI18n();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [view, setView] = useState<WidgetView>('chat');
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -231,16 +232,45 @@ export default function CareerBotWidget() {
 
       const data = await response.json();
       if (data.success && data.reply) {
+        let headlines: string[] = [];
+        const raw = data.reply.replace(/```json\s*/gi, '').replace(/```/g, '').trim();
+        
+        // Try multiple JSON extraction strategies
         try {
-          const raw = data.reply.replace(/```json|```/g, '').trim();
-          const match = raw.match(/\{[\s\S]*\}/);
-          const parsed = match ? JSON.parse(match[0]) : JSON.parse(raw);
-          setHlResults(parsed.headlines || []);
+          // Strategy 1: Direct parse
+          const parsed = JSON.parse(raw);
+          headlines = Array.isArray(parsed.headlines) ? parsed.headlines : Array.isArray(parsed) ? parsed : [];
         } catch {
-          // If JSON parsing fails, try to extract lines as headlines
-          const lines = data.reply.split('\n').filter((l: string) => l.trim().length > 10);
-          setHlResults(lines.slice(0, parseInt(hlNum)));
+          try {
+            // Strategy 2: Extract JSON object from text
+            const jsonMatch = raw.match(/\{[\s\S]*?"headlines"\s*:\s*\[[\s\S]*?\][\s\S]*?\}/);
+            if (jsonMatch) {
+              const parsed = JSON.parse(jsonMatch[0]);
+              headlines = Array.isArray(parsed.headlines) ? parsed.headlines : [];
+            }
+          } catch {
+            try {
+              // Strategy 3: Extract JSON array directly
+              const arrMatch = raw.match(/\[[\s\S]*?\]/);
+              if (arrMatch) {
+                headlines = JSON.parse(arrMatch[0]);
+              }
+            } catch {
+              // Strategy 4: Extract numbered lines as headlines
+              const lines = raw.split('\n')
+                .map((l: string) => l.replace(/^\d+[\.\)\-]\s*/, '').replace(/^"|"$/g, '').trim())
+                .filter((l: string) => l.length > 10 && l.length <= 250);
+              headlines = lines.slice(0, parseInt(hlNum));
+            }
+          }
         }
+        
+        // Clean up: remove surrounding quotes and numbering
+        headlines = headlines
+          .map((h: string) => h.replace(/^"|"$/g, '').replace(/^\d+[\.\)\-]\s*/, '').trim())
+          .filter((h: string) => h.length > 5);
+        
+        setHlResults(headlines.length > 0 ? headlines : [raw.substring(0, 220)]);
       }
     } catch {
       setHlResults([]);
@@ -295,7 +325,11 @@ export default function CareerBotWidget() {
 
       {/* Chat Panel */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-3rem)] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
+        <div className={`fixed z-50 bg-white shadow-2xl flex flex-col overflow-hidden border border-gray-200 transition-all duration-300 ${
+          isFullscreen
+            ? 'inset-0 rounded-none w-full h-full max-w-full max-h-full'
+            : 'bottom-6 right-6 w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-3rem)] rounded-2xl'
+        }`}>
           {/* Header */}
           <div className="px-4 py-3 flex items-center justify-between shrink-0" style={{ background: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' }}>
             <div className="flex items-center gap-3">
@@ -317,7 +351,20 @@ export default function CareerBotWidget() {
                   <path d="M3 3v5h5" />
                 </svg>
               </button>
-              <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors" title="Minimizar">
+              <button onClick={() => setIsFullscreen(!isFullscreen)} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors" title={isFullscreen ? 'Reduzir' : 'Ecrã inteiro'}>
+                {isFullscreen ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M8 3v3a2 2 0 0 1-2 2H3" /><path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+                    <path d="M3 16h3a2 2 0 0 1 2 2v3" /><path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3" /><path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+                    <path d="M3 16v3a2 2 0 0 0 2 2h3" /><path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+                  </svg>
+                )}
+              </button>
+              <button onClick={() => { setIsOpen(false); setIsFullscreen(false); }} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors" title="Minimizar">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M6 9l6 6 6-6" />
                 </svg>

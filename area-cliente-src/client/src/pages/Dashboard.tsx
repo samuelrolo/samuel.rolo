@@ -8,6 +8,7 @@ import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { Link } from 'wouter';
+import CareerProgress from '@/components/CareerProgress';
 import {
   Loader2, Upload, Download, FileText, Check, ArrowRight,
   BarChart3, FileSearch, Compass, Clock, Trash2,
@@ -55,7 +56,7 @@ export default function Dashboard() {
   const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [cvUploaded, setCvUploaded] = useState(false);
-  const [activeTab, setActiveTab] = useState<'analyses' | 'profile' | 'subscription' | 'resources'>('analyses');
+  const [activeTab, setActiveTab] = useState<'analyses' | 'profile' | 'subscription' | 'progress'>('analyses');
 
   // Saved analyses state
   const [analyses, setAnalyses] = useState<SavedAnalysis[]>([]);
@@ -199,7 +200,7 @@ export default function Dashboard() {
 
   const tabs = [
     { key: 'analyses' as const, label: t('dash.myAnalyses'), icon: BarChart3 },
-    { key: 'resources' as const, label: t('dash.resources'), icon: BookOpen },
+    { key: 'progress' as const, label: 'Progresso', icon: BarChart3 },
     { key: 'profile' as const, label: t('dash.personalInfo'), icon: FileText },
     { key: 'subscription' as const, label: t('dash.subscription'), icon: Compass },
   ];
@@ -787,66 +788,8 @@ export default function Dashboard() {
         )}
 
         {/* Tab: Resources */}
-        {activeTab === 'resources' && (
-          <div className="space-y-6">
-            {hasActiveSubscription() ? (
-              <>
-                <div className="p-4 bg-gold/5 border border-gold/10 rounded-lg">
-                  <p className="text-xs text-gold/80 font-light leading-relaxed">
-                    {t('dash.exclusiveResources')}. {t('dash.exclusiveResourcesDesc')}
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  {resources.map((resource) => {
-                    const ResIcon = resource.icon;
-                    return (
-                      <div key={resource.id} className="border border-[#e5e5e5] rounded-lg p-5 hover:border-gold/30 transition-all duration-300">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex items-start gap-4">
-                            <div className="w-10 h-10 bg-gold/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <ResIcon className="w-5 h-5 text-gold" />
-                            </div>
-                            <div>
-                              <h3 className="text-sm font-semibold text-[#1a1a1a] mb-1">{resource.title}</h3>
-                              <p className="text-xs text-[#999] font-light leading-relaxed mb-2">{resource.description}</p>
-                              <div className="flex items-center gap-3">
-                                <span className="px-2 py-0.5 bg-[#f5f5f5] rounded text-[10px] text-[#999] font-medium">{resource.type}</span>
-                                <span className="text-[10px] text-[#ccc]">{resource.size}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <a
-                            href={resource.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            download
-                            className="flex items-center gap-2 px-4 py-2 bg-gold text-[#1a1a1a] text-xs font-medium rounded hover:bg-gold-light transition-all duration-300 flex-shrink-0"
-                          >
-                            <Download className="w-3.5 h-3.5" />
-                            Download
-                          </a>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            ) : (
-              <div className="border border-[#e5e5e5] rounded-lg p-8 text-center">
-                <div className="w-14 h-14 bg-[#f5f5f5] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Lock className="w-6 h-6 text-[#ccc]" />
-                </div>
-                <h3 className="text-base font-semibold text-[#1a1a1a] mb-2">{t('dash.exclusiveResources')}</h3>
-                <p className="text-sm text-[#999] font-light mb-6 max-w-md mx-auto">
-                  {t('dash.exclusiveResourcesDesc')}
-                </p>
-                <Link href="/planos"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-gold text-[#1a1a1a] text-sm font-medium rounded hover:bg-gold-light transition-all duration-300">
-                  Ver planos <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            )}
-          </div>
+        {activeTab === 'progress' && (
+          <CareerProgress variant="detailed" />
         )}
 
         {/* Tab: Subscription */}

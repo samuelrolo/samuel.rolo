@@ -2,6 +2,9 @@
  * Career Progress System — "O Meu Perfil de Carreira"
  * Scale: 0 → 1000 points across 5 levels
  * Calculates score from real user_analyses data + profile completeness
+ * Supports two variants:
+ *   - compact: shows only level badge, score ring, description (for MemberArea)
+ *   - detailed: shows full breakdown with factors and badge (for Dashboard/Profile)
  */
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,6 +18,10 @@ type AnalysisRecord = {
   created_at: string;
 };
 
+type CareerProgressProps = {
+  variant?: 'compact' | 'detailed';
+};
+
 // ─── Level Configuration ────────────────────────────────────────────────────
 const LEVELS = [
   { name: 'Explorador', icon: '🌱', min: 0, max: 199, color: '#7A7A7A', bg: '#F1EFE8', desc: 'Estás a dar os primeiros passos. Faz a tua primeira análise para começar a subir.' },
@@ -24,17 +31,8 @@ const LEVELS = [
   { name: 'Elite', icon: '💎', min: 800, max: 1000, color: '#72243E', bg: '#FBEAF0', desc: 'Perfil de referência. Estás no topo do posicionamento de carreira.' },
 ];
 
-const UNLOCKS = [
-  { lv: 0, text: 'Acesso à plataforma e primeiros recursos' },
-  { lv: 1, text: 'Badge no perfil + dicas personalizadas' },
-  { lv: 2, text: 'Templates premium desbloqueados' },
-  { lv: 3, text: 'Relatório PDF consolidado do perfil' },
-  { lv: 4, text: 'Destaque na comunidade + desconto 1:1' },
-];
-
 // ─── Score Calculation ──────────────────────────────────────────────────────
 function calculateScore(analyses: AnalysisRecord[], profile: any) {
-  let score = 0;
   const factors: Record<string, { earned: number; max: number; tasks: { label: string; pts: number; done: boolean; bonus?: boolean }[] }> = {
     cv: { earned: 0, max: 250, tasks: [] },
     li: { earned: 0, max: 250, tasks: [] },
@@ -82,7 +80,6 @@ function calculateScore(analyses: AnalysisRecord[], profile: any) {
     const scenarios = a.data?.scenarios || a.data?.paths || [];
     return Array.isArray(scenarios) && scenarios.length > 1;
   });
-  // Check if analyses in different months
   const cpMonths = new Set(cpAnalyses.map(a => a.created_at?.slice(0, 7)));
   const cpDifferentMonths = cpMonths.size >= 2;
 
@@ -108,11 +105,9 @@ function calculateScore(analyses: AnalysisRecord[], profile: any) {
   const used2 = usedTools.length >= 2;
   const usedAll = usedTools.length >= 4;
 
-  // Check if user returned after 30 days
   const dates = analyses.map(a => new Date(a.created_at).getTime()).sort();
   const returned30 = dates.length >= 2 && (dates[dates.length - 1] - dates[0]) >= 30 * 24 * 60 * 60 * 1000;
 
-  // Profile completeness
   const profileComplete = !!(
     profile?.first_name &&
     profile?.last_name &&
@@ -135,7 +130,7 @@ function calculateScore(analyses: AnalysisRecord[], profile: any) {
       if (t.done) f.earned += t.pts;
     });
   });
-  score = Object.values(factors).reduce((s, f) => s + f.earned, 0);
+  const score = Object.values(factors).reduce((s, f) => s + f.earned, 0);
 
   return { score, factors, profileComplete };
 }
@@ -157,7 +152,7 @@ const FACTOR_META: Record<string, { name: string; icon: string; iconBg: string; 
 };
 
 // ─── Component ──────────────────────────────────────────────────────────────
-export default function CareerProgress() {
+export default function CareerProgress({ variant = 'detailed' }: CareerProgressProps) {
   const { profile } = useAuth();
   const [analyses, setAnalyses] = useState<AnalysisRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -203,6 +198,60 @@ export default function CareerProgress() {
     );
   }
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // COMPACT VARIANT — just level + score + description + progress bar
+  // ═══════════════════════════════════════════════════════════════════════════
+  if (variant === 'compact') {
+    return (
+      <div className="bg-white border border-[#e5e5e5] rounded-xl p-4 shadow-sm">
+        <div className="flex gap-4 items-center">
+          {/* Small Ring */}
+          <div className="relative w-[64px] h-[64px] flex-shrink-0">
+            <svg viewBox="0 0 100 100" className="w-[64px] h-[64px]" style={{ transform: 'rotate(-90deg)' }}>
+              <circle cx="50" cy="50" r={R} fill="none" stroke="#e5e5e5" strokeWidth="9" />
+              <circle
+                cx="50" cy="50" r={R} fill="none"
+                stroke={lv.color} strokeWidth="9" strokeLinecap="round"
+                strokeDasharray={CIRC.toFixed(1)}
+                strokeDashoffset={offset.toFixed(1)}
+                style={{ transition: 'stroke-dashoffset 0.9s cubic-bezier(.4,0,.2,1)' }}
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-sm font-semibold text-[#1a1a1a]">{score}</span>
+              <span className="text-[8px] text-[#999]">/ 1000</span>
+            </div>
+          </div>
+
+          {/* Level Info */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider"
+                style={{ background: lv.bg, color: lv.color }}
+              >
+                {lv.icon} {lv.name}
+              </span>
+            </div>
+            <p className="text-[11px] text-[#666] leading-relaxed mb-2 line-clamp-2">{lv.desc}</p>
+            {next && (
+              <div className="flex items-center gap-2 text-[10px] text-[#999]">
+                <span>{score}</span>
+                <div className="flex-1 h-1 bg-[#e5e5e5] rounded-full overflow-hidden">
+                  <div className="h-full rounded-full" style={{ width: `${lvProg.toFixed(0)}%`, background: lv.color, transition: 'width 0.9s cubic-bezier(.4,0,.2,1)' }} />
+                </div>
+                <span>{next.min} · {next.name}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // DETAILED VARIANT — full breakdown with factors and badge
+  // ═══════════════════════════════════════════════════════════════════════════
   return (
     <div className="space-y-4">
       {/* Score Card */}
@@ -253,7 +302,7 @@ export default function CareerProgress() {
         </div>
 
         {/* Level Pips */}
-        <div className="flex gap-1.5 mb-4">
+        <div className="flex gap-1.5">
           {LEVELS.map((l, i) => {
             const achieved = score >= l.min;
             const current = i === lvIdx;
@@ -261,7 +310,7 @@ export default function CareerProgress() {
               <div
                 key={l.name}
                 className={`flex-1 py-1.5 px-1 border rounded-lg text-center transition-all ${current ? 'border-2' : ''} ${achieved ? '' : 'opacity-35'}`}
-                style={current ? { borderColor: l.color } : {}}
+                style={{ borderColor: current ? l.color : achieved ? l.color + '40' : '#e5e5e5', background: current ? l.bg : 'transparent' }}
               >
                 <div className="text-xs leading-none mb-0.5">{l.icon}</div>
                 <div className="text-[8px] font-semibold uppercase tracking-wider" style={{ color: achieved ? l.color : '' }}>{l.name}</div>
@@ -270,25 +319,6 @@ export default function CareerProgress() {
             );
           })}
         </div>
-
-        {/* Unlocks */}
-        <div className="text-[9px] font-semibold uppercase tracking-widest text-[#999] mb-2">O que cada nível desbloqueia</div>
-        {UNLOCKS.map((u) => {
-          const achieved = lvIdx >= u.lv;
-          const l = LEVELS[u.lv];
-          return (
-            <div key={u.lv} className="flex items-center gap-2 py-1.5 border-t border-[#f0f0f0] first:border-t-0 text-[11px]">
-              <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: achieved ? l.color : '#e5e5e5' }} />
-              <span className="flex-1" style={{ opacity: achieved ? 1 : 0.45 }}>{u.text}</span>
-              <span
-                className="text-[8px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider"
-                style={{ background: achieved ? l.bg : '#f5f5f4', color: achieved ? l.color : '#999' }}
-              >
-                {l.name}
-              </span>
-            </div>
-          );
-        })}
       </div>
 
       {/* Factors */}
@@ -365,7 +395,6 @@ export default function CareerProgress() {
               {lv.icon} {lv.name} · {score} pts
             </div>
             <div className="text-[9px] text-gray-400">Share2Inspire Career Profile</div>
-            {/* Mini progress bar */}
             <div className="mt-2 mx-auto w-32 h-1 bg-white/10 rounded-full overflow-hidden">
               <div className="h-full rounded-full" style={{ width: `${(score / 1000) * 100}%`, background: lv.color === '#7A7A7A' ? '#ccc' : lv.color }} />
             </div>
