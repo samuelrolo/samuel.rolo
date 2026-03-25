@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,13 +64,14 @@
       ]
     }
     </script>
-    <link rel="icon" href="../../images/favicon.png" type="image/png">
+    <link rel="icon" href="/images/favicon.png" type="image/png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media=\'all\'">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:'Poppins',sans-serif;background:#fff;color:#1a1a2e;-webkit-font-smoothing:antialiased}
+        body{font-family:
+        'Poppins',sans-serif;background:#fff;color:#1a1a2e;-webkit-font-smoothing:antialiased}
         .nav-item{position:relative}
         .mega-dropdown .mega-menu{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #f0f0f0;box-shadow:0 12px 40px rgba(0,0,0,.08);padding:16px 20px;min-width:360px;z-index:1050}
         .nav-item.mega-dropdown:hover .mega-menu,.nav-item.mega-dropdown .mega-menu:hover{display:block}
@@ -124,7 +126,8 @@
         .caso-block p em{font-style:italic;color:rgba(255,255,255,.65)}
         .caso-block p:last-child{margin-bottom:0}
         .phase-card{border:1px solid rgba(0,0,0,.07);border-radius:8px;padding:1.5rem 1.8rem;margin-bottom:1.2rem;position:relative;overflow:hidden}
-        .phase-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#C9A961}
+        .phase-card::before{content:
+        '';position:absolute;left:0;top:0;bottom:0;width:3px;background:#C9A961}
         .phase-card .phase-num{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A961;margin-bottom:.4rem;display:block}
         .phase-card h3{font-size:1rem;font-weight:600;color:#1a1a2e;margin:0 0 .5rem}
         .phase-card .phase-weeks{font-size:.76rem;color:#999;margin-bottom:.8rem}
@@ -180,62 +183,78 @@
         .related-card a:hover{color:#1a1a2e}
         .fade-in{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
         .fade-in.visible{opacity:1;transform:translateY(0)}
-        .nav-bar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,0.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,0.04);height:70px;display:flex;align-items:center}
-        .nav-inner{max-width:1100px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;width:100%}
-        .nav-logo img{height:36px}
-        .nav-links{display:flex;gap:2rem;align-items:center}
-        .nav-links a{font-size:0.75rem;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:#1a1a2e;text-decoration:none;transition:color 0.3s}
-        .nav-links a:hover,.nav-links a.active{color:#C9A961}
-        .nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
-        .nav-toggle span{display:block;width:22px;height:2px;background:#1a1a2e;transition:all .3s}
-        @media(max-width:991px){.nav-toggle{display:flex}.nav-links{display:none;position:absolute;top:70px;left:0;right:0;background:#fff;flex-direction:column;padding:2rem;gap:1.5rem;border-bottom:1px solid rgba(0,0,0,0.06)}.nav-links.open{display:flex}}
-        .mega-menu{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #f0f0f0;box-shadow:0 12px 40px rgba(0,0,0,.08);padding:16px 20px;min-width:200px;z-index:1050}
-        .mega-dropdown:hover .mega-menu,.mega-dropdown .mega-menu:hover{display:block}
-        .mega-menu a{display:block;padding:4px 0;font-size:.8rem;color:#555;text-decoration:none;transition:color .2s}
-        .mega-menu a:hover{color:#C9A961}
-        @media(max-width:991px){.mega-menu{position:static;transform:none;box-shadow:none;border:none;padding:8px 12px;background:#fafafa}}
     </style>
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '3865352233767400');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
 </head>
 <body>
 
 <header>
-    <!-- Navigation -->
-    <header>
-        <nav class="nav-bar">
-        <div class="nav-inner">
-            <a href="/en/pages/home/" class="nav-logo">
-                <img loading="lazy" src="/images/logo.webp" alt="Share2Inspire">
-            </a>
-            <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
-                <span></span><span></span><span></span>
-            </button>
-            <div class="nav-links">
-                <a href="/en/pages/home/">Home</a>
-                <a href="/en/cv-analyser">CV Analyser</a>
-                <a href="/en/career-path">Career Path</a>
-                <a href="/en/pages/services/">Services</a>
+    <nav class="navbar navbar-expand-lg fixed-top" style="background:rgba(26,26,46,0.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);">
+        <div class="container" style="max-width:1100px;">
+            <a class="navbar-brand" href="/en/pages/home/"><img fetchpriority="high" src="/images/logo.webp" alt="Share2Inspire Logo" style="height:36px;"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color:rgba(255,255,255,.2);"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/en/pages/home/" style="text-transform:uppercase;letter-spacing:1px;font-size:.85rem;font-weight:500;color:rgba(255,255,255,.6);">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/en/cv-analyser" style="text-transform:uppercase;letter-spacing:1px;font-size:.85rem;font-weight:500;color:rgba(255,255,255,.6);">CV Analyser</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/en/career-path" style="text-transform:uppercase;letter-spacing:1px;font-size:.85rem;font-weight:500;color:rgba(255,255,255,.6);">Career Path</a></li>
+                    <li class="nav-item mega-dropdown">
+                        <a class="nav-link" href="/en/pages/services/" style="text-transform:uppercase;letter-spacing:1px;font-size:.85rem;font-weight:500;color:rgba(255,255,255,.6);">Services</a>
+                        <div class="mega-menu">
+                            <a class="mega-link" href="/en/linkedin-roaster">LinkedIn Roaster</a>
+                            <a class="mega-link" href="https://share2inspire.pt/en/cv-builder/">CV Maker</a>
+                            <a class="mega-link" href="/en/pages/services/">CV by Specialist</a>
+                            <a class="mega-link" href="/en/pages/services/">KickStart Pro</a>
+                        </div>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/en/blog" style="text-transform:uppercase;letter-spacing:1px;font-size:.85rem;font-weight:500;color:#C9A961;">Knowledge Hub</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/en/pages/about" style="text-transform:uppercase;letter-spacing:1px;font-size:.85rem;font-weight:500;color:rgba(255,255,255,.6);">About</a></li>
+                    <li class="nav-item ms-2"><a class="nav-link" href="/en/area-cliente/" style="background:#BF9A33;color:#0a0a0a!important;padding:.4rem 1rem;border-radius:4px;font-weight:600;">Client Area</a></li>
+                    <li class="nav-item dropdown ms-2">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:rgba(255,255,255,.6);">
+                            <i class="fas fa-globe"></i> EN
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="languageDropdown">
+                            <li><a class="dropdown-item" href="/blog/artigos/recrutamento-big4-guia-candidatos">PT</a></li>
+                            <li><a class="dropdown-item active" href="/en/blog/artigos/big4-recruitment-guide-candidates">EN</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
+</header>
 
-    <!-- SVG: Process pipeline -->
+<section class="hero">
+    <div class="hero-inner fade-in">
+        <p class="hero-breadcrumb"><a href="/en/blog">Knowledge Hub</a> &nbsp;/&nbsp; <a href="/en/blog#articles">Articles</a> &nbsp;/&nbsp; Consulting &amp; Big4</p>
+        <span class="hero-tag">Recruitment Process · 2026 Guide</span>
+        <h1>Big4 Recruitment:<br><strong>Complete Guide for Candidates</strong></h1>
+        <p class="hero-lead">How to join Deloitte, PwC, EY or KPMG. The 5 process stages, what they assess at each round, mistakes to avoid and preparation checklists.</p>
+        <div class="hero-meta">
+            <span><strong>Samuel Rolo</strong></span>
+            <span class="dot"></span>
+            <span>19 Mar 2026</span>
+            <span class="dot"></span>
+            <span>11 min read</span>
+            <span class="dot"></span>
+            <span style="color:#C9A961;font-weight:600;">Structured &amp; Practical</span>
+        </div>
+        <div class="toc-box">
+            <h4>Index</h4>
+            <ol>
+                <li><a href="#process">The 5 Recruitment Stages</a></li>
+                <li><a href="#case">The Case Interview in Detail</a></li>
+                <li><a href="#mistakes">Fatal Mistakes That Eliminate Good Candidates</a></li>
+                <li><a href="#checklist">Preparation Checklists by Stage</a></li>
+            </ol>
+        </div>
+    </div>
+</section>
+
+<div class="article-wrap">
+
+    <p class="fade-in" style="margin-top:2.5rem;">Getting into a Big4 is a structured, multi-stage process designed to test not just your technical skills, but your personality, resilience, and problem-solving abilities. This guide breaks down each of the 5 stages, what recruiters are looking for, and how to prepare to maximise your chances.</p>
+
     <div class="illus-wrap fade-in">
         <svg viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
             <rect width="700" height="160" fill="#fafaf8" rx="8"/>
@@ -248,82 +267,78 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             <rect x="152" y="38" width="118" height="72" rx="6" fill="#1a1a2e"/>
             <text x="211" y="64" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#C9A961">STAGE 2</text>
             <text x="211" y="78" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#fff">Online Tests</text>
-            <text x="211" y="91" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7" fill="rgba(255,255,255,0.6)">Sem 3–4 · Eliminat.</text>
+            <text x="211" y="91" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7" fill="rgba(255,255,255,0.6)">Wk 3–4 · Eliminatory</text>
             <polygon points="274,74 283,68 283,80" fill="#bbb"/>
             <rect x="286" y="38" width="118" height="72" rx="6" fill="#1a1a2e"/>
             <text x="345" y="64" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#C9A961">STAGE 3</text>
             <text x="345" y="78" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#fff">HR Screen</text>
-            <text x="345" y="91" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7" fill="rgba(255,255,255,0.6)">Sem 5–6 · Motivação</text>
+            <text x="345" y="91" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7" fill="rgba(255,255,255,0.6)">Wk 5–6 · Motivation</text>
             <polygon points="408,74 417,68 417,80" fill="#bbb"/>
             <rect x="420" y="38" width="118" height="72" rx="6" fill="#c0392b"/>
             <text x="479" y="64" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#fff">STAGE 4</text>
             <text x="479" y="78" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#fff">Case Interview</text>
-            <text x="479" y="91" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7" fill="rgba(255,255,255,0.7)">Sem 7–9 · A mais temida</text>
+            <text x="479" y="91" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7" fill="rgba(255,255,255,0.7)">Wk 7–9 · The most feared</text>
             <polygon points="542,74 551,68 551,80" fill="#bbb"/>
             <rect x="554" y="38" width="128" height="72" rx="6" fill="#2E7D52"/>
             <text x="618" y="64" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#fff">STAGE 5</text>
             <text x="618" y="78" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" fill="#fff">Partner Interview</text>
-            <text x="618" y="91" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7" fill="rgba(255,255,255,0.7)">Sem 10–12 · Decisão</text>
-            <text x="350" y="127" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" fill="#999" font-style="italic">Cada fase é eliminatória — não há recuperação de rondas anteriores</text>
+            <text x="618" y="91" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7" fill="rgba(255,255,255,0.7)">Wk 10–12 · Decision</text>
+            <text x="350" y="127" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" fill="#999" font-style="italic">Each stage is eliminatory — there is no recovery from previous rounds</text>
         </svg>
-        <p class="illus-caption">The 5 process stages de recrutamento nas Big4 — da candidatura à decisão final</p>
+        <p class="illus-caption">The 5 recruitment stages at Big4 firms, from application to final decision.</p>
     </div>
 
-    <span class="anchor-label" id="fases">02 — O Processo</span>
-    <h2 class="fade-in">The 5 process stages</h2>
+    <span class="anchor-label" id="process">01 — The Process</span>
+    <h2 class="fade-in">The 5 Recruitment Stages</h2>
     <div class="anchor-divider"></div>
 
-    <!-- Phase 1 -->
     <div class="phase-card fade-in">
         <span class="phase-num">Phase 1 &nbsp;·&nbsp; Weeks 1–2</span>
-        <h3>CV e Carta de Motivação — o primeiro filtro</h3>
-        <div class="phase-weeks">ATS automático antes de qualquer olho humano</div>
-        <p>As Big4 usam software ATS (sistemas automáticos de triagem) antes de qualquer humano ver o teu documento. Se não passares nesta fase, nunca chegas à entrevista.</p>
+        <h3>CV &amp; Cover Letter — The First Filter</h3>
+        <div class="phase-weeks">Automated ATS before any human eye</div>
+        <p>Big4 firms use ATS (Applicant Tracking Systems) before any human sees your document. If you don't pass this stage, you'll never get to the interview.</p>
     </div>
-    <p class="fade-in"><strong>O que o recrutador procura no teu CV:</strong></p>
+    <p class="fade-in"><strong>What the recruiter looks for in your CV:</strong></p>
     <ul class="tip-list fade-in">
-        <li>Resultados concretos e mensuráveis — não "trabalhei em projetos", mas "reduzi custos em 15%"</li>
-        <li>Liderança comprovada: associações, cargos em clubes, projetos académicos com impacto</li>
-        <li>Internships relevantes: consultoria, banca, indústria — mesmo que curtos</li>
-        <li>Consistência entre o teu percurso e a motivação para consultoria</li>
-        <li>Universidades de referência e média académica elevada (especialmente em entry-level)</li>
+        <li>Concrete and measurable results, not "I worked on projects," but "I reduced costs by 15%"</li>
+        <li>Proven leadership: associations, club positions, academic projects with impact</li>
+        <li>Relevant internships: consulting, banking, industry, even if short</li>
+        <li>Consistency between your background and your motivation for consulting</li>
+        <li>Top-tier universities and high academic average (especially for entry-level)</li>
     </ul>
 
     <div class="caso-block fade-in">
-        <span class="caso-label">Caso Prático 01 — O CV que passou na triagem automática</span>
-        <p>A Sofia candidatou-se à Deloitte com um CV de 2 páginas, cheio de responsabilidades em linguagem passiva ("participei em", "colaborei com"). O ATS classificou-o como baixa relevância e não chegou a recruiter humano.</p>
-        <p>Na segunda tentativa, reformulou o CV para 1 página com bullet points em formato STAR: "Liderei projeto de otimização de processos que reduziu tempo de resposta a clientes em 30%." Chegou à entrevista de motivação na semana seguinte.</p>
+        <span class="caso-label">Case Study 01 — The CV that passed the automated screening</span>
+        <p>Sofia applied to Deloitte with a 2-page CV, full of responsibilities in passive language ("participated in," "collaborated with"). The ATS classified it as low relevance and it never reached a human recruiter.</p>
+        <p>On her second attempt, she reformulated her CV to 1 page with bullet points in the STAR format: "Led a process optimization project that reduced customer response time by 30%." She got to the motivation interview the following week.</p>
     </div>
 
     <ul class="tip-list fade-in">
-        <li>Usa o formato STAR (Situação, Tarefa, Ação, Resultado) em cada bullet point</li>
-        <li>Mantém o CV em 1 página se tens menos de 3 anos de experiência</li>
-        <li>Quantifica tudo: "liderei uma equipa" vs. "liderei uma equipa de 8 pessoas durante 6 meses"</li>
-        <li>Personaliza a carta de motivação para cada firma — cópia/cola é detetado</li>
-        <li>Menciona projetos concretos da firma que te interessam — mostra que fizeste pesquisa</li>
+        <li>Use the STAR format (Situation, Task, Action, Result) in each bullet point</li>
+        <li>Keep your CV to 1 page if you have less than 3 years of experience</li>
+        <li>Quantify everything: "led a team" vs. "led a team of 8 people for 6 months"</li>
+        <li>Personalize the cover letter for each firm — copy/paste is detected</li>
+        <li>Mention specific projects of the firm that interest you — it shows you've done your research</li>
     </ul>
 
-    <!-- Phase 2 -->
     <div class="phase-card fade-in">
         <span class="phase-num">Phase 2 &nbsp;·&nbsp; Weeks 3–4</span>
-        <h3>Testes Online e Gamificação</h3>
-        <div class="phase-weeks">Eliminatório — não há segunda oportunidade</div>
-        <p>Cada firma tem a sua plataforma preferida e avalia coisas diferentes. Não subestimes esta fase.</p>
+        <h3>Online Tests and Gamification</h3>
+        <div class="phase-weeks">Eliminatory — no second chance</div>
+        <p>Each firm has its preferred platform and assesses different things. Do not underestimate this stage.</p>
     </div>
 
     <div class="firm-grid fade-in">
-        <div class="firm-card"><div class="firm-name">Deloitte</div><div class="firm-test">Pymetrics / Raciocínio Numérico</div><p>Tomada de decisão, padrões cognitivos, memória</p></div>
-        <div class="firm-card"><div class="firm-name">PwC</div><div class="firm-test">Arctic Shores / Verbal e Numérico</div><p>Raciocínio lógico, velocidade e precisão</p></div>
-        <div class="firm-card"><div class="firm-name">EY</div><div class="firm-test">Strengths Assessment / SHL</div><p>Comportamento em situações profissionais</p></div>
-        <div class="firm-card"><div class="firm-name">KPMG</div><div class="firm-test">KPMG Game (IA emocional)</div><p>Decisão sob pressão, empatia, colaboração</p></div>
+        <div class="firm-card"><div class="firm-name">Deloitte</div><div class="firm-test">Pymetrics / Numerical Reasoning</div><p>Decision-making, cognitive patterns, memory</p></div>
+        <div class="firm-card"><div class="firm-name">PwC</div><div class="firm-test">Arctic Shores / Verbal &amp; Numerical</div><p>Logical reasoning, speed and accuracy</p></div>
+        <div class="firm-card"><div class="firm-name">EY</div><div class="firm-test">Strengths Assessment / SHL</div><p>Behaviour in professional situations</p></div>
+        <div class="firm-card"><div class="firm-name">KPMG</div><div class="firm-test">KPMG Game (Emotional AI)</div><p>Decision under pressure, empathy, collaboration</p></div>
     </div>
 
-    <!-- SVG: Firms comparison -->
     <div class="illus-wrap fade-in">
         <svg viewBox="0 0 700 190" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
             <rect width="700" height="190" fill="#fafaf8" rx="8"/>
             <text x="350" y="24" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" font-weight="700" fill="#1a1a2e" letter-spacing="2">CULTURE AND FOCUS OF EACH FIRM</text>
-            <!-- Deloitte -->
             <rect x="20" y="40" width="155" height="130" rx="8" fill="#fff" stroke="#C9A961" stroke-width="1.5"/>
             <text x="97" y="65" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" font-weight="700" fill="#C9A961">Deloitte</text>
             <line x1="35" y1="74" x2="160" y2="74" stroke="#f5f0e0" stroke-width="1"/>
@@ -332,7 +347,6 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             <text x="97" y="128" text-anchor="middle" font-family="Poppins,sans-serif" font-size="9.5" fill="#999">Pymetrics</text>
             <text x="97" y="143" text-anchor="middle" font-family="Poppins,sans-serif" font-size="9" fill="#bbb">Numerical reasoning</text>
             <text x="97" y="163" text-anchor="middle" font-family="Poppins,sans-serif" font-size="9" fill="#C9A961" font-weight="600">Tech-forward</text>
-            <!-- PwC -->
             <rect x="188" y="40" width="155" height="130" rx="8" fill="#fff" stroke="#ddd" stroke-width="1.5"/>
             <text x="265" y="65" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" font-weight="700" fill="#1a1a2e">PwC</text>
             <line x1="203" y1="74" x2="328" y2="74" stroke="#f0f0f0" stroke-width="1"/>
@@ -341,7 +355,6 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             <text x="265" y="128" text-anchor="middle" font-family="Poppins,sans-serif" font-size="9.5" fill="#999">Arctic Shores</text>
             <text x="265" y="143" text-anchor="middle" font-family="Poppins,sans-serif" font-size="9" fill="#bbb">Verbal &amp; numerical</text>
             <text x="265" y="163" text-anchor="middle" font-family="Poppins,sans-serif" font-size="9" fill="#1a1a2e" font-weight="600">Client-focused</text>
-            <!-- EY -->
             <rect x="356" y="40" width="155" height="130" rx="8" fill="#fff" stroke="#ddd" stroke-width="1.5"/>
             <text x="433" y="65" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" font-weight="700" fill="#1a1a2e">EY</text>
             <line x1="371" y1="74" x2="496" y2="74" stroke="#f0f0f0" stroke-width="1"/>
@@ -350,7 +363,6 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             <text x="433" y="128" text-anchor="middle" font-family="Poppins,sans-serif" font-size="9.5" fill="#999">Strengths / SHL</text>
             <text x="433" y="143" text-anchor="middle" font-family="Poppins,sans-serif" font-size="9" fill="#bbb">Behavioural</text>
             <text x="433" y="163" text-anchor="middle" font-family="Poppins,sans-serif" font-size="9" fill="#1a1a2e" font-weight="600">People-first</text>
-            <!-- KPMG -->
             <rect x="524" y="40" width="155" height="130" rx="8" fill="#fff" stroke="#ddd" stroke-width="1.5"/>
             <text x="601" y="65" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" font-weight="700" fill="#1a1a2e">KPMG</text>
             <line x1="539" y1="74" x2="664" y2="74" stroke="#f0f0f0" stroke-width="1"/>
@@ -360,124 +372,113 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             <text x="601" y="143" text-anchor="middle" font-family="Poppins,sans-serif" font-size="9" fill="#bbb">Emotional intelligence</text>
             <text x="601" y="163" text-anchor="middle" font-family="Poppins,sans-serif" font-size="9" fill="#1a1a2e" font-weight="600">Rigorous process</text>
         </svg>
-        <p class="illus-caption">Cultura, foco e plataforma de testes de cada uma das Big4</p>
+        <p class="illus-caption">Culture, focus, and testing platform of each of the Big4 firms.</p>
     </div>
 
-    <!-- Phase 3 -->
     <div class="phase-card fade-in">
         <span class="phase-num">Phase 3 &nbsp;·&nbsp; Weeks 5–6</span>
         <h3>Motivation Interview / HR Screen</h3>
-        <div class="phase-weeks">30–45 minutos · Parece informal — não é</div>
-        <p>Esta entrevista é conduzida por um recruiter ou HR Business Partner. É uma triagem estruturada onde eliminam candidatos que não sabem explicar porque querem estar ali.</p>
+        <div class="phase-weeks">30–45 minutes · Seems informal, but it's not</div>
+        <p>This interview is conducted by a recruiter or HR Business Partner. It's a structured screening where they eliminate candidates who can't explain why they want to be there.</p>
     </div>
 
-    <p class="fade-in"><strong>As perguntas mais comuns:</strong></p>
+    <p class="fade-in"><strong>The most common questions:</strong></p>
     <ul class="tip-list fade-in">
-        <li>"Porque queres trabalhar em consultoria?" — a mais importante, prepara-a a fundo</li>
-        <li>"Porque a Deloitte/PwC/EY/KPMG e não as outras?" — mostra que fizeste pesquisa específica</li>
-        <li>"Onde te vês daqui a 5 anos?" — alinha com a progressão típica da firma</li>
-        <li>"Conta-me uma experiência em que resolveste um problema complexo"</li>
-        <li>"Qual foi o teu maior fracasso e o que aprendeste com ele?"</li>
+        <li>"Why do you want to work in consulting?" — the most important one, prepare it thoroughly</li>
+        <li>"Why Deloitte/PwC/EY/KPMG and not the others?" — shows you've done specific research</li>
+        <li>"Where do you see yourself in 5 years?" — align with the firm's typical career progression</li>
+        <li>"Tell me about a time you solved a complex problem"</li>
+        <li>"What was your biggest failure and what did you learn from it?"</li>
     </ul>
 
     <div class="caso-block fade-in">
-        <span class="caso-label">Caso Prático 02 — A resposta que eliminou um candidato com 17 de média</span>
-        <p>O Miguel tinha um CV impecável: engenharia, 17/20 de média, dois internships. Na HR screen da EY, quando perguntaram "Porque consultoria?", respondeu: <em>"Porque tem um salário competitivo e progressão rápida."</em></p>
-        <p>Não passou para a fase seguinte. O recruiter queria ouvir evidência de curiosidade intelectual, gosto por resolver problemas complexos e uma motivação que ligasse a história pessoal do candidato à função — não uma razão transacional.</p>
+        <span class="caso-label">Case Study 02 — The answer that eliminated a candidate with a 17/20 GPA</span>
+        <p>Miguel had an impeccable CV: engineering, 17/20 GPA, two internships. In the EY HR screen, when asked "Why consulting?", he replied: <em>"Because it has a competitive salary and fast progression."</em></p>
+        <p>He didn't make it to the next stage. The recruiter wanted to hear evidence of intellectual curiosity, a taste for solving complex problems, and a motivation that connected the candidate's personal story to the role, not a transactional reason.</p>
     </div>
 
     <ul class="tip-list fade-in">
-        <li>Foca-te em motivações intrínsecas: curiosidade, impacto, aprendizagem acelerada</li>
-        <li>Liga a resposta a uma experiência concreta que tiveste — não uses abstrações</li>
-        <li>Evita mencionar salário, progressão rápida ou prestígio como motivação principal</li>
-        <li>Termina sempre a ligar à firma específica — porque aquela e não outra</li>
+        <li>Focus on intrinsic motivations: curiosity, impact, accelerated learning</li>
+        <li>Connect your answer to a concrete experience you've had — don't use abstractions</li>
+        <li>Avoid mentioning salary, fast progression, or prestige as your main motivation</li>
+        <li>Always end by connecting to the specific firm — why that one and not another</li>
     </ul>
 
-    <!-- Phase 4 -->
     <div class="phase-card fade-in" style="border-left-color:#c0392b;">
         <span class="phase-num" style="color:#c0392b;">Phase 4 &nbsp;·&nbsp; Weeks 7–9</span>
-        <h3>A Case Interview — A fase mais diferenciadora</h3>
-        <div class="phase-weeks">Problema de negócio real · Resolução em voz alta · Sem respostas certas</div>
-        <p>Vais receber um problema de negócio real ou fictício e tens de o estruturar, analisar e apresentar recomendações em voz alta, em tempo real. Não é sobre saber a resposta — é sobre como pensas.</p>
+        <h3>The Case Interview — The Most Differentiating Stage</h3>
+        <div class="phase-weeks">Real business problem · Out-loud problem solving · No right answers</div>
+        <p>You will receive a real or fictional business problem and you have to structure it, analyze it, and present recommendations out loud, in real time. It's not about knowing the answer, it's about how you think.</p>
     </div>
 
-    <!-- Phase 5 -->
     <div class="phase-card fade-in" style="border-left-color:#2E7D52;">
         <span class="phase-num" style="color:#2E7D52;">Phase 5 &nbsp;·&nbsp; Weeks 10–12</span>
         <h3>Interview with Partner or Senior Manager</h3>
-        <div class="phase-weeks">Avaliação de maturidade, liderança e fit cultural</div>
-        <p>Aqui já não é sobre casos de negócio — é sobre ti como pessoa. O partner quer saber se te colocaria à frente de um CFO do lado do cliente.</p>
+        <div class="phase-weeks">Assessment of maturity, leadership, and cultural fit</div>
+        <p>This is no longer about business cases, it's about you as a person. The partner wants to know if they would put you in front of a client's CFO.</p>
     </div>
 
-    <!-- Case Interview detail -->
-    <span class="anchor-label" id="case">03 — Case Interview</span>
-    <h2 class="fade-in">The case interview in detail</h2>
+    <span class="anchor-label" id="case">02 — The Case Interview</span>
+    <h2 class="fade-in">The Case Interview in Detail</h2>
     <div class="anchor-divider"></div>
 
-    <!-- SVG: Case types chart -->
     <div class="illus-wrap fade-in">
         <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
             <rect width="700" height="200" fill="#fafaf8" rx="8"/>
             <text x="350" y="24" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" font-weight="700" fill="#1a1a2e" letter-spacing="2">CASE TYPES — FREQUENCY AND FIRMS</text>
-            <!-- Headers -->
-            <text x="30" y="45" font-family="Poppins,sans-serif" font-size="8" font-weight="700" fill="#999" letter-spacing="1">TIPO</text>
+            <text x="30" y="45" font-family="Poppins,sans-serif" font-size="8" font-weight="700" fill="#999" letter-spacing="1">TYPE</text>
             <text x="310" y="45" font-family="Poppins,sans-serif" font-size="8" font-weight="700" fill="#999" letter-spacing="1">FREQUENCY</text>
-            <text x="440" y="45" font-family="Poppins,sans-serif" font-size="8" font-weight="700" fill="#999" letter-spacing="1">FIRMA</text>
-            <text x="580" y="45" font-family="Poppins,sans-serif" font-size="8" font-weight="700" fill="#999" letter-spacing="1">ÁREA</text>
+            <text x="440" y="45" font-family="Poppins,sans-serif" font-size="8" font-weight="700" fill="#999" letter-spacing="1">FIRM</text>
+            <text x="580" y="45" font-family="Poppins,sans-serif" font-size="8" font-weight="700" fill="#999" letter-spacing="1">AREA</text>
             <line x1="20" y1="50" x2="680" y2="50" stroke="#e8e8e8" stroke-width="1"/>
-            <!-- Row 1 -->
             <rect x="20" y="55" width="660" height="28" rx="3" fill="#fff"/>
             <text x="30" y="73" font-family="Poppins,sans-serif" font-size="8.5" fill="#333">Profitability (margin decline)</text>
             <rect x="305" y="60" width="68" height="16" rx="8" fill="#fef3cd"/>
-            <text x="339" y="72" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7.5" font-weight="600" fill="#856404">ALTA</text>
-            <text x="440" y="73" font-family="Poppins,sans-serif" font-size="8" fill="#555">Todas</text>
+            <text x="339" y="72" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7.5" font-weight="600" fill="#856404">HIGH</text>
+            <text x="440" y="73" font-family="Poppins,sans-serif" font-size="8" fill="#555">All</text>
             <text x="580" y="73" font-family="Poppins,sans-serif" font-size="8" fill="#555">Strategy</text>
-            <!-- Row 2 -->
             <rect x="20" y="83" width="660" height="28" rx="3" fill="#fafaf8"/>
             <text x="30" y="101" font-family="Poppins,sans-serif" font-size="8.5" fill="#333">Digital / Tech (digital transformation)</text>
             <rect x="305" y="88" width="90" height="16" rx="8" fill="#fef3cd"/>
-            <text x="350" y="100" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7.5" font-weight="600" fill="#856404">ALTA ↑</text>
+            <text x="350" y="100" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7.5" font-weight="600" fill="#856404">HIGH ↑</text>
             <text x="440" y="101" font-family="Poppins,sans-serif" font-size="8" fill="#555">Deloitte, PwC</text>
             <text x="580" y="101" font-family="Poppins,sans-serif" font-size="10" fill="#555">Technology</text>
-            <!-- Row 3 -->
             <rect x="20" y="111" width="660" height="28" rx="3" fill="#fff"/>
             <text x="30" y="129" font-family="Poppins,sans-serif" font-size="8.5" fill="#333">Market Entry (new geography/product)</text>
             <rect x="305" y="116" width="68" height="16" rx="8" fill="#e8f4fd"/>
-            <text x="339" y="128" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7.5" font-weight="600" fill="#0c5460">MÉDIA</text>
+            <text x="339" y="128" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7.5" font-weight="600" fill="#0c5460">MEDIUM</text>
             <text x="440" y="129" font-family="Poppins,sans-serif" font-size="8" fill="#555">Deloitte, PwC</text>
             <text x="580" y="129" font-family="Poppins,sans-serif" font-size="8" fill="#555">Strategy</text>
-            <!-- Row 4 -->
             <rect x="20" y="139" width="660" height="28" rx="3" fill="#fafaf8"/>
             <text x="30" y="157" font-family="Poppins,sans-serif" font-size="8.5" fill="#333">Operations (efficiency, supply chain)</text>
             <rect x="305" y="144" width="68" height="16" rx="8" fill="#e8f4fd"/>
-            <text x="339" y="156" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7.5" font-weight="600" fill="#0c5460">MÉDIA</text>
+            <text x="339" y="156" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7.5" font-weight="600" fill="#0c5460">MEDIUM</text>
             <text x="440" y="157" font-family="Poppins,sans-serif" font-size="8" fill="#555">EY, KPMG</text>
             <text x="580" y="157" font-family="Poppins,sans-serif" font-size="8" fill="#555">Operations</text>
-            <!-- Row 5 -->
             <rect x="20" y="167" width="660" height="25" rx="3" fill="#fff"/>
-            <text x="30" y="184" font-family="Poppins,sans-serif" font-size="8.5" fill="#333">M&amp;A / Due Diligence</text>
+            <text x="30" y="184" font-family="Poppins,sans-serif" font-size="8.5" fill="#333">M&A / Due Diligence</text>
             <rect x="305" y="170" width="68" height="16" rx="8" fill="#f0faf4"/>
-            <text x="339" y="182" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7.5" font-weight="600" fill="#2E7D52">BAIXA</text>
+            <text x="339" y="182" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7.5" font-weight="600" fill="#2E7D52">LOW</text>
             <text x="440" y="184" font-family="Poppins,sans-serif" font-size="8" fill="#555">EY, KPMG Deal</text>
             <text x="580" y="184" font-family="Poppins,sans-serif" font-size="8" fill="#555">Transactions</text>
         </svg>
-        <p class="illus-caption">Tipos de case por frequência — e quais as firmas que os aplicam com maior regularidade</p>
+        <p class="illus-caption">Case types by frequency, and which firms apply them most regularly.</p>
     </div>
 
-    <h3 class="fade-in">A estrutura vencedora</h3>
+    <h3 class="fade-in">The Winning Structure</h3>
     <ul class="tip-list fade-in">
-        <li><strong>1. Clarifica o problema:</strong> faz 2 a 3 perguntas antes de começares a resolver</li>
-        <li><strong>2. Anuncia o teu framework:</strong> "Vou abordar isto através de três dimensões..."</li>
-        <li><strong>3. Pensa em voz alta</strong> — o silêncio é o teu inimigo nesta fase</li>
-        <li><strong>4. Usa estrutura MECE:</strong> Mutually Exclusive, Collectively Exhaustive</li>
-        <li><strong>5. Quantifica sempre que possível</strong> — chega a números, mesmo que estimados</li>
-        <li><strong>6. Conclui com uma recomendação clara e direta,</strong> sem hesitar</li>
+        <li><strong>1. Clarify the problem:</strong> ask 2 to 3 questions before you start solving</li>
+        <li><strong>2. Announce your framework:</strong> "I will approach this through three dimensions..."</li>
+        <li><strong>3. Think out loud</strong> — silence is your enemy at this stage</li>
+        <li><strong>4. Use a MECE structure:</strong> Mutually Exclusive, Collectively Exhaustive</li>
+        <li><strong>5. Quantify whenever possible</strong> — get to numbers, even if estimated</li>
+        <li><strong>6. Conclude with a clear and direct recommendation,</strong> without hesitation</li>
     </ul>
 
     <div class="caso-block fade-in">
-        <span class="caso-label">Caso Prático 03 — Exemplo de case resolvido</span>
-        <p><strong style="color:#C9A961;">Enunciado:</strong> "O teu cliente é um retalhista de moda em Portugal. O lucro caiu 20% no último ano. O que aconteceu e o que recomendas?"</p>
-        <p><strong style="color:#C9A961;">Approach:</strong> Start by clarifying — "A queda é em margem bruta ou lucro líquido? É em todas as categorias ou específica?" Estrutura em duas dimensões: Revenue (queda de vendas, mix de produto, pricing) e Cost (COGS, SG&amp;A). Prioriza por impacto, chega a hipóteses com números estimados e termina com recomendação clara: "Recomendo focar primeiro em X porque representa 60% do impacto estimado."</p>
+        <span class="caso-label">Case Study 03 — Example of a solved case</span>
+        <p><strong style="color:#C9A961;">Prompt:</strong> "Your client is a fashion retailer in Portugal. Profit has dropped by 20% in the last year. What happened and what do you recommend?"</p>
+        <p><strong style="color:#C9A961;">Approach:</strong> Start by clarifying, "Is the drop in gross margin or net profit? Is it across all categories or specific?" Structure into two dimensions: Revenue (sales drop, product mix, pricing) and Cost (COGS, SG&A). Prioritize by impact, come up with hypotheses with estimated numbers, and end with a clear recommendation: "I recommend focusing first on X because it represents 60% of the estimated impact."</p>
     </div>
 
     <div class="warning-box fade-in">
@@ -486,7 +487,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         ✗ Staying silent for more than 30 seconds — think out loud<br>
         ✗ Using a generic framework without adapting it to the specific case<br>
         ✗ Avoiding the numbers — many candidates shy away from maths out of insecurity<br>
-        ✗ Not reaching a recommendation — the interviewer wants a decision, not a "it depends"</p>
+        ✗ Not reaching a recommendation — the interviewer wants a decision, not an "it depends"</p>
     </div>
 
     <div class="video-wrap fade-in">
@@ -499,138 +500,134 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         </div>
     </div>
 
-    <!-- Erros -->
-    <span class="anchor-label" id="erros">04 — Fatal Mistakes</span>
-    <h2 class="fade-in">Mistakes that eliminate good candidates</h2>
+    <span class="anchor-label" id="mistakes">03 — Fatal Mistakes</span>
+    <h2 class="fade-in">Mistakes That Eliminate Good Candidates</h2>
     <div class="anchor-divider"></div>
 
     <ul class="error-list fade-in">
         <li>
             <div class="error-num">1</div>
             <div class="error-content">
-                <h4>Candidatares-te a todas as firmas com o mesmo material</h4>
-                <p>Cada Big4 tem uma cultura e prioridades diferentes. Deloitte valoriza inovação e tecnologia; KPMG é mais conservadora e focada em processo; PwC tem forte cultura de cliente; EY destaca-se em desenvolvimento de pessoas. Uma candidatura genérica é imediatamente detetada.</p>
+                <h4>Applying to all firms with the same material</h4>
+                <p>Each Big4 has a different culture and priorities. Deloitte values innovation and technology; KPMG is more conservative and process-focused; PwC has a strong client culture; EY stands out in people development. A generic application is immediately detected.</p>
             </div>
         </li>
         <li>
             <div class="error-num">2</div>
             <div class="error-content">
-                <h4>Não praticares cases até ficares confortável</h4>
-                <p>A maior parte dos candidatos pratica 3 ou 4 cases. Os que entram praticaram 20 a 40. A diferença é a fluidez — pareces natural a estruturar problemas, não pareces a seguir um guião.</p>
+                <h4>Not practicing cases until you're comfortable</h4>
+                <p>Most candidates practice 3 or 4 cases. Those who get in have practiced 20 to 40. The difference is fluency — you seem natural structuring problems, you don't seem to be following a script.</p>
             </div>
         </li>
         <li>
             <div class="error-num">3</div>
             <div class="error-content">
-                <h4>Subestimares a entrevista de motivação</h4>
-                <p>Muitos candidatos dedicam semanas a preparar cases e 20 minutos a pensar porque querem consultoria. O recruiter consegue distinguir uma resposta preparada de uma resposta genuína — e valoriza a segunda.</p>
+                <h4>Underestimating the motivation interview</h4>
+                <p>Many candidates spend weeks preparing for cases and 20 minutes thinking about why they want to do consulting. The recruiter can distinguish a prepared answer from a genuine one, and values the latter.</p>
             </div>
         </li>
         <li>
             <div class="error-num">4</div>
             <div class="error-content">
-                <h4>Não perguntares nada no final</h4>
-                <p>"Tem alguma pergunta para mim?" é uma oportunidade, não uma formalidade. Não ter perguntas comunica falta de curiosidade e interesse. Prepara sempre 2 a 3 perguntas específicas e inteligentes.</p>
+                <h4>Not asking anything at the end</h4>
+                <p>"Do you have any questions for me?" is an opportunity, not a formality. Not having questions communicates a lack of curiosity and interest. Always prepare 2 to 3 specific and intelligent questions.</p>
             </div>
         </li>
         <li>
             <div class="error-num">5</div>
             <div class="error-content">
-                <h4>Desistires depois de um não</h4>
-                <p>Muitos consultores sénior foram rejeitados numa primeira tentativa. As Big4 têm políticas de candidatura repetida — geralmente podes tentar de novo após 6 a 12 meses. Pede feedback, trabalha as lacunas e volta mais forte.</p>
+                <h4>Giving up after a 'no'</h4>
+                <p>Many senior consultants were rejected on their first attempt. Big4 firms have re-application policies — you can usually try again after 6 to 12 months. Ask for feedback, work on the gaps, and come back stronger.</p>
             </div>
         </li>
     </ul>
 
-    <!-- Checklists -->
-    <span class="anchor-label" id="checklist">05 — Checklists</span>
-    <h2 class="fade-in">Preparation checklists by stage</h2>
+    <span class="anchor-label" id="checklist">04 — Checklists</span>
+    <h2 class="fade-in">Preparation Checklists by Stage</h2>
     <div class="anchor-divider"></div>
 
     <div class="checklist-section fade-in">
         <h3>CV &amp; Application</h3>
         <ul class="checklist">
-            <li>O teu CV tem no máximo 1 página (se tens menos de 3 anos de experiência)</li>
-            <li>Cada bullet point tem um resultado concreto e mensurável</li>
-            <li>A carta de motivação menciona projetos ou iniciativas específicas da firma</li>
-            <li>Alinhaste o teu percurso com a área a que te candidatas (consultoria de gestão, tecnologia, auditoria, fiscal)</li>
-            <li>Pediste a alguém de fora da tua área para rever o CV — a clareza conta</li>
+            <li>Your CV is at most 1 page long (if you have less than 3 years of experience)</li>
+            <li>Each bullet point has a concrete and measurable result</li>
+            <li>The cover letter mentions specific projects or initiatives of the firm</li>
+            <li>You have aligned your background with the area you are applying for (management consulting, technology, audit, tax)</li>
+            <li>You have asked someone from outside your field to review your CV — clarity counts</li>
         </ul>
     </div>
 
     <div class="checklist-section fade-in">
-        <h3>Testes Online</h3>
+        <h3>Online Tests</h3>
         <ul class="checklist">
-            <li>Fizeste pelo menos 3 testes de prática de raciocínio numérico e verbal</li>
-            <li>Tens um ambiente silencioso e ligação à internet estável para o dia do teste</li>
-            <li>Verificaste o prazo de realização do teste — não deixes para as últimas horas</li>
-            <li>Leste as instruções completas antes de começares</li>
+            <li>You have done at least 3 practice tests for numerical and verbal reasoning</li>
+            <li>You have a quiet environment and a stable internet connection for the test day</li>
+            <li>You have checked the deadline for taking the test — don't leave it to the last minute</li>
+            <li>You have read the full instructions before starting</li>
         </ul>
     </div>
 
     <div class="checklist-section fade-in">
         <h3>Motivation Interview</h3>
         <ul class="checklist">
-            <li>Consegues explicar em 2 minutos porque queres consultoria, com uma experiência concreta</li>
-            <li>Sabes 3 diferenças relevantes entre a firma a que te candidatas e as concorrentes</li>
-            <li>Preparaste respostas comportamentais (liderança, conflito, fracasso) com a estrutura STAR</li>
-            <li>Tens 2 a 3 perguntas inteligentes para fazer ao recruiter</li>
+            <li>You can explain in 2 minutes why you want to do consulting, with a concrete experience</li>
+            <li>You know 3 relevant differences between the firm you are applying to and its competitors</li>
+            <li>You have prepared behavioral answers (leadership, conflict, failure) with the STAR structure</li>
+            <li>You have 2 to 3 intelligent questions to ask the recruiter</li>
         </ul>
     </div>
 
     <div class="checklist-section fade-in">
         <h3>Case Interview</h3>
         <ul class="checklist">
-            <li>Praticaste pelo menos 15 a 20 cases completos — em voz alta, não apenas a pensar</li>
-            <li>Fizeste mock interviews com outros candidatos ou amigos</li>
-            <li>Sabes calcular percentagens e fazer estimações de mercado sem calculadora</li>
-            <li>Estás confortável com os frameworks principais: profitability, market entry, M&amp;A</li>
-            <li>Sabes pedir tempo para pensar sem pareceres bloqueado</li>
+            <li>You have practiced at least 15 to 20 complete cases — out loud, not just in your head</li>
+            <li>You have done mock interviews with other candidates or friends</li>
+            <li>You know how to calculate percentages and make market estimations without a calculator</li>
+            <li>You are comfortable with the main frameworks: profitability, market entry, M&A</li>
+            <li>You know how to ask for time to think without seeming blocked</li>
         </ul>
     </div>
 
     <div class="checklist-section fade-in">
         <h3>Final Interview with Partner</h3>
         <ul class="checklist">
-            <li>Pesquisaste o partner no LinkedIn e sabes a sua área de especialização</li>
-            <li>Tens 3 histórias de liderança preparadas em formato STAR</li>
-            <li>Preparaste 3 perguntas específicas sobre a firma ou área — não sobre salário</li>
-            <li>Escolheste roupa profissional adequada ao contexto da firma</li>
-            <li>Confirmaste a morada, o piso e o nome do interlocutor com antecedência</li>
+            <li>You have researched the partner on LinkedIn and know their area of expertise</li>
+            <li>You have 3 leadership stories prepared in STAR format</li>
+            <li>You have prepared 3 specific questions about the firm or area — not about salary</li>
+            <li>You have chosen professional attire appropriate for the firm's context</li>
+            <li>You have confirmed the address, floor, and interviewer's name in advance</li>
         </ul>
     </div>
 
     <div class="success-box fade-in">
-        <p><strong>Uma nota final:</strong> Entrar numa Big4 é difícil. Mas é uma dificuldade que se prepara. A maioria dos candidatos que não entra não falhou por falta de talento — falhou por falta de preparação específica. Sabe o que vais encontrar, pratica o que vais fazer e apresenta-te com confiança genuína. Isso é o que separa quem entra de quem fica a ver.</p>
+        <p><strong>A final note:</strong> Getting into a Big4 is difficult. But it's a difficulty that can be prepared for. Most candidates who don't get in didn't fail for lack of talent, they failed for lack of specific preparation. Know what you're going to find, practice what you're going to do, and present yourself with genuine confidence. That's what separates those who get in from those who watch.</p>
     </div>
 
     <div class="cta-banner fade-in">
-        <span class="cta-label">Ferramenta Gratuita</span>
-        <h3>O teu CV está pronto<br><strong>para a triagem automática das Big4?</strong></h3>
-        <p>O CV Analyser da Share2Inspire analisa o teu CV em 60 segundos e diz-te exatamente o que um recruiter — e um ATS — vai encontrar. Antes de te candidatares, garante que passas no primeiro filtro.</p>
-        <a href="/cv-analyser">Analisar o Meu CV Gratuitamente →</a>
+        <span class="cta-label">Free Tool</span>
+        <h3>Is your CV ready<br><strong>for the Big4's automated screening?</strong></h3>
+        <p>The Share2Inspire CV Analyser analyses your CV in 60 seconds and tells you exactly what a recruiter — and an ATS — will find. Before you apply, make sure you pass the first filter.</p>
+        <a href="/en/cv-analyser">Analyse My CV for Free →</a>
     </div>
 
 </div>
 
-<!-- Related -->
 <div class="section-light">
     <div class="section-inner fade-in">
         <span class="section-label">Keep reading</span>
         <h2 class="section-title">Related <strong>content</strong></h2>
         <div class="divider"></div>
         <div class="related-grid">
-            <div class="related-card"><span class="tag">CV &amp; ATS</span><h4>The Definitive ATS Guide: How to Make Sure Your CV Passes the Filters</h4><a href="guia-superar-ats-curriculo.html">Read article →</a></div>
-            <div class="related-card"><span class="tag">Interviews</span><h4>In-Person vs. Remote Interview: Complete Preparation Guide</h4><a href="entrevista-presencial-vs-remota.html">Read article →</a></div>
-            <div class="related-card"><span class="tag">Cover Letter</span><h4>The Cover Letter That Gets Interviews</h4><a href="carta-de-apresentacao-que-gera-entrevistas.html">Read article →</a></div>
-            <div class="related-card"><span class="tag">Career Strategy</span><h4>How to Negotiate Your Salary: Complete Guide 2026</h4><a href="how-to-negotiate-salary.html">Read article →</a></div>
+            <div class="related-card"><span class="tag">CV &amp; ATS</span><h4>The Definitive ATS Guide: How to Make Sure Your CV Passes the Filters</h4><a href="/en/blog/artigos/guia-superar-ats-curriculo.html">Read article →</a></div>
+            <div class="related-card"><span class="tag">Interviews</span><h4>In-Person vs. Remote Interview: Complete Preparation Guide</h4><a href="/en/blog/artigos/entrevista-presencial-vs-remota.html">Read article →</a></div>
+            <div class="related-card"><span class="tag">Cover Letter</span><h4>The Cover Letter That Gets Interviews</h4><a href="/en/blog/artigos/carta-de-apresentacao-que-gera-entrevistas.html">Read article →</a></div>
+            <div class="related-card"><span class="tag">Career Strategy</span><h4>How to Negotiate Your Salary: Complete Guide 2026</h4><a href="/en/blog/artigos/how-to-negotiate-salary.html">Read article →</a></div>
             <div class="related-card"><span class="tag">Video</span><h4>How to Land a Big 4 Job: The Ultimate Guide (5:18 min)</h4><a href="/en/videos/big4-recruitment-guide.html">Watch video →</a></div>
-            <div class="related-card" style="border-left:2px solid #C9A961;"><span class="tag">Big4 · Insider</span><h4>Big4 From the Inside: What Nobody Tells You Before You Join</h4><a href="big4-insider-10-years.html">Read article →</a></div>
+            <div class="related-card" style="border-left:2px solid #C9A961;"><span class="tag">Big4 · Insider</span><h4>Big4 From the Inside: What Nobody Tells You Before You Join</h4><a href="/en/blog/artigos/big4-insider-10-years.html">Read article →</a></div>
         </div>
     </div>
 </div>
 
-<!-- Newsletter -->
 <div class="section-dark" style="border-top:1px solid rgba(255,255,255,0.06);">
     <div class="section-inner fade-in" style="text-align:center;">
         <div style="max-width:520px;margin:0 auto;">
@@ -646,32 +643,31 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     </div>
 </div>
 
-<!-- Footer -->
 <footer style="background:#1a1a2e;">
-    <div class="container">
-        <div class="row g-4" style="padding:60px 0 10px;">
-            <div class="col-lg-4"><img loading="lazy" src="../../images/logo.webp" alt="Share2Inspire" style="height:32px;margin-bottom:1rem;"><p style="font-size:.8rem;color:rgba(255,255,255,.5);">Sharing to inspire careers.</p></div>
+    <div class="container" style="background:#1a1a2e;max-width:100%;padding:0;">
+        <div class="row g-4 justify-content-center" style="background:#1a1a2e;padding:60px 2rem 10px;max-width:1100px;margin:0 auto;">
+            <div class="col-lg-4"><img loading="lazy" src="/images/logo.webp" alt="Share2Inspire" style="height:32px;margin-bottom:1rem;"><p style="font-size:.8rem;color:rgba(255,255,255,.5);">Sharing to inspire careers.</p></div>
             <div class="col-lg-2 col-md-4">
                 <h5 style="font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:#C9A961;font-weight:600;margin-bottom:1rem;">Navigation</h5>
-                <a href="../../index.html" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:.5rem;">Home</a>
-                <a href="../sobre.html" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:.5rem;">About</a>
-                <a href="../servicos.html" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:.5rem;">Services</a>
-                <a href="../conhecimento.html" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;">Knowledge Hub</a>
+                <a href="/en/pages/home/" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:.5rem;">Home</a>
+                <a href="/en/pages/about" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:.5rem;">About</a>
+                <a href="/en/pages/services/" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:.5rem;">Services</a>
+                <a href="/en/blog" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;">Knowledge Hub</a>
             </div>
             <div class="col-lg-2 col-md-4">
                 <h5 style="font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:#C9A961;font-weight:600;margin-bottom:1rem;">Tools</h5>
-                <a href="/cv-analyser" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:.5rem;">CV Analyser</a>
-                <a href="/linkedin-roaster" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:.5rem;">LinkedIn Roaster</a>
-                <a href="/career-path" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;">Career Path</a>
+                <a href="/en/cv-analyser" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:.5rem;">CV Analyser</a>
+                <a href="/en/linkedin-roaster" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:.5rem;">LinkedIn Roaster</a>
+                <a href="/en/career-path" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;">Career Path</a>
             </div>
             <div class="col-lg-2 col-md-4">
                 <h5 style="font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:#C9A961;font-weight:600;margin-bottom:1rem;">Legal</h5>
-                <a href="../../../pages/politica-privacidade.html" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:.5rem;">Privacy</a>
-                <a href="../../../pages/politica-cookies.html" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:.5rem;">Cookies</a>
-                <a href="../../../pages/informacao-legal.html" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;">Legal Information</a>
+                <a href="/en/pages/privacy-policy" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:.5rem;">Privacy</a>
+                <a href="/en/pages/privacy-policy" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;margin-bottom:.5rem;">Cookies</a>
+                <a href="/en/pages/about" style="display:block;font-size:.8rem;color:rgba(255,255,255,.5);text-decoration:none;">Legal Information</a>
             </div>
         </div>
-        <div style="background:#1a1a2e;padding:0 0 30px;">
+        <div style="background:#1a1a2e;padding:0 2rem 30px;">
             <div style="max-width:1100px;margin:0 auto;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.06);text-align:center;">
                 <p style="font-size:.65rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1.5px;">&copy; 2026 SHARE2INSPIRE | SAMUEL ROLO. ALL RIGHTS RESERVED.</p>
             </div>
