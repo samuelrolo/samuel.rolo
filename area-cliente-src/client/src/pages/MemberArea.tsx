@@ -897,7 +897,7 @@ export default function MemberArea() {
     key: string;
     icon: any;
     color: string;
-    type: 'external' | 'inline' | 'locked' | 'discount';
+    type: 'external' | 'inline' | 'locked' | 'discount' | 'widget';
     action?: string;
     url?: string;
     discount?: string | null;
@@ -938,8 +938,8 @@ export default function MemberArea() {
       key: 'careerBot',
       icon: Bot,
       color: 'from-purple-500/15 to-purple-500/5',
-      type: 'external',
-      url: 'https://share2inspire.pt/career-bot/',
+      type: 'widget',
+      action: 'openCareerBot',
       label: 'Career Advisory Bot',
       desc: lang === 'pt' ? 'Assistente pessoal de carreira com IA' : 'Personal AI career assistant',
     },
@@ -1324,6 +1324,27 @@ export default function MemberArea() {
                   </a>
                 )}
 
+                {/* Widget trigger tool */}
+                {tool.type === 'widget' && (
+                  <button
+                    onClick={() => {
+                      if (tool.action === 'openCareerBot') {
+                        window.dispatchEvent(new Event('open-career-bot'));
+                      }
+                    }}
+                    className="group flex items-center gap-4 p-5 w-full text-left"
+                  >
+                    <div className={`w-10 h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color}`}>
+                      <tool.icon className="w-4.5 h-4.5 text-[#333]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
+                      <p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
+                    </div>
+                    <ExternalLink className="w-3.5 h-3.5 text-[#ccc] group-hover:text-gold/50 transition-colors shrink-0" />
+                  </button>
+                )}
+
                 {/* Locked tool */}
                 {tool.type === 'locked' && (
                   <div className="flex items-center gap-4 p-5 opacity-50">
@@ -1423,6 +1444,32 @@ export default function MemberArea() {
         <section>
           <h2 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('member.content')}</h2>
           <p className="text-xs text-[#999] font-light mb-6">{t('member.contentDesc')}</p>
+
+          {/* Highlighted: Cover Letter Generator */}
+          <div className="mb-6 p-4 border border-gold/20 rounded-lg bg-gradient-to-r from-gold/5 to-transparent">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-gold/20 to-gold/5 flex items-center justify-center shrink-0">
+                <FileText className="w-5 h-5 text-gold" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-semibold text-[#1a1a1a] mb-0.5">
+                  {lang === 'pt' ? '✉️ Gerador de Cartas de Apresentação' : '✉️ Cover Letter Generator'}
+                </h3>
+                <p className="text-xs text-[#777] font-light">
+                  {lang === 'pt'
+                    ? 'Gera cartas de apresentação personalizadas com base no teu CV e LinkedIn. Indica a empresa e a vaga e o nosso AI faz o resto.'
+                    : 'Generate personalised cover letters based on your CV and LinkedIn. Just provide the company and role.'}
+                </p>
+              </div>
+              <button
+                onClick={() => window.dispatchEvent(new Event('open-career-bot-cover-letter'))}
+                className="shrink-0 px-4 py-2 rounded-lg text-white text-xs font-medium transition-all hover:opacity-90"
+                style={{ background: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' }}
+              >
+                {lang === 'pt' ? 'Gerar Carta' : 'Generate Letter'}
+              </button>
+            </div>
+          </div>
 
           {/* Filters */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
