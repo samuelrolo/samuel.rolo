@@ -103,11 +103,11 @@ export default function CareerBotWidget() {
   // Don't render if no active subscription — MUST be after all hooks
   if (!user || !hasActiveSubscription()) return null;
 
-  const sendMessage = async (overrideMessage?: string) => {
+  const sendMessage = async (overrideMessage?: string, displayMessage?: string) => {
     const msg = overrideMessage || input.trim();
     if (!msg && view === 'chat') return;
 
-    const userMsg: Message = { role: 'user', content: msg || '...' };
+    const userMsg: Message = { role: 'user', content: displayMessage || msg || '...' };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
     setLoading(true);
@@ -206,8 +206,9 @@ INSTRUÇÕES DE QUALIDADE:
    - Incluir pelo menos um dado quantificável (%, €, equipas, projetos)
 
 Gera APENAS a carta, sem explicações adicionais.`;
+    const display = `✉️ Gerar carta de apresentação para ${role} na ${company}${coverLetterNotes ? ` (${coverLetterNotes})` : ''}`;
     setView('chat');
-    sendMessage(msg);
+    sendMessage(msg, display);
   };
 
   const handleNetworkingEmailSubmit = () => {
@@ -248,8 +249,9 @@ INSTRUÇÕES DE QUALIDADE:
    - O e-mail deve poder ser lido em menos de 1 minuto
 
 Gera APENAS o e-mail completo (com assunto), sem explicações adicionais.`;
+    const display = `🤝 Gerar e-mail de networking para ${netRecipient} — ${netPurpose}${netNotes ? ` (${netNotes})` : ''}`;
     setView('chat');
-    sendMessage(msg);
+    sendMessage(msg, display);
   };
 
   const handleLinkedinPostSubmit = () => {
@@ -300,8 +302,9 @@ INSTRUÇÕES DE QUALIDADE:
    - O post deve gerar comentários, não apenas likes
 
 Gera APENAS o post, sem explicações adicionais.`;
+    const display = `📢 Gerar post LinkedIn: ${liNewRole} na ${liNewCompany} (tom: ${liTone})${liNotes ? ` — ${liNotes}` : ''}`;
     setView('chat');
-    sendMessage(msg);
+    sendMessage(msg, display);
   };
 
   const copyToClipboard = (text: string) => {
