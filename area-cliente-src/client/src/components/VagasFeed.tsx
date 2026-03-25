@@ -2,9 +2,11 @@
  * VagasFeed — Feed de Vagas powered by Adzuna API
  * Componente React integrado na Área de Membro com destaque visual
  * Credenciais pré-configuradas; pesquisa personalizável
+ * Fully i18n-aware via useI18n hook
  */
 import { useState, useEffect, useCallback } from 'react';
 import { Briefcase, MapPin, RefreshCw, ExternalLink, Search } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 // ─── Pre-configured Adzuna credentials ──────────────────────────────────────
 const S2I_APP_ID  = '6c8e3465';
@@ -38,15 +40,18 @@ const DEMO_VAGAS: Vaga[] = [
 
 type FilterType = 'todas' | 'remote' | 'lisboa' | 'rh' | 'marketing';
 
-const FILTERS: { key: FilterType; label: string }[] = [
-  { key: 'todas',     label: 'Todas' },
-  { key: 'remote',    label: 'Remoto' },
-  { key: 'lisboa',    label: 'Lisboa' },
-  { key: 'rh',        label: 'RH' },
-  { key: 'marketing', label: 'Marketing' },
-];
+export default function VagasFeed({ lang: langProp }: { lang?: string }) {
+  const { t, lang: ctxLang } = useI18n();
+  const lang = langProp || ctxLang;
 
-export default function VagasFeed({ lang = 'pt' }: { lang?: string }) {
+  const FILTERS: { key: FilterType; label: string }[] = [
+    { key: 'todas',     label: t('vf.all') },
+    { key: 'remote',    label: t('vf.remote') },
+    { key: 'lisboa',    label: 'Lisboa' },
+    { key: 'rh',        label: t('vf.hr') },
+    { key: 'marketing', label: 'Marketing' },
+  ];
+
   const [vagas, setVagas] = useState<Vaga[]>([]);
   const [activeFilter, setActiveFilter] = useState<FilterType>('todas');
   const [loading, setLoading] = useState(true);
@@ -92,6 +97,8 @@ export default function VagasFeed({ lang = 'pt' }: { lang?: string }) {
     return v.key?.includes(activeFilter);
   });
 
+  const remoteLabel = lang === 'pt' ? 'Remoto' : 'Remote';
+
   return (
     <section className="mb-12">
       {/* Section header with gold accent */}
@@ -101,15 +108,15 @@ export default function VagasFeed({ lang = 'pt' }: { lang?: string }) {
         </div>
         <div>
           <h2 className="text-sm font-medium text-[#1a1a1a]">
-            {lang === 'pt' ? 'Feed de Vagas' : 'Job Feed'}
+            {t('vf.title')}
           </h2>
           <p className="text-[11px] text-[#999] font-light">
-            {lang === 'pt' ? 'Curadas para o teu perfil · Powered by Adzuna' : 'Curated for your profile · Powered by Adzuna'}
+            {t('vf.subtitle')}
           </p>
         </div>
         <div className="ml-auto">
           <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#BF9A33]/10 text-[#a57b0a] border border-[#BF9A33]/20">
-            {loading ? '...' : `${filtered.length} ${lang === 'pt' ? 'vagas' : 'jobs'}`}
+            {loading ? '...' : `${filtered.length} ${t('vf.jobs')}`}
           </span>
         </div>
       </div>
@@ -138,7 +145,7 @@ export default function VagasFeed({ lang = 'pt' }: { lang?: string }) {
             className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] text-[#6c757d] border border-[#dee2e6] hover:border-[#BF9A33] hover:text-[#a57b0a] transition-all"
           >
             <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
-            {lang === 'pt' ? 'Atualizar' : 'Refresh'}
+            {t('vf.refresh')}
           </button>
         </div>
 
@@ -156,13 +163,13 @@ export default function VagasFeed({ lang = 'pt' }: { lang?: string }) {
             </div>
           ) : filtered.length === 0 ? (
             <div className="py-10 text-center text-[#6c757d] text-xs">
-              {lang === 'pt' ? 'Sem vagas para este filtro.' : 'No jobs for this filter.'}
+              {t('vf.noJobs')}
               <br />
               <button
                 onClick={() => setActiveFilter('todas')}
                 className="text-[#a57b0a] font-semibold mt-1 hover:underline"
               >
-                {lang === 'pt' ? 'Ver todas →' : 'View all →'}
+                {t('vf.viewAll')}
               </button>
             </div>
           ) : (
@@ -201,7 +208,7 @@ export default function VagasFeed({ lang = 'pt' }: { lang?: string }) {
                     )}
                     {v.remote && (
                       <span className="text-[10px] px-2 py-0.5 rounded bg-[#dbeafe] border border-[#93c5fd] text-[#003d8f] font-medium">
-                        🏠 Remoto
+                        🏠 {remoteLabel}
                       </span>
                     )}
                     {v.tags.map((tag, ti) => (
@@ -224,11 +231,11 @@ export default function VagasFeed({ lang = 'pt' }: { lang?: string }) {
             rel="noopener noreferrer"
             className="text-[12px] text-[#a57b0a] font-semibold hover:text-[#BF9A33] inline-flex items-center gap-1"
           >
-            {lang === 'pt' ? 'Ver todas as vagas no Adzuna' : 'View all jobs on Adzuna'}
+            {t('vf.viewAllAdzuna')}
             <ExternalLink className="w-3 h-3" />
           </a>
           <div className="text-[10px] text-[#999] mt-0.5">
-            Powered by Adzuna API {!isApiData && `· ${lang === 'pt' ? 'Dados de demonstração' : 'Demo data'}`}
+            Powered by Adzuna API {!isApiData && `· ${t('vf.demoData')}`}
           </div>
         </div>
       </div>

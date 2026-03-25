@@ -5,9 +5,11 @@
  * Supports two variants:
  *   - compact: shows only level badge, score ring, description (for MemberArea)
  *   - detailed: shows full breakdown with factors and badge (for Dashboard/Profile)
+ * Fully i18n-aware via lang prop
  */
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useI18n } from '@/lib/i18n';
 import { supabase } from '@/lib/supabase';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -23,16 +25,25 @@ type CareerProgressProps = {
 };
 
 // ─── Level Configuration ────────────────────────────────────────────────────
-const LEVELS = [
-  { name: 'Explorador', icon: '🌱', min: 0, max: 199, color: '#7A7A7A', bg: '#F1EFE8', desc: 'Estás a dar os primeiros passos. Faz a tua primeira análise para começar a subir.' },
-  { name: 'Consciente', icon: '🔍', min: 200, max: 399, color: '#185FA5', bg: '#E6F1FB', desc: 'Já tens uma visão clara do ponto de partida. Continua a explorar as ferramentas.' },
-  { name: 'Ativo', icon: '⚡', min: 400, max: 599, color: '#3B6D11', bg: '#EAF3DE', desc: 'Estás em movimento. As tuas análises mostram progressos concretos.' },
-  { name: 'Estratégico', icon: '🚀', min: 600, max: 799, color: '#854F0B', bg: '#FAEEDA', desc: 'Tens uma estratégia definida. O mercado reconhece o teu posicionamento.' },
-  { name: 'Elite', icon: '💎', min: 800, max: 1000, color: '#72243E', bg: '#FBEAF0', desc: 'Perfil de referência. Estás no topo do posicionamento de carreira.' },
+const LEVEL_KEYS = ['explorer', 'aware', 'active', 'strategic', 'elite'] as const;
+const LEVEL_ICONS = ['🌱', '🔍', '⚡', '🚀', '💎'];
+const LEVEL_RANGES = [
+  { min: 0, max: 199 },
+  { min: 200, max: 399 },
+  { min: 400, max: 599 },
+  { min: 600, max: 799 },
+  { min: 800, max: 1000 },
+];
+const LEVEL_COLORS = [
+  { color: '#7A7A7A', bg: '#F1EFE8' },
+  { color: '#185FA5', bg: '#E6F1FB' },
+  { color: '#3B6D11', bg: '#EAF3DE' },
+  { color: '#854F0B', bg: '#FAEEDA' },
+  { color: '#72243E', bg: '#FBEAF0' },
 ];
 
 // ─── Score Calculation ──────────────────────────────────────────────────────
-function calculateScore(analyses: AnalysisRecord[], profile: any) {
+function calculateScore(analyses: AnalysisRecord[], profile: any, t: (key: string) => string) {
   const factors: Record<string, { earned: number; max: number; tasks: { label: string; pts: number; done: boolean; bonus?: boolean }[] }> = {
     cv: { earned: 0, max: 250, tasks: [] },
     li: { earned: 0, max: 250, tasks: [] },
@@ -51,10 +62,10 @@ function calculateScore(analyses: AnalysisRecord[], profile: any) {
   const hasCvImprovement = cvAnalyses.length >= 2;
 
   factors.cv.tasks = [
-    { label: 'Primeira análise feita', pts: 50, done: hasCvAnalysis },
-    { label: 'Score do CV ≥ 60%', pts: 75, done: cvScore >= 60 },
-    { label: 'Score do CV ≥ 85%', pts: 125, done: cvScore >= 85 },
-    { label: 'Segunda análise (melhoria)', pts: 50, done: hasCvImprovement, bonus: true },
+    { label: t('cp.task.firstAnalysis'), pts: 50, done: hasCvAnalysis },
+    { label: t('cp.task.cvScore60'), pts: 75, done: cvScore >= 60 },
+    { label: t('cp.task.cvScore85'), pts: 125, done: cvScore >= 85 },
+    { label: t('cp.task.secondAnalysis'), pts: 50, done: hasCvImprovement, bonus: true },
   ];
 
   // ── LinkedIn (max 250) ──
@@ -67,10 +78,10 @@ function calculateScore(analyses: AnalysisRecord[], profile: any) {
   const hasLiImprovement = liAnalyses.length >= 2;
 
   factors.li.tasks = [
-    { label: 'Primeira análise feita', pts: 50, done: hasLiAnalysis },
-    { label: 'Score LinkedIn ≥ 60%', pts: 75, done: liScore >= 60 },
-    { label: 'Score LinkedIn ≥ 85%', pts: 125, done: liScore >= 85 },
-    { label: 'Perfil reanalisado após melhorias', pts: 50, done: hasLiImprovement, bonus: true },
+    { label: t('cp.task.firstAnalysis'), pts: 50, done: hasLiAnalysis },
+    { label: t('cp.task.liScore60'), pts: 75, done: liScore >= 60 },
+    { label: t('cp.task.liScore85'), pts: 125, done: liScore >= 85 },
+    { label: t('cp.task.liReanalysed'), pts: 50, done: hasLiImprovement, bonus: true },
   ];
 
   // ── Career Path (max 200) ──
@@ -84,9 +95,9 @@ function calculateScore(analyses: AnalysisRecord[], profile: any) {
   const cpDifferentMonths = cpMonths.size >= 2;
 
   factors.cp.tasks = [
-    { label: 'Análise feita', pts: 100, done: hasCpAnalysis },
-    { label: 'Mais de 1 cenário explorado', pts: 50, done: cpMultiScenario },
-    { label: 'Análise repetida em meses diferentes', pts: 50, done: cpDifferentMonths, bonus: true },
+    { label: t('cp.task.analysisCompleted'), pts: 100, done: hasCpAnalysis },
+    { label: t('cp.task.multiScenario'), pts: 50, done: cpMultiScenario },
+    { label: t('cp.task.repeatMonths'), pts: 50, done: cpDifferentMonths, bonus: true },
   ];
 
   // ── Career Intelligence (max 150) ──
@@ -95,8 +106,8 @@ function calculateScore(analyses: AnalysisRecord[], profile: any) {
   const hasCi2 = ciAnalyses.length >= 2;
 
   factors.ci.tasks = [
-    { label: 'Primeira análise', pts: 75, done: hasCi1 },
-    { label: 'Segunda análise', pts: 75, done: hasCi2 },
+    { label: t('cp.task.firstCi'), pts: 75, done: hasCi1 },
+    { label: t('cp.task.secondCi'), pts: 75, done: hasCi2 },
   ];
 
   // ── Consistency & Engagement (max 150) ──
@@ -118,10 +129,10 @@ function calculateScore(analyses: AnalysisRecord[], profile: any) {
   );
 
   factors.eng.tasks = [
-    { label: 'Usou 2 ferramentas diferentes', pts: 30, done: used2 },
-    { label: 'Usou todas as 4 ferramentas', pts: 50, done: usedAll },
-    { label: 'Regressou após 30 dias', pts: 30, done: returned30, bonus: true },
-    { label: 'Perfil 100% preenchido', pts: 40, done: profileComplete },
+    { label: t('cp.task.used2tools'), pts: 30, done: used2 },
+    { label: t('cp.task.usedAll'), pts: 50, done: usedAll },
+    { label: t('cp.task.returned30'), pts: 30, done: returned30, bonus: true },
+    { label: t('cp.task.profileComplete'), pts: 40, done: profileComplete },
   ];
 
   // Calculate totals
@@ -136,26 +147,38 @@ function calculateScore(analyses: AnalysisRecord[], profile: any) {
 }
 
 function getLevelIndex(score: number) {
-  for (let i = LEVELS.length - 1; i >= 0; i--) {
-    if (score >= LEVELS[i].min) return i;
+  for (let i = LEVEL_RANGES.length - 1; i >= 0; i--) {
+    if (score >= LEVEL_RANGES[i].min) return i;
   }
   return 0;
 }
 
-// ─── Factor Config ──────────────────────────────────────────────────────────
-const FACTOR_META: Record<string, { name: string; icon: string; iconBg: string; color: string }> = {
-  cv: { name: 'CV Analyser', icon: '📄', iconBg: '#EFF5FC', color: '#185FA5' },
-  li: { name: 'LinkedIn Roaster', icon: '🔗', iconBg: '#EDF7F1', color: '#3B6D11' },
-  cp: { name: 'Career Path', icon: '🗺️', iconBg: '#FBF3E7', color: '#854F0B' },
-  ci: { name: 'Career Intelligence', icon: '🧠', iconBg: '#FBF0F4', color: '#72243E' },
-  eng: { name: 'Consistência & Engajamento', icon: '⚡', iconBg: '#EEF7E8', color: '#27500A' },
-};
-
 // ─── Component ──────────────────────────────────────────────────────────────
 export default function CareerProgress({ variant = 'detailed' }: CareerProgressProps) {
   const { profile } = useAuth();
+  const { t, lang } = useI18n();
   const [analyses, setAnalyses] = useState<AnalysisRecord[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Build translated level data
+  const LEVELS = useMemo(() => LEVEL_KEYS.map((key, i) => ({
+    name: t(`cp.lv.${key}`),
+    icon: LEVEL_ICONS[i],
+    min: LEVEL_RANGES[i].min,
+    max: LEVEL_RANGES[i].max,
+    color: LEVEL_COLORS[i].color,
+    bg: LEVEL_COLORS[i].bg,
+    desc: t(`cp.lv.${key}.desc`),
+  })), [t, lang]);
+
+  // Factor meta with translated consistency label
+  const FACTOR_META: Record<string, { name: string; icon: string; iconBg: string; color: string }> = useMemo(() => ({
+    cv: { name: 'CV Analyser', icon: '📄', iconBg: '#EFF5FC', color: '#185FA5' },
+    li: { name: 'LinkedIn Roaster', icon: '🔗', iconBg: '#EDF7F1', color: '#3B6D11' },
+    cp: { name: 'Career Path', icon: '🗺️', iconBg: '#FBF3E7', color: '#854F0B' },
+    ci: { name: 'Career Intelligence', icon: '🧠', iconBg: '#FBF0F4', color: '#72243E' },
+    eng: { name: t('cp.consistency'), icon: '⚡', iconBg: '#EEF7E8', color: '#27500A' },
+  }), [t, lang]);
 
   useEffect(() => {
     if (!profile?.id) return;
@@ -176,8 +199,8 @@ export default function CareerProgress({ variant = 'detailed' }: CareerProgressP
   }, [profile?.id]);
 
   const { score, factors, profileComplete } = useMemo(
-    () => calculateScore(analyses, profile),
-    [analyses, profile]
+    () => calculateScore(analyses, profile, t),
+    [analyses, profile, t]
   );
 
   const lvIdx = getLevelIndex(score);
@@ -281,7 +304,7 @@ export default function CareerProgress({ variant = 'detailed' }: CareerProgressP
               className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider mb-1"
               style={{ background: lv.bg, color: lv.color }}
             >
-              {lv.icon} Nível {lvIdx + 1}
+              {lv.icon} {t('cp.level')} {lvIdx + 1}
             </span>
             <h3 className="text-lg font-semibold text-[#1a1a1a] mb-0.5" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               {lv.name}
@@ -296,7 +319,7 @@ export default function CareerProgress({ variant = 'detailed' }: CareerProgressP
                 <span>{next.min} · {next.name}</span>
               </div>
             ) : (
-              <span className="text-[11px] font-semibold" style={{ color: lv.color }}>Nível máximo atingido ★</span>
+              <span className="text-[11px] font-semibold" style={{ color: lv.color }}>{t('cp.maxLevel')}</span>
             )}
           </div>
         </div>
@@ -322,7 +345,7 @@ export default function CareerProgress({ variant = 'detailed' }: CareerProgressP
       </div>
 
       {/* Factors */}
-      <div className="text-[9px] font-semibold uppercase tracking-widest text-[#999] mb-1">Fatores de pontuação</div>
+      <div className="text-[9px] font-semibold uppercase tracking-widest text-[#999] mb-1">{t('cp.scoringFactors')}</div>
       {Object.entries(factors).map(([key, f]) => {
         const meta = FACTOR_META[key];
         const pct = f.max > 0 ? Math.round((f.earned / f.max) * 100) : 0;
@@ -334,7 +357,7 @@ export default function CareerProgress({ variant = 'detailed' }: CareerProgressP
               </div>
               <div className="flex-1">
                 <div className="text-xs font-semibold text-[#1a1a1a]">{meta.name}</div>
-                <div className="text-[10px] text-[#999]">{pct}% completo</div>
+                <div className="text-[10px] text-[#999]">{pct}% {t('cp.complete')}</div>
               </div>
               <div className="text-sm font-semibold text-[#1a1a1a]">
                 {f.earned}<span className="text-[10px] text-[#999] font-normal"> / {f.max} pts</span>
@@ -344,27 +367,27 @@ export default function CareerProgress({ variant = 'detailed' }: CareerProgressP
               <div className="h-full rounded-full" style={{ width: `${pct}%`, background: meta.color, transition: 'width 0.7s cubic-bezier(.4,0,.2,1)' }} />
             </div>
             <div className="space-y-0">
-              {f.tasks.map((t) => (
-                <div key={t.label} className="flex items-center gap-2 py-1.5 border-t border-[#f5f5f4] first:border-t-0 text-[11px] text-[#999]">
+              {f.tasks.map((task) => (
+                <div key={task.label} className="flex items-center gap-2 py-1.5 border-t border-[#f5f5f4] first:border-t-0 text-[11px] text-[#999]">
                   <div
                     className="w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0"
-                    style={t.done ? { background: meta.color, borderColor: 'transparent' } : { borderColor: '#e5e5e5' }}
+                    style={task.done ? { background: meta.color, borderColor: 'transparent' } : { borderColor: '#e5e5e5' }}
                   >
-                    {t.done && (
+                    {task.done && (
                       <svg viewBox="0 0 10 10" fill="none" className="w-2.5 h-2.5">
                         <path d="M2 5l2.5 2.5L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     )}
                   </div>
-                  <span className={`flex-1 ${t.done ? 'line-through text-[#ccc]' : ''}`}>
-                    {t.label}
-                    {t.bonus && <span className="ml-1 text-[9px] bg-[#f5f5f4] px-1.5 py-0.5 rounded text-[#999]">bónus</span>}
+                  <span className={`flex-1 ${task.done ? 'line-through text-[#ccc]' : ''}`}>
+                    {task.label}
+                    {task.bonus && <span className="ml-1 text-[9px] bg-[#f5f5f4] px-1.5 py-0.5 rounded text-[#999]">{t('cp.task.bonus')}</span>}
                   </span>
                   <span
                     className="text-[9px] font-semibold px-2 py-0.5 rounded-full"
-                    style={{ background: t.done ? meta.iconBg : '#f5f5f4', color: t.done ? meta.color : '#999' }}
+                    style={{ background: task.done ? meta.iconBg : '#f5f5f4', color: task.done ? meta.color : '#999' }}
                   >
-                    +{t.pts}
+                    +{task.pts}
                   </span>
                 </div>
               ))}
@@ -383,8 +406,8 @@ export default function CareerProgress({ variant = 'detailed' }: CareerProgressP
               </svg>
             </div>
             <div className="flex-1">
-              <div className="text-xs font-semibold text-[#1a1a1a]">Badge de Carreira</div>
-              <div className="text-[10px] text-[#999]">Partilha o teu progresso no LinkedIn</div>
+              <div className="text-xs font-semibold text-[#1a1a1a]">{t('cp.careerBadge')}</div>
+              <div className="text-[10px] text-[#999]">{t('cp.shareDesc')}</div>
             </div>
           </div>
           {/* Badge Preview */}
@@ -401,9 +424,12 @@ export default function CareerProgress({ variant = 'detailed' }: CareerProgressP
           </div>
           <button
             onClick={() => {
-              const text = `${lv.icon} Nível ${lv.name} na Share2Inspire!\n\nEstou a investir no meu posicionamento de carreira com a Share2Inspire. Já alcancei ${score}/1000 pontos no meu Perfil de Carreira.\n\n#Share2Inspire #CarreiraComEstratégia #DesenvolvimentoProfissional`;
+              const shareText = t('cp.linkedin.shareText')
+                .replace('${icon}', lv.icon)
+                .replace('${name}', lv.name)
+                .replace('${score}', String(score));
               const url = 'https://share2inspire.pt';
-              window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(text)}`, '_blank');
+              window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(shareText)}`, '_blank');
             }}
             className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-white transition-all hover:opacity-90"
             style={{ background: '#0A66C2' }}
@@ -411,7 +437,7 @@ export default function CareerProgress({ variant = 'detailed' }: CareerProgressP
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
               <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
             </svg>
-            Partilhar no LinkedIn
+            {t('cp.shareLinkedin')}
           </button>
         </div>
       )}
