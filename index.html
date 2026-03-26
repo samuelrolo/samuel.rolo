@@ -394,7 +394,284 @@
             color: #1A1A1A;
         }
 
-        /* --- Subscrição CTA --- */
+        /* --- Hero Decision Cards --- */
+        .hero-decision-cards {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 680px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero-decision-card {
+            flex: 1 1 280px;
+            max-width: 320px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(201,169,97,0.25);
+            border-radius: 12px;
+            padding: 1.8rem 1.5rem;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        .hero-decision-card:hover {
+            background: rgba(255,255,255,0.14);
+            border-color: rgba(201,169,97,0.5);
+            transform: translateY(-3px);
+        }
+        .hero-decision-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .hero-decision-card p {
+            font-size: 0.82rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        .hero-decision-card .hdc-cta {
+            display: inline-block;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #C9A961, #B8943D);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .hero-decision-card .hdc-cta:hover {
+            background: #fff;
+            color: #1A1A1A;
+        }
+        @media (max-width: 640px) {
+            .hero-decision-cards { flex-direction: column; align-items: center; }
+            .hero-decision-card { max-width: 100%; }
+        }
+
+        /* --- Valor Rápido --- */
+        .valor-rapido-section {
+            padding: 60px 0;
+            background: #fff;
+        }
+        .valor-rapido-inner {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .vr-item {
+            flex: 1 1 180px;
+            max-width: 220px;
+            text-align: center;
+        }
+        .vr-item .vr-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(201,169,97,0.08);
+            border-radius: 50%;
+        }
+        .vr-item p {
+            font-size: 0.88rem;
+            font-weight: 400;
+            color: #444;
+            line-height: 1.6;
+        }
+        @media (max-width: 640px) {
+            .valor-rapido-inner { flex-direction: column; align-items: center; }
+            .vr-item { max-width: 100%; }
+        }
+
+        /* --- Ecossistema Explicado --- */
+        .ecossistema-section {
+            padding: 80px 0 20px;
+            background: var(--s2i-bg, #faf8f4);
+            text-align: center;
+        }
+        .ecossistema-section h2 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: #1A1A1A;
+            margin-bottom: 0.8rem;
+        }
+        .ecossistema-section h2 strong {
+            font-weight: 600;
+        }
+        .ecossistema-section .eco-text {
+            font-size: 0.95rem;
+            font-weight: 300;
+            color: #666;
+            line-height: 1.7;
+            max-width: 620px;
+            margin: 0 auto 0;
+        }
+
+        /* --- Para Quem É --- */
+        .para-quem-section {
+            padding: 80px 0;
+            background: #fff;
+        }
+        .para-quem-section h2 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: #1A1A1A;
+            text-align: center;
+            margin-bottom: 0;
+        }
+        .para-quem-section h2 strong {
+            font-weight: 600;
+        }
+        .pq-grid {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 2rem;
+        }
+        .pq-card {
+            flex: 1 1 220px;
+            max-width: 260px;
+            background: #fafaf8;
+            border: 1px solid #f0ede5;
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .pq-card:hover {
+            border-color: rgba(201,169,97,0.3);
+            transform: translateY(-3px);
+        }
+        .pq-card .pq-icon {
+            font-size: 1.5rem;
+            color: #C9A961;
+            margin-bottom: 1rem;
+        }
+        .pq-card p {
+            font-size: 0.88rem;
+            font-weight: 400;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* --- Autoridade --- */
+        .autoridade-section {
+            padding: 80px 0;
+            background: var(--s2i-bg, #faf8f4);
+            text-align: center;
+        }
+        .autoridade-section h2 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: #1A1A1A;
+            margin-bottom: 0.8rem;
+        }
+        .autoridade-section h2 strong {
+            font-weight: 600;
+        }
+        .autoridade-section .aut-text {
+            font-size: 0.95rem;
+            font-weight: 300;
+            color: #666;
+            line-height: 1.7;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* --- CTA Final com Escolha --- */
+        .cta-final-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-final-section::before {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 250px; height: 250px;
+            background: radial-gradient(circle, rgba(201,169,97,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .cta-final-inner {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        .cta-final-cards {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 0;
+        }
+        .cta-final-card {
+            flex: 1 1 280px;
+            max-width: 320px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(201,169,97,0.2);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        .cta-final-card:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(201,169,97,0.4);
+            transform: translateY(-3px);
+        }
+        .cta-final-card .cfc-condition {
+            font-size: 0.78rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
+            margin-bottom: 1.2rem;
+        }
+        .cta-final-card .cfc-button {
+            display: inline-block;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #C9A961, #B8943D);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .cta-final-card .cfc-button:hover {
+            background: #fff;
+            color: #1A1A1A;
+        }
+        @media (max-width: 640px) {
+            .cta-final-cards { flex-direction: column; align-items: center; }
+            .cta-final-card { max-width: 100%; }
+        }
+
+        /* --- Subscrição CTA (hidden - preserved) --- */
         .subscription-cta {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             padding: 80px 0;
@@ -1341,25 +1618,22 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     </header>
 
     <!-- ============================
-         HERO — Uma mensagem. Espaço.
+         SECÇÃO 1 — HERO: VISÃO + DIREÇÃO
          ============================ -->
     <section class="hero-minimal">
         <div class="hero-inner">
-            <h1>O ecossistema completo de<br><strong>desenvolvimento de carreira</strong></h1>
-            <p>Ferramentas com IA, orientação estratégica e planos personalizados<br>para profissionais que querem evoluir com clareza e propósito.</p>
-            <a class="hero-cta" href="/area-cliente/">Explorar planos</a>
-            <div class="hero-proofs">
-                <div class="proof-item">
-                    <div class="proof-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-                    <div class="proof-text"><strong>Diagnóstico gratuito</strong> em menos de 30 segundos</div>
+            <h1>Constrói a tua carreira com <strong>estratégia</strong>,<br>não por tentativa e erro</h1>
+            <p>Um ecossistema completo para perceberes onde estás,<br>o que ajustar e qual o próximo passo certo.</p>
+            <div class="hero-decision-cards">
+                <div class="hero-decision-card">
+                    <h3>Quero melhorar o meu CV</h3>
+                    <p>Percebe porque não estás a ser chamado e o que mudar.</p>
+                    <a href="/cv-analyser" class="hdc-cta">Analisar o meu CV</a>
                 </div>
-                <div class="proof-item">
-                    <div class="proof-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>
-                    <div class="proof-text"><strong>Compatível com ATS</strong> usados por recrutadores</div>
-                </div>
-                <div class="proof-item">
-                    <div class="proof-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
-                    <div class="proof-text"><strong>Recomendações práticas</strong> para melhorar o teu CV</div>
+                <div class="hero-decision-card">
+                    <h3>Quero definir o meu próximo passo</h3>
+                    <p>Descobre que caminho faz sentido para a tua evolução.</p>
+                    <a href="/career-path" class="hdc-cta">Explorar o meu caminho</a>
                 </div>
             </div>
         </div>
@@ -1367,33 +1641,38 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     </section>
 
     <!-- ============================
-         SUBSCRIÇÃO CTA — Primeiro CTA após o hero
+         SECÇÃO 2 — VALOR RÁPIDO
          ============================ -->
-    <section class="subscription-cta fade-up">
-        <div class="sub-inner">
-            <span class="sub-label">Planos de Carreira</span>
-            <h2>Tudo o que precisas para <strong>evoluir</strong></h2>
-            <p class="sub-text">Acede a todas as ferramentas, relatórios ilimitados e orientação personalizada com um plano que se adapta ao teu momento profissional.</p>
-            <div class="sub-features">
-                <div class="sub-feature">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>CV Analyser ilimitado</span>
+    <section class="valor-rapido-section fade-up">
+        <div class="valor-rapido-inner">
+            <div class="vr-item">
+                <div class="vr-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                 </div>
-                <div class="sub-feature">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>Career Path completo</span>
-                </div>
-                <div class="sub-feature">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>LinkedIn Roaster</span>
-                </div>
-                <div class="sub-feature">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>Career Intelligence</span>
-                </div>
+                <p>Diagnóstico em segundos, sem complexidade</p>
             </div>
-            <a href="/area-cliente/" class="sub-button">Ver planos e subscrever</a>
-            <p class="sub-note">Também disponível em análises individuais sem subscrição</p>
+            <div class="vr-item">
+                <div class="vr-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                </div>
+                <p>Baseado em critérios reais de recrutamento</p>
+            </div>
+            <div class="vr-item">
+                <div class="vr-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                </div>
+                <p>Recomendações claras e acionáveis</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         SECÇÃO 3 — O ECOSSISTEMA EXPLICADO
+         ============================ -->
+    <section class="ecossistema-section fade-up">
+        <div class="container">
+            <h2>O Share2Inspire não é uma <strong>ferramenta isolada</strong></h2>
+            <p class="eco-text">É um sistema que liga Análise, Posicionamento e Decisão — para garantir que cada passo na tua carreira tem intenção e direção.</p>
         </div>
     </section>
 
@@ -1468,6 +1747,59 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                     <h3>KickStart Pro</h3>
                     <p>Sessão estratégica para parar, pensar e recentrar. Clarifica opções e define próximos passos.</p>
                     <a href="pages/servicos.html" class="service-card-link">Agendar sessão <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         SECÇÃO 4 — PARA QUEM É
+         ============================ -->
+    <section class="para-quem-section fade-up">
+        <div class="container">
+            <h2>Para quem é o <strong>Share2Inspire</strong>?</h2>
+            <div class="gold-line"></div>
+        </div>
+        <div class="pq-grid">
+            <div class="pq-card">
+                <div class="pq-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                <p>Profissionais que não estão a ter respostas às candidaturas</p>
+            </div>
+            <div class="pq-card">
+                <div class="pq-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="1.5"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg></div>
+                <p>Pessoas em transição de carreira</p>
+            </div>
+            <div class="pq-card">
+                <div class="pq-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+                <p>Quem quer crescer mas sente falta de direção</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         SECÇÃO 5 — AUTORIDADE
+         ============================ -->
+    <section class="autoridade-section fade-up">
+        <div class="container">
+            <h2>Criado com base em <strong>experiência real</strong></h2>
+            <div class="gold-line"></div>
+            <p class="aut-text">Não é uma tool genérica com IA. É um sistema construído com base em anos de experiência em consultoria, transformação organizacional e gestão de talento.</p>
+        </div>
+    </section>
+
+    <!-- ============================
+         SECÇÃO 6 — CTA FINAL COM ESCOLHA
+         ============================ -->
+    <section class="cta-final-section fade-up">
+        <div class="cta-final-inner">
+            <div class="cta-final-cards">
+                <div class="cta-final-card">
+                    <p class="cfc-condition">Se queres resultados mais rápidos nas candidaturas</p>
+                    <a href="/cv-analyser" class="cfc-button">Analisa o teu CV</a>
+                </div>
+                <div class="cta-final-card">
+                    <p class="cfc-condition">Se queres clareza sobre o teu futuro profissional</p>
+                    <a href="/career-path" class="cfc-button">Explora o teu caminho</a>
                 </div>
             </div>
         </div>
