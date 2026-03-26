@@ -429,6 +429,19 @@ export default function BundleHomeEN() {
               Get started <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
             <p className="text-xs text-slate-400">One-time payment · No subscription · Instant results</p>
+
+            {/* ─── Member Area CTA ─── */}
+            <div className="mt-10 p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-xl mx-auto">
+              <p className="text-sm font-bold text-slate-800 mb-2">Want regular access to these tools?</p>
+              <p className="text-xs text-slate-500 mb-4 leading-relaxed">With a subscription plan, you get weekly analyses included, exclusive content, personalised job feed and much more — all in one platform.</p>
+              <a
+                href="https://www.share2inspire.pt/area-cliente/planos"
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
+              >
+                View subscription plans →
+              </a>
+              <p className="text-[10px] text-slate-400 mt-2">From €9.99/month · Cancel anytime</p>
+            </div>
           </div>
         </div>
       )}

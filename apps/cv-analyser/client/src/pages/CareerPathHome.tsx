@@ -1240,6 +1240,21 @@ export default function CareerPathHome() {
 
 
 
+      {/* ─── Member Area CTA ─── */}
+      <div className="max-w-2xl mx-auto px-6 mt-12 mb-8">
+        <div className="p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center">
+          <p className="text-base font-bold text-slate-800 mb-2">Queres acesso regular ao Career Path?</p>
+          <p className="text-sm text-slate-500 mb-4 leading-relaxed">Com um plano Growth ou Pro, tens Career Path incluído mensalmente + CV Analyser semanal, conteúdos exclusivos e muito mais.</p>
+          <a
+            href="https://www.share2inspire.pt/area-cliente/planos"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
+          >
+            Ver planos de subscrição →
+          </a>
+          <p className="text-xs text-slate-400 mt-3">Career Path incluído a partir do plano Growth (19,99€/mês)</p>
+        </div>
+      </div>
+
       {/* Footer */}
       <footer className="border-t border-foreground/10 py-8 px-6 mt-8">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">

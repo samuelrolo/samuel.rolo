@@ -1949,6 +1949,19 @@ export default function HomeEN() {
           </Button>
         </div>
 
+        {/* ─── Member Area CTA ─── */}
+        <div className="mt-16 mb-10 p-8 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-2xl mx-auto">
+          <p className="text-base font-bold text-slate-800 mb-2">Want regular access to this tool?</p>
+          <p className="text-sm text-slate-500 mb-5 leading-relaxed max-w-lg mx-auto">With a subscription plan, you get weekly CV analyses included, Career Path, exclusive content, personalised job feed and much more.</p>
+          <a
+            href="https://www.share2inspire.pt/area-cliente/planos"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
+          >
+            View subscription plans →
+          </a>
+          <p className="text-xs text-slate-400 mt-3">From €9.99/month · Cancel anytime</p>
+        </div>
+
         {/* Footer */}
         <footer className="border-t border-border pt-8 pb-12 text-center space-y-2">
           <p className="text-sm text-muted-foreground">© 2026 Share2Inspire — All rights reserved</p>

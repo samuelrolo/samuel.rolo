@@ -2368,6 +2368,22 @@ export default function Home() {
           </Button>
         </div>
 
+        {/* ─── Member Area CTA ─── */}
+        <div className="mt-16 mb-10 p-8 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-2xl mx-auto">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            <p className="text-base font-bold text-slate-800">Queres acesso regular a esta ferramenta?</p>
+          </div>
+          <p className="text-sm text-slate-500 mb-5 leading-relaxed max-w-lg mx-auto">Com um plano de subscrição, tens análises de CV incluídas todas as semanas, Career Path, conteúdos exclusivos, feed de vagas personalizado e muito mais.</p>
+          <a
+            href="https://www.share2inspire.pt/area-cliente/planos"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
+          >
+            Ver planos de subscrição →
+          </a>
+          <p className="text-xs text-slate-400 mt-3">A partir de 9,99€/mês · Cancela quando quiseres</p>
+        </div>
+
         {/* Footer */}
         <footer className="border-t border-border pt-8 pb-12 text-center space-y-2">
           <p className="text-sm text-muted-foreground">

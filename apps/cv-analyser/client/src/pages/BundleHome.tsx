@@ -632,6 +632,22 @@ export default function BundleHome() {
               Começar agora <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
             <p className="text-xs text-slate-400">Pagamento único · Sem subscrição · Resultados imediatos</p>
+
+            {/* ─── Member Area CTA ─── */}
+            <div className="mt-10 p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-xl mx-auto">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Sparkles className="w-4 h-4 text-[#C9A961]" />
+                <p className="text-sm font-bold text-slate-800">Queres acesso regular a estas ferramentas?</p>
+              </div>
+              <p className="text-xs text-slate-500 mb-4 leading-relaxed">Com um plano de subscrição, tens análises incluídas todas as semanas, conteúdos exclusivos, feed de vagas personalizado e muito mais — tudo numa única plataforma.</p>
+              <a
+                href="https://www.share2inspire.pt/area-cliente/planos"
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
+              >
+                Ver planos de subscrição <ArrowRight className="w-4 h-4" />
+              </a>
+              <p className="text-[10px] text-slate-400 mt-2">A partir de 9,99€/mês · Cancela quando quiseres</p>
+            </div>
           </div>
         </div>
       )}
