@@ -22,7 +22,7 @@ const ADZUNA_SUPPORTED: Record<string, string> = {
 
 // Fallback mapping for unsupported countries → nearest supported Adzuna country
 const ADZUNA_FALLBACK: Record<string, string> = {
-  PT: 'es', IE: 'gb', SE: 'gb', DK: 'gb', NO: 'gb', FI: 'gb',
+  PT: 'gb', IE: 'gb', SE: 'gb', DK: 'gb', NO: 'gb', FI: 'gb',
   AE: 'gb', HK: 'sg', JP: 'gb', KR: 'gb', CN: 'sg',
   AR: 'br', CL: 'br', CO: 'br', PE: 'br',
 };
@@ -98,11 +98,18 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
   const [loading, setLoading] = useState(true);
   const [isApiData, setIsApiData] = useState(false);
 
+  const isUnsupportedCountry = !ADZUNA_SUPPORTED[countryCode.toUpperCase()];
+
   const fetchVagas = useCallback(async () => {
     setLoading(true);
     try {
-      const whereParam = region || countryName || '';
-      const url = `https://api.adzuna.com/v1/api/jobs/${adzunaCountry}/search/1?app_id=${S2I_APP_ID}&app_key=${S2I_APP_KEY}&results_per_page=10&what=${encodeURIComponent(defaultQuery)}&where=${encodeURIComponent(whereParam)}&content-type=application/json`;
+      // When country is not directly supported by Adzuna (e.g. Portugal),
+      // search the fallback country WITHOUT location filter to get actual results
+      const whereParam = isUnsupportedCountry ? '' : (region || countryName || '');
+      // When using fallback to an English-speaking country, always use English query
+      const fallbackLang = isUnsupportedCountry && ['gb', 'us', 'au', 'nz', 'za', 'sg', 'in', 'ca'].includes(adzunaCountry) ? 'en' : lang;
+      const whatParam = isUnsupportedCountry ? getDefaultQuery(fallbackLang) : defaultQuery;
+      const url = `https://api.adzuna.com/v1/api/jobs/${adzunaCountry}/search/1?app_id=${S2I_APP_ID}&app_key=${S2I_APP_KEY}&results_per_page=10&what=${encodeURIComponent(whatParam)}&where=${encodeURIComponent(whereParam)}&content-type=application/json`;
       const res = await fetch(url);
       const data = await res.json();
       if (data.results?.length) {
@@ -129,7 +136,7 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
       setIsApiData(false);
     }
     setLoading(false);
-  }, [adzunaCountry, defaultQuery, countryName, region]);
+  }, [adzunaCountry, defaultQuery, countryName, region, isUnsupportedCountry]);
 
   useEffect(() => { fetchVagas(); }, [fetchVagas]);
 
@@ -147,9 +154,9 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
     ? `Sem vagas encontradas para ${countryName}. Tenta outro filtro.`
     : `No jobs found for ${countryName}. Try another filter.`;
   const unsupportedMsg = lang === 'pt'
-    ? `A pesquisa de vagas para ${countryName} utiliza resultados de ${ADZUNA_DOMAINS[adzunaCountry]?.replace('www.adzuna.', '') || adzunaCountry}.`
-    : `Job search for ${countryName} uses results from ${ADZUNA_DOMAINS[adzunaCountry]?.replace('www.adzuna.', '') || adzunaCountry}.`;
-  const isUsingFallback = !ADZUNA_SUPPORTED[countryCode.toUpperCase()];
+    ? `O Adzuna não cobre ${countryName} diretamente. A mostrar vagas internacionais relevantes (via ${ADZUNA_DOMAINS[adzunaCountry]?.replace('www.', '') || adzunaCountry}).`
+    : `Adzuna doesn't cover ${countryName} directly. Showing relevant international jobs (via ${ADZUNA_DOMAINS[adzunaCountry]?.replace('www.', '') || adzunaCountry}).`;
+  const isUsingFallback = isUnsupportedCountry;
 
   return (
     <section className="mb-12">

@@ -45,6 +45,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .limit(1)
       .single();
     setSubscription(data);
+
+    // Set sessionStorage flags so external tools (CV Analyser, Career Path, etc.)
+    // on the same domain can detect member status and auto-unlock content
+    if (data && data.status === 'active' && new Date(data.expires_at) > new Date()) {
+      const plan = (data.plan || '').toLowerCase();
+      const tier = plan.includes('pro') ? 'pro' : plan.includes('growth') ? 'growth' : 'essential';
+      sessionStorage.setItem('isMember', 'true');
+      sessionStorage.setItem('memberPlanTier', tier);
+      sessionStorage.setItem('isPaid', 'true');
+      sessionStorage.setItem('careerPathPaid', 'true');
+    } else {
+      sessionStorage.removeItem('isMember');
+      sessionStorage.removeItem('memberPlanTier');
+      sessionStorage.removeItem('isPaid');
+      sessionStorage.removeItem('careerPathPaid');
+    }
   }
 
   async function refreshProfile() {
@@ -102,6 +118,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSession(null);
     setProfile(null);
     setSubscription(null);
+    // Clear member flags from sessionStorage
+    sessionStorage.removeItem('isMember');
+    sessionStorage.removeItem('memberPlanTier');
+    sessionStorage.removeItem('isPaid');
+    sessionStorage.removeItem('careerPathPaid');
   }
 
   async function resetPassword(email: string) {

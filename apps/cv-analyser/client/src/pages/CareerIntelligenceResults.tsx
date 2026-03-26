@@ -771,8 +771,26 @@ export default function CareerIntelligenceResults() {
                 </div>
                 <div className="space-y-3">
                   <div className="p-3 bg-muted/20 rounded-lg border border-border">
-                    <p className="text-[10px] font-semibold text-[#C9A961] mb-1">{isEN ? 'ALIGNED COMPANIES' : 'EMPRESAS ALINHADAS'}</p>
-                    <p className="text-xs text-muted-foreground">{careerData.market_context.aligned_companies}</p>
+                    <p className="text-[10px] font-semibold text-[#C9A961] mb-2">{isEN ? 'ALIGNED COMPANIES' : 'EMPRESAS ALINHADAS'}</p>
+                    {typeof careerData.market_context.aligned_companies === 'object' && !Array.isArray(careerData.market_context.aligned_companies) ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {Object.entries(careerData.market_context.aligned_companies).filter(([key]) => key !== 'aligned_companies_note').map(([sector, companies]: [string, any]) => (
+                          <div key={sector} className="space-y-1">
+                            <p className="text-[10px] font-bold text-foreground/70 uppercase tracking-wider">{sector}</p>
+                            <ul className="space-y-0.5">
+                              {(Array.isArray(companies) ? companies : [companies]).map((company: string, idx: number) => (
+                                <li key={idx} className="text-xs text-muted-foreground flex items-start gap-1">
+                                  <span className="text-[#C9A961] mt-0.5 shrink-0">•</span>
+                                  <span>{company}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">{typeof careerData.market_context.aligned_companies === 'string' ? careerData.market_context.aligned_companies : JSON.stringify(careerData.market_context.aligned_companies)}</p>
+                    )}
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="p-3 bg-muted/20 rounded-lg border border-border">

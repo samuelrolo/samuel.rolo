@@ -328,7 +328,7 @@ export default function CareerIntelligenceHomeEN() {
       sessionStorage.setItem('careerPathCvFilename', file.name);
       sessionStorage.setItem('analysisLang', 'en');
       sessionStorage.setItem('analysisCountry', country);
-      if (region) sessionStorage.setItem('analysisRegion', region);
+      sessionStorage.setItem('analysisRegion', region || '');
       if (linkedinUrl) sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
 
       const profile = analysisSource.candidate_profile || {};

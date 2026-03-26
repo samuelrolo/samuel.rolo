@@ -18,6 +18,7 @@ import { Loader2, ArrowLeft, Home as HomeIcon, FileCheck, Lock, TrendingUp, Euro
 import type { AnalysisData } from "@/types/analysis";
 import { trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
+import { getMemberPlanTier } from "@/lib/memberAuth";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
@@ -595,6 +596,13 @@ export default function Results() {
     const paidStatus = sessionStorage.getItem('isPaid');
     if (paidStatus === 'true') {
       setIsPaid(true);
+    }
+
+    // Auto-unlock for active members (Essential, Growth, or Pro)
+    const memberTier = getMemberPlanTier();
+    if (memberTier && memberTier !== 'none') {
+      setIsPaid(true);
+      sessionStorage.setItem('isPaid', 'true');
     }
 
     // Restore applied coupon from sessionStorage (set by Home.tsx / HomeEN.tsx)

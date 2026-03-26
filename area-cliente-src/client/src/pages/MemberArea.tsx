@@ -1037,6 +1037,13 @@ export default function MemberArea() {
       setAnalysisResult(null);
       setAnalysisError(null);
       setCvFile(null);
+      // Scroll the clicked tool into view after a short delay to let React render
+      setTimeout(() => {
+        const el = document.querySelector(`[data-tool-key="${key}"]`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
     }
   };
 
@@ -1095,7 +1102,7 @@ export default function MemberArea() {
       key: 'careerPath',
       icon: Route,
       color: 'from-emerald-500/15 to-emerald-500/5',
-      type: planTier === 'pro' ? 'discount' : planTier === 'growth' ? 'discount' : 'locked',
+      type: planTier === 'pro' ? 'inline' : planTier === 'growth' ? 'inline' : 'locked',
       action: 'careerPath',
       url: 'https://share2inspire.pt/career-path/',
       discount: planTier === 'growth' ? '8,99€' : planTier === 'pro' ? '4,99€' : null,
@@ -1107,7 +1114,7 @@ export default function MemberArea() {
       key: 'careerIntelligence',
       icon: Sparkles,
       color: 'from-violet-500/15 to-violet-500/5',
-      type: planTier === 'pro' ? 'discount' : 'locked',
+      type: planTier === 'pro' ? 'inline' : 'locked',
       action: 'careerIntelligence',
       url: 'https://share2inspire.pt/career-intelligence/',
       discount: planTier === 'pro' ? '9,99€' : null,
@@ -1483,7 +1490,7 @@ export default function MemberArea() {
           </p>
           <div className="space-y-3">
             {tools.map((tool) => (
-              <div key={tool.key} className="border border-[#e5e5e5] rounded-lg overflow-hidden hover:border-gold/20 transition-all duration-500">
+              <div key={tool.key} data-tool-key={tool.key} className="border border-[#e5e5e5] rounded-lg overflow-hidden hover:border-gold/20 transition-all duration-500">
                 {/* External link tool */}
                 {tool.type === 'external' && (
                   <a href={tool.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-5">
@@ -1689,19 +1696,19 @@ export default function MemberArea() {
                 title: t('member.linkedinHeadline'),
                 desc: t('member.linkedinHeadlineDesc'),
                 cta: t('member.generateHeadlines'),
-                btnStyle: 'linear-gradient(135deg, #0A66C2 0%, #004182 100%)',
+                btnStyle: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)',
                 ctaIcon: 'sparkle',
               },
             ].map((tpl) => (
-              <div key={tpl.event} className="p-3 sm:p-4 border border-[#e5e5e5] rounded-lg hover:border-gold/30 transition-all group">
+              <div key={tpl.event} className="p-3 sm:p-4 border border-[#e5e5e5] rounded-lg hover:border-gold/30 transition-all group flex flex-col h-full">
                 <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br ${tpl.color} flex items-center justify-center mb-2 sm:mb-3`}>
                   <tpl.icon className="w-4.5 h-4.5 text-[#333]" />
                 </div>
                 <h3 className="text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1 group-hover:text-gold transition-colors">{tpl.title}</h3>
-                <p className="text-[10px] sm:text-[11px] text-[#999] font-light leading-relaxed mb-2 sm:mb-3 line-clamp-2 sm:line-clamp-none">{tpl.desc}</p>
+                <p className="text-[10px] sm:text-[11px] text-[#999] font-light leading-relaxed mb-2 sm:mb-3 line-clamp-2 sm:line-clamp-none flex-1">{tpl.desc}</p>
                 <button
                   onClick={() => window.dispatchEvent(new Event(tpl.event))}
-                  className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded text-xs font-medium text-white transition-all hover:opacity-90"
+                  className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded text-xs font-medium text-white transition-all hover:opacity-90 mt-auto"
                   style={{ background: tpl.btnStyle }}
                 >
                   {tpl.ctaIcon === 'sparkle' ? <Sparkles className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
