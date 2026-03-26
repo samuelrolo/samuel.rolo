@@ -28,7 +28,9 @@ function Routes() {
         </ProtectedRoute>
       </Route>
       <Route path="/membros">
-        <ProtectedRoute requireSubscription>
+        {/* requireSubscription removido: MemberArea gere internamente o routing
+            entre UpgradePage (sem subscrição) e dashboard completo (com subscrição) */}
+        <ProtectedRoute>
           <MemberArea />
         </ProtectedRoute>
       </Route>

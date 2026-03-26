@@ -9,6 +9,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
+import UpgradePage from './UpgradePage';
 import { supabase, type MemberContent } from '@/lib/supabase';
 import {
   FileText, BarChart3, Route, Linkedin, Bot, BookOpen,
@@ -1461,6 +1462,12 @@ export default function MemberArea() {
 
     return null;
   };
+
+  // ─── Routing automático: sem subscrição activa → UpgradePage ─────────────
+  const hasActiveSub = subscription && subscription.status === 'active' && new Date(subscription.expires_at) > new Date();
+  if (!hasActiveSub) {
+    return <UpgradePage />;
+  }
 
   return (
     <div className="min-h-screen pt-24 pb-20">
