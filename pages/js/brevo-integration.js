@@ -22,7 +22,7 @@ window.brevoIntegration = {
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
-                { email: 'srshare2inspire@gmail.com', name: 'Samuel Rolo' }
+                { email: 'geral@share2inspire.pt', name: 'Samuel Rolo' }
             ],
             subject: `Kickstart - Nova Inscrição de ${data.name}`,
             templateId: 1, // Template ID do Brevo para Kickstart
@@ -53,7 +53,7 @@ window.brevoIntegration = {
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
-                { email: 'srshare2inspire@gmail.com', name: 'Samuel Rolo' }
+                { email: 'geral@share2inspire.pt', name: 'Samuel Rolo' }
             ],
             subject: `Consultoria - Pedido de ${data.name}`,
             templateId: 2, // Template ID do Brevo para Consultoria
@@ -84,7 +84,7 @@ window.brevoIntegration = {
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
-                { email: 'srshare2inspire@gmail.com', name: 'Samuel Rolo' }
+                { email: 'geral@share2inspire.pt', name: 'Samuel Rolo' }
             ],
             subject: `Coaching - Inscrição de ${data.name}`,
             templateId: 3, // Template ID do Brevo para Coaching
@@ -114,7 +114,7 @@ window.brevoIntegration = {
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
-                { email: 'srshare2inspire@gmail.com', name: 'Samuel Rolo' }
+                { email: 'geral@share2inspire.pt', name: 'Samuel Rolo' }
             ],
             subject: `Workshop - Inscrição de ${data.name}`,
             templateId: 4, // Template ID do Brevo para Workshops
@@ -144,7 +144,7 @@ window.brevoIntegration = {
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
-                { email: 'srshare2inspire@gmail.com', name: 'Samuel Rolo' }
+                { email: 'geral@share2inspire.pt', name: 'Samuel Rolo' }
             ],
             subject: `Contacto - ${data.subject || 'Pedido de Informações'}`,
             templateId: 5, // Template ID do Brevo para Contacto
@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Brevo Integration - Versão Multi-Serviços Carregada');
     console.log('📧 Serviços suportados: Kickstart, Consultoria, Coaching, Workshops');
     console.log('🔗 Backend URL:', 'https://share2inspire-beckend.lm.r.appspot.com');
-    console.log('📧 E-mail de contacto: srshare2inspire@gmail.com');
+    console.log('📧 E-mail de contacto: geral@share2inspire.pt');
 });
 
 // Exportar para uso global

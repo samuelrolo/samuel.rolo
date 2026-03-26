@@ -3,7 +3,7 @@
  * VERSÃO CORRIGIDA COM MÚLTIPLOS SERVIÇOS - Julho 2026
  * Suporte para: Kickstart Pro, Consultoria, Coaching, Workshops
  * URLs CORRIGIDAS para funcionar com os novos blueprints
- * E-MAIL CORRIGIDO: srshare2inspire@gmail.com
+ * E-MAIL CORRIGIDO: geral@share2inspire.pt
  * CORREÇÃO: Campos name/email em vez de customerName/customerEmail
  */
 
@@ -27,7 +27,7 @@ window.brevoIntegration = {
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
-                { email: 'srshare2inspire@gmail.com', name: 'Samuel Rolo' }
+                { email: 'geral@share2inspire.pt', name: 'Samuel Rolo' }
             ],
             subject: `Kickstart Pro - Marcação de ${data.name}`,
             templateId: 1, // Template ID do Brevo para Kickstart
@@ -59,7 +59,7 @@ window.brevoIntegration = {
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
-                { email: 'srshare2inspire@gmail.com', name: 'Samuel Rolo' }
+                { email: 'geral@share2inspire.pt', name: 'Samuel Rolo' }
             ],
             subject: `Consultoria Organizacional - Proposta para ${data.company}`,
             templateId: 2, // Template ID do Brevo para Consultoria
@@ -90,7 +90,7 @@ window.brevoIntegration = {
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
-                { email: 'srshare2inspire@gmail.com', name: 'Samuel Rolo' }
+                { email: 'geral@share2inspire.pt', name: 'Samuel Rolo' }
             ],
             subject: `Coaching Individual - Sessão para ${data.name}`,
             templateId: 3, // Template ID do Brevo para Coaching
@@ -120,7 +120,7 @@ window.brevoIntegration = {
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
-                { email: 'srshare2inspire@gmail.com', name: 'Samuel Rolo' }
+                { email: 'geral@share2inspire.pt', name: 'Samuel Rolo' }
             ],
             subject: `Workshop - Inscrição de ${data.name}`,
             templateId: 4,
@@ -164,7 +164,7 @@ window.brevoIntegration = {
         const emailData = {
             to: [
                 { email: data.email, name: data.name },
-                { email: 'srshare2inspire@gmail.com', name: 'Samuel Rolo' }
+                { email: 'geral@share2inspire.pt', name: 'Samuel Rolo' }
             ],
             subject: `Contacto - ${data.subject || 'Pedido de Informações'}`,
             templateId: 5, // Template ID do Brevo para Contacto
@@ -384,7 +384,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Brevo Integration - Versão Multi-Serviços Corrigida Carregada');
     console.log('📧 Serviços suportados: Kickstart, Consultoria, Coaching, Workshops');
     console.log('🔗 Backend URL:', 'https://share2inspire-beckend.lm.r.appspot.com');
-    console.log('📧 E-mail de contacto: srshare2inspire@gmail.com');
+    console.log('📧 E-mail de contacto: geral@share2inspire.pt');
     console.log('✅ CORREÇÃO: Usando name/email em vez de customerName/customerEmail');
 });
 

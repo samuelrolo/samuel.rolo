@@ -16,6 +16,11 @@ const CareerPathHome = lazy(() => import("./pages/CareerPathHome"));
 const CareerPathResults = lazy(() => import("./pages/CareerPathResults"));
 const HomeEN = lazy(() => import("./pages/en/HomeEN"));
 const CareerPathHomeEN = lazy(() => import("./pages/en/CareerPathHomeEN"));
+const BundleHome = lazy(() => import("./pages/BundleHome"));
+const BundleHomeEN = lazy(() => import("./pages/en/BundleHomeEN"));
+const CareerIntelligenceHome = lazy(() => import("./pages/CareerIntelligenceHome"));
+const CareerIntelligenceHomeEN = lazy(() => import("./pages/en/CareerIntelligenceHomeEN"));
+const CareerIntelligenceResults = lazy(() => import("./pages/CareerIntelligenceResults"));
 
 // ─── Loading fallback ───
 function PageLoader() {
@@ -34,8 +39,10 @@ function usePageTitle() {
   useEffect(() => {
     const pathname = window.location.pathname;
     const titles: Record<string, string> = {
+      '/en/career-intelligence': 'Share2Inspire — Career Intelligence',
       '/en/career-path': 'Share2Inspire — Career Path',
       '/en/cv-analyser': 'Share2Inspire — CV Analyser (EN)',
+      '/career-intelligence': 'Share2Inspire — Career Intelligence',
       '/career-path': 'Share2Inspire — Career Path',
       '/cv-analyser': 'Share2Inspire — CV Analyser',
     };
@@ -55,6 +62,31 @@ function AppRouter() {
   usePageTitle();
 
   // ─── English International Routes ───
+
+  // EN Bundle: /en/bundle
+  if (pathname.startsWith('/en/bundle')) {
+    return (
+      <Router base="/en/bundle">
+        <Switch>
+          <Route path={"/"} component={BundleHomeEN} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // EN Career Intelligence: /en/career-intelligence
+  if (pathname.startsWith('/en/career-intelligence')) {
+    return (
+      <Router base="/en/career-intelligence">
+        <Switch>
+          <Route path={"/"} component={CareerIntelligenceHomeEN} />
+          <Route path={"/results"} component={CareerIntelligenceResults} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
 
   // EN Career Path: /en/career-path and /en/career-path/results
   if (pathname.startsWith('/en/career-path')) {
@@ -84,6 +116,31 @@ function AppRouter() {
   }
 
   // ─── Portuguese Routes (unchanged) ───
+
+  // Bundle PT: /bundle
+  if (pathname.startsWith('/bundle')) {
+    return (
+      <Router base="/bundle">
+        <Switch>
+          <Route path={"/"} component={BundleHome} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
+
+  // Career Intelligence PT: /career-intelligence
+  if (pathname.startsWith('/career-intelligence')) {
+    return (
+      <Router base="/career-intelligence">
+        <Switch>
+          <Route path={"/"} component={CareerIntelligenceHome} />
+          <Route path={"/results"} component={CareerIntelligenceResults} />
+          <Route component={NotFound} />
+        </Switch>
+      </Router>
+    );
+  }
 
   // Career Path product: /career-path and /career-path/results
   if (pathname.startsWith('/career-path')) {

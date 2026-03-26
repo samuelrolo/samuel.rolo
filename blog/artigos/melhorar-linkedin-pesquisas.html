@@ -18,7 +18,9 @@
     <meta property="og:url" content="https://www.share2inspire.pt/blog/artigos/melhorar-linkedin-pesquisas">
     <meta property="og:title" content="Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores">
     <meta property="og:description" content="Aprenda as 5 estratégias práticas para otimizar o teu perfil LinkedIn e aumentar a visibilidade.">
-    <meta property="og:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
+    <meta property="og:image" content="https://www.share2inspire.pt/images/og-share2inspire.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:locale" content="pt_PT">
     <meta property="og:site_name" content="Share2Inspire">
     <meta property="article:author" content="Samuel Rolo">
@@ -27,8 +29,13 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores">
     <meta name="twitter:description" content="Aprenda as 5 estratégias práticas para otimizar o teu perfil LinkedIn e aumentar a visibilidade.">
-    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
-    <link rel="icon" href="../../images/logo.png" type="image/png">
+    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-share2inspire.png">
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/images/favicon-512x512.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <script type="application/ld+json">
@@ -39,7 +46,7 @@
             "@type": "Article",
             "headline": "Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores",
             "description": "Aprenda as 5 estratégias práticas para otimizar o teu perfil LinkedIn e aumentar a visibilidade.",
-            "image": "https://www.share2inspire.pt/images/og-cv-analyser.png",
+            "image": "https://www.share2inspire.pt/images/og-share2inspire.png",
             "author": {
                 "@type": "Person",
                 "name": "Samuel Rolo"
@@ -49,7 +56,7 @@
                 "name": "Share2Inspire",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://www.share2inspire.pt/images/logo.png"
+                    "url": "https://www.share2inspire.pt/images/og-share2inspire.png"
                 }
             },
             "datePublished": "2026-03-16",
@@ -88,7 +95,7 @@
     </script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         .nav-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.04); }
         .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 70px; }
         .nav-logo img { height: 36px; }
@@ -99,7 +106,7 @@
         .nav-toggle span { display: block; width: 22px; height: 2px; background: #1a1a2e; margin: 5px 0; transition: 0.3s; }
         @media (max-width: 768px) {
             .nav-toggle { display: block; }
-            .nav-links { display: none; position: absolute; top: 70px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.04); }
+            .nav-links { display: none; position: absolute; top: 70px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.04);  width: 100%; box-sizing: border-box;}
             .nav-links.open { display: flex; }
         }
 
@@ -151,7 +158,7 @@
         .related-title { font-size: 1.4rem; font-weight: 300; color: #1a1a2e; margin-bottom: 0.5rem; }
         .related-title strong { font-weight: 600; }
         .related-divider { width: 40px; height: 2px; background: #C9A961; margin: 1rem 0 2rem; }
-        .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+        .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 1.5rem; }
         .related-card { background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; padding: 1.2rem; transition: box-shadow 0.3s; }
         .related-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .related-card .tag { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; margin-bottom: 0.5rem; }
@@ -166,7 +173,43 @@
         .footer-col p { font-size: 0.8rem; color: rgba(255,255,255,0.5); line-height: 1.7; }
         .footer-bottom { max-width: 1100px; margin: 3rem auto 0; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); }
         .footer-bottom p { font-size: 0.7rem; color: rgba(255,255,255,0.3); }
+    
+        /* ── Mobile Responsive Fixes ── */
+        @media (max-width: 600px) {
+            .article-hero { padding: 100px 1.25rem 40px; }
+            .article-hero-inner { padding: 0; }
+            .article-body { padding: 40px 1.25rem 60px; }
+            .article-body h2 { font-size: 1.2rem; }
+            .article-body h3 { font-size: 1rem; }
+            .article-body p, .article-body li { font-size: 0.9rem; }
+            .related-section { padding: 40px 1.25rem; }
+            .related-grid { grid-template-columns: 1fr; }
+            .blog-container { padding: 2rem 1.25rem; }
+            .articles-grid { grid-template-columns: 1fr; }
+            .article-card { padding: 1.5rem; }
+            .footer-inner { flex-direction: column; gap: 1.5rem; }
+            .footer-col { min-width: unset; width: 100%; }
+            .nav-inner { padding: 0 1.25rem; }
+        }
+    
     </style>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '3865352233767400');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 <body>
     <nav class="nav-bar">
@@ -177,17 +220,7 @@
                 <a href="../../index.html">Inicio</a>
                 <a href="/cv-analyser">CV Analyser</a>
                 <a href="/career-path">Career Path</a>
-                <div class="nav-item mega-dropdown" style="position:relative;">
-                    <a href="../../pages/servicos.html">Servicos</a>
-                    <div class="mega-menu">
-                        <div class="mega-col">
-                            <a class="mega-link" href="/linkedin-roaster">LinkedIn Roaster</a>
-                            <a class="mega-link" href="https://share2inspire.pt/cv-builder/">CV Maker</a>
-                            <a class="mega-link" href="../../pages/servicos.html">CV por Especialista</a>
-                            <a class="mega-link" href="../../pages/servicos.html">KickStart Pro</a>
-                        </div>
-                    </div>
-                </div>
+                <a href="/pages/servicos.html">Serviços</a>
                 <a href="../../pages/conhecimento.html" class="active">Conhecimento</a>
                 <a href="../../pages/sobre.html">Sobre</a>
                 <a href="../../pages/contactos.html">Contactos</a>
@@ -323,7 +356,7 @@
             </div>
             <div class="footer-col">
                 <h4>Contacto</h4>
-                <p>srshare2inspire@gmail.com</p>
+                <p>geral@share2inspire.pt</p>
                 <div style="display:flex;gap:1rem;margin-top:0.5rem;">
                     <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" style="color:#C9A961;"><i class="fab fa-linkedin"></i></a>
                     <a href="https://www.instagram.com/share2inspire_/" target="_blank" style="color:#C9A961;"><i class="fab fa-instagram"></i></a>

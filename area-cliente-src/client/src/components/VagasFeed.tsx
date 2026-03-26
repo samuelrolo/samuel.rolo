@@ -116,19 +116,14 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
 
   const fetchVagas = useCallback(async () => {
     setLoading(true);
-    // For unsupported countries (Portugal, etc.), always use curated demo data
-    // This avoids showing irrelevant UK/Spain jobs to Portuguese users
-    if (isUnsupportedCountry) {
-      // Shuffle demo data slightly for freshness feel
-      const shuffled = [...DEMO_VAGAS_PT].sort(() => Math.random() - 0.5);
-      setVagas(shuffled);
-      setIsApiData(false);
-      setLoading(false);
-      return;
-    }
     try {
-      const whereParam = region || countryName || '';
-      const url = `https://api.adzuna.com/v1/api/jobs/${adzunaCountry}/search/1?app_id=${S2I_APP_ID}&app_key=${S2I_APP_KEY}&results_per_page=10&what=${encodeURIComponent(defaultQuery)}&where=${encodeURIComponent(whereParam)}&content-type=application/json`;
+      // When country is not directly supported by Adzuna (e.g. Portugal),
+      // search the fallback country WITHOUT location filter to get actual results
+      const whereParam = isUnsupportedCountry ? '' : (region || countryName || '');
+      // When using fallback to an English-speaking country, always use English query
+      const fallbackLang = isUnsupportedCountry && ['gb', 'us', 'au', 'nz', 'za', 'sg', 'in', 'ca'].includes(adzunaCountry) ? 'en' : lang;
+      const whatParam = isUnsupportedCountry ? getDefaultQuery(fallbackLang) : defaultQuery;
+      const url = `https://api.adzuna.com/v1/api/jobs/${adzunaCountry}/search/1?app_id=${S2I_APP_ID}&app_key=${S2I_APP_KEY}&results_per_page=10&what=${encodeURIComponent(whatParam)}&where=${encodeURIComponent(whereParam)}&content-type=application/json`;
       const res = await fetch(url);
       const data = await res.json();
       if (data.results?.length) {
@@ -147,11 +142,20 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
         setVagas(mapped);
         setIsApiData(true);
       } else {
-        setVagas([]);
+        // Fallback to demo data for unsupported countries
+        if (isUnsupportedCountry) {
+          setVagas([...DEMO_VAGAS_PT]);
+        } else {
+          setVagas([]);
+        }
         setIsApiData(false);
       }
     } catch {
-      setVagas([]);
+      if (isUnsupportedCountry) {
+        setVagas([...DEMO_VAGAS_PT]);
+      } else {
+        setVagas([]);
+      }
       setIsApiData(false);
     }
     setLoading(false);

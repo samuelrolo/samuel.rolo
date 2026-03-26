@@ -35,7 +35,12 @@
     <meta name="twitter:player:width" content="1280">
     <meta name="twitter:player:height" content="720">
     <!-- Favicon -->
-    <link rel="icon" href="../images/logo.png" type="image/png">
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/images/favicon-512x512.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <!-- VideoObject + Clip Structured Data -->
@@ -78,7 +83,7 @@
                     "url": "https://www.share2inspire.pt",
                     "logo": {
                         "@type": "ImageObject",
-                        "url": "https://www.share2inspire.pt/images/logo.png"
+                        "url": "https://www.share2inspire.pt/images/og-share2inspire.png"
                     }
                 },
                 "inLanguage": "en",
@@ -343,6 +348,23 @@
         .subscribe-banner .sub-btn:hover { background: #d4af37; }
         .subscribe-banner .sub-btn i { margin-right: 0.5rem; }
     </style>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '3865352233767400');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 <body>
     <!-- ── Navigation ── -->
@@ -358,17 +380,7 @@
                 <a href="../index.html">Inicio</a>
                 <a href="/cv-analyser">CV Analyser</a>
                 <a href="/career-path">Career Path</a>
-                <div class="nav-item mega-dropdown" style="position:relative;">
-                    <a href="../pages/servicos.html">Servicos</a>
-                    <div class="mega-menu">
-                        <div class="mega-col">
-                            <a class="mega-link" href="/linkedin-roaster">LinkedIn Roaster</a>
-                            <a class="mega-link" href="https://share2inspire.pt/cv-builder/">CV Maker</a>
-                            <a class="mega-link" href="../pages/servicos.html">CV por Especialista</a>
-                            <a class="mega-link" href="../pages/servicos.html">KickStart Pro</a>
-                        </div>
-                    </div>
-                </div>
+                <a href="/pages/servicos.html">Serviços</a>
                 <a href="../pages/conhecimento.html" class="active">Conhecimento</a>
                 <a href="../pages/sobre.html">Sobre</a>
                 <a href="../pages/contactos.html">Contactos</a>
@@ -625,7 +637,7 @@
             </div>
             <div class="footer-col">
                 <h4>Contacto</h4>
-                <p>srshare2inspire@gmail.com</p>
+                <p>geral@share2inspire.pt</p>
                 <div style="display:flex;gap:1rem;margin-top:0.5rem;">
                     <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" style="color:#C9A961;"><i class="fab fa-linkedin"></i></a>
                     <a href="https://www.instagram.com/share2inspire_/" target="_blank" style="color:#C9A961;"><i class="fab fa-instagram"></i></a>

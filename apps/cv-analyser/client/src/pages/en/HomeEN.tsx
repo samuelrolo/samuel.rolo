@@ -15,6 +15,7 @@ import { useLocation } from "wouter";
 import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { countries } from "./countries";
+import { useCurrency } from "@/hooks/useCurrency";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -284,9 +285,9 @@ const testimonials = [
 const pricingPlans = [
   {
     name: "Essential",
-    price: "5.99",
+    price: "9.99",
     analyses: 1,
-    perUnit: "5.99",
+    perUnit: "9.99",
     popular: false,
     badge: null,
     features: ["Full analysis unlocked", "Normal curve positioning", "Detailed salary estimate", "LinkedIn Certification — share your result", "PDF report via email"],
@@ -294,18 +295,18 @@ const pricingPlans = [
 
   {
     name: "Professional",
-    price: "14.99",
+    price: "15.99",
     analyses: 3,
-    perUnit: "5.00",
+    perUnit: "5.33",
     popular: false,
     badge: null,
     features: ["3 full analyses", "Reusable code for future analyses", "LinkedIn Certification — share your result", "Ideal for testing CV versions", "Priority email support"],
   },
   {
     name: "Premium",
-    price: "24.99",
+    price: "20.49",
     analyses: 5,
-    perUnit: "5.00",
+    perUnit: "4.10",
     popular: false,
     badge: null,
     features: ["5 full analyses", "Reusable code for future analyses", "LinkedIn Certification — share your result", "Best price per analysis", "Share with friends/colleagues"],
@@ -325,17 +326,82 @@ const comparisonFeatures = [
   { feature: "Shareable LinkedIn Certification", us: true, competitor1: false, competitor2: false },
   { feature: "CV vs LinkedIn cross-analysis", us: true, competitor1: false, competitor2: false },
 
-  { feature: "Price", usText: "From $5.99", comp1Text: "$19.99/mo", comp2Text: "$9.99" },
+  { feature: "Price", usText: "From 9.99", comp1Text: "19.99/mo", comp2Text: "9.99" },
 ];
 
 export default function HomeEN() {
   useEffect(() => { document.title = "CV Analyser — AI-Powered CV Analysis | Share2Inspire"; }, []);
+  const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
 
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [savedCvInfo, setSavedCvInfo] = useState<{filename: string; url: string} | null>(null);
+
+  // Load saved CV from user_profiles if logged in
+  useEffect(() => {
+    (async () => {
+      try {
+        const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+        if (!storageKey) return;
+        const stored = localStorage.getItem(storageKey);
+        if (!stored) return;
+        const parsed = JSON.parse(stored);
+        const accessToken = parsed?.access_token;
+        const userId = parsed?.user?.id;
+        if (!accessToken || !userId) return;
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/user_profiles?id=eq.${userId}&select=cv_url,cv_filename,email`, {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` }
+        });
+        if (!res.ok) return;
+        const rows = await res.json();
+        if (rows?.[0]?.cv_url && rows[0].cv_filename) {
+          setSavedCvInfo({ filename: rows[0].cv_filename, url: rows[0].cv_url });
+        }
+        if (rows?.[0]?.email) setAnalysisEmail(rows[0].email);
+      } catch (e) { /* silent */ }
+    })();
+  }, []);
+
+  // Save CV to Supabase Storage after analysis
+  function persistCvToStorage(base64Content: string, filename: string) {
+    try {
+      const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+      if (!storageKey) return;
+      const stored = localStorage.getItem(storageKey);
+      if (!stored) return;
+      const parsed = JSON.parse(stored);
+      const accessToken = parsed?.access_token;
+      const userId = parsed?.user?.id;
+      if (!accessToken || !userId) return;
+      const byteString = atob(base64Content.split(',')[1] || base64Content);
+      const mimeString = base64Content.split(',')[0]?.split(':')[1]?.split(';')[0] || 'application/pdf';
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+      const blob = new Blob([ab], { type: mimeString });
+      const ext = filename.split('.').pop() || 'pdf';
+      const path = `${userId}/cv.${ext}`;
+      fetch(`${SUPABASE_URL}/storage/v1/object/user-cvs/${path}`, {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'x-upsert': 'true' },
+        body: blob
+      }).then(r => {
+        if (r.ok) {
+          const storagePath = `${SUPABASE_URL}/storage/v1/object/authenticated/user-cvs/${path}`;
+          fetch(`${SUPABASE_URL}/rest/v1/user_profiles?id=eq.${userId}`, {
+            method: 'PATCH',
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cv_url: storagePath, cv_filename: filename, cv_uploaded_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+          }).catch(() => {});
+          console.log('[S2I] CV saved to storage');
+        }
+      }).catch(e => console.warn('[S2I] CV storage error:', e));
+    } catch (e) { /* silent */ }
+  }
+
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [pricingOpen, setPricingOpen] = useState(false);
   const [wantsJobMatch, setWantsJobMatch] = useState(false);
@@ -556,6 +622,30 @@ export default function HomeEN() {
       }
 
       logAnalysisToSupabase(analysisResult, analysisSource, cvText);
+
+      // Persist CV to Supabase Storage for future sessions
+      persistCvToStorage(base64Content, file.name);
+
+      // Save to user_analyses for area-cliente dashboard
+      try {
+        const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+        if (storageKey) {
+          const stored = localStorage.getItem(storageKey);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            const accessToken = parsed?.access_token;
+            const userId = parsed?.user?.id;
+            if (accessToken && userId) {
+              fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
+                method: 'POST',
+                headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+                body: JSON.stringify({ user_id: userId, analysis_type: 'cv_analyser', data: { ...analysisResult, captured_at: new Date().toISOString(), email: analysisEmail }, created_at: new Date().toISOString() })
+              }).catch(() => {});
+            }
+          }
+        }
+      } catch (e) { /* silent */ }
+
       setLocation('/results');
 
     } catch (err: any) {
@@ -568,16 +658,48 @@ export default function HomeEN() {
     }
   };
 
-  // Validate voucher code against Supabase
+  // Validate discount/voucher code against Supabase (checks discount_coupons first, then vouchers)
   const validateVoucherForLinkedIn = async (code: string): Promise<boolean> => {
     setLinkedInVoucherValidating(true);
     setLinkedInVoucherError(null);
+    const upperCode = code.toUpperCase();
     try {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      // Step 1: Check discount_coupons
+      const couponRes = await fetch(`${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(upperCode)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+      });
+      const coupons = await couponRes.json();
+      if (Array.isArray(coupons) && coupons.length > 0) {
+        const coupon = coupons[0];
+        const now = new Date();
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setLinkedInVoucherError('This code is not yet active.'); return false; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setLinkedInVoucherError('This code has expired.'); return false; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setLinkedInVoucherError('This code has reached its limit.'); return false; }
+        const products = coupon.applicable_products || [];
+        if (products.length > 0 && !products.includes('all') && !products.includes('cv_analyser') && !products.includes('linkedin_roaster')) { setLinkedInVoucherError('This code is not applicable here.'); return false; }
+        if (coupon.discount_percent === 100) {
+          sessionStorage.setItem('isPaid', 'true');
+          sessionStorage.setItem('paymentAmount', '0');
+          sessionStorage.setItem('transactionId', `COUPON-${upperCode}`);
+          setShowLinkedInPaywall(false);
+          // Increment coupon usage counter
+          const { incrementCouponUsage } = await import('@/lib/affiliate');
+          incrementCouponUsage(upperCode);
+          return true;
         }
+        // Partial discount — store it in sessionStorage for the Results page payment modal
+        sessionStorage.setItem('appliedCouponCode', upperCode);
+        sessionStorage.setItem('appliedCouponPercent', String(coupon.discount_percent));
+        const { incrementCouponUsage: incUsage } = await import('@/lib/affiliate');
+        incUsage(upperCode);
+        setLinkedInVoucherError(`${coupon.discount_percent}% discount applied! It will be used at payment.`);
+        setTimeout(() => { setShowLinkedInPaywall(false); }, 1500);
+        return true;
+      }
+
+      // Step 2: Check vouchers
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(upperCode)}&select=*`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
       });
       const vouchers = await res.json();
       if (!Array.isArray(vouchers) || vouchers.length === 0) {
@@ -591,7 +713,7 @@ export default function HomeEN() {
         return false;
       }
       sessionStorage.setItem('isPaid', 'true');
-      sessionStorage.setItem('voucherCode', code);
+      sessionStorage.setItem('voucherCode', upperCode);
       sessionStorage.setItem('voucherId', String(voucher.id));
       sessionStorage.setItem('remainingAnalyses', String(remaining));
       sessionStorage.setItem('paymentAmount', String(voucher.amount_paid || 0));
@@ -761,7 +883,7 @@ export default function HomeEN() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           amount: plan.price,
-          currency: 'usd',
+          currency: currencyCode,
           email: liPaywallEmail,
           product: `CV Analyser - ${plan.name} (LinkedIn)`,
           description: `LinkedIn ${plan.name} - ${plan.analyses} analysis(es)`,
@@ -803,7 +925,7 @@ export default function HomeEN() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           amount: plan.price,
-          currency: 'usd',
+          currency: currencyCode,
           email: voucherEmail,
           product: `CV Analyser - ${plan.name} (Voucher)`,
           description: `Voucher ${plan.name} - ${plan.analyses} analysis(es)`,
@@ -984,17 +1106,16 @@ export default function HomeEN() {
         </div>
       </header>
 
-      {/* Career Path Banner */}
-      <a href="/en/career-path" className="block bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30 hover:from-[#222] hover:to-[#333] transition-all cursor-pointer">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3">
-          <Compass className="w-4 h-4 text-[#C9A961] shrink-0" />
+      {/* Bundle Banner — Main offer */}
+      <div className="bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30">
+        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3 flex-wrap">
+          <span className="text-[10px] bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] text-[#1a1a2e] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase shrink-0">Most popular</span>
           <span className="text-sm text-white">
-            <strong className="text-[#C9A961]">NEW</strong> — Discover your personalised AI Career Path
+            <strong className="text-[#C9A961]">Bundle</strong> — CV Analyser + Career Path for <strong className="text-white">{CUR}29</strong>
           </span>
-          <span className="text-xs bg-[#C9A961] text-white px-2 py-0.5 rounded-full font-semibold shrink-0">From $10</span>
-          <span className="text-[#C9A961] text-sm hidden sm:inline">→</span>
+          <a href="/en/bundle" className="text-xs bg-[#C9A961] hover:bg-[#B8943D] text-white px-3 py-1 rounded-full font-semibold shrink-0 transition-all">Get Bundle</a>
         </div>
-      </a>
+      </div>
 
       {/* Hero Section */}
       <main className="max-w-4xl mx-auto px-6 py-6 md:py-16">
@@ -1079,6 +1200,32 @@ export default function HomeEN() {
               )}
             </label>
             <p className="text-[11px] text-muted-foreground text-center">PDF, DOCX or Image • Free • Data deleted after analysis</p>
+            {!file && savedCvInfo && (
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+                    const stored = storageKey ? localStorage.getItem(storageKey) : null;
+                    const accessToken = stored ? JSON.parse(stored)?.access_token : null;
+                    const userId = stored ? JSON.parse(stored)?.user?.id : null;
+                    const filePath = `${userId}/cv.pdf`;
+                    const downloadUrl = `${SUPABASE_URL}/storage/v1/object/authenticated/user-cvs/${filePath}`;
+                    const res = await fetch(downloadUrl, {
+                      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` }
+                    });
+                    if (!res.ok) throw new Error('Download failed');
+                    const blob = await res.blob();
+                    const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                    setFile(f);
+                  } catch { setError('Could not load saved CV.'); }
+                }}
+                className="text-xs text-[#C9A961] hover:underline font-medium text-center w-full mt-1"
+              >
+                <FileCheck className="w-3.5 h-3.5 inline mr-1" />
+                Use saved CV: {savedCvInfo.filename}
+              </button>
+            )}
           </div>
 
           {/* Desktop: Full drag & drop area */}
@@ -1117,6 +1264,34 @@ export default function HomeEN() {
                   )}
                 </div>
               </label>
+              {!file && savedCvInfo && (
+                <div className="mt-3 text-center">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+                        const stored = storageKey ? localStorage.getItem(storageKey) : null;
+                        const accessToken = stored ? JSON.parse(stored)?.access_token : null;
+                        const userId = stored ? JSON.parse(stored)?.user?.id : null;
+                        const filePath = `${userId}/cv.pdf`;
+                        const downloadUrl = `${SUPABASE_URL}/storage/v1/object/authenticated/user-cvs/${filePath}`;
+                        const res = await fetch(downloadUrl, {
+                          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` }
+                        });
+                        if (!res.ok) throw new Error('Download failed');
+                        const blob = await res.blob();
+                        const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                        setFile(f);
+                      } catch { setError('Could not load saved CV.'); }
+                    }}
+                    className="text-xs text-[#C9A961] hover:underline font-medium"
+                  >
+                    <FileCheck className="w-3.5 h-3.5 inline mr-1" />
+                    Use saved CV: {savedCvInfo.filename}
+                  </button>
+                </div>
+              )}
             </div>
             <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5 mt-3">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -1273,7 +1448,7 @@ export default function HomeEN() {
                             : 'border-border bg-background text-muted-foreground hover:border-[#C9A961]/50'
                         }`}
                       >
-                        <p className="font-semibold">${plan.price}</p>
+                        <p className="font-semibold">{CUR}{plan.price}</p>
                         <p className="text-[10px] text-muted-foreground">{plan.analyses} analysis{plan.analyses > 1 ? 'es' : ''}</p>
                       </button>
                     ))}
@@ -1301,7 +1476,7 @@ export default function HomeEN() {
                     {voucherPaymentLoading ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
                     ) : (
-                      <>Buy Voucher — ${pricingPlans[voucherSelectedPlan].price}</>  
+                      <>Buy Voucher — {CUR}{pricingPlans[voucherSelectedPlan].price}</>  
                     )}
                   </button>
                 </>
@@ -1417,9 +1592,9 @@ export default function HomeEN() {
                 <p className="text-sm text-white/70">LinkedIn analysis requires a paid package. Get a complete report with ATS score, salary estimate and personalised recommendations.</p>
               </div>
 
-              {/* Voucher code input */}
+              {/* Discount code input */}
               <div className="space-y-2">
-                <p className="text-xs font-medium text-white/80">Already have a code?</p>
+                <p className="text-xs font-medium text-white/80">Already have a discount code?</p>
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -1473,9 +1648,9 @@ export default function HomeEN() {
                         }}
                         className="p-3 rounded-lg border border-white/20 bg-white/5 hover:border-[#C9A961]/50 hover:bg-[#C9A961]/10 transition-all text-center"
                       >
-                        <p className="text-lg font-bold text-[#C9A961]">${plan.price}</p>
+                        <p className="text-lg font-bold text-[#C9A961]">{CUR}{plan.price}</p>
                         <p className="text-xs text-white/60">{plan.analyses} analysis{plan.analyses > 1 ? 'es' : ''}</p>
-                        <p className="text-[10px] text-white/40 mt-0.5">${plan.perUnit}/ea.</p>
+                        <p className="text-[10px] text-white/40 mt-0.5">{CUR}{plan.perUnit}/ea.</p>
                       </button>
                     ))}
                   </div>
@@ -1494,7 +1669,7 @@ export default function HomeEN() {
                       ← Back
                     </button>
                     <span className="text-sm font-semibold text-[#C9A961]">
-                      {pricingPlans[liPaywallPlan].name} — ${pricingPlans[liPaywallPlan].price}
+                      {pricingPlans[liPaywallPlan].name} — {CUR}{pricingPlans[liPaywallPlan].price}
                     </span>
                   </div>
 
@@ -1519,7 +1694,7 @@ export default function HomeEN() {
                     {liPaywallLoading ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Redirecting to checkout...</>
                     ) : (
-                      <>Buy & Analyse — ${pricingPlans[liPaywallPlan].price}</>
+                      <>Buy & Analyse — {CUR}{pricingPlans[liPaywallPlan].price}</>
                     )}
                   </button>
                   <p className="text-[10px] text-white/40 text-center">Secure payment via Stripe. Analysis starts automatically.</p>
@@ -1697,7 +1872,7 @@ export default function HomeEN() {
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center"><Award className="w-6 h-6 text-[#C9A961]" /></div>
               <div className="text-left">
                 <h2 className="text-xl font-bold text-foreground">Full Analysis Packages</h2>
-                <p className="text-sm text-muted-foreground">From $5.99 per analysis</p>
+                <p className="text-sm text-muted-foreground">From {CUR}9.99 per analysis</p>
               </div>
             </div>
             {pricingOpen ? <ChevronUp className="w-6 h-6 text-muted-foreground" /> : <ChevronDown className="w-6 h-6 text-muted-foreground" />}
@@ -1716,10 +1891,10 @@ export default function HomeEN() {
                   </div>
                   <div className="space-y-0">
                     <div className="flex items-baseline gap-1">
-                      <span className={`text-4xl font-bold ${plan.popular ? 'text-white' : 'text-foreground'}`}>${plan.price}</span>
+                      <span className={`text-4xl font-bold ${plan.popular ? 'text-white' : 'text-foreground'}`}>{CUR}{plan.price}</span>
                     </div>
                     <p className={`text-sm ${plan.popular ? 'text-white/70' : 'text-muted-foreground'}`}>
-                      {plan.name === 'Complete' ? (<><span className="line-through">$14.98</span> <span className="font-semibold">save $5</span></>) : (<>${plan.perUnit} per analysis</>)}
+                      {plan.name === 'Complete' ? (<>CV Analyser + Career Path</>) : (<>{CUR}{plan.perUnit} per analysis</>)}
                     </p>
                   </div>
                   <ul className="space-y-2">
@@ -1760,18 +1935,31 @@ export default function HomeEN() {
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center"><Shield className="w-6 h-6 text-[#C9A961]" /></div>
               <h3 className="text-lg font-semibold text-foreground">Fair Price, No Subscription</h3>
-              <p className="text-sm text-muted-foreground">Pay only when you need it. No monthly fees, no commitments. From $5.99 per full analysis.</p>
+              <p className="text-sm text-muted-foreground">Pay only when you need it. No monthly fees, no commitments. From {CUR}9.99 per full analysis.</p>
             </div>
           </div>
         </div>
 
         {/* Final CTA */}
-        <div className="mt-20 mb-10 bg-[#C9A961] rounded-2xl p-8 md:p-12 text-center space-y-6">
+        <div className="mt-20 mb-10 bg-[#C9A961] rounded-2xl p-8 md:p-12 text-center space-y-6 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-white">Ready to improve your CV?</h2>
           <p className="text-white/80 max-w-lg mx-auto">Start with the free analysis. No credit card, no commitment. Discover what recruiters really think.</p>
           <Button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="bg-white text-[#C9A961] hover:bg-white/90 font-semibold px-8 py-3 text-base">
             Start Free Analysis
           </Button>
+        </div>
+
+        {/* ─── Member Area CTA ─── */}
+        <div className="mt-16 mb-10 p-8 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-3xl mx-auto">
+          <p className="text-base font-bold text-slate-800 mb-2">Want regular access to this tool?</p>
+          <p className="text-sm text-slate-500 mb-5 leading-relaxed max-w-lg mx-auto">With a subscription plan, you get weekly CV analyses included, Career Path, exclusive content, personalised job feed and much more.</p>
+          <a
+            href="https://www.share2inspire.pt/area-cliente/planos"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
+          >
+            View subscription plans →
+          </a>
+          <p className="text-xs text-slate-400 mt-3">From €9.99/month · Cancel anytime</p>
         </div>
 
         {/* Footer */}

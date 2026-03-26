@@ -13,7 +13,7 @@ const EMAIL_CONFIG = {
 
     // Sender details
     SENDER_NAME: 'Samuel Rolo | Share2Inspire',
-    SENDER_EMAIL: 'srshare2inspire@gmail.com',
+    SENDER_EMAIL: 'geral@share2inspire.pt',
 
     // Payment links (MB WAY reference generation)
     MB_WAY_CV_REVIEW: 'https://share2inspire.pt/pages/pagamento.html?service=cv-review&amount=25',

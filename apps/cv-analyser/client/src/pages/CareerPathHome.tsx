@@ -1,16 +1,18 @@
 // Career Path — Produto independente Share2Inspire
 // Upload de CV + URL LinkedIn → Pagamento → Análise de carreira com IA
-// Preço: €10,00
+// Preço: €19,99
 
 import { useState, useEffect } from "react";
-import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, XCircle, Minus, ChevronDown, ChevronUp, Linkedin, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, Globe, DollarSign, Zap, Lock, ArrowRight, Shield, Check } from "lucide-react";
+import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, XCircle, Minus, ChevronDown, ChevronUp, Linkedin, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, Globe, DollarSign, Zap, Lock, ArrowRight, Shield, Check, Eye, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLocation } from "wouter";
 import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
-import { trackAffiliateConversion } from "@/lib/affiliate";
+import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
+import { getMemberPlanTier } from "@/lib/memberAuth";
+import { countries } from "./en/countries";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -59,38 +61,12 @@ const testimonials = [
   },
 ];
 
-/* ─── Pricing ─── */
-const pricingPlans = [
-  {
-    name: "Career Path",
-    price: "10,00",
-    popular: true,
-    badge: null,
-    description: "Análise de carreira completa com roadmap personalizado",
-    features: [
-      "Roadmap de carreira personalizado",
-      "Análise de gaps de competências",
-      "Cruzamento CV vs LinkedIn",
-      "Formações e certificações recomendadas",
-      "Estratégia de networking",
-      "Próximos passos concretos",
-    ],
-  },
-];
+/* ─── Pricing (inline) ─── */
+const PRICE_DISPLAY_BASE = '19,99€';
+const PRICE_DISPLAY_GROWTH = '8,99€';
+const PRICE_DISPLAY_PRO = '4,99€';
 
-/* ─── Comparison (benchmark real) ─── */
-const comparisonFeatures = [
-  { feature: "Roadmap de carreira personalizado", us: true, competitor1: false, competitor2: false, competitor3: false },
-  { feature: "Análise baseada no teu CV real", us: true, competitor1: false, competitor2: false, competitor3: false },
-  { feature: "Cruzamento CV vs LinkedIn", us: true, competitor1: false, competitor2: false, competitor3: false },
-  { feature: "Análise de gaps de competências", us: true, competitor1: true, competitor2: false, competitor3: true },
-  { feature: "Formações e certificações recomendadas", us: true, competitor1: false, competitor2: false, competitor3: true },
-  { feature: "Estratégia de networking", us: true, competitor1: false, competitor2: false, competitor3: true },
-  { feature: "Resultados imediatos (< 1 min)", us: true, competitor1: false, competitor2: true, competitor3: false },
-  { feature: "Análise em Português", us: true, competitor1: false, competitor2: false, competitor3: false },
-  { feature: "Sem subscrição mensal", us: true, competitor1: false, competitor2: true, competitor3: false },
-  { feature: "Preço", usText: "€10,00", comp1Text: "€56-299/sessão", comp2Text: "€0-20/mês", comp3Text: "€29,99/mês" },
-];
+/* (comparison table removed — simplifying homepage) */
 
 export default function CareerPathHome() {
   useEffect(() => { document.title = "Career Path — Roadmap de Carreira com IA | Share2Inspire"; }, []);
@@ -106,9 +82,11 @@ export default function CareerPathHome() {
   const [loadingStep, setLoadingStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [pricingOpen, setPricingOpen] = useState(false);
   const [step, setStep] = useState<'hero' | 'upload' | 'preview' | 'analyzing' | 'results'>('hero');
   const [careerGoal, setCareerGoal] = useState<string>('');
+  const [country, setCountry] = useState<string>('Portugal');
+  const [region, setRegion] = useState<string>('');
+  const countryData = countries.find(c => c.country === country);
   const [previewData, setPreviewData] = useState<any>(null);
 
   // Progressive loading messages for Career Path
@@ -144,14 +122,25 @@ export default function CareerPathHome() {
   const [pollingExpired, setPollingExpired] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
 
-  // Voucher state
-  const [showVoucherModal, setShowVoucherModal] = useState(false);
-  const [voucherCode, setVoucherCode] = useState('');
-  const [voucherError, setVoucherError] = useState<string | null>(null);
-  const [voucherLoading, setVoucherLoading] = useState(false);
+  // Unified discount code state
+  const [discountCode, setDiscountCode] = useState('');
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [discountLoading, setDiscountLoading] = useState(false);
+  const [discountError, setDiscountError] = useState<string | null>(null);
+  const [discountValid, setDiscountValid] = useState(false);
 
-  const PRICE = '10,00';
-  const PRICE_NUM = 10.00;
+  // Member pricing detection
+  const memberTier = getMemberPlanTier();
+  const isMemberGrowth = memberTier === 'growth';
+  const isMemberPro = memberTier === 'pro';
+  const hasMemberDiscount = isMemberGrowth || isMemberPro;
+
+  const PRICE = isMemberPro ? '4,99' : isMemberGrowth ? '8,99' : '19,99';
+  const PRICE_NUM = isMemberPro ? 4.99 : isMemberGrowth ? 8.99 : 19.99;
+  const PRICE_DISPLAY = isMemberPro ? PRICE_DISPLAY_PRO : isMemberGrowth ? PRICE_DISPLAY_GROWTH : PRICE_DISPLAY_BASE;
+  const memberProductType = isMemberPro ? 'career_path_member_pro' : isMemberGrowth ? 'career_path_member_growth' : 'career_path';
+  const FINAL_PRICE = discountPercent > 0 ? PRICE_NUM * (1 - discountPercent / 100) : PRICE_NUM;
+  const FINAL_PRICE_DISPLAY = FINAL_PRICE.toFixed(2).replace('.', ',');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -173,46 +162,74 @@ export default function CareerPathHome() {
     }
   };
 
-  /* ─── Validação de voucher ─── */
-  const handleVoucherSubmit = async () => {
-    if (!voucherCode.trim()) {
-      setVoucherError('Introduz um código de voucher');
-      return;
-    }
-    setVoucherLoading(true);
-    setVoucherError(null);
+  /* ─── Unified discount code validation (checks coupons first, then vouchers) ─── */
+  const handleDiscountValidate = async () => {
+    if (!discountCode.trim()) return;
+    setDiscountLoading(true);
+    setDiscountError(null);
+    const code = discountCode.trim().toUpperCase();
     try {
-      const code = voucherCode.trim().toUpperCase();
-      // 1. Consultar voucher via Supabase REST API
+      // Step 1: Check discount_coupons
+      const couponRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,partner_name,max_uses,current_uses,valid_from,valid_until,applicable_products`,
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+      );
+      const coupons = await couponRes.json();
+      if (Array.isArray(coupons) && coupons.length > 0) {
+        const coupon = coupons[0];
+        const now = new Date();
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError('Este código ainda não está ativo.'); return; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError('Este código já expirou.'); return; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError('Este código atingiu o limite de utilizações.'); return; }
+        const products = coupon.applicable_products || [];
+        if (products.length > 0 && !products.includes('all') && !products.includes('career_path')) { setDiscountError('Este código não é aplicável ao Career Path.'); return; }
+        setDiscountPercent(coupon.discount_percent);
+        setDiscountValid(true);
+        // If 100% discount, unlock immediately
+        if (coupon.discount_percent === 100) {
+          incrementCouponUsage(code);
+          trackAffiliateConversion({ product: 'career_path', amount: 0, currency: 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
+          setShowPaymentModal(false);
+          sessionStorage.setItem('careerPathPaid', 'true');
+          sessionStorage.setItem('cpOrderId', `CP-COUPON-${code}`);
+          if (email) sessionStorage.setItem('cpPaymentEmail', email);
+          setTimeout(() => { setLocation('/results'); }, 400);
+        }
+        return;
+      }
+
+      // Step 2: Check vouchers table
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`,
         { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
       );
       const rows = await res.json();
-      if (!rows.length) throw new Error('Código inválido ou expirado');
-      const v = rows[0];
-      if (!v.is_active) throw new Error('Este código já foi utilizado');
-      if (v.used_analyses >= v.total_analyses) throw new Error('Este código já não tem utilizações disponíveis');
-      if (v.voucher_type !== 'career_path' && !v.includes_career_path) throw new Error('Este código não é válido para o Career Path');
-      // 2. Marcar voucher como usado
-      await fetch(
-        `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
-        {
-          method: 'PATCH',
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-          body: JSON.stringify({ used_analyses: v.used_analyses + 1, is_active: (v.used_analyses + 1) < v.total_analyses }),
-        }
-      );
-      // Voucher válido — marcar como pago e ir para resultados
-      setShowVoucherModal(false);
-      sessionStorage.setItem('careerPathPaid', 'true');
-      sessionStorage.setItem('cpOrderId', `CP-VOUCHER-${v.code}`);
-      if (v.email) sessionStorage.setItem('cpPaymentEmail', v.email);
-      setTimeout(() => { setLocation('/results'); }, 400);
-    } catch (err: any) {
-      setVoucherError(err.message || 'Código inválido');
+      if (Array.isArray(rows) && rows.length > 0) {
+        const v = rows[0];
+        if (!v.is_active) { setDiscountError('Este código já foi utilizado'); return; }
+        if (v.used_analyses >= v.total_analyses) { setDiscountError('Este código já não tem utilizações disponíveis'); return; }
+        if (v.voucher_type !== 'career_path' && !v.includes_career_path) { setDiscountError('Este código não é válido para o Career Path'); return; }
+        await fetch(
+          `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
+          {
+            method: 'PATCH',
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+            body: JSON.stringify({ used_analyses: v.used_analyses + 1, is_active: (v.used_analyses + 1) < v.total_analyses }),
+          }
+        );
+        setShowPaymentModal(false);
+        sessionStorage.setItem('careerPathPaid', 'true');
+        sessionStorage.setItem('cpOrderId', `CP-VOUCHER-${v.code}`);
+        if (v.email) sessionStorage.setItem('cpPaymentEmail', v.email);
+        setTimeout(() => { setLocation('/results'); }, 400);
+        return;
+      }
+
+      setDiscountError('Código inválido ou expirado');
+    } catch {
+      setDiscountError('Erro ao validar código');
     } finally {
-      setVoucherLoading(false);
+      setDiscountLoading(false);
     }
   };
 
@@ -322,6 +339,8 @@ export default function CareerPathHome() {
       sessionStorage.setItem('careerPathCvFile', base64Content);
       sessionStorage.setItem('careerPathCvFilename', file.name);
       sessionStorage.setItem('analysisLang', 'pt');
+      sessionStorage.setItem('analysisCountry', country);
+      sessionStorage.setItem('analysisRegion', region || '');
       if (linkedinUrl) {
         sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
       }
@@ -357,6 +376,7 @@ export default function CareerPathHome() {
     if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
 
     setPaymentLoading(true);
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
 
     try {
@@ -371,7 +391,7 @@ export default function CareerPathHome() {
           email,
           phone: (() => { const p = phone.replace(/\D/g, '').replace(/^(\+?351)/, ''); return `351${p}`; })(),
           orderId,
-          amount: PRICE_NUM.toFixed(2),
+          amount: FINAL_PRICE.toFixed(2),
           paymentMethod: 'mbway',
           description: 'Share2Inspire - Career Path',
           name: email.split('@')[0],
@@ -397,11 +417,12 @@ export default function CareerPathHome() {
     if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
 
     sessionStorage.setItem('cpPaymentEmail', email);
-    trackPaymentStart('career_path', 10.00);
-    window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}EUR`, '_blank');
+    trackPaymentStart('career_path', FINAL_PRICE);
+    window.open(`https://paypal.me/SamuelRolo/${FINAL_PRICE}EUR`, '_blank');
     setPaymentStep('success');
-    trackPurchase('career_path', 10.00, `CP-PAYPAL-${Date.now()}`);
-    trackAffiliateConversion({ product: 'career_path', amount: 10.00, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
+    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: FINAL_PRICE, currency: 'EUR'});
+    trackPurchase('career_path', FINAL_PRICE, `CP-PAYPAL-${Date.now()}`);
+    trackAffiliateConversion({ product: 'career_path', amount: FINAL_PRICE, currency: 'EUR', payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
   };
 
   const handleStripePayment = async () => {
@@ -409,6 +430,7 @@ export default function CareerPathHome() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError('Email inválido'); return; }
     setPaymentLoading(true);
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
     try {
       const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -418,13 +440,13 @@ export default function CareerPathHome() {
         body: JSON.stringify({
           email,
           name: email.split('@')[0],
-          product_type: 'career_path',
+          product_type: memberProductType,
           orderId,
           language: 'pt',
-          country: '',
-          region: '',
+          country,
+          region,
           currency: 'eur',
-          amount: PRICE_NUM,
+          amount: FINAL_PRICE,
         })
       });
       const data = await response.json();
@@ -542,22 +564,7 @@ export default function CareerPathHome() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Promo Banner */}
-      <a
-        href="/cv-analyser"
-        className="block bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30 hover:from-[#222] hover:to-[#333] transition-all cursor-pointer"
-      >
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3">
-          <FileText className="w-4 h-4 text-[#C9A961] shrink-0" />
-          <span className="text-sm text-white">
-            <strong className="text-[#C9A961]">GRÁTIS</strong> — Analisa o teu CV em 30 segundos com IA
-          </span>
-          <span className="text-xs bg-[#C9A961] text-white px-2 py-0.5 rounded-full font-semibold shrink-0">
-            Análise Gratuita
-          </span>
-          <span className="text-[#C9A961] text-sm hidden sm:inline">→</span>
-        </div>
-      </a>
+      {/* Bundle banner removed — one page, one product, one decision */}
 
       {/* Header */}
       <header className="border-b border-foreground/10 px-6 py-4">
@@ -590,52 +597,51 @@ export default function CareerPathHome() {
                 Powered by IA Avançada
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-                Descobre qual é o <span className="text-[#C9A961]">próximo passo ideal</span><br />da tua carreira.
+                O teu próximo passo de carreira <span className="text-[#C9A961]">começa aqui</span>.<br />Descobre o teu Career Path.
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                A nossa IA analisa a tua experiência profissional e identifica caminhos de carreira com maior potencial de crescimento.
+                A nossa IA analisa o teu CV e LinkedIn para traçar o teu roadmap de carreira com maior potencial de crescimento — em menos de 1 minuto.
               </p>
             </div>
 
-            {/* 3 Example Result Cards */}
-            <div className="space-y-4">
-              <p className="text-xs font-semibold text-center text-muted-foreground tracking-wider">EXEMPLO DE RESULTADO</p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                  { path: 'People Analytics', match: 84, progression: 'HR Specialist → Head of People Analytics', skills: 'Data storytelling, HR analytics, automação' },
-                  { path: 'HR Digital Transformation', match: 88, progression: 'HR Manager → Chief People Officer', skills: 'Transformação digital, change management, IA' },
-                  { path: 'Talent Strategy', match: 79, progression: 'Recruiter → Director of Talent', skills: 'Employer branding, workforce planning, analytics' },
-                ].map((ex, i) => (
-                  <div key={i} className="p-5 rounded-2xl border-2 border-[#C9A961]/30 bg-gradient-to-b from-[#C9A961]/5 to-transparent space-y-3">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-bold text-foreground">{ex.path}</p>
-                      <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded-full">{ex.match}%</span>
-                    </div>
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="w-3.5 h-3.5 text-[#C9A961] shrink-0" />
-                        <p className="text-xs text-muted-foreground">{ex.progression}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Target className="w-3.5 h-3.5 text-[#C9A961] shrink-0" />
-                        <p className="text-xs text-muted-foreground">{ex.skills}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* ── Showcase: See What You'll Receive ── */}
+            <div className="relative rounded-2xl border-2 border-[#C9A961]/30 bg-gradient-to-b from-[#C9A961]/5 to-transparent overflow-hidden">
+              <div className="p-8 md:p-10 space-y-6">
+                <div className="text-center space-y-3">
+                  <p className="text-xs font-semibold tracking-wider text-[#C9A961] uppercase">Exemplo Real de Resultado</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-foreground">Vê exactamente o que vais receber</h2>
+                  <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+                    Roadmap de carreira personalizado, análise de gaps, cargos recomendados com % de fit, formações, certificações, estratégia de networking e plano de acção imediato.
+                  </p>
+                </div>
 
-            {/* CTA Button */}
-            <div className="text-center space-y-4">
-              <Button
-                onClick={() => setStep('upload')}
-                className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
-              >
-                <Compass className="w-5 h-5 mr-2" />
-                Gerar o meu Career Path
-              </Button>
-              <p className="text-xs text-muted-foreground">Análise completa por €10,00 · Pagamento único · Sem subscrição</p>
+                {/* CTA */}
+                <div className="flex flex-col items-center gap-4">
+                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <a
+                      href="/career-path/example/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 h-10 px-5 text-sm font-medium rounded-lg bg-white text-[#9a7d3e] border border-[#C9A961]/30 hover:border-[#C9A961] transition-all"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      Ver Exemplo
+                    </a>
+                    <button
+                      onClick={() => setStep('upload')}
+                      className="inline-flex items-center gap-2 h-10 px-5 text-sm font-semibold rounded-lg bg-[#1a1a1a] hover:bg-[#2a2a2a] text-white transition-all"
+                    >
+                      <Compass className="w-3.5 h-3.5" />
+                      Descobrir o meu Career Path
+                    </button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Relatório real gerado pela nossa IA</p>
+                </div>
+                {/* Competitive statement */}
+                <p className="text-center text-sm md:text-base font-medium italic" style={{ color: '#C9A961' }}>
+                  {`O que outros cobram 600€, a Share2Inspire entrega em 30 segundos por ${PRICE_DISPLAY}.`}
+                </p>
+              </div>
             </div>
 
             {/* Trust Badges */}
@@ -675,6 +681,49 @@ export default function CareerPathHome() {
               </div>
             </div>
 
+            {/* Como funciona — 3 passos */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-center text-foreground">3 passos. 1 minuto. O teu Career Path.</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  { step: "1", title: "Carrega o teu CV", desc: "Faz upload do CV e partilha o teu LinkedIn.", time: "30 seg" },
+                  { step: "2", title: "A IA analisa tudo", desc: "Cruzamos experiência, competências e mercado.", time: "30 seg" },
+                  { step: "3", title: "Recebe o teu Career Path", desc: "Roadmap completo com gaps, formações e acções.", time: "Imediato" },
+                ].map((item, i) => (
+                  <div key={i} className="relative p-5 rounded-xl bg-card border border-border text-center space-y-2">
+                    <div className="w-8 h-8 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/30 flex items-center justify-center mx-auto">
+                      <span className="text-sm font-bold text-[#C9A961]">{item.step}</span>
+                    </div>
+                    <p className="font-semibold text-foreground text-sm">{item.title}</p>
+                    <p className="text-xs text-muted-foreground">{item.desc}</p>
+                    <span className="text-[10px] text-[#C9A961] font-medium">{item.time}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Tensão — plantar semente do PRO */}
+            <div className="space-y-4 p-6 rounded-2xl bg-muted/30 border border-border">
+              <h3 className="text-lg font-bold text-foreground text-center">Mas saber o teu Career Path é só o início.</h3>
+              <div className="space-y-3 text-sm text-muted-foreground text-center max-w-2xl mx-auto leading-relaxed">
+                <p>
+                  O Career Path mostra-te para onde podes ir. Mas há uma diferença real entre eles. Alguns vão acelerar a tua carreira. Outros podem atrasar-te anos.
+                </p>
+                <p>
+                  Qual tem maior probabilidade de sucesso? Qual exige mais esforço do que parece? O que perdes ao escolher um em vez de outro?
+                </p>
+                <p>
+                  Quando tiveres o teu Career Path, a verdadeira questão deixa de ser "para onde ir". Passa a ser: <strong className="text-foreground">qual é a melhor decisão neste momento</strong>.
+                </p>
+                <p>
+                  O <strong className="text-foreground">Career Intelligence</strong> ajuda-te a responder a isso. Com comparação clara, trade-offs reais e uma recomendação fundamentada — para decidires com confiança, não com dúvida.
+                </p>
+                <p className="text-xs text-muted-foreground/80 pt-2">
+                  Disponível como upgrade após a análise.
+                </p>
+              </div>
+            </div>
+
             {/* Testimonials */}
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-center text-foreground">O que dizem os utilizadores</h2>
@@ -698,13 +747,14 @@ export default function CareerPathHome() {
 
             {/* Bottom CTA */}
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
-              <h2 className="text-2xl font-bold text-foreground">Pronto para traçar o teu caminho?</h2>
-              <p className="text-muted-foreground">Roadmap completo por apenas €10,00. Sem compromisso.</p>
+              <h2 className="text-2xl font-bold text-foreground">Começa pelo diagnóstico. A decisão vem depois.</h2>
+              <p className="text-muted-foreground">Análise completa por {PRICE_DISPLAY}. Pagamento único. Sem subscrição. Resultado em menos de 1 minuto.{hasMemberDiscount && <span className="ml-1 text-green-600 font-medium">(desconto de membro {memberTier === 'pro' ? 'Pro' : 'Growth'})</span>}</p>
               <Button
                 onClick={() => setStep('upload')}
-                className="px-8 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl transition-all"
+                className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
               >
-                Gerar o meu Career Path
+                <Compass className="w-5 h-5 mr-2" />
+                Descobrir o meu Career Path
               </Button>
             </div>
           </div>
@@ -801,6 +851,47 @@ export default function CareerPathHome() {
                 </div>
               </div>
 
+              {/* País e Região */}
+              <div className="space-y-3">
+                <p className="text-sm font-medium">4. País e região <span className="text-red-500">*</span></p>
+                <div className="grid grid-cols-1 gap-3">
+                  <select
+                    value={country}
+                    onChange={(e) => { setCountry(e.target.value); setRegion(''); }}
+                    className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
+                  >
+                    <option value="">Selecciona o teu país...</option>
+                    {countries.map(c => (
+                      <option key={c.code} value={c.country}>{c.country}</option>
+                    ))}
+                  </select>
+                  {countryData && countryData.regions.length > 1 && (
+                    <select
+                      value={region}
+                      onChange={(e) => setRegion(e.target.value)}
+                      className="h-10 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
+                    >
+                      <option value="">Selecciona a região (opcional)...</option>
+                      {countryData.regions.map(r => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="space-y-2">
+                <p className="text-sm font-medium">5. E-mail <span className="text-red-500">*</span></p>
+                <input
+                  type="email"
+                  placeholder="o-teu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
+                />
+              </div>
+
               {/* Terms */}
               <div className="flex items-start gap-3">
                 <input
@@ -828,7 +919,7 @@ export default function CareerPathHome() {
               {/* Submit */}
               <Button
                 onClick={handleAnalyze}
-                disabled={!file || !acceptedTerms || !isValidLinkedinUrl(linkedinUrl) || loading}
+                disabled={!file || !acceptedTerms || !isValidLinkedinUrl(linkedinUrl) || !email || !country || loading}
                 className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 {loading ? (
@@ -837,7 +928,7 @@ export default function CareerPathHome() {
                     {loadingMessages[loadingStep]}
                   </span>
                 ) : (
-                  "Analisar Perfil — €10,00"
+                  "Iniciar análise"
                 )}
               </Button>
 
@@ -861,56 +952,7 @@ export default function CareerPathHome() {
               </button>
             </div>
 
-            {/* Comparison Table — inline dropdown */}
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <button
-                onClick={() => setPricingOpen(!pricingOpen)}
-                className="w-full flex items-center justify-between py-2 text-left"
-              >
-                <span className="text-sm font-semibold text-foreground flex items-center gap-2">
-                  <Award className="w-4 h-4 text-[#C9A961]" />
-                  Career Path vs Outros Métodos
-                </span>
-                {pricingOpen ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
-              </button>
-              {pricingOpen && (
-                <div className="mt-3 overflow-x-auto rounded-xl border border-border">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-muted/50">
-                        <th className="text-left p-3 font-semibold text-foreground text-xs">Funcionalidade</th>
-                        <th className="p-3 text-center"><span className="text-xs font-bold text-[#C9A961]">Career Path</span></th>
-                        <th className="p-3 text-xs font-medium text-muted-foreground text-center">Coaching</th>
-                        <th className="p-3 text-xs font-medium text-muted-foreground text-center">ChatGPT</th>
-                        <th className="p-3 text-xs font-medium text-muted-foreground text-center">LinkedIn</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {comparisonFeatures.map((row, i) => (
-                        <tr key={i} className={`border-t border-border ${i % 2 === 0 ? '' : 'bg-muted/20'}`}>
-                          <td className="p-3 text-xs text-foreground">{row.feature}</td>
-                          {row.usText ? (
-                            <>
-                              <td className="p-3 text-center text-xs font-bold text-[#C9A961]">{row.usText}</td>
-                              <td className="p-3 text-center text-xs text-muted-foreground">{row.comp1Text}</td>
-                              <td className="p-3 text-center text-xs text-muted-foreground">{row.comp2Text}</td>
-                              <td className="p-3 text-center text-xs text-muted-foreground">{row.comp3Text}</td>
-                            </>
-                          ) : (
-                            <>
-                              <td className="p-3 text-center">{row.us ? <CheckCircle2 className="w-4 h-4 text-[#C9A961] mx-auto" /> : <XCircle className="w-4 h-4 text-muted-foreground/30 mx-auto" />}</td>
-                              <td className="p-3 text-center">{row.competitor1 ? <Minus className="w-4 h-4 text-amber-400 mx-auto" /> : <XCircle className="w-4 h-4 text-muted-foreground/30 mx-auto" />}</td>
-                              <td className="p-3 text-center">{row.competitor2 ? <Minus className="w-4 h-4 text-amber-400 mx-auto" /> : <XCircle className="w-4 h-4 text-muted-foreground/30 mx-auto" />}</td>
-                              <td className="p-3 text-center">{row.competitor3 ? <Minus className="w-4 h-4 text-amber-400 mx-auto" /> : <XCircle className="w-4 h-4 text-muted-foreground/30 mx-auto" />}</td>
-                            </>
-                          )}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
+            {/* Comparison table removed — simplifying homepage */}
           </div>
         )}
 
@@ -997,7 +1039,7 @@ export default function CareerPathHome() {
                 className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
               >
                 <Compass className="w-5 h-5 mr-2" />
-                Desbloquear Career Path — €{PRICE}
+                Desbloquear Career Path — {PRICE}€
               </Button>
               <p className="text-center text-[10px] text-muted-foreground">Roadmap personalizado · Formações recomendadas · Próximos cargos · Estratégia de networking</p>
               <button
@@ -1024,9 +1066,47 @@ export default function CareerPathHome() {
 
           {paymentStep === 'payment' && (
             <div className="space-y-4">
-              <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20">
-                <p className="text-sm font-semibold text-foreground">Career Path</p>
-                <p className="text-lg font-bold text-[#C9A961]">€{PRICE}</p>
+              <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Career Path</p>
+                  <p className="text-xs text-muted-foreground">Mapa de carreira personalizado</p>
+                </div>
+                <div className="text-right">
+                  {discountPercent > 0 ? (
+                    <>
+                      <p className="text-xs text-muted-foreground line-through">{PRICE}€</p>
+                      <p className="text-lg font-bold text-[#C9A961]">{FINAL_PRICE_DISPLAY}€</p>
+                      <p className="text-[10px] text-green-600 font-semibold">-{discountPercent}%</p>
+                    </>
+                  ) : (
+                    <p className="text-lg font-bold text-[#C9A961]">{PRICE}€</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Unified discount code */}
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-foreground">Código de desconto (opcional)</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={discountCode}
+                    onChange={(e) => { setDiscountCode(e.target.value.toUpperCase()); setDiscountError(null); setDiscountValid(false); setDiscountPercent(0); }}
+                    placeholder="CÓDIGO"
+                    className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
+                    onKeyDown={(e) => e.key === 'Enter' && handleDiscountValidate()}
+                  />
+                  <Button
+                    onClick={handleDiscountValidate}
+                    disabled={discountLoading || !discountCode.trim() || discountValid}
+                    variant="outline"
+                    className="text-sm"
+                  >
+                    {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : discountValid ? <Check className="w-4 h-4 text-green-500" /> : 'Aplicar'}
+                  </Button>
+                </div>
+                {discountError && <p className="text-xs text-red-500">{discountError}</p>}
+                {discountValid && <p className="text-xs text-green-600 font-semibold">Desconto de {discountPercent}% aplicado!</p>}
               </div>
 
               {/* Email */}
@@ -1041,72 +1121,92 @@ export default function CareerPathHome() {
                 />
               </div>
 
-              {/* Payment method */}
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-foreground">Método de pagamento</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {(['mbway', 'stripe', 'paypal'] as const).map((method) => (
-                    <button
-                      key={method}
-                      onClick={() => setPaymentMethod(method)}
-                      className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                        paymentMethod === method
-                          ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground'
-                          : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
+              {FINAL_PRICE > 0 ? (
+                <>
+                  {/* Payment method */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-foreground">Método de pagamento</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {(['mbway', 'stripe', 'paypal'] as const).map((method) => (
+                        <button
+                          key={method}
+                          onClick={() => setPaymentMethod(method)}
+                          className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+                            paymentMethod === method
+                              ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground'
+                              : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
+                          }`}
+                        >
+                          {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? 'Cartão' : 'PayPal'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Phone (MB WAY only) */}
+                  {paymentMethod === 'mbway' && (
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-foreground">Telemóvel (MB WAY)</label>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="9XXXXXXXX"
+                        className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
+                      />
+                    </div>
+                  )}
+
+                  {paymentError && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4 shrink-0" />{paymentError}
+                    </p>
+                  )}
+
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowPaymentModal(false)}
+                      className="flex-1"
+                    >
+                      Voltar
+                    </Button>
+                    <Button
+                      onClick={paymentMethod === 'stripe' ? handleStripePayment : paymentMethod === 'mbway' ? handleMBWayPayment : handlePayPalPayment}
+                      disabled={paymentLoading}
+                      className={`flex-1 font-semibold text-white ${
+                        paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
                       }`}
                     >
-                      {method === 'mbway' ? 'MB WAY' : method === 'stripe' ? 'Cartão' : 'PayPal'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Phone (MB WAY only) */}
-              {paymentMethod === 'mbway' && (
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-foreground">Telemóvel (MB WAY)</label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="9XXXXXXXX"
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-                  />
+                      {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar ${FINAL_PRICE_DISPLAY}€`}
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowPaymentModal(false)}
+                    className="flex-1"
+                  >
+                    Voltar
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowPaymentModal(false);
+                      sessionStorage.setItem('careerPathPaid', 'true');
+                      sessionStorage.setItem('cpOrderId', `CP-FREE-${discountCode || 'PROMO'}`);
+                      if (email) sessionStorage.setItem('cpPaymentEmail', email);
+                      setLocation('/results');
+                    }}
+                    className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"
+                  >
+                    <Unlock className="w-4 h-4 mr-2" /> Desbloquear grátis
+                  </Button>
                 </div>
               )}
 
-              {paymentError && (
-                <p className="text-sm text-red-500 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4 shrink-0" />{paymentError}
-                </p>
-              )}
 
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowPaymentModal(false)}
-                  className="flex-1"
-                >
-                  Voltar
-                </Button>
-                <Button
-                  onClick={paymentMethod === 'stripe' ? handleStripePayment : paymentMethod === 'mbway' ? handleMBWayPayment : handlePayPalPayment}
-                  disabled={paymentLoading}
-                  className={`flex-1 font-semibold text-white ${
-                    paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
-                  }`}
-                >
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pagar €${PRICE}`}
-                </Button>
-              </div>
-
-              <button
-                onClick={() => { setShowPaymentModal(false); setTimeout(() => setShowVoucherModal(true), 300); }}
-                className="w-full text-sm text-[#C9A961] hover:underline flex items-center justify-center gap-1 pt-1"
-              >
-                <Ticket className="w-4 h-4" />
-                Já tenho um código de voucher
-              </button>
             </div>
           )}
 
@@ -1149,42 +1249,22 @@ export default function CareerPathHome() {
         </DialogContent>
       </Dialog>
 
-      {/* ─── Voucher Modal ─── */}
-      <Dialog open={showVoucherModal} onOpenChange={setShowVoucherModal}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Ticket className="w-5 h-5 text-[#C9A961]" />
-              Código de Voucher
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Introduz o teu código de voucher para desbloquear o Career Path.
-            </p>
-            <input
-              type="text"
-              value={voucherCode}
-              onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
-              placeholder="Ex: CP-XXXXX-XXXXX"
-              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-              onKeyDown={(e) => e.key === 'Enter' && handleVoucherSubmit()}
-            />
-            {voucherError && (
-              <p className="text-sm text-red-500 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4 shrink-0" />{voucherError}
-              </p>
-            )}
-            <Button
-              onClick={handleVoucherSubmit}
-              disabled={voucherLoading || !voucherCode.trim()}
-              className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
-            >
-              {voucherLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Unlock className="w-4 h-4 mr-2" />Validar Código</>}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+
+
+      {/* ─── Member Area CTA ─── */}
+      <div className="max-w-3xl mx-auto px-6 mt-12 mb-8">
+        <div className="p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center">
+          <p className="text-base font-bold text-slate-800 mb-2">Queres acesso regular ao Career Path?</p>
+          <p className="text-sm text-slate-500 mb-4 leading-relaxed">Com um plano Growth ou Pro, tens Career Path incluído mensalmente + CV Analyser semanal, conteúdos exclusivos e muito mais.</p>
+          <a
+            href="https://www.share2inspire.pt/area-cliente/planos"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
+          >
+            Ver planos de subscrição →
+          </a>
+          <p className="text-xs text-slate-400 mt-3">Career Path incluído a partir do plano Growth (19,99€/mês)</p>
+        </div>
+      </div>
 
       {/* Footer */}
       <footer className="border-t border-foreground/10 py-8 px-6 mt-8">

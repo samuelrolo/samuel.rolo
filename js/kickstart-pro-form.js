@@ -178,7 +178,7 @@ async function handleKickstartSubmit(event) {
     } catch (error) {
         console.error('❌ Erro no formulário Kickstart:', error);
         window.formUtils.showFormMessage(messageDiv, 'error',
-            `Erro no processamento: ${error.message}. Tente novamente ou contacte-nos em samuel@share2inspire.pt`);
+            `Erro no processamento: ${error.message}. Tente novamente ou contacte-nos em geral@share2inspire.pt`);
     } finally {
         window.formUtils.setButtonLoading(submitButton, false, 'Confirmar e Pagar (30€)');
     }

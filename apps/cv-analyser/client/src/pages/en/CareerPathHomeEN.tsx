@@ -3,13 +3,17 @@
 // Includes country/region selector for geolocalised analysis
 
 import { useState, useEffect } from "react";
-import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, XCircle, ChevronDown, ChevronUp, Linkedin, Globe, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, DollarSign, Zap, Lock, ArrowRight, Shield, Check } from "lucide-react";
+import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, XCircle, ChevronDown, ChevronUp, Linkedin, Globe, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, DollarSign, Zap, Lock, ArrowRight, Shield, Check, Eye, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLocation } from "wouter";
 import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { countries } from "./countries";
+import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
+import { trackAffiliateConversion } from "@/lib/affiliate";
+import { getMemberPlanTier } from "@/lib/memberAuth";
+import { useCurrency } from "@/hooks/useCurrency";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -58,39 +62,6 @@ const testimonials = [
   },
 ];
 
-/* ─── Pricing ─── */
-const pricingPlans = [
-  {
-    name: "Career Path",
-    price: "12.50",
-    popular: true,
-    badge: null,
-    description: "Full career analysis with personalised roadmap",
-    features: [
-      "Personalised career roadmap",
-      "Skills gap analysis",
-      "CV vs LinkedIn cross-analysis",
-      "Recommended training & certifications",
-      "Networking strategy",
-      "Concrete next steps",
-    ],
-  },
-];
-
-/* ─── Comparison ─── */
-const comparisonFeatures = [
-  { feature: "Personalised career roadmap", us: true, competitor1: false, competitor2: false, competitor3: false },
-  { feature: "Analysis based on your real CV", us: true, competitor1: false, competitor2: false, competitor3: false },
-  { feature: "CV vs LinkedIn cross-analysis", us: true, competitor1: false, competitor2: false, competitor3: false },
-  { feature: "Skills gap analysis", us: true, competitor1: true, competitor2: false, competitor3: true },
-  { feature: "Recommended training & certifications", us: true, competitor1: false, competitor2: false, competitor3: true },
-  { feature: "Networking strategy", us: true, competitor1: false, competitor2: false, competitor3: true },
-  { feature: "Instant results (< 1 min)", us: true, competitor1: false, competitor2: true, competitor3: false },
-  { feature: "Localised for your market", us: true, competitor1: false, competitor2: false, competitor3: false },
-  { feature: "No monthly subscription", us: true, competitor1: false, competitor2: true, competitor3: false },
-  { feature: "Price", usText: "$12.50", comp1Text: "$56-299/session", comp2Text: "$0-20/mo", comp3Text: "$29.99/mo" },
-];
-
 export default function CareerPathHomeEN() {
   useEffect(() => { document.title = "Career Path — AI-Powered Career Roadmap | Share2Inspire"; }, []);
 
@@ -105,7 +76,6 @@ export default function CareerPathHomeEN() {
   const [loadingStep, setLoadingStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [pricingOpen, setPricingOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("");
   const [step, setStep] = useState<'hero' | 'upload' | 'preview' | 'analyzing' | 'results'>('hero');
@@ -140,15 +110,25 @@ export default function CareerPathHomeEN() {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'payment' | 'success'>('payment');
 
-  // Voucher state
-  const [showVoucherModal, setShowVoucherModal] = useState(false);
-  const [voucherCode, setVoucherCode] = useState('');
-  const [voucherError, setVoucherError] = useState<string | null>(null);
-  const [voucherLoading, setVoucherLoading] = useState(false);
+  // Unified discount code state
+  const [discountCode, setDiscountCode] = useState('');
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [discountLoading, setDiscountLoading] = useState(false);
+  const [discountError, setDiscountError] = useState<string | null>(null);
+  const [discountValid, setDiscountValid] = useState(false);
 
-  const PRICE = '12.50';
-  const PRICE_NUM = 12.50;
-  const CUR = '$';
+  // Member pricing detection
+  const memberTier = getMemberPlanTier();
+  const isMemberGrowth = memberTier === 'growth';
+  const isMemberPro = memberTier === 'pro';
+  const hasMemberDiscount = isMemberGrowth || isMemberPro;
+
+  const PRICE = isMemberPro ? '4.99' : isMemberGrowth ? '8.99' : '19.99';
+  const PRICE_NUM = isMemberPro ? 4.99 : isMemberGrowth ? 8.99 : 19.99;
+  const memberProductType = isMemberPro ? 'career_path_member_pro' : isMemberGrowth ? 'career_path_member_growth' : 'career_path';
+  const FINAL_PRICE = discountPercent > 0 ? PRICE_NUM * (1 - discountPercent / 100) : PRICE_NUM;
+  const FINAL_PRICE_DISPLAY = FINAL_PRICE.toFixed(2);
+  const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
 
   const countryData = countries.find(c => c.country === selectedCountry);
 
@@ -171,44 +151,62 @@ export default function CareerPathHomeEN() {
     }
   };
 
-  /* ─── Voucher validation ─── */
-  const handleVoucherSubmit = async () => {
-    if (!voucherCode.trim()) {
-      setVoucherError('Enter a voucher code');
-      return;
-    }
-    setVoucherLoading(true);
-    setVoucherError(null);
+  /* ─── Unified discount code validation (checks coupons first, then vouchers) ─── */
+  const handleDiscountValidate = async () => {
+    if (!discountCode.trim()) return;
+    setDiscountLoading(true);
+    setDiscountError(null);
+    const code = discountCode.trim().toUpperCase();
     try {
-      const code = voucherCode.trim().toUpperCase();
-      // 1. Query voucher from Supabase REST API
+      // Step 1: Check discount_coupons
+      const couponRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,partner_name,max_uses,current_uses,valid_from,valid_until,applicable_products`,
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+      );
+      const coupons = await couponRes.json();
+      if (Array.isArray(coupons) && coupons.length > 0) {
+        const coupon = coupons[0];
+        const now = new Date();
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError('This code is not yet active.'); return; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError('This code has expired.'); return; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError('This code has reached its usage limit.'); return; }
+        const products = coupon.applicable_products || [];
+        if (products.length > 0 && !products.includes('all') && !products.includes('career_path')) { setDiscountError('This code is not applicable to Career Path.'); return; }
+        setDiscountPercent(coupon.discount_percent);
+        setDiscountValid(true);
+        return;
+      }
+
+      // Step 2: Check vouchers table
       const res = await fetch(
         `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`,
         { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
       );
       const rows = await res.json();
-      if (!rows.length) throw new Error('Invalid or expired code');
-      const v = rows[0];
-      if (!v.is_active) throw new Error('This code has already been used');
-      if (v.used_analyses >= v.total_analyses) throw new Error('This code has no remaining uses');
-      if (v.voucher_type !== 'career_path' && !v.includes_career_path) throw new Error('This code is not valid for Career Path');
-      // 2. Mark voucher as used
-      await fetch(
-        `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
-        {
-          method: 'PATCH',
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-          body: JSON.stringify({ used_analyses: v.used_analyses + 1, is_active: (v.used_analyses + 1) < v.total_analyses }),
-        }
-      );
-      // Voucher valid — mark as paid and go to results
-      setShowVoucherModal(false);
-      sessionStorage.setItem('careerPathPaid', 'true');
-      setTimeout(() => { setLocation('/results'); }, 400);
-    } catch (err: any) {
-      setVoucherError(err.message || 'Invalid code');
+      if (Array.isArray(rows) && rows.length > 0) {
+        const v = rows[0];
+        if (!v.is_active) { setDiscountError('This code has already been used'); return; }
+        if (v.used_analyses >= v.total_analyses) { setDiscountError('This code has no remaining uses'); return; }
+        if (v.voucher_type !== 'career_path' && !v.includes_career_path) { setDiscountError('This code is not valid for Career Path'); return; }
+        await fetch(
+          `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${v.id}`,
+          {
+            method: 'PATCH',
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+            body: JSON.stringify({ used_analyses: v.used_analyses + 1, is_active: (v.used_analyses + 1) < v.total_analyses }),
+          }
+        );
+        setShowPaymentModal(false);
+        sessionStorage.setItem('careerPathPaid', 'true');
+        setTimeout(() => { setLocation('/results'); }, 400);
+        return;
+      }
+
+      setDiscountError('Invalid or expired code');
+    } catch {
+      setDiscountError('Error validating code');
     } finally {
-      setVoucherLoading(false);
+      setDiscountLoading(false);
     }
   };
 
@@ -319,7 +317,6 @@ export default function CareerPathHomeEN() {
         sessionStorage.setItem('careerPathLinkedinUrl', linkedinUrl);
       }
 
-      // Show preview before payment
       const profile = analysisSource.candidate_profile || {};
       setPreviewData({
         name: profile.detected_name || 'N/A',
@@ -348,6 +345,7 @@ export default function CareerPathHomeEN() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError('Invalid email'); return; }
     setPaymentLoading(true);
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     setPaymentError(null);
     try {
       const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -357,13 +355,13 @@ export default function CareerPathHomeEN() {
         body: JSON.stringify({
           email,
           name: email.split('@')[0],
-          product_type: 'career_path',
+          product_type: memberProductType,
           orderId,
           language: 'en',
           country: selectedCountry,
           region: selectedRegion,
-          currency: 'usd',
-          amount: PRICE_NUM,
+          currency: currencyCode,
+          amount: FINAL_PRICE,
         })
       });
       const data = await response.json();
@@ -386,8 +384,11 @@ export default function CareerPathHomeEN() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) { setPaymentError('Invalid email'); return; }
     sessionStorage.setItem('cpPaymentEmail', email);
-    window.open(`https://paypal.me/SamuelRolo/${PRICE_NUM}USD`, '_blank');
+    window.open(`https://paypal.me/SamuelRolo/${FINAL_PRICE}USD`, '_blank');
     setPaymentStep('success');
+    if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: FINAL_PRICE, currency: currencyCodeUpper});
+    trackPurchase('career_path', 19.99, `CP-PAYPAL-${Date.now()}`);
+    trackAffiliateConversion({ product: 'career_path', amount: 19.99, currency: currencyCodeUpper, payment_method: 'paypal', customer_email: email, transaction_id: `CP-PAYPAL-${Date.now()}` });
   };
 
   const handlePaymentSuccess = () => {
@@ -398,23 +399,6 @@ export default function CareerPathHomeEN() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Promo Banner */}
-      <a
-        href="/en/cv-analyser"
-        className="block bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30 hover:from-[#222] hover:to-[#333] transition-all cursor-pointer"
-      >
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3">
-          <FileText className="w-4 h-4 text-[#C9A961] shrink-0" />
-          <span className="text-sm text-white">
-            <strong className="text-[#C9A961]">FREE</strong> — Analyse your CV in 30 seconds with AI
-          </span>
-          <span className="text-xs bg-[#C9A961] text-white px-2 py-0.5 rounded-full font-semibold shrink-0">
-            Free Analysis
-          </span>
-          <span className="text-[#C9A961] text-sm hidden sm:inline">→</span>
-        </div>
-      </a>
-
       {/* Header */}
       <header className="border-b border-foreground/10 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -436,133 +420,185 @@ export default function CareerPathHomeEN() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-16">
+      <main className="max-w-4xl mx-auto px-6 py-12">
 
-        {/* ═══ STEP 1: HERO — Promise + Examples (value-first) ═══ */}
+        {/* ═══ STEP 1: HERO — Compact, conversion-focused ═══ */}
         {step === 'hero' && (
-          <div className="space-y-16 animate-in fade-in">
-            {/* Hero */}
+          <div className="space-y-12 animate-in fade-in">
+
+            {/* ── Hero: Headline + CTA immediately visible ── */}
             <div className="text-center space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/20 text-sm font-medium text-[#C9A961]">
                 <Compass className="w-4 h-4" />
                 Powered by Advanced AI
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-                Discover your <span className="text-[#C9A961]">ideal next career move</span>.
+                Your career has <span className="text-[#C9A961]">3 possible paths</span>.<br />Find out which ones.
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Our AI analyses your professional experience and identifies career paths with the highest growth potential.
+                Upload your CV, get a personalised roadmap with gap analysis, salary estimates, and an action plan — in under 1 minute.
               </p>
-            </div>
 
-            {/* 3 Example Result Cards */}
-            <div className="space-y-4">
-              <p className="text-xs font-semibold text-center text-muted-foreground tracking-wider">EXAMPLE RESULT</p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Primary CTA */}
+              <div className="flex flex-col items-center gap-3 pt-2">
+                <Button
+                  onClick={() => setStep('upload')}
+                  className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all shadow-lg shadow-[#C9A961]/20"
+                >
+                  <Compass className="w-5 h-5 mr-2" />
+                  Start my Career Path — {CUR}{PRICE}
+                </Button>
+                <p className="text-xs text-muted-foreground">One-time payment · No subscription · Results in under 1 minute</p>
+              </div>
+
+              {/* Trust badges — inline */}
+              <div className="flex flex-wrap justify-center gap-6 pt-2">
                 {[
-                  { path: 'People Analytics', match: 84, progression: 'HR Specialist → Head of People Analytics', skills: 'Data storytelling, HR analytics, automation' },
-                  { path: 'HR Digital Transformation', match: 88, progression: 'HR Manager → Chief People Officer', skills: 'Digital transformation, change management, AI' },
-                  { path: 'Talent Strategy', match: 79, progression: 'Recruiter → Director of Talent', skills: 'Employer branding, workforce planning, analytics' },
-                ].map((ex, i) => (
-                  <div key={i} className="p-5 rounded-2xl border-2 border-[#C9A961]/30 bg-gradient-to-b from-[#C9A961]/5 to-transparent space-y-3">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-bold text-foreground">{ex.path}</p>
-                      <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded-full">{ex.match}%</span>
-                    </div>
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="w-3.5 h-3.5 text-[#C9A961] shrink-0" />
-                        <p className="text-xs text-muted-foreground">{ex.progression}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Target className="w-3.5 h-3.5 text-[#C9A961] shrink-0" />
-                        <p className="text-xs text-muted-foreground">{ex.skills}</p>
-                      </div>
-                    </div>
+                  { icon: <Shield className="w-4 h-4" />, label: "100% private" },
+                  { icon: <Zap className="w-4 h-4" />, label: "Results in < 1 min" },
+                  { icon: <Award className="w-4 h-4" />, label: "Created by HR experts" },
+                ].map((badge, i) => (
+                  <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <span className="text-[#C9A961]">{badge.icon}</span>
+                    {badge.label}
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* CTA Button */}
-            <div className="text-center space-y-4">
-              <Button
-                onClick={() => setStep('upload')}
-                className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
-              >
-                <Compass className="w-5 h-5 mr-2" />
-                Generate my Career Path
-              </Button>
-              <p className="text-xs text-muted-foreground">Full analysis for $12.50 · One-time payment · No subscription</p>
-            </div>
-
-            {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { icon: <Shield className="w-5 h-5" />, label: "100% private data" },
-                { icon: <Zap className="w-5 h-5" />, label: "Results in < 1 minute" },
-                { icon: <Award className="w-5 h-5" />, label: "Created by HR experts" },
-              ].map((badge, i) => (
-                <div key={i} className="flex flex-col items-center gap-2 p-4 rounded-xl bg-muted/30 text-center">
-                  <span className="text-[#C9A961]">{badge.icon}</span>
-                  <span className="text-xs font-medium text-muted-foreground">{badge.label}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* What's Included — Preview */}
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-center text-foreground">What you'll receive</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* ── What you'll receive — compact grid ── */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-center text-foreground">What you'll receive</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {[
-                  { icon: <Compass className="w-4 h-4" />, title: "Career Roadmap", desc: "Step-by-step plan for the next 1-3 years" },
-                  { icon: <Target className="w-4 h-4" />, title: "Gap Analysis", desc: "Skills you need for the next level" },
-                  { icon: <DollarSign className="w-4 h-4" />, title: "Salary Estimate", desc: "Estimated salary progression per stage" },
-                  { icon: <BookOpen className="w-4 h-4" />, title: "Recommended Training", desc: "Certifications with the greatest career impact" },
-                  { icon: <Users className="w-4 h-4" />, title: "Networking Strategy", desc: "Who to meet and how to position yourself" },
-                  { icon: <Calendar className="w-4 h-4" />, title: "30-60-90 Day Plan", desc: "Concrete, time-bound actions" },
+                  { icon: <Compass className="w-4 h-4" />, title: "Career Roadmap", desc: "Step-by-step plan for 1-3 years" },
+                  { icon: <Target className="w-4 h-4" />, title: "Gap Analysis", desc: "Skills for the next level" },
+                  { icon: <DollarSign className="w-4 h-4" />, title: "Salary Estimate", desc: "Progression per stage" },
+                  { icon: <BookOpen className="w-4 h-4" />, title: "Training Plan", desc: "High-impact certifications" },
+                  { icon: <Users className="w-4 h-4" />, title: "Networking Strategy", desc: "Who to meet and how" },
+                  { icon: <Calendar className="w-4 h-4" />, title: "30-60-90 Day Plan", desc: "Concrete actions" },
                 ].map((item, i) => (
-                  <div key={i} className="flex gap-3 p-4 rounded-xl bg-card border border-border">
+                  <div key={i} className="flex gap-2.5 p-3 rounded-xl bg-card border border-border">
                     <span className="text-[#C9A961] mt-0.5 shrink-0">{item.icon}</span>
                     <div>
-                      <p className="font-semibold text-foreground text-sm">{item.title}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+                      <p className="font-semibold text-foreground text-xs">{item.title}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{item.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Testimonials */}
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-center text-foreground">What our users say</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* ── Example — kept but compact ── */}
+            <div className="rounded-2xl border border-[#C9A961]/20 bg-gradient-to-b from-[#C9A961]/5 to-transparent overflow-hidden">
+              <div className="p-6 md:p-8 space-y-4">
+                <div className="text-center space-y-2">
+                  <p className="text-xs font-semibold tracking-wider text-[#C9A961] uppercase">Real Result Example</p>
+                  <h2 className="text-xl font-bold text-foreground">See exactly what you'll receive</h2>
+                  <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+                    Personalised career roadmap, gap analysis, recommended roles with % fit, training, certifications, networking strategy and action plan.
+                  </p>
+                </div>
+
+                <div className="flex flex-col items-center gap-3">
+                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <a
+                      href="/en/career-path/example/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 h-10 px-5 text-sm font-medium rounded-lg bg-white text-[#9a7d3e] border border-[#C9A961]/30 hover:border-[#C9A961] transition-all"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      See Example
+                    </a>
+                    <button
+                      onClick={() => setStep('upload')}
+                      className="inline-flex items-center gap-2 h-10 px-5 text-sm font-semibold rounded-lg bg-[#1a1a1a] hover:bg-[#2a2a2a] text-white transition-all"
+                    >
+                      <Compass className="w-3.5 h-3.5" />
+                      Discover my Career Path
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">Real report generated by our AI</p>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Career Intelligence Upsell — clear options ── */}
+            <div className="rounded-2xl border border-purple-200 bg-gradient-to-br from-purple-50/50 to-[#C9A961]/5 overflow-hidden">
+              <div className="p-6 md:p-8 space-y-4">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <Brain className="w-5 h-5 text-purple-600" />
+                  <h3 className="text-lg font-bold text-foreground">Want more than a roadmap?</h3>
+                </div>
+                <p className="text-sm text-muted-foreground text-center max-w-xl mx-auto">
+                  <strong className="text-foreground">Career Intelligence</strong> compares multiple strategic career directions side-by-side, analyses trade-offs, and gives you a justified recommendation — so you decide with confidence.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                  {/* Option 1: Upgrade after Career Path */}
+                  <div className="p-4 rounded-xl bg-white border border-border space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded-full tracking-wider">SAVE</span>
+                      <span className="text-sm font-semibold text-foreground">Start with Career Path</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Get your Career Path for {CUR}{PRICE}, then upgrade to Career Intelligence for just {CUR}29.</p>
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-lg font-bold text-[#C9A961]">{CUR}{PRICE}</span>
+                      <span className="text-xs text-muted-foreground">then +{CUR}29 upgrade</span>
+                    </div>
+                  </div>
+                  {/* Option 2: Full Career Intelligence */}
+                  <div className="p-4 rounded-xl bg-white border border-purple-200 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full tracking-wider">FULL</span>
+                      <span className="text-sm font-semibold text-foreground">Career Intelligence</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Everything in Career Path + strategic comparison, trade-offs, and final recommendation.</p>
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg font-bold text-purple-600">{CUR}49</span>
+                      <a
+                        href="/en/career-intelligence"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 hover:text-purple-700 transition-colors"
+                      >
+                        Learn more <ArrowRight className="w-3 h-3" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Testimonials — compact ── */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-center text-foreground">What our users say</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {testimonials.map((t, i) => (
-                  <div key={i} className="p-5 rounded-xl bg-card border border-border space-y-3">
+                  <div key={i} className="p-4 rounded-xl bg-card border border-border space-y-2">
                     <div className="flex gap-0.5">
                       {Array.from({ length: t.rating }).map((_, j) => (
-                        <Star key={j} className="w-4 h-4 fill-[#C9A961] text-[#C9A961]" />
+                        <Star key={j} className="w-3.5 h-3.5 fill-[#C9A961] text-[#C9A961]" />
                       ))}
                     </div>
-                    <p className="text-sm text-muted-foreground italic">"{t.text}"</p>
+                    <p className="text-xs text-muted-foreground italic leading-relaxed">"{t.text}"</p>
                     <div>
-                      <p className="text-sm font-semibold text-foreground">{t.name}</p>
-                      <p className="text-xs text-muted-foreground">{t.role}</p>
+                      <p className="text-xs font-semibold text-foreground">{t.name}</p>
+                      <p className="text-[11px] text-muted-foreground">{t.role}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Bottom CTA */}
-            <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
-              <h2 className="text-2xl font-bold text-foreground">Ready to chart your path?</h2>
-              <p className="text-muted-foreground">Full career roadmap for just $12.50. No commitment.</p>
+            {/* ── Bottom CTA ── */}
+            <div className="text-center space-y-3 p-6 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
+              <h2 className="text-xl font-bold text-foreground">Ready to discover your Career Path?</h2>
+              <p className="text-sm text-muted-foreground">Full analysis for {CUR}{PRICE}. One-time payment. Results in under 1 minute.</p>
               <Button
                 onClick={() => setStep('upload')}
-                className="px-8 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white font-semibold rounded-xl transition-all"
+                className="h-12 px-8 text-sm font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
               >
-                Generate my Career Path
+                <Compass className="w-5 h-5 mr-2" />
+                Start my Career Path
               </Button>
             </div>
           </div>
@@ -652,7 +688,6 @@ export default function CareerPathHomeEN() {
                     className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/30 focus:border-[#C9A961] transition-colors text-sm"
                   />
                 </div>
-                {/* Transparency note */}
                 <div className="p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg">
                   <p className="text-xs font-semibold text-blue-600 mb-1.5 flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" /> The system will automatically analyse:</p>
                   <div className="grid grid-cols-2 gap-1">
@@ -691,6 +726,18 @@ export default function CareerPathHomeEN() {
                 </div>
               </div>
 
+              {/* Email */}
+              <div className="space-y-2">
+                <p className="text-sm font-medium">5. E-mail <span className="text-red-500">*</span></p>
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/40"
+                />
+              </div>
+
               {/* Terms */}
               <div className="flex items-start gap-3">
                 <input type="checkbox" id="cp-terms" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} disabled={loading} className="mt-0.5 w-4 h-4 rounded border-border accent-[#C9A961]" />
@@ -709,13 +756,13 @@ export default function CareerPathHomeEN() {
               {/* Submit */}
               <Button
                 onClick={handleAnalyze}
-                disabled={!file || !acceptedTerms || !isValidLinkedinUrl(linkedinUrl) || loading || !selectedCountry}
+                disabled={!file || !acceptedTerms || !isValidLinkedinUrl(linkedinUrl) || loading || !selectedCountry || !email}
                 className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 {loading ? (
                   <span className="flex items-center gap-2"><Loader2 className="w-5 h-5 animate-spin" />{loadingMessages[loadingStep]}</span>
                 ) : (
-                  "Analyse Profile — $12.50"
+                  "Start analysis"
                 )}
               </Button>
 
@@ -738,53 +785,6 @@ export default function CareerPathHomeEN() {
                 ← Back
               </button>
             </div>
-
-            {/* Comparison Table */}
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <button onClick={() => setPricingOpen(!pricingOpen)} className="w-full flex items-center justify-between py-2 text-left">
-                <span className="text-sm font-semibold text-foreground flex items-center gap-2">
-                  <Award className="w-4 h-4 text-[#C9A961]" />Career Path vs Other Methods
-                </span>
-                {pricingOpen ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
-              </button>
-              {pricingOpen && (
-                <div className="mt-3 overflow-x-auto rounded-xl border border-border">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-muted/50">
-                        <th className="text-left p-3 font-semibold text-foreground text-xs">Feature</th>
-                        <th className="p-3 text-center"><span className="text-xs font-bold text-[#C9A961]">Career Path</span></th>
-                        <th className="p-3 text-xs font-medium text-muted-foreground text-center">Coaching</th>
-                        <th className="p-3 text-xs font-medium text-muted-foreground text-center">ChatGPT</th>
-                        <th className="p-3 text-xs font-medium text-muted-foreground text-center">LinkedIn</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {comparisonFeatures.map((row, i) => (
-                        <tr key={i} className={`border-t border-border ${i % 2 === 0 ? '' : 'bg-muted/20'}`}>
-                          <td className="p-3 text-xs text-foreground">{row.feature}</td>
-                          {row.usText ? (
-                            <>
-                              <td className="p-3 text-center text-xs font-bold text-[#C9A961]">{row.usText}</td>
-                              <td className="p-3 text-center text-xs text-muted-foreground">{row.comp1Text}</td>
-                              <td className="p-3 text-center text-xs text-muted-foreground">{row.comp2Text}</td>
-                              <td className="p-3 text-center text-xs text-muted-foreground">{row.comp3Text}</td>
-                            </>
-                          ) : (
-                            <>
-                              <td className="p-3 text-center">{row.us ? <CheckCircle2 className="w-4 h-4 text-[#C9A961] mx-auto" /> : <XCircle className="w-4 h-4 text-muted-foreground/40 mx-auto" />}</td>
-                              <td className="p-3 text-center">{row.competitor1 ? <CheckCircle2 className="w-4 h-4 text-muted-foreground/60 mx-auto" /> : <XCircle className="w-4 h-4 text-muted-foreground/40 mx-auto" />}</td>
-                              <td className="p-3 text-center">{row.competitor2 ? <CheckCircle2 className="w-4 h-4 text-muted-foreground/60 mx-auto" /> : <XCircle className="w-4 h-4 text-muted-foreground/40 mx-auto" />}</td>
-                              <td className="p-3 text-center">{row.competitor3 ? <CheckCircle2 className="w-4 h-4 text-muted-foreground/60 mx-auto" /> : <XCircle className="w-4 h-4 text-muted-foreground/40 mx-auto" />}</td>
-                            </>
-                          )}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
           </div>
         )}
 
@@ -801,13 +801,10 @@ export default function CareerPathHomeEN() {
             </div>
 
             <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
-              {/* Name & Role */}
               <div className="text-center pb-4 border-b border-border">
                 <p className="text-lg font-bold text-foreground">{previewData.name}</p>
                 <p className="text-sm text-[#C9A961] font-semibold">{previewData.role}</p>
               </div>
-
-              {/* Seniority & Experience */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-muted/30 rounded-lg text-center">
                   <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-1">SENIORITY</p>
@@ -818,8 +815,6 @@ export default function CareerPathHomeEN() {
                   <p className="text-sm font-bold text-foreground">{previewData.experience}</p>
                 </div>
               </div>
-
-              {/* Top Skills */}
               <div>
                 <p className="text-[10px] font-semibold text-muted-foreground tracking-wider mb-2">TOP DETECTED SKILLS</p>
                 <div className="flex flex-wrap gap-2">
@@ -828,8 +823,6 @@ export default function CareerPathHomeEN() {
                   ))}
                 </div>
               </div>
-
-              {/* Next Role - the hook */}
               {previewData.nextRole && (
                 <div className="p-4 bg-gradient-to-r from-[#C9A961]/5 to-[#C9A961]/10 rounded-xl border border-[#C9A961]/20">
                   <p className="text-[10px] font-semibold text-[#C9A961] tracking-wider mb-1">MOST LIKELY NEXT CAREER STEP</p>
@@ -860,7 +853,7 @@ export default function CareerPathHomeEN() {
               </div>
             </div>
 
-            {/* CTA */}
+            {/* Payment CTAs — Career Path + Career Intelligence option */}
             <div className="space-y-3">
               <Button
                 onClick={() => {
@@ -871,9 +864,28 @@ export default function CareerPathHomeEN() {
                 className="w-full h-14 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"
               >
                 <Compass className="w-5 h-5 mr-2" />
-                Unlock Career Path — ${PRICE}
+                Unlock Career Path — {CUR}{PRICE}
               </Button>
-              <p className="text-center text-[10px] text-muted-foreground">Personalised roadmap · Recommended training · Next roles · Networking strategy</p>
+
+              {/* Career Intelligence upsell */}
+              <div className="p-4 rounded-xl border border-purple-200 bg-purple-50/50 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Brain className="w-4 h-4 text-purple-600" />
+                  <span className="text-sm font-semibold text-foreground">Want the full strategic analysis?</span>
+                </div>
+                <p className="text-xs text-muted-foreground">Career Intelligence includes everything in Career Path + side-by-side comparison, trade-offs, and a justified recommendation.</p>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-bold text-purple-600">{CUR}49</span>
+                  <a
+                    href="/en/career-intelligence"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 hover:text-purple-700 transition-colors ml-auto"
+                  >
+                    Get Career Intelligence <ArrowRight className="w-3 h-3" />
+                  </a>
+                </div>
+              </div>
+
+              <p className="text-center text-[10px] text-muted-foreground">Or upgrade to Career Intelligence after your Career Path results for just {CUR}29</p>
               <button
                 onClick={() => setStep('upload')}
                 className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors text-center"
@@ -898,12 +910,49 @@ export default function CareerPathHomeEN() {
 
           {paymentStep === 'payment' && (
             <div className="space-y-4">
-              <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20">
-                <p className="text-sm font-semibold text-foreground">Career Path</p>
-                <p className="text-lg font-bold text-[#C9A961]">{CUR}{PRICE}</p>
+              <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Career Path</p>
+                  <p className="text-xs text-muted-foreground">Personalised career map</p>
+                </div>
+                <div className="text-right">
+                  {discountPercent > 0 ? (
+                    <>
+                      <p className="text-xs text-muted-foreground line-through">{CUR}{PRICE}</p>
+                      <p className="text-lg font-bold text-[#C9A961]">{CUR}{FINAL_PRICE_DISPLAY}</p>
+                      <p className="text-[10px] text-green-600 font-semibold">-{discountPercent}%</p>
+                    </>
+                  ) : (
+                    <p className="text-lg font-bold text-[#C9A961]">{CUR}{PRICE}</p>
+                  )}
+                </div>
               </div>
 
-              {/* Email */}
+              {/* Unified discount code */}
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-foreground">Discount code (optional)</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={discountCode}
+                    onChange={(e) => { setDiscountCode(e.target.value.toUpperCase()); setDiscountError(null); setDiscountValid(false); setDiscountPercent(0); }}
+                    placeholder="CODE"
+                    className="flex-1 px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
+                    onKeyDown={(e) => e.key === 'Enter' && handleDiscountValidate()}
+                  />
+                  <Button
+                    onClick={handleDiscountValidate}
+                    disabled={discountLoading || !discountCode.trim() || discountValid}
+                    variant="outline"
+                    className="text-sm"
+                  >
+                    {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : discountValid ? <Check className="w-4 h-4 text-green-500" /> : 'Apply'}
+                  </Button>
+                </div>
+                {discountError && <p className="text-xs text-red-500">{discountError}</p>}
+                {discountValid && <p className="text-xs text-green-600 font-semibold">{discountPercent}% discount applied!</p>}
+              </div>
+
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-foreground">Email</label>
                 <input
@@ -915,58 +964,71 @@ export default function CareerPathHomeEN() {
                 />
               </div>
 
-              {/* Payment method — EN only has Stripe and PayPal */}
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-foreground">Payment method</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {(['stripe', 'paypal'] as const).map((method) => (
-                    <button
-                      key={method}
-                      onClick={() => setPaymentMethod(method)}
-                      className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                        paymentMethod === method
-                          ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground'
-                          : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
+              {FINAL_PRICE > 0 ? (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-foreground">Payment method</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {(['stripe', 'paypal'] as const).map((method) => (
+                        <button
+                          key={method}
+                          onClick={() => setPaymentMethod(method)}
+                          className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+                            paymentMethod === method
+                              ? 'border-[#C9A961] bg-[#C9A961]/5 text-foreground'
+                              : 'border-border text-muted-foreground hover:border-[#C9A961]/50'
+                          }`}
+                        >
+                          {method === 'stripe' ? 'Card' : 'PayPal'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {paymentError && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4 shrink-0" />{paymentError}
+                    </p>
+                  )}
+
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowPaymentModal(false)}
+                      className="flex-1"
+                    >
+                      Back
+                    </Button>
+                    <Button
+                      onClick={paymentMethod === 'stripe' ? handleStripePayment : handlePayPalPayment}
+                      disabled={paymentLoading}
+                      className={`flex-1 font-semibold text-white ${
+                        paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
                       }`}
                     >
-                      {method === 'stripe' ? 'Card' : 'PayPal'}
-                    </button>
-                  ))}
+                      {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pay ${CUR}${FINAL_PRICE_DISPLAY}`}
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setShowPaymentModal(false)} className="flex-1">Back</Button>
+                  <Button
+                    onClick={() => {
+                      setShowPaymentModal(false);
+                      sessionStorage.setItem('careerPathPaid', 'true');
+                      sessionStorage.setItem('cpOrderId', `CP-FREE-${discountCode || 'PROMO'}`);
+                      if (email) sessionStorage.setItem('cpPaymentEmail', email);
+                      setLocation('/results');
+                    }}
+                    className="flex-1 font-semibold text-white bg-green-600 hover:bg-green-700"
+                  >
+                    <Unlock className="w-4 h-4 mr-2" /> Unlock free
+                  </Button>
                 </div>
-              </div>
-
-              {paymentError && (
-                <p className="text-sm text-red-500 flex items-center gap-1">
-                  <AlertCircle className="w-4 h-4 shrink-0" />{paymentError}
-                </p>
               )}
 
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowPaymentModal(false)}
-                  className="flex-1"
-                >
-                  Back
-                </Button>
-                <Button
-                  onClick={paymentMethod === 'stripe' ? handleStripePayment : handlePayPalPayment}
-                  disabled={paymentLoading}
-                  className={`flex-1 font-semibold text-white ${
-                    paymentMethod === 'stripe' ? 'bg-[#635BFF] hover:bg-[#5046E5]' : 'bg-[#C9A961] hover:bg-[#A88B4E]'
-                  }`}
-                >
-                  {paymentLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Pay ${CUR}${PRICE}`}
-                </Button>
-              </div>
 
-              <button
-                onClick={() => { setShowPaymentModal(false); setTimeout(() => setShowVoucherModal(true), 300); }}
-                className="w-full text-sm text-[#C9A961] hover:underline flex items-center justify-center gap-1 pt-1"
-              >
-                <Ticket className="w-4 h-4" />
-                I already have a voucher code
-              </button>
             </div>
           )}
 
@@ -986,42 +1048,22 @@ export default function CareerPathHomeEN() {
         </DialogContent>
       </Dialog>
 
-      {/* ─── Voucher Modal ─── */}
-      <Dialog open={showVoucherModal} onOpenChange={setShowVoucherModal}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Ticket className="w-5 h-5 text-[#C9A961]" />
-              Voucher Code
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Enter your voucher code to unlock the Career Path.
-            </p>
-            <input
-              type="text"
-              value={voucherCode}
-              onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
-              placeholder="Ex: CP-XXXXX-XXXXX"
-              className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A961]"
-              onKeyDown={(e) => e.key === 'Enter' && handleVoucherSubmit()}
-            />
-            {voucherError && (
-              <p className="text-sm text-red-500 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4 shrink-0" />{voucherError}
-              </p>
-            )}
-            <Button
-              onClick={handleVoucherSubmit}
-              disabled={voucherLoading || !voucherCode.trim()}
-              className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
-            >
-              {voucherLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Unlock className="w-4 h-4 mr-2" />Validate Code</>}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+
+
+      {/* ─── Member Area CTA ─── */}
+      <div className="max-w-3xl mx-auto px-6 mt-12 mb-8">
+        <div className="p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center">
+          <p className="text-base font-bold text-slate-800 mb-2">Want regular access to Career Path?</p>
+          <p className="text-sm text-slate-500 mb-4 leading-relaxed">With a Growth or Pro plan, you get Career Path included monthly + weekly CV Analyser, exclusive content and much more.</p>
+          <a
+            href="https://www.share2inspire.pt/area-cliente/planos"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
+          >
+            View subscription plans →
+          </a>
+          <p className="text-xs text-slate-400 mt-3">Career Path included from the Growth plan (€19.99/month)</p>
+        </div>
+      </div>
 
       {/* Footer */}
       <footer className="border-t border-foreground/10 py-8 px-6 mt-8">

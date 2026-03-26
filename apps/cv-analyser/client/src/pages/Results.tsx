@@ -4,7 +4,7 @@
 // Payment: MB WAY + PayPal options
 // Voucher: Code validation for multi-analysis plans via Supabase
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
 import ATSRejectionBlock from "@/components/ATSRejectionBlock";
 import QuadrantCard from "@/components/QuadrantCard";
@@ -14,13 +14,107 @@ import RecruiterPerception from "@/components/RecruiterPerception";
 import LockedSection from "@/components/LockedSection";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Loader2, ArrowLeft, Home as HomeIcon, FileCheck, Lock, TrendingUp, Euro, Info, BarChart3, Grid2x2, Eye, AlertTriangle, Bot, CreditCard, CheckCircle2, Mail, Ticket, Unlock, Target, Sparkles, Calendar, Send, Rocket, GraduationCap, Briefcase, Globe, Users, MapPin, ExternalLink, Linkedin, Compass, Download, Copy, Award, Share2, AlertCircle, Flame, DollarSign, Shield, Star, ChevronRight, Zap, Check } from "lucide-react";
+import { Loader2, ArrowLeft, Home as HomeIcon, FileCheck, Lock, TrendingUp, Euro, Info, BarChart3, Grid2x2, Eye, AlertTriangle, Bot, CreditCard, CheckCircle2, Mail, Ticket, Unlock, Target, Sparkles, Calendar, Send, Rocket, GraduationCap, Briefcase, Globe, Users, MapPin, ExternalLink, Linkedin, Compass, Download, Copy, Award, Share2, AlertCircle, Flame, DollarSign, Shield, Star, ChevronRight, Zap, Check, Save } from "lucide-react";
 import type { AnalysisData } from "@/types/analysis";
 import { trackPurchase } from "@/lib/gtag";
-import { trackAffiliateConversion } from "@/lib/affiliate";
+import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
+import { getMemberPlanTier } from "@/lib/memberAuth";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+
+/**
+ * Save analysis result to user_analyses table if user is authenticated via Supabase.
+ * Checks for existing Supabase session and saves the analysis data.
+ */
+async function saveToUserAnalyses(analysisType: string, data: Record<string, any>): Promise<boolean> {
+  // Try to get Supabase session from localStorage
+  const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+  if (!storageKey) {
+    console.warn('[S2I] No Supabase auth token found in localStorage');
+    throw new Error('NOT_LOGGED_IN');
+  }
+  const stored = localStorage.getItem(storageKey);
+  if (!stored) throw new Error('NOT_LOGGED_IN');
+  const parsed = JSON.parse(stored);
+  let accessToken = parsed?.access_token;
+  const refreshToken = parsed?.refresh_token;
+  const userId = parsed?.user?.id;
+  if (!accessToken || !userId) throw new Error('NOT_LOGGED_IN');
+
+  // Check if we already saved this analysis (avoid duplicates)
+  const dedupKey = `s2i_saved_${analysisType}_${sessionStorage.getItem('analysisId') || Date.now()}`;
+  if (sessionStorage.getItem(dedupKey)) return true; // Already saved
+
+  const payload = {
+    user_id: userId,
+    analysis_type: analysisType,
+    data: { ...data, captured_at: new Date().toISOString() },
+    created_at: new Date().toISOString()
+  };
+
+  // First attempt with current access token
+  let res = await fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  // If 401, try to refresh the token and retry
+  if (res.status === 401 && refreshToken) {
+    console.log('[S2I] Access token expired, attempting refresh...');
+    try {
+      const refreshRes = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ refresh_token: refreshToken })
+      });
+      if (refreshRes.ok) {
+        const newSession = await refreshRes.json();
+        accessToken = newSession.access_token;
+        // Update localStorage with new session
+        localStorage.setItem(storageKey, JSON.stringify(newSession));
+        console.log('[S2I] Token refreshed successfully, retrying save...');
+        // Retry the save with new token
+        res = await fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify(payload)
+        });
+      } else {
+        console.warn('[S2I] Token refresh failed:', refreshRes.status);
+        throw new Error('SESSION_EXPIRED');
+      }
+    } catch (refreshErr: any) {
+      if (refreshErr.message === 'SESSION_EXPIRED') throw refreshErr;
+      console.warn('[S2I] Token refresh error:', refreshErr);
+      throw new Error('SESSION_EXPIRED');
+    }
+  }
+
+  if (res.ok) {
+    sessionStorage.setItem(dedupKey, 'true');
+    console.log('[S2I] Analysis saved to user_analyses:', analysisType);
+    return true;
+  } else {
+    const errText = await res.text().catch(() => '');
+    console.error('[S2I] Save failed:', res.status, errText);
+    throw new Error(res.status === 401 ? 'SESSION_EXPIRED' : `SAVE_FAILED_${res.status}`);
+  }
+}
 
 /**
  * Update the cv_analysis record with the user's email.
@@ -324,7 +418,7 @@ export default function Results() {
   const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
   const [isPaid, setIsPaid] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [showVoucherModal, setShowVoucherModal] = useState(false);
+  const [showDiscountModal, setShowDiscountModal] = useState(false);
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
@@ -348,8 +442,8 @@ export default function Results() {
   // Currency & pricing: PT = EUR, EN = USD
   const CUR = isEN ? '$' : '€';
   const P = isEN
-    ? { cv: '5.99', cp: '15.00', career: '12.50' }
-    : { cv: '3,99', cp: '12,00', career: '10,00' };
+    ? { cv: '9.99', cp: '19.99', career: '19.99' }
+    : { cv: '9,99', cp: '19,99', career: '19,99' };
   const CURRENCY_CODE = isEN ? 'USD' : 'EUR';
   const [pollingMessage, setPollingMessage] = useState(() => {
     const pEN = window.location.pathname.startsWith('/en/');
@@ -359,7 +453,7 @@ export default function Results() {
   });
   const [selectedPlan, setSelectedPlan] = useState<{ name: string; price: string; analyses: number; voucher_type?: string; includes_career_path?: boolean }>({
     name: isEN ? 'CV Report' : 'Relatório CV',
-    price: isEN ? '5.99' : '3,99',
+    price: isEN ? '9.99' : '9,99',
     analyses: 1,
     voucher_type: 'standard',
     includes_career_path: false,
@@ -368,11 +462,24 @@ export default function Results() {
   // Upsell popup state (shown during analysis loading)
 
   
-  // Voucher state
-  const [voucherCode, setVoucherCode] = useState("");
-  const [voucherLoading, setVoucherLoading] = useState(false);
-  const [voucherError, setVoucherError] = useState<string | null>(null);
-  const [voucherSuccess, setVoucherSuccess] = useState<string | null>(null);
+  // Unified discount code state
+  const [discountCode, setDiscountCode] = useState("");
+  const [discountLoading, setDiscountLoading] = useState(false);
+  const [discountError, setDiscountError] = useState<string | null>(null);
+  const [discountSuccess, setDiscountSuccess] = useState<string | null>(null);
+  // Applied partial discount coupon
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
+  const getDiscountedPrice = (price: string) => {
+    if (!appliedCoupon) return price;
+    const num = parseFloat(price.replace(',', '.'));
+    const discounted = Math.round(num * (1 - appliedCoupon.percent / 100) * 100) / 100;
+    return isEN ? discounted.toFixed(2) : discounted.toFixed(2).replace('.', ',');
+  };
+  const getDiscountedPriceNum = (price: string) => {
+    const num = parseFloat(price.replace(',', '.'));
+    if (!appliedCoupon) return num;
+    return Math.round(num * (1 - appliedCoupon.percent / 100) * 100) / 100;
+  };
 
   // Email report state
   const [reportEmail, setReportEmail] = useState("");
@@ -380,6 +487,52 @@ export default function Results() {
   const [reportSent, setReportSent] = useState(false);
   const [postCopied, setPostCopied] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
+
+  // Save to Área de Cliente
+  const [savingToAccount, setSavingToAccount] = useState(false);
+  const [savedToAccount, setSavedToAccount] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    if (storageKey) {
+      const stored = localStorage.getItem(storageKey);
+      if (stored) {
+        try { const p = JSON.parse(stored); if (p?.access_token && p?.user?.id) setIsLoggedIn(true); } catch {}
+      }
+    }
+  }, []);
+
+  const handleSaveToAccount = async () => {
+    setSavingToAccount(true);
+    setSaveError(null);
+    try {
+      const cvData = sessionStorage.getItem('cvAnalysis');
+      const parsed = cvData ? JSON.parse(cvData) : {};
+      await saveToUserAnalyses('cv_analyser', {
+        score: parsed.atsScore || parsed.overallScore || parsed.score,
+        analysis: {
+          atsScore: parsed.atsScore,
+          overallScore: parsed.overallScore,
+          keywords: parsed.keywords,
+          recommendations: parsed.recommendations,
+        },
+        results_html: document.querySelector('.results-container')?.innerHTML || '',
+        analysis_id: sessionStorage.getItem('analysisId'),
+      });
+      setSavedToAccount(true);
+    } catch (err: any) {
+      if (err?.message === 'SESSION_EXPIRED' || err?.message === 'NOT_LOGGED_IN') {
+        setSaveError(isEN ? 'Session expired. Please log in again in your Account area and return here.' : 'Sessão expirada. Faz login novamente na Área de Cliente e volta aqui.');
+        setIsLoggedIn(false);
+      } else {
+        setSaveError(isEN ? 'Error saving. Try again.' : 'Erro ao guardar. Tenta novamente.');
+      }
+    } finally {
+      setSavingToAccount(false);
+    }
+  };
 
   // Career Path state
   const [careerPathData, setCareerPathData] = useState<any>(null);
@@ -445,10 +598,57 @@ export default function Results() {
       setIsPaid(true);
     }
 
+    // Auto-unlock for active members (Essential, Growth, or Pro)
+    const memberTier = getMemberPlanTier();
+    if (memberTier && memberTier !== 'none') {
+      setIsPaid(true);
+      sessionStorage.setItem('isPaid', 'true');
+    }
+
+    // Restore applied coupon from sessionStorage (set by Home.tsx / HomeEN.tsx)
+    const savedCouponCode = sessionStorage.getItem('appliedCouponCode');
+    const savedCouponPercent = sessionStorage.getItem('appliedCouponPercent');
+    if (savedCouponCode && savedCouponPercent) {
+      setAppliedCoupon({ code: savedCouponCode, percent: parseInt(savedCouponPercent, 10) });
+      // Clean up so it's not re-applied on next visit
+      sessionStorage.removeItem('appliedCouponCode');
+      sessionStorage.removeItem('appliedCouponPercent');
+    }
+    // Also restore coupon from Stripe redirect
+    const stripeCoupon = sessionStorage.getItem('appliedCouponBeforeStripe');
+    if (stripeCoupon) {
+      try {
+        setAppliedCoupon(JSON.parse(stripeCoupon));
+        sessionStorage.removeItem('appliedCouponBeforeStripe');
+      } catch (_) {}
+    }
+
+    // Restore Career Path data from sessionStorage (survives page refresh)
+    const savedCareerPathData = sessionStorage.getItem('careerPathData');
+    if (savedCareerPathData) {
+      try {
+        const cpParsed = JSON.parse(savedCareerPathData);
+        setCareerPathData(cpParsed);
+        setCareerPathPaymentStep('done');
+        sessionStorage.setItem('careerPathIncluded', 'true');
+        console.log('[Results] Restored Career Path data from sessionStorage');
+      } catch (e) {
+        console.warn('[Results] Error restoring Career Path data:', e);
+      }
+    }
+
     // Check for Stripe payment return
     const urlParams = new URLSearchParams(window.location.search);
     const paymentStatus = urlParams.get('payment');
     const sessionId = urlParams.get('session_id');
+
+    // Handle cancelled payment — clean URL and redirect to home
+    if (paymentStatus === 'cancelled') {
+      window.history.replaceState({}, '', window.location.pathname);
+      setLocation(isEN ? '/en' : '/');
+      return;
+    }
+
     if (paymentStatus === 'success' && sessionId) {
       // Restore selectedPlan from sessionStorage (lost during Stripe redirect)
       const savedPlan = sessionStorage.getItem('selectedPlanBeforeStripe');
@@ -472,9 +672,10 @@ export default function Results() {
           if (data.success && data.paid) {
             setIsPaid(true);
             sessionStorage.setItem('isPaid', 'true');
-            const priceVal = restoredPlan ? parseFloat(String(restoredPlan.price).replace(',', '.')) : 3.99;
+            const priceVal = restoredPlan ? parseFloat(String(restoredPlan.price).replace(',', '.')) : 9.99;
             const productName = restoredPlan?.includes_career_path ? 'bundle' : 'cv_analyser';
             trackPurchase(productName, priceVal, `CV-STRIPE-${sessionId}`);
+            if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: priceVal, currency: isEN ? 'USD' : 'EUR'});
             trackAffiliateConversion({ product: productName, amount: priceVal, currency: isEN ? 'USD' : 'EUR', payment_method: 'stripe', transaction_id: `CV-STRIPE-${sessionId}` });
             updateAnalysisPayment(String(priceVal), 'stripe', `CV-STRIPE-${sessionId}`);
 
@@ -494,13 +695,92 @@ export default function Results() {
         })
         .catch(err => console.error('Stripe verify error:', err));
     }
+    // Auto-generate Career Path when coming from Bundle flow
+    const bundleCareerPathPaid = sessionStorage.getItem('careerPathPaid');
+    if (bundleCareerPathPaid === 'true') {
+      sessionStorage.setItem('careerPathIncluded', 'true');
+      const bundleLinkedin = sessionStorage.getItem('careerPathLinkedinUrl') || '';
+      const bundleEmail = sessionStorage.getItem('paymentEmail') || '';
+      setCareerPathLinkedin(bundleLinkedin);
+      setCareerPathEmail(bundleEmail);
+      setCareerPathPaymentStep('generating');
+      // Remove flag so it doesn't re-trigger on refresh
+      sessionStorage.removeItem('careerPathPaid');
+      // DEFINITIVE FIX: Call the Career Path API directly here, reading all data
+      // from sessionStorage (not React state) to avoid race conditions.
+      // We use a self-invoking async function to call the API immediately.
+      (async () => {
+        console.log('[Bundle→CareerPath] Auto-generating Career Path...');
+        try {
+          // Use the actual CV text stored by BundleHome, NOT the transformed analysis JSON
+          const cvTextForCP = sessionStorage.getItem('careerPathCvText') || '';
+          const linkedinForCP = sessionStorage.getItem('careerPathLinkedinUrl') || bundleLinkedin || '';
+          console.log('[Bundle→CareerPath] cv_text length:', cvTextForCP.length, 'linkedin:', linkedinForCP ? 'yes' : 'no');
+          const cpResponse = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              mode: 'career_path',
+              cv_text: cvTextForCP,
+              linkedin_url: linkedinForCP || undefined,
+              language: isEN ? 'en' : 'pt',
+              country: sessionStorage.getItem('analysisCountry') || (isEN ? '' : 'Portugal'),
+              region: sessionStorage.getItem('analysisRegion') || '',
+            })
+          });
+          const cpData = await cpResponse.json();
+          console.log('[Bundle→CareerPath] Response:', cpData.success, !!cpData.career_path);
+          if (cpData.success || cpData.career_path) {
+            const cpResult = cpData.career_path || cpData;
+            setCareerPathData(cpResult);
+            setCareerPathPaymentStep('done');
+            // Also persist to sessionStorage so it survives page refresh
+            sessionStorage.setItem('careerPathData', JSON.stringify(cpResult));
+          } else {
+            console.error('[Bundle→CareerPath] API error:', cpData.error);
+            setCareerPathError(cpData.error || 'Erro ao gerar Career Path');
+          }
+        } catch (cpErr: any) {
+          console.error('[Bundle→CareerPath] Fetch error:', cpErr);
+          setCareerPathError(cpErr.message || 'Erro ao gerar Career Path');
+        }
+      })();
+    }
   }, [setLocation]);
-
-  // Upsell popup removed — only show payment modal when user clicks "Unlock Full Analysis"
+  // Upsell popup removed — only show payment modal when user clicks "Unlock Full Analysis""
 
   const unlockFullReport = useCallback(() => {
     setIsPaid(true);
     sessionStorage.setItem('isPaid', 'true');
+    // Save to user_analyses for area-cliente dashboard
+    // IMPORTANT: Delay capture until after React re-renders with isPaid=true
+    // so we capture the UNLOCKED content, not the blurred/locked version
+    setTimeout(async () => {
+      try {
+        const cvData = sessionStorage.getItem('cvAnalysis');
+        if (cvData) {
+          const parsed = JSON.parse(cvData);
+          await saveToUserAnalyses('cv_analyser', {
+            score: parsed.atsScore || parsed.overallScore || parsed.score,
+            analysis: {
+              atsScore: parsed.atsScore,
+              overallScore: parsed.overallScore,
+              keywords: parsed.keywords,
+              recommendations: parsed.recommendations,
+            },
+            results_html: document.querySelector('.results-container')?.innerHTML || '',
+            analysis_id: sessionStorage.getItem('analysisId'),
+          });
+          setSavedToAccount(true);
+        }
+      } catch (e: any) {
+        console.warn('[S2I] Auto-save after payment failed:', e?.message);
+        // Don't block the user - they can still manually save later
+      }
+    }, 1500); // Wait 1.5s for React to re-render unlocked content
   }, []);
 
   const openPaymentModal = (plan?: { name: string; price: string; analyses: number }) => {
@@ -548,7 +828,7 @@ export default function Results() {
           country,
           region,
           currency: CURRENCY_CODE.toLowerCase(),
-          amount: parseFloat(selectedPlan.price.replace(',', '.'))
+          amount: getDiscountedPriceNum(selectedPlan.price)
         })
       });
       const data = await response.json();
@@ -559,8 +839,9 @@ export default function Results() {
       sessionStorage.setItem('paymentEmail', email);
       updateAnalysisEmail(email);
       sessionStorage.setItem('stripeSessionId', data.sessionId);
-      // Save selectedPlan before redirect so it survives page reload
+      // Save selectedPlan and coupon before redirect so it survives page reload
       sessionStorage.setItem('selectedPlanBeforeStripe', JSON.stringify(selectedPlan));
+      if (appliedCoupon) sessionStorage.setItem('appliedCouponBeforeStripe', JSON.stringify(appliedCoupon));
       window.location.href = data.url;
     } catch (err) {
       setPaymentError(err instanceof Error ? err.message : 'Error processing payment');
@@ -598,7 +879,7 @@ export default function Results() {
       }
 
       const parsedAnalysis = JSON.parse(analysisDataStr);
-      const priceNum = parseFloat(selectedPlan.price.replace(',', '.'));
+      const priceNum = getDiscountedPriceNum(selectedPlan.price);
       const orderId = `CVA-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
       const cleanPhone = phone.replace(/\D/g, '').replace(/^(\+?351)/, '');
@@ -612,7 +893,7 @@ export default function Results() {
           orderId: orderId,
           amount: priceNum.toFixed(2),
           paymentMethod: 'mbway',
-          description: `CV Analyser - ${selectedPlan.name}`,
+          description: appliedCoupon ? `CV Analyser - ${selectedPlan.name} (${appliedCoupon.percent}% off)` : `CV Analyser - ${selectedPlan.name}`,
           name: email.split('@')[0],
           analysisData: parsedAnalysis
         })
@@ -659,7 +940,7 @@ export default function Results() {
     setPaymentError(null);
 
     try {
-      const priceNum = parseFloat(selectedPlan.price.replace(',', '.'));
+      const priceNum = getDiscountedPriceNum(selectedPlan.price);
       sessionStorage.setItem('paymentEmail', email);
       updateAnalysisEmail(email);
       
@@ -667,6 +948,7 @@ export default function Results() {
       window.open(`https://paypal.me/SamuelRolo/${priceNum}${CURRENCY_CODE}`, '_blank');
       
       // For PayPal, we need manual confirmation - go to success step
+      if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: priceNum, currency: CURRENCY_CODE});
       setPaymentStep('success');
     } catch (err) {
       setPaymentError(isEN ? 'Error opening PayPal. Try again.' : 'Erro ao abrir PayPal. Tenta novamente.');
@@ -676,6 +958,7 @@ export default function Results() {
   };
 
   const handlePayment = () => {
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
     if (paymentMethod === 'stripe') {
       handleStripePayment();
     } else if (paymentMethod === 'mbway') {
@@ -744,6 +1027,7 @@ export default function Results() {
             setCareerPathEmail(email);
           }
           
+          if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: parseFloat(selectedPlan.price.replace(',', '.')), currency: CURRENCY_CODE});
           setPaymentStep('success');
           return;
         }
@@ -815,6 +1099,7 @@ export default function Results() {
           sessionStorage.setItem('careerPathIncluded', 'true');
           setCareerPathEmail(email);
         }
+        if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: parseFloat(selectedPlan.price.replace(',', '.')), currency: CURRENCY_CODE});
         setPaymentStep('success');
       } else {
         setPollingExpired(true);
@@ -873,36 +1158,63 @@ export default function Results() {
     }
   };
 
-  // Validate voucher code
-  const handleVoucherValidation = async () => {
-    if (!voucherCode.trim()) {
-      setVoucherError(isEN ? 'Enter a voucher code' : 'Introduz um código de voucher');
+  // Validate discount code (checks discount_coupons first, then vouchers)
+  const handleDiscountValidation = async () => {
+    if (!discountCode.trim()) {
+      setDiscountError(isEN ? 'Enter a code' : 'Introduz um código');
       return;
     }
 
-    setVoucherLoading(true);
-    setVoucherError(null);
-    setVoucherSuccess(null);
+    setDiscountLoading(true);
+    setDiscountError(null);
+    setDiscountSuccess(null);
+    const code = discountCode.trim().toUpperCase();
 
     try {
-      const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(voucherCode.trim().toUpperCase())}&is_active=eq.true&select=*`,
-        {
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-          }
-        }
+      // Step 1: Check discount_coupons table
+      const couponRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,max_uses,current_uses,valid_from,valid_until,applicable_products`,
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
       );
-
-      if (!response.ok) {
-        throw new Error(isEN ? 'Error verifying code' : 'Erro ao verificar código');
+      const coupons = await couponRes.json();
+      if (Array.isArray(coupons) && coupons.length > 0) {
+        const coupon = coupons[0];
+        const now = new Date();
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setDiscountError(isEN ? 'This code is not yet active.' : 'Este código ainda não está ativo.'); return; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setDiscountError(isEN ? 'This code has expired.' : 'Este código já expirou.'); return; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setDiscountError(isEN ? 'This code has reached its usage limit.' : 'Este código atingiu o limite.'); return; }
+        const products = coupon.applicable_products || [];
+        if (products.length > 0 && !products.includes('all') && !products.includes('cv_analyser') && !products.includes('cv_report')) { setDiscountError(isEN ? 'This code is not applicable here.' : 'Este código não é aplicável aqui.'); return; }
+        if (coupon.discount_percent === 100) {
+          setDiscountSuccess(isEN ? 'Code valid! Analysis unlocked.' : 'Código válido! Análise desbloqueada.');
+          unlockFullReport();
+          updateAnalysisPayment('0', 'coupon', code);
+          // Increment coupon usage counter
+          incrementCouponUsage(code);
+          // Track affiliate conversion even for free coupons
+          trackAffiliateConversion({ product: 'cv_analyser', amount: 0, currency: isEN ? 'USD' : 'EUR', payment_method: 'coupon', transaction_id: `COUPON-${code}` });
+          setTimeout(() => { setShowDiscountModal(false); setDiscountCode(''); setDiscountSuccess(null); }, 2500);
+          return;
+        }
+        // Partial discount — apply it
+        setAppliedCoupon({ code, percent: coupon.discount_percent });
+        incrementCouponUsage(code);
+        setDiscountSuccess(isEN ? `${coupon.discount_percent}% discount applied!` : `Desconto de ${coupon.discount_percent}% aplicado!`);
+        setTimeout(() => { setShowDiscountModal(false); setDiscountCode(''); setDiscountSuccess(null); }, 2000);
+        return;
       }
 
+      // Step 2: Check vouchers table
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=*`,
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+      );
+
+      if (!response.ok) throw new Error(isEN ? 'Error verifying code' : 'Erro ao verificar código');
       const vouchers = await response.json();
       
       if (vouchers.length === 0) {
-        setVoucherError(isEN ? 'Invalid or already used code' : 'Código inválido ou já utilizado');
+        setDiscountError(isEN ? 'Invalid or already used code' : 'Código inválido ou já utilizado');
         return;
       }
 
@@ -910,53 +1222,37 @@ export default function Results() {
       const remaining = voucher.total_analyses - voucher.used_analyses;
 
       if (remaining <= 0) {
-        setVoucherError(isEN ? 'This code has no analyses remaining' : 'Este código já não tem análises disponíveis');
+        setDiscountError(isEN ? 'This code has no analyses remaining' : 'Este código já não tem análises disponíveis');
         return;
       }
 
-      // Use one analysis
       const updateResponse = await fetch(
         `${SUPABASE_URL}/rest/v1/vouchers?id=eq.${voucher.id}`,
         {
           method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'Prefer': 'return=representation'
-          },
-          body: JSON.stringify({
-            used_analyses: voucher.used_analyses + 1,
-            is_active: remaining - 1 > 0,
-            updated_at: new Date().toISOString()
-          })
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Prefer': 'return=representation' },
+          body: JSON.stringify({ used_analyses: voucher.used_analyses + 1, is_active: remaining - 1 > 0, updated_at: new Date().toISOString() })
         }
       );
 
       if (updateResponse.ok) {
-        setVoucherSuccess(isEN ? `Valid code! Analysis unlocked. ${remaining - 1} use(s) remaining.` : `Código válido! Análise desbloqueada. Restam ${remaining - 1} análise(s).`);
+        setDiscountSuccess(isEN ? `Valid code! Analysis unlocked. ${remaining - 1} use(s) remaining.` : `Código válido! Análise desbloqueada. Restam ${remaining - 1} análise(s).`);
         unlockFullReport();
-        updateAnalysisPayment(selectedPlan.price, 'voucher', voucherCode);
+        updateAnalysisPayment(selectedPlan.price, 'voucher', code);
         
-        // If voucher includes career path, auto-unlock it
         if (voucher.includes_career_path || voucher.voucher_type === 'complete') {
           sessionStorage.setItem('careerPathIncluded', 'true');
-          setVoucherSuccess(isEN ? `Valid code! Analysis + Career Path unlocked. ${remaining - 1} use(s) remaining.` : `Código válido! Análise + Career Path desbloqueados. Restam ${remaining - 1} análise(s).`);
+          setDiscountSuccess(isEN ? `Valid code! Analysis + Career Path unlocked. ${remaining - 1} use(s) remaining.` : `Código válido! Análise + Career Path desbloqueados. Restam ${remaining - 1} análise(s).`);
         }
         
-        // Close modal after 2 seconds
-        setTimeout(() => {
-          setShowVoucherModal(false);
-          setVoucherCode("");
-          setVoucherSuccess(null);
-        }, 2500);
+        setTimeout(() => { setShowDiscountModal(false); setDiscountCode(''); setDiscountSuccess(null); }, 2500);
       } else {
         throw new Error(isEN ? 'Error using code' : 'Erro ao utilizar código');
       }
     } catch (err) {
-      setVoucherError(err instanceof Error ? err.message : (isEN ? 'Error verifying code' : 'Erro ao verificar código'));
+      setDiscountError(err instanceof Error ? err.message : (isEN ? 'Error verifying code' : 'Erro ao verificar código'));
     } finally {
-      setVoucherLoading(false);
+      setDiscountLoading(false);
     }
   };
 
@@ -979,7 +1275,7 @@ export default function Results() {
     try {
       const orderId = `CP-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      const cpAmount = isEN ? '12.50' : '10.00';
+      const cpAmount = isEN ? '19.99' : '19.99';
       const cpCurrencyCode = isEN ? 'usd' : 'eur';
 
       if (careerPathPaymentMethod === 'stripe') {
@@ -1087,8 +1383,14 @@ export default function Results() {
 
   const generateCareerPath = async () => {
     setCareerPathLoading(true);
+    setCareerPathError(null);
     try {
       const cvData = sessionStorage.getItem('cvAnalysis');
+      // IMPORTANT: Read linkedin from sessionStorage first (reliable for Bundle flow),
+      // fallback to React state (for manual Career Path purchase flow)
+      const linkedinFromStorage = sessionStorage.getItem('careerPathLinkedinUrl') || '';
+      const linkedinUrl = linkedinFromStorage || careerPathLinkedin || '';
+      console.log('[CareerPath] Generating with linkedin:', linkedinUrl, 'country:', sessionStorage.getItem('analysisCountry'));
       const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
         method: 'POST',
         headers: {
@@ -1098,7 +1400,7 @@ export default function Results() {
         body: JSON.stringify({
           mode: 'career_path',
           cv_text: cvData || '',
-          linkedin_url: careerPathLinkedin || undefined,
+          linkedin_url: linkedinUrl || undefined,
           language: isEN ? 'en' : 'pt',
           country: sessionStorage.getItem('analysisCountry') || (isEN ? '' : 'Portugal'),
           region: sessionStorage.getItem('analysisRegion') || '',
@@ -1106,12 +1408,14 @@ export default function Results() {
       });
 
       const data = await response.json();
+      console.log('[CareerPath] Response:', data.success, !!data.career_path);
       if (!data.success && !data.career_path) throw new Error(data.error || (isEN ? 'Error generating Career Path' : 'Erro ao gerar Career Path'));
       
       setCareerPathData(data.career_path || data);
       setCareerPathPaymentStep('done');
       setShowCareerPathModal(false);
     } catch (err: any) {
+      console.error('[CareerPath] Error:', err);
       setCareerPathError(err.message || (isEN ? 'Error generating Career Path' : 'Erro ao gerar Career Path'));
     } finally {
       setCareerPathLoading(false);
@@ -1145,6 +1449,19 @@ export default function Results() {
         <Loader2 className="w-8 h-8 animate-spin text-[#C9A961]" />
       </div>
     );
+  }
+
+  // Defensive guard: ensure quadrants is always a valid array
+  const safeQuadrants = (analysisData.quadrants && Array.isArray(analysisData.quadrants) && analysisData.quadrants.length > 0)
+    ? analysisData.quadrants
+    : [
+        { title: isEN ? 'Structure' : 'Estrutura', score: 65, benchmark: 70, impactPhrase: isEN ? 'CV organisation and clarity' : 'Organização e clareza do CV' },
+        { title: isEN ? 'Content' : 'Conteúdo', score: 70, benchmark: 72, impactPhrase: isEN ? 'Content quality and relevance' : 'Qualidade e relevância do conteúdo' },
+        { title: isEN ? 'Education' : 'Formação', score: 68, benchmark: 65, impactPhrase: isEN ? 'Academic and continuous education' : 'Formação académica e contínua' },
+        { title: isEN ? 'Experience' : 'Experiência', score: 72, benchmark: 70, impactPhrase: isEN ? 'Professional experience' : 'Experiência profissional' },
+      ];
+  if (!analysisData.quadrants || !Array.isArray(analysisData.quadrants) || analysisData.quadrants.length === 0) {
+    analysisData = { ...analysisData, quadrants: safeQuadrants };
   }
 
   const avgScore = analysisData.quadrants.reduce((sum, q) => sum + q.score, 0) / analysisData.quadrants.length;
@@ -1223,7 +1540,7 @@ export default function Results() {
             ) : (
               <>
                 <Button
-                  onClick={() => setShowVoucherModal(true)}
+                  onClick={() => setShowDiscountModal(true)}
                   variant="outline"
                   size="sm"
                   className="text-xs sm:text-sm font-medium border-[#C9A961]/30 text-[#C9A961] hover:bg-[#C9A961]/5"
@@ -1252,7 +1569,7 @@ export default function Results() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-8">
+      <main className="results-container max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-8">
         {/* Report Label */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           {isPaid ? (
@@ -1994,11 +2311,11 @@ export default function Results() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border">
                         <div className="p-3">
                           <p className="text-[10px] font-semibold text-red-500 mb-1">{isEN ? '❌ BEFORE' : '❌ ANTES'}</p>
-                          <p className="text-sm text-muted-foreground">{action.before}</p>
+                          <p className="text-sm text-muted-foreground">{typeof action.before === 'object' ? JSON.stringify(action.before) : String(action.before || '')}</p>
                         </div>
                         <div className="p-3">
                           <p className="text-[10px] font-semibold text-green-600 mb-1">{isEN ? '✅ AFTER' : '✅ DEPOIS'}</p>
-                          <p className="text-sm text-muted-foreground">{action.after}</p>
+                          <p className="text-sm text-muted-foreground">{typeof action.after === 'object' ? JSON.stringify(action.after) : String(action.after || '')}</p>
                         </div>
                       </div>
                     </div>
@@ -2049,8 +2366,24 @@ export default function Results() {
 
 
 
+        {/* ═══ Career Path Loading (Bundle auto-generation) ═══ */}
+        {careerPathPaymentStep === 'generating' && !careerPathData && (
+          <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-8 text-center space-y-4">
+            <Loader2 className="w-10 h-10 animate-spin text-[#C9A961] mx-auto" />
+            <div>
+              <p className="text-lg font-semibold text-foreground">{isEN ? 'Generating your Career Path...' : 'A gerar o teu Career Path...'}</p>
+              <p className="text-sm text-muted-foreground mt-1">{isEN ? 'Analysing your profile and creating a personalised roadmap. This may take up to 30 seconds.' : 'A analisar o teu perfil e a criar um roadmap personalizado. Isto pode demorar até 30 segundos.'}</p>
+            </div>
+            {careerPathError && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-sm text-red-600">{careerPathError}</p>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* ═══ Career Path Cross-sell (produto independente) ═══ */}
-        {isPaid && (
+        {isPaid && !careerPathData && careerPathPaymentStep !== 'generating' && careerPathPaymentStep !== 'done' && (
           <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-6 sm:p-8 space-y-5">
             <div className="flex items-center gap-3">
               <GoldIcon>
@@ -2690,6 +3023,48 @@ export default function Results() {
           </div>
         )}
 
+        {/* ═══ Save to Área de Cliente ═══ */}
+        {isPaid && (
+          <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-8 space-y-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#C9A961]/10 flex items-center justify-center">
+                <Save className="w-5 h-5 text-[#C9A961]" />
+              </div>
+              <div>
+                <p className="text-base font-semibold text-foreground">{isEN ? 'Save to My Account' : 'Guardar na Área de Cliente'}</p>
+                <p className="text-xs text-muted-foreground">{isEN ? 'Access your results anytime from your dashboard' : 'Acede aos teus resultados a qualquer momento no teu dashboard'}</p>
+              </div>
+            </div>
+            {!isLoggedIn ? (
+              <div className="flex items-center gap-3 p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
+                <Lock className="w-5 h-5 text-amber-500 shrink-0" />
+                <p className="text-sm text-amber-700">{isEN ? 'Log in to save your results.' : 'Faz login para guardar os teus resultados.'} <a href="/area-cliente/auth" className="underline font-semibold text-[#C9A961] hover:text-[#A88B4E]">{isEN ? 'Log in' : 'Iniciar sessão'}</a></p>
+              </div>
+            ) : savedToAccount ? (
+              <div className="flex items-center gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
+                <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                <p className="text-sm text-green-600">{isEN ? 'Saved successfully! View in your dashboard.' : 'Guardado com sucesso! Consulta no teu dashboard.'}</p>
+              </div>
+            ) : (
+              <>
+                <Button
+                  onClick={handleSaveToAccount}
+                  disabled={savingToAccount}
+                  className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold py-3"
+                >
+                  {savingToAccount ? (
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  ) : (
+                    <Save className="w-4 h-4 mr-2" />
+                  )}
+                  {isEN ? 'Save to My Account' : 'Guardar na Minha Conta'}
+                </Button>
+                {saveError && <p className="text-sm text-red-500">{saveError}</p>}
+              </>
+            )}
+          </div>
+        )}
+
           </div>{/* close blurred content layer */}
 
           {/* Floating unlock overlay on top of blurred content */}
@@ -2759,7 +3134,7 @@ export default function Results() {
                     {isEN ? `Or just the CV Report — ${CUR}${P.cv}` : `Ou apenas o Relatório CV — ${CUR}${P.cv}`}
                   </Button>
                   <Button
-                    onClick={() => setShowVoucherModal(true)}
+                    onClick={() => setShowDiscountModal(true)}
                     variant="outline"
                     size="sm"
                     className="border-[#C9A961]/30 text-[#C9A961] hover:bg-[#C9A961]/5 w-full"
@@ -2846,7 +3221,13 @@ export default function Results() {
                             )}
                           </div>
                         </div>
-                        <span className="text-lg font-bold text-[#C9A961]">{CUR}{plan.price}</span>
+                        <span className="text-lg font-bold text-[#C9A961]">
+                          {appliedCoupon ? (
+                            <><span className="text-sm line-through text-slate-400 mr-1">{CUR}{plan.price}</span>{CUR}{getDiscountedPrice(plan.price)}</>
+                          ) : (
+                            <>{CUR}{plan.price}</>
+                          )}
+                        </span>
                       </div>
                       <div className="ml-7 space-y-0.5">
                         {(plan as any).features?.map((f: string, fi: number) => (
@@ -2871,7 +3252,11 @@ export default function Results() {
                 onClick={() => setPaymentStep('payment')}
                 className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
               >
-                {isEN ? `Continue to Payment — ${CUR}${selectedPlan.price}` : `Continuar para Pagamento — ${CUR}${selectedPlan.price}`}
+                {appliedCoupon ? (
+                  isEN ? <>Continue to Payment — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</> : <>Continuar para Pagamento — <span className="line-through text-slate-400 mr-1">{CUR}{selectedPlan.price}</span> {CUR}{getDiscountedPrice(selectedPlan.price)}</>
+                ) : (
+                  isEN ? `Continue to Payment — ${CUR}${selectedPlan.price}` : `Continuar para Pagamento — ${CUR}${selectedPlan.price}`
+                )}
               </Button>
             </div>
           )}
@@ -2975,8 +3360,17 @@ export default function Results() {
               <div className="pt-4 space-y-3">
                 <div className="flex items-center justify-between text-sm border-t border-border pt-3">
                   <span className="text-muted-foreground">Total</span>
-                  <span className="text-lg font-bold text-foreground">{CUR}{selectedPlan.price}</span>
+                  <span className="text-lg font-bold text-foreground">
+                    {appliedCoupon ? (
+                      <><span className="line-through text-muted-foreground mr-2">{CUR}{selectedPlan.price}</span><span className="text-green-600">{CUR}{getDiscountedPrice(selectedPlan.price)}</span></>
+                    ) : (
+                      <>{CUR}{selectedPlan.price}</>
+                    )}
+                  </span>
                 </div>
+                {appliedCoupon && (
+                  <p className="text-xs text-green-600 text-right -mt-2">{appliedCoupon.percent}% {isEN ? 'discount' : 'desconto'} ({appliedCoupon.code})</p>
+                )}
                 <Button
                   onClick={handlePayment}
                   disabled={loading}
@@ -3023,7 +3417,7 @@ export default function Results() {
               <div className="space-y-2">
                 <h3 className="text-lg font-bold text-foreground">{isEN ? 'Request sent to MB WAY' : 'Pedido enviado para MB WAY'}</h3>
                 <p className="text-sm text-muted-foreground">
-                  {isEN ? <>Open the MB WAY app on your phone and approve the payment of <span className="font-semibold text-foreground">{CUR}{selectedPlan.price}</span>.</> : <>Abre a app MB WAY no telemóvel e aprova o pagamento de <span className="font-semibold text-foreground">{CUR}{selectedPlan.price}</span>.</>}
+                  {isEN ? <>Open the MB WAY app on your phone and approve the payment of <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</> : <>Abre a app MB WAY no telemóvel e aprova o pagamento de <span className="font-semibold text-foreground">{CUR}{getDiscountedPrice(selectedPlan.price)}</span>.</>}
                 </p>
               </div>
               <div className="bg-muted/30 rounded-lg p-4 space-y-2">
@@ -3163,47 +3557,48 @@ export default function Results() {
         </DialogContent>
       </Dialog>
 
-      {/* ═══ Voucher Modal ═══ */}
-      <Dialog open={showVoucherModal} onOpenChange={setShowVoucherModal}>
+      {/* ═══ Discount Code Modal ═══ */}
+      <Dialog open={showDiscountModal} onOpenChange={setShowDiscountModal}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Ticket className="w-5 h-5 text-[#C9A961]" />
-              {isEN ? 'Enter Code' : 'Inserir Código'}
+              {isEN ? 'Discount Code' : 'Código de Desconto'}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <p className="text-sm text-muted-foreground">
-              {isEN ? 'If you purchased a multi-analysis package, enter the code you received to unlock this analysis.' : 'Se compraste um pacote com múltiplas análises, introduz o código que recebeste para desbloquear esta análise.'}
+              {isEN ? 'Enter your discount or voucher code to unlock this analysis.' : 'Introduz o teu código de desconto ou voucher para desbloquear esta análise.'}
             </p>
             <div className="space-y-2">
               <input
                 type="text"
-                value={voucherCode}
-                onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
-                placeholder="S2I-XXXXXX"
+                value={discountCode}
+                onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                placeholder={isEN ? 'Enter code' : 'Inserir código'}
                 className="w-full px-3 py-3 border border-border rounded-lg bg-background text-foreground text-center text-lg font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-[#C9A961] uppercase"
+                onKeyDown={(e) => e.key === 'Enter' && handleDiscountValidation()}
               />
             </div>
 
-            {voucherError && (
+            {discountError && (
               <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                <p className="text-sm text-red-500">{voucherError}</p>
+                <p className="text-sm text-red-500">{discountError}</p>
               </div>
             )}
 
-            {voucherSuccess && (
+            {discountSuccess && (
               <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                <p className="text-sm text-green-600">{voucherSuccess}</p>
+                <p className="text-sm text-green-600">{discountSuccess}</p>
               </div>
             )}
 
             <Button
-              onClick={handleVoucherValidation}
-              disabled={voucherLoading || !voucherCode.trim()}
+              onClick={handleDiscountValidation}
+              disabled={discountLoading || !discountCode.trim()}
               className="w-full bg-[#C9A961] hover:bg-[#A88B4E] text-white font-semibold"
             >
-              {voucherLoading ? (
+              {discountLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   {isEN ? 'Validating...' : 'A validar...'}

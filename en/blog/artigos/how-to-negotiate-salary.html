@@ -24,7 +24,9 @@
     <meta property="og:url" content="https://www.share2inspire.pt/en/blog/artigos/how-to-negotiate-salary">
     <meta property="og:title" content="How to Negotiate Your Salary: Complete Guide 2026">
     <meta property="og:description" content="When to ask, what to say, how to use market data and the mistakes that cost you money. Practical salary negotiation guide.">
-    <meta property="og:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
+    <meta property="og:image" content="https://www.share2inspire.pt/images/og-share2inspire.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:locale" content="en_US">
     <meta property="og:site_name" content="Share2Inspire">
 
@@ -32,7 +34,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="How to Negotiate Your Salary: Complete Guide 2026">
     <meta name="twitter:description" content="Practical salary negotiation guide — data, scripts and real strategies.">
-    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
+    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-share2inspire.png">
 
     <!-- Schema.org -->
     <script type="application/ld+json">
@@ -44,7 +46,7 @@
           "headline": "How to Negotiate Your Salary: Complete Guide 2026",
           "description": "Learn how to negotiate salary with confidence. When to ask, what to say, how to use market data and the mistakes that cost you money.",
           "author": { "@type": "Person", "name": "Samuel Rolo", "url": "https://www.linkedin.com/in/samuelrolo/" },
-          "publisher": { "@type": "Organization", "name": "Share2Inspire", "logo": { "@type": "ImageObject", "url": "https://www.share2inspire.pt/images/logo.png" } },
+          "publisher": { "@type": "Organization", "name": "Share2Inspire", "logo": { "@type": "ImageObject", "url": "https://www.share2inspire.pt/images/og-share2inspire.png" } },
           "datePublished": "2026-03-19",
           "dateModified": "2026-03-19",
           "mainEntityOfPage": { "@type": "WebPage", "@id": "https://www.share2inspire.pt/en/blog/artigos/how-to-negotiate-salary" },
@@ -83,7 +85,12 @@
     }
     </script>
 
-    <link rel="icon" href="../../../images/favicon.png" type="image/png">
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/images/favicon-512x512.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
@@ -184,8 +191,39 @@
         .cta-banner p { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem; max-width: 500px; margin-left: auto; margin-right: auto; }
         .cta-banner a { display: inline-block; background: #C9A961; color: #1a1a2e; padding: 0.8rem 2rem; border-radius: 4px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; transition: background 0.3s; }
         .cta-banner a:hover { background: #d4af37; }
-        .illus-wrap { margin: 2rem 0; background: #fafaf8; border-radius: 10px; padding: 1.5rem; border: 1px solid rgba(0,0,0,0.05); }
+        .illus-wrap { margin: 2rem 0; background: #fafaf8; border-radius: 10px; padding: 1.5rem 1.5rem 1rem; border: 1px solid rgba(0,0,0,0.05); }
         .illus-caption { font-size: 0.72rem; color: #999; text-align: center; margin-top: 0.8rem; font-style: italic; }
+        /* Timeline */
+        .timeline-row { display: flex; align-items: flex-start; gap: 0; position: relative; margin: 1.2rem 0 0.5rem; }
+        .timeline-row::before { content:''; position:absolute; top: 44px; left: calc(16.66% + 20px); right: calc(16.66% + 20px); height: 2px; background: #ddd; z-index:0; }
+        .tl-item { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 0.5rem; position: relative; z-index:1; }
+        .tl-label { font-size: 0.72rem; font-weight: 600; color: #1a1a2e; margin-bottom: 0.4rem; line-height: 1.3; }
+        .tl-sub { font-size: 0.65rem; color: #666; margin-bottom: 0.5rem; line-height: 1.3; }
+        .tl-circle { width: 40px; height: 40px; border-radius: 50%; background: #C9A961; color: #1a1a2e; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; flex-shrink: 0; }
+        .tl-check { font-size: 0.65rem; color: #2E7D52; font-weight: 600; }
+        .tl-avoid { font-size: 0.7rem; color: #c0392b; text-align: center; margin-top: 0.8rem; padding: 0.5rem 0.8rem; background: #fff6f5; border-radius: 4px; border: 1px solid #f5c6bb; }
+        @media (max-width: 520px) { .timeline-row::before { display: none; } .timeline-row { flex-direction: column; gap: 1rem; } .tl-item { flex-direction: row; text-align: left; gap: 1rem; align-items: center; } .tl-circle { flex-shrink: 0; margin: 0; } .tl-label, .tl-sub, .tl-check { text-align: left; } }
+        /* Data sources */
+        .sources-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1rem 0 0.5rem; }
+        .source-card { background: #fff; border: 1.5px solid #ddd; border-radius: 8px; padding: 1.2rem 1rem; display: flex; flex-direction: column; gap: 0.3rem; }
+        .source-card.featured { border-color: #C9A961; }
+        .source-name { font-size: 0.82rem; font-weight: 700; color: #1a1a2e; }
+        .source-card.featured .source-name { color: #C9A961; }
+        .source-sub { font-size: 0.7rem; color: #666; }
+        .source-divider { height: 1px; background: #f0f0f0; margin: 0.4rem 0; }
+        .source-desc { font-size: 0.72rem; color: #555; line-height: 1.5; }
+        .source-badge { font-size: 0.65rem; font-weight: 600; color: #2E7D52; margin-top: 0.3rem; }
+        .sources-tip { font-size: 0.72rem; color: #999; text-align: center; font-style: italic; margin-top: 0.6rem; }
+        @media (max-width: 600px) { .sources-grid { grid-template-columns: 1fr; } }
+        /* Errors grid */
+        .errors-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #1a1a2e; text-align: center; margin-bottom: 1rem; }
+        .errors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+        .error-card { background: #fff2f0; border: 1px solid #f5c6bb; border-radius: 6px; padding: 1rem 1.1rem; }
+        .error-label { font-size: 0.65rem; font-weight: 700; color: #c0392b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.3rem; }
+        .error-title { font-size: 0.8rem; font-weight: 600; color: #1a1a2e; margin-bottom: 0.3rem; line-height: 1.35; }
+        .error-desc { font-size: 0.75rem; color: #666; line-height: 1.5; }
+        .error-card.full { grid-column: 1 / -1; }
+        @media (max-width: 520px) { .errors-grid { grid-template-columns: 1fr; } .error-card.full { grid-column: auto; } }
         .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.2rem; margin-top: 1.5rem; }
         .related-card { border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; padding: 1.4rem; transition: all 0.3s; }
         .related-card:hover { border-color: #C9A961; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
@@ -196,6 +234,23 @@
         .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
         .fade-in.visible { opacity: 1; transform: translateY(0); }
     </style>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '3865352233767400');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 
 <body>
@@ -214,76 +269,7 @@
                 <a href="/en/pages/home/">Home</a>
                 <a href="/en/cv-analyser">CV Analyser</a>
                 <a href="/en/career-path">Career Path</a>
-                <div class="nav-item mega-dropdown" style="position:relative;">
-                    <a href="/en/pages/services/">Services</a>
-                    <div class="mega-menu">
-                        <a href="/en/cv-analyser">CV Analyser</a>
-                        <a href="/en/career-path">Career Path</a>
-                        <a href="/en/linkedin-roaster">LinkedIn Roaster</a>
-                    </div>
-                </div>
-                <a href="/en/pages/knowledge">Knowledge</a>
-                <a href="/en/blog/">Blog</a>
-                <a href="/en/pages/about/">About</a>
-            </div>
-        </div>
-    </nav>
-    </header>
-
-    <!-- HERO -->
-    <section class="hero">
-        <div class="hero-inner fade-in">
-            <p class="hero-breadcrumb">
-                <a href="../../../en/pages/knowledge.html">Knowledge Hub</a> &nbsp;/&nbsp;
-                <a href="../conhecimento.html#artigos">Articles</a> &nbsp;/&nbsp;
-                Salary Negotiation
-            </p>
-            <span class="hero-tag">Career Strategy</span>
-            <h1>How to Negotiate<br><strong>Your Salary: Guide 2026</strong></h1>
-            <p class="hero-lead">Most professionals never negotiate their salary. Those who do earn, on average, 10% to 20% more. This guide shows you exactly when, how and what to say.</p>
-            <div class="hero-meta">
-                <span><strong>Samuel Rolo</strong></span>
-                <span class="dot"></span>
-                <span>19 Mar 2026</span>
-                <span class="dot"></span>
-                <span>10 min read</span>
-                <span class="dot"></span>
-                <span style="color:#C9A961;font-weight:600;">Complete Guide</span>
-            </div>
-
-            <div class="toc-box">
-                <h4>Table of Contents</h4>
-                <ol>
-                    <li><a href="#porque-nao-negocias">Why most people don't negotiate — and what it costs them</a></li>
-                    <li><a href="#quando-negociar">When to negotiate: the 3 right moments</a></li>
-                    <li><a href="#pesquisa-mercado">How to use market data to your advantage</a></li>
-                    <li><a href="#o-que-dizer">What to say: scripts that work</a></li>
-                    <li><a href="#erros">The 5 mistakes that cost you money</a></li>
-                    <li><a href="#alem-do-salario">Beyond salary: what else you can negotiate</a></li>
-                    <li><a href="#checklist">Checklist before the conversation</a></li>
-                </ol>
-            </div>
-        </div>
-    </section>
-
-    <!-- ARTICLE -->
-    <div class="article-wrap">
-
-        <!-- Stats -->
-        <div class="stats-row fade-in">
-            <div class="stat-card">
-                <div class="stat-val">73%</div>
-                <div class="stat-desc">of employers have room to negotiate above the initial offer</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-val">3.5%</div>
-                <div class="stat-desc">average salary increase in Portugal in 2026</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-val">10–20%</div>
-                <div class="stat-desc">more earned by professionals who negotiate vs. those who don't</div>
-            </div>
-        </div>
+                <a href="/en/pages/services/">Services</a>
 
         <!-- 1 -->
         <span class="anchor-label" id="porque-nao-negocias">01 — The Problem</span>
@@ -328,27 +314,29 @@
         <p class="fade-in">Negotiating at the wrong time can be just as damaging as not negotiating at all. There are three windows where you have maximum leverage.</p>
 
         <!-- SVG illustration 2 -->
+        <!-- Timeline: 3 negotiation moments -->
         <div class="illus-wrap fade-in">
-            <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
-                <rect width="700" height="200" fill="#fafaf8" rx="8"/>
-                <line x1="60" y1="100" x2="640" y2="100" stroke="#ddd" stroke-width="2"/>
-                <circle cx="160" cy="100" r="18" fill="#C9A961"/>
-                <text x="160" y="104" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#1a1a2e">1</text>
-                <text x="160" y="70" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" font-weight="600" fill="#1a1a2e">Job Offer</text>
-                <text x="160" y="83" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8.5" fill="#666">Maximum leverage</text>
-                <text x="160" y="132" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" fill="#2E7D52">✓ Ideal moment</text>
-                <circle cx="350" cy="100" r="18" fill="#C9A961"/>
-                <text x="350" y="104" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#1a1a2e">2</text>
-                <text x="350" y="70" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" font-weight="600" fill="#1a1a2e">Performance Review</text>
-                <text x="350" y="83" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8.5" fill="#666">Good leverage with evidence</text>
-                <text x="350" y="132" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" fill="#2E7D52">✓ Come prepared</text>
-                <circle cx="540" cy="100" r="18" fill="#C9A961"/>
-                <text x="540" y="104" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#1a1a2e">3</text>
-                <text x="540" y="70" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" font-weight="600" fill="#1a1a2e">After a High-Impact Project</text>
-                <text x="540" y="83" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8.5" fill="#666">Fresh, tangible results</text>
-                <text x="540" y="132" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" fill="#2E7D52">✓ Recent evidence</text>
-                <text x="350" y="170" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8.5" fill="#c0392b">❌ Avoid: company financial difficulties, just after joining, without market data</text>
-            </svg>
+            <div class="timeline-row">
+                <div class="tl-item">
+                    <div class="tl-label">Job Offer</div>
+                    <div class="tl-sub">Maximum leverage</div>
+                    <div class="tl-circle">1</div>
+                    <div class="tl-check">✓ Ideal moment</div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-label">Performance Review</div>
+                    <div class="tl-sub">Good leverage with evidence</div>
+                    <div class="tl-circle">2</div>
+                    <div class="tl-check">✓ Come prepared</div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-label">After a High-Impact Project</div>
+                    <div class="tl-sub">Fresh, tangible results</div>
+                    <div class="tl-circle">3</div>
+                    <div class="tl-check">✓ Recent evidence</div>
+                </div>
+            </div>
+            <div class="tl-avoid">❌ Avoid: company financial difficulties, just after joining a new role, without market data</div>
             <p class="illus-caption">The 3 moments with greatest negotiating power throughout your career</p>
         </div>
 
@@ -383,35 +371,31 @@
 
         <p class="fade-in">Asking for a raise based on "I think I deserve more" is the fastest way to lose a negotiation. Asking based on concrete market data is the most effective way to win it. Research transforms an opinion into an argument.</p>
 
-        <!-- SVG illustration 3 -->
+        <!-- Data sources: responsive HTML -->
         <div class="illus-wrap fade-in">
-            <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
-                <rect width="700" height="220" fill="#fafaf8" rx="8"/>
-                <text x="350" y="28" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#1a1a2e" letter-spacing="2">SALARY DATA SOURCES</text>
-                <rect x="40" y="50" width="180" height="130" fill="#fff" rx="8" stroke="#C9A961" stroke-width="1.5"/>
-                <text x="130" y="78" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" font-weight="700" fill="#C9A961">Career Path</text>
-                <text x="130" y="92" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8.5" fill="#444">Share2Inspire</text>
-                <line x1="60" y1="102" x2="200" y2="102" stroke="#f0f0f0" stroke-width="1"/>
-                <text x="130" y="118" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" fill="#555">Personalised analysis</text>
-                <text x="130" y="132" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" fill="#555">of your positioning</text>
-                <text x="130" y="146" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" fill="#555">vs. market benchmarks</text>
-                <text x="130" y="166" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7.5" font-weight="600" fill="#2E7D52">★ Recommended</text>
-                <rect x="260" y="50" width="180" height="130" fill="#fff" rx="8" stroke="#ddd" stroke-width="1.5"/>
-                <text x="350" y="78" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" font-weight="700" fill="#1a1a2e">Salary Guides</text>
-                <text x="350" y="92" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8.5" fill="#444">Robert Walters / Michael Page</text>
-                <line x1="280" y1="102" x2="420" y2="102" stroke="#f0f0f0" stroke-width="1"/>
-                <text x="350" y="118" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" fill="#555">Data by role, sector</text>
-                <text x="350" y="132" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" fill="#555">and seniority level</text>
-                <text x="350" y="146" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" fill="#555">Updated annually</text>
-                <rect x="480" y="50" width="180" height="130" fill="#fff" rx="8" stroke="#ddd" stroke-width="1.5"/>
-                <text x="570" y="78" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" font-weight="700" fill="#1a1a2e">LinkedIn Salary</text>
-                <text x="570" y="92" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8.5" fill="#444">Insights</text>
-                <line x1="500" y1="102" x2="640" y2="102" stroke="#f0f0f0" stroke-width="1"/>
-                <text x="570" y="118" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" fill="#555">Data by job title</text>
-                <text x="570" y="132" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" fill="#555">and location</text>
-                <text x="570" y="146" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8" fill="#555">Based on real users</text>
-                <text x="350" y="200" text-anchor="middle" font-family="Poppins,sans-serif" font-size="8.5" fill="#999" font-style="italic">Use at least 2 sources to build your salary reference range</text>
-            </svg>
+            <div class="errors-title">SALARY DATA SOURCES</div>
+            <div class="sources-grid">
+                <div class="source-card featured">
+                    <div class="source-name">Career Path</div>
+                    <div class="source-sub">Share2Inspire</div>
+                    <div class="source-divider"></div>
+                    <div class="source-desc">Personalised analysis of your positioning vs. market benchmarks</div>
+                    <div class="source-badge">★ Recommended</div>
+                </div>
+                <div class="source-card">
+                    <div class="source-name">Salary Guides</div>
+                    <div class="source-sub">Robert Walters / Michael Page</div>
+                    <div class="source-divider"></div>
+                    <div class="source-desc">Data by role, sector and seniority level. Updated annually</div>
+                </div>
+                <div class="source-card">
+                    <div class="source-name">LinkedIn Salary</div>
+                    <div class="source-sub">Insights</div>
+                    <div class="source-divider"></div>
+                    <div class="source-desc">Data by job title and location. Based on real users</div>
+                </div>
+            </div>
+            <div class="sources-tip">Use at least 2 sources to build your salary reference range</div>
             <p class="illus-caption">Key salary data sources for building your negotiation benchmark</p>
         </div>
 
@@ -455,31 +439,36 @@
         <h2 class="fade-in">The 5 mistakes that cost you money</h2>
         <div class="anchor-divider"></div>
 
-        <!-- SVG illustration 4 -->
+        <!-- Errors grid: responsive HTML -->
         <div class="illus-wrap fade-in">
-            <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
-                <rect width="700" height="260" fill="#fafaf8" rx="8"/>
-                <text x="350" y="28" text-anchor="middle" font-family="Poppins,sans-serif" font-size="11" font-weight="700" fill="#1a1a2e" letter-spacing="2">5 SALARY NEGOTIATION MISTAKES</text>
-                <rect x="40" y="50" width="290" height="70" fill="#fff2f0" rx="6" stroke="#f5c6bb" stroke-width="1"/>
-                <text x="55" y="75" font-family="Poppins,sans-serif" font-size="9" font-weight="700" fill="#c0392b">❌ MISTAKE 1</text>
-                <text x="55" y="91" font-family="Poppins,sans-serif" font-size="9" font-weight="600" fill="#1a1a2e">Accepting the first offer without questioning it</text>
-                <text x="55" y="108" font-family="Poppins,sans-serif" font-size="8" fill="#666">73% of companies have margin. Not asking = leaving money on the table.</text>
-                <rect x="370" y="50" width="290" height="70" fill="#fff2f0" rx="6" stroke="#f5c6bb" stroke-width="1"/>
-                <text x="385" y="75" font-family="Poppins,sans-serif" font-size="9" font-weight="700" fill="#c0392b">❌ MISTAKE 2</text>
-                <text x="385" y="91" font-family="Poppins,sans-serif" font-size="9" font-weight="600" fill="#1a1a2e">Giving a number without market research</text>
-                <text x="385" y="108" font-family="Poppins,sans-serif" font-size="8" fill="#666">Without data, your request sounds arbitrary. With data, it's an argument.</text>
-                <rect x="40" y="140" width="290" height="70" fill="#fff2f0" rx="6" stroke="#f5c6bb" stroke-width="1"/>
-                <text x="55" y="165" font-family="Poppins,sans-serif" font-size="9" font-weight="700" fill="#c0392b">❌ MISTAKE 3</text>
-                <text x="55" y="181" font-family="Poppins,sans-serif" font-size="9" font-weight="600" fill="#1a1a2e">Justifying with personal needs</text>
-                <text x="55" y="198" font-family="Poppins,sans-serif" font-size="8" fill="#666">"I need to earn more because..." — irrelevant. Focus on your market value.</text>
-                <rect x="370" y="140" width="290" height="70" fill="#fff2f0" rx="6" stroke="#f5c6bb" stroke-width="1"/>
-                <text x="385" y="165" font-family="Poppins,sans-serif" font-size="9" font-weight="700" fill="#c0392b">❌ MISTAKE 4</text>
-                <text x="385" y="181" font-family="Poppins,sans-serif" font-size="9" font-weight="600" fill="#1a1a2e">Giving a range when asked for a number</text>
-                <text x="385" y="198" font-family="Poppins,sans-serif" font-size="8" fill="#666">Saying "€2,000 to €2,500" gets you €2,000. Ask for the top of your range.</text>
-                <rect x="205" y="225" width="290" height="25" fill="#fff2f0" rx="6" stroke="#f5c6bb" stroke-width="1"/>
-                <text x="220" y="241" font-family="Poppins,sans-serif" font-size="9" font-weight="700" fill="#c0392b">❌ MISTAKE 5 — </text>
-                <text x="310" y="241" font-family="Poppins,sans-serif" font-size="9" fill="#1a1a2e">Immediately backing down after the first "no"</text>
-            </svg>
+            <div class="errors-title">5 SALARY NEGOTIATION MISTAKES</div>
+            <div class="errors-grid">
+                <div class="error-card">
+                    <div class="error-label">❌ MISTAKE 1</div>
+                    <div class="error-title">Accepting the first offer without questioning it</div>
+                    <div class="error-desc">73% of companies have margin. Not asking = leaving money on the table.</div>
+                </div>
+                <div class="error-card">
+                    <div class="error-label">❌ MISTAKE 2</div>
+                    <div class="error-title">Giving a number without market research</div>
+                    <div class="error-desc">Without data, your request sounds arbitrary. With data, it's an argument.</div>
+                </div>
+                <div class="error-card">
+                    <div class="error-label">❌ MISTAKE 3</div>
+                    <div class="error-title">Justifying with personal needs</div>
+                    <div class="error-desc">"I need to earn more because..." — irrelevant. Focus on your market value.</div>
+                </div>
+                <div class="error-card">
+                    <div class="error-label">❌ MISTAKE 4</div>
+                    <div class="error-title">Giving a range when asked for a number</div>
+                    <div class="error-desc">Saying "€2,000 to €2,500" gets you €2,000. Ask for the top of your range.</div>
+                </div>
+                <div class="error-card full">
+                    <div class="error-label">❌ MISTAKE 5</div>
+                    <div class="error-title">Immediately backing down after the first "no"</div>
+                    <div class="error-desc">Silence after a "no" is powerful. Hold your position and ask for an alternative plan.</div>
+                </div>
+            </div>
             <p class="illus-caption">The 5 most common mistakes — and why they're so costly</p>
         </div>
 

@@ -6,7 +6,7 @@
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
-const BREVO_SENDER = { name: 'Share2Inspire', email: 'srshare2inspire@gmail.com' };
+const BREVO_SENDER = { name: 'Share2Inspire', email: 'geral@share2inspire.pt' };
 
 function getBrevoKey() { return localStorage.getItem('s2i_brevo_key') || ''; }
 function ensureBrevoKey() {
@@ -114,8 +114,11 @@ function getAnalysisType(a) {
         if (a.payment_method === 'voucher') return 'voucher';
         return (a.payment_status === 'paid' || (a.payment_amount && a.payment_amount > 0)) ? 'paid' : 'free';
     }
-    // Career path is always paid
+    // Career path, bundle, and Career Intelligence are always paid
     if (a.analysis_type === 'career_path') return 'paid';
+    if (a.analysis_type === 'bundle') return 'paid';
+    if (a.analysis_type === 'career_intelligence_pro') return 'paid';
+    if (a.analysis_type === 'career_intelligence_full') return 'paid';
     // Voucher: only if payment_method explicitly says 'voucher' on THIS analysis
     if (a.payment_method === 'voucher') return 'voucher';
     // Paid: confirmed payment on THIS analysis
@@ -178,6 +181,9 @@ function getLangBadge(lang) {
 }
 function getProductBadge(a) {
     if (a._source === 'linkedin_roaster') return '<span class="badge" style="background:#0077B5;color:#fff;">LinkedIn Roaster</span>';
+    if (a.analysis_type === 'career_intelligence_pro') return '<span class="badge" style="background:#7C3AED;color:#fff;font-weight:600;">CI PRO</span>';
+    if (a.analysis_type === 'career_intelligence_full') return '<span class="badge" style="background:#5B21B6;color:#fff;font-weight:600;">CI Full</span>';
+    if (a.analysis_type === 'bundle') return '<span class="badge" style="background:var(--gold);color:#1a1a1a;font-weight:600;">Bundle</span>';
     if (a.analysis_type === 'career_path') return '<span class="badge badge-career">Career Path</span>';
     return '<span class="badge badge-cv">CV Analyser</span>';
 }
@@ -348,10 +354,16 @@ function updateDashboard() {
         .reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
     // Total = direct analysis payments + voucher sales
     const totalRevenue = directRevenue + voucherRevenue;
-    const cvRevenue = paid.filter(a => a.analysis_type !== 'career_path' && a._source !== 'linkedin_roaster').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0) 
-                    + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type !== 'career_path').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
+    const cvRevenue = paid.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && a._source !== 'linkedin_roaster').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0) 
+                    + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type !== 'career_path' && v.voucher_type !== 'career_intelligence_pro' && v.voucher_type !== 'career_intelligence_full').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
     const cpRevenue = cp.reduce((s, a) => s + (a.payment_amount || 0), 0)
                     + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type === 'career_path').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
+    // Career Intelligence revenue (PRO upgrades + Full standalone)
+    const ciPro = data.filter(a => a.analysis_type === 'career_intelligence_pro');
+    const ciFull = data.filter(a => a.analysis_type === 'career_intelligence_full');
+    const ciAll = [...ciPro, ...ciFull];
+    const ciRevenue = ciAll.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0)
+                    + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && (v.voucher_type === 'career_intelligence_pro' || v.voucher_type === 'career_intelligence_full')).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
 
     const uniqueEmails = new Set(data.filter(a => !isAnonymous(a)).map(a => a.user_email.toLowerCase()));
     const identified   = data.filter(a => !isAnonymous(a));
@@ -401,8 +413,9 @@ function updateDashboard() {
     // === VENDAS REAIS (excluindo samuelrolo@gmail.com) ===
     const excludeEmail = 'samuelrolo@gmail.com';
     const realPaid = paid.filter(a => (a.user_email || '').toLowerCase() !== excludeEmail);
-    const realCVAPaid = realPaid.filter(a => a.analysis_type !== 'career_path' && a._source !== 'linkedin_roaster');
+    const realCVAPaid = realPaid.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && a._source !== 'linkedin_roaster');
     const realCPPaid = realPaid.filter(a => a.analysis_type === 'career_path');
+    const realCIPaid = realPaid.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full');
     const realLRPaid = realPaid.filter(a => a._source === 'linkedin_roaster');
     const realVouchersSold = allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail);
 
@@ -410,13 +423,15 @@ function updateDashboard() {
     const realVoucherRevenue = realVouchersSold.reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
     const realTotalRevenue = realDirectRevenue + realVoucherRevenue;
     const realCVARevenue = realCVAPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0)
-                         + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type !== 'career_path' && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
+                         + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type !== 'career_path' && v.voucher_type !== 'career_intelligence_pro' && v.voucher_type !== 'career_intelligence_full' && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
     const realCPRevenue = realCPPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0)
                         + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type === 'career_path' && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
+    const realCIRevenue = realCIPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0)
+                        + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && (v.voucher_type === 'career_intelligence_pro' || v.voucher_type === 'career_intelligence_full') && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
     const realLRRevenue = realLRPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
 
     // === PIVOT TABLE ===
-    const cvAll = data.filter(a => a.analysis_type !== 'career_path' && a._source !== 'linkedin_roaster');
+    const cvAll = data.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && a._source !== 'linkedin_roaster');
     const cvFreeItems = cvAll.filter(a => getAnalysisType(a) === 'free');
     const cvPaidItems = cvAll.filter(a => getAnalysisType(a) === 'paid');
     const cvVoucherItems = cvAll.filter(a => getAnalysisType(a) === 'voucher');
@@ -437,6 +452,11 @@ function updateDashboard() {
             name: 'Career Path', color: 'var(--teal)', icon: 'fa-route',
             total: cp.length, free: cpFreeItems.length, paid: cpPaidItems.length, voucher: cpVoucherItems.length,
             revenue: cpRevenue, realRevenue: realCPRevenue
+        },
+        {
+            name: 'Career Intelligence', color: '#7C3AED', icon: 'fa-brain',
+            total: ciAll.length, free: 0, paid: ciAll.length, voucher: 0,
+            revenue: ciRevenue, realRevenue: realCIRevenue
         },
         {
             name: 'LinkedIn Roaster', color: '#0077B5', icon: 'fa-linkedin',
@@ -519,17 +539,19 @@ function renderDashRevenueByProduct(cvData, lrData) {
     const revEl = document.getElementById('dashRevenueByProduct');
     if (!revEl) return;
 
-    const cvRev = cvData.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0);
+    const cvRev = cvData.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full').reduce((s, a) => s + (a.payment_amount || 0), 0);
     const cpRev = cvData.filter(a => a.analysis_type === 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0);
+    const ciRev = cvData.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
     const lrRev = lrData.filter(a => a.payment_status === 'paid').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
     const vRev  = allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
-    const total = cvRev + cpRev + lrRev + vRev;
+    const total = cvRev + cpRev + ciRev + lrRev + vRev;
 
     revEl.innerHTML = `
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">
             ${[
                 { label: 'CV Analyser', value: cvRev, color: 'var(--purple)', icon: 'fa-file-alt' },
                 { label: 'Career Path', value: cpRev, color: 'var(--blue)', icon: 'fa-route' },
+                { label: 'Career Intelligence', value: ciRev, color: '#7C3AED', icon: 'fa-brain' },
                 { label: 'LinkedIn Roaster', value: lrRev, color: '#0077B5', icon: 'fab fa-linkedin' },
                 { label: 'Vouchers', value: vRev, color: 'var(--gold)', icon: 'fa-ticket-alt' }
             ].map(p => `
@@ -674,8 +696,9 @@ function renderFunnel() {
     const lrPaidCount = lrFiltered.filter(a => a.payment_status === 'paid').length;
     const ceTotal     = allCareerEnergy.length; // Career Energy
     const freeCount   = data.filter(a => getAnalysisType(a) === 'free').length;
-    const paidCount   = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path').length;
+    const paidCount   = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full').length;
     const cpCount     = data.filter(a => a.analysis_type === 'career_path').length;
+    const ciCount     = data.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full').length;
 
     // LinkedIn Roaster é o topo do funil
     const topTotal = lrTotal + (ceTotal || (freeCount + paidCount + cpCount));
@@ -698,7 +721,8 @@ function renderFunnel() {
         { name: 'Career Energy (Diagnóstico)', count: ceTotal || (freeCount + paidCount + cpCount), color: '#6B7280' },
         { name: 'CV Analyser Grátis', count: freeCount, color: '#C9A961' },
         { name: 'CV Analyser Pago', count: paidCount, color: '#10B981' },
-        { name: 'Career Path', count: cpCount, color: '#3B82F6' }
+        { name: 'Career Path', count: cpCount, color: '#3B82F6' },
+        { name: 'Career Intelligence', count: ciCount, color: '#7C3AED' }
     ];
     const maxCount = Math.max(...steps.map(s => s.count), 1);
     const funnelEl = document.getElementById('funnelVisual');
@@ -755,7 +779,8 @@ function renderFunnel() {
         const anonymous = data.filter(isAnonymous).length;
         const noEmail   = data.filter(a => !a.user_email || a.user_email === '').length;
         const freeNoUpgrade = data.filter(a => getAnalysisType(a) === 'free' && !isAnonymous(a)).length;
-        const paidNoCp = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path').length;
+        const paidNoCp = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full').length;
+        const cpNoCi = data.filter(a => a.analysis_type === 'career_path' && !data.some(b => (b.analysis_type === 'career_intelligence_pro' || b.analysis_type === 'career_intelligence_full') && (b.user_email || '').toLowerCase() === (a.user_email || '').toLowerCase())).length;
 
         abandonEl.innerHTML = `
             <div class="metric-row">
@@ -778,6 +803,13 @@ function renderFunnel() {
                     <div class="metric-bar-wrap"><div class="metric-bar" style="width:${paidCount ? Math.round(paidNoCp/paidCount*100) : 0}%;background:var(--blue);"></div></div>
                     <div class="metric-value" style="color:var(--blue);">${paidNoCp} <small style="font-size:11px;font-weight:400;">(${paidCount ? Math.round(paidNoCp/paidCount*100) : 0}%)</small></div>
                 </div>
+            </div>
+            <div class="metric-row">
+                <div class="metric-label"><i class="fas fa-brain" style="color:#7C3AED;margin-right:6px;"></i> Career Path sem CI PRO upgrade</div>
+                <div style="display:flex;align-items:center;gap:12px;flex:1;margin-left:16px;">
+                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:${cpCount ? Math.round(cpNoCi/cpCount*100) : 0}%;background:#7C3AED;"></div></div>
+                    <div class="metric-value" style="color:#7C3AED;">${cpNoCi} <small style="font-size:11px;font-weight:400;">(${cpCount ? Math.round(cpNoCi/cpCount*100) : 0}%)</small></div>
+                </div>
             </div>`;
     }
 
@@ -785,15 +817,16 @@ function renderFunnel() {
     const oppEl = document.getElementById('conversionOpportunities');
     if (oppEl) {
         const freeIdentified = data.filter(a => getAnalysisType(a) === 'free' && !isAnonymous(a)).length;
-        const cvPaidNoCp     = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && !isAnonymous(a)).length;
+        const cvPaidNoCp     = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && !isAnonymous(a)).length;
+        const cpNoCiOpp      = data.filter(a => a.analysis_type === 'career_path' && !isAnonymous(a) && !data.some(b => (b.analysis_type === 'career_intelligence_pro' || b.analysis_type === 'career_intelligence_full') && (b.user_email || '').toLowerCase() === (a.user_email || '').toLowerCase())).length;
         const avgTicket      = paidCount > 0 ? (data.filter(a => getAnalysisType(a) === 'paid').reduce((s, a) => s + (a.payment_amount || 0), 0) / paidCount) : 0;
-        const potentialRev   = (freeIdentified * avgTicket * 0.1 + cvPaidNoCp * 19.99 * 0.2).toFixed(0);
+        const potentialRev   = (freeIdentified * avgTicket * 0.1 + cvPaidNoCp * 19.99 * 0.2 + cpNoCiOpp * 24 * 0.15).toFixed(0);
 
         oppEl.innerHTML = `
             <div style="margin-bottom:12px;padding:12px;background:var(--green-bg);border-radius:8px;border-left:3px solid var(--green);">
                 <div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:4px;">💰 Receita Potencial Estimada</div>
                 <div style="font-size:20px;font-weight:700;color:var(--dark);">${potentialRev}€</div>
-                <div style="font-size:11px;color:var(--text-muted);">Com 10% de conversão das leads grátis + 20% upsell Career Path</div>
+                <div style="font-size:11px;color:var(--text-muted);">10% leads grátis + 20% upsell Career Path + 15% upsell CI PRO</div>
             </div>
             <div class="metric-row">
                 <div class="metric-label">Leads grátis identificadas para upsell</div>
@@ -804,6 +837,10 @@ function renderFunnel() {
                 <div class="metric-value" style="color:var(--blue);">${cvPaidNoCp}</div>
             </div>
             <div class="metric-row">
+                <div class="metric-label">Career Path para upsell CI PRO (24€)</div>
+                <div class="metric-value" style="color:#7C3AED;">${cpNoCiOpp}</div>
+            </div>
+            <div class="metric-row">
                 <div class="metric-label">Ticket médio atual</div>
                 <div class="metric-value" style="color:var(--green);">${avgTicket.toFixed(2)}€</div>
             </div>`;
@@ -812,17 +849,19 @@ function renderFunnel() {
     // Receita por Produto (inclui LinkedIn Roaster)
     const revEl = document.getElementById('revenueByProduct');
     if (revEl) {
-        const cvRev = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0);
+        const cvRev = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full').reduce((s, a) => s + (a.payment_amount || 0), 0);
         const cpRev = data.filter(a => a.analysis_type === 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0);
+        const ciRevFunnel = data.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
         const lrRev = lrFiltered.filter(a => a.payment_status === 'paid').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
         const vRev  = allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
-        const total = cvRev + cpRev + lrRev + vRev;
+        const total = cvRev + cpRev + ciRevFunnel + lrRev + vRev;
 
         revEl.innerHTML = `
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">
                 ${[
                     { label: 'CV Analyser', value: cvRev, color: 'var(--purple)', icon: 'fa-file-alt' },
                     { label: 'Career Path', value: cpRev, color: 'var(--blue)', icon: 'fa-route' },
+                    { label: 'Career Intelligence', value: ciRevFunnel, color: '#7C3AED', icon: 'fa-brain' },
                     { label: 'LinkedIn Roaster', value: lrRev, color: '#0077B5', icon: 'fab fa-linkedin' },
                     { label: 'Vouchers', value: vRev, color: 'var(--gold)', icon: 'fa-ticket-alt' }
                 ].map(p => `
@@ -865,11 +904,13 @@ function getCRMSuggestion(p) {
     const hasAutoUpsell7d = emailsSent.some(e => e.email_type === 'upsell_auto_7d');
     const hasPurchase = p.purchases.length > 0;
     const hasCareerPath = p.purchases.some(a => a.analysis_type === 'career_path');
-    const hasCVPaid = p.purchases.some(a => a.analysis_type !== 'career_path');
+    const hasCVPaid = p.purchases.some(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full');
+    const hasCI = p.purchases.some(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full');
     const avgScore = p.analyses.filter(a => a.score > 0).length ? Math.round(p.analyses.filter(a => a.score > 0).reduce((s, a) => s + a.score, 0) / p.analyses.filter(a => a.score > 0).length) : 0;
+    if (hasPurchase && hasCareerPath && !hasCI) return '<span style="color:#7C3AED;"><i class="fas fa-brain"></i> Oferecer CI PRO (24€)</span>';
     if (hasPurchase && !hasCareerPath) return '<span style="color:var(--blue);"><i class="fas fa-bullseye"></i> Oferecer Career Path</span>';
-    if (hasPurchase && hasCareerPath && !hasCVPaid) return '<span style="color:var(--blue);"><i class="fas fa-bullseye"></i> Oferecer CV Analyser</span>';
-    if (hasPurchase && hasCareerPath && hasCVPaid) return '<span style="color:var(--green);"><i class="fas fa-star"></i> Pedir testemunho</span>';
+    if (hasPurchase && hasCareerPath && hasCI && !hasCVPaid) return '<span style="color:var(--blue);"><i class="fas fa-bullseye"></i> Oferecer CV Analyser</span>';
+    if (hasPurchase && hasCareerPath && hasCI && hasCVPaid) return '<span style="color:var(--green);"><i class="fas fa-star"></i> Pedir testemunho</span>';
     if (hasAutoUpsell7d && !hasPurchase) return '<span style="color:var(--orange);"><i class="fas fa-phone"></i> Contacto directo</span>';
     if (hasAutoUpsell2h && !hasPurchase) return '<span style="color:var(--text-muted);"><i class="fas fa-clock"></i> Aguardar follow-up 7d</span>';
     if (avgScore > 0 && avgScore < 60) return '<span style="color:var(--red);"><i class="fas fa-fire"></i> Score baixo — upsell urgente</span>';
@@ -977,7 +1018,7 @@ function buildCRMProfiles() {
 
     return Object.values(profileMap).map(p => {
         const hasPurchase = p.purchases.length > 0;
-        const hasMultiple = p.purchases.length >= 2 || (p.purchases.length >= 1 && p.analyses.some(a => a.analysis_type === 'career_path'));
+        const hasMultiple = p.purchases.length >= 2 || (p.purchases.length >= 1 && p.analyses.some(a => a.analysis_type === 'career_path' || a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full'));
         const inNurturing = sentEmails.has(p.email);
 
         let stage = 'lead';
@@ -1023,8 +1064,9 @@ function renderCRM() {
     if (productFilter !== 'all') {
         filtered = filtered.filter(p => {
             if (productFilter === 'cv_free') return p.analyses.some(a => getAnalysisType(a) === 'free');
-            if (productFilter === 'cv_paid') return p.purchases.some(a => a.analysis_type !== 'career_path');
+            if (productFilter === 'cv_paid') return p.purchases.some(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full');
             if (productFilter === 'career_path') return p.purchases.some(a => a.analysis_type === 'career_path');
+            if (productFilter === 'career_intelligence') return p.purchases.some(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full');
             return true;
         });
     }
@@ -1050,8 +1092,9 @@ function renderCRM() {
     tbody.innerHTML = page.map(p => {
         const initials = (p.name || p.email).slice(0, 2).toUpperCase();
         const lastDate = new Date(p.lastInteraction).toLocaleDateString('pt-PT');
-        const productsUsed = [...new Set(p.analyses.map(a => a.analysis_type === 'career_path' ? 'Career Path' : a.analysis_type === 'linkedin_roaster' ? 'LinkedIn Roaster' : 'CV Analyser'))].join(', ');
-        const productsBought = p.purchases.length > 0 ? [...new Set(p.purchases.map(a => a.analysis_type === 'career_path' ? 'Career Path' : a.analysis_type === 'linkedin_roaster' ? 'LinkedIn Roaster' : 'CV Analyser'))].join(', ') : '—';
+        const productNameMap = t => t === 'career_path' ? 'Career Path' : t === 'career_intelligence_pro' ? 'CI PRO' : t === 'career_intelligence_full' ? 'CI Full' : t === 'linkedin_roaster' ? 'LinkedIn Roaster' : 'CV Analyser';
+        const productsUsed = [...new Set(p.analyses.map(a => productNameMap(a.analysis_type || (a._source === 'linkedin_roaster' ? 'linkedin_roaster' : ''))))].join(', ');
+        const productsBought = p.purchases.length > 0 ? [...new Set(p.purchases.map(a => productNameMap(a.analysis_type)))].join(', ') : '—';
         return `
         <tr>
             <td>
@@ -1104,8 +1147,8 @@ function exportCRMCSV() {
     profiles.forEach(p => {
         rows.push([
             p.email, p.name || '', p.professional_area || '', p.seniority || '',
-            [...new Set(p.analyses.map(a => a.analysis_type === 'career_path' ? 'Career Path' : 'CV Analyser'))].join(';'),
-            [...new Set(p.purchases.map(a => a.analysis_type === 'career_path' ? 'Career Path' : 'CV Analyser'))].join(';') || '',
+            [...new Set(p.analyses.map(a => a.analysis_type === 'career_path' ? 'Career Path' : a.analysis_type === 'career_intelligence_pro' ? 'CI PRO' : a.analysis_type === 'career_intelligence_full' ? 'CI Full' : a.analysis_type === 'linkedin_roaster' ? 'LinkedIn Roaster' : 'CV Analyser'))].join(';'),
+            [...new Set(p.purchases.map(a => a.analysis_type === 'career_path' ? 'Career Path' : a.analysis_type === 'career_intelligence_pro' ? 'CI PRO' : a.analysis_type === 'career_intelligence_full' ? 'CI Full' : a.analysis_type === 'linkedin_roaster' ? 'LinkedIn Roaster' : 'CV Analyser'))].join(';') || '',
             p.totalSpent.toFixed(2),
             p.lastInteraction?.slice(0, 10),
             p.stage
@@ -1189,8 +1232,10 @@ function renderAnalyses() {
     if (lang !== 'all') data = data.filter(a => detectLanguage(a) === lang);
     if (product !== 'all') {
         if (product === 'linkedin_roaster') data = data.filter(a => a._source === 'linkedin_roaster');
-        else if (product === 'cv') data = data.filter(a => a.analysis_type !== 'career_path' && a._source !== 'linkedin_roaster');
+        else if (product === 'bundle') data = data.filter(a => a.analysis_type === 'bundle');
+        else if (product === 'cv') data = data.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'bundle' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && a._source !== 'linkedin_roaster');
         else if (product === 'career_path') data = data.filter(a => a.analysis_type === 'career_path');
+        else if (product === 'career_intelligence') data = data.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full');
     }
     if (email) data = data.filter(a => (a.user_email || '').toLowerCase().includes(email));
     if (from) data = data.filter(a => a.created_at >= from);
@@ -1248,7 +1293,7 @@ function exportAnalysesCSV() {
     data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     const rows = [['Data','Nome','Email','Score','Área','Tipo','Produto','Idioma','Valor','Origem']];
     data.forEach(a => {
-        const productName = a._source === 'linkedin_roaster' ? 'LinkedIn Roaster' : (a.analysis_type === 'career_path' ? 'Career Path' : 'CV Analyser');
+        const productName = a._source === 'linkedin_roaster' ? 'LinkedIn Roaster' : a.analysis_type === 'career_intelligence_pro' ? 'CI PRO' : a.analysis_type === 'career_intelligence_full' ? 'CI Full' : a.analysis_type === 'career_path' ? 'Career Path' : 'CV Analyser';
         rows.push([
             a.created_at?.slice(0,10), a.user_name||'', a.user_email||'',
             a.score || a.teaser_score || '', a.professional_area || a.target_area || '',
@@ -1295,7 +1340,7 @@ function renderVouchers() {
             <td><code style="font-size:12px;background:var(--bg);padding:2px 6px;border-radius:4px;">${v.code}</code></td>
             <td style="font-size:12px;">${v.email || '—'}</td>
             <td style="font-size:12px;">${v.plan_name || '—'}</td>
-            <td>${v.voucher_type === 'linkedin_roaster' ? '<span class="badge" style="background:#0077B5;color:#fff;font-size:10px;">LinkedIn Roaster</span>' : v.voucher_type === 'career_path' ? '<span class="badge badge-career">Career Path</span>' : v.voucher_type === 'complete' || v.voucher_type === 'bundle' ? '<span class="badge" style="background:var(--gold);color:#fff;font-size:10px;">Bundle</span>' : '<span class="badge badge-cv">CV Analyser</span>'}</td>
+            <td>${v.voucher_type === 'linkedin_roaster' ? '<span class="badge" style="background:#0077B5;color:#fff;font-size:10px;">LinkedIn Roaster</span>' : v.voucher_type === 'career_intelligence_pro' ? '<span class="badge" style="background:#7C3AED;color:#fff;font-size:10px;">CI PRO</span>' : v.voucher_type === 'career_intelligence_full' ? '<span class="badge" style="background:#5B21B6;color:#fff;font-size:10px;">CI Full</span>' : v.voucher_type === 'career_path' ? '<span class="badge badge-career">Career Path</span>' : v.voucher_type === 'complete' || v.voucher_type === 'bundle' ? '<span class="badge" style="background:var(--gold);color:#fff;font-size:10px;">Bundle</span>' : '<span class="badge badge-cv">CV Analyser</span>'}</td>
             <td style="font-size:12px;font-weight:600;">${parseFloat(v.amount_paid) > 0 ? parseFloat(v.amount_paid).toFixed(2) + '€' : '—'}</td>
             <td>
                 <span class="badge ${isActive ? 'badge-success' : 'badge-secondary'}">${isActive ? 'Ativo' : 'Usado'}</span>
@@ -1390,7 +1435,8 @@ function renderNurturingSegments() {
 
     const upsell     = allAnalyses.filter(a => getAnalysisType(a) === 'free' && hasEmail(a));
     const feedback   = allAnalyses.filter(a => getAnalysisType(a) === 'paid' && !a.user_rating && hasEmail(a));
-    const careerpath = allAnalyses.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && hasEmail(a));
+    const careerpath = allAnalyses.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && hasEmail(a));
+    const ciUpsell = allAnalyses.filter(a => a.analysis_type === 'career_path' && hasEmail(a) && !allAnalyses.some(b => (b.analysis_type === 'career_intelligence_pro' || b.analysis_type === 'career_intelligence_full') && (b.user_email || '').toLowerCase() === (a.user_email || '').toLowerCase()));
     const abandoned  = allAnalyses.filter(a => !hasEmail(a) && new Date(a.created_at) > new Date(Date.now() - 7 * 86400000));
 
     const uniqueUpsell     = [...new Set(upsell.map(a => a.user_email.toLowerCase()))];
@@ -1400,6 +1446,8 @@ function renderNurturingSegments() {
     setText('upsellCount',     uniqueUpsell.length);
     setText('feedbackCount',   uniqueFeedback.length);
     setText('careerpathCount', uniqueCareerpath.length);
+    const uniqueCIUpsell = [...new Set(ciUpsell.map(a => a.user_email.toLowerCase()))];
+    setText('ciUpsellCount', uniqueCIUpsell.length);
     setText('abandonedCount',  abandoned.length);
 }
 
@@ -1428,6 +1476,14 @@ const emailTemplates = {
 <p>O Career Path vai ajudar-te a identificar as melhores oportunidades e o plano de ação para chegares lá.</p>
 <p><a href="https://www.share2inspire.pt/career-path" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Explorar Career Path →</a></p>
 <p>Com os melhores cumprimentos,<br>Equipa Share2Inspire</p>`
+        },
+        ci_upsell: {
+            subject: '🧠 Desbloqueia a análise estratégica completa',
+            body: `<p>Olá {{nome}},</p>
+<p>Já traçaste o teu Career Path — agora leva a tua estratégia ao próximo nível!</p>
+<p>O Career Intelligence PRO desbloqueia a comparação estratégica, trade-offs e recomendação de decisão personalizada.</p>
+<p><a href="https://www.share2inspire.pt/career-intelligence" style="background:#7C3AED;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Desbloquear Career Intelligence →</a></p>
+<p>Com os melhores cumprimentos,<br>Equipa Share2Inspire</p>`
         }
     },
     en: {
@@ -1454,6 +1510,14 @@ const emailTemplates = {
 <p>Career Path will help you identify the best opportunities and the action plan to get there.</p>
 <p><a href="https://www.share2inspire.pt/career-path" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Explore Career Path →</a></p>
 <p>Best regards,<br>Share2Inspire Team</p>`
+        },
+        ci_upsell: {
+            subject: '🧠 Unlock the full strategic analysis',
+            body: `<p>Hi {{nome}},</p>
+<p>You've mapped your Career Path — now take your strategy to the next level!</p>
+<p>Career Intelligence PRO unlocks strategic comparison, trade-offs and a personalised decision recommendation.</p>
+<p><a href="https://www.share2inspire.pt/career-intelligence" style="background:#7C3AED;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Unlock Career Intelligence →</a></p>
+<p>Best regards,<br>Share2Inspire Team</p>`
         }
     }
 };
@@ -1476,7 +1540,13 @@ function prepareNurturing(segment) {
             return { email, name: a?.user_name || '', sent: sentEmails.has(email) };
         });
     } else if (segment === 'careerpath') {
-        const emails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && hasEmail(a)).map(a => a.user_email.toLowerCase().trim()))];
+        const emails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && hasEmail(a)).map(a => a.user_email.toLowerCase().trim()))];
+        recipients = emails.map(email => {
+            const a = allAnalyses.find(x => x.user_email?.toLowerCase() === email);
+            return { email, name: a?.user_name || '', sent: sentEmails.has(email) };
+        });
+    } else if (segment === 'ci_upsell') {
+        const emails = [...new Set(allAnalyses.filter(a => a.analysis_type === 'career_path' && hasEmail(a) && !allAnalyses.some(b => (b.analysis_type === 'career_intelligence_pro' || b.analysis_type === 'career_intelligence_full') && (b.user_email || '').toLowerCase() === (a.user_email || '').toLowerCase())).map(a => a.user_email.toLowerCase().trim()))];
         recipients = emails.map(email => {
             const a = allAnalyses.find(x => x.user_email?.toLowerCase() === email);
             return { email, name: a?.user_name || '', sent: sentEmails.has(email) };
@@ -1490,7 +1560,7 @@ function prepareNurturing(segment) {
     const composer = document.getElementById('emailComposer');
     if (composer) {
         composer.style.display = '';
-        const titleMap = { upsell: 'Upsell — Análise Completa', feedback: 'Pedir Feedback', careerpath: 'Upsell — Career Path' };
+        const titleMap = { upsell: 'Upsell — Análise Completa', feedback: 'Pedir Feedback', careerpath: 'Upsell — Career Path', ci_upsell: 'Upsell — Career Intelligence PRO' };
         const titleEl = document.getElementById('composerTitle');
         if (titleEl) titleEl.innerHTML = `<i class="fas fa-paper-plane"></i> ${titleMap[segment] || 'Compor Email'}`;
         const subjectEl = document.getElementById('emailSubject');
@@ -2216,8 +2286,8 @@ function renderAffTable() {
         const date = new Date(aff.created_at).toLocaleDateString('pt-PT');
         const baseUrl = 'https://www.share2inspire.pt';
         const product = aff.product || 'cv-analyser';
-        const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','linkedin-roaster':'LinkedIn Roaster'};
-        const productColors = {'cv-analyser':'var(--blue)','career-path':'var(--gold)','linkedin-roaster':'#0077B5'};
+        const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','linkedin-roaster':'LinkedIn Roaster'};
+        const productColors = {'cv-analyser':'var(--blue)','career-path':'var(--gold)','career-intelligence':'#7C3AED','linkedin-roaster':'#0077B5'};
         const products = product.split(',');
         const badges = products.map(p => `<span class="badge" style="background:${productColors[p]||'var(--blue)'};color:#fff;font-size:10px;margin:1px;">${esc(productLabels[p]||p)}</span>`).join(' ');
 
@@ -2284,6 +2354,10 @@ function renderAffConversions() {
         const date = new Date(c.created_at).toLocaleString('pt-PT', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
         const productBadge = c.product === 'career_path'
             ? '<span class="badge badge-career">Career Path</span>'
+            : c.product === 'career_intelligence_pro' || c.product === 'career-intelligence'
+            ? '<span class="badge" style="background:#7C3AED;color:#fff;">CI PRO</span>'
+            : c.product === 'career_intelligence_full'
+            ? '<span class="badge" style="background:#5B21B6;color:#fff;">CI Full</span>'
             : c.product === 'bundle'
             ? '<span class="badge badge-purple">Bundle</span>'
             : c.product === 'linkedin-roaster' || c.product === 'linkedin_roaster'
@@ -2323,7 +2397,7 @@ function updateAffLinkPreview() {
         el.innerHTML = '<span style="color:var(--red);">Seleciona pelo menos um produto</span>';
         return;
     }
-    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','linkedin-roaster':'LinkedIn Roaster'};
+    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','linkedin-roaster':'LinkedIn Roaster'};
     const slug = code || '...';
     el.innerHTML = products.map(p => {
         const links = [`share2inspire.pt/${p}?ref=${slug}`];
@@ -2404,7 +2478,7 @@ async function saveAffiliate() {
             showToast('Afiliado atualizado!', 'success');
         } else {
             await supaInsert('affiliates', { name, email: email || null, code, product, commission_pct: commission, notes: notes || null, active: true });
-            const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','linkedin-roaster':'LinkedIn Roaster'};
+            const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','linkedin-roaster':'LinkedIn Roaster'};
             const labels = products.map(p => productLabels[p] || p).join(', ');
             showToast(`Afiliado criado para ${labels}!`, 'success');
         }
@@ -2429,7 +2503,7 @@ async function toggleAffiliate(id, currentActive) {
 function copyAffLink(code, product) {
     product = product || 'cv-analyser';
     const base = 'https://www.share2inspire.pt';
-    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','linkedin-roaster':'LinkedIn Roaster'};
+    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','linkedin-roaster':'LinkedIn Roaster'};
     // Support comma-separated multi-product
     const products = product.split(',');
     const allLinks = [];
@@ -2532,6 +2606,8 @@ function renderCoupons() {
     const productLabels = {
         'cv_analysis': '<span class="badge" style="background:var(--blue);color:#fff;font-size:10px;">CV</span>',
         'career_path': '<span class="badge" style="background:var(--gold);color:#fff;font-size:10px;">Career</span>',
+        'career_intelligence_pro': '<span class="badge" style="background:#7C3AED;color:#fff;font-size:10px;">CI PRO</span>',
+        'career_intelligence_full': '<span class="badge" style="background:#5B21B6;color:#fff;font-size:10px;">CI Full</span>',
         'bundle': '<span class="badge" style="background:var(--purple);color:#fff;font-size:10px;">Bundle</span>',
         'linkedin_roaster': '<span class="badge" style="background:#0077B5;color:#fff;font-size:10px;">Roaster</span>'
     };
@@ -2740,6 +2816,7 @@ function getMergedUsers() {
             analyses_count: analyses.length,
             cv_analyser_count: analyses.filter(a => a.analysis_type === 'cv_analyser').length,
             career_path_count: analyses.filter(a => a.analysis_type === 'career_path').length,
+            career_intelligence_count: analyses.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full').length,
             linkedin_roaster_count: analyses.filter(a => a.analysis_type === 'linkedin_roaster').length,
             career_energy_count: analyses.filter(a => a.analysis_type === 'career_energy').length,
             profile_complete: !!(profile && profile.first_name && profile.last_name && profile.phone)
@@ -2823,7 +2900,7 @@ function renderUsers() {
 
         // Analyses count with breakdown tooltip
         const analysesHtml = u.analyses_count > 0
-            ? `<span style="font-weight:600;cursor:help;" title="CV: ${u.cv_analyser_count} | Career: ${u.career_path_count} | LinkedIn: ${u.linkedin_roaster_count}">${u.analyses_count}</span>`
+            ? `<span style="font-weight:600;cursor:help;" title="CV: ${u.cv_analyser_count} | Career: ${u.career_path_count} | CI: ${u.career_intelligence_count} | LinkedIn: ${u.linkedin_roaster_count}">${u.analyses_count}</span>`
             : '<span style="color:var(--text-muted);">0</span>';
 
         // CV
@@ -2898,7 +2975,7 @@ function showUserDetail(userId) {
         analysesHtml = `<table style="width:100%;margin-top:8px;font-size:12px;">
             <thead><tr><th>Tipo</th><th>Data</th></tr></thead>
             <tbody>${u.analyses.map(a => {
-                const typeMap = { cv_analyser: 'CV Analyser', career_path: 'Career Path', linkedin_roaster: 'LinkedIn Roaster', career_energy: 'Career Energy' };
+                const typeMap = { cv_analyser: 'CV Analyser', career_path: 'Career Path', career_intelligence_pro: 'CI PRO', career_intelligence_full: 'CI Full', linkedin_roaster: 'LinkedIn Roaster', career_energy: 'Career Energy' };
                 return `<tr>
                     <td>${typeMap[a.analysis_type] || a.analysis_type}</td>
                     <td>${new Date(a.created_at).toLocaleString('pt-PT')}</td>
@@ -2963,9 +3040,10 @@ function showUserDetail(userId) {
                 <!-- Saved Analyses -->
                 <div style="margin-bottom:12px;">
                     <h4 style="font-size:13px;font-weight:600;color:var(--dark);margin-bottom:4px;"><i class="fas fa-chart-bar" style="color:var(--blue);margin-right:6px;"></i> Análises Guardadas (${u.analyses_count})</h4>
-                    <div style="display:flex;gap:12px;margin-top:6px;margin-bottom:4px;">
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;margin-bottom:4px;">
                         <span class="badge badge-cv">CV: ${u.cv_analyser_count}</span>
                         <span class="badge badge-career">Career: ${u.career_path_count}</span>
+                        <span class="badge" style="background:#EDE9FE;color:#7C3AED;">CI: ${u.career_intelligence_count}</span>
                         <span class="badge" style="background:#E0F2FE;color:#0077B5;">LinkedIn: ${u.linkedin_roaster_count}</span>
                     </div>
                     ${analysesHtml}

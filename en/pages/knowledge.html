@@ -22,22 +22,31 @@
     <meta property="og:url" content="https://www.share2inspire.pt/en/pages/knowledge">
     <meta property="og:title" content="Knowledge Hub | Career Resources">
     <meta property="og:description" content="Articles, videos, podcast and free tools on CV, ATS, LinkedIn, interviews and professional development.">
-    <meta property="og:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
+    <meta property="og:image" content="https://www.share2inspire.pt/images/og-share2inspire.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:locale" content="en_US">
     <meta property="og:site_name" content="Share2Inspire">
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Knowledge Hub | Career Resources">
     <meta name="twitter:description" content="Articles, videos, podcast and free tools on career and professional development.">
-    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
+    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-share2inspire.png">
     <!-- Favicon -->
-    <link rel="icon" href="/images/favicon.png" type="image/png">
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/images/favicon-512x512.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/consolidated-styles.css">
+    <link rel="stylesheet" href="/css/side-widgets.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="/css/side-widgets.css"></noscript>
 
     <style>
         /* ── Reset & Base ── */
@@ -231,6 +240,23 @@
       }
     }
     </script>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '3865352233767400');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 
 <body>
@@ -251,17 +277,7 @@
                         <li class="nav-item"><a class="nav-link" href="/en/pages/home/" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="/en/cv-analyser" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">CV Analyser</a></li>
                         <li class="nav-item"><a class="nav-link" href="/en/career-path" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Career Path</a></li>
-                        <li class="nav-item mega-dropdown">
-                            <a class="nav-link" href="/en/pages/services/" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Services</a>
-                            <div class="mega-menu">
-                                <div class="mega-col">
-                                    <a class="mega-link" href="/en/linkedin-roaster">LinkedIn Roaster</a>
-                                    <a class="mega-link" href="https://share2inspire.pt/cv-builder/">CV Maker</a>
-                                    <a class="mega-link" href="/en/pages/services/">CV by Expert</a>
-                                    <a class="mega-link" href="/en/pages/services/">KickStart Pro</a>
-                                </div>
-                            </div>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/en/pages/services/" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Services</a></li>
                         <li class="nav-item"><a class="nav-link" href="/en/pages/knowledge" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;color:var(--s2i-gold);">Knowledge Hub</a></li>
                         <li class="nav-item"><a class="nav-link" href="/en/pages/about/" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">About</a></li>
                         <li class="nav-item"><a class="nav-link" href="/en/pages/contact/" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Contacts</a></li>
@@ -413,6 +429,24 @@
                 <div class="meta">Samuel Rolo · 9 min read</div>
                 <a href="/en/blog/artigos/how-to-negotiate-salary" class="read-link">Read article &rarr;</a>
             </article>
+
+            <!-- Article: Big4 Recruitment Guide -->
+            <article class="article-card">
+                <span class="tag">Consulting &amp; Big4</span>
+                <h3>Big4 Recruitment: Complete Guide for Candidates 2026</h3>
+                <p>How to get into Deloitte, PwC, EY or KPMG. The 5 process stages, what they assess in each round, mistakes to avoid and preparation checklists.</p>
+                <div class="meta">Samuel Rolo &nbsp;&middot;&nbsp; 19 Mar 2026 &nbsp;&middot;&nbsp; 12 min</div>
+                <a href="/en/blog/artigos/big4-recruitment-guide-candidates" class="read-link">Read article &rarr;</a>
+            </article>
+
+            <!-- Article: Big4 Insider 10 Years -->
+            <article class="article-card" style="border-left:3px solid #C9A961;">
+                <span class="tag">Big4 &middot; Insider</span>
+                <h3>Big4 From the Inside: What Nobody Tells You Before You Join</h3>
+                <p>10 years of Big4 experience condensed into one article. What really happens inside the firms, what you learn, what you pay and whether it&rsquo;s truly worth it.</p>
+                <div class="meta">Samuel Rolo &nbsp;&middot;&nbsp; 24 Mar 2026 &nbsp;&middot;&nbsp; 14 min</div>
+                <a href="/en/blog/artigos/big4-insider-10-years" class="read-link">Read article &rarr;</a>
+            </article>
         </div>
     </div>
 
@@ -540,6 +574,38 @@
                 </div>
             </div>
         </div>
+        <div class="featured-video-section" style="margin-top:1.5rem;border:2px solid #C9A961;">
+            <p class="fv-label" style="color:#C9A961;"><i class="fas fa-fire"></i> New Video</p>
+            <div class="fv-grid">
+                <div class="video-embed-wrapper">
+                    <iframe src="https://www.youtube.com/embed/yU_tJV1Ap94?rel=0&modestbranding=1" title="The Secret to Maximising Your Post-Big4 ROI: Can 5 Years Change Your Life?" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="fv-info">
+                    <h3>The Secret to Maximising Your Post-Big4 ROI: Can 5 Years Change Your Life?</h3>
+                    <p>Have you ever wondered if the sacrifice of 5 years at a Big4 firm is really worth it? We analyse the real ROI: salary progression, endless hours, network building and opportunity cost. When to leave and how to maximise your value.</p>
+                    <div class="fv-links">
+                        <a href="/en/videos/big4-insider-roi-post-big4.html">Watch full guide &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=yU_tJV1Ap94" target="_blank" rel="noopener">Watch on YouTube &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="featured-video-section" style="margin-top:1.5rem;">
+            <p class="fv-label"><i class="fas fa-fire"></i> New Video</p>
+            <div class="fv-grid">
+                <div class="video-embed-wrapper">
+                    <iframe src="https://www.youtube.com/embed/teIBWJiSEFU?rel=0&modestbranding=1" title="How to Land a Big 4 Job (Deloitte, PwC, EY, KPMG): The Ultimate Guide" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+                </div>
+                <div class="fv-info">
+                    <h3>How to Land a Big 4 Job (Deloitte, PwC, EY, KPMG): The Ultimate Guide</h3>
+                    <p>The acceptance rate at Big 4 firms is only 2–6%. Watch the complete 5-phase playbook — from ATS CV to partner interview — to land a job at Deloitte, PwC, EY or KPMG.</p>
+                    <div class="fv-links">
+                        <a href="/en/videos/big4-recruitment-guide.html">Watch full guide &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=teIBWJiSEFU" target="_blank" rel="noopener">Watch on YouTube &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- ══════════════════════════════════════════════ -->
@@ -654,6 +720,7 @@
                     <a href="/en/cv-analyser" class="footer-link">CV Analyser</a>
                     <a href="/en/linkedin-roaster" class="footer-link">LinkedIn Roaster</a>
                     <a href="/en/career-path" class="footer-link">Career Path</a>
+                    <a href="/en/bundle" class="footer-link">Bundle</a>
                 </div>
                 <div class="col-lg-2 col-md-4">
                     <h5 class="footer-title">Legal</h5>

@@ -240,7 +240,7 @@ Como posso ajudar-te hoje?`;
             
             const errorMsg = {
                 type: 'bot',
-                content: this.lang === 'en' ? 'Sorry, a temporary error occurred. Please try again or contact me directly at **samuel.rolo@share2inspire.pt**' : 'Peço desculpa, ocorreu um erro temporário. Por favor, tenta novamente ou contacta-me diretamente em **samuel.rolo@share2inspire.pt**',
+                content: this.lang === 'en' ? 'Sorry, a temporary error occurred. Please try again or contact me directly at **geral@share2inspire.pt**' : 'Peço desculpa, ocorreu um erro temporário. Por favor, tenta novamente ou contacta-me diretamente em **geral@share2inspire.pt**',
                 timestamp: new Date()
             };
             
@@ -397,7 +397,7 @@ Qual é a tua situação? De onde para onde queres ir?`;
         if (msg.includes('contacto') || msg.includes('contato') || msg.includes('email') || msg.includes('falar') || msg.includes('linkedin') || msg.includes('sessão') || msg.includes('coaching')) {
             return `Claro! Aqui estão as minhas formas de contacto:
 
-📧 **Email:** samuel.rolo@share2inspire.pt
+📧 **Email:** geral@share2inspire.pt
 💼 **LinkedIn:** /in/samuelrolo
 🌐 **Website:** share2inspire.pt
 

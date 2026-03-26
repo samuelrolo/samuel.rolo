@@ -16,7 +16,9 @@
     <meta property="og:url" content="https://www.share2inspire.pt/blog">
     <meta property="og:title" content="Blog | Artigos sobre Carreira e Desenvolvimento Profissional">
     <meta property="og:description" content="Leia artigos sobre desenvolvimento de carreira, otimização de CV, LinkedIn e estratégias profissionais.">
-    <meta property="og:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
+    <meta property="og:image" content="https://www.share2inspire.pt/images/og-share2inspire.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:locale" content="pt_PT">
     <meta property="og:site_name" content="Share2Inspire">
     
@@ -24,10 +26,15 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Blog | Artigos sobre Carreira e Desenvolvimento Profissional">
     <meta name="twitter:description" content="Leia artigos sobre desenvolvimento de carreira, otimização de CV, LinkedIn e estratégias profissionais.">
-    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-cv-analyser.png">
+    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-share2inspire.png">
     
     <!-- Favicon -->
-    <link rel="icon" href="../images/logo.png" type="image/png">
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/images/favicon-512x512.png">
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -38,7 +45,7 @@
     
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
         /* ── Navigation ── */
         .nav-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.04); }
@@ -51,7 +58,7 @@
         .nav-toggle span { display: block; width: 22px; height: 2px; background: #1a1a2e; margin: 5px 0; transition: 0.3s; }
         @media (max-width: 768px) {
             .nav-toggle { display: block; }
-            .nav-links { display: none; position: absolute; top: 70px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.04); }
+            .nav-links { display: none; position: absolute; top: 70px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.04);  width: 100%; box-sizing: border-box; width: 100%; box-sizing: border-box;}
             .nav-links.open { display: flex; }
         }
 
@@ -82,7 +89,7 @@
         .breadcrumb a:hover { text-decoration: underline; }
         .breadcrumb span { color: #999; margin: 0 0.4rem; }
 
-        .articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 2rem; }
 
         .article-card { background: #fff; border: 1px solid rgba(0,0,0,0.06); padding: 2rem; transition: all 0.4s ease; }
         .article-card:hover { border-color: #C9A961; box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
@@ -97,6 +104,25 @@
         .blog-footer { background: #1a1a2e; color: rgba(255,255,255,0.6); padding: 3rem 2rem; text-align: center; font-size: 0.8rem; }
         .blog-footer a { color: #C9A961; text-decoration: none; }
         .blog-footer a:hover { text-decoration: underline; }
+    
+        /* ── Mobile Responsive Fixes ── */
+        @media (max-width: 600px) {
+            .article-hero { padding: 100px 1.25rem 40px; }
+            .article-hero-inner { padding: 0; }
+            .article-body { padding: 40px 1.25rem 60px; }
+            .article-body h2 { font-size: 1.2rem; }
+            .article-body h3 { font-size: 1rem; }
+            .article-body p, .article-body li { font-size: 0.9rem; }
+            .related-section { padding: 40px 1.25rem; }
+            .related-grid { grid-template-columns: 1fr; }
+            .blog-container { padding: 2rem 1.25rem; }
+            .articles-grid { grid-template-columns: 1fr; }
+            .article-card { padding: 1.5rem; }
+            .footer-inner { flex-direction: column; gap: 1.5rem; }
+            .footer-col { min-width: unset; width: 100%; }
+            .nav-inner { padding: 0 1.25rem; }
+        }
+    
     </style>
     
     <!-- Schema Markup -->
@@ -112,11 +138,28 @@
             "name": "Share2Inspire",
             "logo": {
                 "@type": "ImageObject",
-                "url": "https://www.share2inspire.pt/images/logo.png"
+                "url": "https://www.share2inspire.pt/images/og-share2inspire.png"
             }
         }
     }
     </script>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '3865352233767400');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 
 <body>
@@ -240,6 +283,24 @@
                 <p>Quando pedir, o que dizer, como usar dados de mercado e os erros que custam dinheiro. Guia prático com scripts reais para profissionais portugueses.</p>
                 <div class="meta">Samuel Rolo · 9 min de leitura</div>
                 <a href="artigos/como-negociar-salario-portugal.html" class="read-link">Ler artigo →</a>
+            </article>
+
+            <!-- Article: Recrutamento Big4 -->
+            <article class="article-card">
+                <span class="tag">Consultoria &amp; Big4</span>
+                <h3>Recrutamento nas Big4: Guia Completo para Candidatos 2026</h3>
+                <p>Como entrar na Deloitte, PwC, EY ou KPMG. As 5 fases do processo, o que avaliam em cada ronda, erros a evitar e checklists de preparação.</p>
+                <div class="meta">Samuel Rolo &nbsp;·&nbsp; 19 Mar 2026 &nbsp;·&nbsp; 12 min</div>
+                <a href="artigos/recrutamento-big4-guia-candidatos.html" class="read-link">Ler artigo →</a>
+            </article>
+
+            <!-- Article: Big4 Insider 10 Anos -->
+            <article class="article-card" style="border-left:3px solid #C9A961;">
+                <span class="tag">Big4 &middot; Insider</span>
+                <h3>Big4 por Dentro: O que Ninguém te Conta Antes de Entrares</h3>
+                <p>10 anos de experiência nas Big4 condensados num artigo. O que realmente acontece dentro das firmas, o que aprendes, o que pagas e se vale mesmo a pena.</p>
+                <div class="meta">Samuel Rolo &nbsp;·&nbsp; 24 Mar 2026 &nbsp;·&nbsp; 14 min</div>
+                <a href="artigos/big4-insider-10-anos.html" class="read-link">Ler artigo →</a>
             </article>
 
         </div>

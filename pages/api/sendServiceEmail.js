@@ -9,7 +9,7 @@ const functions = require('@google-cloud/functions-framework');
 
 // Brevo API configuration
 const BREVO_API_KEY = process.env.BREVO_API_KEY;
-const SENDER_EMAIL = 'srshare2inspire@gmail.com';
+const SENDER_EMAIL = 'geral@share2inspire.pt';
 const SENDER_NAME = 'Samuel Rolo | Share2Inspire';
 
 // Email templates

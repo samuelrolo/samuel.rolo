@@ -45,6 +45,7 @@ export default function Checkout() {
     onSuccess: (data) => {
       setPaymentData(data);
       toast.success("Pagamento iniciado com sucesso!");
+      if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: selectedPlan.price, currency: 'EUR'});
       setIsProcessing(false);
     },
     onError: (error) => {
@@ -65,6 +66,7 @@ export default function Checkout() {
     }
 
     setIsProcessing(true);
+    if (typeof window.fbq === 'function') window.fbq('track', 'AddPaymentInfo');
 
     try {
       await createPaymentMutation.mutateAsync({

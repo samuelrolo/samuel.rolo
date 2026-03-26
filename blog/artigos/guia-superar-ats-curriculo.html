@@ -19,6 +19,8 @@
     <meta property="og:title" content="Guia Definitivo: Como Superar o ATS e Fazer o Teu Currículo Chegar ao Recrutador">
     <meta property="og:description" content="Guia completo sobre como otimizar o teu CV para passar nos filtros automáticos ATS. Estratégias de palavras-chave, formatação e estrutura.">
     <meta property="og:image" content="https://files.manuscdn.com/user_upload_by_module/session_file/105354394/mHGRZYkLXpuSTFDs.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:locale" content="pt_PT">
     <meta property="og:site_name" content="Share2Inspire">
     <meta property="article:author" content="Samuel Rolo">
@@ -28,7 +30,12 @@
     <meta name="twitter:title" content="Guia Definitivo: Como Superar o ATS e Fazer o Teu Currículo Chegar ao Recrutador">
     <meta name="twitter:description" content="Guia completo sobre como otimizar o teu CV para passar nos filtros automáticos ATS.">
     <meta name="twitter:image" content="https://files.manuscdn.com/user_upload_by_module/session_file/105354394/mHGRZYkLXpuSTFDs.png">
-    <link rel="icon" href="../../images/logo.png" type="image/png">
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/images/favicon-512x512.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <script type="application/ld+json">
@@ -49,7 +56,7 @@
                 "name": "Share2Inspire",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://www.share2inspire.pt/images/logo.png"
+                    "url": "https://www.share2inspire.pt/images/og-share2inspire.png"
                 }
             },
             "datePublished": "2026-03-17",
@@ -138,7 +145,7 @@
     </script>
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         /* ── Navigation ── */
         .nav-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.97); border-bottom: 1px solid rgba(0,0,0,0.04); }
         .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0.8rem 2rem; display: flex; align-items: center; justify-content: space-between; }
@@ -150,7 +157,7 @@
         .nav-toggle span { display: block; width: 18px; height: 1.5px; background: #1a1a2e; margin: 4px 0; }
         @media (max-width: 768px) {
             .nav-toggle { display: block; }
-            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff; flex-direction: column; padding: 1.5rem 2rem; gap: 1rem; border-bottom: 1px solid rgba(0,0,0,0.06); }
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff; flex-direction: column; padding: 1.5rem 2rem; gap: 1rem; border-bottom: 1px solid rgba(0,0,0,0.06);  width: 100%; box-sizing: border-box;}
             .nav-links.open { display: flex; }
         }
         .nav-item { position: relative; }
@@ -217,7 +224,7 @@
         .related-title { font-size: 1.4rem; font-weight: 300; color: #1a1a2e; margin-bottom: 0.5rem; }
         .related-title strong { font-weight: 600; }
         .related-divider { width: 40px; height: 2px; background: #C9A961; margin: 1rem 0 2rem; }
-        .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+        .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 1.5rem; }
         .related-card { background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; padding: 1.2rem; transition: box-shadow 0.3s; }
         .related-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .related-card .tag { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; margin-bottom: 0.5rem; }
@@ -233,7 +240,43 @@
         .footer-col p { font-size: 0.8rem; color: rgba(255,255,255,0.5); line-height: 1.7; }
         .footer-bottom { max-width: 1100px; margin: 3rem auto 0; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
         .footer-bottom p { font-size: 0.7rem; color: rgba(255,255,255,0.3); }
+    
+        /* ── Mobile Responsive Fixes ── */
+        @media (max-width: 600px) {
+            .article-hero { padding: 100px 1.25rem 40px; }
+            .article-hero-inner { padding: 0; }
+            .article-body { padding: 40px 1.25rem 60px; }
+            .article-body h2 { font-size: 1.2rem; }
+            .article-body h3 { font-size: 1rem; }
+            .article-body p, .article-body li { font-size: 0.9rem; }
+            .related-section { padding: 40px 1.25rem; }
+            .related-grid { grid-template-columns: 1fr; }
+            .blog-container { padding: 2rem 1.25rem; }
+            .articles-grid { grid-template-columns: 1fr; }
+            .article-card { padding: 1.5rem; }
+            .footer-inner { flex-direction: column; gap: 1.5rem; }
+            .footer-col { min-width: unset; width: 100%; }
+            .nav-inner { padding: 0 1.25rem; }
+        }
+    
     </style>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '3865352233767400');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 <body>
     <!-- ── Navigation ── -->
@@ -249,238 +292,7 @@
                 <a href="../../index.html">Inicio</a>
                 <a href="/cv-analyser">CV Analyser</a>
                 <a href="/career-path">Career Path</a>
-                <div class="nav-item mega-dropdown" style="position:relative;">
-                    <a href="../../pages/servicos.html">Servicos</a>
-                    <div class="mega-menu">
-                        <a href="/cv-analyser">CV Analyser</a>
-                        <a href="/career-path">Career Path</a>
-                        <a href="/linkedin-roaster">LinkedIn Roaster</a>
-                    </div>
-                </div>
-                <a href="../../pages/conhecimento.html">Conhecimento</a>
-                <a href="../index.html">Blog</a>
-                <a href="../../pages/sobre.html">Sobre</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- ── Hero ── -->
-    <section class="article-hero">
-        <div class="article-hero-inner">
-            <p class="article-breadcrumb"><a href="../../index.html">Início</a> / <a href="../index.html">Blog</a> / Guia ATS</p>
-            <p class="article-tag">Guia Completo</p>
-            <h1>Guia Definitivo: Como <strong>Superar o ATS</strong> e Fazer o Teu Currículo Chegar ao Recrutador</h1>
-            <p class="subtitle">Passar pelos sistemas ATS — os "robôs" que filtram candidaturas — é o primeiro grande desafio de qualquer procura de emprego moderna. Este guia reúne as estratégias essenciais para garantir que o teu perfil supera esta barreira inicial.</p>
-            <div class="article-meta">
-                <span>Samuel Rolo</span>
-                <span>·</span>
-                <span>17 Março 2026</span>
-                <span>·</span>
-                <span>8 min de leitura</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- ── Article Body ── -->
-    <main class="article-body">
-
-        <!-- Infographic 1 -->
-        <div class="infographic-container">
-            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/105354394/mHGRZYkLXpuSTFDs.png" alt="Infográfico sobre como criar um CV ATS friendly com palavras-chave adaptadas, formato simples, resultados quantificáveis e títulos padrão" loading="lazy">
-            <p class="infographic-caption">Anatomia de um CV otimizado para sistemas ATS</p>
-        </div>
-
-        <p>Se o teu currículo não estiver otimizado para os sistemas de triagem automática, ele pode ser descartado antes mesmo de um recrutador o abrir. Centenas de candidaturas por vaga exigem uma triagem automática inicial para selecionar apenas os melhores perfis — e é aqui que entra o <strong>ATS (Applicant Tracking System)</strong>.</p>
-
-        <div class="key-question">
-            <p>A pergunta que importa</p>
-            <blockquote>Sabias que <strong>mais de 75% dos currículos</strong> são rejeitados pelos filtros automáticos antes de chegarem a um recrutador humano?</blockquote>
-        </div>
-
-        <h2>1. O que é um sistema ATS?</h2>
-
-        <p>Um ATS é um software que analisa currículos automaticamente, classificando candidatos com base em critérios e algoritmos definidos pela empresa. O sistema transforma o teu documento em dados, procura <strong>palavras-chave</strong>, títulos de funções e anos de experiência, e atribui uma pontuação a cada candidatura.</p>
-
-        <p>Empresas como a Deloitte, BNP Paribas, Galp e praticamente todas as grandes organizações utilizam estes sistemas. Mesmo muitas PMEs já recorrem a plataformas de recrutamento com filtros ATS integrados. Compreender como funcionam é o primeiro passo para garantir que o teu CV não é eliminado automaticamente.</p>
-
-        <h2>2. Otimização de palavras-chave</h2>
-
-        <p>Os sistemas ATS funcionam como motores de busca. Procuram termos específicos que coincidam com a descrição da função publicada pela empresa. A chave está em identificar e replicar essas palavras no teu currículo.</p>
-
-        <h3>Como identificar as palavras certas</h3>
-
-        <p>Analisa o anúncio de emprego e sublinha as competências técnicas mencionadas — por exemplo, <strong>Project Management</strong>, <strong>Python</strong>, <strong>Vendas Diretas</strong> — e as ferramentas referidas. Usa as palavras exatamente como aparecem no anúncio. Se pedem "Gestão de Projetos", não escrevas apenas "Coordenador".</p>
-
-        <div class="highlight-box">
-            <p><strong>A Regra do Acrónimo:</strong> Muitos sistemas são limitados na interpretação. Usa sempre o termo por extenso e o acrónimo na primeira menção.</p>
-            <p style="margin-top:0.5rem;"><span class="good">✓ Correto:</span> "Especialista em Search Engine Optimization (SEO) com 5 anos de experiência."</p>
-        </div>
-
-        <h2>3. Formatação amigável para o ATS</h2>
-
-        <p>O design excessivo é o maior inimigo do ATS. Elementos visuais complexos podem "partir" a leitura do software, fazendo com que ele ignore informações cruciais do teu currículo.</p>
-
-        <h3>O que evitar</h3>
-        <ul>
-            <li>Gráficos, tabelas complexas, imagens e logótipos</li>
-            <li>Barras de progresso de competências (o ATS não consegue quantificar)</li>
-            <li>Estrutura de colunas duplas</li>
-            <li>Cabeçalhos e rodapés do Word (muitos sistemas não os conseguem ler)</li>
-        </ul>
-
-        <h3>O que usar</h3>
-        <ul>
-            <li>Estrutura de <strong>coluna única</strong> e limpa</li>
-            <li><strong>Negrito</strong> e listas por pontos padrão</li>
-            <li>Títulos de secção reconhecíveis: "Experiência Profissional", "Formação Académica", "Competências"</li>
-            <li>Formato PDF com texto selecionável (nunca imagens digitalizadas)</li>
-        </ul>
-
-        <!-- Infographic 2 -->
-        <div class="infographic-container">
-            <img src="https://files.manuscdn.com/user_upload_by_module/session_file/105354394/KUlVNuOJbtoJbqtD.png" alt="CV vs Filtros ATS: infográfico sobre o funil do recrutamento digital, como o sistema lê o CV, o que bloqueia a candidatura e a estrutura que funciona" loading="lazy">
-            <p class="infographic-caption">CV vs. Filtros ATS: Como garantir que o teu currículo chega ao recrutador</p>
-        </div>
-
-        <h2>4. Estrutura e dados de contacto</h2>
-
-        <p>A forma como organizas a informação determina se o ATS consegue mapear o teu percurso corretamente. Muitos sistemas têm dificuldade em ler dados inseridos na funcionalidade "Cabeçalho e Rodapé" do Word. Coloca o teu <strong>nome, email, LinkedIn e telemóvel</strong> no corpo principal do documento, logo no topo.</p>
-
-        <p>Quanto ao formato de ficheiro, o <strong>PDF é o padrão ideal</strong> para manter a formatação, desde que o texto seja selecionável. Se o sistema for muito antigo, um ficheiro .docx (Word) pode ser mais seguro.</p>
-
-        <p>Usa sempre a <strong>ordem cronológica inversa</strong> — é o formato favorito dos ATS. Começa pela experiência mais recente e segue a estrutura: Nome da Empresa, Localização, Cargo e Datas (Mês/Ano).</p>
-
-        <h2>5. Conteúdo focado em resultados</h2>
-
-        <p>O ATS moderno já consegue identificar contextos de sucesso através de números e verbos de ação. Em vez de "Responsável por...", usa verbos como <strong>"Liderei"</strong>, <strong>"Implementei"</strong>, <strong>"Aumentei"</strong> ou <strong>"Desenvolvi"</strong>.</p>
-
-        <div class="highlight-box">
-            <p><span class="bad">✗ Errado:</span> "Experiência em vendas."</p>
-            <p style="margin-top:0.5rem;"><span class="good">✓ Correto:</span> "Aumentei as vendas em 20% no primeiro semestre através da implementação de uma nova estratégia de prospeção."</p>
-        </div>
-
-        <p>O software valoriza métricas concretas. Sempre que possível, quantifica os teus resultados com números, percentagens e valores.</p>
-
-        <div class="divider"></div>
-
-        <h2>Tabela de resumo: Otimização ATS</h2>
-
-        <table class="ats-table">
-            <thead>
-                <tr>
-                    <th>Elemento</th>
-                    <th>O que o ATS procura</th>
-                    <th>Erro comum</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>Palavras-chave</strong></td>
-                    <td>Termos idênticos aos do anúncio</td>
-                    <td>Usar sinónimos vagos</td>
-                </tr>
-                <tr>
-                    <td><strong>Formatação</strong></td>
-                    <td>Texto simples e hierarquia clara</td>
-                    <td>Usar tabelas e colunas complexas</td>
-                </tr>
-                <tr>
-                    <td><strong>Cargos</strong></td>
-                    <td>Títulos de mercado (ex: Gestor de RH)</td>
-                    <td>Usar títulos internos ou criativos</td>
-                </tr>
-                <tr>
-                    <td><strong>Competências</strong></td>
-                    <td>Lista explícita de hard skills</td>
-                    <td>Omitir competências óbvias</td>
-                </tr>
-                <tr>
-                    <td><strong>Resultados</strong></td>
-                    <td>Métricas quantificáveis</td>
-                    <td>Descrições vagas sem números</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="divider"></div>
-
-        <h2>Exemplo prático de adaptação</h2>
-
-        <p>Imagina que uma vaga de Marketing Digital pede: <em>"Domínio de Google Ads, Meta Ads e análise de métricas no GA4."</em></p>
-
-        <div class="highlight-box">
-            <p><span class="bad">✗ CV errado:</span> "Experiência em publicidade online e análise de dados de sites." (Faltam as keywords específicas)</p>
-            <p style="margin-top:0.5rem;"><span class="good">✓ CV otimizado:</span> "Gestão de campanhas em Google Ads e Meta Ads, com foco na extração de relatórios e análise de métricas através do GA4 (Google Analytics 4)."</p>
-        </div>
-
-        <div class="divider"></div>
-
-        <h2>Nota final</h2>
-
-        <p>Escrever para o robô garante que passas a primeira fase, mas o currículo acabará nas mãos de um recrutador. Garante que o texto continua a ter uma <strong>leitura natural e apelativa</strong> para um ser humano após a otimização. O equilíbrio entre otimização técnica e comunicação eficaz é o que distingue um CV verdadeiramente competitivo.</p>
-
-        <div class="key-question">
-            <p>Próximo passo</p>
-            <blockquote>Antes de enviares a tua próxima candidatura, <strong>testa o teu CV</strong> com uma ferramenta de análise automática para garantir que passa no filtro ATS.</blockquote>
-        </div>
-
-        <!-- Video Reference -->
-        <div style="background:#fafaf8;border-radius:8px;padding:1.5rem;margin:2rem 0;border:1px solid rgba(0,0,0,0.04);">
-            <p style="font-size:0.6rem;text-transform:uppercase;letter-spacing:2px;color:#C9A961;font-weight:600;margin-bottom:0.8rem;"><i class="fas fa-play-circle"></i> &nbsp;Vídeo Tutorial</p>
-            <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:6px;margin-bottom:1rem;background:#000;">
-                <iframe src="https://www.youtube.com/embed/6coJJF79Cy0?rel=0&modestbranding=1" title="Como Criar um CV Compatível com ATS em 2026" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
-            </div>
-            <p style="font-size:0.9rem;font-weight:500;color:#1a1a2e;margin-bottom:0.3rem;">Como Criar um CV Compatível com ATS em 2026</p>
-            <p style="font-size:0.8rem;color:#666;margin-bottom:0.5rem;">Vídeo tutorial completo que complementa este guia. Aprende visualmente como formatar o teu CV para passar nos filtros automáticos ATS, com exemplos práticos de estrutura, palavras-chave e otimização. Descobre passo a passo como transformar um currículo ignorado num documento que gera entrevistas e chega às mãos do recrutador.</p>
-            <a href="../../videos/como-criar-cv-ats-friendly.html" style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;color:#C9A961;text-decoration:none;">Como criar CV ATS friendly &rarr;</a>
-        </div>
-
-        <!-- CTA -->
-        <div class="article-cta">
-            <p class="cta-label">Análise GRÁTIS</p>
-            <h3>Testa o teu CV contra os <strong>filtros ATS</strong></h3>
-            <p>Descobre se o teu currículo passa nos filtros automáticos e recebe recomendações personalizadas para melhorar.</p>
-            <div class="cta-buttons">
-                <a href="/cv-analyser" class="cta-primary">Analisar o meu CV →</a>
-                <a href="/linkedin-roaster" class="cta-secondary">Analisar o meu LinkedIn →</a>
-            </div>
-        </div>
-    </main>
-
-    <!-- ── Related Articles ── -->
-    <section class="related-section">
-        <div class="related-inner">
-            <p class="related-label">Continue a ler</p>
-            <h2 class="related-title">Artigos <strong>relacionados</strong></h2>
-            <div class="related-divider"></div>
-            <div class="related-grid">
-                <div class="related-card">
-                    <p class="tag">Guia de Carreira</p>
-                    <h4>Entrevista Presencial vs. Remota: Guia Completo de Preparação</h4>
-                    <a href="entrevista-presencial-vs-remota.html">Ler artigo →</a>
-                </div>
-                <div class="related-card">
-                    <p class="tag">Estratégia de Carreira</p>
-                    <h4>Como Transformar um CV Ignorado num CV que Gera Entrevistas</h4>
-                    <a href="transformar-cv-ignorado-gerar-entrevistas.html">Ler artigo →</a>
-                </div>
-                <div class="related-card">
-                    <p class="tag">Erros Comuns</p>
-                    <h4>7 Erros no CV que Fazem Muitos Candidatos Serem Rejeitados</h4>
-                    <a href="7-erros-cv-candidatos-rejeitados.html">Ler artigo →</a>
-                </div>
-                <div class="related-card">
-                    <p class="tag">Estratégia de Carreira</p>
-                    <h4>CV ou LinkedIn: Qual é Mais Importante para a Tua Carreira?</h4>
-                    <a href="cv-linkedin-importancia.html">Ler artigo →</a>
-                </div>
-                <div class="related-card">
-                    <p class="tag">Visibilidade Online</p>
-                    <h4>Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores</h4>
-                    <a href="melhorar-linkedin-pesquisas.html">Ler artigo →</a>
-                </div>
-            </div>
-        </div>
+                <a href="/pages/servicos.html">Serviços</a>
     </section>
 
     <!-- ── Footer ── -->
@@ -506,7 +318,7 @@
             </div>
             <div class="footer-col">
                 <h4>Contacto</h4>
-                <p>srshare2inspire@gmail.com</p>
+                <p>geral@share2inspire.pt</p>
                 <div style="display:flex;gap:1rem;margin-top:0.5rem;">
                     <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" style="color:#C9A961;"><i class="fab fa-linkedin"></i></a>
                     <a href="https://www.instagram.com/share2inspire_/" target="_blank" style="color:#C9A961;"><i class="fab fa-instagram"></i></a>

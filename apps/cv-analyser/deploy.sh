@@ -63,6 +63,10 @@ echo "✓ Build complete"
 echo ""
 echo "▸ [2/5] Syncing assets to deploy directory..."
 
+# ⚠️  Static HTML files that must NEVER be overwritten:
+#   - cv-analyser/demo.html, en/cv-analyser/demo.html
+#   - career-path/example/index.html, en/career-path/example/index.html
+
 for dir in "${SPA_DIRS[@]}"; do
   TARGET="$DEPLOY_DIR/$dir"
 
@@ -70,7 +74,7 @@ for dir in "${SPA_DIRS[@]}"; do
   rm -rf "$TARGET/assets/"
   mkdir -p "$TARGET/assets/"
 
-  # Copy new assets + index.html
+  # Copy new assets + index.html (SPA entry point only)
   cp -r "$BUILD_DIR/assets/"* "$TARGET/assets/"
   cp "$BUILD_DIR/index.html" "$TARGET/index.html"
 
@@ -79,10 +83,25 @@ for dir in "${SPA_DIRS[@]}"; do
     cp "$BUILD_DIR/index.html" "$TARGET/results/index.html"
   fi
 
+  # Copy to test/ subfolder if it exists
+  if [ -d "$TARGET/test" ]; then
+    cp "$BUILD_DIR/index.html" "$TARGET/test/index.html"
+  fi
+
+  # Copy to bundle dirs
+  BUNDLE_DIR="$DEPLOY_DIR/$(echo $dir | sed 's/cv-analyser/bundle/; s/career-path/bundle/')"
+  if [ -d "$BUNDLE_DIR" ] && [ "$BUNDLE_DIR" != "$TARGET" ]; then
+    cp "$BUILD_DIR/index.html" "$BUNDLE_DIR/index.html"
+    if [ -d "$BUNDLE_DIR/results" ]; then
+      cp "$BUILD_DIR/index.html" "$BUNDLE_DIR/results/index.html"
+    fi
+  fi
+
   echo "  ✓ $dir"
 done
 
 echo "✓ All directories synced"
+echo "  ℹ️  Static demo/example files preserved (not overwritten)"
 
 # ── Step 3: Verify local hashes ──
 echo ""

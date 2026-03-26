@@ -505,7 +505,7 @@ const testimonials = [
   {
     name: "Mariana Costa",
     role: "Gestora de Projetos",
-    text: "Valia muito mais do que os €3,99 que paguei. O posicionamento na curva normal foi um eye-opener — percebi que estava no percentil 40 e agora estou no 75.",
+    text: "Valia muito mais do que os €9,99 que paguei. O posicionamento na curva normal foi um eye-opener — percebi que estava no percentil 40 e agora estou no 75.",
     rating: 5,
   },
 ];
@@ -514,9 +514,9 @@ const testimonials = [
 const pricingPlans = [
   {
     name: "Essencial",
-    price: "3,99",
+    price: "9,99",
     analyses: 1,
-    perUnit: "3,99",
+    perUnit: "9,99",
     popular: false,
     badge: null,
     features: ["Análise completa desbloqueada", "Curva normal de posicionamento", "Estimativa salarial detalhada", "Certificação LinkedIn — partilha o teu resultado", "Opção de enviar PDF por email"],
@@ -524,18 +524,18 @@ const pricingPlans = [
 
   {
     name: "Profissional",
-    price: "7,99",
+    price: "15,99",
     analyses: 3,
-    perUnit: "2,66",
+    perUnit: "5,33",
     popular: false,
     badge: null,
     features: ["3 análises completas", "Código reutilizável para futuras análises", "Certificação LinkedIn — partilha o teu resultado", "Ideal para testar versões do CV", "Suporte prioritário por email"],
   },
   {
     name: "Premium",
-    price: "12,99",
+    price: "20,49",
     analyses: 5,
-    perUnit: "2,60",
+    perUnit: "4,10",
     popular: false,
     badge: null,
     features: ["5 análises completas", "Código reutilizável para futuras análises", "Certificação LinkedIn — partilha o teu resultado", "Melhor preço por análise", "Partilha com amigos/colegas"],
@@ -555,7 +555,7 @@ const comparisonFeatures = [
   { feature: "Certificação LinkedIn partilhável", us: true, competitor1: false, competitor2: false },
   { feature: "Cruzamento CV vs LinkedIn", us: true, competitor1: false, competitor2: false },
 
-  { feature: "Preço", usText: "Desde €3,99", comp1Text: "€19,99/mês", comp2Text: "€9,99" },
+  { feature: "Preço", usText: "Desde €9,99", comp1Text: "€19,99/mês", comp2Text: "€9,99" },
 ];
 
 export default function Home() {
@@ -566,6 +566,70 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [savedCvInfo, setSavedCvInfo] = useState<{filename: string; url: string} | null>(null);
+
+  // Load saved CV from user_profiles if logged in
+  useEffect(() => {
+    (async () => {
+      try {
+        const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+        if (!storageKey) return;
+        const stored = localStorage.getItem(storageKey);
+        if (!stored) return;
+        const parsed = JSON.parse(stored);
+        const accessToken = parsed?.access_token;
+        const userId = parsed?.user?.id;
+        if (!accessToken || !userId) return;
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/user_profiles?id=eq.${userId}&select=cv_url,cv_filename,email`, {
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` }
+        });
+        if (!res.ok) return;
+        const rows = await res.json();
+        if (rows?.[0]?.cv_url && rows[0].cv_filename) {
+          setSavedCvInfo({ filename: rows[0].cv_filename, url: rows[0].cv_url });
+        }
+        if (rows?.[0]?.email) setAnalysisEmail(rows[0].email);
+      } catch (e) { /* silent */ }
+    })();
+  }, []);
+
+  // Save CV to Supabase Storage after analysis
+  function persistCvToStorage(base64Content: string, filename: string) {
+    try {
+      const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+      if (!storageKey) return;
+      const stored = localStorage.getItem(storageKey);
+      if (!stored) return;
+      const parsed = JSON.parse(stored);
+      const accessToken = parsed?.access_token;
+      const userId = parsed?.user?.id;
+      if (!accessToken || !userId) return;
+      // Convert base64 to blob
+      const byteString = atob(base64Content.split(',')[1] || base64Content);
+      const mimeString = base64Content.split(',')[0]?.split(':')[1]?.split(';')[0] || 'application/pdf';
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+      const blob = new Blob([ab], { type: mimeString });
+      const ext = filename.split('.').pop() || 'pdf';
+      const path = `${userId}/cv.${ext}`;
+      fetch(`${SUPABASE_URL}/storage/v1/object/user-cvs/${path}`, {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'x-upsert': 'true' },
+        body: blob
+      }).then(r => {
+        if (r.ok) {
+          const storagePath = `${SUPABASE_URL}/storage/v1/object/authenticated/user-cvs/${path}`;
+          fetch(`${SUPABASE_URL}/rest/v1/user_profiles?id=eq.${userId}`, {
+            method: 'PATCH',
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cv_url: storagePath, cv_filename: filename, cv_uploaded_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+          }).catch(() => {});
+          console.log('[S2I] CV saved to storage');
+        }
+      }).catch(e => console.warn('[S2I] CV storage error:', e));
+    } catch (e) { /* silent */ }
+  }
 
   // Progressive loading messages for CV Analyser
   const loadingMessages = [
@@ -807,6 +871,29 @@ export default function Home() {
       // Fire-and-forget: log to cv_analysis for dashboard
       logAnalysisToSupabase(analysisResult, analysisSource, cvText);
 
+      // Persist CV to Supabase Storage for future sessions
+      persistCvToStorage(base64Content, file.name);
+
+      // Save to user_analyses for area-cliente dashboard
+      try {
+        const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+        if (storageKey) {
+          const stored = localStorage.getItem(storageKey);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            const accessToken = parsed?.access_token;
+            const userId = parsed?.user?.id;
+            if (accessToken && userId) {
+              fetch(`${SUPABASE_URL}/rest/v1/user_analyses`, {
+                method: 'POST',
+                headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+                body: JSON.stringify({ user_id: userId, analysis_type: 'cv_analyser', data: { ...analysisResult, captured_at: new Date().toISOString(), email: analysisEmail }, created_at: new Date().toISOString() })
+              }).catch(() => {});
+            }
+          }
+        }
+      } catch (e) { /* silent */ }
+
       setLocation('/results');
 
     } catch (err: any) {
@@ -820,16 +907,52 @@ export default function Home() {
     }
   };
 
-  // Validate voucher code against Supabase
+  // Validate discount code against discount_coupons then vouchers
   const validateVoucherForLinkedIn = async (code: string): Promise<boolean> => {
     setLinkedInVoucherValidating(true);
     setLinkedInVoucherError(null);
     try {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      // Step 1: Check discount_coupons (100% discount = free access)
+      const couponRes = await fetch(`${SUPABASE_URL}/rest/v1/discount_coupons?code=eq.${encodeURIComponent(code)}&is_active=eq.true&select=code,discount_percent,partner_name,max_uses,current_uses,valid_from,valid_until,applicable_products`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+      });
+      const coupons = await couponRes.json();
+      if (Array.isArray(coupons) && coupons.length > 0) {
+        const coupon = coupons[0];
+        const now = new Date();
+        if (coupon.valid_from && new Date(coupon.valid_from) > now) { setLinkedInVoucherError('Este código ainda não está ativo.'); return false; }
+        if (coupon.valid_until && new Date(coupon.valid_until) < now) { setLinkedInVoucherError('Este código já expirou.'); return false; }
+        if (coupon.max_uses !== null && (coupon.current_uses || 0) >= coupon.max_uses) { setLinkedInVoucherError('Este código atingiu o limite de utilizações.'); return false; }
+        const products = coupon.applicable_products || [];
+        if (products.length > 0 && !products.includes('all') && !products.includes('cv_analyser') && !products.includes('linkedin_analysis')) {
+          setLinkedInVoucherError('Este código não é aplicável a esta análise.'); return false;
         }
+        if (coupon.discount_percent === 100) {
+          // 100% discount = free access, same as voucher
+          sessionStorage.setItem('isPaid', 'true');
+          sessionStorage.setItem('voucherCode', code);
+          sessionStorage.setItem('paymentAmount', '0');
+          sessionStorage.setItem('transactionId', `COUPON-${code}`);
+          setShowLinkedInPaywall(false);
+          // Increment coupon usage counter
+          const { incrementCouponUsage } = await import('@/lib/affiliate');
+          incrementCouponUsage(code);
+          return true;
+        }
+        // Partial discount — store it in sessionStorage for the Results page payment modal
+        sessionStorage.setItem('appliedCouponCode', code);
+        sessionStorage.setItem('appliedCouponPercent', String(coupon.discount_percent));
+        const { incrementCouponUsage } = await import('@/lib/affiliate');
+        incrementCouponUsage(code);
+        setLinkedInVoucherError(`Desconto de ${coupon.discount_percent}% aplicado! Será usado no pagamento.`);
+        // Close paywall after a brief delay to show the message
+        setTimeout(() => { setShowLinkedInPaywall(false); }, 1500);
+        return true;
+      }
+
+      // Step 2: Check vouchers table
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/vouchers?code=eq.${encodeURIComponent(code)}&select=*`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
       });
       const vouchers = await res.json();
       if (!Array.isArray(vouchers) || vouchers.length === 0) {
@@ -1262,22 +1385,16 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Career Path Banner */}
-      <a
-        href="/career-path"
-        className="block bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30 hover:from-[#222] hover:to-[#333] transition-all cursor-pointer"
-      >
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3">
-          <Compass className="w-4 h-4 text-[#C9A961] shrink-0" />
+      {/* Bundle Banner — Main offer */}
+      <div className="bg-gradient-to-r from-[#1A1A1A] to-[#2d2d2d] border-b border-[#C9A961]/30">
+        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-center gap-3 flex-wrap">
+          <span className="text-[10px] bg-gradient-to-r from-[#C9A961] to-[#E8D5A3] text-[#1a1a2e] px-2 py-0.5 rounded-full font-bold tracking-wider uppercase shrink-0">Mais popular</span>
           <span className="text-sm text-white">
-            <strong className="text-[#C9A961]">NOVO</strong> — Descobre o teu Plano de Carreira personalizado com IA
+            <strong className="text-[#C9A961]">Bundle</strong> — CV Analyser + Career Path por <strong className="text-white">€29</strong>
           </span>
-          <span className="text-xs bg-[#C9A961] text-white px-2 py-0.5 rounded-full font-semibold shrink-0">
-            Desde 10€
-          </span>
-          <span className="text-[#C9A961] text-sm hidden sm:inline">→</span>
+          <a href="/bundle" className="text-xs bg-[#C9A961] hover:bg-[#B8943D] text-white px-3 py-1 rounded-full font-semibold shrink-0 transition-all">Obter Bundle</a>
         </div>
-      </a>
+      </div>
 
       {/* Hero Section */}
       <main className="max-w-4xl mx-auto px-6 py-6 md:py-16">
@@ -1330,6 +1447,33 @@ export default function Home() {
               )}
             </label>
             <p className="text-[11px] text-muted-foreground text-center">PDF, DOCX ou Imagem • Grátis • Dados eliminados após análise</p>
+            {!file && savedCvInfo && (
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    // Use authenticated endpoint for private bucket
+                    const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+                    const stored = storageKey ? localStorage.getItem(storageKey) : null;
+                    const accessToken = stored ? JSON.parse(stored)?.access_token : null;
+                    const userId = stored ? JSON.parse(stored)?.user?.id : null;
+                    const filePath = `${userId}/cv.pdf`;
+                    const downloadUrl = `${SUPABASE_URL}/storage/v1/object/authenticated/user-cvs/${filePath}`;
+                    const res = await fetch(downloadUrl, {
+                      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` }
+                    });
+                    if (!res.ok) throw new Error('Download failed');
+                    const blob = await res.blob();
+                    const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                    setFile(f);
+                  } catch { setError('Não foi possível carregar o CV guardado.'); }
+                }}
+                className="text-xs text-[#C9A961] hover:underline font-medium text-center w-full mt-1"
+              >
+                <FileCheck className="w-3.5 h-3.5 inline mr-1" />
+                Usar CV guardado: {savedCvInfo.filename}
+              </button>
+            )}
           </div>
 
           {/* Desktop: Full drag & drop area */}
@@ -1386,6 +1530,34 @@ export default function Home() {
                   )}
                 </div>
               </label>
+              {!file && savedCvInfo && (
+                <div className="mt-3 text-center">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const storageKey = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'));
+                        const stored = storageKey ? localStorage.getItem(storageKey) : null;
+                        const accessToken = stored ? JSON.parse(stored)?.access_token : null;
+                        const userId = stored ? JSON.parse(stored)?.user?.id : null;
+                        const filePath = `${userId}/cv.pdf`;
+                        const downloadUrl = `${SUPABASE_URL}/storage/v1/object/authenticated/user-cvs/${filePath}`;
+                        const res = await fetch(downloadUrl, {
+                          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` }
+                        });
+                        if (!res.ok) throw new Error('Download failed');
+                        const blob = await res.blob();
+                        const f = new File([blob], savedCvInfo.filename, { type: blob.type || 'application/pdf' });
+                        setFile(f);
+                      } catch { setError('Não foi possível carregar o CV guardado.'); }
+                    }}
+                    className="text-xs text-[#C9A961] hover:underline font-medium"
+                  >
+                    <FileCheck className="w-3.5 h-3.5 inline mr-1" />
+                    Usar CV guardado: {savedCvInfo.filename}
+                  </button>
+                </div>
+              )}
             </div>
             <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5 mt-3">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -1713,15 +1885,15 @@ export default function Home() {
                 <p className="text-sm text-white/70">A análise via LinkedIn requer um pacote pago. Obtém um relatório completo com score ATS, estimativa salarial e recomendações personalizadas.</p>
               </div>
 
-              {/* Voucher code input */}
+              {/* Discount code input */}
               <div className="space-y-2">
-                <p className="text-xs font-medium text-white/80">Já tens um código?</p>
+                <p className="text-xs font-medium text-white/80">Já tens um código de desconto?</p>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={linkedInVoucherCode}
                     onChange={(e) => setLinkedInVoucherCode(e.target.value.toUpperCase())}
-                    placeholder="Ex: S2I-XXXXXX"
+                    placeholder="Inserir código"
                     className="flex-1 px-3 py-2 rounded-lg border border-white/20 bg-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961] uppercase tracking-wider"
                   />
                   <button
@@ -2057,7 +2229,7 @@ export default function Home() {
               </div>
               <div className="text-left">
                 <h2 className="text-xl font-bold text-foreground">Pacotes de Análise Completa</h2>
-                <p className="text-sm text-muted-foreground">Desde €3,99 por análise</p>
+                <p className="text-sm text-muted-foreground">Desde €9,99 por análise</p>
               </div>
             </div>
             {pricingOpen ? (
@@ -2096,13 +2268,13 @@ export default function Home() {
                   </div>
                   <div className="space-y-0">
                     <div className="flex items-baseline gap-1">
-                      <span className={`text-4xl font-bold ${plan.popular ? 'text-white' : 'text-foreground'}`}>€{plan.price}</span>
+                      <span className={`text-4xl font-bold ${plan.popular ? 'text-white' : 'text-foreground'}`}>{plan.price}€</span>
                     </div>
                     <p className={`text-sm ${plan.popular ? 'text-white/70' : 'text-muted-foreground'}`}>
                       {plan.name === 'Completo' ? (
-                        <><span className="line-through">€7,99</span> <span className="font-semibold">poupa 1€</span></>
+                        <>CV Analyser + Career Path</>
                       ) : (
-                        <>€{plan.perUnit} por análise</>
+                        <>{plan.perUnit}€ por análise</>
                       )}
                     </p>
                   </div>
@@ -2172,7 +2344,7 @@ export default function Home() {
               </div>
               <h3 className="text-lg font-semibold text-foreground">Preço Justo, Sem Subscrição</h3>
               <p className="text-sm text-muted-foreground">
-                Paga apenas quando precisas. Sem mensalidades, sem compromissos. A partir de €3,99 por análise completa.
+                Paga apenas quando precisas. Sem mensalidades, sem compromissos. A partir de €9,99 por análise completa.
               </p>
             </div>
           </div>
@@ -2181,7 +2353,7 @@ export default function Home() {
         {/* ═══════════════════════════════════════════════════════════ */}
         {/* SECTION: Final CTA */}
         {/* ═══════════════════════════════════════════════════════════ */}
-        <div className="mt-20 mb-10 bg-[#C9A961] rounded-2xl p-8 md:p-12 text-center space-y-6">
+        <div className="mt-20 mb-10 bg-[#C9A961] rounded-2xl p-8 md:p-12 text-center space-y-6 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-white">
             Pronto para melhorar o teu CV?
           </h2>
@@ -2194,6 +2366,22 @@ export default function Home() {
           >
             Começar Análise Gratuita
           </Button>
+        </div>
+
+        {/* ─── Member Area CTA ─── */}
+        <div className="mt-16 mb-10 p-8 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-3xl mx-auto">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            <p className="text-base font-bold text-slate-800">Queres acesso regular a esta ferramenta?</p>
+          </div>
+          <p className="text-sm text-slate-500 mb-5 leading-relaxed max-w-lg mx-auto">Com um plano de subscrição, tens análises de CV incluídas todas as semanas, Career Path, conteúdos exclusivos, feed de vagas personalizado e muito mais.</p>
+          <a
+            href="https://www.share2inspire.pt/area-cliente/planos"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
+          >
+            Ver planos de subscrição →
+          </a>
+          <p className="text-xs text-slate-400 mt-3">A partir de 9,99€/mês · Cancela quando quiseres</p>
         </div>
 
         {/* Footer */}
