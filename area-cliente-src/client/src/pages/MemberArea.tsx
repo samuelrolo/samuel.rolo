@@ -1,48 +1,54 @@
 /**
- * Design: Consultoria de Luxo Silenciosa
- * Área de Membro com ferramentas inline, conteúdos exclusivos e estado da subscrição
- * Ferramentas executam diretamente via edge function hyper-task
- * Controlo de limites semanais por plano (combinado CV Analyser + LinkedIn Roaster)
- * Career Path inline para Pro (1 incluído/mês), desconto para Growth
- * Career Intelligence inline para Pro (1 incluído/mês)
+ * MemberArea — Hub central do membro
+ * Tabs: Ferramentas · Análises · Vagas · Conteúdos
+ * Free users → UpgradePage
+ * Subscriber → tabs diferenciados por tier (essential/growth/pro)
+ * Análises: última de cada tipo em destaque, restantes colapsáveis
  */
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
-import UpgradePage from './UpgradePage';
 import { supabase, type MemberContent } from '@/lib/supabase';
-import {
-  FileText, BarChart3, Route, Linkedin, Bot, BookOpen,
-  ExternalLink, Search, Clock, ArrowRight, ChevronDown, ChevronUp,
-  Loader2, AlertCircle, CheckCircle, Upload, Lock, Sparkles, Tag,
-  Globe, MapPin, Headphones, Play, Mail, MessageSquare, Megaphone,
-  Home, Wrench, Briefcase, RefreshCw, FileSearch, Compass,
-} from 'lucide-react';
 import { Link } from 'wouter';
 import CareerProgress from '@/components/CareerProgress';
+import UpgradePage from './UpgradePage';
 import VagasFeed from '@/components/VagasFeed';
 import AnalysisResultsFull from '@/components/AnalysisResults';
-import { transformGeminiResponse } from '@/lib/transformGeminiResponse';
+import { transformGeminiResponse } from '@/lib/analysisTransformer';
+import { countries } from '@/lib/countries';
 import * as pdfjsLib from 'pdfjs-dist';
+import {
+  Loader2, Upload, FileText, BarChart3, Linkedin, Bot,
+  Sparkles, Route, Lock, ExternalLink, AlertCircle, CheckCircle,
+  ChevronDown, ChevronUp, Tag, ArrowRight, Globe, MapPin,
+  Search, BookOpen, Play, Headphones, Mail, Megaphone, Briefcase,
+  Clock, Trash2, RefreshCw, Compass, FileSearch, Wrench,
+} from 'lucide-react';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+// ─── Constants ──────────────────────────────────────────────────────────────
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://bnhvfkxfmzarifovrfyf.supabase.co';
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJuaHZma3hmbXphcmlmb3ZyZnlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIyMjc3NTIsImV4cCI6MjA1NzgwMzc1Mn0.aqLBrTVxMEfnNJLOGMVBMGiLPGSQSF_fCVTavv_k4as';
+const HYPER_TASK_URL = `${SUPABASE_URL}/functions/v1/hyper-task`;
 
-// ─── Constants ───────────────────────────────────────────────────────────────
-const HYPER_TASK_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
-const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
-const TOOLS_SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+function getPlanTier(plan?: string): 'essential' | 'growth' | 'pro' {
+  if (!plan) return 'essential';
+  const p = plan.toLowerCase();
+  if (p.includes('pro') || p === 'annual') return 'pro';
+  if (p.includes('growth') || p === 'semiannual') return 'growth';
+  return 'essential';
+}
 
-// ─── Tab System ──────────────────────────────────────────────────────────────
-type TabId = 'overview' | 'tools' | 'jobs' | 'content';
-const TABS: { id: TabId; icon: typeof Home; labelPt: string; labelEn: string }[] = [
-  { id: 'overview', icon: Home,      labelPt: 'Vis\u00e3o Geral', labelEn: 'Overview' },
-  { id: 'tools',    icon: Wrench,    labelPt: 'Ferramentas',  labelEn: 'Tools' },
-  { id: 'jobs',     icon: Briefcase, labelPt: 'Vagas',        labelEn: 'Jobs' },
-  { id: 'content',  icon: BookOpen,  labelPt: 'Conte\u00fados',   labelEn: 'Content' },
+// ─── Tab System ─────────────────────────────────────────────────────────────
+type TabId = 'tools' | 'analyses' | 'jobs' | 'content';
+
+const TABS: { id: TabId; labelPt: string; labelEn: string; icon: typeof Wrench }[] = [
+  { id: 'tools',    labelPt: 'Ferramentas',  labelEn: 'Tools',     icon: Wrench },
+  { id: 'analyses', labelPt: 'Análises',     labelEn: 'Analyses',  icon: FileSearch },
+  { id: 'jobs',     labelPt: 'Vagas',        labelEn: 'Jobs',      icon: Briefcase },
+  { id: 'content',  labelPt: 'Conteúdos',    labelEn: 'Content',   icon: BookOpen },
 ];
 
-// Saved analysis type (for Profile tab)
+// ─── Saved Analysis Types Config ────────────────────────────────────────────
 type SavedAnalysis = {
   id: string;
   user_id: string;
@@ -51,54 +57,13 @@ type SavedAnalysis = {
   created_at: string;
 };
 
-// Tool config for saved analyses display
-const TOOL_CONFIG: Record<string, { label: string; icon: typeof FileSearch; color: string }> = {
-  cv_analyser: { label: 'CV Analyser', icon: FileSearch, color: 'text-blue-400' },
-  career_path: { label: 'Career Path', icon: Compass, color: 'text-emerald-400' },
-  career_intelligence: { label: 'Career Intelligence', icon: BarChart3, color: 'text-violet-400' },
-  linkedin_roaster: { label: 'LinkedIn Roaster', icon: Linkedin, color: 'text-amber-400' },
-  career_energy: { label: 'Career Energy', icon: Sparkles, color: 'text-pink-400' },
+const TOOL_CONFIG: Record<string, { label: string; icon: typeof FileSearch; color: string; bgColor: string; borderColor: string }> = {
+  cv_analyser:         { label: 'CV Analyser',         icon: FileSearch, color: 'text-blue-600',    bgColor: 'bg-blue-50',    borderColor: 'border-blue-200' },
+  linkedin_roaster:    { label: 'LinkedIn Roaster',    icon: Linkedin,   color: 'text-amber-600',   bgColor: 'bg-amber-50',   borderColor: 'border-amber-200' },
+  career_path:         { label: 'Career Path',         icon: Compass,    color: 'text-emerald-600', bgColor: 'bg-emerald-50', borderColor: 'border-emerald-200' },
+  career_intelligence: { label: 'Career Intelligence', icon: BarChart3,  color: 'text-violet-600',  bgColor: 'bg-violet-50',  borderColor: 'border-violet-200' },
+  career_energy:       { label: 'Career Energy Score', icon: Sparkles,   color: 'text-pink-600',    bgColor: 'bg-pink-50',    borderColor: 'border-pink-200' },
 };
-
-// ─── Country/Region Data ─────────────────────────────────────────────────────
-interface CountryRegion {
-  country: string;
-  code: string;
-  currency: string;
-  regions: string[];
-}
-
-const countries: CountryRegion[] = [
-  { country: "Portugal", code: "PT", currency: "EUR", regions: ["Lisboa", "Porto", "Algarve", "Coimbra", "Other"] },
-  { country: "United States", code: "US", currency: "USD", regions: ["California", "New York", "Texas", "Florida", "Illinois", "Massachusetts", "Washington", "Colorado", "Georgia", "Other"] },
-  { country: "United Kingdom", code: "GB", currency: "GBP", regions: ["London", "South East", "North West", "Scotland", "West Midlands", "Yorkshire", "East of England", "Other"] },
-  { country: "Germany", code: "DE", currency: "EUR", regions: ["Bavaria", "Berlin", "Hamburg", "North Rhine-Westphalia", "Baden-Württemberg", "Hesse", "Other"] },
-  { country: "France", code: "FR", currency: "EUR", regions: ["Île-de-France (Paris)", "Auvergne-Rhône-Alpes", "Provence-Alpes-Côte d'Azur", "Occitanie", "Nouvelle-Aquitaine", "Other"] },
-  { country: "Netherlands", code: "NL", currency: "EUR", regions: ["Randstad (Amsterdam/Rotterdam/The Hague)", "North Brabant", "Gelderland", "Other"] },
-  { country: "Spain", code: "ES", currency: "EUR", regions: ["Madrid", "Catalonia (Barcelona)", "Andalusia", "Valencia", "Basque Country", "Other"] },
-  { country: "Switzerland", code: "CH", currency: "CHF", regions: ["Zurich", "Geneva", "Basel", "Bern", "Lausanne", "Other"] },
-  { country: "Canada", code: "CA", currency: "CAD", regions: ["Ontario (Toronto)", "British Columbia (Vancouver)", "Quebec (Montreal)", "Alberta (Calgary)", "Other"] },
-  { country: "Australia", code: "AU", currency: "AUD", regions: ["New South Wales (Sydney)", "Victoria (Melbourne)", "Queensland (Brisbane)", "Western Australia (Perth)", "Other"] },
-  { country: "Ireland", code: "IE", currency: "EUR", regions: ["Dublin", "Cork", "Galway", "Limerick", "Other"] },
-  { country: "Brazil", code: "BR", currency: "BRL", regions: ["São Paulo", "Rio de Janeiro", "Minas Gerais", "Paraná", "Other"] },
-  { country: "Italy", code: "IT", currency: "EUR", regions: ["Lombardy (Milan)", "Lazio (Rome)", "Veneto", "Piedmont (Turin)", "Other"] },
-  { country: "Sweden", code: "SE", currency: "SEK", regions: ["Stockholm", "Gothenburg", "Malmö", "Other"] },
-  { country: "Singapore", code: "SG", currency: "SGD", regions: ["Central", "East", "West", "Other"] },
-  { country: "UAE", code: "AE", currency: "AED", regions: ["Dubai", "Abu Dhabi", "Sharjah", "Other"] },
-  { country: "India", code: "IN", currency: "INR", regions: ["Bangalore", "Mumbai", "Delhi NCR", "Hyderabad", "Pune", "Chennai", "Other"] },
-  { country: "Other", code: "XX", currency: "USD", regions: ["Other"] },
-];
-
-// Plan tier detection from subscription plan field
-function getPlanTier(plan: string | undefined): 'essential' | 'growth' | 'pro' {
-  if (!plan) return 'essential';
-  const p = plan.toLowerCase();
-  if (p.includes('pro')) return 'pro';
-  if (p.includes('growth')) return 'growth';
-  if (p === 'annual') return 'pro';
-  if (p === 'semiannual') return 'growth';
-  return 'essential';
-}
 
 // Weekly limits (combined CV Analyser + LinkedIn Roaster)
 const WEEKLY_LIMITS: Record<string, number> = {
@@ -128,11 +93,8 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
   const analysis = data?.analysis || data;
   if (!analysis) return null;
 
-  // Career Path has a different structure
   const isCareerPath = data?.career_paths || data?.market_analysis || analysis?.career_paths;
   const cpData = isCareerPath ? (data?.career_paths ? data : analysis) : null;
-
-  // LinkedIn Roaster / CV Extraction has candidate_profile + global_summary
   const isLinkedInFormat = analysis?.candidate_profile || data?.candidate_profile;
   const linkedinData = isLinkedInFormat ? (data?.candidate_profile ? data : analysis) : null;
 
@@ -150,7 +112,7 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
         </button>
       </div>
 
-      {/* Career Path specific rendering */}
+      {/* Career Path */}
       {cpData && (
         <div className="space-y-4">
           {cpData.career_paths && Array.isArray(cpData.career_paths) && (
@@ -162,34 +124,23 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
                 <div key={i} className="mb-3 p-3 bg-white border border-[#e5e5e5] rounded">
                   <h6 className="text-sm font-medium text-[#1a1a1a] mb-1">{path.title || path.role || `Caminho ${i + 1}`}</h6>
                   <p className="text-xs text-[#666] leading-relaxed">{path.description || path.summary}</p>
-                  {path.salary_range && (
-                    <p className="text-xs text-gold mt-1">{path.salary_range}</p>
-                  )}
+                  {path.salary_range && <p className="text-xs text-gold mt-1">{path.salary_range}</p>}
                 </div>
               ))}
             </div>
           )}
           {cpData.market_analysis && (
             <div>
-              <h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2">
-                {lang === 'pt' ? 'Análise de Mercado' : 'Market Analysis'}
-              </h5>
-              <p className="text-sm text-[#333] leading-relaxed">
-                {typeof cpData.market_analysis === 'string' ? cpData.market_analysis : JSON.stringify(cpData.market_analysis)}
-              </p>
+              <h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Análise de Mercado' : 'Market Analysis'}</h5>
+              <p className="text-sm text-[#333] leading-relaxed">{typeof cpData.market_analysis === 'string' ? cpData.market_analysis : JSON.stringify(cpData.market_analysis)}</p>
             </div>
           )}
           {cpData.recommendations && Array.isArray(cpData.recommendations) && (
             <div>
-              <h5 className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">
-                {lang === 'pt' ? 'Recomendações' : 'Recommendations'}
-              </h5>
+              <h5 className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Recomendações' : 'Recommendations'}</h5>
               <ul className="space-y-1">
                 {cpData.recommendations.map((r: string, i: number) => (
-                  <li key={i} className="text-sm text-[#333] flex items-start gap-2">
-                    <span className="text-amber-500 mt-0.5">→</span>
-                    <span>{r}</span>
-                  </li>
+                  <li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-amber-500 mt-0.5">→</span><span>{r}</span></li>
                 ))}
               </ul>
             </div>
@@ -197,10 +148,9 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
         </div>
       )}
 
-      {/* LinkedIn Roaster / CV Extraction format (candidate_profile + global_summary) */}
+      {/* LinkedIn Roaster */}
       {linkedinData && !cpData && (
         <div className="space-y-4">
-          {/* Score */}
           {linkedinData.executive_summary?.global_score && (
             <div className="flex items-center gap-3 mb-2">
               <div className="w-14 h-14 rounded-full border-2 border-gold/30 flex items-center justify-center">
@@ -209,127 +159,62 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
               <div>
                 <p className="text-xs text-[#999]">{lang === 'pt' ? 'Pontuação global' : 'Overall score'}</p>
                 <p className="text-sm font-medium text-[#1a1a1a]">{linkedinData.executive_summary.global_score}/100</p>
-                {linkedinData.executive_summary.market_positioning && (
-                  <p className="text-xs text-[#666] mt-0.5">{linkedinData.executive_summary.market_positioning}</p>
-                )}
               </div>
             </div>
           )}
-
           {linkedinData.candidate_profile && (
             <div>
-              <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-2">
-                {lang === 'pt' ? 'Perfil Detetado' : 'Detected Profile'}
-              </h5>
+              <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-2">{lang === 'pt' ? 'Perfil Detetado' : 'Detected Profile'}</h5>
               <div className="grid grid-cols-2 gap-2">
                 {linkedinData.candidate_profile.detected_name && linkedinData.candidate_profile.detected_name !== 'N/A' && (
-                  <div className="p-2 bg-white border border-[#e5e5e5] rounded">
-                    <p className="text-[10px] text-[#999] uppercase">{lang === 'pt' ? 'Nome' : 'Name'}</p>
-                    <p className="text-xs font-medium text-[#1a1a1a]">{linkedinData.candidate_profile.detected_name}</p>
-                  </div>
+                  <div className="p-2 bg-white border border-[#e5e5e5] rounded"><p className="text-[10px] text-[#999] uppercase">{lang === 'pt' ? 'Nome' : 'Name'}</p><p className="text-xs font-medium text-[#1a1a1a]">{linkedinData.candidate_profile.detected_name}</p></div>
                 )}
                 {linkedinData.candidate_profile.detected_role && linkedinData.candidate_profile.detected_role !== 'N/A' && (
-                  <div className="p-2 bg-white border border-[#e5e5e5] rounded">
-                    <p className="text-[10px] text-[#999] uppercase">{lang === 'pt' ? 'Função' : 'Role'}</p>
-                    <p className="text-xs font-medium text-[#1a1a1a]">{linkedinData.candidate_profile.detected_role}</p>
-                  </div>
-                )}
-                {linkedinData.candidate_profile.seniority && linkedinData.candidate_profile.seniority !== 'N/A' && (
-                  <div className="p-2 bg-white border border-[#e5e5e5] rounded">
-                    <p className="text-[10px] text-[#999] uppercase">{lang === 'pt' ? 'Senioridade' : 'Seniority'}</p>
-                    <p className="text-xs font-medium text-[#1a1a1a]">{linkedinData.candidate_profile.seniority}</p>
-                  </div>
-                )}
-                {linkedinData.candidate_profile.total_years_exp && linkedinData.candidate_profile.total_years_exp !== 'N/A' && (
-                  <div className="p-2 bg-white border border-[#e5e5e5] rounded">
-                    <p className="text-[10px] text-[#999] uppercase">{lang === 'pt' ? 'Experiência' : 'Experience'}</p>
-                    <p className="text-xs font-medium text-[#1a1a1a]">{linkedinData.candidate_profile.total_years_exp}</p>
-                  </div>
+                  <div className="p-2 bg-white border border-[#e5e5e5] rounded"><p className="text-[10px] text-[#999] uppercase">{lang === 'pt' ? 'Função' : 'Role'}</p><p className="text-xs font-medium text-[#1a1a1a]">{linkedinData.candidate_profile.detected_role}</p></div>
                 )}
               </div>
               {linkedinData.candidate_profile.key_skills && linkedinData.candidate_profile.key_skills.length > 0 && (
                 <div className="mt-3">
-                  <p className="text-[10px] text-[#999] uppercase mb-1.5">{lang === 'pt' ? 'Competências-chave' : 'Key Skills'}</p>
                   <div className="flex flex-wrap gap-1.5">
                     {linkedinData.candidate_profile.key_skills.map((skill: string, i: number) => (
-                      <span key={i} className="px-2 py-0.5 bg-gold/5 border border-gold/20 rounded text-[10px] text-gold font-medium">
-                        {skill}
-                      </span>
+                      <span key={i} className="px-2 py-0.5 bg-gold/5 border border-gold/20 rounded text-[10px] text-gold font-medium">{skill}</span>
                     ))}
                   </div>
                 </div>
               )}
             </div>
           )}
-
-          {/* Global Summary */}
           {linkedinData.global_summary && (
             <div>
               {linkedinData.global_summary.strengths && linkedinData.global_summary.strengths.length > 0 && (
                 <div className="mb-4">
-                  <h5 className="text-xs font-medium text-emerald-700 uppercase tracking-wider mb-2">
-                    {lang === 'pt' ? 'Pontos Fortes' : 'Strengths'}
-                  </h5>
-                  <ul className="space-y-1">
-                    {linkedinData.global_summary.strengths.map((s: string, i: number) => (
-                      <li key={i} className="text-sm text-[#333] flex items-start gap-2">
-                        <span className="text-emerald-500 mt-0.5">+</span>
-                        <span>{s}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <h5 className="text-xs font-medium text-emerald-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Pontos Fortes' : 'Strengths'}</h5>
+                  <ul className="space-y-1">{linkedinData.global_summary.strengths.map((s: string, i: number) => (<li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-emerald-500 mt-0.5">+</span><span>{s}</span></li>))}</ul>
                 </div>
               )}
-              {/* improvements OR gaps - edge function returns 'improvements' */}
               {(linkedinData.global_summary.improvements || linkedinData.global_summary.gaps || []).length > 0 && (
                 <div className="mb-4">
-                  <h5 className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">
-                    {lang === 'pt' ? 'Áreas a Melhorar' : 'Areas to Improve'}
-                  </h5>
-                  <ul className="space-y-1">
-                    {(linkedinData.global_summary.improvements || linkedinData.global_summary.gaps || []).map((s: string, i: number) => (
-                      <li key={i} className="text-sm text-[#333] flex items-start gap-2">
-                        <span className="text-amber-500 mt-0.5">!</span>
-                        <span>{s}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <h5 className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Áreas a Melhorar' : 'Areas to Improve'}</h5>
+                  <ul className="space-y-1">{(linkedinData.global_summary.improvements || linkedinData.global_summary.gaps || []).map((s: string, i: number) => (<li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-amber-500 mt-0.5">!</span><span>{s}</span></li>))}</ul>
                 </div>
               )}
               {linkedinData.global_summary.recommendations && linkedinData.global_summary.recommendations.length > 0 && (
                 <div className="mb-4">
-                  <h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2">
-                    {lang === 'pt' ? 'Recomendações' : 'Recommendations'}
-                  </h5>
-                  <ul className="space-y-1">
-                    {linkedinData.global_summary.recommendations.map((s: string, i: number) => (
-                      <li key={i} className="text-sm text-[#333] flex items-start gap-2">
-                        <span className="text-blue-500 mt-0.5">→</span>
-                        <span>{s}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Recomendações' : 'Recommendations'}</h5>
+                  <ul className="space-y-1">{linkedinData.global_summary.recommendations.map((s: string, i: number) => (<li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-blue-500 mt-0.5">→</span><span>{s}</span></li>))}</ul>
                 </div>
               )}
             </div>
           )}
-
-          {/* Priority Recommendations */}
           {linkedinData.priority_recommendations?.immediate_adjustments && (
             <div className="p-3 bg-blue-50 border border-blue-100 rounded-lg">
-              <h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-1">
-                {lang === 'pt' ? 'Ajustes Prioritários' : 'Priority Adjustments'}
-              </h5>
+              <h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-1">{lang === 'pt' ? 'Ajustes Prioritários' : 'Priority Adjustments'}</h5>
               <p className="text-sm text-[#333] leading-relaxed">{linkedinData.priority_recommendations.immediate_adjustments}</p>
             </div>
           )}
-
-          {/* CV Problems / Detailed Issues */}
           {linkedinData.cv_problems && linkedinData.cv_problems.length > 0 && (
             <div>
-              <h5 className="text-xs font-medium text-red-700 uppercase tracking-wider mb-3">
-                {lang === 'pt' ? 'Problemas Identificados' : 'Identified Issues'}
-              </h5>
+              <h5 className="text-xs font-medium text-red-700 uppercase tracking-wider mb-3">{lang === 'pt' ? 'Problemas Identificados' : 'Identified Issues'}</h5>
               <div className="space-y-3">
                 {linkedinData.cv_problems.map((problem: any, i: number) => (
                   <div key={i} className="p-3 bg-white border border-[#e5e5e5] rounded-lg">
@@ -338,9 +223,6 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
                       <h6 className="text-sm font-medium text-[#1a1a1a]">{problem.title}</h6>
                     </div>
                     <p className="text-xs text-[#666] leading-relaxed ml-7 mb-2">{problem.description}</p>
-                    {problem.full_explanation && (
-                      <p className="text-xs text-[#555] leading-relaxed ml-7 mb-2">{problem.full_explanation}</p>
-                    )}
                     {problem.rewrite_suggestion && (
                       <div className="ml-7 p-2 bg-emerald-50 border border-emerald-100 rounded">
                         <p className="text-[10px] text-emerald-700 uppercase font-medium mb-1">{lang === 'pt' ? 'Sugestão de melhoria' : 'Improvement suggestion'}</p>
@@ -355,82 +237,21 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
         </div>
       )}
 
-      {/* Standard analysis rendering (CV with score/summary/strengths) */}
+      {/* Standard analysis */}
       {!cpData && !linkedinData && (
         <>
           {analysis.score !== undefined && (
             <div className="mb-4 flex items-center gap-3">
-              <div className="w-14 h-14 rounded-full border-2 border-gold/30 flex items-center justify-center">
-                <span className="text-lg font-bold text-gold">{analysis.score}</span>
-              </div>
-              <div>
-                <p className="text-xs text-[#999]">{lang === 'pt' ? 'Pontuação global' : 'Overall score'}</p>
-                <p className="text-sm font-medium text-[#1a1a1a]">{analysis.score}/100</p>
-              </div>
+              <div className="w-14 h-14 rounded-full border-2 border-gold/30 flex items-center justify-center"><span className="text-lg font-bold text-gold">{analysis.score}</span></div>
+              <div><p className="text-xs text-[#999]">{lang === 'pt' ? 'Pontuação global' : 'Overall score'}</p><p className="text-sm font-medium text-[#1a1a1a]">{analysis.score}/100</p></div>
             </div>
           )}
-
-          {analysis.summary && (
-            <div className="mb-4">
-              <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-2">
-                {lang === 'pt' ? 'Resumo' : 'Summary'}
-              </h5>
-              <p className="text-sm text-[#333] leading-relaxed">{analysis.summary}</p>
-            </div>
-          )}
-
-          {analysis.strengths && analysis.strengths.length > 0 && (
-            <div className="mb-4">
-              <h5 className="text-xs font-medium text-emerald-700 uppercase tracking-wider mb-2">
-                {lang === 'pt' ? 'Pontos Fortes' : 'Strengths'}
-              </h5>
-              <ul className="space-y-1">
-                {analysis.strengths.map((s: string, i: number) => (
-                  <li key={i} className="text-sm text-[#333] flex items-start gap-2">
-                    <span className="text-emerald-500 mt-0.5">+</span>
-                    <span>{s}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {analysis.improvements && analysis.improvements.length > 0 && (
-            <div className="mb-4">
-              <h5 className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">
-                {lang === 'pt' ? 'A melhorar' : 'To improve'}
-              </h5>
-              <ul className="space-y-1">
-                {analysis.improvements.map((s: string, i: number) => (
-                  <li key={i} className="text-sm text-[#333] flex items-start gap-2">
-                    <span className="text-amber-500 mt-0.5">!</span>
-                    <span>{s}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {analysis.recommendations && analysis.recommendations.length > 0 && (
-            <div>
-              <h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2">
-                {lang === 'pt' ? 'Recomendações' : 'Recommendations'}
-              </h5>
-              <ul className="space-y-1">
-                {analysis.recommendations.map((s: string, i: number) => (
-                  <li key={i} className="text-sm text-[#333] flex items-start gap-2">
-                    <span className="text-blue-500 mt-0.5">→</span>
-                    <span>{s}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
+          {analysis.summary && (<div className="mb-4"><h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-2">{lang === 'pt' ? 'Resumo' : 'Summary'}</h5><p className="text-sm text-[#333] leading-relaxed">{analysis.summary}</p></div>)}
+          {analysis.strengths && analysis.strengths.length > 0 && (<div className="mb-4"><h5 className="text-xs font-medium text-emerald-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Pontos Fortes' : 'Strengths'}</h5><ul className="space-y-1">{analysis.strengths.map((s: string, i: number) => (<li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-emerald-500 mt-0.5">+</span><span>{s}</span></li>))}</ul></div>)}
+          {analysis.improvements && analysis.improvements.length > 0 && (<div className="mb-4"><h5 className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'A melhorar' : 'To improve'}</h5><ul className="space-y-1">{analysis.improvements.map((s: string, i: number) => (<li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-amber-500 mt-0.5">!</span><span>{s}</span></li>))}</ul></div>)}
+          {analysis.recommendations && analysis.recommendations.length > 0 && (<div><h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Recomendações' : 'Recommendations'}</h5><ul className="space-y-1">{analysis.recommendations.map((s: string, i: number) => (<li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-blue-500 mt-0.5">→</span><span>{s}</span></li>))}</ul></div>)}
           {!analysis.score && !analysis.summary && !analysis.strengths && !analysis.candidate_profile && (
-            <div className="bg-white border border-[#e5e5e5] rounded p-4 max-h-96 overflow-auto">
-              <pre className="text-xs text-[#333] whitespace-pre-wrap">{JSON.stringify(analysis, null, 2)}</pre>
-            </div>
+            <div className="bg-white border border-[#e5e5e5] rounded p-4 max-h-96 overflow-auto"><pre className="text-xs text-[#333] whitespace-pre-wrap">{JSON.stringify(analysis, null, 2)}</pre></div>
           )}
         </>
       )}
@@ -469,25 +290,27 @@ export default function MemberArea() {
 
   // Career Intelligence states
   const [monthlyCareerIntelUsed, setMonthlyCareerIntelUsed] = useState(0);
-  // Tab navigation
-  const [activeTab, setActiveTab] = useState<TabId>('overview');
 
+  // Tab navigation
+  const [activeTab, setActiveTab] = useState<TabId>('tools');
+
+  // Saved analyses states
+  const [savedAnalyses, setSavedAnalyses] = useState<SavedAnalysis[]>([]);
+  const [loadingSaved, setLoadingSaved] = useState(true);
+  const [expandedAnalysisType, setExpandedAnalysisType] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const planTier = getPlanTier(subscription?.plan);
   const weeklyLimit = WEEKLY_LIMITS[planTier] || 2;
   const isProPlan = planTier === 'pro';
 
-  // Get regions for selected country
   const selectedCountryData = countries.find(c => c.country === cpCountry);
   const availableRegions = selectedCountryData?.regions || [];
 
   // ─── Fetch content ──────────────────────────────────────────────────────
   useEffect(() => {
     async function fetchContent() {
-      const { data } = await supabase
-        .from('member_content')
-        .select('*')
-        .order('sort_order', { ascending: true });
+      const { data } = await supabase.from('member_content').select('*').order('sort_order', { ascending: true });
       setContent(data || []);
       setLoading(false);
     }
@@ -502,122 +325,85 @@ export default function MemberArea() {
       const weekStart = new Date(now);
       weekStart.setDate(weekStart.getDate() - weekStart.getDay());
       weekStart.setHours(0, 0, 0, 0);
-
-      const { data, error } = await supabase
-        .from('user_analyses')
-        .select('id')
-        .eq('user_id', user!.id)
-        .in('analysis_type', ['cv_analyser', 'linkedin_roaster'])
-        .gte('created_at', weekStart.toISOString());
-
-      if (!error && data) {
-        setWeeklyUsage(data.length);
-      }
+      const { data, error } = await supabase.from('user_analyses').select('id').eq('user_id', user!.id).in('analysis_type', ['cv_analyser', 'linkedin_roaster']).gte('created_at', weekStart.toISOString());
+      if (!error && data) setWeeklyUsage(data.length);
     }
     fetchUsage();
   }, [user?.id, analysisResult]);
 
-  // ─── Fetch monthly Career Path usage (Pro only) ─────────────────────────
+  // ─── Fetch monthly Career Path usage ─────────────────────────────────
   useEffect(() => {
     if (!user?.id || planTier !== 'pro') return;
     async function fetchCpUsage() {
       const now = new Date();
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-
-      const { data, error } = await supabase
-        .from('user_analyses')
-        .select('id')
-        .eq('user_id', user!.id)
-        .eq('analysis_type', 'career_path')
-        .gte('created_at', monthStart.toISOString());
-
-      if (!error && data) {
-        setMonthlyCareerPathUsed(data.length);
-      }
+      const { data, error } = await supabase.from('user_analyses').select('id').eq('user_id', user!.id).eq('analysis_type', 'career_path').gte('created_at', monthStart.toISOString());
+      if (!error && data) setMonthlyCareerPathUsed(data.length);
     }
     fetchCpUsage();
   }, [user?.id, planTier, analysisResult]);
 
-  // ─── Fetch monthly Career Intelligence usage (Pro only) ─────────────────
+  // ─── Fetch monthly Career Intelligence usage ─────────────────────────
   useEffect(() => {
     if (!user?.id || planTier !== 'pro') return;
     async function fetchCiUsage() {
       const now = new Date();
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-
-      const { data, error } = await supabase
-        .from('user_analyses')
-        .select('id')
-        .eq('user_id', user!.id)
-        .eq('analysis_type', 'career_intelligence')
-        .gte('created_at', monthStart.toISOString());
-
-      if (!error && data) {
-        setMonthlyCareerIntelUsed(data.length);
-      }
+      const { data, error } = await supabase.from('user_analyses').select('id').eq('user_id', user!.id).eq('analysis_type', 'career_intelligence').gte('created_at', monthStart.toISOString());
+      if (!error && data) setMonthlyCareerIntelUsed(data.length);
     }
     fetchCiUsage();
   }, [user?.id, planTier, analysisResult]);
 
+  // ─── Fetch saved analyses ──────────────────────────────────────────────
+  useEffect(() => {
+    if (!user?.id) return;
+    setLoadingSaved(true);
+    async function fetchSaved() {
+      const { data, error } = await supabase.from('user_analyses').select('*').eq('user_id', user!.id).order('created_at', { ascending: false }).limit(100);
+      if (!error && data) setSavedAnalyses(data as SavedAnalysis[]);
+      setLoadingSaved(false);
+    }
+    fetchSaved();
+  }, [user?.id, analysisResult]);
 
-
+  // ─── Content filtering ─────────────────────────────────────────────────
   const filtered = useMemo(() => {
     let items = [...content];
-
-    // Add blog articles as virtual content when filter is 'all' or 'article'
     if (filter === 'all' || filter === 'article') {
       const blogItems: MemberContent[] = BLOG_ARTICLES.map((article, i) => ({
-        id: `blog-${i}`,
-        title: article.title,
-        description: article.desc,
-        content_type: 'article' as const,
-        file_url: article.url,
-        thumbnail_url: null,
-        tags: null,
-        is_published: true,
-        required_plan: 'monthly' as const,
-        sort_order: 100 + i,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        id: `blog-${i}`, title: article.title, description: article.desc, content_type: 'article' as const,
+        file_url: article.url, thumbnail_url: null, tags: null, is_published: true, required_plan: 'monthly' as const,
+        sort_order: 100 + i, created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
       }));
       items = [...items, ...blogItems];
     }
-
     if (filter !== 'all') items = items.filter(c => c.content_type === filter);
     if (search.trim()) {
       const q = search.toLowerCase();
-      items = items.filter(c =>
-        c.title.toLowerCase().includes(q) || c.description?.toLowerCase().includes(q)
-      );
+      items = items.filter(c => c.title.toLowerCase().includes(q) || c.description?.toLowerCase().includes(q));
     }
     return items;
   }, [content, filter, search]);
 
-  const daysLeft = subscription
-    ? Math.max(0, Math.ceil((new Date(subscription.expires_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-    : 0;
+  const daysLeft = subscription ? Math.max(0, Math.ceil((new Date(subscription.expires_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : 0;
 
   const filterLabels: Record<string, string> = {
-    all: t('member.allTypes'),
-    ebook: t('member.ebooks'),
-    article: t('member.articles'),
-    video: t('member.videos'),
-    podcast: 'Podcast',
+    all: t('member.allTypes'), ebook: t('member.ebooks'), article: t('member.articles'), video: t('member.videos'), podcast: 'Podcast',
   };
 
-  // ─── Extract text from PDF (same pattern as BundleHome) ─────────────
+  // ─── CV helpers ─────────────────────────────────────────────────────────
   const extractPdfText = useCallback(async (arrayBuffer: ArrayBuffer): Promise<string> => {
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
     let text = '';
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      text += content.items.map((item: any) => item.str).join(' ') + '\n';
+      const c = await page.getTextContent();
+      text += c.items.map((item: any) => item.str).join(' ') + '\n';
     }
     return text.trim().substring(0, 8000);
   }, []);
 
-  // ─── Convert file/blob to base64 ────────────────────────────────────────
   const toBase64 = useCallback((blob: Blob): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -627,536 +413,174 @@ export default function MemberArea() {
     });
   }, []);
 
-  // ─── Read CV text from file (with base64 fallback for server-side extraction) ──
   const readCvText = useCallback(async (file: File): Promise<{ text: string; base64?: string; filename?: string }> => {
     let text = '';
     const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
     const isDocx = file.name.toLowerCase().endsWith('.docx');
-
     if (isPdf) {
-      try {
-        const arrayBuffer = await file.arrayBuffer();
-        text = await extractPdfText(arrayBuffer);
-      } catch (e) {
-        console.warn('[CV] PDF text extraction failed:', e);
-      }
+      try { const ab = await file.arrayBuffer(); text = await extractPdfText(ab); } catch (e) { console.warn('[CV] PDF extraction failed:', e); }
     } else if (isDocx) {
-      try {
-        const mammoth = await import('mammoth');
-        const arrayBuffer = await file.arrayBuffer();
-        const result = await mammoth.extractRawText({ arrayBuffer });
-        text = result.value;
-      } catch (e) {
-        console.warn('[CV] DOCX extraction failed:', e);
-      }
+      try { const mammoth = await import('mammoth'); const ab = await file.arrayBuffer(); const r = await mammoth.extractRawText({ arrayBuffer: ab }); text = r.value; } catch (e) { console.warn('[CV] DOCX extraction failed:', e); }
     } else {
-      text = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = () => reject(new Error('Erro ao ler o ficheiro.'));
-        reader.readAsText(file);
-      });
+      text = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result as string); reader.onerror = () => reject(new Error('Erro ao ler.')); reader.readAsText(file); });
     }
-
-    // If text is too short, prepare base64 for server-side Gemini Vision extraction
     if (text.trim().length < 50 && isPdf) {
-      console.log('[CV] Texto insuficiente (' + text.length + ' chars). A preparar base64 para extração server-side...');
       const base64 = await toBase64(file);
       return { text, base64, filename: file.name };
     }
-
     return { text: text.substring(0, 8000) };
   }, [extractPdfText, toBase64]);
 
-  // ─── Download CV from profile ───────────────────────────────────────────
   const downloadProfileCv = useCallback(async (): Promise<{ text: string; base64?: string; filename?: string } | null> => {
     if (!profile?.cv_url) return null;
     try {
-      // cv_url may be a full public URL or a storage path
-      // Dashboard saves it as: https://xxx.supabase.co/storage/v1/object/public/user-cvs/userId/cv.pdf
-      // But .download() expects just the path: userId/cv.pdf
       let storagePath = profile.cv_url;
       const bucketMarker = '/user-cvs/';
       const markerIndex = storagePath.indexOf(bucketMarker);
-      if (markerIndex !== -1) {
-        storagePath = storagePath.substring(markerIndex + bucketMarker.length);
-        console.log('[CV] Extracted storage path from public URL:', storagePath);
-      }
-
+      if (markerIndex !== -1) storagePath = storagePath.substring(markerIndex + bucketMarker.length);
       let blob: Blob | null = null;
-
-      // Try storage download with extracted path
-      try {
-        const { data } = await supabase.storage
-          .from('user-cvs')
-          .download(storagePath);
-        if (data) blob = data;
-      } catch (storageErr) {
-        console.warn('[CV] Storage download failed, trying direct fetch...', storageErr);
-      }
-
-      // Fallback: fetch directly from the public URL
-      if (!blob && profile.cv_url.startsWith('http')) {
-        try {
-          const resp = await fetch(profile.cv_url);
-          if (resp.ok) blob = await resp.blob();
-        } catch (fetchErr) {
-          console.warn('[CV] Direct fetch also failed:', fetchErr);
-        }
-      }
-
+      try { const { data } = await supabase.storage.from('user-cvs').download(storagePath); if (data) blob = data; } catch (e) { console.warn('[CV] Storage download failed:', e); }
+      if (!blob && profile.cv_url.startsWith('http')) { try { const resp = await fetch(profile.cv_url); if (resp.ok) blob = await resp.blob(); } catch (e) { console.warn('[CV] Direct fetch failed:', e); } }
       if (blob) {
         const isPdf = profile.cv_url.toLowerCase().endsWith('.pdf') || blob.type === 'application/pdf';
         let text = '';
-
-        if (isPdf) {
-          try {
-            const arrayBuffer = await blob.arrayBuffer();
-            text = await extractPdfText(arrayBuffer);
-          } catch (e) {
-            console.warn('[CV] Profile PDF text extraction failed:', e);
-          }
-        } else {
-          text = await blob.text();
-        }
-
-        // If text is too short and it's a PDF, prepare base64 for server-side extraction
-        if (text.trim().length < 50 && isPdf) {
-          console.log('[CV] Profile CV texto insuficiente (' + text.length + ' chars). A preparar base64...');
-          const base64 = await toBase64(blob);
-          const filename = profile.cv_url.split('/').pop() || 'cv.pdf';
-          return { text, base64, filename };
-        }
-
+        if (isPdf) { try { const ab = await blob.arrayBuffer(); text = await extractPdfText(ab); } catch (e) { console.warn('[CV] Profile PDF extraction failed:', e); } } else { text = await blob.text(); }
+        if (text.trim().length < 50 && isPdf) { const base64 = await toBase64(blob); return { text, base64, filename: profile.cv_url.split('/').pop() || 'cv.pdf' }; }
         return { text: text.substring(0, 8000) };
       }
-    } catch (e) {
-      console.error('Error downloading CV:', e);
-    }
+    } catch (e) { console.error('Error downloading CV:', e); }
     return null;
   }, [profile?.cv_url, extractPdfText, toBase64]);
 
-  // ─── Helper: get CV data (text + optional base64 for server fallback) ─────
-  const getCvData = useCallback(async (): Promise<{ text: string; base64?: string; filename?: string } | null> => {
-    if (cvFile) {
-      return readCvText(cvFile);
-    } else if (profile?.cv_url) {
-      return downloadProfileCv();
-    }
+  const getCvData = useCallback(async () => {
+    if (cvFile) return readCvText(cvFile);
+    else if (profile?.cv_url) return downloadProfileCv();
     return null;
   }, [cvFile, profile?.cv_url, readCvText, downloadProfileCv]);
 
-  // ─── Helper: build API request body with server-side fallback ───────────
   const buildCvRequestBody = (cvData: { text: string; base64?: string; filename?: string }, mode: string, extra?: Record<string, any>): any => {
     const body: any = { mode, lang };
-    const useServerExtraction = cvData.text.trim().length < 50 && cvData.base64;
-    if (useServerExtraction) {
-      body.file = cvData.base64;
-      body.filename = cvData.filename;
-      console.log(`[${mode}] A enviar PDF para extração via Gemini Vision...`);
-    } else {
-      body.cv_text = cvData.text.substring(0, 8000);
-    }
+    if (cvData.text.trim().length < 50 && cvData.base64) { body.file = cvData.base64; body.filename = cvData.filename; } else { body.cv_text = cvData.text.substring(0, 8000); }
     if (extra) Object.assign(body, extra);
     return body;
   };
 
-  // ─── Helper: fetch with retry (same as standalone) ──────────────────────
   const fetchWithRetry = useCallback(async (body: any, timeoutMs = 120000, maxRetries = 2): Promise<any> => {
     let response: Response | null = null;
     let responseData: any = null;
-
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
       try {
-        response = await fetch(HYPER_TASK_URL, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body),
-          signal: controller.signal,
-        });
-
+        response = await fetch(HYPER_TASK_URL, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: controller.signal });
         clearTimeout(timeoutId);
-
-        if (response.ok) {
-          responseData = await response.json();
-          if (responseData.success) return responseData;
-        }
-
-        if (attempt < maxRetries) {
-          console.warn(`[API] Tentativa ${attempt + 1} falhou (status: ${response?.status}). A tentar novamente...`);
-          await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
-        }
+        if (response.ok) { responseData = await response.json(); if (responseData.success) return responseData; }
+        if (attempt < maxRetries) { await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); }
       } catch (fetchError: any) {
         clearTimeout(timeoutId);
-        if (attempt < maxRetries && fetchError.name !== 'AbortError') {
-          console.warn(`[API] Tentativa ${attempt + 1} falhou (${fetchError.message}). A tentar novamente...`);
-          await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
-        } else {
-          throw fetchError;
-        }
+        if (attempt < maxRetries && fetchError.name !== 'AbortError') { await new Promise(r => setTimeout(r, 2000 * (attempt + 1))); } else { throw fetchError; }
       }
     }
-
     if (!response?.ok) throw new Error('Erro na análise IA. Tenta novamente.');
     if (!responseData?.success) throw new Error(responseData?.error || 'Erro na análise IA.');
     return responseData;
   }, []);
 
-  // ─── Run CV Analysis ────────────────────────────────────────────────────
+  // ─── Tool execution functions ──────────────────────────────────────────
   const runCvAnalysis = useCallback(async () => {
     if (!user?.id || !subscription) return;
-    if (weeklyUsage >= weeklyLimit) {
-      setAnalysisError(lang === 'pt'
-        ? 'Atingiste o limite semanal de análises do teu plano.'
-        : 'You have reached your weekly analysis limit.');
-      return;
-    }
-
-    setAnalyzing(true);
-    setAnalysisError(null);
-    setAnalysisResult(null);
-
+    if (weeklyUsage >= weeklyLimit) { setAnalysisError(lang === 'pt' ? 'Atingiste o limite semanal de análises do teu plano.' : 'You have reached your weekly analysis limit.'); return; }
+    setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
       const cvData = await getCvData();
-
-      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) {
-        setAnalysisError(lang === 'pt'
-          ? 'Não foi possível ler o CV. Carrega um ficheiro ou atualiza o teu CV no perfil.'
-          : 'Could not read CV. Upload a file or update your CV in your profile.');
-        setAnalyzing(false);
-        return;
-      }
-
+      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) { setAnalysisError(lang === 'pt' ? 'Não foi possível ler o CV. Carrega um ficheiro ou atualiza o teu CV no perfil.' : 'Could not read CV.'); setAnalyzing(false); return; }
       const body = buildCvRequestBody(cvData, 'cv_extraction');
       const result = await fetchWithRetry(body);
-
-      // Transform raw analysis into enriched report (quadrants, ATS, salary, etc.)
       const rawAnalysis = result?.analysis || result;
       const enriched = transformGeminiResponse(rawAnalysis);
       setAnalysisResult({ ...result, _enriched: enriched });
-
-      await supabase.from('user_analyses').insert({
-        user_id: user.id,
-        analysis_type: 'cv_analyser',
-        data: { source: 'member_area', plan: subscription.plan, tier: planTier, captured_at: new Date().toISOString(), email: profile?.email },
-      });
+      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'cv_analyser', data: { source: 'member_area', plan: subscription.plan, tier: planTier, captured_at: new Date().toISOString(), email: profile?.email } });
       setWeeklyUsage(prev => prev + 1);
-    } catch (err: any) {
-      setAnalysisError(err.name === 'AbortError'
-        ? (lang === 'pt' ? 'A análise demorou demasiado. Tenta novamente.' : 'Analysis took too long. Please try again.')
-        : (err.message || 'Erro inesperado.'));
-    } finally {
-      setAnalyzing(false);
-    }
+    } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
+    finally { setAnalyzing(false); }
   }, [user?.id, subscription, weeklyUsage, weeklyLimit, planTier, lang, getCvData, fetchWithRetry]);
 
-  // ─── Run LinkedIn Analysis ──────────────────────────────────────────────
   const runLinkedinAnalysis = useCallback(async () => {
     if (!user?.id || !subscription) return;
-    if (weeklyUsage >= weeklyLimit) {
-      setAnalysisError(lang === 'pt'
-        ? 'Atingiste o limite semanal de análises do teu plano.'
-        : 'You have reached your weekly analysis limit.');
-      return;
-    }
-
+    if (weeklyUsage >= weeklyLimit) { setAnalysisError(lang === 'pt' ? 'Atingiste o limite semanal de análises do teu plano.' : 'You have reached your weekly analysis limit.'); return; }
     const linkedinUrl = profile?.linkedin_url;
-    if (!linkedinUrl || !linkedinUrl.includes('linkedin.com/in/')) {
-      setAnalysisError(lang === 'pt'
-        ? 'Adiciona o teu perfil LinkedIn nas definições do perfil.'
-        : 'Add your LinkedIn profile URL in your profile settings.');
-      return;
-    }
-
-    setAnalyzing(true);
-    setAnalysisError(null);
-    setAnalysisResult(null);
-
+    if (!linkedinUrl || !linkedinUrl.includes('linkedin.com/in/')) { setAnalysisError(lang === 'pt' ? 'Adiciona o teu perfil LinkedIn nas definições do perfil.' : 'Add your LinkedIn profile URL.'); return; }
+    setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
-      // Also get CV data if available for richer analysis
       const cvData = await getCvData();
-
       const body: any = { mode: 'cv_extraction', linkedin_url: linkedinUrl, lang };
-      if (cvData && (cvData.text.trim().length >= 50 || cvData.base64)) {
-        if (cvData.text.trim().length < 50 && cvData.base64) {
-          body.file = cvData.base64;
-          body.filename = cvData.filename;
-        } else {
-          body.cv_text = cvData.text.substring(0, 8000);
-        }
-      }
-
+      if (cvData && (cvData.text.trim().length >= 50 || cvData.base64)) { if (cvData.text.trim().length < 50 && cvData.base64) { body.file = cvData.base64; body.filename = cvData.filename; } else { body.cv_text = cvData.text.substring(0, 8000); } }
       const result = await fetchWithRetry(body);
-
       setAnalysisResult(result);
-
-      await supabase.from('user_analyses').insert({
-        user_id: user.id,
-        analysis_type: 'linkedin_roaster',
-        data: {
-          source: 'member_area',
-          plan: subscription.plan,
-          tier: planTier,
-          linkedin_url: linkedinUrl,
-          captured_at: new Date().toISOString(),
-          email: profile?.email,
-        },
-      });
+      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'linkedin_roaster', data: { source: 'member_area', plan: subscription.plan, tier: planTier, linkedin_url: linkedinUrl, captured_at: new Date().toISOString(), email: profile?.email } });
       setWeeklyUsage(prev => prev + 1);
-    } catch (err: any) {
-      setAnalysisError(err.name === 'AbortError'
-        ? (lang === 'pt' ? 'A análise demorou demasiado. Tenta novamente.' : 'Analysis took too long. Please try again.')
-        : (err.message || 'Erro inesperado.'));
-    } finally {
-      setAnalyzing(false);
-    }
+    } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
+    finally { setAnalyzing(false); }
   }, [user?.id, subscription, weeklyUsage, weeklyLimit, planTier, lang, profile, getCvData, fetchWithRetry]);
 
-  // ─── Run Career Path ───────────────────────────────────────────────────
   const runCareerPath = useCallback(async () => {
     if (!user?.id || !subscription) return;
     const limit = planTier === 'pro' ? 3 : 0;
-    if (monthlyCareerPathUsed >= limit) {
-      setAnalysisError(lang === 'pt'
-        ? `Atingiste o limite mensal de Career Path (${limit}/mês).`
-        : `You reached the monthly Career Path limit (${limit}/month).`);
-      return;
-    }
-
-    setAnalyzing(true);
-    setAnalysisError(null);
-    setAnalysisResult(null);
-
+    if (monthlyCareerPathUsed >= limit) { setAnalysisError(lang === 'pt' ? `Atingiste o limite mensal de Career Path (${limit}/mês).` : `Monthly Career Path limit reached.`); return; }
+    setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
       const cvData = await getCvData();
-
-      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) {
-        setAnalysisError(lang === 'pt'
-          ? 'Não foi possível ler o CV. Carrega um ficheiro ou atualiza o teu CV no perfil.'
-          : 'Could not read CV. Upload a file or update your CV in your profile.');
-        setAnalyzing(false);
-        return;
-      }
-
-      // First get CV extraction
+      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) { setAnalysisError(lang === 'pt' ? 'Não foi possível ler o CV.' : 'Could not read CV.'); setAnalyzing(false); return; }
       const extractionBody = buildCvRequestBody(cvData, 'cv_extraction');
       const extractionResult = await fetchWithRetry(extractionBody);
       const analysisSource = extractionResult.analysis || extractionResult;
       const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
-
-      // Now run career path with the extracted data
-      const careerPathBody: any = {
-        mode: 'career_path',
-        cv_text: cvText,
-        cv_analysis: JSON.stringify(analysisSource),
-        linkedin_url: profile?.linkedin_url || '',
-        country: cpCountry,
-        region: cpRegion,
-        lang: lang,
-      };
-
+      const careerPathBody: any = { mode: 'career_path', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: profile?.linkedin_url || '', country: cpCountry, region: cpRegion, lang };
       const result = await fetchWithRetry(careerPathBody);
-
       setAnalysisResult(result);
-
-      await supabase.from('user_analyses').insert({
-        user_id: user.id,
-        analysis_type: 'career_path',
-        data: {
-          source: 'member_area_pro',
-          plan: subscription.plan,
-          tier: planTier,
-          country: cpCountry,
-          region: cpRegion,
-          captured_at: new Date().toISOString(),
-          email: profile?.email,
-        },
-      });
-
+      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_path', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email } });
       setMonthlyCareerPathUsed(prev => prev + 1);
-    } catch (err: any) {
-      setAnalysisError(err.name === 'AbortError'
-        ? (lang === 'pt' ? 'A análise demorou demasiado. Tenta novamente.' : 'Analysis took too long. Please try again.')
-        : (err.message || 'Erro inesperado.'));
-    } finally {
-      setAnalyzing(false);
-    }
+    } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
+    finally { setAnalyzing(false); }
   }, [user?.id, subscription, planTier, monthlyCareerPathUsed, profile, cpCountry, cpRegion, lang, getCvData, fetchWithRetry]);
 
-  // ─── Run Career Intelligence ───────────────────────────────────────────
   const runCareerIntelligence = useCallback(async () => {
     if (!user?.id || !subscription) return;
     const limit = planTier === 'pro' ? 3 : 0;
-    if (monthlyCareerIntelUsed >= limit) {
-      setAnalysisError(lang === 'pt'
-        ? `Atingiste o limite mensal de Career Intelligence (${limit}/mês).`
-        : `You reached the monthly Career Intelligence limit (${limit}/month).`);
-      return;
-    }
-
-    setAnalyzing(true);
-    setAnalysisError(null);
-    setAnalysisResult(null);
-
+    if (monthlyCareerIntelUsed >= limit) { setAnalysisError(lang === 'pt' ? `Atingiste o limite mensal de Career Intelligence (${limit}/mês).` : `Monthly Career Intelligence limit reached.`); return; }
+    setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
       const cvData = await getCvData();
-
-      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) {
-        setAnalysisError(lang === 'pt'
-          ? 'Não foi possível ler o CV. Carrega um ficheiro ou atualiza o teu CV no perfil.'
-          : 'Could not read CV. Upload a file or update your CV in your profile.');
-        setAnalyzing(false);
-        return;
-      }
-
-      // First get CV extraction
+      if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) { setAnalysisError(lang === 'pt' ? 'Não foi possível ler o CV.' : 'Could not read CV.'); setAnalyzing(false); return; }
       const extractionBody = buildCvRequestBody(cvData, 'cv_extraction');
       const extractionResult = await fetchWithRetry(extractionBody);
       const analysisSource = extractionResult.analysis || extractionResult;
       const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
-
-      // Now run career intelligence
-      const ciBody: any = {
-        mode: 'career_intelligence',
-        cv_text: cvText,
-        cv_analysis: JSON.stringify(analysisSource),
-        linkedin_url: profile?.linkedin_url || '',
-        country: cpCountry,
-        region: cpRegion,
-        lang: lang,
-      };
-
+      const ciBody: any = { mode: 'career_intelligence', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: profile?.linkedin_url || '', country: cpCountry, region: cpRegion, lang };
       const result = await fetchWithRetry(ciBody);
-
       setAnalysisResult(result);
-
-      await supabase.from('user_analyses').insert({
-        user_id: user.id,
-        analysis_type: 'career_intelligence',
-        data: {
-          source: 'member_area_pro',
-          plan: subscription.plan,
-          tier: planTier,
-          country: cpCountry,
-          region: cpRegion,
-          captured_at: new Date().toISOString(),
-          email: profile?.email,
-        },
-      });
-
+      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_intelligence', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email } });
       setMonthlyCareerIntelUsed(prev => prev + 1);
-    } catch (err: any) {
-      setAnalysisError(err.name === 'AbortError'
-        ? (lang === 'pt' ? 'A análise demorou demasiado. Tenta novamente.' : 'Analysis took too long. Please try again.')
-        : (err.message || 'Erro inesperado.'));
-    } finally {
-      setAnalyzing(false);
-    }
+    } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
+    finally { setAnalyzing(false); }
   }, [user?.id, subscription, planTier, monthlyCareerIntelUsed, profile, cpCountry, cpRegion, lang, getCvData, fetchWithRetry]);
 
   // ─── Toggle tool panel ──────────────────────────────────────────────────
   const toggleTool = (key: string) => {
-    if (expandedTool === key) {
-      setExpandedTool(null);
-      setAnalysisResult(null);
-      setAnalysisError(null);
-      setCvFile(null);
-    } else {
-      setExpandedTool(key);
-      setAnalysisResult(null);
-      setAnalysisError(null);
-      setCvFile(null);
-      // Scroll the clicked tool into view after a short delay to let React render
-      setTimeout(() => {
-        const el = document.querySelector(`[data-tool-key="${key}"]`);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 100);
-    }
+    if (expandedTool === key) { setExpandedTool(null); setAnalysisResult(null); setAnalysisError(null); setCvFile(null); }
+    else { setExpandedTool(key); setAnalysisResult(null); setAnalysisError(null); setCvFile(null); setTimeout(() => { const el = document.querySelector(`[data-tool-key="${key}"]`); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100); }
   };
 
   // ─── Tool definitions ───────────────────────────────────────────────────
-  type ToolDef = {
-    key: string;
-    icon: any;
-    color: string;
-    type: 'external' | 'inline' | 'locked' | 'discount' | 'widget';
-    action?: string;
-    url?: string;
-    discount?: string | null;
-    discountOriginal?: string | null;
-    label: string;
-    desc: string;
-  };
+  type ToolDef = { key: string; icon: any; color: string; type: 'external' | 'inline' | 'locked' | 'discount' | 'widget'; action?: string; url?: string; discount?: string | null; discountOriginal?: string | null; label: string; desc: string; badge?: number };
 
   const tools: ToolDef[] = [
-    {
-      key: 'cvMaker',
-      icon: FileText,
-      color: 'from-gold/20 to-gold/5',
-      type: 'external',
-      url: 'https://share2inspire.pt/cv-builder/',
-      label: 'CV Maker',
-      desc: lang === 'pt' ? 'Cria CVs profissionais com templates otimizados' : 'Create professional CVs with optimized templates',
-    },
-    {
-      key: 'cvAnalyzer',
-      icon: BarChart3,
-      color: 'from-blue-500/15 to-blue-500/5',
-      type: 'inline',
-      action: 'cv',
-      label: 'CV Analyser',
-      desc: lang === 'pt' ? 'Análise completa e detalhada do teu CV com IA' : 'Complete AI-powered analysis of your CV',
-    },
-    {
-      key: 'linkedinRoster',
-      icon: Linkedin,
-      color: 'from-sky-500/15 to-sky-500/5',
-      type: 'inline',
-      action: 'linkedin',
-      label: 'LinkedIn Roaster',
-      desc: lang === 'pt' ? 'Otimiza o teu perfil LinkedIn com feedback IA' : 'Optimize your LinkedIn profile with AI feedback',
-    },
-    {
-      key: 'careerBot',
-      icon: Bot,
-      color: 'from-purple-500/15 to-purple-500/5',
-      type: 'widget',
-      action: 'openCareerBot',
-      label: 'Career Advisory',
-      desc: lang === 'pt' ? 'Assistente pessoal de carreira com IA' : 'Personal AI career assistant',
-    },
-    {
-      key: 'careerPath',
-      icon: Route,
-      color: 'from-emerald-500/15 to-emerald-500/5',
-      type: planTier === 'pro' ? 'inline' : planTier === 'growth' ? 'inline' : 'locked',
-      action: 'careerPath',
-      url: 'https://share2inspire.pt/career-path/',
-      discount: planTier === 'growth' ? '8,99€' : planTier === 'pro' ? '4,99€' : null,
-      discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '19€' : null,
-      label: 'Career Path',
-      desc: lang === 'pt' ? 'Planeamento estratégico da tua carreira' : 'Strategic career planning',
-    },
-    {
-      key: 'careerIntelligence',
-      icon: Sparkles,
-      color: 'from-violet-500/15 to-violet-500/5',
-      type: planTier === 'pro' ? 'inline' : 'locked',
-      action: 'careerIntelligence',
-      url: 'https://share2inspire.pt/career-intelligence/',
-      discount: planTier === 'pro' ? '9,99€' : null,
-      discountOriginal: planTier === 'pro' ? '39€' : null,
-      label: 'Career Intelligence',
-      desc: lang === 'pt' ? 'Análise avançada de mercado e posicionamento' : 'Advanced market analysis and positioning',
-    },
+    { key: 'cvMaker', icon: FileText, color: 'from-gold/20 to-gold/5', type: 'external', url: 'https://share2inspire.pt/cv-builder/', label: 'CV Maker', desc: lang === 'pt' ? 'Cria CVs profissionais com templates otimizados' : 'Create professional CVs with optimized templates' },
+    { key: 'cvAnalyzer', icon: BarChart3, color: 'from-blue-500/15 to-blue-500/5', type: 'inline', action: 'cv', label: 'CV Analyser', desc: lang === 'pt' ? 'Análise completa e detalhada do teu CV com IA' : 'Complete AI-powered analysis of your CV', badge: savedAnalyses.filter(a => a.analysis_type === 'cv_analyser').length || undefined },
+    { key: 'linkedinRoster', icon: Linkedin, color: 'from-sky-500/15 to-sky-500/5', type: 'inline', action: 'linkedin', label: 'LinkedIn Roaster', desc: lang === 'pt' ? 'Otimiza o teu perfil LinkedIn com feedback IA' : 'Optimize your LinkedIn profile with AI feedback', badge: savedAnalyses.filter(a => a.analysis_type === 'linkedin_roaster').length || undefined },
+    { key: 'careerBot', icon: Bot, color: 'from-purple-500/15 to-purple-500/5', type: 'widget', action: 'openCareerBot', label: 'Career Advisory', desc: lang === 'pt' ? 'Assistente pessoal de carreira com IA' : 'Personal AI career assistant' },
+    { key: 'careerPath', icon: Route, color: 'from-emerald-500/15 to-emerald-500/5', type: planTier === 'pro' ? 'inline' : planTier === 'growth' ? 'inline' : 'locked', action: 'careerPath', url: 'https://share2inspire.pt/career-path/', discount: planTier === 'growth' ? '8,99€' : planTier === 'pro' ? '4,99€' : null, discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '19€' : null, label: 'Career Path', desc: lang === 'pt' ? 'Planeamento estratégico da tua carreira' : 'Strategic career planning', badge: savedAnalyses.filter(a => a.analysis_type === 'career_path').length || undefined },
+    { key: 'careerIntelligence', icon: Sparkles, color: 'from-violet-500/15 to-violet-500/5', type: planTier === 'pro' ? 'inline' : 'locked', action: 'careerIntelligence', url: 'https://share2inspire.pt/career-intelligence/', discount: planTier === 'pro' ? '9,99€' : null, discountOriginal: planTier === 'pro' ? '39€' : null, label: 'Career Intelligence', desc: lang === 'pt' ? 'Análise avançada de mercado e posicionamento' : 'Advanced market analysis and positioning', badge: savedAnalyses.filter(a => a.analysis_type === 'career_intelligence').length || undefined },
   ];
 
   const remainingAnalyses = Math.max(0, weeklyLimit - weeklyUsage);
@@ -1166,7 +590,6 @@ export default function MemberArea() {
     if (tool.action === 'cv') {
       return (
         <div className="space-y-4">
-          {/* CV source info */}
           <div>
             {profile?.cv_url ? (
               <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-3 py-2">
@@ -1180,30 +603,15 @@ export default function MemberArea() {
               </div>
             )}
           </div>
-
-          {/* File upload */}
           <div>
             <input ref={fileInputRef} type="file" accept=".pdf,.docx,.txt" onChange={(e) => setCvFile(e.target.files?.[0] || null)} className="hidden" />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#ccc] rounded text-xs text-[#666] hover:border-gold/40 hover:text-gold transition-colors"
-            >
+            <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#ccc] rounded text-xs text-[#666] hover:border-gold/40 hover:text-gold transition-colors">
               <Upload className="w-3.5 h-3.5" />
-              {cvFile ? cvFile.name : (lang === 'pt' ? 'Ou carrega outro CV (PDF, DOCX, TXT)' : 'Or upload another CV (PDF, DOCX, TXT)')}
+              {cvFile ? cvFile.name : (lang === 'pt' ? 'Ou carrega outro CV (PDF, DOCX, TXT)' : 'Or upload another CV')}
             </button>
           </div>
-
-          {/* Execute */}
-          <button
-            onClick={runCvAnalysis}
-            disabled={analyzing || (!profile?.cv_url && !cvFile) || (weeklyUsage >= weeklyLimit)}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#1a1a1a] text-white text-sm font-medium rounded hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-          >
-            {analyzing ? (
-              <><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A analisar...' : 'Analyzing...'}</>
-            ) : (
-              <><BarChart3 className="w-4 h-4" />{lang === 'pt' ? 'Executar análise de CV' : 'Run CV analysis'}</>
-            )}
+          <button onClick={runCvAnalysis} disabled={analyzing || (!profile?.cv_url && !cvFile) || (weeklyUsage >= weeklyLimit)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
+            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A analisar...' : 'Analyzing...'}</>) : (<><BarChart3 className="w-4 h-4" />{lang === 'pt' ? 'Executar análise de CV' : 'Run CV analysis'}</>)}
           </button>
         </div>
       );
@@ -1225,17 +633,8 @@ export default function MemberArea() {
               </div>
             )}
           </div>
-
-          <button
-            onClick={runLinkedinAnalysis}
-            disabled={analyzing || !profile?.linkedin_url || (weeklyUsage >= weeklyLimit)}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#1a1a1a] text-white text-sm font-medium rounded hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-          >
-            {analyzing ? (
-              <><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A analisar perfil LinkedIn...' : 'Analyzing LinkedIn profile...'}</>
-            ) : (
-              <><Linkedin className="w-4 h-4" />{lang === 'pt' ? 'Analisar perfil LinkedIn' : 'Analyze LinkedIn profile'}</>
-            )}
+          <button onClick={runLinkedinAnalysis} disabled={analyzing || !profile?.linkedin_url || (weeklyUsage >= weeklyLimit)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
+            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A analisar perfil LinkedIn...' : 'Analyzing LinkedIn...'}</>) : (<><Linkedin className="w-4 h-4" />{lang === 'pt' ? 'Analisar perfil LinkedIn' : 'Analyze LinkedIn profile'}</>)}
           </button>
         </div>
       );
@@ -1245,88 +644,34 @@ export default function MemberArea() {
       const cpAvailable = monthlyCareerPathUsed < 1;
       return (
         <div className="space-y-4">
-          {/* Pro included badge */}
           <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-3 py-2">
             <CheckCircle className="w-3.5 h-3.5" />
             <span>{lang === 'pt' ? '1 Career Path incluído por mês no plano Pro' : '1 Career Path included per month on Pro plan'}</span>
-            {!cpAvailable && (
-              <span className="ml-auto text-amber-600 font-medium">
-                {lang === 'pt' ? '(já utilizado este mês)' : '(already used this month)'}
-              </span>
-            )}
+            {!cpAvailable && <span className="ml-auto text-amber-600 font-medium">{lang === 'pt' ? '(já utilizado este mês)' : '(already used this month)'}</span>}
           </div>
-
-          {/* CV source */}
           <div>
             {profile?.cv_url ? (
-              <div className="flex items-center gap-2 text-xs text-emerald-700/70 bg-emerald-50/50 border border-emerald-200/50 rounded px-3 py-2">
-                <CheckCircle className="w-3.5 h-3.5" />
-                <span>{lang === 'pt' ? 'CV do perfil' : 'Profile CV'}: {profile.cv_filename || 'CV'}</span>
-              </div>
+              <div className="flex items-center gap-2 text-xs text-emerald-700/70 bg-emerald-50/50 border border-emerald-200/50 rounded px-3 py-2"><CheckCircle className="w-3.5 h-3.5" /><span>{lang === 'pt' ? 'CV do perfil' : 'Profile CV'}: {profile.cv_filename || 'CV'}</span></div>
             ) : (
-              <div className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">
-                <AlertCircle className="w-3.5 h-3.5" />
-                <span>{lang === 'pt' ? 'Sem CV no perfil. Carrega um ficheiro.' : 'No CV in profile. Upload a file.'}</span>
-              </div>
+              <div className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2"><AlertCircle className="w-3.5 h-3.5" /><span>{lang === 'pt' ? 'Sem CV no perfil.' : 'No CV in profile.'}</span></div>
             )}
           </div>
-
-          {/* File upload */}
           <div>
             <input ref={fileInputRef} type="file" accept=".pdf,.docx,.txt" onChange={(e) => setCvFile(e.target.files?.[0] || null)} className="hidden" />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#ccc] rounded text-xs text-[#666] hover:border-gold/40 hover:text-gold transition-colors"
-            >
-              <Upload className="w-3.5 h-3.5" />
-              {cvFile ? cvFile.name : (lang === 'pt' ? 'Ou carrega outro CV' : 'Or upload another CV')}
-            </button>
+            <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#ccc] rounded text-xs text-[#666] hover:border-gold/40 hover:text-gold transition-colors"><Upload className="w-3.5 h-3.5" />{cvFile ? cvFile.name : (lang === 'pt' ? 'Ou carrega outro CV' : 'Or upload another CV')}</button>
           </div>
-
-          {/* Country & Region dropdowns */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">
-                <Globe className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'País' : 'Country'}
-              </label>
-              <select
-                value={cpCountry}
-                onChange={e => { setCpCountry(e.target.value); setCpRegion(''); }}
-                className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"
-              >
-                {countries.map(c => (
-                  <option key={c.code} value={c.country}>{c.country}</option>
-                ))}
-              </select>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><Globe className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'País' : 'Country'}</label>
+              <select value={cpCountry} onChange={e => { setCpCountry(e.target.value); setCpRegion(''); }} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white">{countries.map(c => (<option key={c.code} value={c.country}>{c.country}</option>))}</select>
             </div>
             <div>
-              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">
-                <MapPin className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'Região' : 'Region'}
-              </label>
-              <select
-                value={cpRegion}
-                onChange={e => setCpRegion(e.target.value)}
-                className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"
-              >
-                <option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>
-                {availableRegions.map(r => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
-              </select>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><MapPin className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'Região' : 'Region'}</label>
+              <select value={cpRegion} onChange={e => setCpRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"><option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>{availableRegions.map(r => (<option key={r} value={r}>{r}</option>))}</select>
             </div>
           </div>
-
-          {/* Execute */}
-          <button
-            onClick={runCareerPath}
-            disabled={analyzing || !cpAvailable || (!profile?.cv_url && !cvFile)}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#1a1a1a] text-white text-sm font-medium rounded hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-          >
-            {analyzing ? (
-              <><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar Career Path...' : 'Generating Career Path...'}</>
-            ) : (
-              <><Route className="w-4 h-4" />{lang === 'pt' ? 'Gerar Career Path' : 'Generate Career Path'}</>
-            )}
+          <button onClick={runCareerPath} disabled={analyzing || !cpAvailable || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
+            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar Career Path...' : 'Generating Career Path...'}</>) : (<><Route className="w-4 h-4" />{lang === 'pt' ? 'Gerar Career Path' : 'Generate Career Path'}</>)}
           </button>
         </div>
       );
@@ -1336,421 +681,215 @@ export default function MemberArea() {
       const ciAvailable = monthlyCareerIntelUsed < 1;
       return (
         <div className="space-y-4">
-          {/* Pro included badge */}
           <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-3 py-2">
             <CheckCircle className="w-3.5 h-3.5" />
             <span>{lang === 'pt' ? '1 Career Intelligence incluído por mês no plano Pro' : '1 Career Intelligence included per month on Pro plan'}</span>
-            {!ciAvailable && (
-              <span className="ml-auto text-amber-600 font-medium">
-                {lang === 'pt' ? '(já utilizado este mês)' : '(already used this month)'}
-              </span>
-            )}
+            {!ciAvailable && <span className="ml-auto text-amber-600 font-medium">{lang === 'pt' ? '(já utilizado este mês)' : '(already used this month)'}</span>}
           </div>
-
-          {/* CV source */}
           <div>
             {profile?.cv_url ? (
-              <div className="flex items-center gap-2 text-xs text-emerald-700/70 bg-emerald-50/50 border border-emerald-200/50 rounded px-3 py-2">
-                <CheckCircle className="w-3.5 h-3.5" />
-                <span>{lang === 'pt' ? 'CV do perfil' : 'Profile CV'}: {profile.cv_filename || 'CV'}</span>
-              </div>
+              <div className="flex items-center gap-2 text-xs text-emerald-700/70 bg-emerald-50/50 border border-emerald-200/50 rounded px-3 py-2"><CheckCircle className="w-3.5 h-3.5" /><span>{lang === 'pt' ? 'CV do perfil' : 'Profile CV'}: {profile.cv_filename || 'CV'}</span></div>
             ) : (
-              <div className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">
-                <AlertCircle className="w-3.5 h-3.5" />
-                <span>{lang === 'pt' ? 'Sem CV no perfil. Carrega um ficheiro.' : 'No CV in profile. Upload a file.'}</span>
-              </div>
+              <div className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2"><AlertCircle className="w-3.5 h-3.5" /><span>{lang === 'pt' ? 'Sem CV no perfil.' : 'No CV in profile.'}</span></div>
             )}
           </div>
-
-          {/* File upload */}
           <div>
             <input ref={fileInputRef} type="file" accept=".pdf,.docx,.txt" onChange={(e) => setCvFile(e.target.files?.[0] || null)} className="hidden" />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#ccc] rounded text-xs text-[#666] hover:border-gold/40 hover:text-gold transition-colors"
-            >
-              <Upload className="w-3.5 h-3.5" />
-              {cvFile ? cvFile.name : (lang === 'pt' ? 'Ou carrega outro CV' : 'Or upload another CV')}
-            </button>
+            <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#ccc] rounded text-xs text-[#666] hover:border-gold/40 hover:text-gold transition-colors"><Upload className="w-3.5 h-3.5" />{cvFile ? cvFile.name : (lang === 'pt' ? 'Ou carrega outro CV' : 'Or upload another CV')}</button>
           </div>
-
-          {/* Country & Region dropdowns */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">
-                <Globe className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'País' : 'Country'}
-              </label>
-              <select
-                value={cpCountry}
-                onChange={e => { setCpCountry(e.target.value); setCpRegion(''); }}
-                className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"
-              >
-                {countries.map(c => (
-                  <option key={c.code} value={c.country}>{c.country}</option>
-                ))}
-              </select>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><Globe className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'País' : 'Country'}</label>
+              <select value={cpCountry} onChange={e => { setCpCountry(e.target.value); setCpRegion(''); }} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white">{countries.map(c => (<option key={c.code} value={c.country}>{c.country}</option>))}</select>
             </div>
             <div>
-              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block">
-                <MapPin className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'Região' : 'Region'}
-              </label>
-              <select
-                value={cpRegion}
-                onChange={e => setCpRegion(e.target.value)}
-                className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"
-              >
-                <option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>
-                {availableRegions.map(r => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
-              </select>
+              <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><MapPin className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'Região' : 'Region'}</label>
+              <select value={cpRegion} onChange={e => setCpRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"><option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>{availableRegions.map(r => (<option key={r} value={r}>{r}</option>))}</select>
             </div>
           </div>
-
-          {/* Execute */}
-          <button
-            onClick={runCareerIntelligence}
-            disabled={analyzing || !ciAvailable || (!profile?.cv_url && !cvFile)}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#1a1a1a] text-white text-sm font-medium rounded hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-          >
-            {analyzing ? (
-              <><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar análise...' : 'Generating analysis...'}</>
-            ) : (
-              <><Sparkles className="w-4 h-4" />{lang === 'pt' ? 'Gerar Career Intelligence' : 'Generate Career Intelligence'}</>
-            )}
+          <button onClick={runCareerIntelligence} disabled={analyzing || !ciAvailable || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
+            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar análise...' : 'Generating analysis...'}</>) : (<><Sparkles className="w-4 h-4" />{lang === 'pt' ? 'Gerar Career Intelligence' : 'Generate Career Intelligence'}</>)}
           </button>
         </div>
       );
     }
-
     return null;
   };
 
-  // ─── Routing automático: sem subscrição activa → UpgradePage ─────────────
-  const hasActiveSub = subscription && subscription.status === 'active' && new Date(subscription.expires_at) > new Date();
-  if (!hasActiveSub) {
-    return <UpgradePage />;
+  // ─── Analysis helpers ───────────────────────────────────────────────────
+  function getAnalysisSummary(analysis: SavedAnalysis): string {
+    const data = analysis.data;
+    if (!data) return '';
+    if (analysis.analysis_type === 'cv_analyser') { const s = data.score ?? data.analysis?.score ?? data.analysis?.atsScore ?? data.analysis?.overall_score; if (s !== undefined) return `Score ATS: ${s}/100`; }
+    if (analysis.analysis_type === 'linkedin_roaster') { if (data.score) return `Score: ${data.score}`; if (data.analysis?.teaser?.nota_geral) return `Nota: ${data.analysis.teaser.nota_geral}`; }
+    if (analysis.analysis_type === 'career_path') { if (data.career_path?.title) return data.career_path.title; }
+    if (analysis.analysis_type === 'career_intelligence') { if (data.strategic_paths && Array.isArray(data.strategic_paths)) return `${data.strategic_paths.length} caminhos estratégicos`; }
+    if (analysis.analysis_type === 'career_energy') { if (data.total_score) return `Score: ${data.total_score}${data.level ? ` — ${data.level}` : ''}`; }
+    return '';
   }
+
+  function formatDate(dateStr: string) {
+    try { return new Date(dateStr).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch { return dateStr; }
+  }
+
+  async function handleDeleteAnalysis(id: string) {
+    if (!confirm(lang === 'pt' ? 'Tens a certeza que queres apagar esta análise?' : 'Are you sure you want to delete this analysis?')) return;
+    setDeletingId(id);
+    try { await supabase.from('user_analyses').delete().eq('id', id); setSavedAnalyses(prev => prev.filter(a => a.id !== id)); } catch (e) { console.error('Error deleting analysis:', e); }
+    setDeletingId(null);
+  }
+
+  // Group analyses by type
+  const groupedAnalyses = useMemo(() => {
+    const groups: Record<string, SavedAnalysis[]> = {};
+    savedAnalyses.forEach(a => { const type = a.analysis_type || 'unknown'; if (!groups[type]) groups[type] = []; groups[type].push(a); });
+    return groups;
+  }, [savedAnalyses]);
+
+  // ─── Routing: sem subscrição → UpgradePage ─────────────────────────────
+  const hasActiveSub = subscription && subscription.status === 'active' && new Date(subscription.expires_at) > new Date();
+  if (!hasActiveSub) return <UpgradePage />;
 
   return (
     <div className="min-h-screen pt-24 pb-20">
       <div className="container max-w-5xl mx-auto px-4">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+
+        {/* ─── Header ─── */}
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
           <div>
-            <p className="text-gold text-xs font-light tracking-[0.15em] uppercase mb-2">{t('member.title')}</p>
+            <p className="text-gold text-[11px] font-medium tracking-[0.15em] uppercase mb-1">{t('member.title')}</p>
             <h1 className="text-2xl md:text-3xl font-semibold text-[#1a1a1a]">
               {profile?.first_name ? `${t('member.welcome')}, ${profile.first_name}.` : t('member.welcome')}
             </h1>
           </div>
-          {subscription && (
-            <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-[#999] font-light flex-wrap">
-              <span className={`px-2.5 py-1 rounded text-[10px] font-semibold uppercase tracking-wider ${
-                planTier === 'pro' ? 'bg-violet-100 text-violet-700 border border-violet-200' :
-                planTier === 'growth' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
-                'bg-gold/10 text-gold border border-gold/20'
-              }`}>
-                {planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'}
-              </span>
-              <Clock className="w-3.5 h-3.5" />
-              <span>{t('member.planExpires')} {new Date(subscription.expires_at).toLocaleDateString('pt-PT')}</span>
-              <span className="px-2 py-0.5 bg-gold/10 border border-gold/20 rounded text-gold text-[10px] font-medium">
-                {daysLeft} {t('member.daysLeft')}
-              </span>
-            </div>
-           )}
+          <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-[#999] font-light flex-wrap">
+            <span className={`px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider ${
+              planTier === 'pro' ? 'bg-violet-50 text-violet-700 border border-violet-200' :
+              planTier === 'growth' ? 'bg-blue-50 text-blue-700 border border-blue-200' :
+              'bg-amber-50 text-amber-700 border border-amber-200'
+            }`}>
+              {planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'}
+            </span>
+            {/* Quota pill */}
+            <span className="flex items-center gap-1.5 px-2.5 py-1 bg-[#f5f5f4] border border-[#e5e5e5] rounded-md">
+              <Sparkles className="w-3 h-3 text-gold" />
+              <span className="text-[10px] font-medium text-[#666]">{weeklyUsage}/{isProPlan ? '∞' : weeklyLimit}</span>
+              <span className="text-[10px] text-[#999]">{lang === 'pt' ? 'esta semana' : 'this week'}</span>
+            </span>
+            <span className="flex items-center gap-1 text-[10px] text-[#999]">
+              <Clock className="w-3 h-3" />
+              {daysLeft}d
+            </span>
+          </div>
         </div>
 
-        {/* ─── Tab Navigation ─── */}
-        <div className="mb-8 border-b border-[#e5e5e5]">
-          <nav className="flex gap-0 -mb-px overflow-x-auto scrollbar-hide">
+        {/* ─── Career Progress (compact) ─── */}
+        <div className="mb-8 p-4 border border-[#e5e5e5] rounded-xl bg-white shadow-sm">
+          <CareerProgress variant="compact" />
+        </div>
+
+        {/* ─── Tab Navigation (NO arrows) ─── */}
+        <div className="mb-8">
+          <nav className="flex gap-1 bg-[#f5f5f4] p-1 rounded-xl">
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id;
               const TabIcon = tab.icon;
+              // Lock jobs & content for essential
+              const isLocked = (tab.id === 'jobs' || tab.id === 'content') && planTier === 'essential';
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-3 text-xs font-medium border-b-2 transition-all duration-300 whitespace-nowrap ${
+                  onClick={() => !isLocked && setActiveTab(tab.id)}
+                  className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-300 ${
                     isActive
-                      ? 'border-gold text-gold'
-                      : 'border-transparent text-[#999] hover:text-[#666] hover:border-[#ddd]'
+                      ? 'bg-white text-[#1a1a1a] shadow-sm'
+                      : isLocked
+                        ? 'text-[#ccc] cursor-default'
+                        : 'text-[#888] hover:text-[#555]'
                   }`}
                 >
                   <TabIcon className="w-3.5 h-3.5" />
-                  {lang === 'pt' ? tab.labelPt : tab.labelEn}
+                  <span className="hidden sm:inline">{lang === 'pt' ? tab.labelPt : tab.labelEn}</span>
+                  {isLocked && <Lock className="w-3 h-3" />}
                 </button>
               );
             })}
           </nav>
         </div>
 
-        {/* ═══════════════════ TAB: OVERVIEW ═══════════════════ */}
-        {activeTab === 'overview' && (
-          <div className="space-y-6 animate-in fade-in duration-300">
-
-            {/* Row 1: Quota + Career Score */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Quota Card */}
-              {subscription && (
-                <div className="p-5 border border-[#e5e5e5] rounded-lg bg-[#fafaf9] hover:border-gold/20 transition-all">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-3.5 h-3.5 text-gold" />
-                      <span className="text-xs font-medium text-[#1a1a1a]">{t('member.analysesThisWeek')}</span>
-                    </div>
-                    <span className="text-xs tabular-nums text-[#666] font-medium">{weeklyUsage}/{isProPlan ? '∞' : weeklyLimit}</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-[#e5e5e5] rounded-full overflow-hidden mb-2">
-                    <div className="h-full bg-gold rounded-full transition-all duration-500" style={{ width: isProPlan ? '10%' : `${Math.min(100, (weeklyUsage / weeklyLimit) * 100)}%` }} />
-                  </div>
-                  <p className="text-[10px] text-[#999]">
-                    {remainingAnalyses > 0 || isProPlan
-                      ? (isProPlan ? (lang === 'pt' ? 'Ilimitado · Renova 2ª feira' : 'Unlimited · Resets Monday') : `${remainingAnalyses} ${t('member.remaining')}`)
-                      : (lang === 'pt' ? 'Limite atingido · Renova 2ª feira' : 'Limit reached · Resets Monday')}
-                  </p>
-                </div>
-              )}
-
-              {/* Career Score Card */}
-              <Link href="/perfil" className="p-5 border border-[#e5e5e5] rounded-lg bg-[#fafaf9] hover:border-gold/20 transition-all text-left group block">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <BarChart3 className="w-3.5 h-3.5 text-gold" />
-                    <span className="text-xs font-medium text-[#1a1a1a]">{lang === 'pt' ? 'Perfil de Carreira' : 'Career Profile'}</span>
-                  </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#ccc] group-hover:text-gold transition-colors" />
-                </div>
-                <CareerProgress variant="compact" />
-              </Link>
-            </div>
-
-            {/* Row 2: Tools Summary — compact grid */}
-            <div>
-              <h3 className="text-xs font-medium text-[#1a1a1a] mb-3">{lang === 'pt' ? 'As tuas ferramentas' : 'Your tools'}</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {tools.map((tool) => {
-                  const isLocked = tool.type === 'locked';
-                  return (
-                    <button
-                      key={tool.key}
-                      onClick={() => { if (!isLocked) setActiveTab('tools'); }}
-                      className={`p-4 border rounded-lg text-left transition-all group ${
-                        isLocked ? 'border-[#e5e5e5] bg-[#fafaf9] opacity-50 cursor-default' : 'border-[#e5e5e5] hover:border-gold/20 bg-white'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className={`w-8 h-8 rounded flex items-center justify-center bg-gradient-to-br ${tool.color}`}>
-                          <tool.icon className="w-3.5 h-3.5 text-[#333]" />
-                        </div>
-                        {isLocked ? (
-                          <Lock className="w-3 h-3 text-[#ccc]" />
-                        ) : (
-                          <ArrowRight className="w-3 h-3 text-[#ccc] group-hover:text-gold transition-colors" />
-                        )}
-                      </div>
-                      <p className="text-[11px] font-medium text-[#1a1a1a] mb-0.5">{tool.label}</p>
-                      <p className="text-[10px] text-[#999] font-light line-clamp-1">
-                        {isLocked ? (lang === 'pt' ? 'Disponível com upgrade' : 'Available with upgrade') : tool.desc}
-                      </p>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Row 3: Jobs Summary Card */}
-            <button onClick={() => setActiveTab('jobs')} className="w-full p-5 border border-[#e5e5e5] rounded-lg bg-[#fafaf9] hover:border-gold/20 transition-all text-left group">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 flex items-center justify-center">
-                    <Briefcase className="w-4 h-4 text-[#333]" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-[#1a1a1a]">{lang === 'pt' ? 'Feed de Vagas' : 'Job Feed'}</p>
-                    <p className="text-[10px] text-[#999] font-light">
-                      {planTier === 'essential'
-                        ? (lang === 'pt' ? 'Disponível a partir do plano Growth' : 'Available from Growth plan')
-                        : (lang === 'pt' ? 'Vagas curadas para o teu perfil' : 'Jobs curated for your profile')}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {planTier === 'essential' ? (
-                    <Lock className="w-3.5 h-3.5 text-[#ccc]" />
-                  ) : (
-                    <span className="text-[10px] text-gold font-medium group-hover:underline">{lang === 'pt' ? 'Ver vagas →' : 'View jobs →'}</span>
-                  )}
-                </div>
-              </div>
-            </button>
-
-            {/* Row 4: Quick links */}
-            <div className="grid grid-cols-3 gap-2">
-              {TABS.filter(t => t.id !== 'overview').map((tab) => {
-                const TabIcon = tab.icon;
-                return (
-                  <button key={tab.id} onClick={() => setActiveTab(tab.id)} className="p-3 border border-[#e5e5e5] rounded-lg hover:border-gold/20 transition-all text-center group">
-                    <TabIcon className="w-4 h-4 text-[#999] group-hover:text-gold mx-auto mb-1.5 transition-colors" />
-                    <p className="text-[10px] font-medium text-[#1a1a1a]">{lang === 'pt' ? tab.labelPt : tab.labelEn}</p>
-                  </button>
-                );
-              })}
-            </div>
-
-          </div>
-        )}
-
-        {/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 TAB: TOOLS \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */}
+        {/* ═══════════════════ TAB: TOOLS ═══════════════════ */}
         {activeTab === 'tools' && (
-          <div className="animate-in fade-in duration-300">
-        <section className="mb-16">
-          <h2 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('member.tools')}</h2>
-          <p className="text-xs text-[#999] font-light mb-6">
-            {lang === 'pt' ? 'Acede às tuas ferramentas incluídas na subscrição.' : 'Access your tools included in your subscription.'}
-          </p>
-          <div className="space-y-3">
+          <div className="animate-in fade-in duration-300 space-y-3">
             {tools.map((tool) => (
-              <div key={tool.key} data-tool-key={tool.key} className="border border-[#e5e5e5] rounded-lg overflow-hidden hover:border-gold/20 transition-all duration-500">
+              <div key={tool.key} data-tool-key={tool.key} className="border border-[#e5e5e5] rounded-xl overflow-hidden hover:border-gold/20 transition-all duration-300 bg-white shadow-sm">
                 {/* External link tool */}
                 {tool.type === 'external' && (
                   <a href={tool.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-5">
-                    <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}>
-                      <tool.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#333]" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-xs sm:text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
-                      <p className="text-[10px] sm:text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
-                    </div>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}><tool.icon className="w-4 h-4 text-[#333]" /></div>
+                    <div className="flex-1 min-w-0"><h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3><p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p></div>
                     <ExternalLink className="w-3.5 h-3.5 text-[#ccc] group-hover:text-gold/50 transition-colors shrink-0" />
                   </a>
                 )}
-
-                {/* Widget trigger tool */}
+                {/* Widget trigger */}
                 {tool.type === 'widget' && (
-                  <button
-                    onClick={() => {
-                      if (tool.action === 'openCareerBot') {
-                        window.dispatchEvent(new Event('open-career-bot'));
-                      }
-                    }}
-                    className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-5 w-full text-left"
-                  >
-                    <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}>
-                      <tool.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#333]" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-xs sm:text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
-                      <p className="text-[10px] sm:text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
-                    </div>
+                  <button onClick={() => { if (tool.action === 'openCareerBot') window.dispatchEvent(new Event('open-career-bot')); }} className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-5 w-full text-left">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}><tool.icon className="w-4 h-4 text-[#333]" /></div>
+                    <div className="flex-1 min-w-0"><h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3><p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p></div>
                     <ExternalLink className="w-3.5 h-3.5 text-[#ccc] group-hover:text-gold/50 transition-colors shrink-0" />
                   </button>
                 )}
-
                 {/* Locked tool */}
                 {tool.type === 'locked' && (
                   <div className="flex items-center gap-3 sm:gap-4 p-4 sm:p-5 opacity-50">
-                    <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}>
-                      <tool.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#333]" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-xs sm:text-sm font-medium text-[#1a1a1a]">{tool.label}</h3>
-                      <p className="text-[10px] sm:text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
-                    </div>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}><tool.icon className="w-4 h-4 text-[#333]" /></div>
+                    <div className="flex-1 min-w-0"><h3 className="text-sm font-medium text-[#1a1a1a]">{tool.label}</h3><p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p></div>
                     <Lock className="w-3.5 h-3.5 text-[#ccc] shrink-0" />
                   </div>
                 )}
-
-                {/* Discount tool (external link + discount badge) */}
+                {/* Discount tool */}
                 {tool.type === 'discount' && (
                   <a href={tool.url} target="_blank" rel="noopener noreferrer" className="group flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-4 sm:p-5">
                     <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
-                      <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}>
-                        <tool.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#333]" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-xs sm:text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
-                        <p className="text-[10px] sm:text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
-                      </div>
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}><tool.icon className="w-4 h-4 text-[#333]" /></div>
+                      <div className="flex-1 min-w-0"><h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3><p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p></div>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0 ml-12 sm:ml-0">
-                      {tool.discountOriginal && (
-                        <span className="text-[10px] text-[#bbb] line-through">{tool.discountOriginal}</span>
-                      )}
-                      <span className="flex items-center gap-1 px-2 py-1 bg-gold/5 border border-gold/20 rounded text-[10px] text-gold font-medium">
-                        <Tag className="w-3 h-3" />
-                        {tool.discount}
-                      </span>
+                    <div className="flex items-center gap-2 shrink-0 ml-13 sm:ml-0">
+                      {tool.discountOriginal && <span className="text-[10px] text-[#bbb] line-through">{tool.discountOriginal}</span>}
+                      <span className="flex items-center gap-1 px-2 py-1 bg-gold/5 border border-gold/20 rounded text-[10px] text-gold font-medium"><Tag className="w-3 h-3" />{tool.discount}</span>
                     </div>
                   </a>
                 )}
-
                 {/* Inline expandable tool */}
                 {tool.type === 'inline' && (
                   <>
                     <button onClick={() => toggleTool(tool.key)} className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-5 w-full text-left">
-                      <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}>
-                        <tool.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-[#333]" />
-                      </div>
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br ${tool.color} shrink-0`}><tool.icon className="w-4 h-4 text-[#333]" /></div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-xs sm:text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
-                        <p className="text-[10px] sm:text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors">{tool.label}</h3>
+                          {tool.badge && tool.badge > 0 && <span className="px-1.5 py-0.5 bg-gold/10 text-gold text-[10px] font-semibold rounded-full">{tool.badge}</span>}
+                        </div>
+                        <p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
                       </div>
                       {tool.action === 'careerPath' && planTier === 'pro' && (
-                        <span className="px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium shrink-0 mr-2">
-                          {monthlyCareerPathUsed < 1
-                            ? `1 ${t('member.includedMonth')}`
-                            : t('member.used')
-                          }
-                        </span>
+                        <span className="px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium shrink-0 mr-2">{monthlyCareerPathUsed < 1 ? `1 ${t('member.includedMonth')}` : t('member.used')}</span>
                       )}
                       {tool.action === 'careerIntelligence' && planTier === 'pro' && (
-                        <span className="px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium shrink-0 mr-2">
-                          {monthlyCareerIntelUsed < 1
-                            ? `1 ${t('member.includedMonth')}`
-                            : t('member.used')
-                          }
-                        </span>
+                        <span className="px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium shrink-0 mr-2">{monthlyCareerIntelUsed < 1 ? `1 ${t('member.includedMonth')}` : t('member.used')}</span>
                       )}
-                      {expandedTool === tool.key ? (
-                        <ChevronUp className="w-4 h-4 text-gold shrink-0" />
-                      ) : (
-                        <ChevronDown className="w-4 h-4 text-[#ccc] group-hover:text-gold/50 transition-colors shrink-0" />
-                      )}
+                      {expandedTool === tool.key ? <ChevronUp className="w-4 h-4 text-gold shrink-0" /> : <ChevronDown className="w-4 h-4 text-[#ccc] group-hover:text-gold/50 transition-colors shrink-0" />}
                     </button>
-
                     {expandedTool === tool.key && (
                       <div className="border-t border-[#e5e5e5] p-5 bg-[#fafaf9]">
                         {renderInlinePanel(tool)}
-
-                        {/* Error */}
-                        {analysisError && (
-                          <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2 mt-4">
-                            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                            <span>{analysisError}</span>
-                          </div>
-                        )}
-
-                        {/* Result */}
+                        {analysisError && (<div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2 mt-4"><AlertCircle className="w-3.5 h-3.5 shrink-0" /><span>{analysisError}</span></div>)}
                         {analysisResult && (
                           analysisResult._enriched ? (
                             <div className="mt-4 border border-gold/20 rounded-lg bg-[#fafaf9] p-4 animate-in fade-in duration-500">
-                              <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center gap-2">
-                                  <CheckCircle className="w-4 h-4 text-emerald-600" />
-                                  <h4 className="text-sm font-semibold text-[#1a1a1a]">
-                                    {lang === 'pt' ? 'Análise concluída' : 'Analysis complete'}
-                                  </h4>
-                                </div>
-                                <button onClick={() => setAnalysisResult(null)} className="text-xs text-[#999] hover:text-[#1a1a1a] transition-colors">
-                                  {lang === 'pt' ? 'Fechar' : 'Close'}
-                                </button>
-                              </div>
+                              <div className="flex items-center justify-between mb-4"><div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-600" /><h4 className="text-sm font-semibold text-[#1a1a1a]">{lang === 'pt' ? 'Análise concluída' : 'Analysis complete'}</h4></div><button onClick={() => setAnalysisResult(null)} className="text-xs text-[#999] hover:text-[#1a1a1a] transition-colors">{lang === 'pt' ? 'Fechar' : 'Close'}</button></div>
                               <AnalysisResultsFull data={analysisResult._enriched} />
                             </div>
-                          ) : (
-                            <AnalysisResult data={analysisResult} onClose={() => setAnalysisResult(null)} lang={lang} />
-                          )
+                          ) : (<AnalysisResult data={analysisResult} onClose={() => setAnalysisResult(null)} lang={lang} />)
                         )}
                       </div>
                     )}
@@ -1759,7 +898,101 @@ export default function MemberArea() {
               </div>
             ))}
           </div>
-         </section>
+        )}
+
+        {/* ═══════════════════ TAB: ANALYSES ═══════════════════ */}
+        {activeTab === 'analyses' && (
+          <div className="animate-in fade-in duration-300">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm font-semibold text-[#1a1a1a]">{lang === 'pt' ? 'Biblioteca de Análises' : 'Analysis Library'}</h2>
+                <span className="text-[10px] text-[#999] bg-[#f5f5f4] px-2 py-0.5 rounded-full">{savedAnalyses.length}</span>
+              </div>
+              <button
+                onClick={() => { setLoadingSaved(true); supabase.from('user_analyses').select('*').eq('user_id', user!.id).order('created_at', { ascending: false }).limit(100).then(({ data }) => { setSavedAnalyses(data as SavedAnalysis[] || []); setLoadingSaved(false); }); }}
+                className="flex items-center gap-1 text-[10px] text-[#999] hover:text-gold transition-colors"
+              >
+                <RefreshCw className="w-3 h-3" /> {lang === 'pt' ? 'Atualizar' : 'Refresh'}
+              </button>
+            </div>
+
+            {loadingSaved ? (
+              <div className="py-16 text-center"><Loader2 className="w-5 h-5 animate-spin text-gold mx-auto" /><p className="text-xs text-[#999] mt-2">{t('dash.loadingAnalyses')}</p></div>
+            ) : savedAnalyses.length === 0 ? (
+              <div className="py-16 text-center border border-dashed border-[#e5e5e5] rounded-xl bg-[#fafaf9]">
+                <FileSearch className="w-10 h-10 text-[#ddd] mx-auto mb-3" />
+                <p className="text-sm text-[#999] mb-1">{t('dash.noAnalysesYet')}</p>
+                <p className="text-xs text-[#bbb] mb-4">{lang === 'pt' ? 'Usa as ferramentas para gerar a tua primeira análise.' : 'Use the tools to generate your first analysis.'}</p>
+                <button onClick={() => setActiveTab('tools')} className="inline-flex items-center gap-1.5 text-xs text-gold hover:underline font-medium">
+                  <Wrench className="w-3 h-3" /> {lang === 'pt' ? 'Ir para Ferramentas' : 'Go to Tools'}
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-8">
+                {Object.entries(groupedAnalyses).map(([type, items]) => {
+                  const config = TOOL_CONFIG[type] || { label: type, icon: FileText, color: 'text-[#999]', bgColor: 'bg-[#f5f5f4]', borderColor: 'border-[#e5e5e5]' };
+                  const ToolIcon = config.icon;
+                  const isExpanded = expandedAnalysisType === type;
+                  const latest = items[0]; // Most recent
+                  const rest = items.slice(1);
+
+                  return (
+                    <div key={type} className="border border-[#e5e5e5] rounded-xl bg-white shadow-sm overflow-hidden">
+                      {/* Type header */}
+                      <div className="flex items-center gap-3 p-4 border-b border-[#f0f0f0]">
+                        <div className={`w-8 h-8 rounded-lg ${config.bgColor} flex items-center justify-center`}>
+                          <ToolIcon className={`w-4 h-4 ${config.color}`} />
+                        </div>
+                        <span className="text-sm font-semibold text-[#1a1a1a]">{config.label}</span>
+                        <span className="text-[10px] text-[#999] bg-[#f5f5f4] px-2 py-0.5 rounded-full">{items.length}</span>
+                      </div>
+
+                      {/* Latest analysis — highlighted */}
+                      <div className="p-4 bg-gradient-to-r from-[#fafaf9] to-white">
+                        <div className="flex items-center gap-1.5 text-[10px] text-gold font-medium uppercase tracking-wider mb-2">
+                          <Sparkles className="w-3 h-3" />
+                          {lang === 'pt' ? 'Última análise' : 'Latest analysis'}
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            {getAnalysisSummary(latest) && <p className="text-sm font-medium text-[#1a1a1a] mb-1">{getAnalysisSummary(latest)}</p>}
+                            <div className="flex items-center gap-1.5 text-[10px] text-[#999]"><Clock className="w-3 h-3" />{formatDate(latest.created_at)}</div>
+                          </div>
+                          <button onClick={() => handleDeleteAnalysis(latest.id)} disabled={deletingId === latest.id} className="text-[#ddd] hover:text-red-400 transition-colors">
+                            {deletingId === latest.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Older analyses — collapsible */}
+                      {rest.length > 0 && (
+                        <>
+                          <button onClick={() => setExpandedAnalysisType(isExpanded ? null : type)} className="w-full flex items-center justify-between px-4 py-2.5 border-t border-[#f0f0f0] text-[11px] text-[#888] hover:text-gold hover:bg-[#fafaf9] transition-all">
+                            <span>{isExpanded ? (lang === 'pt' ? 'Ocultar anteriores' : 'Hide older') : (lang === 'pt' ? `Ver mais ${rest.length} análise${rest.length > 1 ? 's' : ''}` : `Show ${rest.length} more`)}</span>
+                            {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                          </button>
+                          {isExpanded && (
+                            <div className="border-t border-[#f0f0f0]">
+                              {rest.map((sa) => (
+                                <div key={sa.id} className="flex items-center justify-between px-4 py-3 border-b border-[#f5f5f4] last:border-b-0 hover:bg-[#fafaf9] transition-colors group">
+                                  <div>
+                                    {getAnalysisSummary(sa) && <p className="text-xs font-medium text-[#1a1a1a] mb-0.5">{getAnalysisSummary(sa)}</p>}
+                                    <div className="flex items-center gap-1.5 text-[10px] text-[#999]"><Clock className="w-3 h-3" />{formatDate(sa.created_at)}</div>
+                                  </div>
+                                  <button onClick={() => handleDeleteAnalysis(sa.id)} disabled={deletingId === sa.id} className="text-[#ddd] hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100">
+                                    {deletingId === sa.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
@@ -1769,14 +1002,11 @@ export default function MemberArea() {
             {planTier !== 'essential' ? (
               <VagasFeed lang={lang} countryCode={selectedCountryData?.code || 'PT'} countryName={cpCountry} region={cpRegion || undefined} />
             ) : (
-              <section className="p-6 border border-dashed border-[#e5e5e5] rounded-lg bg-[#fafaf9] text-center">
-                <Lock className="w-6 h-6 text-[#ccc] mx-auto mb-3" />
+              <section className="p-8 border border-dashed border-[#e5e5e5] rounded-xl bg-[#fafaf9] text-center">
+                <Lock className="w-8 h-8 text-[#ccc] mx-auto mb-3" />
                 <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{lang === 'pt' ? 'Feed de Vagas' : 'Job Feed'}</h3>
                 <p className="text-xs text-[#999] font-light mb-4 max-w-sm mx-auto">{t('member.lockedVagas')}</p>
-                <a href="/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded hover:bg-gold/20 transition-all">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  {t('member.upgradeCta')}
-                </a>
+                <a href="/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded-lg hover:bg-gold/20 transition-all"><Sparkles className="w-3.5 h-3.5" />{t('member.upgradeCta')}</a>
               </section>
             )}
           </div>
@@ -1785,227 +1015,100 @@ export default function MemberArea() {
         {/* ═══════════════════ TAB: CONTENT ═══════════════════ */}
         {activeTab === 'content' && (
           <div className="animate-in fade-in duration-300">
-        {/* Content — Growth+ only */}
-        {planTier === 'essential' ? (
-          <section className="p-6 border border-dashed border-[#e5e5e5] rounded-lg bg-[#fafaf9] text-center">
-            <Lock className="w-6 h-6 text-[#ccc] mx-auto mb-3" />
-            <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('member.content')}</h3>
-            <p className="text-xs text-[#999] font-light mb-4 max-w-sm mx-auto">{t('member.lockedContent')}</p>
-            <a href="/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded hover:bg-gold/20 transition-all">
-              <Sparkles className="w-3.5 h-3.5" />
-              {t('member.upgradeCta')}
-            </a>
-          </section>
-        ) : (
-        <section>
-          <h2 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('member.content')}</h2>
-          <p className="text-xs text-[#999] font-light mb-6">{t('member.contentDesc')}</p>
+            {planTier === 'essential' ? (
+              <section className="p-8 border border-dashed border-[#e5e5e5] rounded-xl bg-[#fafaf9] text-center">
+                <Lock className="w-8 h-8 text-[#ccc] mx-auto mb-3" />
+                <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('member.content')}</h3>
+                <p className="text-xs text-[#999] font-light mb-4 max-w-sm mx-auto">{t('member.lockedContent')}</p>
+                <a href="/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded-lg hover:bg-gold/20 transition-all"><Sparkles className="w-3.5 h-3.5" />{t('member.upgradeCta')}</a>
+              </section>
+            ) : (
+              <section>
+                <h2 className="text-sm font-semibold text-[#1a1a1a] mb-1">{t('member.content')}</h2>
+                <p className="text-xs text-[#999] font-light mb-6">{t('member.contentDesc')}</p>
 
-          {/* AI Templates — Career Bot powered */}
-          <div className="mb-6 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
-            {[
-              {
-                icon: FileText,
-                color: 'from-gold/20 to-gold/5',
-                event: 'open-career-bot-cover-letter',
-                title: t('member.coverLetter'),
-                desc: t('member.coverLetterDesc'),
-                cta: t('member.generate'),
-                btnStyle: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)',
-                ctaIcon: 'bot',
-              },
-              {
-                icon: Mail,
-                color: 'from-blue-500/15 to-blue-500/5',
-                event: 'open-career-bot-networking-email',
-                title: t('member.networkingEmail'),
-                desc: t('member.networkingEmailDesc'),
-                cta: t('member.generate'),
-                btnStyle: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)',
-                ctaIcon: 'bot',
-              },
-              {
-                icon: Megaphone,
-                color: 'from-sky-500/15 to-sky-500/5',
-                event: 'open-career-bot-linkedin-post',
-                title: t('member.linkedinPost'),
-                desc: t('member.linkedinPostDesc'),
-                cta: t('member.generate'),
-                btnStyle: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)',
-                ctaIcon: 'bot',
-              },
-              {
-                icon: Linkedin,
-                color: 'from-[#0A66C2]/15 to-[#0A66C2]/5',
-                event: 'open-headline-generator',
-                title: t('member.linkedinHeadline'),
-                desc: t('member.linkedinHeadlineDesc'),
-                cta: t('member.generateHeadlines'),
-                btnStyle: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)',
-                ctaIcon: 'sparkle',
-              },
-            ].map((tpl) => (
-              <div key={tpl.event} className="p-3 sm:p-4 border border-[#e5e5e5] rounded-lg hover:border-gold/30 transition-all group flex flex-col h-full">
-                <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br ${tpl.color} flex items-center justify-center mb-2 sm:mb-3`}>
-                  <tpl.icon className="w-4.5 h-4.5 text-[#333]" />
+                {/* AI Templates */}
+                <div className="mb-6 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {[
+                    { icon: FileText, color: 'from-gold/20 to-gold/5', event: 'open-career-bot-cover-letter', title: t('member.coverLetter'), desc: t('member.coverLetterDesc'), cta: t('member.generate'), ctaIcon: 'bot' },
+                    { icon: Mail, color: 'from-blue-500/15 to-blue-500/5', event: 'open-career-bot-networking-email', title: t('member.networkingEmail'), desc: t('member.networkingEmailDesc'), cta: t('member.generate'), ctaIcon: 'bot' },
+                    { icon: Megaphone, color: 'from-sky-500/15 to-sky-500/5', event: 'open-career-bot-linkedin-post', title: t('member.linkedinPost'), desc: t('member.linkedinPostDesc'), cta: t('member.generate'), ctaIcon: 'bot' },
+                    { icon: Linkedin, color: 'from-[#0A66C2]/15 to-[#0A66C2]/5', event: 'open-headline-generator', title: t('member.linkedinHeadline'), desc: t('member.linkedinHeadlineDesc'), cta: t('member.generateHeadlines'), ctaIcon: 'sparkle' },
+                  ].map((tpl) => (
+                    <div key={tpl.event} className="p-4 border border-[#e5e5e5] rounded-xl hover:border-gold/30 transition-all group flex flex-col h-full bg-white shadow-sm">
+                      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${tpl.color} flex items-center justify-center mb-3`}><tpl.icon className="w-4.5 h-4.5 text-[#333]" /></div>
+                      <h3 className="text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1 group-hover:text-gold transition-colors">{tpl.title}</h3>
+                      <p className="text-[10px] sm:text-[11px] text-[#999] font-light leading-relaxed mb-3 line-clamp-2 flex-1">{tpl.desc}</p>
+                      <button onClick={() => window.dispatchEvent(new Event(tpl.event))} className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-white transition-all hover:opacity-90 mt-auto" style={{ background: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' }}>
+                        {tpl.ctaIcon === 'sparkle' ? <Sparkles className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}{tpl.cta}
+                      </button>
+                    </div>
+                  ))}
                 </div>
-                <h3 className="text-xs sm:text-sm font-semibold text-[#1a1a1a] mb-1 group-hover:text-gold transition-colors">{tpl.title}</h3>
-                <p className="text-[10px] sm:text-[11px] text-[#999] font-light leading-relaxed mb-2 sm:mb-3 line-clamp-2 sm:line-clamp-none flex-1">{tpl.desc}</p>
-                <button
-                  onClick={() => window.dispatchEvent(new Event(tpl.event))}
-                  className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded text-xs font-medium text-white transition-all hover:opacity-90 mt-auto"
-                  style={{ background: tpl.btnStyle }}
-                >
-                  {tpl.ctaIcon === 'sparkle' ? <Sparkles className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
-                  {tpl.cta}
-                </button>
-              </div>
-            ))}
-          </div>
 
-          {/* Filters */}
-          <div className="flex flex-col gap-3 mb-6">
-            <div className="flex gap-2 flex-wrap">
-              {contentTypes.map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setFilter(type)}
-                  className={`px-3 py-1.5 text-xs rounded transition-all duration-300 ${
-                    filter === type
-                      ? 'bg-gold/10 border border-gold/20 text-gold font-medium'
-                      : 'border border-[#e5e5e5] text-[#888] hover:text-[#1a1a1a]/60 hover:border-[#ddd]'
-                  }`}
-                >
-                  {filterLabels[type]}
-                </button>
-              ))}
-            </div>
-            <div className="relative w-full sm:w-auto sm:ml-auto">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#aaa]" />
-              <input
-                type="text"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder={t('member.search')}
-                className="pl-8 pr-3 py-2 bg-[#f7f7f6] border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] placeholder-[#aaa] focus:border-gold/30 focus:outline-none transition-colors w-full sm:w-56"
-              />
-            </div>
-          </div>
+                {/* Filters */}
+                <div className="flex flex-col gap-3 mb-6">
+                  <div className="flex gap-2 flex-wrap">
+                    {contentTypes.map((type) => (
+                      <button key={type} onClick={() => setFilter(type)} className={`px-3 py-1.5 text-xs rounded-lg transition-all duration-300 ${filter === type ? 'bg-gold/10 border border-gold/20 text-gold font-medium' : 'border border-[#e5e5e5] text-[#888] hover:text-[#1a1a1a]/60 hover:border-[#ddd]'}`}>{filterLabels[type]}</button>
+                    ))}
+                  </div>
+                  <div className="relative w-full sm:w-auto sm:ml-auto">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#aaa]" />
+                    <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder={t('member.search')} className="pl-8 pr-3 py-2 bg-[#f7f7f6] border border-[#e5e5e5] rounded-lg text-xs text-[#1a1a1a] placeholder-[#aaa] focus:border-gold/30 focus:outline-none transition-colors w-full sm:w-56" />
+                  </div>
+                </div>
 
-          {/* Content Grid */}
-          {loading ? (
-            <div className="py-20 text-center">
-              <div className="w-5 h-5 border-2 border-gold/30 border-t-gold rounded-full animate-spin mx-auto" />
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="py-20 text-center">
-              <BookOpen className="w-8 h-8 text-[#ccc] mx-auto mb-3" />
-              <p className="text-sm text-[#999] font-light">{t('member.noContent')}</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filtered.map((item) => {
-                const isVideo = item.content_type === 'video';
-                const isPodcast = item.content_type === 'podcast';
-                const youtubeId = isVideo && item.file_url ? getYouTubeId(item.file_url) : null;
+                {/* Content Grid */}
+                {loading ? (
+                  <div className="py-20 text-center"><div className="w-5 h-5 border-2 border-gold/30 border-t-gold rounded-full animate-spin mx-auto" /></div>
+                ) : filtered.length === 0 ? (
+                  <div className="py-20 text-center"><BookOpen className="w-8 h-8 text-[#ccc] mx-auto mb-3" /><p className="text-sm text-[#999] font-light">{t('member.noContent')}</p></div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filtered.map((item) => {
+                      const isVideo = item.content_type === 'video';
+                      const isPodcast = item.content_type === 'podcast';
+                      const youtubeId = isVideo && item.file_url ? getYouTubeId(item.file_url) : null;
 
-                // Podcast card with Spotify embed
-                if (isPodcast) {
-                  return (
-                    <div key={item.id} className="border border-[#e5e5e5] rounded overflow-hidden col-span-1 sm:col-span-2 lg:col-span-3">
-                      <div className="p-4">
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[10px] text-[#999] uppercase tracking-wider flex items-center gap-1">
-                            <Headphones className="w-3 h-3" />
-                            podcast
-                          </span>
-                        </div>
-                        <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{item.title}</h3>
-                        <p className="text-[11px] text-[#999] font-light leading-relaxed mb-3">{item.description}</p>
-                        <iframe
-                          style={{ borderRadius: '12px' }}
-                          src={item.file_url}
-                          width="100%"
-                          height="352"
-                          frameBorder="0"
-                          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                          loading="lazy"
-                        />
-                      </div>
-                    </div>
-                  );
-                }
+                      if (isPodcast) {
+                        return (
+                          <div key={item.id} className="border border-[#e5e5e5] rounded-xl overflow-hidden col-span-1 sm:col-span-2 lg:col-span-3 bg-white shadow-sm">
+                            <div className="p-4">
+                              <div className="flex items-center gap-2 mb-3"><span className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[10px] text-[#999] uppercase tracking-wider flex items-center gap-1"><Headphones className="w-3 h-3" />podcast</span></div>
+                              <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{item.title}</h3>
+                              <p className="text-[11px] text-[#999] font-light leading-relaxed mb-3">{item.description}</p>
+                              <iframe style={{ borderRadius: '12px' }} src={item.file_url} width="100%" height="352" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" />
+                            </div>
+                          </div>
+                        );
+                      }
 
-                // Video card with YouTube embed
-                if (isVideo && youtubeId) {
-                  return (
-                    <div key={item.id} className="border border-[#e5e5e5] rounded overflow-hidden hover:border-gold/20 transition-all duration-500">
-                      <div className="aspect-video bg-black">
-                        <iframe
-                          src={`https://www.youtube.com/embed/${youtubeId}`}
-                          title={item.title}
-                          className="w-full h-full"
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        />
-                      </div>
-                      <div className="p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[10px] text-[#999] uppercase tracking-wider flex items-center gap-1">
-                            <Play className="w-3 h-3" />
-                            video
-                          </span>
-                        </div>
-                        <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{item.title}</h3>
-                        <p className="text-[11px] text-[#999] font-light line-clamp-2 leading-relaxed">{item.description}</p>
-                      </div>
-                    </div>
-                  );
-                }
+                      if (isVideo && youtubeId) {
+                        return (
+                          <div key={item.id} className="border border-[#e5e5e5] rounded-xl overflow-hidden hover:border-gold/20 transition-all duration-500 bg-white shadow-sm">
+                            <div className="aspect-video bg-black"><iframe src={`https://www.youtube.com/embed/${youtubeId}`} title={item.title} className="w-full h-full" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen /></div>
+                            <div className="p-4"><div className="flex items-center gap-2 mb-2"><span className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[10px] text-[#999] uppercase tracking-wider flex items-center gap-1"><Play className="w-3 h-3" />video</span></div><h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{item.title}</h3><p className="text-[11px] text-[#999] font-light line-clamp-2 leading-relaxed">{item.description}</p></div>
+                          </div>
+                        );
+                      }
 
-                // Standard content card (ebook, article, template)
-                return (
-                  <a
-                    key={item.id}
-                    href={item.file_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group border border-[#e5e5e5] rounded overflow-hidden hover:border-gold/20 transition-all duration-500"
-                  >
-                    {item.thumbnail_url && (
-                      <div className="aspect-[16/9] bg-white/[0.02] overflow-hidden">
-                        <img
-                          src={item.thumbnail_url}
-                          alt={item.title}
-                          className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
-                        />
-                      </div>
-                    )}
-                    <div className="p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[10px] text-[#999] uppercase tracking-wider">
-                          {item.content_type}
-                        </span>
-                      </div>
-                      <h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors mb-1">
-                        {item.title}
-                      </h3>
-                      <p className="text-[11px] text-[#999] font-light line-clamp-2 leading-relaxed">
-                        {item.description}
-                      </p>
-                      <div className="mt-3 flex items-center gap-1 text-[11px] text-gold/50 group-hover:text-gold transition-colors">
-                        <span>{t('member.access')}</span>
-                        <ArrowRight className="w-3 h-3" />
-                      </div>
-                    </div>
-                  </a>
-                );
-              })}
-            </div>
-          )}
-        </section>
-        )}
+                      return (
+                        <a key={item.id} href={item.file_url} target="_blank" rel="noopener noreferrer" className="group border border-[#e5e5e5] rounded-xl overflow-hidden hover:border-gold/20 transition-all duration-500 bg-white shadow-sm">
+                          {item.thumbnail_url && (<div className="aspect-[16/9] bg-white/[0.02] overflow-hidden"><img src={item.thumbnail_url} alt={item.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" /></div>)}
+                          <div className="p-4">
+                            <div className="flex items-center gap-2 mb-2"><span className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[10px] text-[#999] uppercase tracking-wider">{item.content_type}</span></div>
+                            <h3 className="text-sm font-medium text-[#1a1a1a] group-hover:text-gold transition-colors mb-1">{item.title}</h3>
+                            <p className="text-[11px] text-[#999] font-light line-clamp-2 leading-relaxed">{item.description}</p>
+                            <div className="mt-3 flex items-center gap-1 text-[11px] text-gold/50 group-hover:text-gold transition-colors"><span>{t('member.access')}</span><ArrowRight className="w-3 h-3" /></div>
+                          </div>
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
+              </section>
+            )}
           </div>
         )}
 
