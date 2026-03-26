@@ -9,13 +9,16 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
+import UpgradePage from './UpgradePage';
 import { supabase, type MemberContent } from '@/lib/supabase';
 import {
   FileText, BarChart3, Route, Linkedin, Bot, BookOpen,
   ExternalLink, Search, Clock, ArrowRight, ChevronDown, ChevronUp,
   Loader2, AlertCircle, CheckCircle, Upload, Lock, Sparkles, Tag,
-  Globe, MapPin, Headphones, Play, Mail, MessageSquare, Megaphone
+  Globe, MapPin, Headphones, Play, Mail, MessageSquare, Megaphone,
+  Home, Wrench, Briefcase, RefreshCw, FileSearch, Compass,
 } from 'lucide-react';
+import { Link } from 'wouter';
 import CareerProgress from '@/components/CareerProgress';
 import VagasFeed from '@/components/VagasFeed';
 import AnalysisResultsFull from '@/components/AnalysisResults';
@@ -29,6 +32,33 @@ const HYPER_TASK_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hy
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const TOOLS_SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+
+// ─── Tab System ──────────────────────────────────────────────────────────────
+type TabId = 'overview' | 'tools' | 'jobs' | 'content';
+const TABS: { id: TabId; icon: typeof Home; labelPt: string; labelEn: string }[] = [
+  { id: 'overview', icon: Home,      labelPt: 'Vis\u00e3o Geral', labelEn: 'Overview' },
+  { id: 'tools',    icon: Wrench,    labelPt: 'Ferramentas',  labelEn: 'Tools' },
+  { id: 'jobs',     icon: Briefcase, labelPt: 'Vagas',        labelEn: 'Jobs' },
+  { id: 'content',  icon: BookOpen,  labelPt: 'Conte\u00fados',   labelEn: 'Content' },
+];
+
+// Saved analysis type (for Profile tab)
+type SavedAnalysis = {
+  id: string;
+  user_id: string;
+  analysis_type: string;
+  data: Record<string, any>;
+  created_at: string;
+};
+
+// Tool config for saved analyses display
+const TOOL_CONFIG: Record<string, { label: string; icon: typeof FileSearch; color: string }> = {
+  cv_analyser: { label: 'CV Analyser', icon: FileSearch, color: 'text-blue-400' },
+  career_path: { label: 'Career Path', icon: Compass, color: 'text-emerald-400' },
+  career_intelligence: { label: 'Career Intelligence', icon: BarChart3, color: 'text-violet-400' },
+  linkedin_roaster: { label: 'LinkedIn Roaster', icon: Linkedin, color: 'text-amber-400' },
+  career_energy: { label: 'Career Energy', icon: Sparkles, color: 'text-pink-400' },
+};
 
 // ─── Country/Region Data ─────────────────────────────────────────────────────
 interface CountryRegion {
@@ -439,6 +469,9 @@ export default function MemberArea() {
 
   // Career Intelligence states
   const [monthlyCareerIntelUsed, setMonthlyCareerIntelUsed] = useState(0);
+  // Tab navigation
+  const [activeTab, setActiveTab] = useState<TabId>('overview');
+
 
   const planTier = getPlanTier(subscription?.plan);
   const weeklyLimit = WEEKLY_LIMITS[planTier] || 2;
@@ -525,6 +558,8 @@ export default function MemberArea() {
     }
     fetchCiUsage();
   }, [user?.id, planTier, analysisResult]);
+
+
 
   const filtered = useMemo(() => {
     let items = [...content];
@@ -886,7 +921,7 @@ export default function MemberArea() {
   // ─── Run Career Path ───────────────────────────────────────────────────
   const runCareerPath = useCallback(async () => {
     if (!user?.id || !subscription) return;
-    const limit = planTier === 'pro' ? 1 : planTier === 'elite' ? 3 : 0;
+    const limit = planTier === 'pro' ? 3 : 0;
     if (monthlyCareerPathUsed >= limit) {
       setAnalysisError(lang === 'pt'
         ? `Atingiste o limite mensal de Career Path (${limit}/mês).`
@@ -957,7 +992,7 @@ export default function MemberArea() {
   // ─── Run Career Intelligence ───────────────────────────────────────────
   const runCareerIntelligence = useCallback(async () => {
     if (!user?.id || !subscription) return;
-    const limit = planTier === 'pro' ? 1 : planTier === 'elite' ? 3 : 0;
+    const limit = planTier === 'pro' ? 3 : 0;
     if (monthlyCareerIntelUsed >= limit) {
       setAnalysisError(lang === 'pt'
         ? `Atingiste o limite mensal de Career Intelligence (${limit}/mês).`
@@ -1391,6 +1426,12 @@ export default function MemberArea() {
     return null;
   };
 
+  // ─── Routing automático: sem subscrição activa → UpgradePage ─────────────
+  const hasActiveSub = subscription && subscription.status === 'active' && new Date(subscription.expires_at) > new Date();
+  if (!hasActiveSub) {
+    return <UpgradePage />;
+  }
+
   return (
     <div className="min-h-screen pt-24 pb-20">
       <div className="container max-w-5xl mx-auto px-4">
@@ -1417,72 +1458,152 @@ export default function MemberArea() {
                 {daysLeft} {t('member.daysLeft')}
               </span>
             </div>
-          )}
+           )}
         </div>
 
-        {/* Usage indicator */}
-        {subscription && (
-          <div className="mb-8 p-4 border border-[#e5e5e5] rounded-lg bg-[#fafaf9]">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-gold" />
-                <span className="text-xs font-medium text-[#1a1a1a]">
-                  {t('member.analysesThisWeek')}
-                </span>
-                <span className="text-[10px] text-[#aaa] font-light">
-                  (CV Analyser + LinkedIn Roaster)
-                </span>
+        {/* ─── Tab Navigation ─── */}
+        <div className="mb-8 border-b border-[#e5e5e5]">
+          <nav className="flex gap-0 -mb-px overflow-x-auto scrollbar-hide">
+            {TABS.map((tab) => {
+              const isActive = activeTab === tab.id;
+              const TabIcon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-3 text-xs font-medium border-b-2 transition-all duration-300 whitespace-nowrap ${
+                    isActive
+                      ? 'border-gold text-gold'
+                      : 'border-transparent text-[#999] hover:text-[#666] hover:border-[#ddd]'
+                  }`}
+                >
+                  <TabIcon className="w-3.5 h-3.5" />
+                  {lang === 'pt' ? tab.labelPt : tab.labelEn}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* ═══════════════════ TAB: OVERVIEW ═══════════════════ */}
+        {activeTab === 'overview' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+
+            {/* Row 1: Quota + Career Score */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Quota Card */}
+              {subscription && (
+                <div className="p-5 border border-[#e5e5e5] rounded-lg bg-[#fafaf9] hover:border-gold/20 transition-all">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-3.5 h-3.5 text-gold" />
+                      <span className="text-xs font-medium text-[#1a1a1a]">{t('member.analysesThisWeek')}</span>
+                    </div>
+                    <span className="text-xs tabular-nums text-[#666] font-medium">{weeklyUsage}/{isProPlan ? '∞' : weeklyLimit}</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-[#e5e5e5] rounded-full overflow-hidden mb-2">
+                    <div className="h-full bg-gold rounded-full transition-all duration-500" style={{ width: isProPlan ? '10%' : `${Math.min(100, (weeklyUsage / weeklyLimit) * 100)}%` }} />
+                  </div>
+                  <p className="text-[10px] text-[#999]">
+                    {remainingAnalyses > 0 || isProPlan
+                      ? (isProPlan ? (lang === 'pt' ? 'Ilimitado · Renova 2ª feira' : 'Unlimited · Resets Monday') : `${remainingAnalyses} ${t('member.remaining')}`)
+                      : (lang === 'pt' ? 'Limite atingido · Renova 2ª feira' : 'Limit reached · Resets Monday')}
+                  </p>
+                </div>
+              )}
+
+              {/* Career Score Card */}
+              <Link href="/perfil" className="p-5 border border-[#e5e5e5] rounded-lg bg-[#fafaf9] hover:border-gold/20 transition-all text-left group block">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="w-3.5 h-3.5 text-gold" />
+                    <span className="text-xs font-medium text-[#1a1a1a]">{lang === 'pt' ? 'Perfil de Carreira' : 'Career Profile'}</span>
+                  </div>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#ccc] group-hover:text-gold transition-colors" />
+                </div>
+                <CareerProgress variant="compact" />
+              </Link>
+            </div>
+
+            {/* Row 2: Tools Summary — compact grid */}
+            <div>
+              <h3 className="text-xs font-medium text-[#1a1a1a] mb-3">{lang === 'pt' ? 'As tuas ferramentas' : 'Your tools'}</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {tools.map((tool) => {
+                  const isLocked = tool.type === 'locked';
+                  return (
+                    <button
+                      key={tool.key}
+                      onClick={() => { if (!isLocked) setActiveTab('tools'); }}
+                      className={`p-4 border rounded-lg text-left transition-all group ${
+                        isLocked ? 'border-[#e5e5e5] bg-[#fafaf9] opacity-50 cursor-default' : 'border-[#e5e5e5] hover:border-gold/20 bg-white'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className={`w-8 h-8 rounded flex items-center justify-center bg-gradient-to-br ${tool.color}`}>
+                          <tool.icon className="w-3.5 h-3.5 text-[#333]" />
+                        </div>
+                        {isLocked ? (
+                          <Lock className="w-3 h-3 text-[#ccc]" />
+                        ) : (
+                          <ArrowRight className="w-3 h-3 text-[#ccc] group-hover:text-gold transition-colors" />
+                        )}
+                      </div>
+                      <p className="text-[11px] font-medium text-[#1a1a1a] mb-0.5">{tool.label}</p>
+                      <p className="text-[10px] text-[#999] font-light line-clamp-1">
+                        {isLocked ? (lang === 'pt' ? 'Disponível com upgrade' : 'Available with upgrade') : tool.desc}
+                      </p>
+                    </button>
+                  );
+                })}
               </div>
-              <span className="text-xs text-[#999]">
-                {`${weeklyUsage}/${weeklyLimit}`}
-              </span>
             </div>
-            <div className="w-full h-1.5 bg-[#e5e5e5] rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gold rounded-full transition-all duration-500"
-                style={{ width: `${Math.min(100, (weeklyUsage / weeklyLimit) * 100)}%` }}
-              />
+
+            {/* Row 3: Jobs Summary Card */}
+            <button onClick={() => setActiveTab('jobs')} className="w-full p-5 border border-[#e5e5e5] rounded-lg bg-[#fafaf9] hover:border-gold/20 transition-all text-left group">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 flex items-center justify-center">
+                    <Briefcase className="w-4 h-4 text-[#333]" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-[#1a1a1a]">{lang === 'pt' ? 'Feed de Vagas' : 'Job Feed'}</p>
+                    <p className="text-[10px] text-[#999] font-light">
+                      {planTier === 'essential'
+                        ? (lang === 'pt' ? 'Disponível a partir do plano Growth' : 'Available from Growth plan')
+                        : (lang === 'pt' ? 'Vagas curadas para o teu perfil' : 'Jobs curated for your profile')}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {planTier === 'essential' ? (
+                    <Lock className="w-3.5 h-3.5 text-[#ccc]" />
+                  ) : (
+                    <span className="text-[10px] text-gold font-medium group-hover:underline">{lang === 'pt' ? 'Ver vagas →' : 'View jobs →'}</span>
+                  )}
+                </div>
+              </div>
+            </button>
+
+            {/* Row 4: Quick links */}
+            <div className="grid grid-cols-3 gap-2">
+              {TABS.filter(t => t.id !== 'overview').map((tab) => {
+                const TabIcon = tab.icon;
+                return (
+                  <button key={tab.id} onClick={() => setActiveTab(tab.id)} className="p-3 border border-[#e5e5e5] rounded-lg hover:border-gold/20 transition-all text-center group">
+                    <TabIcon className="w-4 h-4 text-[#999] group-hover:text-gold mx-auto mb-1.5 transition-colors" />
+                    <p className="text-[10px] font-medium text-[#1a1a1a]">{lang === 'pt' ? tab.labelPt : tab.labelEn}</p>
+                  </button>
+                );
+              })}
             </div>
-            {remainingAnalyses > 0 && (
-              <p className="text-[10px] text-[#999] mt-1.5">
-                {`${remainingAnalyses} ${t('member.remaining')}`}
-              </p>
-            )}
-            {remainingAnalyses === 0 && (
-              <p className="text-[10px] text-amber-600 mt-1.5">
-                {lang === 'pt' ? 'Limite semanal atingido. Renova na próxima semana.' : 'Weekly limit reached. Resets next week.'}
-              </p>
-            )}
+
           </div>
         )}
 
-        {/* Career Progress */}
-        <section className="mb-12">
-          <h2 className="text-sm font-medium text-[#1a1a1a] mb-1">
-            {t('member.myCareerProfile')}
-          </h2>
-          <p className="text-xs text-[#999] font-light mb-4">
-            {t('member.myCareerProfileDesc')}
-          </p>
-          <CareerProgress variant="compact" />
-        </section>
-
-        {/* Vagas Feed — Growth+ only */}
-        {planTier !== 'essential' ? (
-          <VagasFeed lang={lang} countryCode={selectedCountryData?.code || 'PT'} countryName={cpCountry} region={cpRegion || undefined} />
-        ) : (
-          <section className="mb-16 p-6 border border-dashed border-[#e5e5e5] rounded-lg bg-[#fafaf9] text-center">
-            <Lock className="w-6 h-6 text-[#ccc] mx-auto mb-3" />
-            <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{lang === 'pt' ? 'Feed de Vagas' : 'Job Feed'}</h3>
-            <p className="text-xs text-[#999] font-light mb-4 max-w-sm mx-auto">{t('member.lockedVagas')}</p>
-            <a href="/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded hover:bg-gold/20 transition-all">
-              <Sparkles className="w-3.5 h-3.5" />
-              {t('member.upgradeCta')}
-            </a>
-          </section>
-        )}
-
-        {/* Tools */}
+        {/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 TAB: TOOLS \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */}
+        {activeTab === 'tools' && (
+          <div className="animate-in fade-in duration-300">
         <section className="mb-16">
           <h2 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('member.tools')}</h2>
           <p className="text-xs text-[#999] font-light mb-6">
@@ -1638,8 +1759,32 @@ export default function MemberArea() {
               </div>
             ))}
           </div>
-        </section>
+         </section>
+          </div>
+        )}
 
+        {/* ═══════════════════ TAB: JOBS ═══════════════════ */}
+        {activeTab === 'jobs' && (
+          <div className="animate-in fade-in duration-300">
+            {planTier !== 'essential' ? (
+              <VagasFeed lang={lang} countryCode={selectedCountryData?.code || 'PT'} countryName={cpCountry} region={cpRegion || undefined} />
+            ) : (
+              <section className="p-6 border border-dashed border-[#e5e5e5] rounded-lg bg-[#fafaf9] text-center">
+                <Lock className="w-6 h-6 text-[#ccc] mx-auto mb-3" />
+                <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{lang === 'pt' ? 'Feed de Vagas' : 'Job Feed'}</h3>
+                <p className="text-xs text-[#999] font-light mb-4 max-w-sm mx-auto">{t('member.lockedVagas')}</p>
+                <a href="/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded hover:bg-gold/20 transition-all">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  {t('member.upgradeCta')}
+                </a>
+              </section>
+            )}
+          </div>
+        )}
+
+        {/* ═══════════════════ TAB: CONTENT ═══════════════════ */}
+        {activeTab === 'content' && (
+          <div className="animate-in fade-in duration-300">
         {/* Content — Growth+ only */}
         {planTier === 'essential' ? (
           <section className="p-6 border border-dashed border-[#e5e5e5] rounded-lg bg-[#fafaf9] text-center">
@@ -1861,6 +2006,9 @@ export default function MemberArea() {
           )}
         </section>
         )}
+          </div>
+        )}
+
       </div>
     </div>
   );

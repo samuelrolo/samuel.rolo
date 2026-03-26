@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch, Router as WouterRouter, useLocation } from "wouter";
+import { Route, Switch, Router as WouterRouter, useLocation, Redirect } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -12,9 +12,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CareerBotWidget from "./components/CareerBotWidget";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
 import Plans from "./pages/Plans";
 import MemberArea from "./pages/MemberArea";
+import ProfilePage from "./pages/ProfilePage";
 
 function Routes() {
   return (
@@ -24,13 +24,20 @@ function Routes() {
       <Route path="/planos" component={Plans} />
       <Route path="/perfil">
         <ProtectedRoute>
-          <Dashboard />
+          <ProfilePage />
         </ProtectedRoute>
       </Route>
       <Route path="/membros">
-        <ProtectedRoute requireSubscription>
+        <ProtectedRoute>
           <MemberArea />
         </ProtectedRoute>
+      </Route>
+      {/* Legacy redirects */}
+      <Route path="/dashboard">
+        <Redirect to="/membros" />
+      </Route>
+      <Route path="/vagas">
+        <Redirect to="/membros" />
       </Route>
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
