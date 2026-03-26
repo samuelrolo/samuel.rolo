@@ -47,7 +47,7 @@ const tiers: TierConfig[] = [
       'sub.essential.b6',
     ],
     limit: 'sub.essential.limit',
-    notIncluded: ['sub.notIncluded.careerPath', 'sub.notIncluded.careerIntel'],
+    notIncluded: ['sub.notIncluded.vagas', 'sub.notIncluded.ebooks', 'sub.notIncluded.careerPath', 'sub.notIncluded.careerIntel'],
   },
   {
     tier: 'growth',
@@ -154,13 +154,13 @@ export default function Plans() {
           {!user && (
             <div className="mt-8 p-4 bg-white/[0.02] border border-[#e5e5e5] rounded-lg max-w-md mx-auto">
               <p className="text-sm text-[#555] font-light mb-3">
-                Cria a tua conta <span className="text-gold font-medium">gratuita</span> e guarda todas as tuas análises num só lugar.
+                {t('sub.freeCtaText')}
               </p>
               <button
                 onClick={() => navigate('/auth')}
                 className="inline-flex items-center gap-2 px-5 py-2 border border-gold/30 text-gold text-sm font-medium rounded hover:bg-gold/10 transition-all duration-300"
               >
-                Criar conta gratuita
+                {t('sub.freeCtaBtn')}
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -249,7 +249,7 @@ export default function Plans() {
                 {/* Bonuses */}
                 {tierConfig.bonuses && tierConfig.bonuses.length > 0 && (
                   <div className="mb-4 pt-3 border-t border-[#eee]">
-                    <span className="text-[10px] text-gold font-medium uppercase tracking-wider">Bónus</span>
+                    <span className="text-[10px] text-gold font-medium uppercase tracking-wider">{t('sub.bonusLabel')}</span>
                     <ul className="space-y-2 mt-2">
                       {tierConfig.bonuses.map((e) => (
                         <li key={e} className="flex items-start gap-2.5">
@@ -290,7 +290,7 @@ export default function Plans() {
                     }`}
                   >
                     {!user && <Lock className="w-3.5 h-3.5" />}
-                    {!user ? 'Criar conta para subscrever' : t('sub.subscribe')}
+                    {!user ? t('sub.createToSubscribe') : t('sub.subscribe')}
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 )}

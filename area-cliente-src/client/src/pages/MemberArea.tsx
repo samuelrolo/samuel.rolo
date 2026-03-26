@@ -72,9 +72,9 @@ function getPlanTier(plan: string | undefined): 'essential' | 'growth' | 'pro' {
 
 // Weekly limits (combined CV Analyser + LinkedIn Roaster)
 const WEEKLY_LIMITS: Record<string, number> = {
-  essential: 2,
+  essential: 1,
   growth: 5,
-  pro: 10,
+  pro: 999, // unlimited
 };
 
 const contentTypes = ['all', 'ebook', 'article', 'video', 'podcast'] as const;
@@ -1095,11 +1095,11 @@ export default function MemberArea() {
       key: 'careerPath',
       icon: Route,
       color: 'from-emerald-500/15 to-emerald-500/5',
-      type: planTier === 'pro' ? 'inline' : planTier === 'growth' ? 'discount' : 'locked',
+      type: planTier === 'pro' ? 'discount' : planTier === 'growth' ? 'discount' : 'locked',
       action: 'careerPath',
       url: 'https://share2inspire.pt/career-path/',
-      discount: planTier === 'growth' ? '14€' : null,
-      discountOriginal: planTier === 'growth' ? '19€' : null,
+      discount: planTier === 'growth' ? '8,99€' : planTier === 'pro' ? '4,99€' : null,
+      discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '19€' : null,
       label: 'Career Path',
       desc: lang === 'pt' ? 'Planeamento estratégico da tua carreira' : 'Strategic career planning',
     },
@@ -1107,8 +1107,11 @@ export default function MemberArea() {
       key: 'careerIntelligence',
       icon: Sparkles,
       color: 'from-violet-500/15 to-violet-500/5',
-      type: planTier === 'pro' ? 'inline' : 'locked',
+      type: planTier === 'pro' ? 'discount' : 'locked',
       action: 'careerIntelligence',
+      url: 'https://share2inspire.pt/career-intelligence/',
+      discount: planTier === 'pro' ? '9,99€' : null,
+      discountOriginal: planTier === 'pro' ? '39€' : null,
       label: 'Career Intelligence',
       desc: lang === 'pt' ? 'Análise avançada de mercado e posicionamento' : 'Advanced market analysis and positioning',
     },
@@ -1457,8 +1460,20 @@ export default function MemberArea() {
           <CareerProgress variant="compact" />
         </section>
 
-        {/* Vagas Feed — Highlighted section */}
-        <VagasFeed lang={lang} />
+        {/* Vagas Feed — Growth+ only */}
+        {planTier !== 'essential' ? (
+          <VagasFeed lang={lang} />
+        ) : (
+          <section className="mb-16 p-6 border border-dashed border-[#e5e5e5] rounded-lg bg-[#fafaf9] text-center">
+            <Lock className="w-6 h-6 text-[#ccc] mx-auto mb-3" />
+            <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{lang === 'pt' ? 'Feed de Vagas' : 'Job Feed'}</h3>
+            <p className="text-xs text-[#999] font-light mb-4 max-w-sm mx-auto">{t('member.lockedVagas')}</p>
+            <a href="/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded hover:bg-gold/20 transition-all">
+              <Sparkles className="w-3.5 h-3.5" />
+              {t('member.upgradeCta')}
+            </a>
+          </section>
+        )}
 
         {/* Tools */}
         <section className="mb-16">
@@ -1618,7 +1633,18 @@ export default function MemberArea() {
           </div>
         </section>
 
-        {/* Content */}
+        {/* Content — Growth+ only */}
+        {planTier === 'essential' ? (
+          <section className="p-6 border border-dashed border-[#e5e5e5] rounded-lg bg-[#fafaf9] text-center">
+            <Lock className="w-6 h-6 text-[#ccc] mx-auto mb-3" />
+            <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('member.content')}</h3>
+            <p className="text-xs text-[#999] font-light mb-4 max-w-sm mx-auto">{t('member.lockedContent')}</p>
+            <a href="/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded hover:bg-gold/20 transition-all">
+              <Sparkles className="w-3.5 h-3.5" />
+              {t('member.upgradeCta')}
+            </a>
+          </section>
+        ) : (
         <section>
           <h2 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('member.content')}</h2>
           <p className="text-xs text-[#999] font-light mb-6">{t('member.contentDesc')}</p>
@@ -1827,6 +1853,7 @@ export default function MemberArea() {
             </div>
           )}
         </section>
+        )}
       </div>
     </div>
   );
