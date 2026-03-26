@@ -26,7 +26,7 @@ interface PriceMap { monthly: number; semiannual: number; annual: number; }
 interface TierConfig {
   tier: Tier; icon: React.ReactNode; prices: PriceMap;
   tagline: string; benefits: string[]; limit: string;
-  bonuses?: string[]; notIncluded?: string[]; badge?: string; highlight?: boolean;
+  bonuses?: string[]; notIncluded?: string[]; badge?: string; highlight?: boolean; roi?: string; valueAnchor?: string;
 }
 
 const tiers: TierConfig[] = [
@@ -36,6 +36,7 @@ const tiers: TierConfig[] = [
     tagline: 'sub.essential.tagline',
     benefits: ['sub.essential.b1','sub.essential.b2','sub.essential.b3','sub.essential.b4','sub.essential.b5','sub.essential.b6'],
     limit: 'sub.essential.limit',
+    roi: 'sub.essential.roi', valueAnchor: 'sub.essential.anchor',
     notIncluded: ['sub.notIncluded.vagas','sub.notIncluded.ebooks','sub.notIncluded.careerPath','sub.notIncluded.careerIntel'],
   },
   {
@@ -44,6 +45,7 @@ const tiers: TierConfig[] = [
     tagline: 'sub.growth.tagline',
     benefits: ['sub.growth.b1','sub.growth.b2','sub.growth.b3','sub.growth.b4','sub.growth.b5'],
     limit: 'sub.growth.limit',
+    roi: 'sub.growth.roi',
     bonuses: ['sub.growth.bonus'], notIncluded: ['sub.notIncluded.careerIntel'],
     badge: 'sub.recommended', highlight: true,
   },
@@ -53,8 +55,15 @@ const tiers: TierConfig[] = [
     tagline: 'sub.pro.tagline',
     benefits: ['sub.pro.b1','sub.pro.b2','sub.pro.b3','sub.pro.b4','sub.pro.b5'],
     limit: 'sub.pro.limit',
+    roi: 'sub.pro.roi',
     bonuses: ['sub.pro.bonus1','sub.pro.bonus2'], badge: 'sub.bestValue',
   },
+];
+
+const testimonials = [
+  { name: 'Ana M.', role: 'Senior Manager', text: 'sub.testimonial1', avatar: '/images/avatars/ana.png' },
+  { name: 'Diogo S.', role: 'Software Engineer', text: 'sub.testimonial2', avatar: '/images/avatars/diogo.png' },
+  { name: 'Mariana C.', role: 'Product Manager', text: 'sub.testimonial3', avatar: '/images/avatars/mariana.png' },
 ];
 
 const faqs = [
@@ -134,6 +143,15 @@ export default function Plans() {
 
         {/* Header */}
         <div className="text-center mb-12">
+          {/* Social Proof Badge */}
+          <div className="flex items-center justify-center gap-2 text-xs text-[#888] font-light mb-6">
+            <div className="flex -space-x-2 overflow-hidden">
+              <img className="inline-block h-5 w-5 rounded-full ring-2 ring-white" src="/images/avatars/ana.png" alt="Ana M." />
+              <img className="inline-block h-5 w-5 rounded-full ring-2 ring-white" src="/images/avatars/diogo.png" alt="Diogo S." />
+              <img className="inline-block h-5 w-5 rounded-full ring-2 ring-white" src="/images/avatars/mariana.png" alt="Mariana C." />
+            </div>
+            <span>+500 {t('sub.usersImproved')}</span>
+          </div>
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-gold/10 border border-gold/20 rounded-full mb-6">
             <Sparkles className="w-3.5 h-3.5 text-gold" />
             <span className="text-xs text-gold font-medium">{t('sub.founderBadge')}</span>
@@ -302,26 +320,46 @@ export default function Plans() {
                   </div>
                 )}
 
+                {/* ROI & Value Anchor */}
+                <div className="mt-auto pt-4">
+                  {tc.roi && (
+                    <div className="mb-3 text-center">
+                      <p className="text-xs text-emerald-700 font-medium bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1.5 inline-block">{t(tc.roi)}</p>
+                    </div>
+                  )}
+                  {tc.valueAnchor && (
+                    <div className="mb-3 text-center">
+                      <p className="text-[11px] text-[#999] font-light">{t(tc.valueAnchor)}</p>
+                    </div>
+                  )}
+                </div>
+
                 {/* CTA */}
                 {current ? (
                   <div className="w-full py-2.5 text-center text-sm text-gold/60 font-light border border-gold/20 rounded mt-auto">
                     {t('sub.current')}
                   </div>
                 ) : (
-                  <button onClick={() => handleSubscribe(tc.tier)}
-                    className={`w-full py-2.5 text-sm font-medium rounded transition-all duration-300 flex items-center justify-center gap-2 mt-auto ${
-                      tc.highlight
-                        ? 'bg-gold text-[#1a1a1a] hover:bg-[#a07d08] hover:text-white'
-                        : 'border border-[#ddd] text-[#333] hover:border-gold/30 hover:text-[#1a1a1a]'
-                    }`}>
-                    {!user && <Lock className="w-3.5 h-3.5" />}
-                    {!user
-                      ? t('sub.createToSubscribe')
-                      : upgrade
-                        ? `Upgrade para ${t(`sub.${tc.tier}`)}`
-                        : t('sub.subscribe')}
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="mt-auto">
+                    <button onClick={() => handleSubscribe(tc.tier)}
+                      className={`w-full py-2.5 text-sm font-medium rounded transition-all duration-300 flex items-center justify-center gap-2 ${
+                        tc.highlight
+                          ? 'bg-gold text-[#1a1a1a] hover:bg-[#a07d08] hover:text-white'
+                          : 'border border-[#ddd] text-[#333] hover:border-gold/30 hover:text-[#1a1a1a]'
+                      }`}>
+                      {!user && <Lock className="w-3.5 h-3.5" />}
+                      {!user
+                        ? t('sub.createToSubscribe')
+                        : upgrade
+                          ? `Upgrade para ${t(`sub.${tc.tier}`)}`
+                          : t('sub.subscribe')}
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                    {/* Ajuste 5: Garantia de satisfação */}
+                    <p className="text-center text-[10px] text-[#bbb] font-light mt-1.5 flex items-center justify-center gap-1">
+                      <Check className="w-2.5 h-2.5" /> Cancela quando quiseres
+                    </p>
+                  </div>
                 )}
               </div>
             );
@@ -372,6 +410,21 @@ export default function Plans() {
         </div>
 
         {/* Limited offer */}
+        {/* Testimonials */}
+        <div className="max-w-4xl mx-auto mb-20">
+          <h2 className="text-xl font-semibold text-[#1a1a1a] mb-8 text-center">{t('sub.testimonialsTitle')}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((testimonial, i) => (
+              <div key={i} className="bg-[#f7f7f6] border border-[#e5e5e5] rounded-lg p-6 text-center">
+                <img src={testimonial.avatar} alt={testimonial.name} className="w-12 h-12 rounded-full mx-auto mb-4" />
+                <p className="text-sm text-[#555] font-light italic mb-4">{t(testimonial.text)}</p>
+                <p className="text-xs font-semibold text-[#1a1a1a]">{testimonial.name}</p>
+                <p className="text-[10px] text-[#999]">{testimonial.role}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="text-center mb-20">
           <p className="text-xs text-[#bbb] font-light">{t('sub.limitedOffer')}</p>
         </div>

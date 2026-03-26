@@ -587,11 +587,24 @@ export default function PaymentModal({ plan, onClose }: Props) {
             <div className="space-y-3">
               <p className="text-xs text-[#888] font-light mb-4">{t('pay.method')}</p>
 
-              {/* MB WAY */}
+              {/* Ajuste 4: Email capture no step de selecção */}
+              <div className="mb-4">
+                <label className="block text-[10px] text-[#999] uppercase tracking-wider mb-1.5">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="email@exemplo.com"
+                  className="w-full px-3 py-2.5 text-sm border border-[#e5e5e5] rounded bg-white text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-[#C9A961]/40"
+                />
+              </div>
+
+              {/* Ajuste 3: MB WAY em destaque visual */}
               <button
                 onClick={() => selectMethod('mbway')}
-                className="w-full flex items-center gap-4 p-4 border border-[#e5e5e5] rounded hover:border-[#C9A961]/40 transition-all duration-300 group bg-white"
+                className="w-full flex items-center gap-4 p-4 border-2 border-[#C9A961]/60 rounded hover:border-[#C9A961] transition-all duration-300 group bg-white relative"
               >
+                <span className="absolute -top-2.5 left-3 bg-[#C9A961] text-[#1a1a1a] text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Recomendado</span>
                 <div className="w-10 h-10 bg-[#E4002B]/10 rounded flex items-center justify-center">
                   <Smartphone className="w-5 h-5 text-[#E4002B]" />
                 </div>
@@ -599,53 +612,63 @@ export default function PaymentModal({ plan, onClose }: Props) {
                   <span className="block text-sm font-medium text-[#1a1a1a]">MB WAY</span>
                   <span className="block text-xs text-[#aaa] font-light">Pagamento instantâneo</span>
                 </div>
-                <ArrowRight className="w-4 h-4 text-[#ccc] group-hover:text-[#C9A961] transition-colors" />
+                <ArrowRight className="w-4 h-4 text-[#C9A961] group-hover:text-[#C9A961] transition-colors" />
               </button>
 
-              {/* Multibanco */}
-              <button
-                onClick={() => selectMethod('multibanco')}
-                className="w-full flex items-center gap-4 p-4 border border-[#e5e5e5] rounded hover:border-[#C9A961]/40 transition-all duration-300 group bg-white"
-              >
-                <div className="w-10 h-10 bg-[#003087]/10 rounded flex items-center justify-center">
-                  <Building2 className="w-5 h-5 text-[#003087]" />
-                </div>
-                <div className="text-left flex-1">
-                  <span className="block text-sm font-medium text-[#1a1a1a]">Multibanco</span>
-                  <span className="block text-xs text-[#aaa] font-light">Referência para pagamento</span>
-                </div>
-                <ArrowRight className="w-4 h-4 text-[#ccc] group-hover:text-[#C9A961] transition-colors" />
-              </button>
+              {/* Ajuste 3: Outros métodos em secção colapsável */}
+              <details className="group">
+                <summary className="cursor-pointer text-xs text-[#aaa] hover:text-[#555] transition-colors py-2 flex items-center gap-1 list-none">
+                  <span className="group-open:hidden">▸</span>
+                  <span className="hidden group-open:inline">▾</span>
+                  Outras formas de pagamento
+                </summary>
+                <div className="space-y-2 mt-2">
+                  {/* Multibanco */}
+                  <button
+                    onClick={() => selectMethod('multibanco')}
+                    className="w-full flex items-center gap-4 p-4 border border-[#e5e5e5] rounded hover:border-[#C9A961]/40 transition-all duration-300 group bg-white"
+                  >
+                    <div className="w-10 h-10 bg-[#003087]/10 rounded flex items-center justify-center">
+                      <Building2 className="w-5 h-5 text-[#003087]" />
+                    </div>
+                    <div className="text-left flex-1">
+                      <span className="block text-sm font-medium text-[#1a1a1a]">Multibanco</span>
+                      <span className="block text-xs text-[#aaa] font-light">Referência para pagamento</span>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-[#ccc] group-hover:text-[#C9A961] transition-colors" />
+                  </button>
 
-              {/* Cartão (Stripe) */}
-              <button
-                onClick={() => selectMethod('stripe')}
-                className="w-full flex items-center gap-4 p-4 border border-[#e5e5e5] rounded hover:border-[#C9A961]/40 transition-all duration-300 group bg-white"
-              >
-                <div className="w-10 h-10 bg-[#635BFF]/10 rounded flex items-center justify-center">
-                  <CreditCard className="w-5 h-5 text-[#635BFF]" />
-                </div>
-                <div className="text-left flex-1">
-                  <span className="block text-sm font-medium text-[#1a1a1a]">Cartão</span>
-                  <span className="block text-xs text-[#aaa] font-light">Visa, Mastercard, etc.</span>
-                </div>
-                <ArrowRight className="w-4 h-4 text-[#ccc] group-hover:text-[#C9A961] transition-colors" />
-              </button>
+                  {/* Cartão (Stripe) */}
+                  <button
+                    onClick={() => selectMethod('stripe')}
+                    className="w-full flex items-center gap-4 p-4 border border-[#e5e5e5] rounded hover:border-[#C9A961]/40 transition-all duration-300 group bg-white"
+                  >
+                    <div className="w-10 h-10 bg-[#635BFF]/10 rounded flex items-center justify-center">
+                      <CreditCard className="w-5 h-5 text-[#635BFF]" />
+                    </div>
+                    <div className="text-left flex-1">
+                      <span className="block text-sm font-medium text-[#1a1a1a]">Cartão</span>
+                      <span className="block text-xs text-[#aaa] font-light">Visa, Mastercard, etc.</span>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-[#ccc] group-hover:text-[#C9A961] transition-colors" />
+                  </button>
 
-              {/* PayPal */}
-              <button
-                onClick={() => selectMethod('paypal')}
-                className="w-full flex items-center gap-4 p-4 border border-[#e5e5e5] rounded hover:border-[#C9A961]/40 transition-all duration-300 group bg-white"
-              >
-                <div className="w-10 h-10 bg-[#003087]/10 rounded flex items-center justify-center">
-                  <span className="text-[#003087] font-bold text-sm">PP</span>
+                  {/* PayPal */}
+                  <button
+                    onClick={() => selectMethod('paypal')}
+                    className="w-full flex items-center gap-4 p-4 border border-[#e5e5e5] rounded hover:border-[#C9A961]/40 transition-all duration-300 group bg-white"
+                  >
+                    <div className="w-10 h-10 bg-[#003087]/10 rounded flex items-center justify-center">
+                      <span className="text-[#003087] font-bold text-sm">PP</span>
+                    </div>
+                    <div className="text-left flex-1">
+                      <span className="block text-sm font-medium text-[#1a1a1a]">PayPal</span>
+                      <span className="block text-xs text-[#aaa] font-light">Pagamento via PayPal</span>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-[#ccc] group-hover:text-[#C9A961] transition-colors" />
+                  </button>
                 </div>
-                <div className="text-left flex-1">
-                  <span className="block text-sm font-medium text-[#1a1a1a]">PayPal</span>
-                  <span className="block text-xs text-[#aaa] font-light">Pagamento via PayPal</span>
-                </div>
-                <ArrowRight className="w-4 h-4 text-[#ccc] group-hover:text-[#C9A961] transition-colors" />
-              </button>
+              </details>
 
               {/* Discount code section */}
               <div className="pt-3 border-t border-[#e5e5e5]">
@@ -758,6 +781,10 @@ export default function PaymentModal({ plan, onClose }: Props) {
                 {t('pay.confirm')} — {formatPrice(finalPrice)}
                 <ArrowRight className="w-4 h-4" />
               </button>
+              {/* Ajuste 5: Garantia de satisfação */}
+              <p className="text-center text-[10px] text-[#aaa] font-light mt-2 flex items-center justify-center gap-1">
+                <span>✓</span> Cancela quando quiseres · Sem compromisso
+              </p>
             </div>
           )}
 
