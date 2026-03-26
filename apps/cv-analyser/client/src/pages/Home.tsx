@@ -2353,7 +2353,7 @@ export default function Home() {
         {/* ═══════════════════════════════════════════════════════════ */}
         {/* SECTION: Final CTA */}
         {/* ═══════════════════════════════════════════════════════════ */}
-        <div className="mt-20 mb-10 bg-[#C9A961] rounded-2xl p-8 md:p-12 text-center space-y-6">
+        <div className="mt-20 mb-10 bg-[#C9A961] rounded-2xl p-8 md:p-12 text-center space-y-6 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-white">
             Pronto para melhorar o teu CV?
           </h2>
@@ -2369,7 +2369,7 @@ export default function Home() {
         </div>
 
         {/* ─── Member Area CTA ─── */}
-        <div className="mt-16 mb-10 p-8 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-2xl mx-auto">
+        <div className="mt-16 mb-10 p-8 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-2 mb-3">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
             <p className="text-base font-bold text-slate-800">Queres acesso regular a esta ferramenta?</p>

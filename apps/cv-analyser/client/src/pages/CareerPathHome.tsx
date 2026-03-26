@@ -1252,7 +1252,7 @@ export default function CareerPathHome() {
 
 
       {/* ─── Member Area CTA ─── */}
-      <div className="max-w-2xl mx-auto px-6 mt-12 mb-8">
+      <div className="max-w-3xl mx-auto px-6 mt-12 mb-8">
         <div className="p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center">
           <p className="text-base font-bold text-slate-800 mb-2">Queres acesso regular ao Career Path?</p>
           <p className="text-sm text-slate-500 mb-4 leading-relaxed">Com um plano Growth ou Pro, tens Career Path incluído mensalmente + CV Analyser semanal, conteúdos exclusivos e muito mais.</p>

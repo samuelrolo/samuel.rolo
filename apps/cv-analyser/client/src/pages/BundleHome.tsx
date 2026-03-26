@@ -634,7 +634,7 @@ export default function BundleHome() {
             <p className="text-xs text-slate-400">Pagamento único · Sem subscrição · Resultados imediatos</p>
 
             {/* ─── Member Area CTA ─── */}
-            <div className="mt-10 p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-xl mx-auto">
+            <div className="mt-10 p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-3xl mx-auto">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Sparkles className="w-4 h-4 text-[#C9A961]" />
                 <p className="text-sm font-bold text-slate-800">Queres acesso regular a estas ferramentas?</p>

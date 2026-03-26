@@ -1941,7 +1941,7 @@ export default function HomeEN() {
         </div>
 
         {/* Final CTA */}
-        <div className="mt-20 mb-10 bg-[#C9A961] rounded-2xl p-8 md:p-12 text-center space-y-6">
+        <div className="mt-20 mb-10 bg-[#C9A961] rounded-2xl p-8 md:p-12 text-center space-y-6 max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-white">Ready to improve your CV?</h2>
           <p className="text-white/80 max-w-lg mx-auto">Start with the free analysis. No credit card, no commitment. Discover what recruiters really think.</p>
           <Button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="bg-white text-[#C9A961] hover:bg-white/90 font-semibold px-8 py-3 text-base">
@@ -1950,7 +1950,7 @@ export default function HomeEN() {
         </div>
 
         {/* ─── Member Area CTA ─── */}
-        <div className="mt-16 mb-10 p-8 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-2xl mx-auto">
+        <div className="mt-16 mb-10 p-8 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-3xl mx-auto">
           <p className="text-base font-bold text-slate-800 mb-2">Want regular access to this tool?</p>
           <p className="text-sm text-slate-500 mb-5 leading-relaxed max-w-lg mx-auto">With a subscription plan, you get weekly CV analyses included, Career Path, exclusive content, personalised job feed and much more.</p>
           <a

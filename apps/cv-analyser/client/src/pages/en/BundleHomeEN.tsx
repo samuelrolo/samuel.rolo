@@ -431,7 +431,7 @@ export default function BundleHomeEN() {
             <p className="text-xs text-slate-400">One-time payment · No subscription · Instant results</p>
 
             {/* ─── Member Area CTA ─── */}
-            <div className="mt-10 p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-xl mx-auto">
+            <div className="mt-10 p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-3xl mx-auto">
               <p className="text-sm font-bold text-slate-800 mb-2">Want regular access to these tools?</p>
               <p className="text-xs text-slate-500 mb-4 leading-relaxed">With a subscription plan, you get weekly analyses included, exclusive content, personalised job feed and much more — all in one platform.</p>
               <a
