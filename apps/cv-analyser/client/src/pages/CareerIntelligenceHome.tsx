@@ -11,6 +11,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
+import { getMemberPlanTier } from "@/lib/memberAuth";
 import { countries } from "./en/countries";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -82,12 +83,35 @@ const testimonials = [
   },
 ];
 
-const PRICE_DISPLAY = '49€';
-const PRICE = '49,00';
-const PRICE_NUM = 49.00;
+const PRICE_DISPLAY_BASE = '49€';
+const PRICE_BASE = '49,00';
+const PRICE_NUM_BASE = 49.00;
+const PRICE_DISPLAY_UPGRADE = '29€';
+const PRICE_UPGRADE = '29,00';
+const PRICE_NUM_UPGRADE = 29.00;
+const PRICE_DISPLAY_MEMBER_PRO = '9,99€';
+const PRICE_MEMBER_PRO = '9,99';
+const PRICE_NUM_MEMBER_PRO = 9.99;
 
 export default function CareerIntelligenceHome() {
   useEffect(() => { document.title = "Career Intelligence — Decisão Estratégica de Carreira com IA | Share2Inspire"; }, []);
+
+  // Detect upgrade from Career Path (via URL param or sessionStorage)
+  const isUpgrade = (() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('upgrade') === 'careerpath') return true;
+    if (sessionStorage.getItem('careerPathPaid') === 'true') return true;
+    return false;
+  })();
+
+  // Member Pro pricing (75% discount)
+  const memberTier = getMemberPlanTier();
+  const isMemberPro = memberTier === 'pro';
+
+  const PRICE_DISPLAY = isMemberPro ? PRICE_DISPLAY_MEMBER_PRO : isUpgrade ? PRICE_DISPLAY_UPGRADE : PRICE_DISPLAY_BASE;
+  const PRICE = isMemberPro ? PRICE_MEMBER_PRO : isUpgrade ? PRICE_UPGRADE : PRICE_BASE;
+  const PRICE_NUM = isMemberPro ? PRICE_NUM_MEMBER_PRO : isUpgrade ? PRICE_NUM_UPGRADE : PRICE_NUM_BASE;
+  const memberProductType = isMemberPro ? 'career_intelligence_member_pro' : 'career_intelligence_full';
 
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);
@@ -445,7 +469,7 @@ export default function CareerIntelligenceHome() {
         body: JSON.stringify({
           email,
           name: email.split('@')[0],
-          product_type: 'career_intelligence_full',
+          product_type: memberProductType,
           orderId,
           language: 'pt',
           country,
@@ -687,7 +711,7 @@ export default function CareerIntelligenceHome() {
                   <Scale className="w-5 h-5 mr-2 flex-shrink-0" />
                   Obter a minha recomendação de carreira
                 </Button>
-                <p className="text-xs text-muted-foreground">Análise completa por 49€ · Pagamento único · Resultado em &lt; 1 minuto</p>
+                <p className="text-xs text-muted-foreground">Análise completa por {PRICE_DISPLAY} · Pagamento único · Resultado em &lt; 1 minuto{isUpgrade && <span className="ml-1 text-green-600 font-medium">(upgrade Career Path)</span>}</p>
                 {/* Demo button */}
                 <a
                   href="/career-intelligence/demo"
@@ -746,7 +770,7 @@ export default function CareerIntelligenceHome() {
               <Scale className="w-8 h-8 text-[#C9A961] mx-auto" />
               <h3 className="text-lg font-bold text-white">O equivalente a uma sessão de coaching estratégico.</h3>
               <p className="text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-                Um coach de carreira cobra entre 300€ e 600€ por sessão para te ajudar a decidir. O Career Intelligence entrega a mesma análise — com dados objectivos, comparação estruturada e recomendação fundamentada — por <strong className="text-[#C9A961]">49€</strong>.
+                Um coach de carreira cobra entre 300€ e 600€ por sessão para te ajudar a decidir. O Career Intelligence entrega a mesma análise — com dados objectivos, comparação estruturada e recomendação fundamentada — por <strong className="text-[#C9A961]">{PRICE_DISPLAY}</strong>.
               </p>
             </div>
 
@@ -774,7 +798,7 @@ export default function CareerIntelligenceHome() {
             {/* Bottom CTA */}
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
               <h2 className="text-2xl font-bold text-foreground">Não precisas de mais opções. Precisas de saber qual escolher.</h2>
-              <p className="text-muted-foreground">Diagnóstico completo + decisão estratégica por 49€. Pagamento único. Sem subscrição.</p>
+              <p className="text-muted-foreground">Diagnóstico completo + decisão estratégica por {PRICE_DISPLAY}. Pagamento único. Sem subscrição.</p>
               <Button
                 onClick={() => setStep('upload')}
                 className="h-auto min-h-[3.5rem] px-4 sm:px-10 py-3 text-sm sm:text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all whitespace-normal"

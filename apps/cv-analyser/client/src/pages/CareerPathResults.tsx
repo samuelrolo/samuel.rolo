@@ -1591,7 +1591,7 @@ export default function CareerPathResults() {
                 </div>
               </div>
               <a
-                href={isEN ? '/en/career-intelligence' : '/career-intelligence'}
+                href={isEN ? '/en/career-intelligence?upgrade=careerpath' : '/career-intelligence?upgrade=careerpath'}
                 className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 transition-colors"
               >
                 <Zap className="w-4 h-4" />

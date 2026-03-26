@@ -1462,7 +1462,7 @@ export default function MemberArea() {
 
         {/* Vagas Feed — Growth+ only */}
         {planTier !== 'essential' ? (
-          <VagasFeed lang={lang} />
+          <VagasFeed lang={lang} countryCode={selectedCountryData?.code || 'PT'} countryName={cpCountry} region={cpRegion || undefined} />
         ) : (
           <section className="mb-16 p-6 border border-dashed border-[#e5e5e5] rounded-lg bg-[#fafaf9] text-center">
             <Lock className="w-6 h-6 text-[#ccc] mx-auto mb-3" />

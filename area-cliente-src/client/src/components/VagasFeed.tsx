@@ -1,7 +1,7 @@
 /**
  * VagasFeed — Feed de Vagas powered by Adzuna API
  * Componente React integrado na Área de Membro com destaque visual
- * Credenciais pré-configuradas; pesquisa personalizável
+ * Credenciais pré-configuradas; pesquisa personalizável por país
  * Fully i18n-aware via useI18n hook
  */
 import { useState, useEffect, useCallback } from 'react';
@@ -11,10 +11,49 @@ import { useI18n } from '@/lib/i18n';
 // ─── Pre-configured Adzuna credentials ──────────────────────────────────────
 const S2I_APP_ID  = '6c8e3465';
 const S2I_APP_KEY = 'fb7bb5f2f64806f6454c9bedbe3e1f01';
-const S2I_QUERY   = 'recursos humanos carreira coaching';
 
-// Adzuna base URL for Portugal searches
-const ADZUNA_SEARCH_BASE = 'https://www.adzuna.com/search?loc=Portugal';
+// ─── Adzuna supported countries (ISO 3166-1 alpha-2 → Adzuna code) ─────────
+// Adzuna API supports: at, au, be, br, ca, ch, de, es, fr, gb, in, it, mx, nl, nz, pl, sg, us, za
+const ADZUNA_SUPPORTED: Record<string, string> = {
+  AT: 'at', AU: 'au', BE: 'be', BR: 'br', CA: 'ca', CH: 'ch',
+  DE: 'de', ES: 'es', FR: 'fr', GB: 'gb', IN: 'in', IT: 'it',
+  MX: 'mx', NL: 'nl', NZ: 'nz', PL: 'pl', SG: 'sg', US: 'us', ZA: 'za',
+};
+
+// Fallback mapping for unsupported countries → nearest supported Adzuna country
+const ADZUNA_FALLBACK: Record<string, string> = {
+  PT: 'es', IE: 'gb', SE: 'gb', DK: 'gb', NO: 'gb', FI: 'gb',
+  AE: 'gb', HK: 'sg', JP: 'gb', KR: 'gb', CN: 'sg',
+  AR: 'br', CL: 'br', CO: 'br', PE: 'br',
+};
+
+// Adzuna website domain per country code (for search links)
+const ADZUNA_DOMAINS: Record<string, string> = {
+  at: 'www.adzuna.at', au: 'www.adzuna.com.au', be: 'www.adzuna.be',
+  br: 'www.adzuna.com.br', ca: 'www.adzuna.ca', ch: 'www.adzuna.ch',
+  de: 'www.adzuna.de', es: 'www.adzuna.es', fr: 'www.adzuna.fr',
+  gb: 'www.adzuna.co.uk', in: 'www.adzuna.in', it: 'www.adzuna.it',
+  mx: 'www.adzuna.com.mx', nl: 'www.adzuna.nl', nz: 'www.adzuna.co.nz',
+  pl: 'www.adzuna.pl', sg: 'www.adzuna.sg', us: 'www.adzuna.com', za: 'www.adzuna.co.za',
+};
+
+function getAdzunaCountry(isoCode: string): string {
+  const upper = (isoCode || 'GB').toUpperCase();
+  return ADZUNA_SUPPORTED[upper] || ADZUNA_FALLBACK[upper] || 'gb';
+}
+
+function getAdzunaSearchUrl(adzunaCountry: string, query: string, location?: string): string {
+  const domain = ADZUNA_DOMAINS[adzunaCountry] || 'www.adzuna.co.uk';
+  const params = new URLSearchParams({ q: query });
+  if (location) params.set('w', location);
+  return `https://${domain}/jobs/search?${params.toString()}`;
+}
+
+// Default search queries by language
+function getDefaultQuery(lang: string): string {
+  if (lang === 'pt') return 'recursos humanos carreira';
+  return 'human resources career';
+}
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 interface Vaga {
@@ -29,82 +68,88 @@ interface Vaga {
   url: string;
 }
 
-// Helper to build an Adzuna search URL for a given query
-const adzunaSearchUrl = (query: string) =>
-  `${ADZUNA_SEARCH_BASE}&q=${encodeURIComponent(query)}`;
+type FilterType = 'all' | 'remote' | 'local' | 'hr' | 'marketing';
 
-// ─── Demo/fallback data ─────────────────────────────────────────────────────
-const DEMO_VAGAS: Vaga[] = [
-  { title: "Career Coach & Trainer",       company: "Fundação EDP",       location: "Lisboa",          salary: "2.800–3.800€", remote: false, tags: ["Coaching", "Formação"],  match: 95, key: "rh lisboa",        url: adzunaSearchUrl("career coach trainer Lisboa") },
-  { title: "HR Business Partner",          company: "NOS Comunicações",   location: "Lisboa",          salary: "3.200–4.200€", remote: false, tags: ["RH", "Estratégia"],     match: 88, key: "rh lisboa",        url: adzunaSearchUrl("HR business partner Lisboa") },
-  { title: "Talent Acquisition Specialist",company: "Farfetch",           location: "Porto / Remoto",  salary: "2.600–3.400€", remote: true,  tags: ["Recrutamento"],          match: 82, key: "rh remote",        url: adzunaSearchUrl("talent acquisition specialist Porto") },
-  { title: "People & Culture Manager",     company: "Revolut Portugal",   location: "Lisboa",          salary: "4.000–5.500€", remote: true,  tags: ["RH", "Cultura"],         match: 90, key: "rh lisboa remote", url: adzunaSearchUrl("people culture manager Lisboa") },
-  { title: "Marketing & Brand Manager",    company: "Super Bock Group",   location: "Porto",           salary: "3.000–4.000€", remote: false, tags: ["Marketing"],             match: 74, key: "marketing",        url: adzunaSearchUrl("marketing brand manager Porto") },
-  { title: "Content & Community Manager",  company: "Deco Proteste",      location: "Lisboa / Remoto", salary: "2.200–3.000€", remote: true,  tags: ["Marketing"],             match: 79, key: "marketing remote lisboa", url: adzunaSearchUrl("content community manager Lisboa") },
-  { title: "Learning & Development Lead",  company: "Jerónimo Martins",   location: "Lisboa",          salary: "3.800–5.000€", remote: false, tags: ["L&D", "Formação"],       match: 91, key: "rh lisboa",        url: adzunaSearchUrl("learning development lead Lisboa") },
-  { title: "Employer Branding Specialist", company: "Accenture Portugal", location: "Lisboa / Remoto", salary: "2.800–3.600€", remote: true,  tags: ["Employer Branding"],     match: 85, key: "rh remote lisboa", url: adzunaSearchUrl("employer branding specialist Lisboa") },
-];
+interface VagasFeedProps {
+  lang?: string;
+  countryCode?: string;  // ISO 3166-1 alpha-2 (e.g. 'PT', 'US', 'GB')
+  countryName?: string;  // Display name (e.g. 'Portugal', 'United States')
+  region?: string;       // Region/city (e.g. 'Lisboa', 'London')
+}
 
-type FilterType = 'todas' | 'remote' | 'lisboa' | 'rh' | 'marketing';
-
-export default function VagasFeed({ lang: langProp }: { lang?: string }) {
+export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryName = 'Portugal', region }: VagasFeedProps) {
   const { t, lang: ctxLang } = useI18n();
   const lang = langProp || ctxLang;
 
+  const adzunaCountry = getAdzunaCountry(countryCode);
+  const defaultQuery = getDefaultQuery(lang);
+  const locationLabel = region || countryName || 'Portugal';
+
   const FILTERS: { key: FilterType; label: string }[] = [
-    { key: 'todas',     label: t('vf.all') },
+    { key: 'all',       label: t('vf.all') },
     { key: 'remote',    label: t('vf.remote') },
-    { key: 'lisboa',    label: 'Lisboa' },
-    { key: 'rh',        label: t('vf.hr') },
+    { key: 'local',     label: locationLabel.split(' / ')[0].split(' (')[0] },
+    { key: 'hr',        label: t('vf.hr') },
     { key: 'marketing', label: 'Marketing' },
   ];
 
   const [vagas, setVagas] = useState<Vaga[]>([]);
-  const [activeFilter, setActiveFilter] = useState<FilterType>('todas');
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [loading, setLoading] = useState(true);
   const [isApiData, setIsApiData] = useState(false);
 
   const fetchVagas = useCallback(async () => {
     setLoading(true);
     try {
-      const url = `https://api.adzuna.com/v1/api/jobs/pt/search/1?app_id=${S2I_APP_ID}&app_key=${S2I_APP_KEY}&results_per_page=10&what=${encodeURIComponent(S2I_QUERY)}&where=Portugal&content-type=application/json`;
+      const whereParam = region || countryName || '';
+      const url = `https://api.adzuna.com/v1/api/jobs/${adzunaCountry}/search/1?app_id=${S2I_APP_ID}&app_key=${S2I_APP_KEY}&results_per_page=10&what=${encodeURIComponent(defaultQuery)}&where=${encodeURIComponent(whereParam)}&content-type=application/json`;
       const res = await fetch(url);
       const data = await res.json();
       if (data.results?.length) {
+        const currencySymbol = adzunaCountry === 'gb' ? '£' : adzunaCountry === 'us' ? '$' : '€';
         const mapped: Vaga[] = data.results.map((j: any) => ({
           title:    j.title,
           company:  j.company?.display_name || 'N/A',
-          location: j.location?.display_name || 'Portugal',
-          salary:   j.salary_min ? `${Math.round(j.salary_min / 12)}–${Math.round(j.salary_max / 12)}€/mês` : null,
+          location: j.location?.display_name || countryName,
+          salary:   j.salary_min ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}–${Math.round(j.salary_max / 12).toLocaleString()}` : null,
           remote:   /remot/i.test(j.title + ' ' + (j.description || '')),
           tags:     j.category?.label ? [j.category.label] : [],
           match:    Math.floor(70 + Math.random() * 25),
           key:      (j.category?.label || '').toLowerCase(),
-          url:      j.redirect_url || adzunaSearchUrl(j.title),
+          url:      j.redirect_url || getAdzunaSearchUrl(adzunaCountry, j.title, j.location?.display_name),
         }));
         setVagas(mapped);
         setIsApiData(true);
       } else {
-        setVagas([...DEMO_VAGAS]);
+        setVagas([]);
         setIsApiData(false);
       }
     } catch {
-      setVagas([...DEMO_VAGAS]);
+      setVagas([]);
       setIsApiData(false);
     }
     setLoading(false);
-  }, []);
+  }, [adzunaCountry, defaultQuery, countryName, region]);
 
   useEffect(() => { fetchVagas(); }, [fetchVagas]);
 
   const filtered = vagas.filter(v => {
-    if (activeFilter === 'todas') return true;
+    if (activeFilter === 'all') return true;
     if (activeFilter === 'remote') return v.remote;
-    if (activeFilter === 'lisboa') return v.location.toLowerCase().includes('lisboa');
-    return v.key?.includes(activeFilter);
+    if (activeFilter === 'local') return v.location.toLowerCase().includes(locationLabel.toLowerCase().split(' / ')[0].split(' (')[0].toLowerCase());
+    if (activeFilter === 'hr') return /hr|human|recursos|rh|people|talent/i.test(v.title + ' ' + v.tags.join(' '));
+    if (activeFilter === 'marketing') return /marketing|brand|content|digital|social/i.test(v.title + ' ' + v.tags.join(' '));
+    return true;
   });
 
   const remoteLabel = lang === 'pt' ? 'Remoto' : 'Remote';
+  const noJobsMsg = lang === 'pt'
+    ? `Sem vagas encontradas para ${countryName}. Tenta outro filtro.`
+    : `No jobs found for ${countryName}. Try another filter.`;
+  const unsupportedMsg = lang === 'pt'
+    ? `A pesquisa de vagas para ${countryName} utiliza resultados de ${ADZUNA_DOMAINS[adzunaCountry]?.replace('www.adzuna.', '') || adzunaCountry}.`
+    : `Job search for ${countryName} uses results from ${ADZUNA_DOMAINS[adzunaCountry]?.replace('www.adzuna.', '') || adzunaCountry}.`;
+  const isUsingFallback = !ADZUNA_SUPPORTED[countryCode.toUpperCase()];
 
   return (
     <section className="mb-12">
@@ -118,7 +163,7 @@ export default function VagasFeed({ lang: langProp }: { lang?: string }) {
             {t('vf.title')}
           </h2>
           <p className="text-[11px] text-[#999] font-light">
-            {t('vf.subtitle')}
+            {t('vf.subtitle')} · {countryName}{region ? ` — ${region}` : ''}
           </p>
         </div>
         <div className="ml-auto">
@@ -127,6 +172,13 @@ export default function VagasFeed({ lang: langProp }: { lang?: string }) {
           </span>
         </div>
       </div>
+
+      {/* Fallback notice */}
+      {isUsingFallback && vagas.length > 0 && (
+        <div className="mt-2 mb-1 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded text-[10px] text-amber-700">
+          {unsupportedMsg}
+        </div>
+      )}
 
       {/* Widget container with gold highlight border */}
       <div className="mt-4 border border-[#BF9A33]/25 rounded-lg overflow-hidden bg-white shadow-sm">
@@ -170,10 +222,10 @@ export default function VagasFeed({ lang: langProp }: { lang?: string }) {
             </div>
           ) : filtered.length === 0 ? (
             <div className="py-10 text-center text-[#6c757d] text-xs">
-              {t('vf.noJobs')}
+              {noJobsMsg}
               <br />
               <button
-                onClick={() => setActiveFilter('todas')}
+                onClick={() => setActiveFilter('all')}
                 className="text-[#a57b0a] font-semibold mt-1 hover:underline"
               >
                 {t('vf.viewAll')}
@@ -241,7 +293,7 @@ export default function VagasFeed({ lang: langProp }: { lang?: string }) {
         {/* Footer */}
         <div className="px-4 py-3 border-t border-[#e9ecef] bg-[#f8f9fa] text-center">
           <a
-            href={adzunaSearchUrl(S2I_QUERY)}
+            href={getAdzunaSearchUrl(adzunaCountry, defaultQuery, region || countryName)}
             target="_blank"
             rel="noopener noreferrer"
             className="text-[12px] text-[#a57b0a] font-semibold hover:text-[#BF9A33] inline-flex items-center gap-1"
@@ -250,7 +302,7 @@ export default function VagasFeed({ lang: langProp }: { lang?: string }) {
             <ExternalLink className="w-3 h-3" />
           </a>
           <div className="text-[10px] text-[#999] mt-0.5">
-            Powered by Adzuna API {!isApiData && `· ${t('vf.demoData')}`}
+            Powered by Adzuna API {!isApiData && vagas.length === 0 && `· ${t('vf.noResults')}`}
           </div>
         </div>
       </div>

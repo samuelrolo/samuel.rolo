@@ -11,6 +11,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
+import { getMemberPlanTier } from "@/lib/memberAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import { countries } from "./countries";
 
@@ -81,13 +82,36 @@ const testimonials = [
   },
 ];
 
-const PRICE = '49.00';
-const PRICE_NUM = 49.00;
+const PRICE_BASE = '49.00';
+const PRICE_NUM_BASE = 49.00;
+const PRICE_DISPLAY_UPGRADE = '$29';
+const PRICE_UPGRADE = '29.00';
+const PRICE_NUM_UPGRADE = 29.00;
+const PRICE_DISPLAY_MEMBER_PRO = '$9.99';
+const PRICE_MEMBER_PRO = '9.99';
+const PRICE_NUM_MEMBER_PRO = 9.99;
 
 export default function CareerIntelligenceHomeEN() {
   useEffect(() => { document.title = "Career Intelligence — Strategic Career Decision with AI | Share2Inspire"; }, []);
   const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
-  const PRICE_DISPLAY = `${CUR}49`;
+  const PRICE_DISPLAY_BASE = `${CUR}49`;
+
+  // Detect upgrade from Career Path
+  const isUpgrade = (() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('upgrade') === 'careerpath') return true;
+    if (sessionStorage.getItem('careerPathPaid') === 'true') return true;
+    return false;
+  })();
+
+  // Member Pro pricing (75% discount)
+  const memberTier = getMemberPlanTier();
+  const isMemberPro = memberTier === 'pro';
+
+  const PRICE_DISPLAY = isMemberPro ? PRICE_DISPLAY_MEMBER_PRO : isUpgrade ? PRICE_DISPLAY_UPGRADE : PRICE_DISPLAY_BASE;
+  const PRICE = isMemberPro ? PRICE_MEMBER_PRO : isUpgrade ? PRICE_UPGRADE : PRICE_BASE;
+  const PRICE_NUM = isMemberPro ? PRICE_NUM_MEMBER_PRO : isUpgrade ? PRICE_NUM_UPGRADE : PRICE_NUM_BASE;
+  const memberProductType = isMemberPro ? 'career_intelligence_member_pro' : 'career_intelligence_full';
 
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);
@@ -412,7 +436,7 @@ export default function CareerIntelligenceHomeEN() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email, name: email.split('@')[0], product_type: 'career_intelligence_full',
+          email, name: email.split('@')[0], product_type: memberProductType,
           orderId, language: 'en', country, region, currency: currencyCode, amount: FINAL_PRICE,
         })
       });
@@ -564,7 +588,7 @@ export default function CareerIntelligenceHomeEN() {
                 <Button onClick={() => setStep('upload')} className="h-auto min-h-[3.5rem] px-4 sm:px-10 py-3 text-sm sm:text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all whitespace-normal">
                   <Scale className="w-5 h-5 mr-2 flex-shrink-0" />Get my career recommendation
                 </Button>
-                <p className="text-xs text-muted-foreground">Full analysis for {CUR}49 · One-time payment · Result in &lt; 1 minute</p>
+                <p className="text-xs text-muted-foreground">Full analysis for {PRICE_DISPLAY} · One-time payment · Result in < 1 minute{isUpgrade && <span className="ml-1 text-green-600 font-medium">(Career Path upgrade)</span>}</p>
                 {/* Demo button */}
                 <a
                   href="/en/career-intelligence/demo"
@@ -614,7 +638,7 @@ export default function CareerIntelligenceHomeEN() {
               <Scale className="w-8 h-8 text-[#C9A961] mx-auto" />
               <h3 className="text-lg font-bold text-white">The equivalent of a strategic coaching session.</h3>
               <p className="text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-                A career coach charges between $300 and $600 per session to help you decide. Career Intelligence delivers the same analysis — with objective data, structured comparison and a justified recommendation — for <strong className="text-[#C9A961]">{CUR}49</strong>.
+                A career coach charges between $300 and $600 per session to help you decide. Career Intelligence delivers the same analysis — with objective data, structured comparison and a justified recommendation — for <strong className="text-[#C9A961]">{PRICE_DISPLAY}</strong>.
               </p>
             </div>
 
@@ -633,7 +657,7 @@ export default function CareerIntelligenceHomeEN() {
 
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
               <h2 className="text-2xl font-bold text-foreground">You don't need more options. You need to know which one to choose.</h2>
-              <p className="text-muted-foreground">Full diagnosis + strategic decision for {CUR}49. One-time payment. No subscription.</p>
+              <p className="text-muted-foreground">Full diagnosis + strategic decision for {PRICE_DISPLAY}. One-time payment. No subscription.</p>
               <Button onClick={() => setStep('upload')} className="h-auto min-h-[3.5rem] px-4 sm:px-10 py-3 text-sm sm:text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all whitespace-normal">
                 <Scale className="w-5 h-5 mr-2 flex-shrink-0" />Get my career recommendation
               </Button>

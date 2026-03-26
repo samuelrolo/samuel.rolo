@@ -43,7 +43,7 @@ export async function checkMemberToken(): Promise<boolean> {
 
     // Verificar subscrição ativa e não expirada
     const subRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/subscriptions?user_id=eq.${memberId}&status=eq.active&select=expires_at`,
+      `${SUPABASE_URL}/rest/v1/subscriptions?user_id=eq.${memberId}&status=eq.active&select=expires_at,plan`,
       {
         headers: {
           'apikey': SUPABASE_ANON_KEY,
@@ -63,12 +63,19 @@ export async function checkMemberToken(): Promise<boolean> {
     const isValid = new Date(sub.expires_at) > new Date();
     if (!isValid) return false;
 
+    // Determine plan tier from subscription plan field
+    const planField = (sub.plan || '').toLowerCase();
+    let memberPlanTier = 'essential';
+    if (planField.includes('pro') || planField === 'annual') memberPlanTier = 'pro';
+    else if (planField.includes('growth') || planField === 'semiannual') memberPlanTier = 'growth';
+
     // Tudo válido: definir flags de pagamento no sessionStorage
     // Estas são as mesmas flags que os fluxos existentes verificam
     sessionStorage.setItem('isPaid', 'true');
     sessionStorage.setItem('careerPathPaid', 'true');
     sessionStorage.setItem('isMember', 'true');
     sessionStorage.setItem('memberId', memberId);
+    sessionStorage.setItem('memberPlanTier', memberPlanTier);
 
     // Limpar os parâmetros da URL para não expor o token
     const cleanUrl = new URL(window.location.href);
@@ -87,4 +94,14 @@ export async function checkMemberToken(): Promise<boolean> {
  */
 export function isMemberSession(): boolean {
   return sessionStorage.getItem('isMember') === 'true';
+}
+
+/**
+ * Retorna o tier do plano do membro: 'essential', 'growth', 'pro', ou null se não for membro.
+ */
+export function getMemberPlanTier(): 'essential' | 'growth' | 'pro' | null {
+  if (!isMemberSession()) return null;
+  const tier = sessionStorage.getItem('memberPlanTier');
+  if (tier === 'pro' || tier === 'growth' || tier === 'essential') return tier;
+  return 'essential';
 }

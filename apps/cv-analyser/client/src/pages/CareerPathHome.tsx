@@ -11,6 +11,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
+import { getMemberPlanTier } from "@/lib/memberAuth";
 import { countries } from "./en/countries";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -61,7 +62,9 @@ const testimonials = [
 ];
 
 /* ─── Pricing (inline) ─── */
-const PRICE_DISPLAY = '19,99€';
+const PRICE_DISPLAY_BASE = '19,99€';
+const PRICE_DISPLAY_GROWTH = '8,99€';
+const PRICE_DISPLAY_PRO = '4,99€';
 
 /* (comparison table removed — simplifying homepage) */
 
@@ -126,8 +129,16 @@ export default function CareerPathHome() {
   const [discountError, setDiscountError] = useState<string | null>(null);
   const [discountValid, setDiscountValid] = useState(false);
 
-  const PRICE = '19,99';
-  const PRICE_NUM = 19.99;
+  // Member pricing detection
+  const memberTier = getMemberPlanTier();
+  const isMemberGrowth = memberTier === 'growth';
+  const isMemberPro = memberTier === 'pro';
+  const hasMemberDiscount = isMemberGrowth || isMemberPro;
+
+  const PRICE = isMemberPro ? '4,99' : isMemberGrowth ? '8,99' : '19,99';
+  const PRICE_NUM = isMemberPro ? 4.99 : isMemberGrowth ? 8.99 : 19.99;
+  const PRICE_DISPLAY = isMemberPro ? PRICE_DISPLAY_PRO : isMemberGrowth ? PRICE_DISPLAY_GROWTH : PRICE_DISPLAY_BASE;
+  const memberProductType = isMemberPro ? 'career_path_member_pro' : isMemberGrowth ? 'career_path_member_growth' : 'career_path';
   const FINAL_PRICE = discountPercent > 0 ? PRICE_NUM * (1 - discountPercent / 100) : PRICE_NUM;
   const FINAL_PRICE_DISPLAY = FINAL_PRICE.toFixed(2).replace('.', ',');
 
@@ -429,7 +440,7 @@ export default function CareerPathHome() {
         body: JSON.stringify({
           email,
           name: email.split('@')[0],
-          product_type: 'career_path',
+          product_type: memberProductType,
           orderId,
           language: 'pt',
           country,
@@ -628,7 +639,7 @@ export default function CareerPathHome() {
                 </div>
                 {/* Competitive statement */}
                 <p className="text-center text-sm md:text-base font-medium italic" style={{ color: '#C9A961' }}>
-                  "O que outros cobram 600€, a Share2Inspire entrega em 30 segundos por 19,99€."
+                  {`O que outros cobram 600€, a Share2Inspire entrega em 30 segundos por ${PRICE_DISPLAY}.`}
                 </p>
               </div>
             </div>
@@ -737,7 +748,7 @@ export default function CareerPathHome() {
             {/* Bottom CTA */}
             <div className="text-center space-y-4 p-8 rounded-2xl bg-[#C9A961]/5 border border-[#C9A961]/20">
               <h2 className="text-2xl font-bold text-foreground">Começa pelo diagnóstico. A decisão vem depois.</h2>
-              <p className="text-muted-foreground">Análise completa por 19,99€. Pagamento único. Sem subscrição. Resultado em menos de 1 minuto.</p>
+              <p className="text-muted-foreground">Análise completa por {PRICE_DISPLAY}. Pagamento único. Sem subscrição. Resultado em menos de 1 minuto.{hasMemberDiscount && <span className="ml-1 text-green-600 font-medium">(desconto de membro {memberTier === 'pro' ? 'Pro' : 'Growth'})</span>}</p>
               <Button
                 onClick={() => setStep('upload')}
                 className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all"

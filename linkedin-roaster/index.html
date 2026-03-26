@@ -1896,17 +1896,19 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             return;
         }
         fbq('track', 'InitiateCheckout', { value: paypalPrice, currency: 'EUR', content_ids: ['linkedin-roast'], content_type: 'product' });
-        const paypalUrl = 'https://www.paypal.com/cgi-bin/webscr?cmd=_xclick' +
-            '&business=geral@share2inspire.pt' +
-            '&item_name=LinkedIn+Roaster+-+Auditoria+Completa' + (activeCoupon ? '+(' + activeCoupon.code + ')' : '') +
-            '&amount=' + paypalPrice.toFixed(2) +
-            '&currency_code=EUR' +
-            '&return=' + encodeURIComponent(window.location.href + '?payment=success&method=paypal') +
-            '&cancel_return=' + encodeURIComponent(window.location.href + '?payment=cancelled') +
-            '&custom=' + (analysisId || 'LR-' + Date.now());
+        window.open(`https://paypal.me/SamuelRolo/${paypalPrice.toFixed(2)}EUR`, '_blank');
         sessionStorage.setItem('roasterAnalysisId', analysisId);
         if (activeCoupon) sessionStorage.setItem('roasterCouponCode', activeCoupon.code);
-        window.location.href = paypalUrl;
+        // Track conversion
+        const txId = 'LR-PP-' + Date.now();
+        if (typeof fbq === 'function') fbq('track', 'Purchase', {value: paypalPrice, currency: 'EUR'});
+        trackAffiliateConversion('linkedin_roast', paypalPrice, 'EUR', 'paypal', email, txId);
+        // After PayPal payment, show confirmation
+        setTimeout(() => {
+            if (confirm('Já concluíste o pagamento no PayPal?')) {
+                onPaymentSuccess(email, 'paypal');
+            }
+        }, 3000);
     }
 
     function onPaymentSuccess(email, method) {

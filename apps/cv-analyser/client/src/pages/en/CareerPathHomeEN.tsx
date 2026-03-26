@@ -12,6 +12,7 @@ import mammoth from "mammoth";
 import { countries } from "./countries";
 import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion } from "@/lib/affiliate";
+import { getMemberPlanTier } from "@/lib/memberAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -116,8 +117,15 @@ export default function CareerPathHomeEN() {
   const [discountError, setDiscountError] = useState<string | null>(null);
   const [discountValid, setDiscountValid] = useState(false);
 
-  const PRICE = '19.99';
-  const PRICE_NUM = 19.99;
+  // Member pricing detection
+  const memberTier = getMemberPlanTier();
+  const isMemberGrowth = memberTier === 'growth';
+  const isMemberPro = memberTier === 'pro';
+  const hasMemberDiscount = isMemberGrowth || isMemberPro;
+
+  const PRICE = isMemberPro ? '4.99' : isMemberGrowth ? '8.99' : '19.99';
+  const PRICE_NUM = isMemberPro ? 4.99 : isMemberGrowth ? 8.99 : 19.99;
+  const memberProductType = isMemberPro ? 'career_path_member_pro' : isMemberGrowth ? 'career_path_member_growth' : 'career_path';
   const FINAL_PRICE = discountPercent > 0 ? PRICE_NUM * (1 - discountPercent / 100) : PRICE_NUM;
   const FINAL_PRICE_DISPLAY = FINAL_PRICE.toFixed(2);
   const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
@@ -347,7 +355,7 @@ export default function CareerPathHomeEN() {
         body: JSON.stringify({
           email,
           name: email.split('@')[0],
-          product_type: 'career_path',
+          product_type: memberProductType,
           orderId,
           language: 'en',
           country: selectedCountry,
