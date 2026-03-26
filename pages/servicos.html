@@ -331,6 +331,91 @@
             max-width: 1100px;
             margin: 0 auto;
         }
+
+        /* ─── Infinite Marquee Carousel ─── */
+        .marquee-section {
+            overflow: hidden;
+            padding: 50px 0;
+            background: var(--light-bg);
+        }
+        .marquee-section .section-label {
+            text-align: center;
+            font-size: 1.05rem;
+            font-weight: 400;
+            color: #555;
+            margin-bottom: 2rem;
+        }
+        .marquee-wrapper {
+            overflow: hidden;
+            width: 100%;
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+        }
+        .marquee-track {
+            display: flex;
+            gap: 1rem;
+            width: max-content;
+            animation: marquee-scroll 38s linear infinite;
+        }
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+        @keyframes marquee-scroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        /* Stat badge cards */
+        .marquee-stat {
+            flex-shrink: 0;
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            border-radius: 12px;
+            padding: 1.2rem 1.8rem;
+            text-align: center;
+            min-width: 140px;
+        }
+        .marquee-stat .stat-num {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            line-height: 1.1;
+        }
+        .marquee-stat .stat-label {
+            font-size: 0.72rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+        /* Testimonial cards */
+        .marquee-testi {
+            flex-shrink: 0;
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 1.4rem 1.6rem;
+            width: 280px;
+        }
+        .marquee-testi .testi-stars {
+            color: var(--gold);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.6rem;
+        }
+        .marquee-testi .testi-text {
+            font-size: 0.78rem;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+            font-style: italic;
+        }
+        .marquee-testi .testi-author {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .marquee-testi .testi-author span {
+            font-weight: 400;
+            color: #999;
+        }
         /* Buttons */
         .btn-gold {
             display: inline-flex;
@@ -730,7 +815,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     <section class="svc-section fade-up">
         <div class="container" style="max-width:960px;">
             <div class="row g-4">
-                <div class="col-md-8 mx-auto">
+                <div class="col-12">
                     <div class="svc-card-new" style="flex-direction:row;align-items:center;gap:2rem;flex-wrap:wrap;">
                         <div style="flex:1;min-width:240px;">
                             <div class="card-icon gold" style="margin-bottom:0.8rem;"><i class="fas fa-rocket"></i></div>
@@ -770,45 +855,76 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         </div>
     </section>
 
-    <!-- ========== SOCIAL PROOF ========== -->
-    <section style="padding:50px 0;background:var(--light-bg);" class="fade-up">
-        <div class="container" style="max-width:960px;">
-            <div class="stats-row" style="margin-bottom:3rem;">
-                <div class="stat-item">
+    <!-- ========== SOCIAL PROOF — MARQUEE ========== -->
+    <section class="marquee-section fade-up">
+        <p class="section-label">O que dizem os nossos clientes</p>
+        <div class="marquee-wrapper">
+            <div class="marquee-track">
+                <!-- Set 1 -->
+                <div class="marquee-stat">
                     <div class="stat-num">+500</div>
                     <div class="stat-label">Profissionais ajudados</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-num">5<span style="font-size:1.1rem;">&#9733;</span></div>
-                    <div class="stat-label">Avaliação média</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-num">98%</div>
-                    <div class="stat-label">Taxa de satisfação</div>
-                </div>
-            </div>
-
-            <h3 style="text-align:center;font-size:1.05rem;font-weight:400;color:#555;margin-bottom:1.5rem;">O que dizem os nossos clientes</h3>
-            <div class="testi-grid">
-                <div class="testi-card">
+                <div class="marquee-testi">
                     <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                    <p class="testi-text">&ldquo;O Career Path deu-me uma visão clara do próximo passo. Recomendo a qualquer profissional em transição.&rdquo;</p>
+                    <p class="testi-text">&ldquo;O Career Path deu-me uma vis&atilde;o clara do pr&oacute;ximo passo. Recomendo a qualquer profissional em transi&ccedil;&atilde;o.&rdquo;</p>
                     <div class="testi-author">Ana M. &mdash; <span>Senior Manager</span></div>
                 </div>
-                <div class="testi-card">
+                <div class="marquee-stat">
+                    <div class="stat-num">5&#9733;</div>
+                    <div class="stat-label">Avalia&ccedil;&atilde;o m&eacute;dia</div>
+                </div>
+                <div class="marquee-testi">
                     <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                    <p class="testi-text">&ldquo;O CV Analyser identificou pontos que eu nunca teria visto. Gratuito e extremamente útil.&rdquo;</p>
+                    <p class="testi-text">&ldquo;O CV Analyser identificou pontos que eu nunca teria visto. Gratuito e extremamente &uacute;til.&rdquo;</p>
                     <div class="testi-author">Ricardo P. &mdash; <span>Consultor</span></div>
                 </div>
-                <div class="testi-card">
+                <div class="marquee-stat">
+                    <div class="stat-num">98%</div>
+                    <div class="stat-label">Taxa de satisfa&ccedil;&atilde;o</div>
+                </div>
+                <div class="marquee-testi">
                     <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                    <p class="testi-text">&ldquo;A sessão KickStart Pro foi transformadora. Em 30 minutos tinha um plano de acção concreto.&rdquo;</p>
+                    <p class="testi-text">&ldquo;A sess&atilde;o KickStart Pro foi transformadora. Em 30 minutos tinha um plano de ac&ccedil;&atilde;o concreto.&rdquo;</p>
                     <div class="testi-author">Marta S. &mdash; <span>HR Director</span></div>
                 </div>
-                <div class="testi-card">
+                <div class="marquee-testi">
                     <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
                     <p class="testi-text">&ldquo;O LinkedIn Roaster mudou a forma como me apresento. Recebi 3 contactos na semana seguinte.&rdquo;</p>
-                    <div class="testi-author">João F. &mdash; <span>Tech Lead</span></div>
+                    <div class="testi-author">Jo&atilde;o F. &mdash; <span>Tech Lead</span></div>
+                </div>
+                <!-- Set 2 (duplicate for seamless loop) -->
+                <div class="marquee-stat">
+                    <div class="stat-num">+500</div>
+                    <div class="stat-label">Profissionais ajudados</div>
+                </div>
+                <div class="marquee-testi">
+                    <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testi-text">&ldquo;O Career Path deu-me uma vis&atilde;o clara do pr&oacute;ximo passo. Recomendo a qualquer profissional em transi&ccedil;&atilde;o.&rdquo;</p>
+                    <div class="testi-author">Ana M. &mdash; <span>Senior Manager</span></div>
+                </div>
+                <div class="marquee-stat">
+                    <div class="stat-num">5&#9733;</div>
+                    <div class="stat-label">Avalia&ccedil;&atilde;o m&eacute;dia</div>
+                </div>
+                <div class="marquee-testi">
+                    <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testi-text">&ldquo;O CV Analyser identificou pontos que eu nunca teria visto. Gratuito e extremamente &uacute;til.&rdquo;</p>
+                    <div class="testi-author">Ricardo P. &mdash; <span>Consultor</span></div>
+                </div>
+                <div class="marquee-stat">
+                    <div class="stat-num">98%</div>
+                    <div class="stat-label">Taxa de satisfa&ccedil;&atilde;o</div>
+                </div>
+                <div class="marquee-testi">
+                    <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testi-text">&ldquo;A sess&atilde;o KickStart Pro foi transformadora. Em 30 minutos tinha um plano de ac&ccedil;&atilde;o concreto.&rdquo;</p>
+                    <div class="testi-author">Marta S. &mdash; <span>HR Director</span></div>
+                </div>
+                <div class="marquee-testi">
+                    <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testi-text">&ldquo;O LinkedIn Roaster mudou a forma como me apresento. Recebi 3 contactos na semana seguinte.&rdquo;</p>
+                    <div class="testi-author">Jo&atilde;o F. &mdash; <span>Tech Lead</span></div>
                 </div>
             </div>
         </div>
