@@ -68,6 +68,20 @@ interface Vaga {
   url: string;
 }
 
+// ─── Demo/fallback data for Portugal (Adzuna does not cover PT) ─────────────
+const DEMO_VAGAS_PT: Vaga[] = [
+  { title: "Career Coach & Trainer",       company: "Fundação EDP",       location: "Lisboa",          salary: "2.800–3.800€", remote: false, tags: ["Coaching", "Formação"],  match: 95, key: "rh lisboa",        url: "https://www.adzuna.pt" },
+  { title: "HR Business Partner",          company: "NOS Comunicações",   location: "Lisboa",          salary: "3.200–4.200€", remote: false, tags: ["RH", "Estratégia"],     match: 88, key: "rh lisboa",        url: "https://www.adzuna.pt" },
+  { title: "Talent Acquisition Specialist",company: "Farfetch",           location: "Porto / Remoto",  salary: "2.600–3.400€", remote: true,  tags: ["Recrutamento"],          match: 82, key: "rh remote",        url: "https://www.adzuna.pt" },
+  { title: "People & Culture Manager",     company: "Revolut Portugal",   location: "Lisboa",          salary: "4.000–5.500€", remote: true,  tags: ["RH", "Cultura"],         match: 90, key: "rh lisboa remote", url: "https://www.adzuna.pt" },
+  { title: "Marketing & Brand Manager",    company: "Super Bock Group",   location: "Porto",           salary: "3.000–4.000€", remote: false, tags: ["Marketing"],             match: 74, key: "marketing",        url: "https://www.adzuna.pt" },
+  { title: "Content & Community Manager",  company: "Deco Proteste",      location: "Lisboa / Remoto", salary: "2.200–3.000€", remote: true,  tags: ["Marketing"],             match: 79, key: "marketing remote", url: "https://www.adzuna.pt" },
+  { title: "Learning & Development Lead",  company: "Jerónimo Martins",   location: "Lisboa",          salary: "3.800–5.000€", remote: false, tags: ["L&D", "Formação"],       match: 91, key: "rh lisboa",        url: "https://www.adzuna.pt" },
+  { title: "Employer Branding Specialist", company: "Accenture Portugal", location: "Lisboa / Remoto", salary: "2.800–3.600€", remote: true,  tags: ["Employer Branding"],     match: 85, key: "rh remote lisboa", url: "https://www.adzuna.pt" },
+  { title: "Digital Marketing Specialist", company: "Worten",             location: "Lisboa",          salary: "2.400–3.200€", remote: false, tags: ["Marketing", "Digital"],  match: 77, key: "marketing lisboa", url: "https://www.adzuna.pt" },
+  { title: "HR Transformation Consultant", company: "Deloitte Portugal",  location: "Lisboa / Remoto", salary: "3.500–5.000€", remote: true,  tags: ["RH", "Consultoria"],     match: 93, key: "rh remote lisboa", url: "https://www.adzuna.pt" },
+];
+
 type FilterType = 'all' | 'remote' | 'local' | 'hr' | 'marketing';
 
 interface VagasFeedProps {
@@ -128,11 +142,20 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
         setVagas(mapped);
         setIsApiData(true);
       } else {
-        setVagas([]);
+        // Fallback to demo data for unsupported countries
+        if (isUnsupportedCountry) {
+          setVagas([...DEMO_VAGAS_PT]);
+        } else {
+          setVagas([]);
+        }
         setIsApiData(false);
       }
     } catch {
-      setVagas([]);
+      if (isUnsupportedCountry) {
+        setVagas([...DEMO_VAGAS_PT]);
+      } else {
+        setVagas([]);
+      }
       setIsApiData(false);
     }
     setLoading(false);
@@ -154,8 +177,8 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
     ? `Sem vagas encontradas para ${countryName}. Tenta outro filtro.`
     : `No jobs found for ${countryName}. Try another filter.`;
   const unsupportedMsg = lang === 'pt'
-    ? `O Adzuna não cobre ${countryName} diretamente. A mostrar vagas internacionais relevantes (via ${ADZUNA_DOMAINS[adzunaCountry]?.replace('www.', '') || adzunaCountry}).`
-    : `Adzuna doesn't cover ${countryName} directly. Showing relevant international jobs (via ${ADZUNA_DOMAINS[adzunaCountry]?.replace('www.', '') || adzunaCountry}).`;
+    ? `Vagas curadas para o mercado português. Powered by Adzuna.`
+    : `Curated jobs for the Portuguese market. Powered by Adzuna.`;
   const isUsingFallback = isUnsupportedCountry;
 
   return (
@@ -309,7 +332,7 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
             <ExternalLink className="w-3 h-3" />
           </a>
           <div className="text-[10px] text-[#999] mt-0.5">
-            Powered by Adzuna API {!isApiData && vagas.length === 0 && `· ${t('vf.noResults')}`}
+            Powered by Adzuna API {!isApiData && vagas.length > 0 && `· ${lang === 'pt' ? 'Dados de demonstração' : 'Demo data'}`}{!isApiData && vagas.length === 0 && `· ${t('vf.noResults')}`}
           </div>
         </div>
       </div>
