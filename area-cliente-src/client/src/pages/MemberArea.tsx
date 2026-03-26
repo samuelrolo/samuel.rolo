@@ -14,8 +14,10 @@ import {
   FileText, BarChart3, Route, Linkedin, Bot, BookOpen,
   ExternalLink, Search, Clock, ArrowRight, ChevronDown, ChevronUp,
   Loader2, AlertCircle, CheckCircle, Upload, Lock, Sparkles, Tag,
-  Globe, MapPin, Headphones, Play, Mail, MessageSquare, Megaphone
+  Globe, MapPin, Headphones, Play, Mail, MessageSquare, Megaphone,
+  Home, Wrench, Briefcase, User, Download, Trash2, RefreshCw, FileSearch, Compass,
 } from 'lucide-react';
+import { Link } from 'wouter';
 import CareerProgress from '@/components/CareerProgress';
 import VagasFeed from '@/components/VagasFeed';
 import AnalysisResultsFull from '@/components/AnalysisResults';
@@ -29,6 +31,34 @@ const HYPER_TASK_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hy
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const TOOLS_SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+
+// ─── Tab System ──────────────────────────────────────────────────────────────
+type TabId = 'overview' | 'tools' | 'jobs' | 'content' | 'profile';
+const TABS: { id: TabId; icon: typeof Home; labelPt: string; labelEn: string }[] = [
+  { id: 'overview', icon: Home,      labelPt: 'Vis\u00e3o Geral', labelEn: 'Overview' },
+  { id: 'tools',    icon: Wrench,    labelPt: 'Ferramentas',  labelEn: 'Tools' },
+  { id: 'jobs',     icon: Briefcase, labelPt: 'Vagas',        labelEn: 'Jobs' },
+  { id: 'content',  icon: BookOpen,  labelPt: 'Conte\u00fados',   labelEn: 'Content' },
+  { id: 'profile',  icon: User,      labelPt: 'Perfil',       labelEn: 'Profile' },
+];
+
+// Saved analysis type (for Profile tab)
+type SavedAnalysis = {
+  id: string;
+  user_id: string;
+  analysis_type: string;
+  data: Record<string, any>;
+  created_at: string;
+};
+
+// Tool config for saved analyses display
+const TOOL_CONFIG: Record<string, { label: string; icon: typeof FileSearch; color: string }> = {
+  cv_analyser: { label: 'CV Analyser', icon: FileSearch, color: 'text-blue-400' },
+  career_path: { label: 'Career Path', icon: Compass, color: 'text-emerald-400' },
+  career_intelligence: { label: 'Career Intelligence', icon: BarChart3, color: 'text-violet-400' },
+  linkedin_roaster: { label: 'LinkedIn Roaster', icon: Linkedin, color: 'text-amber-400' },
+  career_energy: { label: 'Career Energy', icon: Sparkles, color: 'text-pink-400' },
+};
 
 // ─── Country/Region Data ─────────────────────────────────────────────────────
 interface CountryRegion {
@@ -439,6 +469,20 @@ export default function MemberArea() {
 
   // Career Intelligence states
   const [monthlyCareerIntelUsed, setMonthlyCareerIntelUsed] = useState(0);
+  // Tab navigation
+  const [activeTab, setActiveTab] = useState<TabId>('overview');
+  // Profile tab: saved analyses
+  const [savedAnalyses, setSavedAnalyses] = useState<SavedAnalysis[]>([]);
+  const [loadingSaved, setLoadingSaved] = useState(false);
+  // Profile tab: CV upload
+  const [profileUploading, setProfileUploading] = useState(false);
+  const [profileSaving, setProfileSaving] = useState(false);
+  // Profile tab: edit mode
+  const [editFirstName, setEditFirstName] = useState('');
+  const [editLastName, setEditLastName] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editLinkedin, setEditLinkedin] = useState('');
+  const [profileEditMode, setProfileEditMode] = useState(false);
 
   const planTier = getPlanTier(subscription?.plan);
   const weeklyLimit = WEEKLY_LIMITS[planTier] || 2;
@@ -525,6 +569,33 @@ export default function MemberArea() {
     }
     fetchCiUsage();
   }, [user?.id, planTier, analysisResult]);
+
+  // Fetch saved analyses for Profile tab
+  useEffect(() => {
+    if (!user?.id || activeTab !== 'profile') return;
+    setLoadingSaved(true);
+    async function fetchSaved() {
+      const { data } = await supabase
+        .from('user_analyses')
+        .select('*')
+        .eq('user_id', user!.id)
+        .order('created_at', { ascending: false })
+        .limit(50);
+      setSavedAnalyses(data || []);
+      setLoadingSaved(false);
+    }
+    fetchSaved();
+  }, [user?.id, activeTab, analysisResult]);
+
+  // Init profile edit fields
+  useEffect(() => {
+    if (profile && !profileEditMode) {
+      setEditFirstName(profile.first_name || '');
+      setEditLastName(profile.last_name || '');
+      setEditPhone(profile.phone || '');
+      setEditLinkedin(profile.linkedin_url || '');
+    }
+  }, [profile, profileEditMode]);
 
   const filtered = useMemo(() => {
     let items = [...content];
@@ -886,7 +957,7 @@ export default function MemberArea() {
   // ─── Run Career Path ───────────────────────────────────────────────────
   const runCareerPath = useCallback(async () => {
     if (!user?.id || !subscription) return;
-    const limit = planTier === 'pro' ? 1 : planTier === 'elite' ? 3 : 0;
+    const limit = planTier === 'pro' ? 3 : 0;
     if (monthlyCareerPathUsed >= limit) {
       setAnalysisError(lang === 'pt'
         ? `Atingiste o limite mensal de Career Path (${limit}/mês).`
@@ -957,7 +1028,7 @@ export default function MemberArea() {
   // ─── Run Career Intelligence ───────────────────────────────────────────
   const runCareerIntelligence = useCallback(async () => {
     if (!user?.id || !subscription) return;
-    const limit = planTier === 'pro' ? 1 : planTier === 'elite' ? 3 : 0;
+    const limit = planTier === 'pro' ? 3 : 0;
     if (monthlyCareerIntelUsed >= limit) {
       setAnalysisError(lang === 'pt'
         ? `Atingiste o limite mensal de Career Intelligence (${limit}/mês).`
@@ -1417,8 +1488,36 @@ export default function MemberArea() {
                 {daysLeft} {t('member.daysLeft')}
               </span>
             </div>
-          )}
+           )}
         </div>
+
+        {/* ─── Tab Navigation ─── */}
+        <div className="mb-8 border-b border-[#e5e5e5]">
+          <nav className="flex gap-0 -mb-px overflow-x-auto scrollbar-hide">
+            {TABS.map((tab) => {
+              const isActive = activeTab === tab.id;
+              const TabIcon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-3 text-xs font-medium border-b-2 transition-all duration-300 whitespace-nowrap ${
+                    isActive
+                      ? 'border-gold text-gold'
+                      : 'border-transparent text-[#999] hover:text-[#666] hover:border-[#ddd]'
+                  }`}
+                >
+                  <TabIcon className="w-3.5 h-3.5" />
+                  {lang === 'pt' ? tab.labelPt : tab.labelEn}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* ═══════════════════ TAB: OVERVIEW ═══════════════════ */}
+        {activeTab === 'overview' && (
+          <div className="space-y-8 animate-in fade-in duration-300">
 
         {/* Usage indicator */}
         {subscription && (
@@ -1482,7 +1581,36 @@ export default function MemberArea() {
           </section>
         )}
 
-        {/* Tools */}
+          {/* Quick links to other tabs */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <button onClick={() => setActiveTab('tools')} className="p-4 border border-[#e5e5e5] rounded-lg hover:border-gold/30 transition-all text-left group">
+              <Wrench className="w-5 h-5 text-[#999] group-hover:text-gold mb-2 transition-colors" />
+              <p className="text-xs font-medium text-[#1a1a1a]">{lang === 'pt' ? 'Ferramentas' : 'Tools'}</p>
+              <p className="text-[10px] text-[#999]">{lang === 'pt' ? 'Analisa o teu CV' : 'Analyse your CV'}</p>
+            </button>
+            <button onClick={() => setActiveTab('jobs')} className="p-4 border border-[#e5e5e5] rounded-lg hover:border-gold/30 transition-all text-left group">
+              <Briefcase className="w-5 h-5 text-[#999] group-hover:text-gold mb-2 transition-colors" />
+              <p className="text-xs font-medium text-[#1a1a1a]">{lang === 'pt' ? 'Vagas' : 'Jobs'}</p>
+              <p className="text-[10px] text-[#999]">{lang === 'pt' ? 'Oportunidades para ti' : 'Opportunities for you'}</p>
+            </button>
+            <button onClick={() => setActiveTab('content')} className="p-4 border border-[#e5e5e5] rounded-lg hover:border-gold/30 transition-all text-left group">
+              <BookOpen className="w-5 h-5 text-[#999] group-hover:text-gold mb-2 transition-colors" />
+              <p className="text-xs font-medium text-[#1a1a1a]">{lang === 'pt' ? 'Conte\u00fados' : 'Content'}</p>
+              <p className="text-[10px] text-[#999]">{lang === 'pt' ? 'Artigos e recursos' : 'Articles & resources'}</p>
+            </button>
+            <button onClick={() => setActiveTab('profile')} className="p-4 border border-[#e5e5e5] rounded-lg hover:border-gold/30 transition-all text-left group">
+              <User className="w-5 h-5 text-[#999] group-hover:text-gold mb-2 transition-colors" />
+              <p className="text-xs font-medium text-[#1a1a1a]">{lang === 'pt' ? 'Perfil' : 'Profile'}</p>
+              <p className="text-[10px] text-[#999]">{lang === 'pt' ? 'Dados e an\u00e1lises' : 'Data & analyses'}</p>
+            </button>
+          </div>
+
+          </div>
+        )}
+
+        {/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 TAB: TOOLS \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */}
+        {activeTab === 'tools' && (
+          <div className="animate-in fade-in duration-300">
         <section className="mb-16">
           <h2 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('member.tools')}</h2>
           <p className="text-xs text-[#999] font-light mb-6">
@@ -1638,8 +1766,32 @@ export default function MemberArea() {
               </div>
             ))}
           </div>
-        </section>
+         </section>
+          </div>
+        )}
 
+        {/* ═══════════════════ TAB: JOBS ═══════════════════ */}
+        {activeTab === 'jobs' && (
+          <div className="animate-in fade-in duration-300">
+            {planTier !== 'essential' ? (
+              <VagasFeed lang={lang} countryCode={selectedCountryData?.code || 'PT'} countryName={cpCountry} region={cpRegion || undefined} />
+            ) : (
+              <section className="p-6 border border-dashed border-[#e5e5e5] rounded-lg bg-[#fafaf9] text-center">
+                <Lock className="w-6 h-6 text-[#ccc] mx-auto mb-3" />
+                <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{lang === 'pt' ? 'Feed de Vagas' : 'Job Feed'}</h3>
+                <p className="text-xs text-[#999] font-light mb-4 max-w-sm mx-auto">{t('member.lockedVagas')}</p>
+                <a href="/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded hover:bg-gold/20 transition-all">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  {t('member.upgradeCta')}
+                </a>
+              </section>
+            )}
+          </div>
+        )}
+
+        {/* ═══════════════════ TAB: CONTENT ═══════════════════ */}
+        {activeTab === 'content' && (
+          <div className="animate-in fade-in duration-300">
         {/* Content — Growth+ only */}
         {planTier === 'essential' ? (
           <section className="p-6 border border-dashed border-[#e5e5e5] rounded-lg bg-[#fafaf9] text-center">
@@ -1861,6 +2013,189 @@ export default function MemberArea() {
           )}
         </section>
         )}
+          </div>
+        )}
+
+        {/* ═══════════════════ TAB: PROFILE ═══════════════════ */}
+        {activeTab === 'profile' && (
+          <div className="space-y-8 animate-in fade-in duration-300">
+
+            {/* Personal Info */}
+            <section className="border border-[#e5e5e5] rounded-lg p-6 bg-[#fafaf9]">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-medium text-[#1a1a1a]">{lang === 'pt' ? 'Dados Pessoais' : 'Personal Info'}</h2>
+                {!profileEditMode ? (
+                  <button onClick={() => setProfileEditMode(true)} className="text-xs text-gold hover:underline">
+                    {lang === 'pt' ? 'Editar' : 'Edit'}
+                  </button>
+                ) : (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={async () => {
+                        if (!user?.id) return;
+                        setProfileSaving(true);
+                        await supabase.from('user_profiles').update({
+                          first_name: editFirstName,
+                          last_name: editLastName,
+                          phone: editPhone,
+                          linkedin_url: editLinkedin,
+                        }).eq('user_id', user.id);
+                        setProfileSaving(false);
+                        setProfileEditMode(false);
+                        window.location.reload();
+                      }}
+                      disabled={profileSaving}
+                      className="text-xs text-white bg-gold px-3 py-1 rounded hover:bg-gold/90 transition-colors disabled:opacity-50"
+                    >
+                      {profileSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : (lang === 'pt' ? 'Guardar' : 'Save')}
+                    </button>
+                    <button onClick={() => setProfileEditMode(false)} className="text-xs text-[#999] hover:text-[#666]">
+                      {lang === 'pt' ? 'Cancelar' : 'Cancel'}
+                    </button>
+                  </div>
+                )}
+              </div>
+              {profileEditMode ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">{lang === 'pt' ? 'Nome' : 'First Name'}</label>
+                    <input value={editFirstName} onChange={e => setEditFirstName(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] bg-white focus:border-gold/30 focus:outline-none" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">{lang === 'pt' ? 'Apelido' : 'Last Name'}</label>
+                    <input value={editLastName} onChange={e => setEditLastName(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] bg-white focus:border-gold/30 focus:outline-none" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">{lang === 'pt' ? 'Telefone' : 'Phone'}</label>
+                    <input value={editPhone} onChange={e => setEditPhone(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] bg-white focus:border-gold/30 focus:outline-none" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">LinkedIn</label>
+                    <input value={editLinkedin} onChange={e => setEditLinkedin(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] bg-white focus:border-gold/30 focus:outline-none" />
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div>
+                    <p className="text-[10px] text-[#999] uppercase tracking-wider mb-0.5">{lang === 'pt' ? 'Nome' : 'Name'}</p>
+                    <p className="text-xs font-medium text-[#1a1a1a]">{profile?.first_name} {profile?.last_name}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-[#999] uppercase tracking-wider mb-0.5">Email</p>
+                    <p className="text-xs font-medium text-[#1a1a1a]">{profile?.email || user?.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-[#999] uppercase tracking-wider mb-0.5">{lang === 'pt' ? 'Telefone' : 'Phone'}</p>
+                    <p className="text-xs font-medium text-[#1a1a1a]">{profile?.phone || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-[#999] uppercase tracking-wider mb-0.5">LinkedIn</p>
+                    <p className="text-xs font-medium text-[#1a1a1a] truncate">{profile?.linkedin_url ? <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-gold hover:underline">{profile.linkedin_url.replace(/^https?:\/\/(www\.)?/, '')}</a> : '-'}</p>
+                  </div>
+                </div>
+              )}
+            </section>
+
+            {/* CV Upload */}
+            <section className="border border-[#e5e5e5] rounded-lg p-6 bg-[#fafaf9]">
+              <h2 className="text-sm font-medium text-[#1a1a1a] mb-4">{lang === 'pt' ? 'Curr\u00edculo' : 'CV / Resume'}</h2>
+              {profile?.cv_url ? (
+                <div className="flex items-center gap-3">
+                  <FileText className="w-5 h-5 text-gold" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-[#1a1a1a] truncate">{profile.cv_filename || 'CV'}</p>
+                    <p className="text-[10px] text-[#999]">{profile.cv_uploaded_at ? new Date(profile.cv_uploaded_at).toLocaleDateString('pt-PT') : ''}</p>
+                  </div>
+                  <a href={profile.cv_url} target="_blank" rel="noopener noreferrer" className="text-xs text-gold hover:underline flex items-center gap-1">
+                    <Download className="w-3 h-3" /> {lang === 'pt' ? 'Ver' : 'View'}
+                  </a>
+                </div>
+              ) : (
+                <p className="text-xs text-[#999]">{lang === 'pt' ? 'Nenhum CV carregado. Carrega um CV na tab Ferramentas para usar as ferramentas de an\u00e1lise.' : 'No CV uploaded. Upload a CV in the Tools tab to use analysis tools.'}</p>
+              )}
+            </section>
+
+            {/* Subscription Info */}
+            {subscription && (
+              <section className="border border-[#e5e5e5] rounded-lg p-6 bg-[#fafaf9]">
+                <h2 className="text-sm font-medium text-[#1a1a1a] mb-4">{lang === 'pt' ? 'Subscri\u00e7\u00e3o' : 'Subscription'}</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div>
+                    <p className="text-[10px] text-[#999] uppercase tracking-wider mb-0.5">{lang === 'pt' ? 'Plano' : 'Plan'}</p>
+                    <p className="text-xs font-medium text-[#1a1a1a]">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${
+                        planTier === 'pro' ? 'bg-violet-100 text-violet-700' :
+                        planTier === 'growth' ? 'bg-blue-100 text-blue-700' :
+                        'bg-gold/10 text-gold'
+                      }`}>
+                        {planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'}
+                      </span>
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-[#999] uppercase tracking-wider mb-0.5">{lang === 'pt' ? 'Estado' : 'Status'}</p>
+                    <p className="text-xs font-medium text-emerald-600">{subscription.status === 'active' ? (lang === 'pt' ? 'Ativa' : 'Active') : subscription.status}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-[#999] uppercase tracking-wider mb-0.5">{lang === 'pt' ? 'Expira' : 'Expires'}</p>
+                    <p className="text-xs font-medium text-[#1a1a1a]">{new Date(subscription.expires_at).toLocaleDateString('pt-PT')}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-[#999] uppercase tracking-wider mb-0.5">{lang === 'pt' ? 'Dias restantes' : 'Days left'}</p>
+                    <p className="text-xs font-medium text-[#1a1a1a]">{daysLeft}</p>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* Career Progress (detailed) */}
+            <section className="border border-[#e5e5e5] rounded-lg p-6 bg-[#fafaf9]">
+              <h2 className="text-sm font-medium text-[#1a1a1a] mb-4">{lang === 'pt' ? 'Progresso de Carreira' : 'Career Progress'}</h2>
+              <CareerProgress variant="detailed" />
+            </section>
+
+            {/* Saved Analyses */}
+            <section className="border border-[#e5e5e5] rounded-lg p-6 bg-[#fafaf9]">
+              <h2 className="text-sm font-medium text-[#1a1a1a] mb-4">{lang === 'pt' ? 'An\u00e1lises Guardadas' : 'Saved Analyses'}</h2>
+              {loadingSaved ? (
+                <div className="py-8 text-center">
+                  <Loader2 className="w-5 h-5 animate-spin text-gold mx-auto" />
+                </div>
+              ) : savedAnalyses.length === 0 ? (
+                <p className="text-xs text-[#999] text-center py-8">{lang === 'pt' ? 'Ainda n\u00e3o tens an\u00e1lises guardadas. Usa as ferramentas para gerar a tua primeira an\u00e1lise.' : 'No saved analyses yet. Use the tools to generate your first analysis.'}</p>
+              ) : (
+                <div className="space-y-3">
+                  {savedAnalyses.map((sa) => {
+                    const config = TOOL_CONFIG[sa.analysis_type] || { label: sa.analysis_type, icon: FileText, color: 'text-[#999]' };
+                    const ToolIcon = config.icon;
+                    return (
+                      <div key={sa.id} className="flex items-center gap-3 p-3 border border-[#e5e5e5] rounded-lg hover:border-gold/20 transition-all">
+                        <ToolIcon className={`w-4 h-4 ${config.color} shrink-0`} />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-[#1a1a1a]">{config.label}</p>
+                          <p className="text-[10px] text-[#999]">{new Date(sa.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                        </div>
+                        <button
+                          onClick={async () => {
+                            if (confirm(lang === 'pt' ? 'Tens a certeza que queres apagar esta an\u00e1lise?' : 'Are you sure you want to delete this analysis?')) {
+                              await supabase.from('user_analyses').delete().eq('id', sa.id);
+                              setSavedAnalyses(prev => prev.filter(a => a.id !== sa.id));
+                            }
+                          }}
+                          className="text-[#ccc] hover:text-red-400 transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+
+          </div>
+        )}
+
       </div>
     </div>
   );

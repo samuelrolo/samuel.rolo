@@ -6,6 +6,8 @@ interface QuadrantCardProps {
   score: number;
   benchmark: number;
   insight?: string;
+  strengths?: string[];
+  weaknesses?: string[];
 }
 
 const QuadrantCard = ({ title, score, benchmark, insight }: QuadrantCardProps) => {

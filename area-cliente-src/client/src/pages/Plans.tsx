@@ -335,9 +335,7 @@ export default function Plans() {
       {/* Payment Modal */}
       {selectedPlan && user && (
         <PaymentModal
-          plan={selectedPlan}
-          price={getPlanPrice(selectedPlan)}
-          planLabel={getPlanLabel(selectedPlan)}
+          plan={selectedPlan as any}
           onClose={() => setSelectedPlan(null)}
         />
       )}
