@@ -255,7 +255,7 @@
         .svc-card-new .card-icon.purple { background: rgba(124,58,237,0.08); color: #7C3AED; }
 
         .svc-card-new h3 {
-            font-size: 1.05rem;
+            font-size: 0.94rem;
             font-weight: 600;
             color: var(--dark);
             margin-bottom: 0.3rem;
@@ -273,7 +273,7 @@
             color: #fff;
         }
         .svc-card-new .card-desc {
-            font-size: 0.85rem;
+            font-size: 0.76rem;
             color: var(--muted);
             line-height: 1.6;
             margin-bottom: 1rem;
@@ -285,7 +285,7 @@
             margin: 0 0 1.2rem;
         }
         .svc-card-new .card-features li {
-            font-size: 0.8rem;
+            font-size: 0.72rem;
             color: #555;
             padding: 0.3rem 0;
             display: flex;
@@ -310,15 +310,27 @@
             margin-top: auto;
         }
         .svc-card-new .card-price {
-            font-size: 0.82rem;
+            font-size: 0.74rem;
             color: var(--muted);
         }
         .svc-card-new .card-price strong {
-            font-size: 1.1rem;
+            font-size: 0.98rem;
             font-weight: 700;
             color: var(--dark);
         }
 
+
+        /* Ajuste 1: max-width dos cards nas Etapas 1 e 3 */
+        .svc-card-constrained {
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        /* Ajuste 3: bundle section container alargado */
+        .bundle-section-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
         /* Buttons */
         .btn-gold {
             display: inline-flex;
@@ -560,7 +572,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             <div class="row g-4">
                 <!-- CV Analyser -->
                 <div class="col-md-6">
-                    <div class="svc-card-new">
+                    <div class="svc-card-new svc-card-constrained">
                         <div class="card-icon gold"><i class="fas fa-file-alt"></i></div>
                         <h3>CV Analyser <span class="badge-sm" style="background:var(--gold);">Começa Grátis</span></h3>
                         <p class="card-desc">Diagnóstico instantâneo do teu CV com IA. Score de maturidade, taxa ATS e recomendações concretas.</p>
@@ -579,7 +591,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 
                 <!-- LinkedIn Roaster -->
                 <div class="col-md-6">
-                    <div class="svc-card-new">
+                    <div class="svc-card-new svc-card-constrained">
                         <div class="card-icon blue"><i class="fab fa-linkedin-in"></i></div>
                         <h3>LinkedIn Roaster <span class="badge-sm" style="background:#0A66C2;">Novo</span></h3>
                         <p class="card-desc">Auditoria completa do teu perfil LinkedIn. Score de visibilidade, erros críticos e palavras-chave SEO.</p>
@@ -614,7 +626,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             <div class="row g-4">
                 <!-- CV Maker (Hidden) -->
                 <!-- <div class="col-md-6">
-                    <div class="svc-card-new">
+                    <div class="svc-card-new svc-card-constrained">
                         <div class="card-icon green"><i class="fas fa-pen-fancy"></i></div>
                         <h3>CV Maker <span class="badge-sm" style="background:#888;">Beta</span></h3>
                         <p class="card-desc">Cria o teu currículo profissional em minutos com templates modernos e ATS-friendly.</p>
@@ -666,7 +678,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             <div class="row g-4">
                 <!-- Career Path -->
                 <div class="col-md-6">
-                    <div class="svc-card-new featured">
+                    <div class="svc-card-new svc-card-constrained featured">
                         <span class="card-badge">Recomendado</span>
                         <div class="card-icon gold"><i class="fas fa-route"></i></div>
                         <h3>Career Path</h3>
@@ -689,7 +701,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 
                 <!-- Career Intelligence (standalone) -->
                 <div class="col-md-6">
-                    <div class="svc-card-new" style="border-color:var(--gold-border);">
+                    <div class="svc-card-new svc-card-constrained" style="border-color:var(--gold-border);">
                         <div class="card-icon purple"><i class="fas fa-brain"></i></div>
                         <h3>Career Intelligence <span class="badge-sm" style="background:#7C3AED;">Full</span></h3>
                         <p class="card-desc">Tudo do Career Path + decisão estratégica. Comparação dos 3 caminhos, trade-offs e recomendação fundamentada.</p>
