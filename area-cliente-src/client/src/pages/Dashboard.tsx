@@ -307,15 +307,15 @@ export default function Dashboard() {
     const barColor = pct >= 100 ? 'bg-red-400' : pct >= 80 ? 'bg-amber-400' : 'bg-emerald-400';
     const remaining = isPro ? '∞' : Math.max(0, limit - used);
     return (
-      <div className="space-y-1.5">
+      <div className="p-3 border border-[#e8e8e6] rounded-lg bg-[#fafaf9] space-y-1.5">
         <div className="flex items-center justify-between">
           <span className="text-[10px] text-[#999] font-light">Análises esta semana</span>
-          <span className="text-xs font-medium text-[#555]">
-            {isPro ? '∞' : `${used} / ${limit}`}
+          <span className="text-[11px] font-medium text-[#555]">
+            {isPro ? '∞' : `${used}/${limit}`}
           </span>
         </div>
         {!isPro && (
-          <div className="h-[3px] rounded-full bg-[#e8e8e6] overflow-hidden">
+          <div className="h-1 rounded-full bg-[#e8e8e6] overflow-hidden">
             <div className={`h-full rounded-full ${barColor} transition-all duration-500`} style={{ width: `${pct}%` }} />
           </div>
         )}
@@ -365,15 +365,15 @@ export default function Dashboard() {
       <div className="container max-w-4xl mx-auto px-4">
 
         {/* ── Header ──────────────────────────────────────────────────────── */}
-        <div className="flex items-start justify-between gap-4 mb-8 flex-wrap">
-          <div>
-            <p className="text-gold text-[10px] font-light tracking-[0.15em] uppercase mb-1.5">
+        <div className="flex items-center justify-between gap-6 mb-8">
+          <div className="min-w-0">
+            <p className="text-gold text-[10px] font-light tracking-[0.15em] uppercase mb-1">
               {t('dash.title')}
             </p>
-            <h1 className="text-2xl font-semibold text-[#1a1a1a]">
+            <h1 className="text-xl font-semibold text-[#1a1a1a]">
               {profile?.first_name ? `${t('dash.hello')}, ${profile.first_name}` : t('dash.title')}
             </h1>
-            <p className="text-xs text-[#999] font-light mt-1">
+            <p className="text-[11px] text-[#999] font-light mt-0.5">
               {isSubscriber
                 ? `Plano ${getPlanLabel(subscription?.plan)} · Renova a ${new Date(subscription!.expires_at).toLocaleDateString('pt-PT')}`
                 : `Conta gratuita · ${analyses.length} ${analyses.length === 1 ? 'análise guardada' : 'análises guardadas'}`}
@@ -381,7 +381,7 @@ export default function Dashboard() {
           </div>
           {/* Quota widget no header — só subscribers */}
           {isSubscriber && (
-            <div className="shrink-0 min-w-[180px]">
+            <div className="shrink-0 w-[180px]">
               <QuotaCard used={weeklyUsed} limit={weeklyLimit} resetDay="2ª feira" />
             </div>
           )}
@@ -411,7 +411,7 @@ export default function Dashboard() {
         )}
 
         {/* ── Tabs ─────────────────────────────────────────────────────────── */}
-        <div className="flex gap-0 mb-8 border-b border-[#e5e5e5] overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex gap-0 mb-8 border-b border-[#e5e5e5] overflow-x-auto scrollbar-hide">
           {tabs.map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-1.5 px-3 sm:px-4 py-3 text-xs sm:text-sm font-light transition-all duration-300 border-b-2 -mb-[1px] whitespace-nowrap ${

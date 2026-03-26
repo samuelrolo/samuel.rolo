@@ -1,13 +1,14 @@
 /*
  * Design: Consultoria de Luxo Silenciosa
- * Header com navegação dedicada à Área de Cliente
- * Inclui: logo, nav contextual, voltar ao site, perfil, idioma
+ * Header — navbar limpa e consistente com o site principal
+ * Layout: logo à esquerda, nav central, ações à direita
+ * Sem "Client Area" label — o contexto é dado pela nav
  */
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/lib/i18n';
 import { Link, useLocation } from 'wouter';
 import { useState } from 'react';
-import { Menu, X, User, LogOut, Globe, ArrowLeft, BarChart3, BookOpen, CreditCard, FileText, Home } from 'lucide-react';
+import { Menu, X, User, LogOut, Globe, ArrowLeft, BarChart3, BookOpen, CreditCard, Home } from 'lucide-react';
 
 export default function Header() {
   const { user, signOut, hasActiveSubscription } = useAuth();
@@ -17,7 +18,6 @@ export default function Header() {
 
   const isActive = (href: string) => location === href;
 
-  // Build contextual nav links based on auth state
   const navLinks = [
     { href: '/', label: lang === 'pt' ? 'Início' : 'Home', icon: Home },
     ...(user ? [{ href: '/perfil', label: lang === 'pt' ? 'Painel' : 'Dashboard', icon: BarChart3 }] : []),
@@ -27,41 +27,38 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#FAFAF9]/95 backdrop-blur-md">
-      <div className="container flex items-center justify-between h-16">
-        {/* Left: Back to site + Logo */}
-        <div className="flex items-center gap-3">
-          <a
-            href="https://share2inspire.pt"
-            className="flex items-center gap-1.5 text-xs font-light text-[#888] hover:text-[#555] transition-colors duration-300 pr-3 border-r border-[#e5e5e5]"
-            title={lang === 'pt' ? 'Voltar ao site' : 'Back to site'}
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{lang === 'pt' ? 'Site' : 'Site'}</span>
-          </a>
+      <div className="container flex items-center h-16">
+        {/* Left: Logo */}
+        <div className="flex items-center gap-4 shrink-0">
           <Link href="/" className="flex items-center group">
             <img
               src="https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/logo-white_baacc2e7.png"
               alt="Share2Inspire"
-              className="h-10 w-auto object-contain group-hover:opacity-80 transition-opacity duration-300"
+              className="h-9 w-auto object-contain group-hover:opacity-80 transition-opacity duration-300"
             />
-            <span className="ml-2 text-xs font-light text-[#999] tracking-wide hidden sm:inline">
-              {lang === 'pt' ? 'Área de Cliente' : 'Client Area'}
-            </span>
           </Link>
+          <a
+            href="https://share2inspire.pt"
+            className="flex items-center gap-1 text-[11px] font-light text-[#aaa] hover:text-[#666] transition-colors duration-300"
+            title={lang === 'pt' ? 'Voltar ao site' : 'Back to site'}
+          >
+            <ArrowLeft className="w-3 h-3" />
+            <span className="hidden sm:inline">{lang === 'pt' ? 'Site' : 'Site'}</span>
+          </a>
         </div>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-1">
+        {/* Center: Nav */}
+        <nav className="hidden md:flex items-center gap-0.5 mx-auto">
           {navLinks.map(link => {
             const Icon = link.icon;
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-light tracking-wide transition-all duration-300 ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-[13px] font-light tracking-wide transition-all duration-300 ${
                   isActive(link.href)
                     ? 'text-gold bg-gold/5'
-                    : 'text-[#555] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]'
+                    : 'text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -71,25 +68,24 @@ export default function Header() {
           })}
         </nav>
 
-        {/* Desktop Actions */}
-        <div className="hidden md:flex items-center gap-3">
-          {/* Language Switcher */}
+        {/* Right: Actions */}
+        <div className="hidden md:flex items-center gap-2 shrink-0 ml-auto">
           <button
             onClick={() => setLang(lang === 'pt' ? 'en' : 'pt')}
-            className="flex items-center gap-1 px-2 py-1 rounded text-xs font-light text-[#888] hover:text-[#555] hover:bg-[#f0f0ef] transition-all duration-300"
+            className="flex items-center gap-1 px-2 py-1 rounded text-[11px] font-light text-[#999] hover:text-[#666] hover:bg-[#f0f0ef] transition-all duration-300"
           >
-            <Globe className="w-3.5 h-3.5" />
+            <Globe className="w-3 h-3" />
             {lang === 'pt' ? 'PT' : 'EN'}
           </button>
 
           {user ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <Link
                 href="/perfil"
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-light transition-all duration-300 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-light transition-all duration-300 ${
                   isActive('/perfil')
                     ? 'text-gold bg-gold/5'
-                    : 'text-[#555] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]'
+                    : 'text-[#666] hover:text-[#1a1a1a] hover:bg-[#f0f0ef]'
                 }`}
               >
                 <User className="w-3.5 h-3.5" />
@@ -97,7 +93,7 @@ export default function Header() {
               </Link>
               <button
                 onClick={() => signOut()}
-                className="flex items-center gap-1 px-2 py-1.5 rounded text-xs font-light text-[#999] hover:text-red-500 hover:bg-red-50 transition-all duration-300"
+                className="flex items-center gap-1 px-2 py-1.5 rounded text-[11px] font-light text-[#bbb] hover:text-red-500 hover:bg-red-50 transition-all duration-300"
                 title={t('nav.logout')}
               >
                 <LogOut className="w-3.5 h-3.5" />
@@ -106,7 +102,7 @@ export default function Header() {
           ) : (
             <Link
               href="/auth"
-              className="px-5 py-2 text-sm font-medium text-[#1a1a1a] bg-gold hover:bg-gold-light rounded transition-all duration-300"
+              className="px-4 py-1.5 text-[13px] font-medium text-[#1a1a1a] bg-gold hover:bg-gold-light rounded transition-all duration-300"
             >
               {t('nav.login')}
             </Link>
@@ -116,7 +112,7 @@ export default function Header() {
         {/* Mobile Menu Toggle */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden text-[#333] hover:text-[#1a1a1a] transition-colors"
+          className="md:hidden text-[#333] hover:text-[#1a1a1a] transition-colors ml-auto"
         >
           {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
@@ -129,7 +125,6 @@ export default function Header() {
       {menuOpen && (
         <div className="md:hidden bg-[#FAFAF9]/98 backdrop-blur-md border-t border-[#e5e5e5] animate-in slide-in-from-top-2 duration-200">
           <div className="container py-4 flex flex-col gap-1">
-            {/* Back to site */}
             <a
               href="https://share2inspire.pt"
               className="flex items-center gap-2 px-3 py-2.5 rounded-md text-sm font-light text-[#888] hover:text-[#555] hover:bg-[#f0f0ef] transition-all"
