@@ -42,5 +42,9 @@ npm-debug.log*
 *.bak
 *.backup
 
+# Manus (development tools)
+__manus__/
+.manus-logs/
+
 # Vercel
 .vercel/
