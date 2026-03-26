@@ -8,6 +8,7 @@ import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { Link } from 'wouter';
+import CareerProgress from '@/components/CareerProgress';
 import {
   Loader2, Upload, Download, FileText, Check, ArrowRight,
   BarChart3, FileSearch, Compass, Clock, Trash2,
@@ -25,6 +26,7 @@ type SavedAnalysis = {
 const TOOL_CONFIG: Record<string, { label: string; icon: typeof FileSearch; color: string; link: string }> = {
   cv_analyser: { label: 'CV Analyser', icon: FileSearch, color: 'text-blue-400', link: 'https://share2inspire.pt/cv-analyser' },
   career_path: { label: 'Career Path', icon: Compass, color: 'text-emerald-400', link: 'https://share2inspire.pt/career-path' },
+  career_intelligence: { label: 'Career Intelligence', icon: BarChart3, color: 'text-violet-400', link: 'https://share2inspire.pt/career-intelligence' },
   linkedin_roaster: { label: 'LinkedIn Roaster', icon: Linkedin, color: 'text-amber-400', link: 'https://share2inspire.pt/linkedin-roaster' },
   career_energy: { label: 'Career Energy Score', icon: BarChart3, color: 'text-purple-400', link: 'https://share2inspire.pt/#career-energy' },
 };
@@ -39,11 +41,22 @@ export default function Dashboard() {
   const [phone, setPhone] = useState(profile?.phone || '');
   const [address, setAddress] = useState(profile?.address || '');
   const [linkedin, setLinkedin] = useState(profile?.linkedin_url || '');
+
+  // Sync local state when profile loads asynchronously
+  useEffect(() => {
+    if (profile) {
+      setFirstName(prev => prev || profile.first_name || '');
+      setLastName(prev => prev || profile.last_name || '');
+      setPhone(prev => prev || profile.phone || '');
+      setAddress(prev => prev || profile.address || '');
+      setLinkedin(prev => prev || profile.linkedin_url || '');
+    }
+  }, [profile]);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [cvUploaded, setCvUploaded] = useState(false);
-  const [activeTab, setActiveTab] = useState<'analyses' | 'profile' | 'subscription' | 'resources'>('analyses');
+  const [activeTab, setActiveTab] = useState<'analyses' | 'profile' | 'subscription' | 'progress'>('analyses');
 
   // Saved analyses state
   const [analyses, setAnalyses] = useState<SavedAnalysis[]>([]);
@@ -151,15 +164,43 @@ export default function Dashboard() {
     }
   }
 
+  // Plan tier detection
+  function getPlanTier(plan: string | undefined): string {
+    if (!plan) return '';
+    const p = plan.toLowerCase();
+    if (p.includes('pro')) return 'Pro';
+    if (p.includes('growth')) return 'Growth';
+    if (p === 'annual') return 'Pro';
+    if (p === 'semiannual') return 'Growth';
+    return 'Essential';
+  }
+
+  function getPlanPeriod(plan: string | undefined): string {
+    if (!plan) return '';
+    const p = plan.toLowerCase();
+    if (p.includes('annual') && !p.includes('semi')) return t('sub.annual');
+    if (p.includes('semiannual')) return t('sub.semiannual');
+    return t('sub.monthly');
+  }
+
   const planLabels: Record<string, string> = {
     monthly: t('sub.monthly'),
     semiannual: t('sub.semiannual'),
     annual: t('sub.annual'),
+    essential_monthly: `Essential · ${t('sub.monthly')}`,
+    essential_semiannual: `Essential · ${t('sub.semiannual')}`,
+    essential_annual: `Essential · ${t('sub.annual')}`,
+    growth_monthly: `Growth · ${t('sub.monthly')}`,
+    growth_semiannual: `Growth · ${t('sub.semiannual')}`,
+    growth_annual: `Growth · ${t('sub.annual')}`,
+    pro_monthly: `Pro · ${t('sub.monthly')}`,
+    pro_semiannual: `Pro · ${t('sub.semiannual')}`,
+    pro_annual: `Pro · ${t('sub.annual')}`,
   };
 
   const tabs = [
-    { key: 'analyses' as const, label: 'As minhas análises', icon: BarChart3 },
-    { key: 'resources' as const, label: 'Recursos', icon: BookOpen },
+    { key: 'analyses' as const, label: t('dash.myAnalyses'), icon: BarChart3 },
+    { key: 'progress' as const, label: t('dash.progress'), icon: BarChart3 },
     { key: 'profile' as const, label: t('dash.personalInfo'), icon: FileText },
     { key: 'subscription' as const, label: t('dash.subscription'), icon: Compass },
   ];
@@ -168,12 +209,39 @@ export default function Dashboard() {
   const resources = [
     {
       id: 'ebook-cv-vencedor',
-      title: 'Ebook: Como Criar um CV Vencedor',
-      description: 'Guia completo com dicas práticas para construíres um CV que se destaca no mercado de trabalho.',
+      title: t('res.ebookCv'),
+      description: t('res.ebookCvDesc'),
       type: 'PDF',
       size: '155 KB',
       url: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/Ebook_Como_Criar_um_CV_Vencedor_861d8b44.pdf',
       icon: FileText,
+    },
+    {
+      id: 'energia-para-liderar',
+      title: t('res.energiaLiderar'),
+      description: t('res.energiaLiderarDesc'),
+      type: 'PDF',
+      size: '23 MB',
+      url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/Energia_para_Liderar_Premium.pdf',
+      icon: BookOpen,
+    },
+    {
+      id: '10-erros-linkedin',
+      title: t('res.errosLinkedin'),
+      description: t('res.errosLinkedinDesc'),
+      type: 'PDF',
+      size: '109 KB',
+      url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/10-erros-linkedin.pdf',
+      icon: Linkedin,
+    },
+    {
+      id: 'script-entrevistas',
+      title: t('res.scriptEntrevistas'),
+      description: t('res.scriptEntrevistasDesc'),
+      type: 'PDF',
+      size: '165 KB',
+      url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/storage/v1/object/public/member-resources/Script_de_Entrevistas_Share2Inspire.pdf',
+      icon: FileSearch,
     },
   ];
 
@@ -221,11 +289,21 @@ export default function Dashboard() {
       if (data.score) return `Score: ${data.score}`;
       if (data.analysis?.teaser?.nota_geral) return `Nota: ${data.analysis.teaser.nota_geral}`;
       if (data.results_text) return data.results_text.substring(0, 80) + '...';
-      if (data.email_used) return `Perfil: ${data.email_used}`;
+      if (data.email_used) return `${t('dash.profile')}: ${data.email_used}`;
     }
     if (analysis.analysis_type === 'career_path') {
       if (data.career_path?.title) return data.career_path.title;
       if (data.career_path?.summary) return data.career_path.summary.substring(0, 80) + '...';
+      if (data.results_html) {
+        const cleanText = stripHtml(sanitizeResultsHtml(data.results_html));
+        return cleanText.substring(0, 80) + (cleanText.length > 80 ? '...' : '');
+      }
+    }
+    if (analysis.analysis_type === 'career_intelligence') {
+      if (data.strategic_paths && Array.isArray(data.strategic_paths)) {
+        return `${data.strategic_paths.length} caminhos estratégicos identificados`;
+      }
+      if (data.decision_recommendation?.recommended_path) return data.decision_recommendation.recommended_path;
       if (data.results_html) {
         const cleanText = stripHtml(sanitizeResultsHtml(data.results_html));
         return cleanText.substring(0, 80) + (cleanText.length > 80 ? '...' : '');
@@ -243,6 +321,7 @@ export default function Dashboard() {
     { type: 'cv_analyser', label: 'CV Analyser', icon: FileSearch, link: 'https://share2inspire.pt/cv-analyser' },
     { type: 'linkedin_roaster', label: 'LinkedIn Roaster', icon: Linkedin, link: 'https://share2inspire.pt/linkedin-roaster' },
     { type: 'career_path', label: 'Career Path', icon: Compass, link: 'https://share2inspire.pt/career-path' },
+    { type: 'career_intelligence', label: 'Career Intelligence', icon: BarChart3, link: 'https://share2inspire.pt/career-intelligence' },
   ];
 
   return (
@@ -252,20 +331,20 @@ export default function Dashboard() {
         <div className="mb-8">
           <p className="text-gold text-xs font-light tracking-[0.15em] uppercase mb-2">{t('dash.title')}</p>
           <h1 className="text-2xl font-semibold text-[#1a1a1a]">
-            {profile?.first_name ? `Olá, ${profile.first_name}` : t('dash.title')}
+            {profile?.first_name ? `${t('dash.hello')}, ${profile.first_name}` : t('dash.title')}
           </h1>
           <p className="text-sm text-[#999] font-light mt-1">
-            Aqui encontras todas as tuas análises e informações de conta.
+            {t('dash.subtitle')}
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-8 border-b border-[#e5e5e5]">
+        <div className="flex gap-1 mb-8 border-b border-[#e5e5e5] overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-light transition-all duration-300 border-b-2 -mb-[1px] ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-3 text-xs sm:text-sm font-light transition-all duration-300 border-b-2 -mb-[1px] whitespace-nowrap ${
                 activeTab === tab.key
                   ? 'border-gold text-gold'
                   : 'border-transparent text-[#999] hover:text-[#1a1a1a]/60'
@@ -283,8 +362,8 @@ export default function Dashboard() {
             {/* Explanation */}
             <div className="p-4 bg-gold/5 border border-gold/10 rounded-lg">
               <p className="text-xs text-gold/80 font-light leading-relaxed">
-                A tua conta <span className="font-medium">gratuita</span> guarda todas as análises que fizeres enquanto autenticado.
-                Usa as ferramentas e clica em <span className="font-medium">"Guardar na minha conta"</span> para as ver aqui.
+                {t('dash.freeAccountInfo').split('{free}')[0]}<span className="font-medium">{t('dash.freeLabel')}</span>{t('dash.freeAccountInfo').split('{free}')[1]?.split('{')[0]}
+                {t('dash.saveHint').replace('{save}', t('dash.saveToAccount'))}
               </p>
             </div>
 
@@ -303,7 +382,7 @@ export default function Dashboard() {
                       <div>
                         <h3 className="text-sm font-medium text-[#1a1a1a]">{tool.label}</h3>
                         <p className="text-[10px] text-[#aaa] font-light">
-                          {count > 0 ? `${count} análise${count > 1 ? 's' : ''} guardada${count > 1 ? 's' : ''}` : 'Sem análises'}
+                          {count > 0 ? `${count} ${count > 1 ? t('dash.analysesSaved') : t('dash.analysisSaved')}` : t('dash.noAnalyses')}
                         </p>
                       </div>
                     </div>
@@ -312,7 +391,7 @@ export default function Dashboard() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-1.5 text-xs text-[#999] font-light">
                           <Clock className="w-3 h-3" />
-                          <span>Última: {formatDate(groupedAnalyses[tool.type]?.[0]?.created_at || '')}</span>
+                          <span>{t('dash.last')}: {formatDate(groupedAnalyses[tool.type]?.[0]?.created_at || '')}</span>
                         </div>
                         <button
                           onClick={() => {
@@ -321,17 +400,17 @@ export default function Dashboard() {
                           }}
                           className="flex items-center gap-1.5 text-xs text-gold hover:text-gold-light transition-colors"
                         >
-                          Ver resultados <ArrowRight className="w-3 h-3" />
+                          {t('dash.viewResults')} <ArrowRight className="w-3 h-3" />
                         </button>
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <p className="text-xs text-[#aaa] font-light">Ainda sem análises guardadas</p>
+                        <p className="text-xs text-[#aaa] font-light">{t('dash.noAnalysesYet')}</p>
                         <a
                           href={tool.link}
                           className="inline-flex items-center gap-1.5 text-xs text-gold/60 hover:text-gold transition-colors"
                         >
-                          Fazer análise <ArrowRight className="w-3 h-3" />
+                          {t('dash.doAnalysis')} <ArrowRight className="w-3 h-3" />
                         </a>
                       </div>
                     )}
@@ -344,20 +423,20 @@ export default function Dashboard() {
             {loadingAnalyses ? (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="w-5 h-5 text-gold/40 animate-spin" />
-                <span className="ml-2 text-sm text-[#999] font-light">A carregar análises...</span>
+                <span className="ml-2 text-sm text-[#999] font-light">{t('dash.loadingAnalyses')}</span>
               </div>
             ) : analyses.length > 0 ? (
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-medium text-[#1a1a1a]">
-                    Análises guardadas ({analyses.length})
+                    {t('dash.savedAnalyses')} ({analyses.length})
                   </h2>
                   <button
                     onClick={loadAnalyses}
                     className="flex items-center gap-1.5 text-xs text-[#999] hover:text-gold transition-colors"
                   >
                     <RefreshCw className="w-3 h-3" />
-                    Atualizar
+                    {t('dash.refresh')}
                   </button>
                 </div>
 
@@ -389,7 +468,7 @@ export default function Dashboard() {
                                 </span>
                               </div>
                               <p className="text-sm text-[#333] font-light truncate">
-                                {getAnalysisSummary(analysis) || 'Análise guardada'}
+                                {getAnalysisSummary(analysis) || t('dash.analysisSaved')}
                               </p>
                             </div>
                             <div className="flex items-center gap-2 ml-4">
@@ -400,7 +479,7 @@ export default function Dashboard() {
                                 }}
                                 disabled={deletingId === analysis.id}
                                 className="p-1.5 text-[#aaa] hover:text-red-400 transition-colors"
-                                title="Eliminar análise"
+                                title={t('dash.deleteAnalysis')}
                               >
                                 {deletingId === analysis.id ? (
                                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -423,19 +502,19 @@ export default function Dashboard() {
                                 {/* Score summary line */}
                                 {analysis.data?.score && (
                                   <div className="flex items-center gap-2">
-                                    <span className="text-xs text-[#888] font-light">Score:</span>
+                                    <span className="text-xs text-[#888] font-light">{t('dash.score')}:</span>
                                     <span className="text-sm font-medium text-gold">{analysis.data.score}/100</span>
                                   </div>
                                 )}
                                 {analysis.data?.total_score && (
                                   <div className="flex items-center gap-2">
-                                    <span className="text-xs text-[#888] font-light">Score:</span>
+                                    <span className="text-xs text-[#888] font-light">{t('dash.score')}:</span>
                                     <span className="text-sm font-medium text-gold">{analysis.data.total_score}{analysis.data.level ? ` — ${analysis.data.level}` : ''}</span>
                                   </div>
                                 )}
                                 {analysis.data?.archetype && (
                                   <div className="flex items-center gap-2">
-                                    <span className="text-xs text-[#888] font-light">Arquétipo:</span>
+                                    <span className="text-xs text-[#888] font-light">{t('dash.archetype')}:</span>
                                     <span className="text-sm font-medium text-gold">{analysis.data.archetype}</span>
                                   </div>
                                 )}
@@ -456,7 +535,7 @@ export default function Dashboard() {
                                   <div className="space-y-2">
                                     {analysis.data.analysis.keywords && (
                                       <div>
-                                        <span className="text-xs text-[#888] font-light block mb-1">Palavras-chave:</span>
+                                        <span className="text-xs text-[#888] font-light block mb-1">{t('dash.keywords')}:</span>
                                         <p className="text-xs text-[#666] font-light">
                                           {Array.isArray(analysis.data.analysis.keywords)
                                             ? analysis.data.analysis.keywords.slice(0, 8).join(', ')
@@ -466,7 +545,7 @@ export default function Dashboard() {
                                     )}
                                     {analysis.data.analysis.recommendations && (
                                       <div>
-                                        <span className="text-xs text-[#888] font-light block mb-1">Recomendações:</span>
+                                        <span className="text-xs text-[#888] font-light block mb-1">{t('dash.recommendations')}:</span>
                                         <ul className="space-y-0.5">
                                           {(Array.isArray(analysis.data.analysis.recommendations)
                                             ? analysis.data.analysis.recommendations
@@ -496,6 +575,37 @@ export default function Dashboard() {
                                   </div>
                                 )}
 
+                                {/* Fallback: Career Intelligence structured data */}
+                                {!analysis.data?.results_html && analysis.analysis_type === 'career_intelligence' && analysis.data?.strategic_paths && (
+                                  <div className="space-y-2">
+                                    {analysis.data.decision_recommendation?.recommended_path && (
+                                      <p className="text-xs text-[#555] font-medium">{analysis.data.decision_recommendation.recommended_path}</p>
+                                    )}
+                                    {analysis.data.decision_recommendation?.justification && (
+                                      <p className="text-xs text-[#888] font-light leading-relaxed line-clamp-3">
+                                        {analysis.data.decision_recommendation.justification.substring(0, 300)}
+                                      </p>
+                                    )}
+                                    {Array.isArray(analysis.data.strategic_paths) && analysis.data.strategic_paths.length > 0 && (
+                                      <div className="space-y-1">
+                                        <span className="text-[10px] text-[#aaa] font-light">{t('dash.paths') || 'Caminhos'}:</span>
+                                        {analysis.data.strategic_paths.map((path: any, i: number) => (
+                                          <div key={i} className="flex items-center gap-2 text-xs">
+                                            <span className="text-[#C9A961] font-medium">#{i+1}</span>
+                                            <span className="text-[#555] font-light">{path.title || path.name || `Caminho ${i+1}`}</span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                    {analysis.data.market_context?.aligned_companies && (
+                                      <div>
+                                        <span className="text-[10px] text-[#aaa] font-light block">{t('dash.companies') || 'Empresas'}:</span>
+                                        <p className="text-xs text-[#888] font-light">{analysis.data.market_context.aligned_companies.substring(0, 200)}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+
                                 {/* Fallback: Career Energy structured data */}
                                 {!analysis.data?.results_html && analysis.analysis_type === 'career_energy' && analysis.data?.dimensions && (
                                   <div className="space-y-2">
@@ -515,7 +625,7 @@ export default function Dashboard() {
                                 {/* Fallback: results_text when no HTML */}
                                 {!analysis.data?.results_html && analysis.data?.results_text && (
                                   <div>
-                                    <span className="text-xs text-[#888] font-light block mb-1">Resumo:</span>
+                                    <span className="text-xs text-[#888] font-light block mb-1">{t('dash.summary')}:</span>
                                     <p className="text-xs text-[#888] font-light leading-relaxed">
                                       {analysis.data.results_text.substring(0, 800)}
                                     </p>
@@ -528,14 +638,14 @@ export default function Dashboard() {
                                     href={config.link}
                                     className="inline-flex items-center gap-1.5 text-xs text-gold/60 hover:text-gold transition-colors mt-2"
                                   >
-                                    Fazer nova análise <ArrowRight className="w-3 h-3" />
+                                    {t('dash.doAnalysis')} <ArrowRight className="w-3 h-3" />
                                   </a>
                                 )}
 
                                 {/* Captured at */}
                                 {analysis.data?.captured_at && (
                                   <p className="text-[10px] text-[#bbb] font-light">
-                                    Capturado: {formatDate(analysis.data.captured_at)}
+                                    {formatDate(analysis.data.captured_at)}
                                   </p>
                                 )}
                               </div>
@@ -550,9 +660,9 @@ export default function Dashboard() {
             ) : (
               <div className="text-center py-12 border border-[#e5e5e5] rounded-lg">
                 <BarChart3 className="w-8 h-8 text-[#ccc] mx-auto mb-3" />
-                <p className="text-sm text-[#999] font-light mb-1">Ainda sem análises guardadas</p>
+                <p className="text-sm text-[#999] font-light mb-1">{t('dash.noAnalysesYet')}</p>
                 <p className="text-xs text-[#bbb] font-light mb-4">
-                  Usa as ferramentas e clica em "Guardar na minha conta" para as ver aqui.
+                  {t('dash.saveHint').replace('{save}', t('dash.saveToAccount'))}
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
                   {allTools.map(tool => (
@@ -576,7 +686,7 @@ export default function Dashboard() {
                 <div className="flex items-center gap-4 flex-wrap">
                   <div className="flex items-center gap-2 text-sm text-[#555]">
                     <FileText className="w-4 h-4 text-gold/60" />
-                    <span className="font-light">{profile.cv_filename || 'CV carregado'}</span>
+                    <span className="font-light">{profile.cv_filename || t('dash.cvUploaded')}</span>
                   </div>
                   <a href={profile.cv_url || profile.cv_file_url} target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-1.5 text-xs text-gold hover:text-gold-light transition-colors">
@@ -612,13 +722,13 @@ export default function Dashboard() {
                     <Compass className="w-5 h-5 text-gold" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">Queres acesso a todas as ferramentas?</h3>
+                    <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{t('dash.wantAccess')}</h3>
                     <p className="text-xs text-[#999] font-light mb-3">
-                      Com um plano ativo, tens acesso ilimitado ao CV Maker, Career Advisory Bot, LinkedIn Roster, e-books exclusivos e muito mais.
+                      {t('dash.withPlan')}
                     </p>
                     <Link href="/planos"
                       className="inline-flex items-center gap-2 px-4 py-2 bg-gold text-[#1a1a1a] text-sm font-medium rounded hover:bg-gold-light transition-all duration-300">
-                      Ver planos <ArrowRight className="w-3.5 h-3.5" />
+                      {t('dash.seePlans')} <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
                 </div>
@@ -678,66 +788,8 @@ export default function Dashboard() {
         )}
 
         {/* Tab: Resources */}
-        {activeTab === 'resources' && (
-          <div className="space-y-6">
-            {hasActiveSubscription() ? (
-              <>
-                <div className="p-4 bg-gold/5 border border-gold/10 rounded-lg">
-                  <p className="text-xs text-gold/80 font-light leading-relaxed">
-                    Recursos exclusivos para subscritores. Faz download dos materiais que te ajudam a evoluir na carreira.
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  {resources.map((resource) => {
-                    const ResIcon = resource.icon;
-                    return (
-                      <div key={resource.id} className="border border-[#e5e5e5] rounded-lg p-5 hover:border-gold/30 transition-all duration-300">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex items-start gap-4">
-                            <div className="w-10 h-10 bg-gold/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <ResIcon className="w-5 h-5 text-gold" />
-                            </div>
-                            <div>
-                              <h3 className="text-sm font-semibold text-[#1a1a1a] mb-1">{resource.title}</h3>
-                              <p className="text-xs text-[#999] font-light leading-relaxed mb-2">{resource.description}</p>
-                              <div className="flex items-center gap-3">
-                                <span className="px-2 py-0.5 bg-[#f5f5f5] rounded text-[10px] text-[#999] font-medium">{resource.type}</span>
-                                <span className="text-[10px] text-[#ccc]">{resource.size}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <a
-                            href={resource.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            download
-                            className="flex items-center gap-2 px-4 py-2 bg-gold text-[#1a1a1a] text-xs font-medium rounded hover:bg-gold-light transition-all duration-300 flex-shrink-0"
-                          >
-                            <Download className="w-3.5 h-3.5" />
-                            Download
-                          </a>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            ) : (
-              <div className="border border-[#e5e5e5] rounded-lg p-8 text-center">
-                <div className="w-14 h-14 bg-[#f5f5f5] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Lock className="w-6 h-6 text-[#ccc]" />
-                </div>
-                <h3 className="text-base font-semibold text-[#1a1a1a] mb-2">Recursos exclusivos para subscritores</h3>
-                <p className="text-sm text-[#999] font-light mb-6 max-w-md mx-auto">
-                  Ativa a tua subscrição para aceder a ebooks, guias e materiais exclusivos que te ajudam a evoluir na carreira.
-                </p>
-                <Link href="/planos"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-gold text-[#1a1a1a] text-sm font-medium rounded hover:bg-gold-light transition-all duration-300">
-                  Ver planos <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            )}
-          </div>
+        {activeTab === 'progress' && (
+          <CareerProgress variant="detailed" />
         )}
 
         {/* Tab: Subscription */}
@@ -746,14 +798,21 @@ export default function Dashboard() {
             <h2 className="text-sm font-medium text-[#1a1a1a] mb-4">{t('dash.subscription')}</h2>
             {subscription && hasActiveSubscription() ? (
               <div className="space-y-3">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
                   <span className="px-2.5 py-1 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium">
                     {planLabels[subscription.plan] || subscription.plan}
                   </span>
-                  <span className="text-xs text-green-400/80 font-light">{t('dash.active')}</span>
+                  <span className="px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium">
+                    {t('dash.active')}
+                  </span>
+                  {getPlanTier(subscription.plan) && (
+                    <span className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[10px] text-[#666] font-medium">
+                      Tier: {getPlanTier(subscription.plan)}
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-[#999] font-light">
-                  {t('dash.validUntil')}: {new Date(subscription.end_date).toLocaleDateString('pt-PT')}
+                  {t('dash.validUntil')}: {new Date(subscription.expires_at).toLocaleDateString('pt-PT')}
                 </p>
                 <Link href="/membros" className="inline-flex items-center gap-1.5 text-xs text-gold hover:text-gold-light transition-colors mt-2">
                   {t('nav.member')} <ArrowRight className="w-3 h-3" />
@@ -763,7 +822,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-xs text-[#999] font-light mb-1">{t('dash.noSubscription')}</p>
                 <p className="text-xs text-[#aaa] font-light mb-4">
-                  A tua conta gratuita permite guardar análises. Para aceder a todas as ferramentas premium, subscreve um plano.
+                  {t('dash.freeAccountInfo').replace('{free}', t('dash.freeLabel'))}
                 </p>
                 <Link href="/planos"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-gold text-[#1a1a1a] text-sm font-medium rounded hover:bg-gold-light transition-all duration-300">

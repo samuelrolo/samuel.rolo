@@ -9,6 +9,7 @@ import { I18nProvider } from "./contexts/I18nContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CareerBotWidget from "./components/CareerBotWidget";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -48,6 +49,7 @@ function Layout() {
         <Routes />
       </main>
       {!isAuthPage && <Footer />}
+      <CareerBotWidget />
     </div>
   );
 }

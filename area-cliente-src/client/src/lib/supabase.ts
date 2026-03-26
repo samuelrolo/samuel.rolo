@@ -15,10 +15,9 @@ export type UserProfile = {
   address: string;
   linkedin_url: string;
   avatar_url: string;
-  cv_url: string;         // actual DB column name
-  cv_filename: string;    // original file name
-  cv_uploaded_at: string; // upload timestamp
-  // legacy alias kept for backward compat
+  cv_url: string;
+  cv_filename: string;
+  cv_uploaded_at: string;
   cv_file_url?: string;
   created_at: string;
   updated_at: string;
@@ -27,19 +26,22 @@ export type UserProfile = {
 export type Subscription = {
   id: string;
   user_id: string;
-  plan: 'monthly' | 'semiannual' | 'annual';
-  status: 'active' | 'cancelled' | 'expired';
-  amount_paid: number;
-  start_date: string;
-  end_date: string;
+  plan: string;
+  status: 'active' | 'cancelled' | 'expired' | 'pending';
+  price_eur: number;
+  started_at: string;
+  expires_at: string;
+  payment_method: string;
+  payment_reference: string;
   created_at: string;
+  updated_at: string;
 };
 
 export type MemberContent = {
   id: string;
   title: string;
   description: string;
-  content_type: 'ebook' | 'article' | 'template' | 'video' | 'tool';
+  content_type: 'ebook' | 'article' | 'template' | 'video' | 'tool' | 'podcast';
   file_url: string;
   thumbnail_url: string | null;
   tags: string[] | null;

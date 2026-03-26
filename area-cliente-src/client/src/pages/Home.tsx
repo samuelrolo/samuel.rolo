@@ -6,7 +6,7 @@
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'wouter';
-import { ArrowRight, FileText, BarChart3, Route, Linkedin, Bot, BookOpen } from 'lucide-react';
+import { ArrowRight, FileText, BarChart3, Route, Linkedin, Bot, BookOpen, Target, DollarSign, ScanSearch, PenTool } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const HERO_BG = 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/s2i-hero-bg-KXgoYAkGU9qo3SW9GMJ5qr.webp';
@@ -75,7 +75,7 @@ export default function Home() {
                 ferramentas certas.
               </motion.h1>
               <motion.p variants={fadeUp} custom={2} className="text-[#666] font-light text-lg max-w-lg mx-auto">
-                Acesso ilimitado a CV Maker, CV Analyzer, Career Path, LinkedIn Roster, e-books exclusivos e o Career Advisory Bot.
+                Acesso ilimitado a CV Maker, CV Analyzer, Career Path, LinkedIn Roster, e-books exclusivos e o Career Advisory.
               </motion.p>
               <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
@@ -139,6 +139,75 @@ export default function Home() {
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </section>
+
+      {/* Differentiators */}
+      <section className="py-24 bg-[#F5F5F4]">
+        <div className="container max-w-5xl mx-auto px-4">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            className="text-center mb-16"
+          >
+            <motion.p variants={fadeUp} custom={0} className="text-gold text-sm font-light tracking-[0.2em] uppercase mb-4">
+              {t('home.diffTitle')}
+            </motion.p>
+            <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-4xl font-semibold text-[#1a1a1a]">
+              {t('home.diffSubtitle')}
+            </motion.h2>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12"
+          >
+            {[
+              { icon: Target, titleKey: 'home.diff1Title', descKey: 'home.diff1Desc', accent: 'from-[#BF9A33]/20 to-[#BF9A33]/5' },
+              { icon: DollarSign, titleKey: 'home.diff2Title', descKey: 'home.diff2Desc', accent: 'from-[#0a5c2e]/15 to-[#0a5c2e]/5' },
+              { icon: ScanSearch, titleKey: 'home.diff3Title', descKey: 'home.diff3Desc', accent: 'from-[#003d8f]/15 to-[#003d8f]/5' },
+              { icon: PenTool, titleKey: 'home.diff4Title', descKey: 'home.diff4Desc', accent: 'from-[#7c3aed]/15 to-[#7c3aed]/5' },
+            ].map((diff, i) => (
+              <motion.div
+                key={diff.titleKey}
+                variants={fadeUp}
+                custom={i}
+                className="p-8 border border-[#e5e5e5] rounded bg-white hover:border-gold/25 transition-all duration-500"
+              >
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${diff.accent} flex items-center justify-center mb-5`}>
+                  <diff.icon className="w-5 h-5 text-gold/80" />
+                </div>
+                <h3 className="text-[#1a1a1a] font-semibold text-base mb-2">
+                  {t(diff.titleKey)}
+                </h3>
+                <p className="text-[#777] font-light text-sm leading-relaxed">
+                  {t(diff.descKey)}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {!user || !hasActiveSubscription() ? (
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="text-center"
+            >
+              <motion.div variants={fadeUp} custom={0}>
+                <Link
+                  href="/planos"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-gold text-[#1a1a1a] font-medium rounded hover:bg-gold-light transition-all duration-300"
+                >
+                  {t('home.diffCta')}
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </motion.div>
+            </motion.div>
+          ) : null}
         </div>
       </section>
 
