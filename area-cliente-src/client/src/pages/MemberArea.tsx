@@ -347,6 +347,8 @@ export default function MemberArea() {
 
   // Career Intelligence states
   const [monthlyCareerIntelUsed, setMonthlyCareerIntelUsed] = useState(0);
+  const [ciCountry, setCiCountry] = useState('Portugal');
+  const [ciRegion, setCiRegion] = useState('');
 
   // Tab navigation
   const [activeTab, setActiveTab] = useState<TabId>('tools');
@@ -364,6 +366,8 @@ export default function MemberArea() {
 
   const selectedCountryData = countries.find(c => c.country === cpCountry);
   const availableRegions = selectedCountryData?.regions || [];
+  const ciSelectedCountryData = countries.find(c => c.country === ciCountry);
+  const ciAvailableRegions = ciSelectedCountryData?.regions || [];
 
   // ─── Fetch content ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -614,14 +618,14 @@ export default function MemberArea() {
       const extractionResult = await fetchWithRetry(extractionBody);
       const analysisSource = extractionResult.analysis || extractionResult;
       const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
-      const ciBody: any = { mode: 'career_intelligence', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: profile?.linkedin_url || '', country: cpCountry, region: cpRegion, lang };
+      const ciBody: any = { mode: 'career_intelligence', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: profile?.linkedin_url || '', country: ciCountry, region: ciRegion, lang };
       const result = await fetchWithRetry(ciBody);
       setAnalysisResult(result);
-      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_intelligence', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email } });
+      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_intelligence', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: ciCountry, region: ciRegion, captured_at: new Date().toISOString(), email: profile?.email } });
       setMonthlyCareerIntelUsed(prev => prev + 1);
     } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
     finally { setAnalyzing(false); }
-  }, [user?.id, subscription, planTier, monthlyCareerIntelUsed, profile, cpCountry, cpRegion, lang, getCvData, fetchWithRetry]);
+  }, [user?.id, subscription, planTier, monthlyCareerIntelUsed, profile, ciCountry, ciRegion, lang, getCvData, fetchWithRetry]);
 
   // ─── Toggle tool panel ──────────────────────────────────────────────────
   const toggleTool = (key: string) => {
@@ -781,11 +785,11 @@ export default function MemberArea() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><Globe className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'País' : 'Country'}</label>
-              <select value={cpCountry} onChange={e => { setCpCountry(e.target.value); setCpRegion(''); }} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white">{countries.map(c => (<option key={c.code} value={c.country}>{c.country}</option>))}</select>
+              <select value={ciCountry} onChange={e => { setCiCountry(e.target.value); setCiRegion(''); }} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white">{countries.map(c => (<option key={c.code} value={c.country}>{c.country}</option>))}</select>
             </div>
             <div>
               <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><MapPin className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'Região' : 'Region'}</label>
-              <select value={cpRegion} onChange={e => setCpRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"><option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>{availableRegions.map(r => (<option key={r} value={r}>{r}</option>))}</select>
+              <select value={ciRegion} onChange={e => setCiRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"><option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>{ciAvailableRegions.map(r => (<option key={r} value={r}>{r}</option>))}</select>
             </div>
           </div>
           <button onClick={runCareerIntelligence} disabled={analyzing || !ciAvailable || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
