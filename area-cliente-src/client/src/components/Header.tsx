@@ -1,34 +1,34 @@
 /*
  * Design: Consultoria de Luxo Silenciosa
- * Header — navbar limpa e consistente com o site principal
- * Layout: logo à esquerda, nav central, ações à direita
- * Sem "Client Area" label — o contexto é dado pela nav
+ * Header — navbar limpa e consistente
+ * Nav: Início · Planos · Área de Membro · Meu Perfil
+ * "Painel" removido — era redundante
  */
 import { useAuth } from '@/contexts/AuthContext';
 import { useI18n } from '@/lib/i18n';
 import { Link, useLocation } from 'wouter';
 import { useState } from 'react';
-import { Menu, X, User, LogOut, Globe, ArrowLeft, BarChart3, BookOpen, CreditCard, Home } from 'lucide-react';
+import { Menu, X, User, LogOut, Globe, ArrowLeft, CreditCard, Home, Users } from 'lucide-react';
 
 export default function Header() {
-  const { user, signOut, hasActiveSubscription } = useAuth();
+  const { user, signOut } = useAuth();
   const { t, lang, setLang } = useI18n();
   const [location] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const isActive = (href: string) => location === href;
 
+  /* Nav links — sem "Painel", Área de Membro visível para todos os logados */
   const navLinks = [
     { href: '/', label: lang === 'pt' ? 'Início' : 'Home', icon: Home },
-    ...(user ? [{ href: '/perfil', label: lang === 'pt' ? 'Painel' : 'Dashboard', icon: BarChart3 }] : []),
     { href: '/planos', label: t('nav.plans'), icon: CreditCard },
-    ...(user && hasActiveSubscription() ? [{ href: '/membros', label: t('nav.member'), icon: BookOpen }] : []),
+    ...(user ? [{ href: '/membros', label: lang === 'pt' ? 'Área de Membro' : 'Member Area', icon: Users }] : []),
   ];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#FAFAF9]/95 backdrop-blur-md">
       <div className="container flex items-center h-16">
-        {/* Left: Logo */}
+        {/* Left: Logo + back to site */}
         <div className="flex items-center gap-4 shrink-0">
           <Link href="/" className="flex items-center group">
             <img
@@ -68,7 +68,7 @@ export default function Header() {
           })}
         </nav>
 
-        {/* Right: Actions */}
+        {/* Right: Lang + Profile + Logout */}
         <div className="hidden md:flex items-center gap-2 shrink-0 ml-auto">
           <button
             onClick={() => setLang(lang === 'pt' ? 'en' : 'pt')}
@@ -89,7 +89,7 @@ export default function Header() {
                 }`}
               >
                 <User className="w-3.5 h-3.5" />
-                {t('nav.profile')}
+                {lang === 'pt' ? 'Meu perfil' : 'My profile'}
               </Link>
               <button
                 onClick={() => signOut()}
@@ -153,6 +153,21 @@ export default function Header() {
                 </Link>
               );
             })}
+
+            {user && (
+              <Link
+                href="/perfil"
+                onClick={() => setMenuOpen(false)}
+                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-md text-sm font-light transition-all ${
+                  isActive('/perfil')
+                    ? 'text-gold bg-gold/5'
+                    : 'text-[#555] hover:bg-[#f0f0ef]'
+                }`}
+              >
+                <User className="w-4 h-4" />
+                {lang === 'pt' ? 'Meu perfil' : 'My profile'}
+              </Link>
+            )}
 
             <div className="gold-line my-2" />
 
