@@ -299,6 +299,7 @@ export default function MemberArea() {
   const [loadingSaved, setLoadingSaved] = useState(true);
   const [expandedAnalysisType, setExpandedAnalysisType] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [viewingAnalysis, setViewingAnalysis] = useState<SavedAnalysis | null>(null);
 
   const planTier = getPlanTier(subscription?.plan);
   const weeklyLimit = WEEKLY_LIMITS[planTier] || 2;
@@ -954,13 +955,18 @@ export default function MemberArea() {
                           {lang === 'pt' ? 'Última análise' : 'Latest analysis'}
                         </div>
                         <div className="flex items-center justify-between">
-                          <div>
+                          <div className="flex-1 min-w-0">
                             {getAnalysisSummary(latest) && <p className="text-sm font-medium text-[#1a1a1a] mb-1">{getAnalysisSummary(latest)}</p>}
                             <div className="flex items-center gap-1.5 text-[10px] text-[#999]"><Clock className="w-3 h-3" />{formatDate(latest.created_at)}</div>
                           </div>
-                          <button onClick={() => handleDeleteAnalysis(latest.id)} disabled={deletingId === latest.id} className="text-[#ddd] hover:text-red-400 transition-colors">
-                            {deletingId === latest.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-                          </button>
+                          <div className="flex items-center gap-2 ml-3">
+                            <button onClick={() => setViewingAnalysis(latest)} className="flex items-center gap-1 text-[11px] text-gold hover:text-[#b8960c] font-medium transition-colors">
+                              <ArrowRight className="w-3 h-3" />{lang === 'pt' ? 'Ver resultado' : 'View result'}
+                            </button>
+                            <button onClick={() => handleDeleteAnalysis(latest.id)} disabled={deletingId === latest.id} className="text-[#ddd] hover:text-red-400 transition-colors">
+                              {deletingId === latest.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                            </button>
+                          </div>
                         </div>
                       </div>
 
@@ -975,13 +981,18 @@ export default function MemberArea() {
                             <div className="border-t border-[#f0f0f0]">
                               {rest.map((sa) => (
                                 <div key={sa.id} className="flex items-center justify-between px-4 py-3 border-b border-[#f5f5f4] last:border-b-0 hover:bg-[#fafaf9] transition-colors group">
-                                  <div>
+                                  <div className="flex-1 min-w-0">
                                     {getAnalysisSummary(sa) && <p className="text-xs font-medium text-[#1a1a1a] mb-0.5">{getAnalysisSummary(sa)}</p>}
                                     <div className="flex items-center gap-1.5 text-[10px] text-[#999]"><Clock className="w-3 h-3" />{formatDate(sa.created_at)}</div>
                                   </div>
-                                  <button onClick={() => handleDeleteAnalysis(sa.id)} disabled={deletingId === sa.id} className="text-[#ddd] hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100">
-                                    {deletingId === sa.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
-                                  </button>
+                                  <div className="flex items-center gap-2 ml-3">
+                                    <button onClick={() => setViewingAnalysis(sa)} className="flex items-center gap-1 text-[10px] text-gold hover:text-[#b8960c] font-medium transition-colors opacity-0 group-hover:opacity-100">
+                                      <ArrowRight className="w-3 h-3" />{lang === 'pt' ? 'Ver' : 'View'}
+                                    </button>
+                                    <button onClick={() => handleDeleteAnalysis(sa.id)} disabled={deletingId === sa.id} className="text-[#ddd] hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100">
+                                      {deletingId === sa.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                                    </button>
+                                  </div>
                                 </div>
                               ))}
                             </div>
@@ -1113,6 +1124,31 @@ export default function MemberArea() {
         )}
 
       </div>
+
+      {/* ═══════════════════ ANALYSIS RESULT VIEWER ═══════════════════ */}
+      {viewingAnalysis && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 backdrop-blur-sm overflow-y-auto pt-8 pb-8" onClick={() => setViewingAnalysis(null)}>
+          <div className="relative w-full max-w-4xl mx-4 bg-white rounded-2xl shadow-2xl border border-[#e5e5e5] animate-in fade-in slide-in-from-bottom-4 duration-300" onClick={e => e.stopPropagation()}>
+            <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-[#f0f0f0] bg-white/95 backdrop-blur-sm rounded-t-2xl">
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-lg ${(TOOL_CONFIG[viewingAnalysis.analysis_type] || { bgColor: 'bg-[#f5f5f4]' }).bgColor} flex items-center justify-center`}>
+                  {(() => { const Icon = (TOOL_CONFIG[viewingAnalysis.analysis_type] || { icon: FileSearch }).icon; return <Icon className={`w-4 h-4 ${(TOOL_CONFIG[viewingAnalysis.analysis_type] || { color: 'text-[#999]' }).color}`} />; })()}
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-[#1a1a1a]">{(TOOL_CONFIG[viewingAnalysis.analysis_type] || { label: viewingAnalysis.analysis_type }).label}</h3>
+                  <p className="text-[10px] text-[#999]">{formatDate(viewingAnalysis.created_at)}</p>
+                </div>
+              </div>
+              <button onClick={() => setViewingAnalysis(null)} className="px-3 py-1.5 text-xs text-[#999] hover:text-[#1a1a1a] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-all">
+                {lang === 'pt' ? 'Fechar' : 'Close'}
+              </button>
+            </div>
+            <div className="p-6">
+              <AnalysisResult data={viewingAnalysis.data} onClose={() => setViewingAnalysis(null)} lang={lang} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

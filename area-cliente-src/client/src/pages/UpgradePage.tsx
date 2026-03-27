@@ -72,9 +72,9 @@ const tiers: TierConfig[] = [
 ];
 
 const testimonials = [
-  { name: 'Ana M.', role: 'Senior Manager', textKey: 'sub.testimonial1' },
-  { name: 'Diogo S.', role: 'Software Engineer', textKey: 'sub.testimonial2' },
-  { name: 'Mariana C.', role: 'Product Manager', textKey: 'sub.testimonial3' },
+  { name: 'Ana M.', role: 'Senior Manager', textKey: 'sub.testimonial1', initials: 'AM', color: 'bg-rose-100 text-rose-700' },
+  { name: 'Diogo S.', role: 'Software Engineer', textKey: 'sub.testimonial2', initials: 'DS', color: 'bg-sky-100 text-sky-700' },
+  { name: 'Mariana C.', role: 'Product Manager', textKey: 'sub.testimonial3', initials: 'MC', color: 'bg-amber-100 text-amber-700' },
 ];
 
 const previewFeatures = [
@@ -318,9 +318,12 @@ export default function UpgradePage() {
                   ))}
                 </div>
                 <p className="text-xs text-[#555] font-light leading-relaxed mb-4 italic">{t(tm.textKey)}</p>
-                <div>
-                  <p className="text-xs font-medium text-[#1a1a1a]">{tm.name}</p>
-                  <p className="text-[10px] text-[#999] font-light">{tm.role}</p>
+                <div className="flex items-center gap-2">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold ${tm.color}`}>{tm.initials}</div>
+                  <div>
+                    <p className="text-xs font-medium text-[#1a1a1a]">{tm.name}</p>
+                    <p className="text-[10px] text-[#999] font-light">{tm.role}</p>
+                  </div>
                 </div>
               </div>
             ))}
