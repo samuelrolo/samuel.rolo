@@ -731,6 +731,29 @@ export default function MemberArea() {
           <button onClick={runCareerPath} disabled={analyzing || !cpAvailable || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
             {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar Career Path...' : 'Generating Career Path...'}</>) : (<><Route className="w-4 h-4" />{lang === 'pt' ? 'Gerar Career Path' : 'Generate Career Path'}</>)}
           </button>
+          {!cpAvailable && (
+            <div className="mt-3 rounded-lg border border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 p-3">
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">{lang === 'pt' ? 'Oferta Exclusiva' : 'Exclusive Offer'}</span>
+                <span className="text-[10px] text-amber-600">{lang === 'pt' ? '75% desconto — só para subscritores Pro' : '75% off — Pro subscribers only'}</span>
+              </div>
+              <p className="text-xs text-[#555] mb-2.5">
+                {lang === 'pt' ? 'Já usaste o teu Career Path mensal. Obtém uma análise adicional a preço especial.' : 'You have used your monthly Career Path. Get an additional analysis at a special price.'}
+              </p>
+              <a
+                href={lang === 'pt' ? '/career-path?addon=true&price=4.99' : '/en/career-path?addon=true&price=4.99'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between w-full px-3 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs font-semibold rounded-lg hover:from-amber-600 hover:to-amber-700 transition-all shadow-sm"
+              >
+                <span>{lang === 'pt' ? 'Obter análise adicional' : 'Get additional analysis'}</span>
+                <span className="flex items-center gap-1.5">
+                  <span className="line-through text-amber-200 font-normal">19€</span>
+                  <span className="text-white font-bold">4,99€</span>
+                </span>
+              </a>
+            </div>
+          )}
         </div>
       );
     }
@@ -768,6 +791,29 @@ export default function MemberArea() {
           <button onClick={runCareerIntelligence} disabled={analyzing || !ciAvailable || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
             {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar análise...' : 'Generating analysis...'}</>) : (<><Sparkles className="w-4 h-4" />{lang === 'pt' ? 'Gerar Career Intelligence' : 'Generate Career Intelligence'}</>)}
           </button>
+          {!ciAvailable && (
+            <div className="mt-3 rounded-lg border border-violet-200 bg-gradient-to-r from-violet-50 to-purple-50 p-3">
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-violet-700 bg-violet-100 px-2 py-0.5 rounded-full">{lang === 'pt' ? 'Oferta Exclusiva' : 'Exclusive Offer'}</span>
+                <span className="text-[10px] text-violet-600">{lang === 'pt' ? '75% desconto — só para subscritores Pro' : '75% off — Pro subscribers only'}</span>
+              </div>
+              <p className="text-xs text-[#555] mb-2.5">
+                {lang === 'pt' ? 'Já usaste o teu Career Intelligence mensal. Obtém uma análise adicional a preço especial.' : 'You have used your monthly Career Intelligence. Get an additional analysis at a special price.'}
+              </p>
+              <a
+                href={lang === 'pt' ? '/career-intelligence?addon=true&price=9.99' : '/en/career-intelligence?addon=true&price=9.99'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between w-full px-3 py-2.5 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-xs font-semibold rounded-lg hover:from-violet-700 hover:to-purple-700 transition-all shadow-sm"
+              >
+                <span>{lang === 'pt' ? 'Obter análise adicional' : 'Get additional analysis'}</span>
+                <span className="flex items-center gap-1.5">
+                  <span className="line-through text-violet-300 font-normal">39€</span>
+                  <span className="text-white font-bold">9,99€</span>
+                </span>
+              </a>
+            </div>
+          )}
         </div>
       );
     }
