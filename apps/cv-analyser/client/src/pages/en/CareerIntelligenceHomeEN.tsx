@@ -151,6 +151,15 @@ export default function CareerIntelligenceHomeEN() {
     return () => clearInterval(interval);
   }, [loading]);
 
+  // Sync country/region to sessionStorage in real-time.
+  // This ensures CareerIntelligenceResults always uses the country the user
+  // selected in THIS form, overriding any value left by a previous Career Path
+  // session — which is the root cause of the upgrade-flow country bug.
+  useEffect(() => {
+    sessionStorage.setItem('analysisCountry', country);
+    sessionStorage.setItem('analysisRegion', region || '');
+  }, [country, region]);
+
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'mbway' | 'stripe' | 'paypal'>('stripe');
   const [email, setEmail] = useState('');
