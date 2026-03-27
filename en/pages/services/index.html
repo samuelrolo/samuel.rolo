@@ -208,10 +208,17 @@
             font-weight: 400;
             color: #999;
         }
-        .btn-gold { display: inline-flex; align-items: center; gap: 6px; background: var(--gold); color: #fff; font-size: 0.78rem; font-weight: 600; padding: 8px 18px; border-radius: 8px; text-decoration: none; transition: all 0.3s; border: none; }
-        .btn-gold:hover { background: #b8943d; color: #fff; }
-        .btn-outline-gold { display: inline-flex; align-items: center; gap: 6px; background: transparent; color: var(--gold); font-size: 0.78rem; font-weight: 600; padding: 8px 18px; border-radius: 8px; text-decoration: none; transition: all 0.3s; border: 1px solid var(--gold-border); }
-        .btn-outline-gold:hover { background: var(--gold-light); color: var(--gold); }
+        .btn-gold { display: inline-flex; align-items: center; gap: 6px; background: var(--gold); color: #fff; font-size: 0.75rem; font-weight: 600; padding: 7px 16px; border-radius: 50px; text-decoration: none; transition: all 0.25s; border: none; white-space: nowrap; }
+        .btn-gold:hover { background: #b8943d; color: #fff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(201,169,97,0.3); }
+        .btn-outline-gold { display: inline-flex; align-items: center; gap: 6px; background: transparent; color: var(--gold); font-size: 0.75rem; font-weight: 600; padding: 7px 16px; border-radius: 50px; text-decoration: none; transition: all 0.25s; border: 1.5px solid var(--gold); white-space: nowrap; }
+        .btn-outline-gold:hover { background: var(--gold-light); color: var(--gold); transform: translateY(-1px); }
+        .step-transition-cta { text-align: center; padding: 1.5rem 0 0.5rem; }
+        .step-transition-cta a { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.8rem; font-weight: 500; text-decoration: none; transition: color 0.2s; }
+        .step-transition-cta a:hover { color: var(--gold); }
+        .final-cta-section { padding: 60px 0; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); text-align: center; }
+        .final-cta-section h2 { color: #fff; font-size: 1.5rem; font-weight: 300; margin-bottom: 0.5rem; }
+        .final-cta-section h2 strong { font-weight: 600; color: var(--gold); }
+        .final-cta-section p { color: rgba(255,255,255,0.6); font-size: 0.88rem; margin-bottom: 1.8rem; max-width: 480px; margin-left: auto; margin-right: auto; }
 
         .bundle-banner { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 14px; padding: 2rem 2.5rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; position: relative; overflow: hidden; }
         .bundle-banner::before { content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(201,169,97,0.1) 0%, transparent 70%); border-radius: 50%; }
@@ -241,6 +248,87 @@
 
         .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
         .fade-up.visible { opacity: 1; transform: translateY(0); }
+    
+        /* ─── Compact / Expandable Cards ─── */
+        .svc-card-new {
+            cursor: pointer;
+            padding: 1.2rem 1.5rem;
+        }
+        .svc-card-new .card-tagline {
+            font-size: 0.72rem;
+            color: var(--muted);
+            line-height: 1.4;
+            margin-bottom: 0.6rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .svc-card-new .card-expandable {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+        .svc-card-new.expanded .card-expandable {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .svc-card-new.expanded .card-tagline {
+            display: none;
+        }
+        .svc-card-new .card-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+        }
+        .svc-card-new h3 {
+            font-size: 0.88rem;
+            margin-bottom: 0.2rem;
+        }
+        .svc-card-new .card-footer {
+            padding-top: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+        .svc-card-new .card-footer-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+        .svc-card-new .card-chevron {
+            font-size: 0.65rem;
+            color: var(--muted);
+            transition: transform 0.3s ease;
+            pointer-events: none;
+            flex-shrink: 0;
+        }
+        .svc-card-new.expanded .card-chevron {
+            transform: rotate(180deg);
+        }
+        /* KickStart compact override */
+        .svc-card-new.kickstart-compact {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 0 !important;
+        }
+        .svc-card-new.kickstart-compact .ks-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 768px) {
+            .svc-card-new .card-tagline {
+                white-space: normal;
+            }
+        }
+
     </style>
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','AW-17015553005');</script>
@@ -309,10 +397,6 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 </a>
                 <a href="#step2" class="journey-step">
                     <div class="step-num">2</div>
-                    <span class="step-label">Build</span>
-                </a>
-                <a href="#step3" class="journey-step">
-                    <div class="step-num">3</div>
                     <span class="step-label">Decide</span>
                 </a>
             </div>
@@ -336,6 +420,8 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                     <div class="svc-card-new svc-card-constrained">
                         <div class="card-icon gold"><i class="fas fa-file-alt"></i></div>
                         <h3>CV Analyser <span class="badge-sm" style="background:var(--gold);">Start Free</span></h3>
+                        <p class="card-tagline">See in seconds why your CV isn't working</p>
+                        <div class="card-expandable">
                         <p class="card-desc">Instant AI-powered CV diagnosis. Maturity score, ATS rejection rate, and actionable recommendations.</p>
                         <ul class="card-features">
                             <li>Maturity score 0-100</li>
@@ -343,9 +429,13 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                             <li>ATS rejection rate</li>
                             <li>Free analysis + full report <span class="cur">€</span>9.99</li>
                         </ul>
-                        <div class="card-footer">
-                            <div class="card-price">Free <span style="color:#aaa;">/ full</span> <strong><span class="cur">€</span>9.99</strong></div>
-                            <a href="/en/cv-analyser" class="btn-gold">Analyse CV <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
+                                                </div>
+<div class="card-footer">
+                            <div class="card-footer-left">
+                                <div class="card-price">Free <span style="color:#aaa;">/ full</span> <strong><span class="cur">€</span>9.99</strong></div>
+                                <span class="card-chevron"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <a href="/en/cv-analyser" class="btn-gold">Analyse my CV <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
                         </div>
                     </div>
                 </div>
@@ -354,6 +444,8 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                     <div class="svc-card-new svc-card-constrained">
                         <div class="card-icon blue"><i class="fab fa-linkedin-in"></i></div>
                         <h3>LinkedIn Roaster <span class="badge-sm" style="background:#0A66C2;">New</span></h3>
+                        <p class="card-tagline">Find out what's blocking your visibility</p>
+                        <div class="card-expandable">
                         <p class="card-desc">Complete LinkedIn profile audit. Visibility score, critical errors, and SEO keywords.</p>
                         <ul class="card-features">
                             <li>Visibility score 0-10</li>
@@ -361,74 +453,29 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                             <li>Headlines and SEO keywords</li>
                             <li>Priority recommendation</li>
                         </ul>
-                        <div class="card-footer">
-                            <div class="card-price"><strong><span class="cur">€</span>3.99</strong></div>
-                            <a href="/en/linkedin-roaster" class="btn-outline-gold">Audit profile <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
+                                                </div>
+<div class="card-footer">
+                            <div class="card-footer-left">
+                                <div class="card-price"><strong><span class="cur">€</span>3.99</strong></div>
+                                <span class="card-chevron"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <a href="/en/linkedin-roaster" class="btn-outline-gold">View my profile <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
                         </div>
                     </div>
                 </div>
+            <!-- Step 1 → 2 transition CTA -->
+            <div class="step-transition-cta">
+                <a href="#step2">Know where you stand? Define your direction <i class="fas fa-arrow-down"></i></a>
             </div>
         </div>
     </section>
 
-    <!-- ========== STEP 2 — BUILD ========== -->
+    <!-- ========== STEP 2 — DECIDE ========== -->
     <section class="svc-section fade-up" id="step2">
         <div class="container" style="max-width:960px;">
             <div class="svc-section-header">
                 <div class="step-indicator">
                     <div class="num">2</div>
-                    <span>Step</span>
-                </div>
-                <h2>Prepare your <strong>tools</strong></h2>
-                <p>With the diagnosis done, it's time to build the materials that represent you in the market.</p>
-            </div>
-
-            <div class="row g-4">
-                <!-- CV Maker (Hidden) -->
-                <!-- <div class="col-md-8 mx-auto" style="display:none;">
-                    <div class="svc-card-new">
-                        <div class="card-icon green"><i class="fas fa-pen-fancy"></i></div>
-                        <h3>CV Maker <span class="badge-sm" style="background:#888;">Beta</span></h3>
-                        <p class="card-desc">Create your professional CV in minutes with modern, ATS-friendly templates.</p>
-                        <ul class="card-features">
-                            <li>12 modern templates</li>
-                            <li>Automatic LinkedIn import</li>
-                            <li>PDF and Word export</li>
-                        </ul>
-                        <div class="card-footer">
-                            <div class="card-price">from <strong><span class="cur">€</span>2.99</strong></div>
-                            <a href="https://share2inspire.pt/cv-builder/" class="btn-outline-gold">Create CV <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!-- CV by Specialist (Hidden) -->
-                <!-- <div class="col-md-8 mx-auto">
-                    <div class="svc-card-new">
-                        <div class="card-icon gold"><i class="fas fa-user-tie"></i></div>
-                        <h3>CV by Specialist</h3>
-                        <p class="card-desc">Human and strategic CV review by a specialist. Written feedback and optimised version.</p>
-                        <ul class="card-features">
-                            <li>Optimised for human readability</li>
-                            <li>Strategic written feedback</li>
-                            <li>Real value positioning</li>
-                        </ul>
-                        <div class="card-footer">
-                            <div class="card-price">from <strong><span class="cur">€</span>25</strong></div>
-                            <button class="btn-outline-gold" onclick="new bootstrap.Modal(document.getElementById('cvReviewModal')).show();">Request review <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></button>
-                        </div>
-                    </div>
-                </div> -->
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== STEP 3 — DECIDE ========== -->
-    <section class="svc-section fade-up" id="step3">
-        <div class="container" style="max-width:960px;">
-            <div class="svc-section-header">
-                <div class="step-indicator">
-                    <div class="num">3</div>
                     <span>Step</span>
                 </div>
                 <h2>Define your <strong>direction</strong></h2>
@@ -441,6 +488,8 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                         <span class="card-badge">Recommended</span>
                         <div class="card-icon gold"><i class="fas fa-route"></i></div>
                         <h3>Career Path</h3>
+                        <p class="card-tagline">Stop navigating your career blindly</p>
+                        <div class="card-expandable">
                         <p class="card-desc">Personalised roadmap with 3 strategic paths, skills gaps, training recommendations, and action plan.</p>
                         <ul class="card-features">
                             <li>3 personalised career paths</li>
@@ -449,9 +498,13 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                             <li>Recommended training</li>
                             <li>30-60-90 day plan</li>
                         </ul>
-                        <div class="card-footer">
-                            <div class="card-price"><strong><span class="cur">€</span>19.99</strong></div>
-                            <a href="/en/career-path" class="btn-gold">Map your path <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
+                                                </div>
+<div class="card-footer">
+                            <div class="card-footer-left">
+                                <div class="card-price"><strong><span class="cur">€</span>19.99</strong></div>
+                                <span class="card-chevron"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <a href="/en/career-path" class="btn-gold">Explore my path <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
                         </div>
 
 
@@ -462,6 +515,8 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                     <div class="svc-card-new svc-card-constrained" style="border-color:var(--gold-border);">
                         <div class="card-icon purple"><i class="fas fa-brain"></i></div>
                         <h3>Career Intelligence <span class="badge-sm" style="background:#7C3AED;">Full</span></h3>
+                        <p class="card-tagline">Make the right decision based on data, not doubt</p>
+                        <div class="card-expandable">
                         <p class="card-desc">Everything in Career Path + strategic decision. Side-by-side comparison, trade-offs, and a justified recommendation.</p>
                         <ul class="card-features">
                             <li>Everything in Career Path included</li>
@@ -471,9 +526,13 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                             <li>Final recommendation with justification</li>
                             <li>Market context (companies, demand)</li>
                         </ul>
-                        <div class="card-footer">
-                            <div class="card-price"><strong><span class="cur">€</span>49</strong></div>
-                            <a href="/en/career-intelligence" class="btn-gold">Get recommendation <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
+                                                </div>
+<div class="card-footer">
+                            <div class="card-footer-left">
+                                <div class="card-price"><strong><span class="cur">€</span>49</strong></div>
+                                <span class="card-chevron"><i class="fas fa-chevron-down"></i></span>
+                            </div>
+                            <a href="/en/career-intelligence" class="btn-gold">Start analysis <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
                         </div>
                         <p style="font-size:0.72rem;color:#888;margin-top:0.8rem;">Or start with <a href="/en/career-path" style="color:var(--gold);font-weight:600;">Career Path (<span class="cur">€</span>19.99)</a> and upgrade for <span class="cur">€</span>29.</p>
                     </div>
@@ -492,13 +551,16 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                         <div style="flex:1;min-width:240px;">
                             <div class="card-icon gold" style="margin-bottom:0.8rem;"><i class="fas fa-rocket"></i></div>
                             <h3>KickStart Pro</h3>
+                            <p class="card-tagline">Individual 30-min session with action plan.</p>
+                            <div class="card-expandable">
                             <p class="card-desc" style="margin-bottom:0.5rem;">30-minute one-on-one session with a concrete action plan. Perfect for those who need clarity and immediate direction.</p>
                             <ul class="card-features" style="margin-bottom:0;">
                                 <li>Action plan with 3-5 concrete actions</li>
                                 <li>Post-session follow-up</li>
                             </ul>
                         </div>
-                        <div style="text-align:center;">
+                                                    </div>
+<div style="text-align:center;">
                             <div class="card-price" style="margin-bottom:0.8rem;">from <strong style="font-size:1.3rem;"><span class="cur">€</span>35</strong></div>
                             <button class="btn-gold" onclick="new bootstrap.Modal(document.getElementById('kickstartModal')).show();">Book session <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></button>
                         </div>
@@ -740,6 +802,21 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
       }).catch(function(){});
     })();
     </script>
+
+    <script>
+    // Compact card toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.svc-card-new').forEach(function(card) {
+            if (!card.querySelector('.card-expandable')) return;
+            card.addEventListener('click', function(e) {
+                // Don't toggle if clicking a link or button
+                if (e.target.closest('a') || e.target.closest('button')) return;
+                this.classList.toggle('expanded');
+            });
+        });
+    });
+    </script>
+
 </body>
 
 </html>
