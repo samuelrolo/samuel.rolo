@@ -8,16 +8,37 @@ export interface TransformedAnalysis {
   score?: number;
   atsScore?: number;
   overall_score?: number;
+  overallScore?: number;
+  atsRejectionRate?: number;
   summary?: string;
   strengths?: string[];
   improvements?: string[];
   recommendations?: string[];
+  keywords?: string[];
+  perceivedRole?: string;
+  perceivedSeniority?: string;
+  salaryRange?: { min: number; mid: number; max: number };
+  quadrants?: Array<{
+    title: string;
+    score: number;
+    benchmark: number;
+    impactPhrase: string;
+    strengths?: string[];
+    weaknesses?: string[];
+  }>;
   sections?: Array<{
     title: string;
     score?: number;
     benchmark?: number;
     insight?: string;
     items?: string[];
+  }>;
+  cvProblems?: Array<{
+    title: string;
+    description: string;
+    fullExplanation?: string;
+    correctionExample?: string;
+    rewriteSuggestion?: string;
   }>;
   raw?: Record<string, any>;
 }
@@ -89,15 +110,71 @@ export function transformGeminiResponse(raw: any): TransformedAnalysis {
     }
   }
 
+  // Extract quadrants (for AnalysisResults component)
+  const quadrants: TransformedAnalysis['quadrants'] = [];
+  const quads = analysis?.quadrants || analysis?.dimensions || analysis?.sections;
+  if (Array.isArray(quads)) {
+    for (const q of quads) {
+      quadrants.push({
+        title: q.title || q.name || q.dimension || 'Section',
+        score: typeof q.score === 'number' ? q.score : 50,
+        benchmark: typeof q.benchmark === 'number' ? q.benchmark : 65,
+        impactPhrase: q.impactPhrase || q.impact_phrase || q.insight || q.feedback || q.description || '',
+        strengths: extractStringArray(q, 'strengths', 'pontos_fortes'),
+        weaknesses: extractStringArray(q, 'weaknesses', 'pontos_fracos', 'gaps'),
+      });
+    }
+  }
+
+  // Extract ATS rejection rate
+  const atsRejectionRate = typeof analysis?.atsRejectionRate === 'number' ? analysis.atsRejectionRate
+    : typeof analysis?.ats_rejection_rate === 'number' ? analysis.ats_rejection_rate
+    : typeof analysis?.rejectionRate === 'number' ? analysis.rejectionRate
+    : score ? Math.max(5, Math.min(85, 100 - score)) : 40;
+
+  // Extract keywords
+  const keywords = extractStringArray(analysis, 'keywords', 'key_skills', 'skills', 'tags', 'competencias');
+
+  // Extract perceived role/seniority
+  const perceivedRole = analysis?.perceivedRole || analysis?.perceived_role || analysis?.detected_role || analysis?.role;
+  const perceivedSeniority = analysis?.perceivedSeniority || analysis?.perceived_seniority || analysis?.seniority;
+
+  // Extract salary range
+  const sr = analysis?.salaryRange || analysis?.salary_range || analysis?.salary;
+  const salaryRange = sr ? { min: sr.min || 1200, mid: sr.mid || sr.median || 1650, max: sr.max || 2100 } : undefined;
+
+  // Extract CV problems
+  const cvProblems: TransformedAnalysis['cvProblems'] = [];
+  const probs = analysis?.cvProblems || analysis?.cv_problems || analysis?.problems;
+  if (Array.isArray(probs)) {
+    for (const p of probs) {
+      cvProblems.push({
+        title: p.title || p.name || 'Issue',
+        description: p.description || p.text || '',
+        fullExplanation: p.fullExplanation || p.full_explanation,
+        correctionExample: p.correctionExample || p.correction_example,
+        rewriteSuggestion: p.rewriteSuggestion || p.rewrite_suggestion,
+      });
+    }
+  }
+
   return {
     score,
     atsScore: score,
     overall_score: score,
+    overallScore: score,
+    atsRejectionRate,
     summary,
     strengths,
     improvements,
     recommendations,
+    keywords: keywords.length > 0 ? keywords : undefined,
+    perceivedRole: typeof perceivedRole === 'string' ? perceivedRole : undefined,
+    perceivedSeniority: typeof perceivedSeniority === 'string' ? perceivedSeniority : undefined,
+    salaryRange,
+    quadrants: quadrants.length > 0 ? quadrants : undefined,
     sections: sections.length > 0 ? sections : undefined,
+    cvProblems: cvProblems.length > 0 ? cvProblems : undefined,
     raw: analysis,
   };
 }

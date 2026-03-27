@@ -1,370 +1,425 @@
 {
-    "$schema": "https://openapi.vercel.sh/vercel.json",
-    "version": 2,
-    "name": "share2inspire",
-    "cleanUrls": true,
-    "trailingSlash": false,
-    "redirects": [
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "name": "share2inspire",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/area-cliente/membro",
+      "destination": "/area-cliente/membros",
+      "permanent": true
+    },
+    {
+      "source": "/interview-scripts",
+      "destination": "/loja#script-entrevistas",
+      "permanent": false
+    },
+    {
+      "source": "/en/interview-scripts",
+      "destination": "/loja#script-entrevistas",
+      "permanent": false
+    },
+    {
+      "source": "/pages/cv-analyser",
+      "destination": "/cv-analyser",
+      "permanent": true
+    },
+    {
+      "source": "/pages/cv-analysis",
+      "destination": "/cv-analyser",
+      "permanent": true
+    },
+    {
+      "source": "/pages/services",
+      "destination": "/en/pages/services",
+      "permanent": false
+    },
+    {
+      "source": "/cv-builder",
+      "destination": "https://cv-builder.share2inspire.pt",
+      "permanent": true
+    },
+    {
+      "source": "/cv-builder/:path*",
+      "destination": "https://cv-builder.share2inspire.pt/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/artigos/como-negociar-salario-portugal",
+      "destination": "/blog/artigos/como-negociar-salario-portugal",
+      "permanent": true
+    },
+    {
+      "source": "/en/artigos/how-to-negotiate-salary",
+      "destination": "/en/blog/artigos/how-to-negotiate-salary",
+      "permanent": true
+    },
+    {
+      "source": "/pages/about",
+      "destination": "/pages/sobre",
+      "statusCode": 301
+    },
+    {
+      "source": "/pages/career-path",
+      "destination": "/career-path",
+      "statusCode": 301
+    },
+    {
+      "source": "/pages/home",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/pages/linkedin-roaster",
+      "destination": "/linkedin-roaster",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/pages/career-path",
+      "destination": "/en/career-path",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/pages/conhecimento",
+      "destination": "/en/pages/knowledge",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/pages/cv-analyser",
+      "destination": "/en/cv-analyser",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/pages/linkedin-roaster",
+      "destination": "/en/linkedin-roaster",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/privacy-policy",
+      "destination": "/en/pages/privacy-policy",
+      "statusCode": 301
+    },
+    {
+      "source": "/pages/pages/:path*",
+      "destination": "/:path*",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/pages/pages/:path*",
+      "destination": "/en/:path*",
+      "statusCode": 301
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)\\.html",
+      "headers": [
         {
-            "source": "/area-cliente/membro",
-            "destination": "/area-cliente/membros",
-            "permanent": true
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
         },
         {
-            "source": "/interview-scripts",
-            "destination": "/loja#script-entrevistas",
-            "permanent": false
-        },
-        {
-            "source": "/en/interview-scripts",
-            "destination": "/loja#script-entrevistas",
-            "permanent": false
-        },
-        {
-            "source": "/pages/cv-analyser",
-            "destination": "/cv-analyser",
-            "permanent": true
-        },
-        {
-            "source": "/pages/cv-analysis",
-            "destination": "/cv-analyser",
-            "permanent": true
-        },
-        {
-            "source": "/pages/services",
-            "destination": "/en/pages/services",
-            "permanent": false
-        },
-        {
-            "source": "/cv-builder",
-            "destination": "https://cv-builder.share2inspire.pt",
-            "permanent": true
-        },
-        {
-            "source": "/cv-builder/:path*",
-            "destination": "https://cv-builder.share2inspire.pt/:path*",
-            "permanent": true
-        },
-        {
-            "source": "/artigos/como-negociar-salario-portugal",
-            "destination": "/blog/artigos/como-negociar-salario-portugal",
-            "permanent": true
-        },
-        {
-            "source": "/en/artigos/how-to-negotiate-salary",
-            "destination": "/en/blog/artigos/how-to-negotiate-salary",
-            "permanent": true
+          "key": "Pragma",
+          "value": "no-cache"
         }
-    ],
-    "headers": [
+      ]
+    },
+    {
+      "source": "/(cv-analyser|career-path|career-intelligence|bundle|linkedin-roaster|area-cliente|en/cv-analyser|en/career-path|en/career-intelligence|en/bundle|en/linkedin-roaster)(.*)",
+      "headers": [
         {
-            "source": "/(.*)\\.html",
-            "headers": [
-                {
-                    "key": "Cache-Control",
-                    "value": "no-cache, no-store, must-revalidate"
-                },
-                {
-                    "key": "Pragma",
-                    "value": "no-cache"
-                }
-            ]
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
         },
         {
-            "source": "/(cv-analyser|career-path|career-intelligence|bundle|linkedin-roaster|area-cliente|en/cv-analyser|en/career-path|en/career-intelligence|en/bundle|en/linkedin-roaster)(.*)",
-            "headers": [
-                {
-                    "key": "Cache-Control",
-                    "value": "no-cache, no-store, must-revalidate"
-                },
-                {
-                    "key": "Pragma",
-                    "value": "no-cache"
-                }
-            ]
-        },
-        {
-            "source": "/(.*)",
-            "headers": [
-                {
-                    "key": "X-Frame-Options",
-                    "value": "SAMEORIGIN"
-                },
-                {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                },
-                {
-                    "key": "Referrer-Policy",
-                    "value": "strict-origin-when-cross-origin"
-                },
-                {
-                    "key": "Permissions-Policy",
-                    "value": "camera=(), microphone=(), geolocation=()"
-                }
-            ]
+          "key": "Pragma",
+          "value": "no-cache"
         }
-    ],
-    "rewrites": [
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
         {
-            "source": "/cv-analyser/llms.txt",
-            "destination": "/cv-analyser/llms.txt"
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
         },
         {
-            "source": "/career-path/llms.txt",
-            "destination": "/career-path/llms.txt"
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
         },
         {
-            "source": "/en/cv-analyser/llms.txt",
-            "destination": "/en/cv-analyser/llms.txt"
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
         },
         {
-            "source": "/en/career-path/llms.txt",
-            "destination": "/en/career-path/llms.txt"
-        },
-        {
-            "source": "/en/pages/about",
-            "destination": "/en/pages/about"
-        },
-        {
-            "source": "/en/home",
-            "destination": "/en/pages/home"
-        },
-        {
-            "source": "/en/pages/home",
-            "destination": "/en/pages/home"
-        },
-        {
-            "source": "/en/pages/knowledge",
-            "destination": "/en/pages/knowledge.html"
-        },
-        {
-            "source": "/en/knowledge",
-            "destination": "/en/pages/knowledge.html"
-        },
-        {
-            "source": "/en/pages/services",
-            "destination": "/en/pages/services"
-        },
-        {
-            "source": "/en/pages/privacy-policy",
-            "destination": "/en/pages/privacy-policy"
-        },
-        {
-            "source": "/en/pages/contact",
-            "destination": "/en/pages/contact"
-        },
-        {
-            "source": "/bundle",
-            "destination": "/cv-analyser/index.html"
-        },
-        {
-            "source": "/bundle/(.*)",
-            "destination": "/cv-analyser/index.html"
-        },
-        {
-            "source": "/cv-analyser/demo",
-            "destination": "/cv-analyser/demo.html"
-        },
-        {
-            "source": "/en/cv-analyser/demo",
-            "destination": "/en/cv-analyser/demo.html"
-        },
-        {
-            "source": "/cv-analyser",
-            "destination": "/cv-analyser/index.html"
-        },
-        {
-            "source": "/cv-analyser/(.*)",
-            "destination": "/cv-analyser/index.html"
-        },
-        {
-            "source": "/career-path/example",
-            "destination": "/career-path/example/index.html"
-        },
-        {
-            "source": "/career-path",
-            "destination": "/career-path/index.html"
-        },
-        {
-            "source": "/career-path/(.*)",
-            "destination": "/career-path/index.html"
-        },
-        {
-            "source": "/career-intelligence",
-            "destination": "/career-intelligence/index.html"
-        },
-        {
-            "source": "/career-intelligence/(.*)",
-            "destination": "/career-intelligence/index.html"
-        },
-        {
-            "source": "/en/bundle",
-            "destination": "/en/cv-analyser/index.html"
-        },
-        {
-            "source": "/en/bundle/(.*)",
-            "destination": "/en/cv-analyser/index.html"
-        },
-        {
-            "source": "/en/cv-analyser",
-            "destination": "/en/cv-analyser/index.html"
-        },
-        {
-            "source": "/en/cv-analyser/(.*)",
-            "destination": "/en/cv-analyser/index.html"
-        },
-        {
-            "source": "/en/career-path/example",
-            "destination": "/en/career-path/example/index.html"
-        },
-        {
-            "source": "/en/career-path",
-            "destination": "/en/career-path/index.html"
-        },
-        {
-            "source": "/en/career-path/(.*)",
-            "destination": "/en/career-path/index.html"
-        },
-        {
-            "source": "/en/career-intelligence",
-            "destination": "/en/career-intelligence/index.html"
-        },
-        {
-            "source": "/en/career-intelligence/(.*)",
-            "destination": "/en/career-intelligence/index.html"
-        },
-        {
-            "source": "/linkedin-roaster",
-            "destination": "/linkedin-roaster/index.html"
-        },
-        {
-            "source": "/linkedin-roaster/(.*)",
-            "destination": "/linkedin-roaster/index.html"
-        },
-        {
-            "source": "/estudos",
-            "destination": "/estudos/index.html"
-        },
-        {
-            "source": "/estudos/(.*)",
-            "destination": "/estudos/index.html"
-        },
-        {
-            "source": "/sobre",
-            "destination": "/pages/sobre"
-        },
-        {
-            "source": "/pages/sobre",
-            "destination": "/pages/sobre"
-        },
-        {
-            "source": "/servicos",
-            "destination": "/pages/servicos"
-        },
-        {
-            "source": "/pages/servicos",
-            "destination": "/pages/servicos"
-        },
-        {
-            "source": "/loja",
-            "destination": "/pages/loja"
-        },
-        {
-            "source": "/pages/loja",
-            "destination": "/pages/loja"
-        },
-        {
-            "source": "/conhecimento",
-            "destination": "/pages/conhecimento"
-        },
-        {
-            "source": "/pages/conhecimento",
-            "destination": "/pages/conhecimento"
-        },
-        {
-            "source": "/contactos",
-            "destination": "/pages/contactos"
-        },
-        {
-            "source": "/pages/contactos",
-            "destination": "/pages/contactos"
-        },
-        {
-            "source": "/politica-privacidade",
-            "destination": "/pages/politica-privacidade"
-        },
-        {
-            "source": "/pages/politica-privacidade",
-            "destination": "/pages/politica-privacidade"
-        },
-        {
-            "source": "/politica-cookies",
-            "destination": "/pages/politica-cookies"
-        },
-        {
-            "source": "/pages/politica-cookies",
-            "destination": "/pages/politica-cookies"
-        },
-        {
-            "source": "/informacao-legal",
-            "destination": "/pages/informacao-legal"
-        },
-        {
-            "source": "/pages/informacao-legal",
-            "destination": "/pages/informacao-legal"
-        },
-        {
-            "source": "/termos-condicoes",
-            "destination": "/pages/termos-condicoes"
-        },
-        {
-            "source": "/pages/termos-condicoes",
-            "destination": "/pages/termos-condicoes"
-        },
-        {
-            "source": "/tratamento-dados",
-            "destination": "/pages/tratamento-dados"
-        },
-        {
-            "source": "/pages/tratamento-dados",
-            "destination": "/pages/tratamento-dados"
-        },
-        {
-            "source": "/admin-analytics",
-            "destination": "/pages/admin-analytics"
-        },
-        {
-            "source": "/pages/admin-analytics",
-            "destination": "/pages/admin-analytics"
-        },
-        {
-            "source": "/area-cliente",
-            "destination": "/area-cliente/index.html"
-        },
-        {
-            "source": "/area-cliente/(.*)",
-            "destination": "/area-cliente/index.html"
-        },
-        {
-            "source": "/en/sobre",
-            "destination": "/en/pages/about"
-        },
-        {
-            "source": "/en/servicos",
-            "destination": "/en/pages/services"
-        },
-        {
-            "source": "/en/contactos",
-            "destination": "/en/pages/contact"
-        },
-        {
-            "source": "/blog/artigos/big4-insider-10-anos",
-            "destination": "/blog/artigos/big4-insider-10-anos.html"
-        },
-        {
-            "source": "/en/blog/artigos/big4-insider-10-years",
-            "destination": "/en/blog/artigos/big4-insider-10-years.html"
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
         }
-    ]
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/cv-analyser/llms.txt",
+      "destination": "/cv-analyser/llms.txt"
+    },
+    {
+      "source": "/career-path/llms.txt",
+      "destination": "/career-path/llms.txt"
+    },
+    {
+      "source": "/en/cv-analyser/llms.txt",
+      "destination": "/en/cv-analyser/llms.txt"
+    },
+    {
+      "source": "/en/career-path/llms.txt",
+      "destination": "/en/career-path/llms.txt"
+    },
+    {
+      "source": "/en/pages/about",
+      "destination": "/en/pages/about"
+    },
+    {
+      "source": "/en/home",
+      "destination": "/en/pages/home"
+    },
+    {
+      "source": "/en/pages/home",
+      "destination": "/en/pages/home"
+    },
+    {
+      "source": "/en/pages/knowledge",
+      "destination": "/en/pages/knowledge.html"
+    },
+    {
+      "source": "/en/knowledge",
+      "destination": "/en/pages/knowledge.html"
+    },
+    {
+      "source": "/en/pages/services",
+      "destination": "/en/pages/services"
+    },
+    {
+      "source": "/en/pages/privacy-policy",
+      "destination": "/en/pages/privacy-policy"
+    },
+    {
+      "source": "/en/pages/contact",
+      "destination": "/en/pages/contact"
+    },
+    {
+      "source": "/bundle",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/bundle/(.*)",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/cv-analyser/demo",
+      "destination": "/cv-analyser/demo.html"
+    },
+    {
+      "source": "/en/cv-analyser/demo",
+      "destination": "/en/cv-analyser/demo.html"
+    },
+    {
+      "source": "/cv-analyser",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/cv-analyser/(.*)",
+      "destination": "/cv-analyser/index.html"
+    },
+    {
+      "source": "/career-path/example",
+      "destination": "/career-path/example/index.html"
+    },
+    {
+      "source": "/career-path",
+      "destination": "/career-path/index.html"
+    },
+    {
+      "source": "/career-path/(.*)",
+      "destination": "/career-path/index.html"
+    },
+    {
+      "source": "/career-intelligence",
+      "destination": "/career-intelligence/index.html"
+    },
+    {
+      "source": "/career-intelligence/(.*)",
+      "destination": "/career-intelligence/index.html"
+    },
+    {
+      "source": "/en/bundle",
+      "destination": "/en/cv-analyser/index.html"
+    },
+    {
+      "source": "/en/bundle/(.*)",
+      "destination": "/en/cv-analyser/index.html"
+    },
+    {
+      "source": "/en/cv-analyser",
+      "destination": "/en/cv-analyser/index.html"
+    },
+    {
+      "source": "/en/cv-analyser/(.*)",
+      "destination": "/en/cv-analyser/index.html"
+    },
+    {
+      "source": "/en/career-path/example",
+      "destination": "/en/career-path/example/index.html"
+    },
+    {
+      "source": "/en/career-path",
+      "destination": "/en/career-path/index.html"
+    },
+    {
+      "source": "/en/career-path/(.*)",
+      "destination": "/en/career-path/index.html"
+    },
+    {
+      "source": "/en/career-intelligence",
+      "destination": "/en/career-intelligence/index.html"
+    },
+    {
+      "source": "/en/career-intelligence/(.*)",
+      "destination": "/en/career-intelligence/index.html"
+    },
+    {
+      "source": "/linkedin-roaster",
+      "destination": "/linkedin-roaster/index.html"
+    },
+    {
+      "source": "/linkedin-roaster/(.*)",
+      "destination": "/linkedin-roaster/index.html"
+    },
+    {
+      "source": "/estudos",
+      "destination": "/estudos/index.html"
+    },
+    {
+      "source": "/estudos/(.*)",
+      "destination": "/estudos/index.html"
+    },
+    {
+      "source": "/sobre",
+      "destination": "/pages/sobre/index.html"
+    },
+    {
+      "source": "/pages/sobre",
+      "destination": "/pages/sobre/index.html"
+    },
+    {
+      "source": "/servicos",
+      "destination": "/pages/servicos/index.html"
+    },
+    {
+      "source": "/pages/servicos",
+      "destination": "/pages/servicos/index.html"
+    },
+    {
+      "source": "/loja",
+      "destination": "/pages/loja/index.html"
+    },
+    {
+      "source": "/pages/loja",
+      "destination": "/pages/loja/index.html"
+    },
+    {
+      "source": "/conhecimento",
+      "destination": "/pages/conhecimento/index.html"
+    },
+    {
+      "source": "/pages/conhecimento",
+      "destination": "/pages/conhecimento/index.html"
+    },
+    {
+      "source": "/contactos",
+      "destination": "/pages/contactos/index.html"
+    },
+    {
+      "source": "/pages/contactos",
+      "destination": "/pages/contactos/index.html"
+    },
+    {
+      "source": "/politica-privacidade",
+      "destination": "/pages/politica-privacidade/index.html"
+    },
+    {
+      "source": "/pages/politica-privacidade",
+      "destination": "/pages/politica-privacidade/index.html"
+    },
+    {
+      "source": "/politica-cookies",
+      "destination": "/pages/politica-cookies/index.html"
+    },
+    {
+      "source": "/pages/politica-cookies",
+      "destination": "/pages/politica-cookies/index.html"
+    },
+    {
+      "source": "/informacao-legal",
+      "destination": "/pages/informacao-legal/index.html"
+    },
+    {
+      "source": "/pages/informacao-legal",
+      "destination": "/pages/informacao-legal/index.html"
+    },
+    {
+      "source": "/termos-condicoes",
+      "destination": "/pages/termos-condicoes/index.html"
+    },
+    {
+      "source": "/pages/termos-condicoes",
+      "destination": "/pages/termos-condicoes/index.html"
+    },
+    {
+      "source": "/tratamento-dados",
+      "destination": "/pages/tratamento-dados/index.html"
+    },
+    {
+      "source": "/pages/tratamento-dados",
+      "destination": "/pages/tratamento-dados/index.html"
+    },
+    {
+      "source": "/admin-analytics",
+      "destination": "/pages/admin-analytics/index.html"
+    },
+    {
+      "source": "/pages/admin-analytics",
+      "destination": "/pages/admin-analytics/index.html"
+    },
+    {
+      "source": "/area-cliente",
+      "destination": "/area-cliente/index.html"
+    },
+    {
+      "source": "/area-cliente/(.*)",
+      "destination": "/area-cliente/index.html"
+    },
+    {
+      "source": "/en/sobre",
+      "destination": "/en/pages/about"
+    },
+    {
+      "source": "/en/servicos",
+      "destination": "/en/pages/services"
+    },
+    {
+      "source": "/en/contactos",
+      "destination": "/en/pages/contact"
+    },
+    {
+      "source": "/blog/artigos/big4-insider-10-anos",
+      "destination": "/blog/artigos/big4-insider-10-anos.html"
+    },
+    {
+      "source": "/en/blog/artigos/big4-insider-10-years",
+      "destination": "/en/blog/artigos/big4-insider-10-years.html"
+    }
+  ]
 }

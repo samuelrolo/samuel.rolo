@@ -104,123 +104,150 @@
 
     <!-- ── Structured Data: Service + Product + FAQ + Breadcrumb ── -->
     <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
     {
-      "@context": "https://schema.org",
-      "@graph": [
+      "@type": "WebPage",
+      "@id": "https://www.share2inspire.pt/linkedin-roaster#webpage",
+      "url": "https://www.share2inspire.pt/en/linkedin-roaster",
+      "name": "LinkedIn Profile Audit with AI — LinkedIn Roaster | Share2Inspire",
+      "description": "Descobre em 30 segundos o que os recrutadores pensam do teu perfil LinkedIn. Auditoria profissional com IA: nota, erros críticos, headlines sugeridas e palavras-chave SEO.",
+      "inLanguage": "en",
+      "isPartOf": {
+        "@id": "https://www.share2inspire.pt/#website"
+      },
+      "datePublished": "2026-03-12",
+      "dateModified": "2026-03-12",
+      "breadcrumb": {
+        "@id": "https://www.share2inspire.pt/linkedin-roaster#breadcrumb"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://www.share2inspire.pt/linkedin-roaster#breadcrumb",
+      "itemListElement": [
         {
-          "@type": "WebPage",
-          "@id": "https://www.share2inspire.pt/linkedin-roaster#webpage",
-          "url": "https://www.share2inspire.pt/linkedin-roaster",
-          "name": "LinkedIn Profile Audit with AI — LinkedIn Roaster | Share2Inspire",
-          "description": "Descobre em 30 segundos o que os recrutadores pensam do teu perfil LinkedIn. Auditoria profissional com IA: nota, erros críticos, headlines sugeridas e palavras-chave SEO.",
-          "inLanguage": "en-US",
-          "isPartOf": { "@id": "https://www.share2inspire.pt/#website" },
-          "datePublished": "2026-03-12",
-          "dateModified": "2026-03-12",
-          "breadcrumb": { "@id": "https://www.share2inspire.pt/linkedin-roaster#breadcrumb" }
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.share2inspire.pt/"
         },
         {
-          "@type": "BreadcrumbList",
-          "@id": "https://www.share2inspire.pt/linkedin-roaster#breadcrumb",
-          "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.share2inspire.pt/" },
-            { "@type": "ListItem", "position": 2, "name": "Services", "item": "https://www.share2inspire.pt/en/pages/services" },
-            { "@type": "ListItem", "position": 3, "name": "LinkedIn Roaster", "item": "https://www.share2inspire.pt/linkedin-roaster" }
-          ]
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Services",
+          "item": "https://www.share2inspire.pt/en/pages/services"
         },
         {
-          "@type": "Service",
-          "@id": "https://www.share2inspire.pt/linkedin-roaster#service",
-          "name": "LinkedIn Roaster — LinkedIn Profile Audit with AI",
-          "description": "Professional LinkedIn profile audit with artificial intelligence. Analyses headline, summary, experience, education, certifications, awards, skills and algorithm visibility. Includes score from 0 to 10, critical errors, suggested headlines, SEO keywords and priority recommendation.",
-          "url": "https://www.share2inspire.pt/linkedin-roaster",
-          "provider": {
-            "@type": "Person",
-            "name": "Samuel Rolo",
-            "url": "https://www.share2inspire.pt/pages/sobre",
-            "sameAs": ["https://www.linkedin.com/in/samuelrolo/"]
-          },
-          "serviceType": "LinkedIn Profile Audit",
-          "areaServed": { "@type": "Country", "name": "United States" },
-          "availableLanguage": { "@type": "Language", "name": "English" },
-          "offers": {
-            "@type": "Offer",
-            "name": "Full LinkedIn Audit",
-            "price": "3.99",
-            "priceCurrency": "USD",
-            "availability": "https://schema.org/InStock",
-            "url": "https://www.share2inspire.pt/linkedin-roaster",
-            "priceValidUntil": "2026-12-31",
-            "description": "Full LinkedIn profile audit with AI: score, critical errors, suggested headlines, SEO keywords and priority recommendation."
+          "@type": "ListItem",
+          "position": 3,
+          "name": "LinkedIn Roaster",
+          "item": "https://www.share2inspire.pt/linkedin-roaster"
+        }
+      ]
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.share2inspire.pt/linkedin-roaster#service",
+      "name": "LinkedIn Roaster — LinkedIn Profile Audit with AI",
+      "description": "Professional LinkedIn profile audit with artificial intelligence. Analyses headline, summary, experience, education, certifications, awards, skills and algorithm visibility. Includes score from 0 to 10, critical errors, suggested headlines, SEO keywords and priority recommendation.",
+      "url": "https://www.share2inspire.pt/en/linkedin-roaster",
+      "provider": {
+        "@type": "Person",
+        "name": "Samuel Rolo",
+        "url": "https://www.share2inspire.pt/pages/sobre",
+        "sameAs": [
+          "https://www.linkedin.com/in/samuelrolo/"
+        ]
+      },
+      "serviceType": "LinkedIn Profile Audit",
+      "areaServed": {
+        "@type": "Country",
+        "name": "United States"
+      },
+      "availableLanguage": {
+        "@type": "Language",
+        "name": "English"
+      },
+      "offers": {
+        "@type": "Offer",
+        "name": "Full LinkedIn Audit",
+        "price": "3.99",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "url": "https://www.share2inspire.pt/en/linkedin-roaster",
+        "priceValidUntil": "2026-12-31",
+        "description": "Full LinkedIn profile audit with AI: score, critical errors, suggested headlines, SEO keywords and priority recommendation."
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.share2inspire.pt/linkedin-roaster#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is LinkedIn Roaster?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "LinkedIn Roaster is a professional LinkedIn profile audit tool powered by artificial intelligence. It analyses your headline, summary, experience, education, certifications, awards and algorithm visibility, returning a score from 0 to 10 and concrete improvement recommendations."
           }
         },
         {
-          "@type": "FAQPage",
-          "@id": "https://www.share2inspire.pt/linkedin-roaster#faq",
-          "mainEntity": [
-            {
-              "@type": "Question",
-              "name": "What is LinkedIn Roaster?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "LinkedIn Roaster is a professional LinkedIn profile audit tool powered by artificial intelligence. It analyses your headline, summary, experience, education, certifications, awards and algorithm visibility, returning a score from 0 to 10 and concrete improvement recommendations."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Is the initial analysis free?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "The full report with critical errors, suggested headlines, SEO keywords and priority recommendation is available for just $3.99."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "How does the LinkedIn audit work?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "You enter your LinkedIn profile URL and our AI extracts all public data — headline, summary, experience, education, certifications, awards, skills and follower count. In 30 seconds you receive a detailed audit with score, strengths, areas for improvement and concrete recommendations."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "What payment methods are available?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "We accept credit/debit card (via Stripe) and PayPal. The one-time payment is $3.99 and the report is sent immediately by email."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Is the report sent by email?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Yes. After payment, the full report is sent immediately to the email you provided. It includes the final score, executive summary, strengths, areas for improvement with diagnosis and recommendation, suggested headlines, SEO keywords, education and network analysis, and the priority recommendation."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "Why doesn't my LinkedIn profile show up for recruiters?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Os principais motivos são: headline genérica sem palavras-chave relevantes, resumo sem Call to Action, experiências sem resultados quantificáveis, falta de certificações e recomendações, e baixa actividade na plataforma. O LinkedIn Roaster identifica exactamente o que está a prejudicar a tua visibilidade."
-              }
-            }
-          ]
+          "@type": "Question",
+          "name": "Is the initial analysis free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The full report with critical errors, suggested headlines, SEO keywords and priority recommendation is available for just $3.99."
+          }
         },
         {
-          "@type": "Organization",
-          "@id": "https://www.share2inspire.pt/#organization",
-          "name": "Share2Inspire",
-          "url": "https://www.share2inspire.pt",
-          "logo": "https://www.share2inspire.pt/images/logo.png",
-          "sameAs": [
-            "https://www.linkedin.com/in/samuelrolo/",
-            "https://www.instagram.com/samuel_rolo/"
-          ]
+          "@type": "Question",
+          "name": "How does the LinkedIn audit work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You enter your LinkedIn profile URL and our AI extracts all public data — headline, summary, experience, education, certifications, awards, skills and follower count. In 30 seconds you receive a detailed audit with score, strengths, areas for improvement and concrete recommendations."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What payment methods are available?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We accept credit/debit card (via Stripe) and PayPal. The one-time payment is $3.99 and the report is sent immediately by email."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is the report sent by email?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. After payment, the full report is sent immediately to the email you provided. It includes the final score, executive summary, strengths, areas for improvement with diagnosis and recommendation, suggested headlines, SEO keywords, education and network analysis, and the priority recommendation."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why doesn't my LinkedIn profile show up for recruiters?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Os principais motivos são: headline genérica sem palavras-chave relevantes, resumo sem Call to Action, experiências sem resultados quantificáveis, falta de certificações e recomendações, e baixa actividade na plataforma. O LinkedIn Roaster identifica exactamente o que está a prejudicar a tua visibilidade."
+          }
         }
       ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.share2inspire.pt/#organization",
+      "name": "Share2Inspire",
+      "url": "https://www.share2inspire.pt",
+      "logo": "https://www.share2inspire.pt/images/logo.png",
+      "sameAs": [
+        "https://www.linkedin.com/in/samuelrolo/",
+        "https://www.instagram.com/samuel_rolo/"
+      ]
     }
+  ]
+}
     </script>
 
     <!-- ── Fonts & Icons ── -->
@@ -902,26 +929,7 @@
             .paywall .price { font-size: 1.4rem; }
         }
     </style>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "LinkedIn Roaster by Share2Inspire",
-      "description": "AI-powered LinkedIn profile audit tool. Get professional and constructive feedback on your profile.",
-      "url": "https://www.share2inspire.pt/linkedin-roaster",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Web",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "author": {
-        "@type": "Organization",
-        "name": "Share2Inspire"
-      }
-    }
-    </script>
+    
   
     <style>
     /* Mega Menu Serviços */

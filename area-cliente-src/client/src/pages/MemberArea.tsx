@@ -343,6 +343,7 @@ export default function MemberArea() {
   // Career Path states
   const [cpCountry, setCpCountry] = useState('Portugal');
   const [cpRegion, setCpRegion] = useState('');
+  const [cpLinkedinUrl, setCpLinkedinUrl] = useState('');
   const [monthlyCareerPathUsed, setMonthlyCareerPathUsed] = useState(0);
 
   // Career Intelligence states
@@ -517,7 +518,7 @@ export default function MemberArea() {
   }, [cvFile, profile?.cv_url, readCvText, downloadProfileCv]);
 
   const buildCvRequestBody = (cvData: { text: string; base64?: string; filename?: string }, mode: string, extra?: Record<string, any>): any => {
-    const body: any = { mode, lang };
+    const body: any = { mode, language: lang };
     if (cvData.text.trim().length < 50 && cvData.base64) { body.file = cvData.base64; body.filename = cvData.filename; } else { body.cv_text = cvData.text.substring(0, 8000); }
     if (extra) Object.assign(body, extra);
     return body;
@@ -571,7 +572,7 @@ export default function MemberArea() {
     setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
       const cvData = await getCvData();
-      const body: any = { mode: 'cv_extraction', linkedin_url: linkedinUrl, lang };
+      const body: any = { mode: 'cv_extraction', linkedin_url: linkedinUrl, language: lang };
       if (cvData && (cvData.text.trim().length >= 50 || cvData.base64)) { if (cvData.text.trim().length < 50 && cvData.base64) { body.file = cvData.base64; body.filename = cvData.filename; } else { body.cv_text = cvData.text.substring(0, 8000); } }
       const result = await fetchWithRetry(body);
       setAnalysisResult(result);
@@ -593,7 +594,8 @@ export default function MemberArea() {
       const extractionResult = await fetchWithRetry(extractionBody);
       const analysisSource = extractionResult.analysis || extractionResult;
       const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
-      const careerPathBody: any = { mode: 'career_path', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: profile?.linkedin_url || '', country: cpCountry, region: cpRegion, lang };
+      const linkedinForCp = cpLinkedinUrl.trim() || profile?.linkedin_url || '';
+      const careerPathBody: any = { mode: 'career_path', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: linkedinForCp, country: cpCountry, region: cpRegion, language: lang };
       const result = await fetchWithRetry(careerPathBody);
       setAnalysisResult(result);
       await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_path', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email, analysis: result } });
@@ -614,7 +616,8 @@ export default function MemberArea() {
       const extractionResult = await fetchWithRetry(extractionBody);
       const analysisSource = extractionResult.analysis || extractionResult;
       const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
-      const ciBody: any = { mode: 'career_intelligence', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: profile?.linkedin_url || '', country: cpCountry, region: cpRegion, lang };
+      const linkedinForCi = cpLinkedinUrl.trim() || profile?.linkedin_url || '';
+      const ciBody: any = { mode: 'career_path', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: linkedinForCi, country: cpCountry, region: cpRegion, language: lang };
       const result = await fetchWithRetry(ciBody);
       setAnalysisResult(result);
       await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_intelligence', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email, analysis: result } });
@@ -719,6 +722,11 @@ export default function MemberArea() {
             <input ref={fileInputRef} type="file" accept=".pdf,.docx,.txt" onChange={(e) => setCvFile(e.target.files?.[0] || null)} className="hidden" />
             <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#ccc] rounded text-xs text-[#666] hover:border-gold/40 hover:text-gold transition-colors"><Upload className="w-3.5 h-3.5" />{cvFile ? cvFile.name : (lang === 'pt' ? 'Ou carrega outro CV' : 'Or upload another CV')}</button>
           </div>
+          <div>
+            <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 flex items-center gap-1"><Linkedin className="w-3 h-3" />{lang === 'pt' ? 'LinkedIn' : 'LinkedIn'} <span className="text-red-400">*</span></label>
+            <input type="url" value={cpLinkedinUrl || profile?.linkedin_url || ''} onChange={e => setCpLinkedinUrl(e.target.value)} placeholder="https://linkedin.com/in/o-teu-perfil" className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white placeholder:text-[#bbb]" />
+            <p className="text-[9px] text-[#999] mt-1">{lang === 'pt' ? 'O sistema irá analisar automaticamente: experiência profissional, competências, área de actuação e evolução de funções.' : 'The system will automatically analyze: professional experience, skills, area of activity and role evolution.'}</p>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><Globe className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'País' : 'Country'}</label>
@@ -756,6 +764,11 @@ export default function MemberArea() {
           <div>
             <input ref={fileInputRef} type="file" accept=".pdf,.docx,.txt" onChange={(e) => setCvFile(e.target.files?.[0] || null)} className="hidden" />
             <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-3 py-2 border border-dashed border-[#ccc] rounded text-xs text-[#666] hover:border-gold/40 hover:text-gold transition-colors"><Upload className="w-3.5 h-3.5" />{cvFile ? cvFile.name : (lang === 'pt' ? 'Ou carrega outro CV' : 'Or upload another CV')}</button>
+          </div>
+          <div>
+            <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 flex items-center gap-1"><Linkedin className="w-3 h-3" />{lang === 'pt' ? 'LinkedIn' : 'LinkedIn'} <span className="text-red-400">*</span></label>
+            <input type="url" value={cpLinkedinUrl || profile?.linkedin_url || ''} onChange={e => setCpLinkedinUrl(e.target.value)} placeholder="https://linkedin.com/in/o-teu-perfil" className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white placeholder:text-[#bbb]" />
+            <p className="text-[9px] text-[#999] mt-1">{lang === 'pt' ? 'O sistema irá analisar automaticamente: experiência profissional, competências, área de actuação e evolução de funções.' : 'The system will automatically analyze: professional experience, skills, area of activity and role evolution.'}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
