@@ -93,18 +93,18 @@ function getPlanTier(plan?: string): Tier | null {
   return null;
 }
 
-const COMPARISON_ROWS = [
-  ['CV Analyser',             '1/semana',   '5/semana',         'Ilimitado'],
-  ['LinkedIn Roaster',        '1/semana',   '5/semana',         'Ilimitado'],
-  ['Career Bot',              'Base',        'Avançado',         'Avançado'],
-  ['Progresso de carreira',   '✓',           '✓',                '✓'],
-  ['Artigos do blog',         '✓',           '✓',                '✓'],
-  ['Job Feed',                '—',           'Smart matching',   'Matching + salário'],
-  ['E-books e templates',     '—',           '✓',                '✓'],
-  ['Career Path (bonus)',     '—',           '8,99€',            '4,99€'],
-  ['Career Intelligence',     '—',           '—',                '✓'],
-  ['Processamento prioritário','—',          '—',                '✓'],
-  ['Acesso antecipado',       '—',           '—',                '✓'],
+const COMPARISON_KEYS: [string, string, string, string][] = [
+  ['cmp.cvAnalyser',          '1{w}',       '5{w}',             'cmp.unlimited'],
+  ['cmp.linkedinRoaster',     '1{w}',       '5{w}',             'cmp.unlimited'],
+  ['cmp.careerBot',           'cmp.base',    'cmp.advanced',     'cmp.advanced'],
+  ['cmp.careerProgress',      '\u2713',           '\u2713',                '\u2713'],
+  ['cmp.blogArticles',        '\u2713',           '\u2713',                '\u2713'],
+  ['cmp.jobFeed',             '\u2014',           'cmp.smartMatching','cmp.matchingSalary'],
+  ['cmp.ebooksTemplates',     '\u2014',           '\u2713',                '\u2713'],
+  ['cmp.careerPathBonus',     '\u2014',           '8,99\u20ac',            '4,99\u20ac'],
+  ['cmp.careerIntelligence',  '\u2014',           '\u2014',                '\u2713'],
+  ['cmp.priorityProcessing',  '\u2014',           '\u2014',                '\u2713'],
+  ['cmp.earlyAccess',         '\u2014',           '\u2014',                '\u2713'],
 ];
 
 export default function Plans() {
@@ -175,12 +175,12 @@ export default function Plans() {
             <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#f5f5f4] border border-[#e5e5e5] rounded-lg text-sm text-[#555] font-light">
                 <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                Plano atual: <span className="font-medium text-[#1a1a1a] capitalize">{currentTier}</span>
+                {t('plans.currentPlan')}: <span className="font-medium text-[#1a1a1a] capitalize">{currentTier}</span>
               </div>
               {currentTier !== 'pro' && (
                 <div className="inline-flex items-center gap-1.5 text-xs text-[#999] font-light">
                   <Info className="w-3.5 h-3.5 text-gold/60" />
-                  Upgrade disponível abaixo
+                  {t('plans.upgradeAvailable')}
                 </div>
               )}
             </div>
@@ -209,7 +209,7 @@ export default function Plans() {
           </div>
           {period !== 'monthly' && (
             <p className="text-xs text-[#aaa] font-light">
-              {period === 'semiannual' ? 'Pagamento semestral único' : 'Pagamento anual único'} — sem custos escondidos
+              {period === 'semiannual' ? t('plans.semiannualPayment') : t('plans.annualPayment')} — {t('plans.noHiddenCosts')}
             </p>
           )}
         </div>
@@ -248,12 +248,12 @@ export default function Plans() {
                   </h3>
                   {current && (
                     <span className="ml-auto px-2 py-0.5 bg-emerald-50 border border-emerald-200 rounded text-[9px] text-emerald-700 font-medium">
-                      Atual
+                      {t('plans.current')}
                     </span>
                   )}
                   {upgrade && !current && (
                     <span className="ml-auto px-2 py-0.5 bg-gold/10 border border-gold/20 rounded text-[9px] text-gold font-medium">
-                      Upgrade
+                      {t('plans.upgrade')}
                     </span>
                   )}
                 </div>
@@ -267,7 +267,7 @@ export default function Plans() {
                   </div>
                   {period !== 'monthly' && (
                     <p className="text-[11px] text-[#bbb] font-light mt-0.5">
-                      ≈ {formatPrice(price / months)} / mês
+                      ≈ {formatPrice(price / months)} {t('plans.perMonth')}
                       {savings && <span className="ml-1.5 text-gold font-medium">(-{savings}%)</span>}
                     </p>
                   )}
@@ -351,13 +351,13 @@ export default function Plans() {
                       {!user
                         ? t('sub.createToSubscribe')
                         : upgrade
-                          ? `Upgrade para ${t(`sub.${tc.tier}`)}`
+                          ? `${t('plans.upgradeTo')} ${t(`sub.${tc.tier}`)}`
                           : t('sub.subscribe')}
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                     {/* Ajuste 5: Garantia de satisfação */}
                     <p className="text-center text-[10px] text-[#bbb] font-light mt-1.5 flex items-center justify-center gap-1">
-                      <Check className="w-2.5 h-2.5" /> Cancela quando quiseres
+                      <Check className="w-2.5 h-2.5" /> {t('plans.cancelAnytime')}
                     </p>
                   </div>
                 )}
@@ -371,7 +371,7 @@ export default function Plans() {
           <button onClick={() => setShowComparison(v => !v)}
             className="flex items-center gap-2 mx-auto text-xs text-[#aaa] hover:text-[#666] transition-colors font-light">
             {showComparison ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            {showComparison ? 'Ocultar comparação' : 'Comparar todos os features'}
+            {showComparison ? t('plans.hideComparison') : t('plans.showComparison')}
           </button>
 
           {showComparison && (
@@ -379,27 +379,36 @@ export default function Plans() {
               <table className="w-full text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-[#e5e5e5]">
-                    <th className="text-left py-3 px-4 text-[#888] font-medium w-1/2">Feature</th>
+                    <th className="text-left py-3 px-4 text-[#888] font-medium w-1/2">{t('cmp.feature')}</th>
                     <th className="text-center py-3 px-2 text-[#888] font-medium">Essential</th>
                     <th className="text-center py-3 px-2 text-[#888] font-medium bg-gold/5">Growth</th>
                     <th className="text-center py-3 px-2 text-[#888] font-medium">Pro</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {COMPARISON_ROWS.map(([feature, ess, gro, pro], i) => {
-                    const cell = (val: string, bgClass = '') => (
-                      <td className={`py-2.5 px-2 text-center text-[#888] ${bgClass}`}>
-                        {val === '✓' ? <Check className="w-3.5 h-3.5 text-gold/60 mx-auto" />
-                          : val === '—' ? <X className="w-3 h-3 text-[#ddd] mx-auto" />
-                          : val}
-                      </td>
-                    );
+                  {COMPARISON_KEYS.map(([featureKey, essKey, groKey, proKey], i) => {
+                                        const resolveVal = (v: string) => {
+                      if (v === '\u2713' || v === '\u2014') return v;
+                      if (v.includes('{w}')) return v.replace('{w}', t('cmp.perWeek'));
+                      if (v.startsWith('cmp.')) return t(v);
+                      return v;
+                    };
+                    const cell = (val: string, bgClass = '') => {
+                      const resolved = resolveVal(val);
+                      return (
+                        <td className={`py-2.5 px-2 text-center text-[#888] ${bgClass}`}>
+                          {resolved === '\u2713' ? <Check className="w-3.5 h-3.5 text-gold/60 mx-auto" />
+                            : resolved === '\u2014' ? <X className="w-3 h-3 text-[#ddd] mx-auto" />
+                            : resolved}
+                        </td>
+                      );
+                    };
                     return (
                       <tr key={i} className={`border-b border-[#f0f0f0] ${i % 2 === 0 ? '' : 'bg-[#fafafa]'}`}>
-                        <td className="py-2.5 px-4 text-[#555] font-light">{feature}</td>
-                        {cell(ess)}
-                        {cell(gro, 'bg-gold/5')}
-                        {cell(pro)}
+                        <td className="py-2.5 px-4 text-[#555] font-light">{t(featureKey)}</td>
+                        {cell(essKey)}
+                        {cell(groKey, 'bg-gold/5')}
+                        {cell(proKey)}
                       </tr>
                     );
                   })}

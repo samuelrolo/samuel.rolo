@@ -26,8 +26,8 @@ import {
 } from 'lucide-react';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://bnhvfkxfmzarifovrfyf.supabase.co';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJuaHZma3hmbXphcmlmb3ZyZnlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIyMjc3NTIsImV4cCI6MjA1NzgwMzc1Mn0.aqLBrTVxMEfnNJLOGMVBMGiLPGSQSF_fCVTavv_k4as';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 const HYPER_TASK_URL = `${SUPABASE_URL}/functions/v1/hyper-task`;
 
 function getPlanTier(plan?: string): 'essential' | 'growth' | 'pro' {
@@ -90,13 +90,52 @@ const BLOG_ARTICLES = [
 
 // ─── Analysis Result Display ─────────────────────────────────────────────────
 function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => void; lang: string }) {
-  const analysis = data?.analysis || data;
-  if (!analysis) return null;
+  // Normalize: try multiple paths to find the actual analysis payload
+  const raw = data?.analysis || data;
+  if (!raw) return null;
 
+  // Deep-normalize score field (overallScore, overall_score, ats_score, atsScore, score)
+  const normalizeScore = (obj: any): number | undefined => {
+    if (!obj) return undefined;
+    for (const k of ['score', 'overallScore', 'overall_score', 'ats_score', 'atsScore']) {
+      if (typeof obj[k] === 'number') return obj[k];
+    }
+    if (obj.analysis) return normalizeScore(obj.analysis);
+    return undefined;
+  };
+
+  // Deep-normalize arrays (keywords, strengths, improvements, recommendations)
+  const normalizeArray = (obj: any, ...keys: string[]): string[] => {
+    if (!obj) return [];
+    for (const k of keys) {
+      if (Array.isArray(obj[k]) && obj[k].length > 0) return obj[k].map((v: any) => typeof v === 'string' ? v : (v?.text || v?.title || v?.description || JSON.stringify(v)));
+    }
+    if (obj.analysis) return normalizeArray(obj.analysis, ...keys);
+    return [];
+  };
+
+  const normalizeString = (obj: any, ...keys: string[]): string | undefined => {
+    if (!obj) return undefined;
+    for (const k of keys) {
+      if (typeof obj[k] === 'string' && obj[k].trim()) return obj[k];
+    }
+    if (obj.analysis) return normalizeString(obj.analysis, ...keys);
+    return undefined;
+  };
+
+  const analysis = raw;
   const isCareerPath = data?.career_paths || data?.market_analysis || analysis?.career_paths;
   const cpData = isCareerPath ? (data?.career_paths ? data : analysis) : null;
   const isLinkedInFormat = analysis?.candidate_profile || data?.candidate_profile;
   const linkedinData = isLinkedInFormat ? (data?.candidate_profile ? data : analysis) : null;
+
+  // Normalized fields for standard/fallback rendering
+  const nScore = normalizeScore(analysis);
+  const nSummary = normalizeString(analysis, 'summary', 'executive_summary', 'resumo');
+  const nKeywords = normalizeArray(analysis, 'keywords', 'key_skills', 'skills', 'tags');
+  const nStrengths = normalizeArray(analysis, 'strengths', 'pontos_fortes');
+  const nImprovements = normalizeArray(analysis, 'improvements', 'areas_to_improve', 'gaps', 'melhorias');
+  const nRecommendations = normalizeArray(analysis, 'recommendations', 'recomendacoes', 'suggestions');
 
   return (
     <div className="mt-4 border border-gold/20 rounded-lg bg-[#fafaf9] p-6 animate-in fade-in duration-500">
@@ -237,21 +276,39 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
         </div>
       )}
 
-      {/* Standard analysis */}
+      {/* Standard analysis — uses normalized fields */}
       {!cpData && !linkedinData && (
         <>
-          {analysis.score !== undefined && (
+          {nScore !== undefined && (
             <div className="mb-4 flex items-center gap-3">
-              <div className="w-14 h-14 rounded-full border-2 border-gold/30 flex items-center justify-center"><span className="text-lg font-bold text-gold">{analysis.score}</span></div>
-              <div><p className="text-xs text-[#999]">{lang === 'pt' ? 'Pontuação global' : 'Overall score'}</p><p className="text-sm font-medium text-[#1a1a1a]">{analysis.score}/100</p></div>
+              <div className="w-14 h-14 rounded-full border-2 border-gold/30 flex items-center justify-center"><span className="text-lg font-bold text-gold">{nScore}</span></div>
+              <div><p className="text-xs text-[#999]">{lang === 'pt' ? 'Pontuação global' : 'Overall score'}</p><p className="text-sm font-medium text-[#1a1a1a]">{nScore}/100</p></div>
             </div>
           )}
-          {analysis.summary && (<div className="mb-4"><h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-2">{lang === 'pt' ? 'Resumo' : 'Summary'}</h5><p className="text-sm text-[#333] leading-relaxed">{analysis.summary}</p></div>)}
-          {analysis.strengths && analysis.strengths.length > 0 && (<div className="mb-4"><h5 className="text-xs font-medium text-emerald-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Pontos Fortes' : 'Strengths'}</h5><ul className="space-y-1">{analysis.strengths.map((s: string, i: number) => (<li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-emerald-500 mt-0.5">+</span><span>{s}</span></li>))}</ul></div>)}
-          {analysis.improvements && analysis.improvements.length > 0 && (<div className="mb-4"><h5 className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'A melhorar' : 'To improve'}</h5><ul className="space-y-1">{analysis.improvements.map((s: string, i: number) => (<li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-amber-500 mt-0.5">!</span><span>{s}</span></li>))}</ul></div>)}
-          {analysis.recommendations && analysis.recommendations.length > 0 && (<div><h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Recomendações' : 'Recommendations'}</h5><ul className="space-y-1">{analysis.recommendations.map((s: string, i: number) => (<li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-blue-500 mt-0.5">→</span><span>{s}</span></li>))}</ul></div>)}
-          {!analysis.score && !analysis.summary && !analysis.strengths && !analysis.candidate_profile && (
-            <div className="bg-white border border-[#e5e5e5] rounded p-4 max-h-96 overflow-auto"><pre className="text-xs text-[#333] whitespace-pre-wrap">{JSON.stringify(analysis, null, 2)}</pre></div>
+          {nSummary && (<div className="mb-4"><h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-2">{lang === 'pt' ? 'Resumo' : 'Summary'}</h5><p className="text-sm text-[#333] leading-relaxed">{nSummary}</p></div>)}
+          {nKeywords.length > 0 && (
+            <div className="mb-4">
+              <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-2">{lang === 'pt' ? 'Competências-chave' : 'Key Skills'}</h5>
+              <div className="flex flex-wrap gap-1.5">
+                {nKeywords.map((kw: string, i: number) => (
+                  <span key={i} className="px-2.5 py-1 bg-gold/5 border border-gold/20 rounded-full text-[11px] text-[#666] font-medium">{kw}</span>
+                ))}
+              </div>
+            </div>
+          )}
+          {nStrengths.length > 0 && (<div className="mb-4"><h5 className="text-xs font-medium text-emerald-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Pontos Fortes' : 'Strengths'}</h5><ul className="space-y-1">{nStrengths.map((s: string, i: number) => (<li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-emerald-500 mt-0.5">+</span><span>{s}</span></li>))}</ul></div>)}
+          {nImprovements.length > 0 && (<div className="mb-4"><h5 className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'A melhorar' : 'To improve'}</h5><ul className="space-y-1">{nImprovements.map((s: string, i: number) => (<li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-amber-500 mt-0.5">!</span><span>{s}</span></li>))}</ul></div>)}
+          {nRecommendations.length > 0 && (<div><h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Recomendações' : 'Recommendations'}</h5><ul className="space-y-1">{nRecommendations.map((s: string, i: number) => (<li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-blue-500 mt-0.5">→</span><span>{s}</span></li>))}</ul></div>)}
+          {nScore === undefined && !nSummary && nStrengths.length === 0 && nKeywords.length === 0 && !analysis.candidate_profile && (
+            <div className="space-y-3">
+              {/* Smart fallback: render any string/number/array fields nicely */}
+              {Object.entries(analysis).filter(([k]) => !['source', 'plan', 'tier', 'captured_at', 'email', 'success', 'mode'].includes(k)).map(([key, val]) => {
+                if (typeof val === 'string' && val.trim()) return (<div key={key} className="mb-2"><h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-1">{key.replace(/_/g, ' ')}</h5><p className="text-sm text-[#333] leading-relaxed">{val}</p></div>);
+                if (typeof val === 'number') return (<div key={key} className="mb-2 flex items-center gap-2"><span className="text-xs text-[#999] uppercase">{key.replace(/_/g, ' ')}:</span><span className="text-sm font-semibold text-[#1a1a1a]">{val}</span></div>);
+                if (Array.isArray(val) && val.length > 0) return (<div key={key} className="mb-3"><h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-1.5">{key.replace(/_/g, ' ')}</h5><div className="flex flex-wrap gap-1.5">{val.map((v: any, i: number) => (<span key={i} className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[11px] text-[#666]">{typeof v === 'string' ? v : JSON.stringify(v)}</span>))}</div></div>);
+                return null;
+              })}
+            </div>
           )}
         </>
       )}
@@ -751,42 +808,129 @@ export default function MemberArea() {
   const hasActiveSub = subscription && subscription.status === 'active' && new Date(subscription.expires_at) > new Date();
   if (!hasActiveSub) return <UpgradePage />;
 
+  // ─── Smart next step recommendation ─────────────────────────────────────
+  const nextStepSuggestion = useMemo(() => {
+    const cvAnalyses = savedAnalyses.filter(a => a.analysis_type === 'cv_analyser');
+    const liAnalyses = savedAnalyses.filter(a => a.analysis_type === 'linkedin_roaster');
+    const hasCv = !!profile?.cv_url;
+    const hasLinkedin = !!profile?.linkedin_url;
+    const profileComplete = !!(profile?.first_name && profile?.last_name && profile?.phone && profile?.linkedin_url && profile?.cv_url);
+
+    if (!profileComplete) return { icon: '📋', text: t('member.suggestion.complete'), action: 'profile' as const };
+    if (cvAnalyses.length === 0 && hasCv) return { icon: '📄', text: t('member.suggestion.cvAnalyse'), action: 'cv' as const };
+    if (liAnalyses.length === 0 && hasLinkedin) return { icon: '🔗', text: t('member.suggestion.linkedin'), action: 'linkedin' as const };
+    if (cvAnalyses.length > 0) {
+      const bestCvScore = cvAnalyses.reduce((best, a) => {
+        const s = a.data?.overall_score || a.data?.score || a.data?.ats_score || 0;
+        return Math.max(best, typeof s === 'number' ? s : 0);
+      }, 0);
+      if (bestCvScore < 70) return { icon: '📈', text: t('member.suggestion.cvImprove'), action: 'cv' as const };
+    }
+    if (liAnalyses.length > 0) {
+      const bestLiScore = liAnalyses.reduce((best, a) => {
+        const s = a.data?.overall_score || a.data?.score || 0;
+        return Math.max(best, typeof s === 'number' ? s : 0);
+      }, 0);
+      if (bestLiScore < 70) return { icon: '💡', text: t('member.suggestion.linkedinImprove'), action: 'linkedin' as const };
+    }
+    if (planTier === 'pro' && !savedAnalyses.some(a => a.analysis_type === 'career_path')) {
+      return { icon: '🗺️', text: t('member.suggestion.careerPath'), action: 'careerPath' as const };
+    }
+    return { icon: '🚀', text: t('member.suggestion.keepGoing'), action: 'tools' as const };
+  }, [savedAnalyses, profile, planTier, t]);
+
+  // ─── Last activity ─────────────────────────────────────────────────────
+  const lastActivity = useMemo(() => {
+    if (savedAnalyses.length === 0) return null;
+    const latest = savedAnalyses[0]; // already sorted desc
+    const diff = Date.now() - new Date(latest.created_at).getTime();
+    const days = Math.floor(diff / 86400000);
+    let timeStr = '';
+    if (days === 0) timeStr = t('member.today');
+    else if (days === 1) timeStr = t('member.yesterday');
+    else timeStr = t('member.daysAgo').replace('{n}', String(days));
+    const typeLabels: Record<string, string> = {
+      cv_analyser: t('member.lastCvAnalysis'),
+      linkedin_roaster: t('member.lastLinkedinAnalysis'),
+    };
+    return { label: typeLabels[latest.analysis_type] || t('member.lastActivity'), time: timeStr };
+  }, [savedAnalyses, t]);
+
   return (
-    <div className="min-h-screen pt-24 pb-20">
+    <div className="min-h-screen pt-24 pb-20 bg-[#fafaf9]">
       <div className="container max-w-5xl mx-auto px-4">
 
-        {/* ─── Header ─── */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
-          <div>
-            <p className="text-gold text-[11px] font-medium tracking-[0.15em] uppercase mb-1">{t('member.title')}</p>
-            <h1 className="text-2xl md:text-3xl font-semibold text-[#1a1a1a]">
-              {profile?.first_name ? `${t('member.welcome')}, ${profile.first_name}.` : t('member.welcome')}
-            </h1>
+        {/* ═══════════════════════════════════════════════════════════════════ */}
+        {/* HEADER — Contextual greeting + plan pills + micro insight          */}
+        {/* ═══════════════════════════════════════════════════════════════════ */}
+        <div className="mb-6">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-3">
+            <div>
+              <p className="text-gold text-[11px] font-medium tracking-[0.15em] uppercase mb-1">{t('member.title')}</p>
+              <h1 className="text-2xl md:text-3xl font-semibold text-[#1a1a1a]">
+                {profile?.first_name ? `${t('member.welcome')}, ${profile.first_name}.` : t('member.welcome')}
+              </h1>
+              <p className="text-xs text-[#888] mt-1">{t('member.greetingContextual')}</p>
+            </div>
+            <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-[#999] font-light flex-wrap">
+              <span className={`px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider ${
+                planTier === 'pro' ? 'bg-violet-50 text-violet-700 border border-violet-200' :
+                planTier === 'growth' ? 'bg-blue-50 text-blue-700 border border-blue-200' :
+                'bg-amber-50 text-amber-700 border border-amber-200'
+              }`}>
+                {planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'}
+              </span>
+              <span className="flex items-center gap-1.5 px-2.5 py-1 bg-white border border-[#e5e5e5] rounded-md">
+                <Sparkles className="w-3 h-3 text-gold" />
+                <span className="text-[10px] font-medium text-[#666]">{weeklyUsage}/{isProPlan ? '∞' : weeklyLimit}</span>
+                <span className="text-[10px] text-[#999]">{lang === 'pt' ? 'esta semana' : 'this week'}</span>
+              </span>
+              <span className="flex items-center gap-1 text-[10px] text-[#999]">
+                <Clock className="w-3 h-3" />
+                {daysLeft}d
+              </span>
+            </div>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-[#999] font-light flex-wrap">
-            <span className={`px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider ${
-              planTier === 'pro' ? 'bg-violet-50 text-violet-700 border border-violet-200' :
-              planTier === 'growth' ? 'bg-blue-50 text-blue-700 border border-blue-200' :
-              'bg-amber-50 text-amber-700 border border-amber-200'
-            }`}>
-              {planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'}
-            </span>
-            {/* Quota pill */}
-            <span className="flex items-center gap-1.5 px-2.5 py-1 bg-[#f5f5f4] border border-[#e5e5e5] rounded-md">
-              <Sparkles className="w-3 h-3 text-gold" />
-              <span className="text-[10px] font-medium text-[#666]">{weeklyUsage}/{isProPlan ? '∞' : weeklyLimit}</span>
-              <span className="text-[10px] text-[#999]">{lang === 'pt' ? 'esta semana' : 'this week'}</span>
-            </span>
-            <span className="flex items-center gap-1 text-[10px] text-[#999]">
-              <Clock className="w-3 h-3" />
-              {daysLeft}d
-            </span>
+
+          {/* Micro insight */}
+          <div className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-gold/5 to-transparent border border-gold/10 rounded-lg">
+            <Sparkles className="w-3.5 h-3.5 text-gold shrink-0" />
+            <p className="text-[11px] text-[#666] italic">{t('member.insight')}</p>
           </div>
         </div>
 
-        {/* ─── Career Progress (compact) ─── */}
-        <div className="mb-8 p-4 border border-[#e5e5e5] rounded-xl bg-white shadow-sm">
+        {/* ═══════════════════════════════════════════════════════════════════ */}
+        {/* CAREER PROGRESS (expanded) + NEXT STEP + LAST ACTIVITY            */}
+        {/* ═══════════════════════════════════════════════════════════════════ */}
+        <div className="mb-8 p-5 border border-[#e5e5e5] rounded-xl bg-white shadow-sm">
+          {/* Career Progress */}
           <CareerProgress variant="compact" />
+
+          {/* Insights row */}
+          <div className="mt-4 pt-4 border-t border-[#f0f0f0] grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Next step recommendation */}
+            <div className="flex items-start gap-3 p-3 bg-[#fafaf9] border border-[#f0f0f0] rounded-lg">
+              <span className="text-lg leading-none mt-0.5">{nextStepSuggestion.icon}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] text-gold font-medium uppercase tracking-wider mb-0.5">{t('member.nextStep')}</p>
+                <p className="text-[11px] text-[#555] leading-relaxed">{nextStepSuggestion.text}</p>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-[#ccc] shrink-0 mt-1" />
+            </div>
+
+            {/* Last activity */}
+            <div className="flex items-start gap-3 p-3 bg-[#fafaf9] border border-[#f0f0f0] rounded-lg">
+              <Clock className="w-4 h-4 text-[#bbb] shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] text-[#999] font-medium uppercase tracking-wider mb-0.5">{t('member.lastActivity')}</p>
+                {lastActivity ? (
+                  <p className="text-[11px] text-[#555]">{lastActivity.label}: <span className="font-medium text-[#333]">{lastActivity.time}</span></p>
+                ) : (
+                  <p className="text-[11px] text-[#999]">{t('dash.noAnalysesYet')}</p>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* ─── Tab Navigation (NO arrows) ─── */}
