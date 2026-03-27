@@ -15,6 +15,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { Link, useLocation } from 'wouter';
 import CareerProgress from '@/components/CareerProgress';
+import AnalysisDetailRenderer from '@/components/AnalysisDetailRenderer';
 import {
   Loader2, Upload, Download, FileText, Check, ArrowRight,
   BarChart3, FileSearch, Compass, Clock, Trash2,
@@ -548,100 +549,10 @@ export default function Dashboard() {
                           {expandedId === analysis.id && (
                             <div className="px-4 pb-4 border-t border-[#f0f0f0]">
                               <div className="pt-3 space-y-3">
-                                {analysis.data?.score && (
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs text-[#888] font-light">{t('dash.score')}:</span>
-                                    <span className="text-sm font-medium text-gold">{analysis.data.score}/100</span>
-                                  </div>
-                                )}
-                                {analysis.data?.total_score && (
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs text-[#888] font-light">{t('dash.score')}:</span>
-                                    <span className="text-sm font-medium text-gold">{analysis.data.total_score}{analysis.data.level ? ` — ${analysis.data.level}` : ''}</span>
-                                  </div>
-                                )}
-                                {analysis.data?.archetype && (
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs text-[#888] font-light">{t('dash.archetype')}:</span>
-                                    <span className="text-sm font-medium text-gold">{analysis.data.archetype}</span>
-                                  </div>
-                                )}
-                                {analysis.data?.results_html && (
-                                  <div className="s2i-results-render rounded-lg overflow-hidden bg-[#F0F0EE] border border-[#e5e5e5] p-4"
-                                    style={{ maxHeight: 600, overflowY: 'auto' }}
-                                    dangerouslySetInnerHTML={{ __html: sanitizeResultsHtml(analysis.data.results_html) }}
-                                  />
-                                )}
-                                {/* Fallback: structured data when no HTML */}
-                                {!analysis.data?.results_html && analysis.analysis_type === 'cv_analyser' && analysis.data?.analysis && (
-                                  <div className="space-y-2">
-                                    {analysis.data.analysis.keywords && (
-                                      <div>
-                                        <span className="text-xs text-[#888] font-light block mb-1">{t('dash.keywords')}:</span>
-                                        <p className="text-xs text-[#666] font-light">
-                                          {Array.isArray(analysis.data.analysis.keywords)
-                                            ? analysis.data.analysis.keywords.slice(0, 8).join(', ')
-                                            : String(analysis.data.analysis.keywords).substring(0, 200)}
-                                        </p>
-                                      </div>
-                                    )}
-                                    {analysis.data.analysis.recommendations && (
-                                      <div>
-                                        <span className="text-xs text-[#888] font-light block mb-1">{t('dash.recommendations')}:</span>
-                                        <ul className="space-y-0.5">
-                                          {(Array.isArray(analysis.data.analysis.recommendations)
-                                            ? analysis.data.analysis.recommendations : []
-                                          ).slice(0, 3).map((r: string, i: number) => (
-                                            <li key={i} className="text-xs text-[#666] font-light pl-3 relative before:content-['•'] before:absolute before:left-0 before:text-gold/40">
-                                              {typeof r === 'string' ? r.substring(0, 150) : JSON.stringify(r).substring(0, 150)}
-                                            </li>
-                                          ))}
-                                        </ul>
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
-                                {!analysis.data?.results_html && analysis.analysis_type === 'career_path' && analysis.data?.career_path_json && (
-                                  <div className="space-y-2">
-                                    {analysis.data.career_path_json.title && <p className="text-xs text-[#555] font-medium">{analysis.data.career_path_json.title}</p>}
-                                    {analysis.data.career_path_json.summary && <p className="text-xs text-[#888] font-light leading-relaxed line-clamp-4">{analysis.data.career_path_json.summary.substring(0, 400)}</p>}
-                                  </div>
-                                )}
-                                {!analysis.data?.results_html && analysis.analysis_type === 'career_intelligence' && analysis.data?.strategic_paths && (
-                                  <div className="space-y-2">
-                                    {analysis.data.decision_recommendation?.recommended_path && <p className="text-xs text-[#555] font-medium">{analysis.data.decision_recommendation.recommended_path}</p>}
-                                    {analysis.data.decision_recommendation?.justification && <p className="text-xs text-[#888] font-light leading-relaxed line-clamp-3">{analysis.data.decision_recommendation.justification.substring(0, 300)}</p>}
-                                    {Array.isArray(analysis.data.strategic_paths) && analysis.data.strategic_paths.length > 0 && (
-                                      <div className="space-y-1">
-                                        <span className="text-[10px] text-[#aaa] font-light">Caminhos:</span>
-                                        {analysis.data.strategic_paths.map((path: any, i: number) => (
-                                          <div key={i} className="flex items-center gap-2 text-xs">
-                                            <span className="text-[#C9A961] font-medium">#{i+1}</span>
-                                            <span className="text-[#555] font-light">{path.title || path.name || `Caminho ${i+1}`}</span>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
-                                {!analysis.data?.results_html && analysis.analysis_type === 'career_energy' && analysis.data?.dimensions && (
-                                  <div className="grid grid-cols-2 gap-2">
-                                    {Object.entries(analysis.data.dimensions as Record<string, number | null>).map(([dim, val]) => (
-                                      val !== null && (
-                                        <div key={dim} className="flex items-center justify-between text-xs">
-                                          <span className="text-[#888] font-light capitalize">{dim}:</span>
-                                          <span className="text-[#555] font-medium">{val}</span>
-                                        </div>
-                                      )
-                                    ))}
-                                  </div>
-                                )}
-                                {!analysis.data?.results_html && analysis.data?.results_text && (
-                                  <div>
-                                    <span className="text-xs text-[#888] font-light block mb-1">{t('dash.summary')}:</span>
-                                    <p className="text-xs text-[#888] font-light leading-relaxed">{analysis.data.results_text.substring(0, 800)}</p>
-                                  </div>
-                                )}
+                                <AnalysisDetailRenderer
+                                  analysisType={analysis.analysis_type}
+                                  data={analysis.data}
+                                />
                                 {config?.link && (
                                   <a href={config.link} className="inline-flex items-center gap-1.5 text-xs text-gold/60 hover:text-gold transition-colors">
                                     {t('dash.doAnalysis')} <ArrowRight className="w-3 h-3" />
