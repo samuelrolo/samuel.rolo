@@ -10,9 +10,11 @@ import { useI18n } from '@/lib/i18n';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 
-// ─── Adzuna credentials ────────────────────────────────────────────────────
-const S2I_APP_ID  = '6c8e3465';
-const S2I_APP_KEY = 'fb7bb5f2f64806f6454c9bedbe3e1f01';
+// ─── Adzuna proxy via Supabase Edge Function ──────────────────────────────
+// Credentials are stored in Supabase secrets (S2I_APP_ID, S2I_APP_KEY)
+// Frontend calls the Edge Function which proxies to Adzuna API
+const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+const ADZUNA_PROXY_URL = `${SUPABASE_URL}/functions/v1/adzuna-proxy`;
 
 // ─── Adzuna supported countries ────────────────────────────────────────────
 const ADZUNA_SUPPORTED: Record<string, string> = {
@@ -173,10 +175,18 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
     setError(null);
 
     const query = buildSearchQuery(userKeywords);
-    const whereParam = region || countryName || '';
+    // When using a fallback country (e.g. PT→ES), don't send the original country as location
+    const whereParam = isUnsupportedCountry ? '' : (region || countryName || '');
 
     try {
-      const url = `https://api.adzuna.com/v1/api/jobs/${adzunaCountry}/search/1?app_id=${S2I_APP_ID}&app_key=${S2I_APP_KEY}&results_per_page=10&what=${encodeURIComponent(query)}&where=${encodeURIComponent(whereParam)}&content-type=application/json`;
+      // Call Supabase Edge Function proxy (credentials are server-side)
+      const proxyParams = new URLSearchParams({
+        country: adzunaCountry,
+        what: query,
+        results_per_page: '10',
+      });
+      if (whereParam) proxyParams.set('where', whereParam);
+      const url = `${ADZUNA_PROXY_URL}?${proxyParams.toString()}`;
       const res = await fetch(url);
       const data = await res.json();
 
