@@ -864,7 +864,7 @@ export default function MemberArea() {
     if (liAnalyses.length === 0) return { key: 'member.insight.noLinkedin', action: 'linkedin' as const };
     if (bestLiScore > 0 && bestLiScore < 70) return { key: 'member.insight.lowLiScore', action: 'linkedin' as const };
     if (cpAnalyses.length === 0 && planTier !== 'essential') return { key: 'member.insight.noCareerPath', action: 'careerPath' as const };
-    if (usedCount >= 3) return { key: 'member.insight.proTip', action: 'tools' as const };
+    if (usedCount >= 3) return { key: 'member.insight.proTip', action: 'careerIntelligence' as const };
     return { key: 'member.insight.default', action: 'cv' as const };
   }, [savedAnalyses, profile, planTier]);
 
@@ -876,11 +876,17 @@ export default function MemberArea() {
       cv: 'cvAnalyzer', linkedin: 'linkedinRoster', careerPath: 'careerPath',
       careerIntelligence: 'careerIntelligence', tools: '',
     };
-    const toolKey = toolKeyMap[action];
+    const toolKey = toolKeyMap[action] ?? '';
     if (toolKey) {
       setExpandedTool(toolKey);
       setTimeout(() => {
         const el = document.querySelector(`[data-tool-key="${toolKey}"]`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 150);
+    } else {
+      // For 'tools' action — just scroll to the tools section
+      setTimeout(() => {
+        const el = document.querySelector('[data-tool-key]');
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 150);
     }
