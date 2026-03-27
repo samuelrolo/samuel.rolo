@@ -702,25 +702,47 @@ export default function CareerPathHome() {
               </div>
             </div>
 
-            {/* Tensão — plantar semente do PRO */}
-            <div className="space-y-4 p-6 rounded-2xl bg-muted/30 border border-border">
-              <h3 className="text-lg font-bold text-foreground text-center">Mas saber o teu Career Path é só o início.</h3>
-              <div className="space-y-3 text-sm text-muted-foreground text-center max-w-2xl mx-auto leading-relaxed">
-                <p>
-                  O Career Path mostra-te para onde podes ir. Mas há uma diferença real entre eles. Alguns vão acelerar a tua carreira. Outros podem atrasar-te anos.
+            {/* ── Career Intelligence Upsell — dois cards PT ── */}
+            <div className="rounded-2xl border border-purple-200 bg-gradient-to-br from-purple-50/50 to-[#C9A961]/5 overflow-hidden">
+              <div className="p-6 md:p-8 space-y-4">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <Brain className="w-5 h-5 text-purple-600" />
+                  <h3 className="text-lg font-bold text-foreground">Quer mais do que um roadmap?</h3>
+                </div>
+                <p className="text-sm text-muted-foreground text-center max-w-xl mx-auto">
+                  O <strong className="text-foreground">Career Intelligence</strong> compara múltiplas direções estratégicas de carreira lado a lado, analisa trade-offs e dá-te uma recomendação fundamentada — para decidires com confiança.
                 </p>
-                <p>
-                  Qual tem maior probabilidade de sucesso? Qual exige mais esforço do que parece? O que perdes ao escolher um em vez de outro?
-                </p>
-                <p>
-                  Quando tiveres o teu Career Path, a verdadeira questão deixa de ser "para onde ir". Passa a ser: <strong className="text-foreground">qual é a melhor decisão neste momento</strong>.
-                </p>
-                <p>
-                  O <strong className="text-foreground">Career Intelligence</strong> ajuda-te a responder a isso. Com comparação clara, trade-offs reais e uma recomendação fundamentada — para decidires com confiança, não com dúvida.
-                </p>
-                <p className="text-xs text-muted-foreground/80 pt-2">
-                  Disponível como upgrade após a análise.
-                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                  {/* Opção 1: Upgrade após Career Path */}
+                  <div className="p-4 rounded-xl bg-white border border-border space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded-full tracking-wider">POUPAR</span>
+                      <span className="text-sm font-semibold text-foreground">Começa com Career Path</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Obtém o teu Career Path por {PRICE_DISPLAY} e faz upgrade para Career Intelligence por apenas €29.</p>
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-lg font-bold text-[#C9A961]">{PRICE_DISPLAY}</span>
+                      <span className="text-xs text-muted-foreground">depois +€29 upgrade</span>
+                    </div>
+                  </div>
+                  {/* Opção 2: Career Intelligence completo */}
+                  <div className="p-4 rounded-xl bg-white border border-purple-200 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full tracking-wider">COMPLETO</span>
+                      <span className="text-sm font-semibold text-foreground">Career Intelligence</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Tudo do Career Path + comparação estratégica, trade-offs e recomendação final.</p>
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg font-bold text-purple-600">€49</span>
+                      <a
+                        href="/career-intelligence"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 hover:text-purple-700 transition-colors"
+                      >
+                        Saber mais <ArrowRight className="w-3 h-3" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
