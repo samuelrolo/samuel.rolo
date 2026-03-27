@@ -546,7 +546,7 @@ export default function ProfilePage() {
                   {/* Quick actions */}
                   <div className="flex gap-2">
                     {isSubscriber && (
-                      <Link href="/area-cliente/membros" className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-[#1a1a1a] text-white text-[10px] font-medium rounded-lg hover:bg-[#333] transition-colors">
+                      <Link href="/membros" className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-[#1a1a1a] text-white text-[10px] font-medium rounded-lg hover:bg-[#333] transition-colors">
                         <BarChart3 className="w-3 h-3" /> {t('profile.cvAnalyse')}
                       </Link>
                     )}
@@ -657,10 +657,10 @@ export default function ProfilePage() {
 
                   {/* CTA */}
                   <div className="flex gap-2">
-                    <Link href="/area-cliente/membros" className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-[#1a1a1a] text-white text-[10px] font-medium rounded-lg hover:bg-[#333] transition-colors">
+                    <Link href="/membros" className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-[#1a1a1a] text-white text-[10px] font-medium rounded-lg hover:bg-[#333] transition-colors">
                       <Sparkles className="w-3 h-3" /> {t('profile.useBenefit')}
                     </Link>
-                    <Link href="/area-cliente/planos" className="flex items-center gap-1 px-3 py-2 text-[10px] text-gold border border-gold/20 rounded-lg hover:bg-gold/5 font-medium transition-colors">
+                    <Link href="/planos" className="flex items-center gap-1 px-3 py-2 text-[10px] text-gold border border-gold/20 rounded-lg hover:bg-gold/5 font-medium transition-colors">
                       {t('profile.managePlan')}
                     </Link>
                   </div>
@@ -668,7 +668,7 @@ export default function ProfilePage() {
               ) : (
                 <div className="text-center py-3">
                   <p className="text-xs text-[#999] mb-3">{t('dash.noSubscription')}</p>
-                  <Link href="/area-cliente/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold text-white text-xs font-medium rounded-lg hover:bg-gold/90 transition-colors">
+                  <Link href="/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold text-white text-xs font-medium rounded-lg hover:bg-gold/90 transition-colors">
                     {t('dash.seePlans')} <ArrowRight className="w-3 h-3" />
                   </Link>
                 </div>
@@ -676,7 +676,7 @@ export default function ProfilePage() {
             </section>
 
             {/* ─── Quick link to Member Area ─── */}
-            <Link href="/area-cliente/membros" className="flex items-center justify-between p-4 border border-[#e5e5e5] rounded-xl bg-white shadow-sm hover:border-gold/20 transition-all group">
+            <Link href="/membros" className="flex items-center justify-between p-4 border border-[#e5e5e5] rounded-xl bg-white shadow-sm hover:border-gold/20 transition-all group">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-gold/15 to-gold/5 flex items-center justify-center">
                   <ArrowRight className="w-4 h-4 text-gold" />
