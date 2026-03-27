@@ -46,7 +46,7 @@ const tiers: TierConfig[] = [
     benefits: ['sub.growth.b1','sub.growth.b2','sub.growth.b3','sub.growth.b4','sub.growth.b5'],
     limit: 'sub.growth.limit',
     roi: 'sub.growth.roi',
-    bonuses: ['sub.growth.bonus'], notIncluded: ['sub.notIncluded.careerIntel'],
+    bonuses: ['sub.growth.bonus', 'sub.growth.bonus2'], notIncluded: [],
     badge: 'sub.recommended', highlight: true,
   },
   {
@@ -101,8 +101,8 @@ const COMPARISON_KEYS: [string, string, string, string][] = [
   ['cmp.blogArticles',        '\u2713',           '\u2713',                '\u2713'],
   ['cmp.jobFeed',             '\u2014',           'cmp.smartMatching','cmp.matchingSalary'],
   ['cmp.ebooksTemplates',     '\u2014',           '\u2713',                '\u2713'],
-  ['cmp.careerPathBonus',     '\u2014',           '8,99\u20ac',            '4,99\u20ac'],
-  ['cmp.careerIntelligence',  '\u2014',           '\u2014',                '\u2713'],
+  ['cmp.careerPathBonus',     '\u2014',           '9,50\u20ac',            '4,75\u20ac'],
+  ['cmp.careerIntelligence',  '\u2014',           '19,50\u20ac',           '9,75\u20ac'],
   ['cmp.priorityProcessing',  '\u2014',           '\u2014',                '\u2713'],
   ['cmp.earlyAccess',         '\u2014',           '\u2014',                '\u2713'],
 ];
@@ -342,11 +342,7 @@ export default function Plans() {
                 ) : (
                   <div className="mt-auto">
                     <button onClick={() => handleSubscribe(tc.tier)}
-                      className={`w-full py-2.5 text-sm font-medium rounded transition-all duration-300 flex items-center justify-center gap-2 ${
-                        tc.highlight
-                          ? 'bg-gold text-[#1a1a1a] hover:bg-[#a07d08] hover:text-white'
-                          : 'border border-[#ddd] text-[#333] hover:border-gold/30 hover:text-[#1a1a1a]'
-                      }`}>
+                      className="w-full py-2.5 text-sm font-medium rounded transition-all duration-300 flex items-center justify-center gap-2 bg-gold text-[#1a1a1a] hover:bg-[#a07d08] hover:text-white">
                       {!user && <Lock className="w-3.5 h-3.5" />}
                       {!user
                         ? t('sub.createToSubscribe')

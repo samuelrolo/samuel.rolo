@@ -22,7 +22,7 @@ import {
   Sparkles, Route, Lock, ExternalLink, AlertCircle, CheckCircle,
   ChevronDown, ChevronUp, Tag, ArrowRight, Globe, MapPin,
   Search, BookOpen, Play, Headphones, Mail, Megaphone, Briefcase,
-  Clock, Trash2, RefreshCw, Compass, FileSearch, Wrench,
+  Clock, Trash2, RefreshCw, Compass, FileSearch, Wrench, Download, Send,
 } from 'lucide-react';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
@@ -391,7 +391,7 @@ export default function MemberArea() {
 
   // ─── Fetch monthly Career Path usage ─────────────────────────────────
   useEffect(() => {
-    if (!user?.id || planTier !== 'pro') return;
+    if (!user?.id || (planTier !== 'pro' && planTier !== 'growth')) return;
     async function fetchCpUsage() {
       const now = new Date();
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -403,7 +403,7 @@ export default function MemberArea() {
 
   // ─── Fetch monthly Career Intelligence usage ─────────────────────────
   useEffect(() => {
-    if (!user?.id || planTier !== 'pro') return;
+    if (!user?.id || (planTier !== 'pro' && planTier !== 'growth')) return;
     async function fetchCiUsage() {
       const now = new Date();
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -557,7 +557,7 @@ export default function MemberArea() {
       const rawAnalysis = result?.analysis || result;
       const enriched = transformGeminiResponse(rawAnalysis);
       setAnalysisResult({ ...result, _enriched: enriched });
-      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'cv_analyser', data: { source: 'member_area', plan: subscription.plan, tier: planTier, captured_at: new Date().toISOString(), email: profile?.email } });
+      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'cv_analyser', data: { source: 'member_area', plan: subscription.plan, tier: planTier, captured_at: new Date().toISOString(), email: profile?.email, analysis: rawAnalysis, enriched } });
       setWeeklyUsage(prev => prev + 1);
     } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
     finally { setAnalyzing(false); }
@@ -575,7 +575,7 @@ export default function MemberArea() {
       if (cvData && (cvData.text.trim().length >= 50 || cvData.base64)) { if (cvData.text.trim().length < 50 && cvData.base64) { body.file = cvData.base64; body.filename = cvData.filename; } else { body.cv_text = cvData.text.substring(0, 8000); } }
       const result = await fetchWithRetry(body);
       setAnalysisResult(result);
-      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'linkedin_roaster', data: { source: 'member_area', plan: subscription.plan, tier: planTier, linkedin_url: linkedinUrl, captured_at: new Date().toISOString(), email: profile?.email } });
+      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'linkedin_roaster', data: { source: 'member_area', plan: subscription.plan, tier: planTier, linkedin_url: linkedinUrl, captured_at: new Date().toISOString(), email: profile?.email, analysis: result } });
       setWeeklyUsage(prev => prev + 1);
     } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
     finally { setAnalyzing(false); }
@@ -583,7 +583,7 @@ export default function MemberArea() {
 
   const runCareerPath = useCallback(async () => {
     if (!user?.id || !subscription) return;
-    const limit = planTier === 'pro' ? 3 : 0;
+    const limit = planTier === 'pro' ? 3 : planTier === 'growth' ? 2 : 0;
     if (monthlyCareerPathUsed >= limit) { setAnalysisError(lang === 'pt' ? `Atingiste o limite mensal de Career Path (${limit}/mês).` : `Monthly Career Path limit reached.`); return; }
     setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
@@ -596,7 +596,7 @@ export default function MemberArea() {
       const careerPathBody: any = { mode: 'career_path', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: profile?.linkedin_url || '', country: cpCountry, region: cpRegion, lang };
       const result = await fetchWithRetry(careerPathBody);
       setAnalysisResult(result);
-      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_path', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email } });
+      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_path', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email, analysis: result } });
       setMonthlyCareerPathUsed(prev => prev + 1);
     } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
     finally { setAnalyzing(false); }
@@ -604,7 +604,7 @@ export default function MemberArea() {
 
   const runCareerIntelligence = useCallback(async () => {
     if (!user?.id || !subscription) return;
-    const limit = planTier === 'pro' ? 3 : 0;
+    const limit = planTier === 'pro' ? 3 : planTier === 'growth' ? 2 : 0;
     if (monthlyCareerIntelUsed >= limit) { setAnalysisError(lang === 'pt' ? `Atingiste o limite mensal de Career Intelligence (${limit}/mês).` : `Monthly Career Intelligence limit reached.`); return; }
     setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
@@ -617,7 +617,7 @@ export default function MemberArea() {
       const ciBody: any = { mode: 'career_intelligence', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: profile?.linkedin_url || '', country: cpCountry, region: cpRegion, lang };
       const result = await fetchWithRetry(ciBody);
       setAnalysisResult(result);
-      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_intelligence', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email } });
+      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_intelligence', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email, analysis: result } });
       setMonthlyCareerIntelUsed(prev => prev + 1);
     } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
     finally { setAnalyzing(false); }
@@ -637,8 +637,8 @@ export default function MemberArea() {
     { key: 'cvAnalyzer', icon: BarChart3, color: 'from-blue-500/15 to-blue-500/5', type: 'inline', action: 'cv', label: 'CV Analyser', desc: lang === 'pt' ? 'Análise completa e detalhada do teu CV com IA' : 'Complete AI-powered analysis of your CV', badge: savedAnalyses.filter(a => a.analysis_type === 'cv_analyser').length || undefined },
     { key: 'linkedinRoster', icon: Linkedin, color: 'from-sky-500/15 to-sky-500/5', type: 'inline', action: 'linkedin', label: 'LinkedIn Roaster', desc: lang === 'pt' ? 'Otimiza o teu perfil LinkedIn com feedback IA' : 'Optimize your LinkedIn profile with AI feedback', badge: savedAnalyses.filter(a => a.analysis_type === 'linkedin_roaster').length || undefined },
     { key: 'careerBot', icon: Bot, color: 'from-purple-500/15 to-purple-500/5', type: 'widget', action: 'openCareerBot', label: 'Career Advisory', desc: lang === 'pt' ? 'Assistente pessoal de carreira com IA' : 'Personal AI career assistant' },
-    { key: 'careerPath', icon: Route, color: 'from-emerald-500/15 to-emerald-500/5', type: planTier === 'pro' ? 'inline' : planTier === 'growth' ? 'inline' : 'locked', action: 'careerPath', url: 'https://share2inspire.pt/career-path/', discount: planTier === 'growth' ? '8,99€' : planTier === 'pro' ? '4,99€' : null, discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '19€' : null, label: 'Career Path', desc: lang === 'pt' ? 'Planeamento estratégico da tua carreira' : 'Strategic career planning', badge: savedAnalyses.filter(a => a.analysis_type === 'career_path').length || undefined },
-    { key: 'careerIntelligence', icon: Sparkles, color: 'from-violet-500/15 to-violet-500/5', type: planTier === 'pro' ? 'inline' : 'locked', action: 'careerIntelligence', url: 'https://share2inspire.pt/career-intelligence/', discount: planTier === 'pro' ? '9,99€' : null, discountOriginal: planTier === 'pro' ? '39€' : null, label: 'Career Intelligence', desc: lang === 'pt' ? 'Análise avançada de mercado e posicionamento' : 'Advanced market analysis and positioning', badge: savedAnalyses.filter(a => a.analysis_type === 'career_intelligence').length || undefined },
+    { key: 'careerPath', icon: Route, color: 'from-emerald-500/15 to-emerald-500/5', type: planTier === 'pro' ? 'inline' : planTier === 'growth' ? 'inline' : 'locked', action: 'careerPath', url: 'https://share2inspire.pt/career-path/', discount: planTier === 'growth' ? '9,50€' : planTier === 'pro' ? '4,75€' : null, discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '19€' : null, label: 'Career Path', desc: lang === 'pt' ? 'Planeamento estratégico da tua carreira' : 'Strategic career planning', badge: savedAnalyses.filter(a => a.analysis_type === 'career_path').length || undefined },
+    { key: 'careerIntelligence', icon: Sparkles, color: 'from-violet-500/15 to-violet-500/5', type: (planTier === 'pro' || planTier === 'growth') ? 'inline' : 'locked', action: 'careerIntelligence', url: 'https://share2inspire.pt/career-intelligence/', discount: planTier === 'growth' ? '19,50€' : planTier === 'pro' ? '9,75€' : null, discountOriginal: (planTier === 'growth' || planTier === 'pro') ? '39€' : null, label: 'Career Intelligence', desc: lang === 'pt' ? 'Análise avançada de mercado e posicionamento' : 'Advanced market analysis and positioning', badge: savedAnalyses.filter(a => a.analysis_type === 'career_intelligence').length || undefined },
   ];
 
   const remainingAnalyses = Math.max(0, weeklyLimit - weeklyUsage);
@@ -699,13 +699,14 @@ export default function MemberArea() {
     }
 
     if (tool.action === 'careerPath') {
-      const cpAvailable = monthlyCareerPathUsed < 1;
+      const cpLimit = planTier === 'pro' ? 3 : planTier === 'growth' ? 2 : 0;
+      const cpAvailable = monthlyCareerPathUsed < cpLimit;
       return (
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-3 py-2">
             <CheckCircle className="w-3.5 h-3.5" />
-            <span>{lang === 'pt' ? '1 Career Path incluído por mês no plano Pro' : '1 Career Path included per month on Pro plan'}</span>
-            {!cpAvailable && <span className="ml-auto text-amber-600 font-medium">{lang === 'pt' ? '(já utilizado este mês)' : '(already used this month)'}</span>}
+            <span>{lang === 'pt' ? `${cpLimit} Career Path incluído${cpLimit > 1 ? 's' : ''} por mês no plano ${planTier === 'pro' ? 'Pro' : 'Growth'}` : `${cpLimit} Career Path included per month on ${planTier === 'pro' ? 'Pro' : 'Growth'} plan`} ({monthlyCareerPathUsed}/{cpLimit})</span>
+            {!cpAvailable && <span className="ml-auto text-amber-600 font-medium">{lang === 'pt' ? '(limite atingido este mês)' : '(limit reached this month)'}</span>}
           </div>
           <div>
             {profile?.cv_url ? (
@@ -736,13 +737,14 @@ export default function MemberArea() {
     }
 
     if (tool.action === 'careerIntelligence') {
-      const ciAvailable = monthlyCareerIntelUsed < 1;
+      const ciLimit = planTier === 'pro' ? 3 : planTier === 'growth' ? 2 : 0;
+      const ciAvailable = monthlyCareerIntelUsed < ciLimit;
       return (
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-3 py-2">
             <CheckCircle className="w-3.5 h-3.5" />
-            <span>{lang === 'pt' ? '1 Career Intelligence incluído por mês no plano Pro' : '1 Career Intelligence included per month on Pro plan'}</span>
-            {!ciAvailable && <span className="ml-auto text-amber-600 font-medium">{lang === 'pt' ? '(já utilizado este mês)' : '(already used this month)'}</span>}
+            <span>{lang === 'pt' ? `${ciLimit} Career Intelligence incluído${ciLimit > 1 ? 's' : ''} por mês no plano ${planTier === 'pro' ? 'Pro' : 'Growth'}` : `${ciLimit} Career Intelligence included per month on ${planTier === 'pro' ? 'Pro' : 'Growth'} plan`} ({monthlyCareerIntelUsed}/{ciLimit})</span>
+            {!ciAvailable && <span className="ml-auto text-amber-600 font-medium">{lang === 'pt' ? '(limite atingido este mês)' : '(limit reached this month)'}</span>}
           </div>
           <div>
             {profile?.cv_url ? (
@@ -1088,11 +1090,11 @@ export default function MemberArea() {
                         </div>
                         <p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
                       </div>
-                      {tool.action === 'careerPath' && planTier === 'pro' && (
-                        <span className="px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium shrink-0 mr-2">{monthlyCareerPathUsed < 1 ? `1 ${t('member.includedMonth')}` : t('member.used')}</span>
+                      {tool.action === 'careerPath' && (planTier === 'pro' || planTier === 'growth') && (
+                        <span className="px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium shrink-0 mr-2">{monthlyCareerPathUsed < (planTier === 'pro' ? 3 : 2) ? `${(planTier === 'pro' ? 3 : 2) - monthlyCareerPathUsed} ${t('member.includedMonth')}` : t('member.used')}</span>
                       )}
-                      {tool.action === 'careerIntelligence' && planTier === 'pro' && (
-                        <span className="px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium shrink-0 mr-2">{monthlyCareerIntelUsed < 1 ? `1 ${t('member.includedMonth')}` : t('member.used')}</span>
+                      {tool.action === 'careerIntelligence' && (planTier === 'pro' || planTier === 'growth') && (
+                        <span className="px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium shrink-0 mr-2">{monthlyCareerIntelUsed < (planTier === 'pro' ? 3 : 2) ? `${(planTier === 'pro' ? 3 : 2) - monthlyCareerIntelUsed} ${t('member.includedMonth')}` : t('member.used')}</span>
                       )}
                       {expandedTool === tool.key ? <ChevronUp className="w-4 h-4 text-gold shrink-0" /> : <ChevronDown className="w-4 h-4 text-[#ccc] group-hover:text-gold/50 transition-colors shrink-0" />}
                     </button>
@@ -1105,8 +1107,20 @@ export default function MemberArea() {
                             <div className="mt-4 border border-gold/20 rounded-lg bg-[#fafaf9] p-4 animate-in fade-in duration-500">
                               <div className="flex items-center justify-between mb-4"><div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-600" /><h4 className="text-sm font-semibold text-[#1a1a1a]">{lang === 'pt' ? 'Análise concluída' : 'Analysis complete'}</h4></div><button onClick={() => setAnalysisResult(null)} className="text-xs text-[#999] hover:text-[#1a1a1a] transition-colors">{lang === 'pt' ? 'Fechar' : 'Close'}</button></div>
                               <AnalysisResultsFull data={analysisResult._enriched} />
+                              <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gold/10">
+                                <button onClick={() => { const el = document.querySelector('[data-analysis-result]'); if (el) { const printWin = window.open('', '_blank'); if (printWin) { printWin.document.write('<html><head><title>An\u00e1lise Share2Inspire</title><style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:800px;margin:0 auto;color:#1a1a1a}h1,h2,h3,h4,h5{margin-top:1.5rem}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}</style></head><body>' + el.innerHTML + '</body></html>'); printWin.document.close(); printWin.print(); } } }} className="flex items-center gap-1.5 px-3 py-1.5 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium hover:bg-gold/20 transition-colors"><Download className="w-3.5 h-3.5" />{lang === 'pt' ? 'Guardar / Imprimir' : 'Save / Print'}</button>
+                                <button onClick={() => { const subject = encodeURIComponent(lang === 'pt' ? 'A minha an\u00e1lise Share2Inspire' : 'My Share2Inspire Analysis'); const body = encodeURIComponent(lang === 'pt' ? 'Segue em anexo a minha an\u00e1lise. Para ver o resultado completo, acede \u00e0 tua \u00e1rea de membro em https://www.share2inspire.pt/area-cliente/membros' : 'Please find my analysis attached. For the full result, visit your member area at https://www.share2inspire.pt/area-cliente/membros'); window.open(`mailto:?subject=${subject}&body=${body}`, '_blank'); }} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5" />{lang === 'pt' ? 'Enviar por e-mail' : 'Send by email'}</button>
+                              </div>
                             </div>
-                          ) : (<AnalysisResult data={analysisResult} onClose={() => setAnalysisResult(null)} lang={lang} />)
+                          ) : (
+                            <div>
+                              <AnalysisResult data={analysisResult} onClose={() => setAnalysisResult(null)} lang={lang} />
+                              <div className="flex items-center gap-3 mt-3">
+                                <button onClick={() => { const el = document.querySelector('[data-analysis-result]') || document.querySelector('.animate-in.fade-in'); if (el) { const printWin = window.open('', '_blank'); if (printWin) { printWin.document.write('<html><head><title>An\u00e1lise Share2Inspire</title><style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:800px;margin:0 auto;color:#1a1a1a}h1,h2,h3,h4,h5{margin-top:1.5rem}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}</style></head><body>' + el.innerHTML + '</body></html>'); printWin.document.close(); printWin.print(); } } }} className="flex items-center gap-1.5 px-3 py-1.5 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium hover:bg-gold/20 transition-colors"><Download className="w-3.5 h-3.5" />{lang === 'pt' ? 'Guardar / Imprimir' : 'Save / Print'}</button>
+                                <button onClick={() => { const subject = encodeURIComponent(lang === 'pt' ? 'A minha an\u00e1lise Share2Inspire' : 'My Share2Inspire Analysis'); const body = encodeURIComponent(lang === 'pt' ? 'Segue em anexo a minha an\u00e1lise. Para ver o resultado completo, acede \u00e0 tua \u00e1rea de membro em https://www.share2inspire.pt/area-cliente/membros' : 'Please find my analysis attached. For the full result, visit your member area at https://www.share2inspire.pt/area-cliente/membros'); window.open(`mailto:?subject=${subject}&body=${body}`, '_blank'); }} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5" />{lang === 'pt' ? 'Enviar por e-mail' : 'Send by email'}</button>
+                              </div>
+                            </div>
+                          )
                         )}
                       </div>
                     )}

@@ -100,7 +100,8 @@ const translations: Record<Lang, Record<string, string>> = {
     'sub.growth.b4': 'E-books, recursos PDF e templates premium',
     'sub.growth.b5': 'Career Bot com respostas avançadas',
     'sub.growth.limit': '5 análises por semana',
-    'sub.growth.bonus': 'Career Path por 8,99€ em vez de 19€',
+    'sub.growth.bonus': 'Career Path por 9,50€ em vez de 19€',
+    'sub.growth.bonus2': 'Career Intelligence por 19,50€ em vez de 39€',
     // Pro benefits
     'sub.pro.b1': 'Tudo do plano Growth + acesso total',
     'sub.pro.b2': 'Análises ilimitadas de CV e LinkedIn',
@@ -108,8 +109,8 @@ const translations: Record<Lang, Record<string, string>> = {
     'sub.pro.b4': 'Prioridade no processamento',
     'sub.pro.b5': 'Acesso antecipado a novas funcionalidades',
     'sub.pro.limit': 'Uso contínuo e regular',
-    'sub.pro.bonus1': 'Career Path por 4,99€ em vez de 19€',
-    'sub.pro.bonus2': 'Career Intelligence por 9,99€ em vez de 39€',
+    'sub.pro.bonus1': 'Career Path por 4,75€ em vez de 19€',
+    'sub.pro.bonus2': 'Career Intelligence por 9,75€ em vez de 39€',
     // Not included
     'sub.notIncluded.careerPath': 'Career Path',
     'sub.notIncluded.careerIntel': 'Career Intelligence',
@@ -550,7 +551,8 @@ const translations: Record<Lang, Record<string, string>> = {
     'sub.growth.b4': 'E-books, PDF resources and premium templates',
     'sub.growth.b5': 'Career Bot with advanced responses',
     'sub.growth.limit': '5 analyses per week',
-    'sub.growth.bonus': 'Career Path for 8.99€ instead of 19€',
+    'sub.growth.bonus': 'Career Path for 9.50€ instead of 19€',
+    'sub.growth.bonus2': 'Career Intelligence for 19.50€ instead of 39€',
     // Pro benefits
     'sub.pro.b1': 'Everything in Growth + full access',
     'sub.pro.b2': 'Unlimited CV and LinkedIn analyses',
@@ -558,8 +560,8 @@ const translations: Record<Lang, Record<string, string>> = {
     'sub.pro.b4': 'Priority processing',
     'sub.pro.b5': 'Early access to new features',
     'sub.pro.limit': 'Continuous and regular use',
-    'sub.pro.bonus1': 'Career Path for 4.99€ instead of 19€',
-    'sub.pro.bonus2': 'Career Intelligence for 9.99€ instead of 39€',
+    'sub.pro.bonus1': 'Career Path for 4.75€ instead of 19€',
+    'sub.pro.bonus2': 'Career Intelligence for 9.75€ instead of 39€',
     // Not included
     'sub.notIncluded.careerPath': 'Career Path',
     'sub.notIncluded.careerIntel': 'Career Intelligence',
