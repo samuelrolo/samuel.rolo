@@ -1,9 +1,8 @@
 # robots.txt for share2inspire.pt
-# Updated: 2026-03-20
+# Updated: 2026-03-27
 
 User-agent: *
 Allow: /
-Crawl-delay: 1
 
 # Admin & internal pages
 Disallow: /pages/admin-analytics
@@ -22,10 +21,7 @@ Disallow: /api/
 Disallow: /linkedin-roaster/test-preview
 Disallow: /hr-report/
 
-# Sitemap
-Sitemap: https://www.share2inspire.pt/sitemap.xml
+# Area de cliente (SPA)
+Disallow: /area-cliente/
 
-# LLM Context Files
-# For AI assistants and language models
-# See: https://llmstxt.org/
-# Available at: https://www.share2inspire.pt/llms.txt
+Sitemap: https://www.share2inspire.pt/sitemap.xml
