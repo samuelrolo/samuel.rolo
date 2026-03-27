@@ -26,7 +26,7 @@
     <!-- Charset & Viewport -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkedIn Roaster | AI LinkedIn Profile Audit | Share2Inspire</title>
+    <title>LinkedIn Roaster | Share2Inspire</title>
     <meta name="description" content="Audit your LinkedIn profile with AI. Discover your score, weak points, and how to improve your visibility to recruiters." />
     <link rel="canonical" href="https://www.share2inspire.pt/en/linkedin-roaster" />
     <link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/linkedin-roaster" />
@@ -1459,12 +1459,12 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                     } else {
                         const errorMsg = scrapeData?.error || 'Couldn\'t access the LinkedIn profile.';
                         console.error('[ROASTER] Step 1 FAILED:', errorMsg);
-                        throw new Error('Technical error: couldn\'t extract profile data. <a href="/contactos" style="color:#0073b1;text-decoration:underline">Contact support</a>');
+                        throw new Error('Technical error: couldn\'t extract profile data. <a href="/en/pages/contact/" style="color:#0073b1;text-decoration:underline">Contact support</a>');
                     }
                 } catch (scrapeErr) {
                     if (scrapeErr.message.includes('Erro técnico')) throw scrapeErr;
                     console.error('[ROASTER] Step 1 FAILED (network):', scrapeErr.message);
-                    throw new Error('Technical error: couldn\'t access the extraction service. <a href="/contactos" style="color:#0073b1;text-decoration:underline">Contact support</a>');
+                    throw new Error('Technical error: couldn\'t access the extraction service. <a href="/en/pages/contact/" style="color:#0073b1;text-decoration:underline">Contact support</a>');
                 }
 
                 // ── STEP 2: Send to Edge Function for AI analysis ──

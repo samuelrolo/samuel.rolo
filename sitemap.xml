@@ -10,7 +10,7 @@
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/home/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -19,18 +19,20 @@
     <loc>https://www.share2inspire.pt/pages/sobre</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/sobre" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/about/" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/pages/sobre" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/pages/servicos</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/servicos" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/services/" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/pages/servicos" />
   </url>
   
   <url>
@@ -38,7 +40,7 @@
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/conhecimento" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/knowledge" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/pages/conhecimento" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -47,28 +49,29 @@
     <loc>https://www.share2inspire.pt/pages/contactos</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/contactos" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/contact/" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/pages/contactos" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/pages/loja</loc>
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/pages/criacao-conteudos</loc>
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/pages/people-hub</loc>
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -80,7 +83,7 @@
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/cv-analyser" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/cv-analyser" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/cv-analyser" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -90,7 +93,7 @@
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/career-path" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/career-path" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/career-path" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -100,7 +103,7 @@
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/linkedin-roaster" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/linkedin-roaster" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/linkedin-roaster" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -112,7 +115,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/home/" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -121,18 +124,20 @@
     <loc>https://www.share2inspire.pt/en/pages/about</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/about/" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/sobre" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/pages/sobre" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/en/pages/services</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/services/" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/servicos" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/pages/servicos" />
   </url>
   
   <url>
@@ -140,7 +145,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/knowledge" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/conhecimento" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/pages/conhecimento" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -149,9 +154,10 @@
     <loc>https://www.share2inspire.pt/en/pages/contact</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/contact/" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/contactos" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/pages/contactos" />
   </url>
   
   <url>
@@ -159,7 +165,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/cv-analyser" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/cv-analyser" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/cv-analyser" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -169,7 +175,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/career-path" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/career-path" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/career-path" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -179,7 +185,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/linkedin-roaster" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/linkedin-roaster" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/linkedin-roaster" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -188,16 +194,17 @@
     <loc>https://www.share2inspire.pt/en/pages/privacy-policy</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/privacy-policy/" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/politica-privacidade" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/pages/politica-privacidade" />
   </url>
   
   <!-- ESTUDOS / RESEARCH -->
   
   <url>
     <loc>https://www.share2inspire.pt/estudos</loc>
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -206,7 +213,7 @@
   
   <url>
     <loc>https://www.share2inspire.pt/blog</loc>
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -215,81 +222,90 @@
     <loc>https://www.share2inspire.pt/blog/artigos/ai-career-path-vs-traditional-coaching</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/ai-career-path-vs-traditional-coaching" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/ai-career-path-vs-traditional-coaching" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/ai-career-path-vs-traditional-coaching" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/blog/artigos/entrevista-presencial-vs-remota</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/entrevista-presencial-vs-remota" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/entrevista-presencial-vs-remota" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/entrevista-presencial-vs-remota" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/blog/artigos/guia-superar-ats-curriculo</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/guia-superar-ats-curriculo" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/guia-superar-ats-curriculo" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/guia-superar-ats-curriculo" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/blog/artigos/transformar-cv-ignorado-gerar-entrevistas</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/transformar-cv-ignorado-gerar-entrevistas" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/transformar-cv-ignorado-gerar-entrevistas" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/transformar-cv-ignorado-gerar-entrevistas" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/blog/artigos/7-erros-cv-candidatos-rejeitados</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/7-erros-cv-candidatos-rejeitados" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/7-erros-cv-candidatos-rejeitados" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/7-erros-cv-candidatos-rejeitados" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/blog/artigos/cv-linkedin-importancia</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/cv-linkedin-importancia" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/cv-linkedin-importancia" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/cv-linkedin-importancia" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/blog/artigos/melhorar-linkedin-pesquisas</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/melhorar-linkedin-pesquisas" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/melhorar-linkedin-pesquisas" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/melhorar-linkedin-pesquisas" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/blog/artigos/posicionamento-mercado</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/posicionamento-mercado" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/posicionamento-mercado" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/posicionamento-mercado" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/blog/artigos/carta-de-apresentacao-que-gera-entrevistas</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/carta-de-apresentacao-que-gera-entrevistas" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/carta-de-apresentacao-que-gera-entrevistas" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/carta-de-apresentacao-que-gera-entrevistas" />
   </url>
   
   <!-- BLOG / ARTIGOS (EN) -->
@@ -298,81 +314,90 @@
     <loc>https://www.share2inspire.pt/en/blog/artigos/ai-career-path-vs-traditional-coaching</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/ai-career-path-vs-traditional-coaching" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/ai-career-path-vs-traditional-coaching" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/ai-career-path-vs-traditional-coaching" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/en/blog/artigos/entrevista-presencial-vs-remota</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/entrevista-presencial-vs-remota" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/entrevista-presencial-vs-remota" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/entrevista-presencial-vs-remota" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/en/blog/artigos/guia-superar-ats-curriculo</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/guia-superar-ats-curriculo" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/guia-superar-ats-curriculo" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/guia-superar-ats-curriculo" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/en/blog/artigos/transformar-cv-ignorado-gerar-entrevistas</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/transformar-cv-ignorado-gerar-entrevistas" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/transformar-cv-ignorado-gerar-entrevistas" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/transformar-cv-ignorado-gerar-entrevistas" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/en/blog/artigos/7-erros-cv-candidatos-rejeitados</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/7-erros-cv-candidatos-rejeitados" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/7-erros-cv-candidatos-rejeitados" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/7-erros-cv-candidatos-rejeitados" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/en/blog/artigos/cv-linkedin-importancia</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/cv-linkedin-importancia" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/cv-linkedin-importancia" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/cv-linkedin-importancia" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/en/blog/artigos/melhorar-linkedin-pesquisas</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/melhorar-linkedin-pesquisas" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/melhorar-linkedin-pesquisas" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/melhorar-linkedin-pesquisas" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/en/blog/artigos/posicionamento-mercado</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/posicionamento-mercado" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/posicionamento-mercado" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/posicionamento-mercado" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/en/blog/artigos/carta-de-apresentacao-que-gera-entrevistas</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/carta-de-apresentacao-que-gera-entrevistas" />
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/carta-de-apresentacao-que-gera-entrevistas" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/carta-de-apresentacao-que-gera-entrevistas" />
   </url>
   
   <!-- VIDEOS (PT) -->
@@ -389,9 +414,10 @@
       <video:duration>750</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/videos/como-criar-cv-ats-friendly" />
   </url>
   
   <url>
@@ -407,7 +433,7 @@
       <video:duration>329</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -426,9 +452,10 @@
       <video:duration>750</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/videos/como-criar-cv-ats-friendly" />
   </url>
   
   <url>
@@ -444,7 +471,7 @@
       <video:duration>329</video:duration>
       <video:family_friendly>yes</video:family_friendly>
     </video:video>
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -455,35 +482,36 @@
     <loc>https://www.share2inspire.pt/pages/politica-privacidade</loc>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/politica-privacidade" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/privacy-policy/" />
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/pages/politica-privacidade" />
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/pages/politica-cookies</loc>
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/pages/informacao-legal</loc>
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/pages/termos-condicoes</loc>
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   
   <url>
     <loc>https://www.share2inspire.pt/pages/tratamento-dados</loc>
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -492,38 +520,42 @@
     <!-- Salary Negotiation Articles -->
     <url>
         <loc>https://www.share2inspire.pt/blog/artigos/como-negociar-salario-portugal</loc>
-        <lastmod>2026-03-20</lastmod>
+        <lastmod>2026-03-27</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
         <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/como-negociar-salario-portugal"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/how-to-negotiate-salary"/>
-    </url>
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/como-negociar-salario-portugal" />
+  </url>
     <url>
         <loc>https://www.share2inspire.pt/en/blog/artigos/how-to-negotiate-salary</loc>
-        <lastmod>2026-03-20</lastmod>
+        <lastmod>2026-03-27</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
         <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/how-to-negotiate-salary"/>
         <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/como-negociar-salario-portugal"/>
-    </url>
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/como-negociar-salario-portugal" />
+  </url>
 
     <!-- Big4 Recruitment Articles -->
     <url>
         <loc>https://www.share2inspire.pt/blog/artigos/recrutamento-big4-guia-candidatos</loc>
-        <lastmod>2026-03-20</lastmod>
+        <lastmod>2026-03-27</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
         <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/recrutamento-big4-guia-candidatos"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/big4-recruitment-guide-candidates"/>
-    </url>
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/recrutamento-big4-guia-candidatos" />
+  </url>
     <url>
         <loc>https://www.share2inspire.pt/en/blog/artigos/big4-recruitment-guide-candidates</loc>
-        <lastmod>2026-03-20</lastmod>
+        <lastmod>2026-03-27</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
         <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/big4-recruitment-guide-candidates"/>
         <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/recrutamento-big4-guia-candidatos"/>
-    </url>
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/recrutamento-big4-guia-candidatos" />
+  </url>
 
     <url>
         <loc>https://www.share2inspire.pt/en/videos/big4-recruitment-guide</loc>
@@ -535,7 +567,7 @@
           <video:duration>318</video:duration>
           <video:family_friendly>yes</video:family_friendly>
         </video:video>
-        <lastmod>2026-03-20</lastmod>
+        <lastmod>2026-03-27</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/videos/big4-recruitment-guide"/>
@@ -544,13 +576,13 @@
 
   <url>
     <loc>https://www.share2inspire.pt/blog/artigos/estado-linkedin-portugal-2026</loc>
-    <lastmod>2026-03-20</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
     <url>
         <loc>https://www.share2inspire.pt/blog/artigos/big4-insider-10-anos</loc>
-        <lastmod>2026-03-24</lastmod>
+        <lastmod>2026-03-27</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.9</priority>
         <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/blog/artigos/big4-insider-10-anos"/>
@@ -559,7 +591,7 @@
     </url>
     <url>
         <loc>https://www.share2inspire.pt/en/blog/artigos/big4-insider-10-years</loc>
-        <lastmod>2026-03-24</lastmod>
+        <lastmod>2026-03-27</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.9</priority>
         <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/big4-insider-10-years"/>
@@ -569,18 +601,20 @@
 
   <url>
     <loc>https://www.share2inspire.pt/videos/big4-insider-roi-pos-big4</loc>
-    <lastmod>2026-03-24</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/videos/big4-insider-roi-pos-big4"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/videos/big4-insider-roi-post-big4"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/videos/big4-insider-roi-pos-big4" />
   </url>
   <url>
     <loc>https://www.share2inspire.pt/en/videos/big4-insider-roi-post-big4</loc>
-    <lastmod>2026-03-24</lastmod>
+    <lastmod>2026-03-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/videos/big4-insider-roi-pos-big4"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/videos/big4-insider-roi-post-big4"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/videos/big4-insider-roi-pos-big4" />
   </url>
 </urlset>
