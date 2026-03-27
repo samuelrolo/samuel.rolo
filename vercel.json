@@ -343,7 +343,7 @@
             "destination": "/area-cliente/index.html"
         },
         {
-            "source": "/area-cliente/:path*",
+            "source": "/area-cliente/(.*)",
             "destination": "/area-cliente/index.html"
         },
         {
