@@ -1,7 +1,6 @@
-'use strict';
 // ═══════════════════════════════════════════════════════════════
-//  Share2Inspire · Admin Analytics JS
-//  Versão 2.0 — Funil completo, CRM, Métricas de Crescimento
+//  Share2Inspire · Cockpit de Gestão v3.0
+//  Reestruturado: 7 tabs, cruzamento de dados, fontes verificadas
 // ═══════════════════════════════════════════════════════════════
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
@@ -32,6 +31,10 @@ let allAuthUsers       = [];
 let allUserProfiles    = [];
 let allSubscriptions   = [];
 let allUserAnalyses    = [];
+let allAffiliates      = [];
+let allAffClicks       = [];
+let allAffConversions  = [];
+let allCoupons         = [];
 let usersPage          = 1;
 
 let globalLang       = 'all';
@@ -46,6 +49,7 @@ const PAGE_SIZE      = 25;
 // Chart instances
 let dailyChart = null, typeChart = null, langChart = null, ttfbChart = null;
 let funnelChart = null, scoreChart = null, ceScoreChart = null;
+let revenueChart = null;
 
 // Nurturing state
 let nurturingSegment = null;
@@ -109,23 +113,17 @@ function detectLanguage(a) {
 }
 
 function getAnalysisType(a) {
-    // LinkedIn Roaster: paid = paid, voucher = voucher, non-paid = free (gratuito)
     if (a._source === 'linkedin_roaster') {
         if (a.payment_method === 'voucher') return 'voucher';
         return (a.payment_status === 'paid' || (a.payment_amount && a.payment_amount > 0)) ? 'paid' : 'free';
     }
-    // Career path, bundle, and Career Intelligence are always paid
     if (a.analysis_type === 'career_path') return 'paid';
     if (a.analysis_type === 'bundle') return 'paid';
     if (a.analysis_type === 'career_intelligence_pro') return 'paid';
     if (a.analysis_type === 'career_intelligence_full') return 'paid';
-    // Voucher: only if payment_method explicitly says 'voucher' on THIS analysis
     if (a.payment_method === 'voucher') return 'voucher';
-    // Paid: confirmed payment on THIS analysis
     if (a.payment_status === 'paid' || (a.payment_amount && a.payment_amount > 0)) return 'paid';
-    // Paid analysis_type from backend
     if (a.analysis_type === 'paid') return 'paid';
-    // Everything else is free
     return 'free';
 }
 
@@ -133,7 +131,6 @@ function isAnonymous(a) {
     const email = (a.user_email || '').toLowerCase();
     return !email || email.includes('anonymous') || email.includes('@share2inspire') || email === '';
 }
-// hasEmail: verdadeiro se o registo tem um email real contactável (mesmo que o nome seja "Utilizador Anónimo")
 function hasEmail(a) {
     const email = (a.user_email || '').trim().toLowerCase();
     return email.length > 0 && !email.includes('anonymous') && !email.includes('@share2inspire') && email.includes('@');
@@ -198,17 +195,42 @@ function getStageBadge(stage) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  TOAST
+//  TOAST & HELPERS
 // ═══════════════════════════════════════════════════════════════
 function showToast(msg, type = 'info') {
     const t = document.getElementById('toast');
+    if (!t) return;
     t.textContent = msg;
     t.className = `show ${type}`;
     setTimeout(() => { t.className = ''; }, 3500);
 }
 
+function setText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+}
+
+function renderPagination(containerId, currentPage, totalPages, onPageChange) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    if (totalPages <= 1) { container.innerHTML = ''; return; }
+    let html = '';
+    html += `<button class="page-btn" ${currentPage <= 1 ? 'disabled' : ''} onclick="(${onPageChange.toString()})(${currentPage - 1})">‹</button>`;
+    const start = Math.max(1, currentPage - 2);
+    const end = Math.min(totalPages, currentPage + 2);
+    if (start > 1) html += `<button class="page-btn" onclick="(${onPageChange.toString()})(1)">1</button>`;
+    if (start > 2) html += '<span style="padding:0 4px;color:var(--text-muted);">…</span>';
+    for (let i = start; i <= end; i++) {
+        html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="(${onPageChange.toString()})(${i})">${i}</button>`;
+    }
+    if (end < totalPages - 1) html += '<span style="padding:0 4px;color:var(--text-muted);">…</span>';
+    if (end < totalPages) html += `<button class="page-btn" onclick="(${onPageChange.toString()})(${totalPages})">${totalPages}</button>`;
+    html += `<button class="page-btn" ${currentPage >= totalPages ? 'disabled' : ''} onclick="(${onPageChange.toString()})(${currentPage + 1})">›</button>`;
+    container.innerHTML = html;
+}
+
 // ═══════════════════════════════════════════════════════════════
-//  TAB NAVIGATION
+//  TAB NAVIGATION (7 tabs + sub-tabs)
 // ═══════════════════════════════════════════════════════════════
 function switchTab(name, btn) {
     document.querySelectorAll('.main > div[id^="tab-"]').forEach(el => el.style.display = 'none');
@@ -220,27 +242,57 @@ function switchTab(name, btn) {
     // Lazy render on first visit
     if (name === 'funnel') renderFunnel();
     if (name === 'crm') { renderCRM(); renderAutoEmailsMonitoring(); renderNurturingSegments(); }
-    if (name === 'analyses') renderAnalyses();
-    if (name === 'vouchers') renderVouchers();
-    if (name === 'history') renderEmailHistory();
-    if (name === 'contacts') renderContacts();
-    if (name === 'health') renderHealth();
-    if (name === 'jobsearch') renderJobSearch();
-    if (name === 'careerenergy') renderCareerEnergy();
-    if (name === 'affiliates') renderAffiliates();
-    if (name === 'coupons') renderCoupons();
+    if (name === 'market') { renderJobSearchTable(); renderCETable(); }
+    if (name === 'partnerships') { renderAffiliates(); renderCoupons(); }
     if (name === 'users') renderUsers();
+    if (name === 'system') renderHealthLogs();
 }
 
 function switchCrmSubtab(name, btn) {
     document.querySelectorAll('[id^="crm-sub-"]').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.crm-subtab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#tab-crm .crm-subtab').forEach(b => b.classList.remove('active'));
     const sub = document.getElementById('crm-sub-' + name);
     if (sub) sub.style.display = '';
     if (btn) btn.classList.add('active');
     if (name === 'contacts') renderCRM();
+    if (name === 'analyses') renderAnalyses();
+    if (name === 'vouchers') renderVouchers();
     if (name === 'automation') renderAutoEmailsMonitoring();
     if (name === 'campaigns') renderNurturingSegments();
+    if (name === 'history') renderEmailHistory();
+    if (name === 'messages') renderEmailHistory();
+}
+
+function switchMarketSubtab(name, btn) {
+    document.querySelectorAll('[id^="market-sub-"]').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('#tab-market .crm-subtab').forEach(b => b.classList.remove('active'));
+    const sub = document.getElementById('market-sub-' + name);
+    if (sub) sub.style.display = '';
+    if (btn) btn.classList.add('active');
+    if (name === 'jobs') renderJobSearchTable();
+    if (name === 'energy') renderCETable();
+}
+
+function switchPartnerSubtab(name, btn) {
+    document.querySelectorAll('[id^="partner-sub-"]').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('#tab-partnerships .crm-subtab').forEach(b => b.classList.remove('active'));
+    const sub = document.getElementById('partner-sub-' + name);
+    if (sub) sub.style.display = '';
+    if (btn) btn.classList.add('active');
+    if (name === 'affiliates') renderAffiliates();
+    if (name === 'coupons') renderCoupons();
+    if (name === 'clicks') renderAffClicks();
+    if (name === 'conversions') renderAffConversions();
+}
+
+function switchSystemSubtab(name, btn) {
+    document.querySelectorAll('[id^="system-sub-"]').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('#tab-system .crm-subtab').forEach(b => b.classList.remove('active'));
+    const sub = document.getElementById('system-sub-' + name);
+    if (sub) sub.style.display = '';
+    if (btn) btn.classList.add('active');
+    if (name === 'health') renderHealthLogs();
+    if (name === 'ebook') renderEbookDownloads();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -251,7 +303,7 @@ function setGlobalLang(lang, btn) {
     document.querySelectorAll('#globalLangToggle button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     updateDashboard();
-    renderAnalyses();
+    updateCharts();
 }
 
 function setNurturingLang(lang, btn) {
@@ -297,7 +349,7 @@ async function loadAllData() {
         allVouchers      = Array.isArray(vouchers)     ? vouchers     : [];
         allContacts      = Array.isArray(contacts)     ? contacts     : [];
         allNewsletterSubs = Array.isArray(newsletter)  ? newsletter   : [];
-        allEbookDownloads = allNewsletterSubs; // newsletter_subscribers serve como base de ebook leads
+        allEbookDownloads = allNewsletterSubs;
         allJobSearch     = Array.isArray(jobSearch)    ? jobSearch    : [];
         allCareerEnergy  = Array.isArray(careerEnergy) ? careerEnergy : [];
         allLinkedinRoaster = Array.isArray(linkedinRoaster) ? linkedinRoaster : [];
@@ -321,14 +373,54 @@ async function loadHealthLogs() {
     } catch { allHealthLogs = []; }
 }
 
+async function loadAffiliateData() {
+    try {
+        const [affiliates, clicks, conversions] = await Promise.all([
+            supaFetch('affiliates', 'select=*&order=created_at.desc'),
+            supaFetch('affiliate_clicks', 'select=*&order=created_at.desc&limit=5000'),
+            supaFetch('affiliate_conversions', 'select=*&order=created_at.desc&limit=5000')
+        ]);
+        allAffiliates = Array.isArray(affiliates) ? affiliates : [];
+        allAffClicks = Array.isArray(clicks) ? clicks : [];
+        allAffConversions = Array.isArray(conversions) ? conversions : [];
+    } catch (e) {
+        console.error('Erro ao carregar dados de afiliados:', e);
+    }
+}
+
+async function loadCouponData() {
+    try {
+        const coupons = await supaFetch('discount_coupons', 'select=*&order=created_at.desc');
+        allCoupons = Array.isArray(coupons) ? coupons : [];
+    } catch (e) {
+        console.error('Erro ao carregar cupões:', e);
+    }
+}
+
+async function loadUsersData() {
+    try {
+        const [authUsers, profiles, subscriptions, userAnalyses] = await Promise.all([
+            supaFetch('admin_auth_users', 'select=id,email,raw_user_meta_data,created_at,last_sign_in_at,email_confirmed_at&order=created_at.desc'),
+            supaFetch('user_profiles', 'select=*&order=created_at.desc'),
+            supaFetch('subscriptions', 'select=*&order=created_at.desc'),
+            supaFetch('user_analyses', 'select=id,user_id,analysis_type,created_at&order=created_at.desc&limit=5000')
+        ]);
+        allAuthUsers    = Array.isArray(authUsers)    ? authUsers    : [];
+        allUserProfiles = Array.isArray(profiles)     ? profiles     : [];
+        allSubscriptions = Array.isArray(subscriptions) ? subscriptions : [];
+        allUserAnalyses = Array.isArray(userAnalyses) ? userAnalyses : [];
+    } catch (e) {
+        console.error('Erro ao carregar dados de utilizadores:', e);
+    }
+}
+
 // ═══════════════════════════════════════════════════════════════
-//  DASHBOARD
+//  COCKPIT DASHBOARD
 // ═══════════════════════════════════════════════════════════════
 function updateDashboard() {
     let cvData = filterByLang(allAnalyses, globalLang);
     cvData = filterByPeriod(cvData, dashPeriodDays);
 
-    // Merge LR into the main data for unified KPIs
     const lrTaggedAll = allLinkedinRoaster.map(a => ({ ...a, _source: 'linkedin_roaster' }));
     const lrPeriod = filterByPeriod(lrTaggedAll, dashPeriodDays);
     const data = [...cvData, ...lrPeriod];
@@ -346,19 +438,17 @@ function updateDashboard() {
     const last7d   = data.filter(a => new Date(a.created_at) >= d7);
     const paidLast7 = last7d.filter(a => getAnalysisType(a) === 'paid');
 
-    // Revenue from direct paid analyses (payment_amount on cv_analysis) + LR paid
+    // Revenue
     const directRevenue = paid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
-    // Revenue from voucher sales (amount_paid on vouchers table, excluding test/promo)
     const voucherRevenue = allVouchers
         .filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo')
         .reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
-    // Total = direct analysis payments + voucher sales
     const totalRevenue = directRevenue + voucherRevenue;
+
     const cvRevenue = paid.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && a._source !== 'linkedin_roaster').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0) 
                     + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type !== 'career_path' && v.voucher_type !== 'career_intelligence_pro' && v.voucher_type !== 'career_intelligence_full').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
     const cpRevenue = cp.reduce((s, a) => s + (a.payment_amount || 0), 0)
                     + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type === 'career_path').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
-    // Career Intelligence revenue (PRO upgrades + Full standalone)
     const ciPro = data.filter(a => a.analysis_type === 'career_intelligence_pro');
     const ciFull = data.filter(a => a.analysis_type === 'career_intelligence_full');
     const ciAll = [...ciPro, ...ciFull];
@@ -383,6 +473,31 @@ function updateDashboard() {
     const cpPct   = paid.length ? Math.round(cp.length / paid.length * 100) : 0;
     const rev7d   = paidLast7.reduce((s, a) => s + (a.payment_amount || 0), 0);
 
+    // === VENDAS REAIS (excluindo samuelrolo@gmail.com) ===
+    const excludeEmail = 'samuelrolo@gmail.com';
+    const realPaid = paid.filter(a => (a.user_email || '').toLowerCase() !== excludeEmail);
+    const realCVAPaid = realPaid.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && a._source !== 'linkedin_roaster');
+    const realCPPaid = realPaid.filter(a => a.analysis_type === 'career_path');
+    const realCIPaid = realPaid.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full');
+    const realLRPaid = realPaid.filter(a => a._source === 'linkedin_roaster');
+    const realVouchersSold = allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail);
+
+    const realDirectRevenue = realPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
+    const realVoucherRevenue = realVouchersSold.reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
+    const realTotalRevenue = realDirectRevenue + realVoucherRevenue;
+    const realCVARevenue = realCVAPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0)
+                         + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type !== 'career_path' && v.voucher_type !== 'career_intelligence_pro' && v.voucher_type !== 'career_intelligence_full' && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
+    const realCPRevenue = realCPPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0)
+                        + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type === 'career_path' && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
+    const realCIRevenue = realCIPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0)
+                        + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && (v.voucher_type === 'career_intelligence_pro' || v.voucher_type === 'career_intelligence_full') && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
+    const realLRRevenue = realLRPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
+
+    // LinkedIn Roaster computed values
+    const lrPaidItems = lrPeriod.filter(a => a.payment_status === 'paid');
+    const lrRevenue = lrPaidItems.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
+
+    // Set KPIs
     setText('kpiTotal',        data.length);
     setText('kpi24h',          `${last24h.length} últimas 24h`);
     setText('kpiPaid',         paid.length);
@@ -405,30 +520,13 @@ function updateDashboard() {
     setText('kpiVouchersActive', vActive);
     setText('kpiVouchersUsed', `${vUsed} utilizados`);
 
-    // LinkedIn Roaster computed values
-    const lrPaidItems = lrPeriod.filter(a => a.payment_status === 'paid');
-    const lrRevenue = lrPaidItems.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
-    const lrFreeCount = lrPeriod.length - lrPaidItems.length;
+    // Real Revenue KPI
+    setText('kpiRealRevenue',    `${realTotalRevenue.toFixed(2)}€`);
+    setText('kpiRealRevenueSub', `excl. testes · total: ${totalRevenue.toFixed(2)}€`);
 
-    // === VENDAS REAIS (excluindo samuelrolo@gmail.com) ===
-    const excludeEmail = 'samuelrolo@gmail.com';
-    const realPaid = paid.filter(a => (a.user_email || '').toLowerCase() !== excludeEmail);
-    const realCVAPaid = realPaid.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && a._source !== 'linkedin_roaster');
-    const realCPPaid = realPaid.filter(a => a.analysis_type === 'career_path');
-    const realCIPaid = realPaid.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full');
-    const realLRPaid = realPaid.filter(a => a._source === 'linkedin_roaster');
-    const realVouchersSold = allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail);
-
-    const realDirectRevenue = realPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
-    const realVoucherRevenue = realVouchersSold.reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
-    const realTotalRevenue = realDirectRevenue + realVoucherRevenue;
-    const realCVARevenue = realCVAPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0)
-                         + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type !== 'career_path' && v.voucher_type !== 'career_intelligence_pro' && v.voucher_type !== 'career_intelligence_full' && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
-    const realCPRevenue = realCPPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0)
-                        + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && v.voucher_type === 'career_path' && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
-    const realCIRevenue = realCIPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0)
-                        + allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo' && (v.voucher_type === 'career_intelligence_pro' || v.voucher_type === 'career_intelligence_full') && (v.buyer_email || '').toLowerCase() !== excludeEmail && (v.user_email || '').toLowerCase() !== excludeEmail).reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
-    const realLRRevenue = realLRPaid.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
+    // Hidden compat
+    setText('kpiRevenuePT', '');
+    setText('kpiRevenueEN', '');
 
     // === PIVOT TABLE ===
     const cvAll = data.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && a._source !== 'linkedin_roaster');
@@ -443,32 +541,11 @@ function updateDashboard() {
     const lrVoucherItems = lrPeriod.filter(a => getAnalysisType(a) === 'voucher');
 
     const pivotProducts = [
-        {
-            name: 'CV Analyser', color: 'var(--purple)', icon: 'fa-file-lines',
-            total: cvAll.length, free: cvFreeItems.length, paid: cvPaidItems.length, voucher: cvVoucherItems.length,
-            revenue: cvRevenue, realRevenue: realCVARevenue
-        },
-        {
-            name: 'Career Path', color: 'var(--teal)', icon: 'fa-route',
-            total: cp.length, free: cpFreeItems.length, paid: cpPaidItems.length, voucher: cpVoucherItems.length,
-            revenue: cpRevenue, realRevenue: realCPRevenue
-        },
-        {
-            name: 'Career Intelligence', color: '#7C3AED', icon: 'fa-brain',
-            total: ciAll.length, free: 0, paid: ciAll.length, voucher: 0,
-            revenue: ciRevenue, realRevenue: realCIRevenue
-        },
-        {
-            name: 'LinkedIn Roaster', color: '#0077B5', icon: 'fa-linkedin',
-            total: lrPeriod.length, free: lrFreeItems.length, paid: lrPaidType.length, voucher: lrVoucherItems.length,
-            revenue: lrRevenue, realRevenue: realLRRevenue
-        },
-        {
-            name: 'Vouchers', color: 'var(--green)', icon: 'fa-ticket',
-            total: allVouchers.length, free: 0, paid: 0, voucher: 0,
-            revenue: voucherRevenue, realRevenue: realVoucherRevenue,
-            isVoucher: true, active: vActive, used: vUsed
-        }
+        { name: 'CV Analyser', color: 'var(--purple)', icon: 'fa-file-lines', total: cvAll.length, free: cvFreeItems.length, paid: cvPaidItems.length, voucher: cvVoucherItems.length, revenue: cvRevenue, realRevenue: realCVARevenue },
+        { name: 'Career Path', color: 'var(--teal)', icon: 'fa-route', total: cp.length, free: cpFreeItems.length, paid: cpPaidItems.length, voucher: cpVoucherItems.length, revenue: cpRevenue, realRevenue: realCPRevenue },
+        { name: 'Career Intelligence', color: '#7C3AED', icon: 'fa-brain', total: ciAll.length, free: 0, paid: ciAll.length, voucher: 0, revenue: ciRevenue, realRevenue: realCIRevenue },
+        { name: 'LinkedIn Roaster', color: '#0077B5', icon: 'fa-linkedin', total: lrPeriod.length, free: lrFreeItems.length, paid: lrPaidType.length, voucher: lrVoucherItems.length, revenue: lrRevenue, realRevenue: realLRRevenue },
+        { name: 'Vouchers', color: 'var(--green)', icon: 'fa-ticket', total: allVouchers.length, free: 0, paid: 0, voucher: 0, revenue: voucherRevenue, realRevenue: realVoucherRevenue, isVoucher: true, active: vActive, used: vUsed }
     ];
 
     const pivotBody = document.getElementById('pivotBody');
@@ -489,8 +566,7 @@ function updateDashboard() {
                     <td style="text-align:center;">-</td>
                     <td style="text-align:right;font-weight:600;color:${p.color};">${p.revenue.toFixed(2)}\u20ac</td>
                     <td style="text-align:right;">-</td>
-                    <td style="text-align:right;font-weight:700;color:var(--gold);">${p.realRevenue.toFixed(2)}\u20ac</td>
-                `;
+                    <td style="text-align:right;font-weight:700;color:var(--gold);">${p.realRevenue.toFixed(2)}\u20ac</td>`;
             } else {
                 tr.innerHTML = `
                     <td><span style="color:${p.color};font-weight:600;"><i class="fas ${p.icon}" style="margin-right:6px;"></i>${p.name}</span></td>
@@ -501,13 +577,11 @@ function updateDashboard() {
                     <td style="text-align:center;">${conv}%</td>
                     <td style="text-align:right;font-weight:600;color:${p.color};">${p.revenue.toFixed(2)}\u20ac</td>
                     <td style="text-align:right;">${ticket}\u20ac</td>
-                    <td style="text-align:right;font-weight:700;color:var(--gold);">${p.realRevenue.toFixed(2)}\u20ac</td>
-                `;
+                    <td style="text-align:right;font-weight:700;color:var(--gold);">${p.realRevenue.toFixed(2)}\u20ac</td>`;
             }
             pivotBody.appendChild(tr);
         });
 
-        // Totals row
         const tAll = pivotProducts.filter(p => !p.isVoucher).reduce((s, p) => s + p.total, 0) + allVouchers.length;
         const tFree = pivotProducts.filter(p => !p.isVoucher).reduce((s, p) => s + p.free, 0);
         const tPaid = pivotProducts.filter(p => !p.isVoucher).reduce((s, p) => s + p.paid, 0);
@@ -525,52 +599,100 @@ function updateDashboard() {
         if (pivotFoot) pivotFoot.style.display = '';
     }
 
-    // Dashboard Revenue by Product (includes LinkedIn Roaster)
-    renderDashRevenueByProduct(cvData, lrPeriod);
+    // Cockpit Insights
+    renderCockpitInsights(data, paid, free, cp, ciAll, lrPeriod, realTotalRevenue, uniqueEmails, abandonRate);
 
-    // Hidden compat
-    setText('kpiRevenuePT', '');
-    setText('kpiRevenueEN', '');
+    // Activity Feed
+    renderActivityFeed(data);
 
     document.getElementById('lastUpdate').textContent = 'Atualizado: ' + new Date().toLocaleTimeString('pt-PT');
 }
 
-function renderDashRevenueByProduct(cvData, lrData) {
-    const revEl = document.getElementById('dashRevenueByProduct');
-    if (!revEl) return;
+function renderCockpitInsights(data, paid, free, cp, ciAll, lr, realRevenue, uniqueEmails, abandonRate) {
+    const el = document.getElementById('cockpitInsights');
+    if (!el) return;
 
-    const cvRev = cvData.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full').reduce((s, a) => s + (a.payment_amount || 0), 0);
-    const cpRev = cvData.filter(a => a.analysis_type === 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0);
-    const ciRev = cvData.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
-    const lrRev = lrData.filter(a => a.payment_status === 'paid').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
-    const vRev  = allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
-    const total = cvRev + cpRev + ciRev + lrRev + vRev;
+    const insights = [];
+    
+    // Revenue insight
+    if (realRevenue > 0) {
+        const avgPerUser = uniqueEmails.size > 0 ? (realRevenue / uniqueEmails.size).toFixed(2) : 0;
+        insights.push({ icon: 'fa-euro-sign', color: 'var(--gold)', text: `Receita real: <strong>${realRevenue.toFixed(2)}€</strong> · Média por utilizador: <strong>${avgPerUser}€</strong>` });
+    }
 
-    revEl.innerHTML = `
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">
-            ${[
-                { label: 'CV Analyser', value: cvRev, color: 'var(--purple)', icon: 'fa-file-alt' },
-                { label: 'Career Path', value: cpRev, color: 'var(--blue)', icon: 'fa-route' },
-                { label: 'Career Intelligence', value: ciRev, color: '#7C3AED', icon: 'fa-brain' },
-                { label: 'LinkedIn Roaster', value: lrRev, color: '#0077B5', icon: 'fab fa-linkedin' },
-                { label: 'Vouchers', value: vRev, color: 'var(--gold)', icon: 'fa-ticket-alt' }
-            ].map(p => `
-                <div style="text-align:center;padding:16px;background:var(--bg);border-radius:8px;">
-                    <i class="${p.icon.startsWith('fab') ? p.icon : 'fas ' + p.icon}" style="font-size:20px;color:${p.color};margin-bottom:8px;display:block;"></i>
-                    <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;">${p.label}</div>
-                    <div style="font-size:22px;font-weight:700;color:${p.color};margin-top:4px;">${p.value.toFixed(2)}€</div>
-                    <div style="font-size:11px;color:var(--text-muted);">${total > 0 ? Math.round(p.value/total*100) : 0}% do total</div>
-                </div>`).join('')}
-        </div>
-        <div style="margin-top:16px;padding:12px 16px;background:var(--gold-bg);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:13px;font-weight:600;color:var(--dark);">Total Receita (período)</span>
-            <span style="font-size:20px;font-weight:700;color:var(--gold);">${total.toFixed(2)}€</span>
+    // Conversion insight
+    const convRate = (free.length + paid.length) > 0 ? Math.round(paid.length / (free.length + paid.length) * 100) : 0;
+    if (convRate < 15) {
+        insights.push({ icon: 'fa-exclamation-triangle', color: 'var(--orange)', text: `Taxa de conversão baixa: <strong>${convRate}%</strong> — considerar melhorar o CTA pós-análise gratuita` });
+    } else if (convRate >= 30) {
+        insights.push({ icon: 'fa-check-circle', color: 'var(--green)', text: `Excelente taxa de conversão: <strong>${convRate}%</strong> — o funil está saudável` });
+    }
+
+    // Abandonment insight
+    if (abandonRate > 40) {
+        insights.push({ icon: 'fa-user-slash', color: 'var(--red)', text: `<strong>${abandonRate}%</strong> das análises são anónimas — oportunidade de captura de email` });
+    }
+
+    // Career Path upsell
+    const cpUpsellRate = paid.length > 0 ? Math.round(cp.length / paid.length * 100) : 0;
+    if (cpUpsellRate < 20 && paid.length > 10) {
+        insights.push({ icon: 'fa-route', color: 'var(--blue)', text: `Apenas <strong>${cpUpsellRate}%</strong> dos pagantes compram Career Path — potencial de upsell` });
+    }
+
+    // LinkedIn Roaster as top-of-funnel
+    if (lr.length > 0) {
+        const lrPaidPct = lr.filter(a => getAnalysisType(a) === 'paid').length;
+        insights.push({ icon: 'fa-linkedin', color: '#0077B5', text: `LinkedIn Roaster: <strong>${lr.length}</strong> análises (${lrPaidPct} pagas) — topo do funil ativo` });
+    }
+
+    if (insights.length === 0) return;
+
+    el.innerHTML = `
+        <div class="card" style="border-left:3px solid var(--gold);">
+            <div class="card-header"><div class="card-title"><i class="fas fa-lightbulb" style="color:var(--gold);"></i> Insights Automáticos</div></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+                ${insights.map(i => `
+                    <div style="display:flex;align-items:center;gap:10px;padding:6px 0;">
+                        <i class="fas ${i.icon}" style="color:${i.color};width:16px;text-align:center;"></i>
+                        <span style="font-size:13px;line-height:1.4;">${i.text}</span>
+                    </div>`).join('')}
+            </div>
         </div>`;
 }
 
-function setText(id, val) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = val;
+function renderActivityFeed(data) {
+    const el = document.getElementById('activityFeed');
+    if (!el) return;
+
+    const recent = data.slice(0, 20);
+    if (!recent.length) {
+        el.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:40px;">Sem atividade recente</div>';
+        return;
+    }
+
+    el.innerHTML = recent.map(a => {
+        const name = a.user_name || a.user_email || 'Anónimo';
+        const type = getAnalysisType(a);
+        const badge = getProductBadge(a);
+        const typeBadge = getTypeBadge(type);
+        const time = new Date(a.created_at);
+        const timeStr = time.toLocaleDateString('pt-PT') + ' ' + time.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+        const amount = (type === 'paid' && a.payment_amount) ? `<span style="color:var(--green);font-weight:600;margin-left:8px;">+${parseFloat(a.payment_amount).toFixed(2)}€</span>` : '';
+
+        return `
+            <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--gold-bg);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--gold);flex-shrink:0;">
+                    ${(name[0] || '?').toUpperCase()}
+                </div>
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
+                    <div style="font-size:11px;color:var(--text-muted);">${timeStr}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    ${badge} ${typeBadge} ${amount}
+                </div>
+            </div>`;
+    }).join('');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -581,7 +703,6 @@ function updateCharts() {
     let cvData = filterByLang(allAnalyses, globalLang);
     cvData = filterByPeriod(cvData, days);
 
-    // Merge LinkedIn Roaster into chart data (LR paid = paid, LR non-paid = free/gratuito)
     const lrTagged = allLinkedinRoaster.map(a => ({ ...a, _source: 'linkedin_roaster' }));
     const lrFiltered = filterByPeriod(lrTagged, days);
     const data = [...cvData, ...lrFiltered];
@@ -623,7 +744,36 @@ function updateCharts() {
         });
     }
 
-    // Type Chart (Donut) — includes all products
+    // Revenue Accumulated Chart
+    const revLabels = Object.keys(dateMap);
+    let cumRevenue = 0;
+    const revData = revLabels.map(d => {
+        const dayData = data.filter(a => a.created_at?.slice(0, 10) === d && getAnalysisType(a) === 'paid');
+        cumRevenue += dayData.reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
+        return cumRevenue;
+    });
+    const ctx5 = document.getElementById('revenueChart')?.getContext('2d');
+    if (ctx5) {
+        if (revenueChart) revenueChart.destroy();
+        revenueChart = new Chart(ctx5, {
+            type: 'line',
+            data: {
+                labels: revLabels.map(d => d.slice(5)),
+                datasets: [{
+                    label: 'Receita Acumulada (€)',
+                    data: revData,
+                    borderColor: '#C9A961',
+                    backgroundColor: 'rgba(201,169,97,0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 2
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { y: { ticks: { font: { size: 10 }, callback: v => v + '€' } }, x: { ticks: { font: { size: 10 } } } } }
+        });
+    }
+
+    // Type Chart (Donut)
     const paidCount    = data.filter(a => getAnalysisType(a) === 'paid').length;
     const freeCount    = data.filter(a => getAnalysisType(a) === 'free').length;
     const voucherCount = data.filter(a => getAnalysisType(a) === 'voucher').length;
@@ -640,28 +790,11 @@ function updateCharts() {
         });
     }
 
-    // Lang Chart
-    const ptCount = filterByLang(data, 'pt').length;
-    const enCount = filterByLang(data, 'en').length;
-    const ctx3 = document.getElementById('langChart')?.getContext('2d');
-    if (ctx3) {
-        if (langChart) langChart.destroy();
-        langChart = new Chart(ctx3, {
-            type: 'doughnut',
-            data: {
-                labels: ['🇵🇹 PT', '🇬🇧 EN'],
-                datasets: [{ data: [ptCount, enCount], backgroundColor: ['#166534', '#1E40AF'], borderWidth: 0 }]
-            },
-            options: { responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
-        });
-    }
-
-    // Score Distribution — includes LR teaser_score
+    // Score Distribution
     const scoreBuckets = { '0-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': 0 };
     data.forEach(a => {
         const s = a.score || a.teaser_score || 0;
         if (s <= 0) return;
-        // LR scores are 1-10, normalize to 0-100
         const normalized = a._source === 'linkedin_roaster' ? s * 10 : s;
         if (normalized <= 20) scoreBuckets['0-20']++;
         else if (normalized <= 40) scoreBuckets['21-40']++;
@@ -694,28 +827,23 @@ function renderFunnel() {
     const lrFiltered = filterByPeriod(allLinkedinRoaster, funnelPeriodDays);
     const lrTotal     = lrFiltered.length;
     const lrPaidCount = lrFiltered.filter(a => a.payment_status === 'paid').length;
-    const ceTotal     = allCareerEnergy.length; // Career Energy
+    const ceTotal     = allCareerEnergy.length;
     const freeCount   = data.filter(a => getAnalysisType(a) === 'free').length;
     const paidCount   = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full').length;
     const cpCount     = data.filter(a => a.analysis_type === 'career_path').length;
     const ciCount     = data.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full').length;
 
-    // LinkedIn Roaster é o topo do funil
-    const topTotal = lrTotal + (ceTotal || (freeCount + paidCount + cpCount));
-
-    // KPIs
     setText('funnelLR', lrTotal);
     setText('funnelLRConv', `${lrPaidCount} pagas`);
     setText('funnelCE', ceTotal || freeCount + paidCount + cpCount);
     setText('funnelFree', freeCount);
     setText('funnelPaid', paidCount);
     setText('funnelCP', cpCount);
+    setText('funnelFreeConv', ceTotal ? `${Math.round(freeCount / ceTotal * 100)}% do CE` : '—');
+    setText('funnelPaidConv', freeCount ? `${Math.round(paidCount / (freeCount + paidCount) * 100)}% do grátis` : '—');
+    setText('funnelCPConv', paidCount ? `${Math.round(cpCount / paidCount * 100)}% dos pagantes` : '—');
 
-    setText('funnelFreeConv',      ceTotal ? `${Math.round(freeCount / ceTotal * 100)}% do CE` : '—');
-    setText('funnelPaidConv',      freeCount ? `${Math.round(paidCount / (freeCount + paidCount) * 100)}% do grátis` : '—');
-    setText('funnelCPConv',        paidCount ? `${Math.round(cpCount / paidCount * 100)}% dos pagantes` : '—');
-
-    // Funil Visual — LinkedIn Roaster no topo
+    // Funil Visual
     const steps = [
         { name: 'LinkedIn Roaster (Topo)', count: lrTotal, color: '#0077B5' },
         { name: 'Career Energy (Diagnóstico)', count: ceTotal || (freeCount + paidCount + cpCount), color: '#6B7280' },
@@ -735,41 +863,24 @@ function renderFunnel() {
             <div class="funnel-step">
                 <div class="funnel-label-row">
                     <span class="funnel-step-name">${step.name}</span>
-                    <span class="funnel-step-meta">
-                        <span><strong>${step.count}</strong> utilizadores</span>
-                    </span>
+                    <span class="funnel-step-meta"><strong>${step.count}</strong> utilizadores</span>
                 </div>
                 <div class="funnel-bar-wrap">
                     <div class="funnel-bar" style="width:${pct}%;background:${step.color};">${step.count}</div>
                 </div>
-                ${conv !== null ? `<div class="funnel-conv">Conversão: <span class="conv-pct">${conv}%</span> &nbsp;|&nbsp; Abandono: <span class="drop-pct">${drop}%</span></div>` : ''}
+                ${conv !== null ? `<div class="funnel-conv">Conversão: <span class="conv-pct">${conv}%</span> | Abandono: <span class="drop-pct">${drop}%</span></div>` : ''}
             </div>`;
         }).join('');
     }
 
-    // Funil Chart
+    // Funnel Chart
     const ctx = document.getElementById('funnelChart')?.getContext('2d');
     if (ctx) {
         if (funnelChart) funnelChart.destroy();
         funnelChart = new Chart(ctx, {
             type: 'bar',
-            data: {
-                labels: steps.map(s => s.name),
-                datasets: [{
-                    label: 'Utilizadores',
-                    data: steps.map(s => s.count),
-                    backgroundColor: steps.map(s => s.color),
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: true,
-                animation: { duration: 0 },
-                plugins: { legend: { display: false } },
-                scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 11 } } } }
-            }
+            data: { labels: steps.map(s => s.name), datasets: [{ label: 'Utilizadores', data: steps.map(s => s.count), backgroundColor: steps.map(s => s.color), borderRadius: 4 }] },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 11 } } } } }
         });
     }
 
@@ -777,127 +888,72 @@ function renderFunnel() {
     const abandonEl = document.getElementById('abandonPoints');
     if (abandonEl) {
         const anonymous = data.filter(isAnonymous).length;
-        const noEmail   = data.filter(a => !a.user_email || a.user_email === '').length;
         const freeNoUpgrade = data.filter(a => getAnalysisType(a) === 'free' && !isAnonymous(a)).length;
         const paidNoCp = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full').length;
         const cpNoCi = data.filter(a => a.analysis_type === 'career_path' && !data.some(b => (b.analysis_type === 'career_intelligence_pro' || b.analysis_type === 'career_intelligence_full') && (b.user_email || '').toLowerCase() === (a.user_email || '').toLowerCase())).length;
 
         abandonEl.innerHTML = `
-            <div class="metric-row">
-                <div class="metric-label"><i class="fas fa-user-slash" style="color:var(--red);margin-right:6px;"></i> Utilizadores anónimos (sem email)</div>
-                <div style="display:flex;align-items:center;gap:12px;flex:1;margin-left:16px;">
-                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:${data.length ? Math.round(anonymous/data.length*100) : 0}%;background:var(--red);"></div></div>
-                    <div class="metric-value" style="color:var(--red);">${anonymous} <small style="font-size:11px;font-weight:400;">(${data.length ? Math.round(anonymous/data.length*100) : 0}%)</small></div>
-                </div>
-            </div>
-            <div class="metric-row">
-                <div class="metric-label"><i class="fas fa-arrow-up" style="color:var(--orange);margin-right:6px;"></i> Grátis sem upgrade para pago</div>
-                <div style="display:flex;align-items:center;gap:12px;flex:1;margin-left:16px;">
-                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:${freeCount ? Math.round(freeNoUpgrade/freeCount*100) : 0}%;background:var(--orange);"></div></div>
-                    <div class="metric-value" style="color:var(--orange);">${freeNoUpgrade} <small style="font-size:11px;font-weight:400;">(${freeCount ? Math.round(freeNoUpgrade/freeCount*100) : 0}%)</small></div>
-                </div>
-            </div>
-            <div class="metric-row">
-                <div class="metric-label"><i class="fas fa-route" style="color:var(--blue);margin-right:6px;"></i> CV Pago sem Career Path</div>
-                <div style="display:flex;align-items:center;gap:12px;flex:1;margin-left:16px;">
-                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:${paidCount ? Math.round(paidNoCp/paidCount*100) : 0}%;background:var(--blue);"></div></div>
-                    <div class="metric-value" style="color:var(--blue);">${paidNoCp} <small style="font-size:11px;font-weight:400;">(${paidCount ? Math.round(paidNoCp/paidCount*100) : 0}%)</small></div>
-                </div>
-            </div>
-            <div class="metric-row">
-                <div class="metric-label"><i class="fas fa-brain" style="color:#7C3AED;margin-right:6px;"></i> Career Path sem CI PRO upgrade</div>
-                <div style="display:flex;align-items:center;gap:12px;flex:1;margin-left:16px;">
-                    <div class="metric-bar-wrap"><div class="metric-bar" style="width:${cpCount ? Math.round(cpNoCi/cpCount*100) : 0}%;background:#7C3AED;"></div></div>
-                    <div class="metric-value" style="color:#7C3AED;">${cpNoCi} <small style="font-size:11px;font-weight:400;">(${cpCount ? Math.round(cpNoCi/cpCount*100) : 0}%)</small></div>
-                </div>
-            </div>`;
+            <div class="metric-row"><div class="metric-label"><i class="fas fa-user-slash" style="color:var(--red);margin-right:6px;"></i> Utilizadores anónimos</div>
+                <div style="display:flex;align-items:center;gap:12px;flex:1;margin-left:16px;"><div class="metric-bar-wrap"><div class="metric-bar" style="width:${data.length ? Math.round(anonymous/data.length*100) : 0}%;background:var(--red);"></div></div><div class="metric-value" style="color:var(--red);">${anonymous} (${data.length ? Math.round(anonymous/data.length*100) : 0}%)</div></div></div>
+            <div class="metric-row"><div class="metric-label"><i class="fas fa-arrow-up" style="color:var(--orange);margin-right:6px;"></i> Grátis sem upgrade</div>
+                <div style="display:flex;align-items:center;gap:12px;flex:1;margin-left:16px;"><div class="metric-bar-wrap"><div class="metric-bar" style="width:${freeCount ? Math.round(freeNoUpgrade/freeCount*100) : 0}%;background:var(--orange);"></div></div><div class="metric-value" style="color:var(--orange);">${freeNoUpgrade} (${freeCount ? Math.round(freeNoUpgrade/freeCount*100) : 0}%)</div></div></div>
+            <div class="metric-row"><div class="metric-label"><i class="fas fa-route" style="color:var(--blue);margin-right:6px;"></i> CV Pago sem Career Path</div>
+                <div style="display:flex;align-items:center;gap:12px;flex:1;margin-left:16px;"><div class="metric-bar-wrap"><div class="metric-bar" style="width:${paidCount ? Math.round(paidNoCp/paidCount*100) : 0}%;background:var(--blue);"></div></div><div class="metric-value" style="color:var(--blue);">${paidNoCp} (${paidCount ? Math.round(paidNoCp/paidCount*100) : 0}%)</div></div></div>
+            <div class="metric-row"><div class="metric-label"><i class="fas fa-brain" style="color:#7C3AED;margin-right:6px;"></i> Career Path sem CI PRO</div>
+                <div style="display:flex;align-items:center;gap:12px;flex:1;margin-left:16px;"><div class="metric-bar-wrap"><div class="metric-bar" style="width:${cpCount ? Math.round(cpNoCi/cpCount*100) : 0}%;background:#7C3AED;"></div></div><div class="metric-value" style="color:#7C3AED;">${cpNoCi} (${cpCount ? Math.round(cpNoCi/cpCount*100) : 0}%)</div></div></div>`;
     }
 
-    // Oportunidades
+    // Oportunidades de Conversão
     const oppEl = document.getElementById('conversionOpportunities');
     if (oppEl) {
         const freeIdentified = data.filter(a => getAnalysisType(a) === 'free' && !isAnonymous(a)).length;
-        const cvPaidNoCp     = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && !isAnonymous(a)).length;
-        const cpNoCiOpp      = data.filter(a => a.analysis_type === 'career_path' && !isAnonymous(a) && !data.some(b => (b.analysis_type === 'career_intelligence_pro' || b.analysis_type === 'career_intelligence_full') && (b.user_email || '').toLowerCase() === (a.user_email || '').toLowerCase())).length;
-        const avgTicket      = paidCount > 0 ? (data.filter(a => getAnalysisType(a) === 'paid').reduce((s, a) => s + (a.payment_amount || 0), 0) / paidCount) : 0;
-        const potentialRev   = (freeIdentified * avgTicket * 0.1 + cvPaidNoCp * 19.99 * 0.2 + cpNoCiOpp * 24 * 0.15).toFixed(0);
+        const cvPaidNoCp = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && !isAnonymous(a)).length;
+        const cpNoCiOpp = data.filter(a => a.analysis_type === 'career_path' && !isAnonymous(a) && !data.some(b => (b.analysis_type === 'career_intelligence_pro' || b.analysis_type === 'career_intelligence_full') && (b.user_email || '').toLowerCase() === (a.user_email || '').toLowerCase())).length;
+        const avgTicket = paidCount > 0 ? (data.filter(a => getAnalysisType(a) === 'paid').reduce((s, a) => s + (a.payment_amount || 0), 0) / paidCount) : 0;
+        const potentialRev = (freeIdentified * avgTicket * 0.1 + cvPaidNoCp * 19.99 * 0.2 + cpNoCiOpp * 24 * 0.15).toFixed(0);
 
         oppEl.innerHTML = `
             <div style="margin-bottom:12px;padding:12px;background:var(--green-bg);border-radius:8px;border-left:3px solid var(--green);">
-                <div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:4px;">💰 Receita Potencial Estimada</div>
+                <div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:4px;">Receita Potencial Estimada</div>
                 <div style="font-size:20px;font-weight:700;color:var(--dark);">${potentialRev}€</div>
                 <div style="font-size:11px;color:var(--text-muted);">10% leads grátis + 20% upsell Career Path + 15% upsell CI PRO</div>
             </div>
-            <div class="metric-row">
-                <div class="metric-label">Leads grátis identificadas para upsell</div>
-                <div class="metric-value" style="color:var(--gold);">${freeIdentified}</div>
-            </div>
-            <div class="metric-row">
-                <div class="metric-label">Clientes CV para upsell Career Path</div>
-                <div class="metric-value" style="color:var(--blue);">${cvPaidNoCp}</div>
-            </div>
-            <div class="metric-row">
-                <div class="metric-label">Career Path para upsell CI PRO (24€)</div>
-                <div class="metric-value" style="color:#7C3AED;">${cpNoCiOpp}</div>
-            </div>
-            <div class="metric-row">
-                <div class="metric-label">Ticket médio atual</div>
-                <div class="metric-value" style="color:var(--green);">${avgTicket.toFixed(2)}€</div>
-            </div>`;
+            <div class="metric-row"><div class="metric-label">Leads grátis para upsell</div><div class="metric-value" style="color:var(--gold);">${freeIdentified}</div></div>
+            <div class="metric-row"><div class="metric-label">CV para upsell Career Path</div><div class="metric-value" style="color:var(--blue);">${cvPaidNoCp}</div></div>
+            <div class="metric-row"><div class="metric-label">Career Path para upsell CI PRO</div><div class="metric-value" style="color:#7C3AED;">${cpNoCiOpp}</div></div>
+            <div class="metric-row"><div class="metric-label">Ticket médio atual</div><div class="metric-value" style="color:var(--green);">${avgTicket.toFixed(2)}€</div></div>`;
     }
 
-    // Receita por Produto (inclui LinkedIn Roaster)
+    // Receita por Produto
     const revEl = document.getElementById('revenueByProduct');
     if (revEl) {
         const cvRev = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full').reduce((s, a) => s + (a.payment_amount || 0), 0);
         const cpRev = data.filter(a => a.analysis_type === 'career_path').reduce((s, a) => s + (a.payment_amount || 0), 0);
         const ciRevFunnel = data.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
         const lrRev = lrFiltered.filter(a => a.payment_status === 'paid').reduce((s, a) => s + (parseFloat(a.payment_amount) || 0), 0);
-        const vRev  = allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
+        const vRev = allVouchers.filter(v => v.payment_method !== 'test' && v.payment_method !== 'promo').reduce((s, v) => s + (parseFloat(v.amount_paid) || 0), 0);
         const total = cvRev + cpRev + ciRevFunnel + lrRev + vRev;
 
-        revEl.innerHTML = `
-            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">
-                ${[
-                    { label: 'CV Analyser', value: cvRev, color: 'var(--purple)', icon: 'fa-file-alt' },
-                    { label: 'Career Path', value: cpRev, color: 'var(--blue)', icon: 'fa-route' },
-                    { label: 'Career Intelligence', value: ciRevFunnel, color: '#7C3AED', icon: 'fa-brain' },
-                    { label: 'LinkedIn Roaster', value: lrRev, color: '#0077B5', icon: 'fab fa-linkedin' },
-                    { label: 'Vouchers', value: vRev, color: 'var(--gold)', icon: 'fa-ticket-alt' }
-                ].map(p => `
-                    <div style="text-align:center;padding:16px;background:var(--bg);border-radius:8px;">
-                        <i class="${p.icon.startsWith('fab') ? p.icon : 'fas ' + p.icon}" style="font-size:20px;color:${p.color};margin-bottom:8px;display:block;"></i>
-                        <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;">${p.label}</div>
-                        <div style="font-size:22px;font-weight:700;color:${p.color};margin-top:4px;">${p.value.toFixed(2)}€</div>
-                        <div style="font-size:11px;color:var(--text-muted);">${total > 0 ? Math.round(p.value/total*100) : 0}% do total</div>
-                    </div>`).join('')}
-            </div>
-            <div style="margin-top:16px;padding:12px 16px;background:var(--gold-bg);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
-                <span style="font-size:13px;font-weight:600;color:var(--dark);">Total Receita (período)</span>
-                <span style="font-size:20px;font-weight:700;color:var(--gold);">${total.toFixed(2)}€</span>
-            </div>`;
+        revEl.innerHTML = `<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">
+            ${[
+                { label: 'CV Analyser', value: cvRev, color: 'var(--purple)', icon: 'fa-file-alt' },
+                { label: 'Career Path', value: cpRev, color: 'var(--blue)', icon: 'fa-route' },
+                { label: 'Career Intelligence', value: ciRevFunnel, color: '#7C3AED', icon: 'fa-brain' },
+                { label: 'LinkedIn Roaster', value: lrRev, color: '#0077B5', icon: 'fab fa-linkedin' },
+                { label: 'Vouchers', value: vRev, color: 'var(--gold)', icon: 'fa-ticket-alt' }
+            ].map(p => `<div style="text-align:center;padding:16px;background:var(--bg);border-radius:8px;">
+                <i class="${p.icon.startsWith('fab') ? p.icon : 'fas ' + p.icon}" style="font-size:20px;color:${p.color};margin-bottom:8px;display:block;"></i>
+                <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;">${p.label}</div>
+                <div style="font-size:22px;font-weight:700;color:${p.color};margin-top:4px;">${p.value.toFixed(2)}€</div>
+                <div style="font-size:11px;color:var(--text-muted);">${total > 0 ? Math.round(p.value/total*100) : 0}% do total</div>
+            </div>`).join('')}
+        </div>`;
     }
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  CRM / LEADS
+//  CRM & LEADS
 // ═══════════════════════════════════════════════════════════════
-// ═══════════════════════════════════════════════════════════════
-//  CRM INTELLIGENCE HELPERS
-// ═══════════════════════════════════════════════════════════════
-function getCRMActionsTaken(p) {
-    const actions = [];
-    const emailsSent = allEmailHistory.filter(e => e.recipient_email?.toLowerCase() === p.email);
-    const autoEmails = emailsSent.filter(e => e.email_type === 'upsell_auto_2h' || e.email_type === 'upsell_auto_7d');
-    const manualEmails = emailsSent.filter(e => e.email_type !== 'upsell_auto_2h' && e.email_type !== 'upsell_auto_7d');
-    const freeCount = p.analyses.filter(a => getAnalysisType(a) === 'free').length;
-    const paidCount = p.purchases.length;
-    if (freeCount > 0) actions.push(`<span class="badge badge-secondary">${freeCount}x Análise Free</span>`);
-    if (paidCount > 0) actions.push(`<span class="badge badge-paid">${paidCount}x Compra</span>`);
-    if (autoEmails.length > 0) actions.push(`<span class="badge badge-teal">${autoEmails.length}x Email Auto</span>`);
-    if (manualEmails.length > 0) actions.push(`<span class="badge badge-purple">${manualEmails.length}x Email Manual</span>`);
-    return actions.length ? actions.join(' ') : '<span style="color:var(--text-muted);">Nenhuma</span>';
-}
 function getCRMSuggestion(p) {
     const emailsSent = allEmailHistory.filter(e => e.recipient_email?.toLowerCase() === p.email);
     const hasAutoUpsell2h = emailsSent.some(e => e.email_type === 'upsell_auto_2h');
@@ -917,6 +973,7 @@ function getCRMSuggestion(p) {
     if (avgScore >= 60 && avgScore < 80) return '<span style="color:var(--orange);"><i class="fas fa-chart-line"></i> Mostrar benefícios premium</span>';
     return '<span style="color:var(--text-muted);"><i class="fas fa-hourglass-half"></i> Aguardar email auto 2h</span>';
 }
+
 function getCRMPlannedAction(p) {
     const emailsSent = allEmailHistory.filter(e => e.recipient_email?.toLowerCase() === p.email);
     const hasAutoUpsell2h = emailsSent.some(e => e.email_type === 'upsell_auto_2h');
@@ -941,13 +998,13 @@ function getCRMPlannedAction(p) {
     }
     return '<span style="color:var(--text-muted);">—</span>';
 }
+
 function renderAutoEmailsMonitoring() {
     const autoEmails = allEmailHistory.filter(e => e.email_type === 'upsell_auto_2h' || e.email_type === 'upsell_auto_7d');
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const recent = autoEmails.filter(e => new Date(e.sent_at) > thirtyDaysAgo);
     const upsell2h = recent.filter(e => e.email_type === 'upsell_auto_2h').length;
     const upsell7d = recent.filter(e => e.email_type === 'upsell_auto_7d').length;
-    // Count conversions: users who received auto email AND later purchased
     const autoRecipients = [...new Set(autoEmails.map(e => e.recipient_email?.toLowerCase()))];
     const conversions = autoRecipients.filter(email => {
         const emailDate = autoEmails.find(e => e.recipient_email?.toLowerCase() === email)?.sent_at;
@@ -958,14 +1015,10 @@ function renderAutoEmailsMonitoring() {
     setText('autoUpsell7d', upsell7d);
     setText('autoConversions', conversions);
     setText('autoConvRate', convRate);
-    // Render recent auto emails table
     const tbody = document.getElementById('autoEmailsTable');
     if (!tbody) return;
     const recentAuto = autoEmails.sort((a, b) => new Date(b.sent_at) - new Date(a.sent_at)).slice(0, 15);
-    if (!recentAuto.length) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted);">Nenhum email automático enviado ainda</td></tr>';
-        return;
-    }
+    if (!recentAuto.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted);">Nenhum email automático enviado</td></tr>'; return; }
     tbody.innerHTML = recentAuto.map(e => {
         const date = new Date(e.sent_at).toLocaleDateString('pt-PT') + ' ' + new Date(e.sent_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
         const typeBadge = e.email_type === 'upsell_auto_2h' ? '<span class="badge badge-teal">Upsell 2h</span>' : '<span class="badge badge-purple">Follow-up 7d</span>';
@@ -974,93 +1027,64 @@ function renderAutoEmailsMonitoring() {
         return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td style="font-size:12px;">${e.recipient_email || '—'}</td><td>${typeBadge}</td><td><span class="badge badge-success">Enviado</span></td><td>${convBadge}</td></tr>`;
     }).join('');
 }
-function buildCRMProfiles() {
-    // Agrupa análises por email para criar perfil único por utilizador
-    const profileMap = {};
 
+function buildCRMProfiles() {
+    const profileMap = {};
     allAnalyses.forEach(a => {
         const email = isAnonymous(a) ? null : a.user_email.toLowerCase().trim();
         if (!email) return;
-
         if (!profileMap[email]) {
-            profileMap[email] = {
-                email,
-                name: a.user_name || '',
-                professional_area: a.professional_area || '',
-                seniority: a.seniority_level || '',
-                analyses: [],
-                purchases: [],
-                totalSpent: 0,
-                lastInteraction: a.created_at,
-                firstInteraction: a.created_at
-            };
+            profileMap[email] = { email, name: a.user_name || '', professional_area: a.professional_area || '', seniority: a.seniority_level || '', analyses: [], purchases: [], totalSpent: 0, lastInteraction: a.created_at, firstInteraction: a.created_at };
         }
-
         const p = profileMap[email];
         p.analyses.push(a);
-
         if (new Date(a.created_at) > new Date(p.lastInteraction)) p.lastInteraction = a.created_at;
         if (new Date(a.created_at) < new Date(p.firstInteraction)) p.firstInteraction = a.created_at;
-
         if (!p.name && a.user_name) p.name = a.user_name;
         if (!p.professional_area && a.professional_area) p.professional_area = a.professional_area;
         if (!p.seniority && a.seniority_level) p.seniority = a.seniority_level;
-
         const type = getAnalysisType(a);
-        if (type === 'paid' || type === 'voucher') {
-            p.purchases.push(a);
-            p.totalSpent += (a.payment_amount || 0);
-        }
+        if (type === 'paid' || type === 'voucher') { p.purchases.push(a); p.totalSpent += (a.payment_amount || 0); }
     });
-
-    // Determinar etapa do funil
     const sentEmails = new Set(allEmailHistory.map(e => e.recipient_email?.toLowerCase()));
-
     return Object.values(profileMap).map(p => {
         const hasPurchase = p.purchases.length > 0;
         const hasMultiple = p.purchases.length >= 2 || (p.purchases.length >= 1 && p.analyses.some(a => a.analysis_type === 'career_path' || a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full'));
         const inNurturing = sentEmails.has(p.email);
-
         let stage = 'lead';
         if (hasMultiple) stage = 'recurring';
         else if (hasPurchase) stage = 'client';
         else if (inNurturing) stage = 'nurturing';
-
         return { ...p, stage };
     }).sort((a, b) => new Date(b.lastInteraction) - new Date(a.lastInteraction));
 }
 
 function renderCRM() {
     const profiles = buildCRMProfiles();
-
-    // KPIs
-    const leads     = profiles.filter(p => p.stage === 'lead').length;
+    const leads = profiles.filter(p => p.stage === 'lead').length;
     const nurturing = profiles.filter(p => p.stage === 'nurturing').length;
-    const clients   = profiles.filter(p => p.stage === 'client').length;
+    const clients = profiles.filter(p => p.stage === 'client').length;
     const recurring = profiles.filter(p => p.stage === 'recurring').length;
-
-    setText('crmLeads',     leads);
+    setText('crmLeads', leads);
     setText('crmNurturing', nurturing);
-    setText('crmClients',   clients);
+    setText('crmClients', clients);
     setText('crmRecurring', recurring);
 
-    // Populate seniority and area filters
     const senioritySet = new Set(profiles.map(p => p.seniority).filter(Boolean));
-    const areaSet      = new Set(profiles.map(p => p.professional_area).filter(Boolean));
+    const areaSet = new Set(profiles.map(p => p.professional_area).filter(Boolean));
     populateSelect('crmFilterSeniority', [...senioritySet].sort());
-    populateSelect('crmFilterArea',      [...areaSet].sort());
+    populateSelect('crmFilterArea', [...areaSet].sort());
 
-    // Filter
-    const stageFilter   = document.getElementById('crmFilterStage')?.value || 'all';
+    const stageFilter = document.getElementById('crmFilterStage')?.value || 'all';
     const productFilter = document.getElementById('crmFilterProduct')?.value || 'all';
-    const senFilter     = document.getElementById('crmFilterSeniority')?.value || 'all';
-    const areaFilter    = document.getElementById('crmFilterArea')?.value || 'all';
-    const search        = (document.getElementById('crmSearch')?.value || '').toLowerCase();
+    const senFilter = document.getElementById('crmFilterSeniority')?.value || 'all';
+    const areaFilter = document.getElementById('crmFilterArea')?.value || 'all';
+    const search = (document.getElementById('crmSearch')?.value || '').toLowerCase();
 
     let filtered = profiles;
     if (stageFilter !== 'all') filtered = filtered.filter(p => p.stage === stageFilter);
-    if (senFilter   !== 'all') filtered = filtered.filter(p => p.seniority === senFilter);
-    if (areaFilter  !== 'all') filtered = filtered.filter(p => p.professional_area === areaFilter);
+    if (senFilter !== 'all') filtered = filtered.filter(p => p.seniority === senFilter);
+    if (areaFilter !== 'all') filtered = filtered.filter(p => p.professional_area === areaFilter);
     if (productFilter !== 'all') {
         filtered = filtered.filter(p => {
             if (productFilter === 'cv_free') return p.analyses.some(a => getAnalysisType(a) === 'free');
@@ -1070,42 +1094,24 @@ function renderCRM() {
             return true;
         });
     }
-    if (search) filtered = filtered.filter(p =>
-        p.email.includes(search) || (p.name || '').toLowerCase().includes(search)
-    );
-
+    if (search) filtered = filtered.filter(p => p.email.includes(search) || (p.name || '').toLowerCase().includes(search));
     setText('crmCount', `${filtered.length} contactos`);
 
-    // Paginate
     const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
     crmPage = Math.min(crmPage, totalPages || 1);
     const page = filtered.slice((crmPage - 1) * PAGE_SIZE, crmPage * PAGE_SIZE);
-
     const tbody = document.getElementById('crmTable');
     if (!tbody) return;
+    if (!page.length) { tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum contacto encontrado</td></tr>`; return; }
 
-    if (!page.length) {
-        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum contacto encontrado</td></tr>`;
-        return;
-    }
-
+    const productNameMap = t => t === 'career_path' ? 'Career Path' : t === 'career_intelligence_pro' ? 'CI PRO' : t === 'career_intelligence_full' ? 'CI Full' : t === 'linkedin_roaster' ? 'LinkedIn Roaster' : 'CV Analyser';
     tbody.innerHTML = page.map(p => {
         const initials = (p.name || p.email).slice(0, 2).toUpperCase();
         const lastDate = new Date(p.lastInteraction).toLocaleDateString('pt-PT');
-        const productNameMap = t => t === 'career_path' ? 'Career Path' : t === 'career_intelligence_pro' ? 'CI PRO' : t === 'career_intelligence_full' ? 'CI Full' : t === 'linkedin_roaster' ? 'LinkedIn Roaster' : 'CV Analyser';
-        const productsUsed = [...new Set(p.analyses.map(a => productNameMap(a.analysis_type || (a._source === 'linkedin_roaster' ? 'linkedin_roaster' : ''))))].join(', ');
+        const productsUsed = [...new Set(p.analyses.map(a => productNameMap(a.analysis_type || '')))].join(', ');
         const productsBought = p.purchases.length > 0 ? [...new Set(p.purchases.map(a => productNameMap(a.analysis_type)))].join(', ') : '—';
-        return `
-        <tr>
-            <td>
-                <div style="display:flex;align-items:center;gap:10px;">
-                    <div class="lead-avatar">${initials}</div>
-                    <div>
-                        <div class="lead-name">${p.name || '—'}</div>
-                        <div class="lead-email">${p.email}</div>
-                    </div>
-                </div>
-            </td>
+        return `<tr>
+            <td><div style="display:flex;align-items:center;gap:10px;"><div class="lead-avatar">${initials}</div><div><div class="lead-name">${p.name || '—'}</div><div class="lead-email">${p.email}</div></div></div></td>
             <td style="font-size:12px;">${p.professional_area || '—'}</td>
             <td style="font-size:12px;">${p.seniority || '—'}</td>
             <td style="font-size:12px;">${productsUsed}</td>
@@ -1113,16 +1119,12 @@ function renderCRM() {
             <td style="font-size:12px;font-weight:600;color:var(--gold);">${p.totalSpent > 0 ? p.totalSpent.toFixed(2) + '€' : '—'}</td>
             <td style="font-size:12px;color:var(--text-muted);">${lastDate}</td>
             <td>${getStageBadge(p.stage)}</td>
-            <td>
-                <div style="display:flex;gap:4px;">
-                    <button class="btn-icon" title="Ver Perfil" onclick="showUserProfile('${p.email}')"><i class="fas fa-eye"></i></button>
-                    <button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${p.email}','${(p.name||'').replace(/'/g,"\\\'")}')">
-<i class="fas fa-envelope"></i></button>
-                </div>
-            </td>
+            <td><div style="display:flex;gap:4px;">
+                <button class="btn-icon" title="Ver Perfil" onclick="showUserProfile('${p.email}')"><i class="fas fa-eye"></i></button>
+                <button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${p.email}','${(p.name||'').replace(/'/g,"\\'")}')"><i class="fas fa-envelope"></i></button>
+            </div></td>
         </tr>`;
     }).join('');
-
     renderPagination('crmPagination', crmPage, totalPages, (p) => { crmPage = p; renderCRM(); });
 }
 
@@ -1131,13 +1133,7 @@ function populateSelect(id, options) {
     if (!el) return;
     const current = el.value;
     const existing = [...el.options].map(o => o.value);
-    options.forEach(opt => {
-        if (!existing.includes(opt)) {
-            const o = document.createElement('option');
-            o.value = opt; o.textContent = opt;
-            el.appendChild(o);
-        }
-    });
+    options.forEach(opt => { if (!existing.includes(opt)) { const o = document.createElement('option'); o.value = opt; o.textContent = opt; el.appendChild(o); } });
     if (current) el.value = current;
 }
 
@@ -1145,14 +1141,10 @@ function exportCRMCSV() {
     const profiles = buildCRMProfiles();
     const rows = [['Email','Nome','Área','Senioridade','Produtos Usados','Produtos Comprados','Total Gasto','Última Interação','Etapa']];
     profiles.forEach(p => {
-        rows.push([
-            p.email, p.name || '', p.professional_area || '', p.seniority || '',
-            [...new Set(p.analyses.map(a => a.analysis_type === 'career_path' ? 'Career Path' : a.analysis_type === 'career_intelligence_pro' ? 'CI PRO' : a.analysis_type === 'career_intelligence_full' ? 'CI Full' : a.analysis_type === 'linkedin_roaster' ? 'LinkedIn Roaster' : 'CV Analyser'))].join(';'),
-            [...new Set(p.purchases.map(a => a.analysis_type === 'career_path' ? 'Career Path' : a.analysis_type === 'career_intelligence_pro' ? 'CI PRO' : a.analysis_type === 'career_intelligence_full' ? 'CI Full' : a.analysis_type === 'linkedin_roaster' ? 'LinkedIn Roaster' : 'CV Analyser'))].join(';') || '',
-            p.totalSpent.toFixed(2),
-            p.lastInteraction?.slice(0, 10),
-            p.stage
-        ]);
+        rows.push([p.email, p.name || '', p.professional_area || '', p.seniority || '',
+            [...new Set(p.analyses.map(a => a.analysis_type || 'CV Analyser'))].join(';'),
+            [...new Set(p.purchases.map(a => a.analysis_type || 'CV Analyser'))].join(';') || '',
+            p.totalSpent.toFixed(2), p.lastInteraction?.slice(0, 10), p.stage]);
     });
     downloadCSV(rows, 'crm_leads.csv');
 }
@@ -1164,16 +1156,12 @@ function showUserProfile(email) {
     const profiles = buildCRMProfiles();
     const p = profiles.find(x => x.email === email);
     if (!p) return;
-
     document.getElementById('userProfileTitle').innerHTML = `<i class="fas fa-user" style="color:var(--gold);margin-right:8px;"></i> ${p.name || p.email}`;
     document.getElementById('userProfileModal').style.display = 'flex';
-
     const sentEmails = allEmailHistory.filter(e => e.recipient_email?.toLowerCase() === email);
     const timeline = [...p.analyses, ...sentEmails].sort((a, b) => new Date(b.created_at || b.sent_at) - new Date(a.created_at || a.sent_at));
-
     document.getElementById('userProfileBody').innerHTML = `
-        <div class="profile-section">
-            <h4>Informação do Contacto</h4>
+        <div class="profile-section"><h4>Informação do Contacto</h4>
             <div class="profile-row"><span>Email</span><span>${p.email}</span></div>
             <div class="profile-row"><span>Nome</span><span>${p.name || '—'}</span></div>
             <div class="profile-row"><span>Área Profissional</span><span>${p.professional_area || '—'}</span></div>
@@ -1182,21 +1170,16 @@ function showUserProfile(email) {
             <div class="profile-row"><span>Primeira Interação</span><span>${new Date(p.firstInteraction).toLocaleDateString('pt-PT')}</span></div>
             <div class="profile-row"><span>Última Interação</span><span>${new Date(p.lastInteraction).toLocaleDateString('pt-PT')}</span></div>
         </div>
-        <div class="profile-section">
-            <h4>Produtos & Compras</h4>
+        <div class="profile-section"><h4>Produtos & Compras</h4>
             <div class="profile-row"><span>Análises Realizadas</span><span>${p.analyses.length}</span></div>
             <div class="profile-row"><span>Produtos Comprados</span><span>${p.purchases.length}</span></div>
             <div class="profile-row"><span>Total Gasto</span><span style="font-weight:700;color:var(--gold);">${p.totalSpent.toFixed(2)}€</span></div>
-            <div class="profile-row"><span>Score Médio</span><span>${p.analyses.filter(a => a.score > 0).length ? Math.round(p.analyses.filter(a => a.score > 0).reduce((s, a) => s + a.score, 0) / p.analyses.filter(a => a.score > 0).length) : '—'}</span></div>
         </div>
-        <div class="profile-section">
-            <h4>Histórico de Atividade</h4>
+        <div class="profile-section"><h4>Histórico de Atividade</h4>
             ${timeline.slice(0, 10).map(item => {
                 const isEmail = item.sent_at;
                 const date = new Date(item.created_at || item.sent_at).toLocaleDateString('pt-PT');
-                const desc = isEmail
-                    ? `📧 Email enviado: ${item.subject || item.email_type || 'Follow-up'}`
-                    : `📄 Análise ${getAnalysisType(item)} — Score: ${item.score || '—'}`;
+                const desc = isEmail ? `Email: ${item.subject || item.email_type || 'Follow-up'}` : `Análise ${getAnalysisType(item)} — Score: ${item.score || '—'}`;
                 return `<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div>${desc}</div><div class="timeline-date">${date}</div></div></div>`;
             }).join('')}
         </div>
@@ -1205,85 +1188,56 @@ function showUserProfile(email) {
             <button class="btn btn-outline btn-sm" onclick="closeUserProfile()">Fechar</button>
         </div>`;
 }
-
-function closeUserProfile() {
-    document.getElementById('userProfileModal').style.display = 'none';
-}
+function closeUserProfile() { document.getElementById('userProfileModal').style.display = 'none'; }
 
 // ═══════════════════════════════════════════════════════════════
-//  ANÁLISES
+//  ANÁLISES TAB
 // ═══════════════════════════════════════════════════════════════
 function filterAnalyses() { currentPage = 1; renderAnalyses(); }
 
 function renderAnalyses() {
-    // Merge CV analyses with LinkedIn Roaster analyses (tagged with _source)
     const lrTagged = allLinkedinRoaster.map(a => ({ ...a, _source: 'linkedin_roaster', analysis_type: 'linkedin_roaster' }));
     let data = filterByLang([...allAnalyses, ...lrTagged], globalLang);
     data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-    const type    = document.getElementById('filterType')?.value || 'all';
-    const lang    = document.getElementById('filterLang')?.value || 'all';
-    const product = document.getElementById('filterProduct')?.value || 'all';
-    const email   = (document.getElementById('filterEmail')?.value || '').toLowerCase();
-    const from    = document.getElementById('filterDateFrom')?.value;
-    const to      = document.getElementById('filterDateTo')?.value;
-
-    if (type !== 'all') data = data.filter(a => getAnalysisType(a) === type);
-    if (lang !== 'all') data = data.filter(a => detectLanguage(a) === lang);
-    if (product !== 'all') {
-        if (product === 'linkedin_roaster') data = data.filter(a => a._source === 'linkedin_roaster');
-        else if (product === 'bundle') data = data.filter(a => a.analysis_type === 'bundle');
-        else if (product === 'cv') data = data.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'bundle' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && a._source !== 'linkedin_roaster');
-        else if (product === 'career_path') data = data.filter(a => a.analysis_type === 'career_path');
-        else if (product === 'career_intelligence') data = data.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full');
+    const type = document.getElementById('filterType')?.value || 'all';
+    const email = (document.getElementById('filterSearch')?.value || '').toLowerCase();
+    const period = document.getElementById('filterPeriod')?.value || 'all';
+    if (type !== 'all') {
+        if (type === 'linkedin_roaster') data = data.filter(a => a._source === 'linkedin_roaster');
+        else if (type === 'cv') data = data.filter(a => a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && a._source !== 'linkedin_roaster');
+        else if (type === 'career_path') data = data.filter(a => a.analysis_type === 'career_path');
+        else if (type === 'career_intelligence') data = data.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full');
+        else data = data.filter(a => getAnalysisType(a) === type);
     }
     if (email) data = data.filter(a => (a.user_email || '').toLowerCase().includes(email));
-    if (from) data = data.filter(a => a.created_at >= from);
-    if (to)   data = data.filter(a => a.created_at <= to + 'T23:59:59');
-
+    if (period !== 'all') data = filterByPeriod(data, parseInt(period));
     setText('analysesCount', `${data.length} análises`);
-
     const totalPages = Math.ceil(data.length / PAGE_SIZE);
     currentPage = Math.min(currentPage, totalPages || 1);
     const page = data.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
-
     const tbody = document.getElementById('analysesTable');
     if (!tbody) return;
-
-    if (!page.length) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma análise encontrada</td></tr>`;
-        return;
-    }
-
+    if (!page.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma análise encontrada</td></tr>`; return; }
     tbody.innerHTML = page.map(a => {
-        const type = getAnalysisType(a);
-        const lang = detectLanguage(a);
+        const aType = getAnalysisType(a);
         const dt = new Date(a.created_at);
         const date = dt.toLocaleDateString('pt-PT') + ' ' + dt.toLocaleTimeString('pt-PT', {hour:'2-digit', minute:'2-digit'});
         const rawScore = a.score || a.teaser_score || 0;
-        const score = rawScore > 0 ? `<span style="font-weight:600;color:${rawScore >= 70 ? 'var(--green)' : rawScore >= 40 ? 'var(--orange)' : 'var(--red)'};">` + `${rawScore}</span>` : '—';
+        const score = rawScore > 0 ? `<span style="font-weight:600;color:${rawScore >= 70 ? 'var(--green)' : rawScore >= 40 ? 'var(--orange)' : 'var(--red)'};">${rawScore}</span>` : '—';
         const amount = a.payment_amount > 0 ? `<span style="color:var(--gold);font-weight:600;">${a.payment_amount.toFixed(2)}€</span>` : '—';
-        const anonBadge = isAnonymous(a) ? '<span class="badge badge-secondary" style="font-size:9px;">Anónimo</span>' : '';
-        return `
-        <tr>
+        return `<tr>
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td>${a.user_name || '<span style="color:var(--text-muted);">—</span>'}</td>
-            <td style="font-size:12px;">${isAnonymous(a) ? `<span style="color:var(--text-muted);">${a.user_email || 'anónimo'}</span>` : a.user_email} ${anonBadge}</td>
+            <td>${a.user_name || '—'}</td>
+            <td style="font-size:12px;">${isAnonymous(a) ? '<span style="color:var(--text-muted);">anónimo</span>' : a.user_email}</td>
             <td>${score}</td>
-            <td style="font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${a.professional_area || a.target_area || ''}">${a.professional_area || a.target_area || '—'}</td>
-            <td>${getTypeBadge(type)}</td>
+            <td>${getTypeBadge(aType)}</td>
             <td>${getProductBadge(a)}</td>
-            <td>${getLangBadge(lang)}</td>
             <td>${amount}</td>
-            <td>
-                <div style="display:flex;gap:4px;">
-                    ${!isAnonymous(a) ? `<button class="btn-icon" title="Ver Perfil" onclick="showUserProfile('${a.user_email.toLowerCase()}')"><i class="fas fa-eye"></i></button>` : ''}
-                    ${!isAnonymous(a) ? `<button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${a.user_email}','${(a.user_name||'').replace(/'/g,"\\'")}')"><i class="fas fa-envelope"></i></button>` : ''}
-                </div>
-            </td>
+            <td><div style="display:flex;gap:4px;">
+                ${!isAnonymous(a) ? `<button class="btn-icon" title="Ver Perfil" onclick="showUserProfile('${a.user_email.toLowerCase()}')"><i class="fas fa-eye"></i></button>` : ''}
+            </div></td>
         </tr>`;
     }).join('');
-
     renderPagination('analysesPagination', currentPage, totalPages, (p) => { currentPage = p; renderAnalyses(); });
 }
 
@@ -1291,15 +1245,10 @@ function exportAnalysesCSV() {
     const lrTagged = allLinkedinRoaster.map(a => ({ ...a, _source: 'linkedin_roaster', analysis_type: 'linkedin_roaster' }));
     let data = filterByLang([...allAnalyses, ...lrTagged], globalLang);
     data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    const rows = [['Data','Nome','Email','Score','Área','Tipo','Produto','Idioma','Valor','Origem']];
+    const rows = [['Data','Nome','Email','Score','Tipo','Produto','Valor','Origem']];
     data.forEach(a => {
         const productName = a._source === 'linkedin_roaster' ? 'LinkedIn Roaster' : a.analysis_type === 'career_intelligence_pro' ? 'CI PRO' : a.analysis_type === 'career_intelligence_full' ? 'CI Full' : a.analysis_type === 'career_path' ? 'Career Path' : 'CV Analyser';
-        rows.push([
-            a.created_at?.slice(0,10), a.user_name||'', a.user_email||'',
-            a.score || a.teaser_score || '', a.professional_area || a.target_area || '',
-            getAnalysisType(a), productName,
-            detectLanguage(a), a.payment_amount||0, getPaymentOrigin(a)
-        ]);
+        rows.push([a.created_at?.slice(0,10), a.user_name||'', a.user_email||'', a.score||a.teaser_score||'', getAnalysisType(a), productName, a.payment_amount||0, getPaymentOrigin(a)]);
     });
     downloadCSV(rows, 'analises.csv');
 }
@@ -1312,60 +1261,46 @@ function filterVouchers() { renderVouchers(); }
 function renderVouchers() {
     let data = [...allVouchers];
     const status = document.getElementById('filterVoucherStatus')?.value || 'all';
-    const type   = document.getElementById('filterVoucherType')?.value || 'all';
-    const email  = (document.getElementById('filterVoucherEmail')?.value || '').toLowerCase();
-
+    const email = (document.getElementById('filterVoucherSearch')?.value || '').toLowerCase();
     if (status !== 'all') {
         if (status === 'active') data = data.filter(v => v.is_active === true || (!v.is_active && v.used_analyses < v.total_analyses));
         else data = data.filter(v => v.is_active === false || v.used_analyses >= v.total_analyses);
     }
-    if (type !== 'all') data = data.filter(v => v.voucher_type === type);
-    if (email) data = data.filter(v => (v.email || '').toLowerCase().includes(email));
-
+    if (email) data = data.filter(v => (v.email || '').toLowerCase().includes(email) || (v.code || '').toLowerCase().includes(email));
+    setText('vouchersCount', `${data.length} vouchers`);
     const tbody = document.getElementById('vouchersTable');
     if (!tbody) return;
-
-    if (!data.length) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum voucher encontrado</td></tr>`;
-        return;
-    }
-
+    if (!data.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum voucher encontrado</td></tr>`; return; }
     tbody.innerHTML = data.map(v => {
         const isActive = v.is_active === true || (v.is_active !== false && (v.used_analyses || 0) < (v.total_analyses || 1));
         const date = new Date(v.created_at).toLocaleDateString('pt-PT');
-        const usedPct = v.total_analyses > 0 ? Math.round((v.used_analyses || 0) / v.total_analyses * 100) : 0;
-        const hasCareerPath = v.includes_career_path === true || v.voucher_type === 'complete';
-        return `
-        <tr>
+        return `<tr>
             <td><code style="font-size:12px;background:var(--bg);padding:2px 6px;border-radius:4px;">${v.code}</code></td>
             <td style="font-size:12px;">${v.email || '—'}</td>
             <td style="font-size:12px;">${v.plan_name || '—'}</td>
-            <td>${v.voucher_type === 'linkedin_roaster' ? '<span class="badge" style="background:#0077B5;color:#fff;font-size:10px;">LinkedIn Roaster</span>' : v.voucher_type === 'career_intelligence_pro' ? '<span class="badge" style="background:#7C3AED;color:#fff;font-size:10px;">CI PRO</span>' : v.voucher_type === 'career_intelligence_full' ? '<span class="badge" style="background:#5B21B6;color:#fff;font-size:10px;">CI Full</span>' : v.voucher_type === 'career_path' ? '<span class="badge badge-career">Career Path</span>' : v.voucher_type === 'complete' || v.voucher_type === 'bundle' ? '<span class="badge" style="background:var(--gold);color:#fff;font-size:10px;">Bundle</span>' : '<span class="badge badge-cv">CV Analyser</span>'}</td>
             <td style="font-size:12px;font-weight:600;">${parseFloat(v.amount_paid) > 0 ? parseFloat(v.amount_paid).toFixed(2) + '€' : '—'}</td>
-            <td>
-                <span class="badge ${isActive ? 'badge-success' : 'badge-secondary'}">${isActive ? 'Ativo' : 'Usado'}</span>
-                <span style="font-size:10px;color:var(--text-muted);margin-left:4px;">${v.used_analyses||0}/${v.total_analyses||1}</span>
-            </td>
+            <td><span class="badge ${isActive ? 'badge-success' : 'badge-secondary'}">${isActive ? 'Ativo' : 'Usado'}</span> <span style="font-size:10px;color:var(--text-muted);">${v.used_analyses||0}/${v.total_analyses||1}</span></td>
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td>
-                ${v.email ? `<button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${v.email}','')"><i class="fas fa-envelope"></i></button>` : ''}
-            </td>
+            <td>${v.email ? `<button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${v.email}','')"><i class="fas fa-envelope"></i></button>` : ''}</td>
         </tr>`;
     }).join('');
+}
+
+function exportVouchersCSV() {
+    const rows = [['Código','Email','Plano','Valor','Estado','Usado/Total','Data']];
+    allVouchers.forEach(v => rows.push([v.code, v.email||'', v.plan_name||'', v.amount_paid||'', v.is_active ? 'Ativo' : 'Usado', `${v.used_analyses||0}/${v.total_analyses||1}`, v.created_at?.slice(0,10)]));
+    downloadCSV(rows, 'vouchers.csv');
 }
 
 function showCreateVoucherModal() { document.getElementById('voucherModalOverlay').style.display = 'flex'; }
 function closeVoucherModal() { document.getElementById('voucherModalOverlay').style.display = 'none'; }
 
 async function createVouchers() {
-    const email   = document.getElementById('voucherEmail')?.value?.trim();
+    const email = document.getElementById('voucherEmail')?.value?.trim();
     const planVal = document.getElementById('voucherPlan')?.value;
     const payment = document.getElementById('voucherPayment')?.value;
     const sendEmail = document.getElementById('voucherSendEmail')?.checked;
-
     if (!email) { showToast('Email obrigatório', 'danger'); return; }
-
-    // Pack Teste Parceria: cria 3 vouchers (CV + Career Path + LinkedIn Roaster)
     if (planVal === 'PACK_TESTE_PARCERIA') {
         const packItems = [
             { plan_name: 'CV Analyser', voucher_type: 'standard', includes_career_path: false, amount_paid: '0' },
@@ -1376,1064 +1311,454 @@ async function createVouchers() {
         for (const item of packItems) {
             const code = 'S2I-' + Math.random().toString(36).substring(2, 8).toUpperCase();
             codes.push({ code, plan: item.plan_name });
-            await supaInsert('vouchers', {
-                code, email, plan_name: item.plan_name, total_analyses: 1, used_analyses: 0,
-                amount_paid: item.amount_paid, payment_method: 'oferta',
-                voucher_type: item.voucher_type, includes_career_path: item.includes_career_path,
-                is_active: true, created_at: new Date().toISOString()
-            });
+            await supaInsert('vouchers', { code, email, plan_name: item.plan_name, total_analyses: 1, used_analyses: 0, amount_paid: item.amount_paid, payment_method: 'oferta', voucher_type: item.voucher_type, includes_career_path: item.includes_career_path, is_active: true, created_at: new Date().toISOString() });
         }
         showToast(`Pack Teste criado! ${codes.map(c => c.code).join(', ')}`, 'success');
         closeVoucherModal();
-
         if (sendEmail && ensureBrevoKey()) {
             const codesList = codes.map(c => `<strong>${c.plan}</strong>: <span style="font-size:18px;font-weight:bold;color:#C9A961;">${c.code}</span>`).join('<br>');
-            const subject = 'Os teus vouchers Share2Inspire — Pack Teste';
-            const body = `<p>Olá,</p><p>Seguem os teus vouchers de teste:</p>${codesList}<p style="margin-top:16px;">Acede a <a href="https://www.share2inspire.pt">share2inspire.pt</a> para usar cada um no respetivo produto.</p><p>Com os melhores cumprimentos,<br>Equipa Share2Inspire</p>`;
-            await sendBrevoEmail(email, subject, body);
+            await sendBrevoEmail(email, 'Os teus vouchers Share2Inspire — Pack Teste', `<p>Olá,</p><p>Seguem os teus vouchers de teste:</p>${codesList}<p style="margin-top:16px;">Acede a <a href="https://www.share2inspire.pt">share2inspire.pt</a> para usar.</p><p>Equipa Share2Inspire</p>`);
         }
-
-        await loadAllData();
-        renderVouchers();
-        return;
+        await loadAllData(); renderVouchers(); return;
     }
-
     const [planName, totalStr, amountStr, vType, cpFlag] = planVal.split('|');
-    const total  = parseInt(totalStr);
-    const amount = parseFloat(amountStr);
-
+    const total = parseInt(totalStr); const amount = parseFloat(amountStr);
     const codes = [];
     for (let i = 0; i < total; i++) {
         const code = 'S2I-' + Math.random().toString(36).substring(2, 8).toUpperCase();
         codes.push(code);
-        await supaInsert('vouchers', {
-            code, email, plan_name: planName, total_analyses: 1, used_analyses: 0,
-            amount_paid: amount.toString(), payment_method: payment,
-            voucher_type: vType, includes_career_path: cpFlag === 'true',
-            is_active: true, created_at: new Date().toISOString()
-        });
+        await supaInsert('vouchers', { code, email, plan_name: planName, total_analyses: 1, used_analyses: 0, amount_paid: amount.toString(), payment_method: payment, voucher_type: vType, includes_career_path: cpFlag === 'true', is_active: true, created_at: new Date().toISOString() });
     }
-
     showToast(`${codes.length} voucher(s) criado(s)!`, 'success');
     closeVoucherModal();
-
     if (sendEmail && ensureBrevoKey()) {
-        const subject = `O teu voucher Share2Inspire — ${planName}`;
-        const body = `<p>Olá,</p><p>Segue o teu voucher para <strong>${planName}</strong>:</p><p style="font-size:20px;font-weight:bold;color:#C9A961;">${codes.join('<br>')}</p><p>Acede a <a href="https://www.share2inspire.pt">share2inspire.pt</a> para usar.</p>`;
-        await sendBrevoEmail(email, subject, body);
+        await sendBrevoEmail(email, `O teu voucher Share2Inspire — ${planName}`, `<p>Olá,</p><p>Segue o teu voucher para <strong>${planName}</strong>:</p><p style="font-size:20px;font-weight:bold;color:#C9A961;">${codes.join('<br>')}</p><p>Acede a <a href="https://www.share2inspire.pt">share2inspire.pt</a> para usar.</p>`);
     }
-
-    await loadAllData();
-    renderVouchers();
+    await loadAllData(); renderVouchers();
 }
+
 
 // ═══════════════════════════════════════════════════════════════
-//  NURTURING
+//  EMAIL MODULE
 // ═══════════════════════════════════════════════════════════════
-function renderNurturingSegments() {
-    const sentEmails = new Set(allEmailHistory.map(e => e.recipient_email?.toLowerCase()));
-
-    const upsell     = allAnalyses.filter(a => getAnalysisType(a) === 'free' && hasEmail(a));
-    const feedback   = allAnalyses.filter(a => getAnalysisType(a) === 'paid' && !a.user_rating && hasEmail(a));
-    const careerpath = allAnalyses.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && hasEmail(a));
-    const ciUpsell = allAnalyses.filter(a => a.analysis_type === 'career_path' && hasEmail(a) && !allAnalyses.some(b => (b.analysis_type === 'career_intelligence_pro' || b.analysis_type === 'career_intelligence_full') && (b.user_email || '').toLowerCase() === (a.user_email || '').toLowerCase()));
-    const abandoned  = allAnalyses.filter(a => !hasEmail(a) && new Date(a.created_at) > new Date(Date.now() - 7 * 86400000));
-
-    const uniqueUpsell     = [...new Set(upsell.map(a => a.user_email.toLowerCase()))];
-    const uniqueFeedback   = [...new Set(feedback.map(a => a.user_email.toLowerCase()))];
-    const uniqueCareerpath = [...new Set(careerpath.map(a => a.user_email.toLowerCase()))];
-
-    setText('upsellCount',     uniqueUpsell.length);
-    setText('feedbackCount',   uniqueFeedback.length);
-    setText('careerpathCount', uniqueCareerpath.length);
-    const uniqueCIUpsell = [...new Set(ciUpsell.map(a => a.user_email.toLowerCase()))];
-    setText('ciUpsellCount', uniqueCIUpsell.length);
-    setText('abandonedCount',  abandoned.length);
-}
-
-const emailTemplates = {
-    pt: {
-        upsell: {
-            subject: '🎯 O teu CV merece uma análise completa',
-            body: `<p>Olá {{nome}},</p>
-<p>Vimos que fizeste a análise gratuita do teu CV e ficámos impressionados com o teu perfil!</p>
-<p>A análise completa vai mostrar-te exatamente o que precisas de melhorar para te destacares no mercado de trabalho.</p>
-<p><a href="https://www.share2inspire.pt/cv-analyser" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Ver Análise Completa →</a></p>
-<p>Com os melhores cumprimentos,<br>Equipa Share2Inspire</p>`
-        },
-        feedback: {
-            subject: '⭐ Como foi a tua experiência com o Share2Inspire?',
-            body: `<p>Olá {{nome}},</p>
-<p>Obrigado por teres utilizado os nossos serviços! A tua opinião é muito importante para nós.</p>
-<p>Podes partilhar a tua experiência? Demora apenas 1 minuto.</p>
-<p><a href="https://g.page/r/CZS08nYUvP4qEBM/review" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Deixar Avaliação →</a></p>
-<p>Com os melhores cumprimentos,<br>Equipa Share2Inspire</p>`
-        },
-        careerpath: {
-            subject: '🚀 Descobre o teu próximo passo de carreira',
-            body: `<p>Olá {{nome}},</p>
-<p>Já analisaste o teu CV — agora é hora de traçar o teu caminho de carreira!</p>
-<p>O Career Path vai ajudar-te a identificar as melhores oportunidades e o plano de ação para chegares lá.</p>
-<p><a href="https://www.share2inspire.pt/career-path" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Explorar Career Path →</a></p>
-<p>Com os melhores cumprimentos,<br>Equipa Share2Inspire</p>`
-        },
-        ci_upsell: {
-            subject: '🧠 Desbloqueia a análise estratégica completa',
-            body: `<p>Olá {{nome}},</p>
-<p>Já traçaste o teu Career Path — agora leva a tua estratégia ao próximo nível!</p>
-<p>O Career Intelligence PRO desbloqueia a comparação estratégica, trade-offs e recomendação de decisão personalizada.</p>
-<p><a href="https://www.share2inspire.pt/career-intelligence" style="background:#7C3AED;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Desbloquear Career Intelligence →</a></p>
-<p>Com os melhores cumprimentos,<br>Equipa Share2Inspire</p>`
-        }
-    },
-    en: {
-        upsell: {
-            subject: '🎯 Your CV deserves a full analysis',
-            body: `<p>Hi {{nome}},</p>
-<p>We noticed you completed the free CV analysis — your profile looks promising!</p>
-<p>The full analysis will show you exactly what to improve to stand out in the job market.</p>
-<p><a href="https://www.share2inspire.pt/cv-analyser" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">See Full Analysis →</a></p>
-<p>Best regards,<br>Share2Inspire Team</p>`
-        },
-        feedback: {
-            subject: '⭐ How was your Share2Inspire experience?',
-            body: `<p>Hi {{nome}},</p>
-<p>Thank you for using our services! Your feedback means a lot to us.</p>
-<p>Could you share your experience? It only takes 1 minute.</p>
-<p><a href="https://www.share2inspire.pt" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Leave a Review →</a></p>
-<p>Best regards,<br>Share2Inspire Team</p>`
-        },
-        careerpath: {
-            subject: '🚀 Discover your next career step',
-            body: `<p>Hi {{nome}},</p>
-<p>You've analysed your CV — now it's time to map your career path!</p>
-<p>Career Path will help you identify the best opportunities and the action plan to get there.</p>
-<p><a href="https://www.share2inspire.pt/career-path" style="background:#C9A961;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Explore Career Path →</a></p>
-<p>Best regards,<br>Share2Inspire Team</p>`
-        },
-        ci_upsell: {
-            subject: '🧠 Unlock the full strategic analysis',
-            body: `<p>Hi {{nome}},</p>
-<p>You've mapped your Career Path — now take your strategy to the next level!</p>
-<p>Career Intelligence PRO unlocks strategic comparison, trade-offs and a personalised decision recommendation.</p>
-<p><a href="https://www.share2inspire.pt/career-intelligence" style="background:#7C3AED;color:white;padding:10px 20px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:10px;">Unlock Career Intelligence →</a></p>
-<p>Best regards,<br>Share2Inspire Team</p>`
-        }
-    }
-};
-
-function prepareNurturing(segment) {
-    nurturingSegment = segment;
-    const sentEmails = new Set(allEmailHistory.map(e => e.recipient_email?.toLowerCase()));
-    let recipients = [];
-
-    if (segment === 'upsell') {
-        const emails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'free' && hasEmail(a)).map(a => a.user_email.toLowerCase().trim()))];
-        recipients = emails.map(email => {
-            const a = allAnalyses.find(x => x.user_email?.toLowerCase() === email);
-            return { email, name: a?.user_name || '', sent: sentEmails.has(email) };
-        });
-    } else if (segment === 'feedback') {
-        const emails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'paid' && !a.user_rating && hasEmail(a)).map(a => a.user_email.toLowerCase().trim()))];
-        recipients = emails.map(email => {
-            const a = allAnalyses.find(x => x.user_email?.toLowerCase() === email);
-            return { email, name: a?.user_name || '', sent: sentEmails.has(email) };
-        });
-    } else if (segment === 'careerpath') {
-        const emails = [...new Set(allAnalyses.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence_pro' && a.analysis_type !== 'career_intelligence_full' && hasEmail(a)).map(a => a.user_email.toLowerCase().trim()))];
-        recipients = emails.map(email => {
-            const a = allAnalyses.find(x => x.user_email?.toLowerCase() === email);
-            return { email, name: a?.user_name || '', sent: sentEmails.has(email) };
-        });
-    } else if (segment === 'ci_upsell') {
-        const emails = [...new Set(allAnalyses.filter(a => a.analysis_type === 'career_path' && hasEmail(a) && !allAnalyses.some(b => (b.analysis_type === 'career_intelligence_pro' || b.analysis_type === 'career_intelligence_full') && (b.user_email || '').toLowerCase() === (a.user_email || '').toLowerCase())).map(a => a.user_email.toLowerCase().trim()))];
-        recipients = emails.map(email => {
-            const a = allAnalyses.find(x => x.user_email?.toLowerCase() === email);
-            return { email, name: a?.user_name || '', sent: sentEmails.has(email) };
-        });
-    }
-
-    nurturingRecipients = recipients;
-
-    const template = emailTemplates[nurturingLang]?.[segment] || emailTemplates['pt'][segment] || { subject: '', body: '' };
-
-    const composer = document.getElementById('emailComposer');
-    if (composer) {
-        composer.style.display = '';
-        const titleMap = { upsell: 'Upsell — Análise Completa', feedback: 'Pedir Feedback', careerpath: 'Upsell — Career Path', ci_upsell: 'Upsell — Career Intelligence PRO' };
-        const titleEl = document.getElementById('composerTitle');
-        if (titleEl) titleEl.innerHTML = `<i class="fas fa-paper-plane"></i> ${titleMap[segment] || 'Compor Email'}`;
-        const subjectEl = document.getElementById('emailSubject');
-        const bodyEl    = document.getElementById('emailBody');
-        if (subjectEl) subjectEl.value = template.subject;
-        if (bodyEl)    bodyEl.value    = template.body;
-    }
-
-    renderRecipientList();
-    document.querySelectorAll('.segment-card').forEach(c => c.classList.remove('active'));
-    const segMap = { upsell: 0, feedback: 1, careerpath: 2, abandoned: 3 };
-    const cards  = document.querySelectorAll('.segment-card');
-    if (cards[segMap[segment]]) cards[segMap[segment]].classList.add('active');
-}
-
-function renderRecipientList() {
-    const search   = (document.getElementById('recipientSearch')?.value || '').toLowerCase();
-    const filter   = document.getElementById('recipientFilter')?.value || 'all';
-    const listEl   = document.getElementById('recipientList');
-    if (!listEl) return;
-
-    let filtered = nurturingRecipients;
-    if (filter === 'unsent') filtered = filtered.filter(r => !r.sent);
-    if (filter === 'sent')   filtered = filtered.filter(r => r.sent);
-    if (search) filtered = filtered.filter(r => r.email.includes(search) || r.name.toLowerCase().includes(search));
-
-    const selected = filtered.filter(r => r.checked !== false).length;
-    setText('selectedCount', `(${selected} selecionados)`);
-
-    listEl.innerHTML = filtered.map((r, i) => `
-        <div class="recipient-item ${r.sent ? 'sent' : ''}">
-            <input type="checkbox" id="rec_${i}" ${r.checked !== false ? 'checked' : ''} onchange="toggleRecipient('${r.email}', this.checked)">
-            <div style="flex:1;">
-                <div style="font-size:13px;">${r.name || r.email}</div>
-                ${r.name ? `<div style="font-size:11px;color:var(--text-muted);">${r.email}</div>` : ''}
-            </div>
-            ${r.sent ? '<span class="sent-badge campaign-match">Enviado</span>' : ''}
-        </div>`).join('');
-}
-
-function filterRecipientList() { renderRecipientList(); }
-
-function toggleRecipient(email, checked) {
-    const r = nurturingRecipients.find(x => x.email === email);
-    if (r) r.checked = checked;
-    const selected = nurturingRecipients.filter(r => r.checked !== false).length;
-    setText('selectedCount', `(${selected} selecionados)`);
-}
-
-function toggleAllRecipients(state) {
-    nurturingRecipients.forEach(r => r.checked = state);
-    renderRecipientList();
-}
-
-function selectOnlyUnsent() {
-    nurturingRecipients.forEach(r => r.checked = !r.sent);
-    renderRecipientList();
-}
-
-let isSendingBulk = false;
-async function sendBulkEmail() {
-    if (isSendingBulk) { showToast('Envio em curso, aguarda...', 'warning'); return; }
-    if (!ensureBrevoKey()) return;
-    const subject = document.getElementById('emailSubject')?.value;
-    const body    = document.getElementById('emailBody')?.value;
-    if (!subject || !body) { showToast('Assunto e corpo são obrigatórios', 'danger'); return; }
-
-    const toSend = nurturingRecipients.filter(r => r.checked !== false && !r.sent);
-    if (!toSend.length) { showToast('Nenhum destinatário selecionado (ou todos já enviados)', 'danger'); return; }
-
-    isSendingBulk = true;
-    const btn = document.querySelector('[onclick="sendBulkEmail()"]');
-    const btnOriginal = btn ? btn.innerHTML : '';
-    if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A enviar...'; btn.disabled = true; }
-
-    let sent = 0, errors = 0;
-    try {
-        for (const r of toSend) {
-            try {
-                const personalizedBody = body.replace(/\{\{nome\}\}/g, r.name || 'Olá');
-                const ok = await sendBrevoEmail(r.email, subject, personalizedBody);
-                if (ok) {
-                    sent++;
-                    await supaInsert('email_history', {
-                        recipient_email: r.email, subject, email_type: nurturingSegment || 'custom',
-                        status: 'sent', sent_at: new Date().toISOString()
-                    });
-                    r.sent = true;
-                } else { errors++; }
-                // Rate limit
-                await new Promise(resolve => setTimeout(resolve, 300));
-            } catch (e) { console.error('Erro ao enviar para', r.email, e); errors++; }
-        }
-        if (sent > 0) showToast(`${sent} email(s) enviado(s) com sucesso!${errors ? ` (${errors} falharam)` : ''}`, 'success');
-        else showToast(`Nenhum email enviado. ${errors} erro(s).`, 'danger');
-        await loadEmailHistory();
-        renderRecipientList();
-        renderNurturingSegments();
-    } catch (e) {
-        console.error('Erro no envio em massa:', e);
-        showToast('Erro inesperado no envio: ' + e.message, 'danger');
-    } finally {
-        isSendingBulk = false;
-        if (btn) { btn.innerHTML = btnOriginal; btn.disabled = false; }
-    }
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  EMAIL MODAL (individual)
-// ═══════════════════════════════════════════════════════════════
-function openEmailModal(email, name) {
-    document.getElementById('modalEmailTo').value    = email;
-    document.getElementById('modalEmailLang').value  = 'pt';
+function openEmailModal(to, name) {
+    document.getElementById('modalEmailTo').value = to || '';
+    document.getElementById('modalEmailSubject').value = '';
+    document.getElementById('modalEmailBody').value = '';
+    document.getElementById('modalEmailTemplate').value = '';
+    document.getElementById('modalEmailLang').value = 'pt';
     document.getElementById('emailModalOverlay').style.display = 'flex';
-    loadEmailTemplate();
 }
-
 function closeEmailModal() { document.getElementById('emailModalOverlay').style.display = 'none'; }
 
 function loadEmailTemplate() {
-    const lang     = document.getElementById('modalEmailLang')?.value || 'pt';
-    const template = document.getElementById('modalEmailTemplate')?.value || 'upsell';
-    if (template === 'custom') return;
-    const tpl = emailTemplates[lang]?.[template];
-    if (tpl) {
-        document.getElementById('modalEmailSubject').value = tpl.subject;
-        document.getElementById('modalEmailBody').value    = tpl.body;
-    }
-}
-
-async function sendSingleEmail() {
-    if (!ensureBrevoKey()) return;
-    const to      = document.getElementById('modalEmailTo')?.value;
-    const subject = document.getElementById('modalEmailSubject')?.value;
-    const body    = document.getElementById('modalEmailBody')?.value;
-    if (!to || !subject || !body) { showToast('Preenche todos os campos', 'danger'); return; }
-
-    const btn = document.querySelector('[onclick="sendSingleEmail()"]');
-    const btnOriginal = btn ? btn.innerHTML : '';
-    if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A enviar...'; btn.disabled = true; }
-
-    try {
-        const ok = await sendBrevoEmail(to, subject, body);
-        if (ok) {
-            await supaInsert('email_history', {
-                recipient_email: to, subject,
-                email_type: document.getElementById('modalEmailTemplate')?.value || 'custom',
-                status: 'sent', sent_at: new Date().toISOString()
-            });
-            showToast('Email enviado!', 'success');
-            closeEmailModal();
-            await loadEmailHistory();
+    const tpl = document.getElementById('modalEmailTemplate').value;
+    const lang = document.getElementById('modalEmailLang').value;
+    const to = document.getElementById('modalEmailTo').value;
+    const templates = {
+        pt: {
+            upsell_cv: { subject: 'O teu CV merece mais — upgrade disponível', body: `Olá,\n\nVimos que fizeste uma análise gratuita do teu CV. Gostarias de desbloquear a versão completa com recomendações detalhadas?\n\nAcede a share2inspire.pt/cv-analyser para fazer upgrade.\n\nEquipa Share2Inspire` },
+            upsell_cp: { subject: 'Descobre o teu Career Path personalizado', body: `Olá,\n\nCom base na tua análise de CV, preparámos um Career Path personalizado para ti.\n\nDescobre as melhores oportunidades em share2inspire.pt/career-path\n\nEquipa Share2Inspire` },
+            upsell_ci: { subject: 'Career Intelligence — análise profunda do teu mercado', body: `Olá,\n\nJá tens o teu Career Path. Agora leva a tua carreira ao próximo nível com o Career Intelligence PRO.\n\nDescobre mais em share2inspire.pt/career-intelligence\n\nEquipa Share2Inspire` },
+            followup: { subject: 'Precisas de ajuda com a tua carreira?', body: `Olá,\n\nVimos que visitaste o Share2Inspire recentemente. Podemos ajudar-te com alguma questão sobre a tua carreira?\n\nResponde a este email e teremos todo o gosto em ajudar.\n\nEquipa Share2Inspire` },
+            testimonial: { subject: 'A tua experiência com o Share2Inspire', body: `Olá,\n\nEsperamos que a tua experiência com o Share2Inspire tenha sido positiva! Gostaríamos muito de ouvir o teu feedback.\n\nPoderias partilhar um breve testemunho sobre como as nossas ferramentas te ajudaram?\n\nEquipa Share2Inspire` }
+        },
+        en: {
+            upsell_cv: { subject: 'Your CV deserves more — upgrade available', body: `Hi,\n\nWe noticed you did a free CV analysis. Would you like to unlock the full version with detailed recommendations?\n\nVisit share2inspire.pt/en/cv-analyser to upgrade.\n\nShare2Inspire Team` },
+            upsell_cp: { subject: 'Discover your personalized Career Path', body: `Hi,\n\nBased on your CV analysis, we've prepared a personalized Career Path for you.\n\nDiscover the best opportunities at share2inspire.pt/en/career-path\n\nShare2Inspire Team` },
+            upsell_ci: { subject: 'Career Intelligence — deep market analysis', body: `Hi,\n\nYou already have your Career Path. Now take your career to the next level with Career Intelligence PRO.\n\nLearn more at share2inspire.pt/en/career-intelligence\n\nShare2Inspire Team` },
+            followup: { subject: 'Need help with your career?', body: `Hi,\n\nWe noticed you visited Share2Inspire recently. Can we help you with any career-related questions?\n\nReply to this email and we'll be happy to help.\n\nShare2Inspire Team` },
+            testimonial: { subject: 'Your experience with Share2Inspire', body: `Hi,\n\nWe hope your experience with Share2Inspire has been positive! We'd love to hear your feedback.\n\nCould you share a brief testimonial about how our tools helped you?\n\nShare2Inspire Team` }
         }
-    } catch (e) {
-        console.error('Erro ao enviar email individual:', e);
-        showToast('Erro ao enviar: ' + e.message, 'danger');
-    } finally {
-        if (btn) { btn.innerHTML = btnOriginal; btn.disabled = false; }
+    };
+    const t = templates[lang]?.[tpl];
+    if (t) {
+        document.getElementById('modalEmailSubject').value = t.subject;
+        document.getElementById('modalEmailBody').value = t.body;
     }
 }
 
 async function sendBrevoEmail(to, subject, htmlContent) {
-    try {
-        const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-            method: 'POST',
-            headers: { 'api-key': getBrevoKey(), 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                sender: BREVO_SENDER,
-                to: [{ email: to }],
-                subject,
-                htmlContent
-            })
-        });
-        if (!res.ok) { const err = await res.json(); showToast(`Erro Brevo: ${err.message}`, 'danger'); return false; }
-        return true;
-    } catch (e) { showToast('Erro ao enviar email', 'danger'); return false; }
+    const key = getBrevoKey();
+    if (!key) return false;
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: { 'accept': 'application/json', 'content-type': 'application/json', 'api-key': key },
+        body: JSON.stringify({ sender: BREVO_SENDER, to: [{ email: to }], subject, htmlContent })
+    });
+    return res.ok;
+}
+
+async function sendSingleEmail() {
+    if (!ensureBrevoKey()) return;
+    const to = document.getElementById('modalEmailTo').value.trim();
+    const subject = document.getElementById('modalEmailSubject').value.trim();
+    const body = document.getElementById('modalEmailBody').value.trim();
+    if (!to || !subject || !body) { showToast('Preenche todos os campos', 'danger'); return; }
+    const htmlBody = body.replace(/\n/g, '<br>');
+    const ok = await sendBrevoEmail(to, subject, htmlBody);
+    if (ok) {
+        showToast('Email enviado com sucesso!', 'success');
+        await supaInsert('email_history', { recipient_email: to, subject, body: htmlBody, email_type: 'manual', sent_at: new Date().toISOString(), status: 'sent' });
+        closeEmailModal();
+        await loadEmailHistory();
+        renderEmailHistory();
+    } else { showToast('Erro ao enviar email', 'danger'); }
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  HISTÓRICO DE EMAILS
+//  CAMPAIGNS (Bulk Email)
+// ═══════════════════════════════════════════════════════════════
+function renderNurturingSegments() {
+    const lang = nurturingLang;
+    const profiles = buildCRMProfiles().filter(p => {
+        if (lang === 'pt') return filterByLang(p.analyses, 'pt').length > 0;
+        if (lang === 'en') return filterByLang(p.analyses, 'en').length > 0;
+        return true;
+    });
+    const leads = profiles.filter(p => p.stage === 'lead');
+    const clients = profiles.filter(p => p.stage === 'client');
+    const recurring = profiles.filter(p => p.stage === 'recurring');
+    const el = document.getElementById('nurturingSegments');
+    if (el) {
+        el.innerHTML = `
+            <div class="metric-row"><div class="metric-label">Leads (sem compra)</div><div class="metric-value">${leads.length}</div></div>
+            <div class="metric-row"><div class="metric-label">Clientes (1 compra)</div><div class="metric-value">${clients.length}</div></div>
+            <div class="metric-row"><div class="metric-label">Recorrentes (2+ compras)</div><div class="metric-value">${recurring.length}</div></div>`;
+    }
+    renderRecipientList(profiles);
+}
+
+function renderRecipientList(profiles) {
+    if (!profiles) profiles = buildCRMProfiles();
+    const tbody = document.getElementById('recipientTable');
+    if (!tbody) return;
+    const search = (document.getElementById('recipientSearch')?.value || '').toLowerCase();
+    let filtered = profiles.filter(p => !search || p.email.includes(search) || (p.name || '').toLowerCase().includes(search));
+    setText('recipientCount', `${filtered.length} destinatários`);
+    tbody.innerHTML = filtered.slice(0, 100).map(p => `
+        <tr>
+            <td><input type="checkbox" class="recipient-cb" value="${p.email}" checked></td>
+            <td style="font-size:12px;">${p.name || '—'}</td>
+            <td style="font-size:12px;">${p.email}</td>
+            <td>${getStageBadge(p.stage)}</td>
+        </tr>`).join('');
+}
+
+function filterRecipientList() { renderNurturingSegments(); }
+function toggleAllRecipients(checked) { document.querySelectorAll('.recipient-cb').forEach(cb => cb.checked = checked); }
+function selectOnlyUnsent() {
+    const sentEmails = new Set(allEmailHistory.map(e => e.recipient_email?.toLowerCase()));
+    document.querySelectorAll('.recipient-cb').forEach(cb => { cb.checked = !sentEmails.has(cb.value.toLowerCase()); });
+}
+
+async function sendBulkEmail() {
+    if (!ensureBrevoKey()) return;
+    const subject = document.getElementById('nurturingSubject')?.value?.trim();
+    const body = document.getElementById('nurturingBody')?.value?.trim();
+    if (!subject || !body) { showToast('Preenche assunto e corpo do email', 'danger'); return; }
+    const recipients = [...document.querySelectorAll('.recipient-cb:checked')].map(cb => cb.value);
+    if (!recipients.length) { showToast('Seleciona pelo menos um destinatário', 'danger'); return; }
+    if (!confirm(`Enviar email para ${recipients.length} destinatários?`)) return;
+    let sent = 0, failed = 0;
+    const htmlBody = body.replace(/\n/g, '<br>');
+    for (const email of recipients) {
+        try {
+            const ok = await sendBrevoEmail(email, subject, htmlBody);
+            if (ok) {
+                sent++;
+                await supaInsert('email_history', { recipient_email: email, subject, body: htmlBody, email_type: 'campaign', sent_at: new Date().toISOString(), status: 'sent' });
+            } else { failed++; }
+        } catch (e) { failed++; }
+        if (sent % 5 === 0) showToast(`Enviados: ${sent}/${recipients.length}`, 'info');
+    }
+    showToast(`Campanha concluída: ${sent} enviados, ${failed} falhados`, sent > 0 ? 'success' : 'danger');
+    await loadEmailHistory();
+    renderEmailHistory();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  EMAIL HISTORY
 // ═══════════════════════════════════════════════════════════════
 function renderEmailHistory() {
-    let data = [...allEmailHistory];
-    const type  = document.getElementById('filterHistoryType')?.value || 'all';
-    const email = (document.getElementById('filterHistoryEmail')?.value || '').toLowerCase();
-
+    let data = [...allEmailHistory].sort((a, b) => new Date(b.sent_at) - new Date(a.sent_at));
+    const type = document.getElementById('filterHistoryType')?.value || 'all';
+    const search = (document.getElementById('filterHistorySearch')?.value || '').toLowerCase();
     if (type !== 'all') data = data.filter(e => e.email_type === type);
-    if (email) data = data.filter(e => (e.recipient_email || '').toLowerCase().includes(email));
-
-    setText('historyCount', `${data.length} emails`);
-
+    if (search) data = data.filter(e => (e.recipient_email || '').toLowerCase().includes(search) || (e.subject || '').toLowerCase().includes(search));
+    setText('messagesCount', `${data.length} mensagens`);
     const totalPages = Math.ceil(data.length / PAGE_SIZE);
     historyPage = Math.min(historyPage, totalPages || 1);
     const page = data.slice((historyPage - 1) * PAGE_SIZE, historyPage * PAGE_SIZE);
-
-    const tbody = document.getElementById('emailHistoryTable');
+    const tbody = document.getElementById('autoEmailsTable');
     if (!tbody) return;
-
-    if (!page.length) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum email no histórico</td></tr>`;
-        return;
-    }
-
+    if (!page.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma mensagem encontrada</td></tr>`; return; }
     tbody.innerHTML = page.map(e => {
-        const date = new Date(e.sent_at || e.created_at).toLocaleDateString('pt-PT');
-        return `
-        <tr>
+        const date = new Date(e.sent_at).toLocaleDateString('pt-PT') + ' ' + new Date(e.sent_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
+        const typeMap = { manual: 'Manual', campaign: 'Campanha', upsell_auto_2h: 'Auto 2h', upsell_auto_7d: 'Auto 7d', welcome: 'Boas-vindas' };
+        const typeBadge = `<span class="badge badge-${e.email_type === 'campaign' ? 'purple' : e.email_type === 'manual' ? 'teal' : 'secondary'}">${typeMap[e.email_type] || e.email_type}</span>`;
+        return `<tr>
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
             <td style="font-size:12px;">${e.recipient_email || '—'}</td>
             <td style="font-size:12px;">${e.subject || '—'}</td>
-            <td><span class="badge badge-secondary">${e.email_type || 'custom'}</span></td>
-            <td><span class="badge ${e.status === 'sent' ? 'badge-success' : 'badge-danger'}">${e.status || 'sent'}</span></td>
-        </tr>`;
-    }).join('');
-
-    renderPagination('historyPagination', historyPage, totalPages, (p) => { historyPage = p; renderEmailHistory(); });
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  CONTACTOS
-// ═══════════════════════════════════════════════════════════════
-function renderContacts() {
-    let data = [...allContacts];
-    const search = (document.getElementById('filterContact')?.value || '').toLowerCase();
-    if (search) data = data.filter(c => (c.name || '').toLowerCase().includes(search) || (c.email || '').toLowerCase().includes(search));
-
-    setText('contactsCount', `${data.length} contactos`);
-
-    const tbody = document.getElementById('contactsTable');
-    if (!tbody) return;
-
-    if (!data.length) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum contacto encontrado</td></tr>`;
-        return;
-    }
-
-    tbody.innerHTML = data.map(c => {
-        const date = new Date(c.created_at).toLocaleDateString('pt-PT');
-        return `
-        <tr>
-            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td>${c.name || '—'}</td>
-            <td style="font-size:12px;">${c.email || '—'}</td>
-            <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${c.message||''}">${c.message || '—'}</td>
-            <td style="font-size:12px;">${c.service || '—'}</td>
+            <td>${typeBadge}</td>
+            <td><span class="badge badge-success">Enviado</span></td>
         </tr>`;
     }).join('');
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  SAÚDE DO SISTEMA
+//  MARKET: JOB SEARCH
 // ═══════════════════════════════════════════════════════════════
-function renderHealth() {
-    const logs = allHealthLogs;
-    if (!logs.length) {
-        setText('healthUptime', '—');
-        setText('healthAlerts', '—');
-        setText('healthLastCheck', '—');
-        document.getElementById('endpointStatus').innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Sem dados de saúde disponíveis.</p>';
-        return;
-    }
-
-    const last7d = logs.filter(l => new Date(l.checked_at) > new Date(Date.now() - 7 * 86400000));
-    const healthy = last7d.filter(l => l.status === 'healthy').length;
-    const uptime  = last7d.length ? Math.round(healthy / last7d.length * 100) : 100;
-    const alerts  = last7d.filter(l => l.status !== 'healthy').length;
-    const lastLog = logs[0];
-
-    setText('healthUptime',    `${uptime}%`);
-    setText('healthAlerts',    alerts);
-    setText('healthLastCheck', lastLog ? new Date(lastLog.checked_at).toLocaleTimeString('pt-PT') : '—');
-
-    // Endpoints
-    const endpointMap = {};
-    logs.slice(0, 200).forEach(l => {
-        if (!endpointMap[l.endpoint]) endpointMap[l.endpoint] = { ok: 0, total: 0, lastTtfb: 0 };
-        endpointMap[l.endpoint].total++;
-        if (l.status === 'healthy') endpointMap[l.endpoint].ok++;
-        endpointMap[l.endpoint].lastTtfb = l.ttfb_ms || 0;
-    });
-
-    const endpointEl = document.getElementById('endpointStatus');
-    if (endpointEl) {
-        endpointEl.innerHTML = Object.entries(endpointMap).map(([ep, stats]) => {
-            const pct = Math.round(stats.ok / stats.total * 100);
-            const dotClass = pct >= 95 ? 'healthy' : pct >= 80 ? 'warning' : 'critical';
-            return `
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span class="health-dot ${dotClass}"></span>
-                    <span style="font-size:13px;">${ep}</span>
-                </div>
-                <div style="display:flex;gap:16px;font-size:12px;color:var(--text-muted);">
-                    <span>Uptime: <strong style="color:var(--dark);">${pct}%</strong></span>
-                    <span>TTFB: <strong style="color:var(--dark);">${stats.lastTtfb}ms</strong></span>
-                </div>
-            </div>`;
-        }).join('');
-    }
-
-    // TTFB Chart
-    const ttfbData = logs.slice(0, 50).reverse();
-    const ctx = document.getElementById('ttfbChart')?.getContext('2d');
-    if (ctx) {
-        if (ttfbChart) ttfbChart.destroy();
-        ttfbChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ttfbData.map(l => new Date(l.checked_at).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })),
-                datasets: [{ label: 'TTFB (ms)', data: ttfbData.map(l => l.ttfb_ms || 0), borderColor: '#C9A961', backgroundColor: 'rgba(201,169,97,.1)', tension: 0.3, pointRadius: 2 }]
-            },
-            options: { responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { y: { ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 9 }, maxTicksLimit: 10 } } } }
-        });
-    }
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  E-BOOK DOWNLOADS
-// ═══════════════════════════════════════════════════════════════
-function renderEbookDownloads() {
-    let data = [...allEbookDownloads];
-    const source = document.getElementById('filterEbookSource')?.value || 'all';
-    const period = document.getElementById('filterEbookPeriod')?.value || 'all';
-    const search = (document.getElementById('filterEbookSearch')?.value || '').toLowerCase();
-
-    if (source !== 'all') data = data.filter(e => e.source === source || e.download_source === source);
-    if (period !== 'all') {
-        const days = parseInt(period);
-        data = filterByPeriod(data, days);
-    }
-    if (search) data = data.filter(e => (e.email || '').toLowerCase().includes(search) || (e.name || '').toLowerCase().includes(search));
-
-    const now = new Date();
-    setText('kpiEbookTotal', allEbookDownloads.length);
-    setText('kpiEbook24h',   allEbookDownloads.filter(e => new Date(e.created_at) > new Date(now - 86400000)).length);
-    setText('kpiEbook7d',    allEbookDownloads.filter(e => new Date(e.created_at) > new Date(now - 7 * 86400000)).length);
-    setText('kpiEbook30d',   allEbookDownloads.filter(e => new Date(e.created_at) > new Date(now - 30 * 86400000)).length);
-    setText('ebookCount',    `${data.length} downloads`);
-
-    const tbody = document.getElementById('ebookTable');
-    if (!tbody) return;
-
-    if (!data.length) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum download encontrado</td></tr>`;
-        return;
-    }
-
-    tbody.innerHTML = data.map(e => {
-        const date = new Date(e.created_at).toLocaleDateString('pt-PT');
-        return `
-        <tr>
-            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td style="font-size:12px;">${e.email || '—'}</td>
-            <td>${e.name || '—'}</td>
-            <td><span class="badge badge-secondary">${e.source || e.download_source || '—'}</span></td>
-            <td><span class="badge ${e.email_sent ? 'badge-success' : 'badge-secondary'}">${e.email_sent ? 'Enviado' : 'Pendente'}</span></td>
-        </tr>`;
-    }).join('');
-}
-
-function exportEbookCSV() {
-    const rows = [['Data','Email','Nome','Source','Estado']];
-    allEbookDownloads.forEach(e => rows.push([e.created_at?.slice(0,10), e.email||'', e.name||'', e.source||'', e.email_sent ? 'Enviado' : 'Pendente']));
-    downloadCSV(rows, 'ebook_downloads.csv');
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  JOB SEARCH TRACKING
-// ═══════════════════════════════════════════════════════════════
-function renderJobSearch() {
-    const data = allJobSearch;
-    const now  = new Date();
-
-    setText('kpiJobTotal',       data.length);
-    setText('kpiJobWithJob',     data.filter(j => j.has_job_offer || j.job_offer_found).length);
-    setText('kpiJobNoJob',       data.filter(j => !j.has_job_offer && !j.job_offer_found).length);
-    setText('kpiJobUniqueRoles', new Set(data.map(j => j.detected_role || j.job_title || '').filter(Boolean)).size);
-    setText('kpiJob7d',          data.filter(j => new Date(j.created_at) > new Date(now - 7 * 86400000)).length);
-
-    // Populate seniority filter
-    const senSet = new Set(data.map(j => j.seniority).filter(Boolean));
-    populateSelect('filterJobSeniority', [...senSet].sort());
-
-    renderJobSearchTable();
-    renderJobSearchCharts();
-}
-
 function renderJobSearchTable() {
-    let data = [...allJobSearch];
-    const sen    = document.getElementById('filterJobSeniority')?.value || 'all';
+    let data = [...allJobSearch].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     const period = document.getElementById('filterJobPeriod')?.value || 'all';
     const search = (document.getElementById('filterJobSearch')?.value || '').toLowerCase();
-
-    if (sen !== 'all') data = data.filter(j => j.seniority === sen);
+    const seniority = document.getElementById('filterJobSeniority')?.value || 'all';
     if (period !== 'all') data = filterByPeriod(data, parseInt(period));
-    if (search) data = data.filter(j => (j.detected_role || j.job_title || '').toLowerCase().includes(search) || (j.user_name || '').toLowerCase().includes(search));
+    if (search) data = data.filter(j => (j.desired_role || '').toLowerCase().includes(search) || (j.target_country || '').toLowerCase().includes(search));
+    if (seniority !== 'all') data = data.filter(j => (j.seniority_level || '').toLowerCase() === seniority.toLowerCase());
 
-    setText('jobSearchCount', `${data.length} pesquisas`);
+    // Charts
+    const roleCounts = {};
+    const skillCounts = {};
+    const senCounts = {};
+    const gapCounts = {};
+    data.forEach(j => {
+        const role = j.desired_role || 'Não especificado';
+        roleCounts[role] = (roleCounts[role] || 0) + 1;
+        const sen = j.seniority_level || 'N/A';
+        senCounts[sen] = (senCounts[sen] || 0) + 1;
+        (j.top_skills || []).forEach(s => { skillCounts[s] = (skillCounts[s] || 0) + 1; });
+        (j.keyword_gaps || []).forEach(g => { gapCounts[g] = (gapCounts[g] || 0) + 1; });
+    });
 
-    const tbody = document.getElementById('jobSearchTable');
-    if (!tbody) return;
+    const topRoles = Object.entries(roleCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const topSkills = Object.entries(skillCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const topGaps = Object.entries(gapCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const senEntries = Object.entries(senCounts).sort((a, b) => b[1] - a[1]);
 
-    if (!data.length) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma pesquisa encontrada</td></tr>`;
-        return;
+    renderBarChart('chartTopRoles', topRoles, 'Cargos', '#C9A961');
+    renderBarChart('chartTopSkills', topSkills, 'Competências', '#3B82F6');
+    renderBarChart('chartKeywordGaps', topGaps, 'Gaps', '#EF4444');
+    renderBarChart('chartSeniority', senEntries, 'Senioridade', '#7C3AED');
+
+    // Cross-reference with Career Energy
+    const crossEl = document.getElementById('marketCrossRef');
+    if (crossEl && allCareerEnergy.length > 0 && data.length > 0) {
+        const ceRoles = {};
+        allCareerEnergy.forEach(ce => {
+            const role = ce.current_role || ce.desired_role || '';
+            if (role) ceRoles[role] = (ceRoles[role] || 0) + 1;
+        });
+        const overlap = topRoles.filter(([role]) => ceRoles[role]);
+        const crossText = overlap.length > 0
+            ? `<strong>${overlap.length}</strong> dos top ${topRoles.length} cargos procurados também aparecem no Career Energy. Cargos em comum: ${overlap.map(([r]) => `<span class="badge badge-teal">${r}</span>`).join(' ')}`
+            : 'Sem sobreposição directa entre cargos procurados e Career Energy.';
+        setText('marketCrossRefText', '');
+        crossEl.innerHTML = `<div style="padding:12px;background:var(--teal-bg);border-radius:8px;border-left:3px solid var(--teal);font-size:13px;">${crossText}</div>`;
     }
-
-    tbody.innerHTML = data.slice(0, 100).map(j => {
-        const date  = new Date(j.created_at).toLocaleDateString('pt-PT');
-        const skills = Array.isArray(j.top_skills) ? j.top_skills.slice(0, 3).join(', ') : (j.top_skills || '—');
-        const hasJob = j.has_job_offer || j.job_offer_found;
-        return `
-        <tr>
-            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td style="font-size:12px;">${j.user_name || '—'}</td>
-            <td style="font-size:12px;font-weight:500;">${j.detected_role || j.job_title || '—'}</td>
-            <td><span class="badge badge-secondary">${j.seniority || '—'}</span></td>
-            <td style="font-size:11px;color:var(--text-muted);">${skills}</td>
-            <td><span class="badge ${hasJob ? 'badge-success' : 'badge-secondary'}">${hasJob ? 'Sim' : 'Não'}</span></td>
-            <td style="font-size:12px;">${j.ats_score || '—'}</td>
-        </tr>`;
-    }).join('');
 }
 
-function renderJobSearchCharts() {
-    const data = allJobSearch;
-
-    // Top Roles
-    const roleCount = {};
-    data.forEach(j => { const r = j.detected_role || j.job_title; if (r) roleCount[r] = (roleCount[r] || 0) + 1; });
-    const topRoles = Object.entries(roleCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
-
-    const ctx1 = document.getElementById('chartTopRoles')?.getContext('2d');
-    if (ctx1) new Chart(ctx1, {
+let chartInstances = {};
+function renderBarChart(canvasId, entries, label, color) {
+    const ctx = document.getElementById(canvasId)?.getContext('2d');
+    if (!ctx) return;
+    if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
+    chartInstances[canvasId] = new Chart(ctx, {
         type: 'bar',
-        data: { labels: topRoles.map(r => r[0]), datasets: [{ data: topRoles.map(r => r[1]), backgroundColor: '#C9A961', borderRadius: 3 }] },
-        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
-    });
-
-    // Seniority
-    const senCount = {};
-    data.forEach(j => { const s = j.seniority; if (s) senCount[s] = (senCount[s] || 0) + 1; });
-    const ctx2 = document.getElementById('chartSeniority')?.getContext('2d');
-    if (ctx2) new Chart(ctx2, {
-        type: 'doughnut',
-        data: { labels: Object.keys(senCount), datasets: [{ data: Object.values(senCount), backgroundColor: ['#C9A961','#3B82F6','#10B981','#7C3AED','#F59E0B'], borderWidth: 0 }] },
-        options: { responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
-    });
-
-    // Top Skills
-    const skillCount = {};
-    data.forEach(j => {
-        const skills = Array.isArray(j.top_skills) ? j.top_skills : [];
-        skills.forEach(s => { if (s) skillCount[s] = (skillCount[s] || 0) + 1; });
-    });
-    const topSkills = Object.entries(skillCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
-    const ctx3 = document.getElementById('chartTopSkills')?.getContext('2d');
-    if (ctx3) new Chart(ctx3, {
-        type: 'bar',
-        data: { labels: topSkills.map(s => s[0]), datasets: [{ data: topSkills.map(s => s[1]), backgroundColor: '#3B82F6', borderRadius: 3 }] },
-        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
-    });
-
-    // Keyword Gaps
-    const gapCount = {};
-    data.forEach(j => {
-        const gaps = Array.isArray(j.keyword_gaps) ? j.keyword_gaps : [];
-        gaps.forEach(g => { if (g) gapCount[g] = (gapCount[g] || 0) + 1; });
-    });
-    const topGaps = Object.entries(gapCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
-    const ctx4 = document.getElementById('chartKeywordGaps')?.getContext('2d');
-    if (ctx4) new Chart(ctx4, {
-        type: 'bar',
-        data: { labels: topGaps.map(g => g[0]), datasets: [{ data: topGaps.map(g => g[1]), backgroundColor: '#EF4444', borderRadius: 3 }] },
+        data: { labels: entries.map(e => e[0]), datasets: [{ label, data: entries.map(e => e[1]), backgroundColor: color, borderRadius: 4 }] },
         options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } } }
     });
 }
 
 function exportJobSearchCSV() {
-    const rows = [['Data','Nome','Cargo','Senioridade','Skills','Com Vaga','ATS Score']];
-    allJobSearch.forEach(j => rows.push([
-        j.created_at?.slice(0,10), j.user_name||'', j.detected_role||j.job_title||'',
-        j.seniority||'',
-        Array.isArray(j.top_skills) ? j.top_skills.join(';') : '',
-        j.has_job_offer || j.job_offer_found ? 'Sim' : 'Não',
-        j.ats_score||''
-    ]));
+    const rows = [['Data','Cargo','País','Senioridade','Skills','Gaps']];
+    allJobSearch.forEach(j => rows.push([j.created_at?.slice(0,10), j.desired_role||'', j.target_country||'', j.seniority_level||'', (j.top_skills||[]).join(';'), (j.keyword_gaps||[]).join(';')]));
     downloadCSV(rows, 'job_search.csv');
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  CAREER ENERGY
+//  MARKET: CAREER ENERGY
 // ═══════════════════════════════════════════════════════════════
-function renderCareerEnergy() {
-    const data = allCareerEnergy;
-
-    const scores = data.filter(d => d.total_score > 0).map(d => d.total_score);
-    const avgScore = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
-    const countries = new Set(data.map(d => d.country).filter(Boolean));
-    const linkedin  = data.filter(d => d.linkedin_shared).length;
-
-    setText('kpiCETotal',     data.length);
-    setText('kpiCEAvg',       avgScore);
-    setText('kpiCEAboveAvg',  data.filter(d => d.total_score > (d.country_avg || 50)).length);
-    setText('kpiCECountries', countries.size);
-    setText('kpiCELinkedIn',  linkedin);
-
-    // Populate filters
-    populateSelect('filterCECountry', [...countries].sort());
-    const levels = new Set(data.map(d => d.energy_level || d.level).filter(Boolean));
-    populateSelect('filterCELevel', [...levels].sort());
-
-    renderCETable();
-    renderCECharts();
-}
-
 function renderCETable() {
-    let data = [...allCareerEnergy];
+    let data = [...allCareerEnergy].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     const country = document.getElementById('filterCECountry')?.value || 'all';
-    const level   = document.getElementById('filterCELevel')?.value || 'all';
+    const level = document.getElementById('filterCELevel')?.value || 'all';
+    if (country !== 'all') data = data.filter(ce => (ce.country || '').toLowerCase().includes(country.toLowerCase()));
+    if (level !== 'all') data = data.filter(ce => (ce.energy_level || '').toLowerCase() === level.toLowerCase());
 
-    if (country !== 'all') data = data.filter(d => d.country === country);
-    if (level   !== 'all') data = data.filter(d => (d.energy_level || d.level) === level);
-
-    setText('ceCount', `${data.length} diagnósticos`);
-
-    const tbody = document.getElementById('ceTable');
-    if (!tbody) return;
-
-    if (!data.length) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum diagnóstico encontrado</td></tr>`;
-        return;
-    }
-
-    tbody.innerHTML = data.slice(0, 100).map(d => {
-        const date  = new Date(d.created_at).toLocaleDateString('pt-PT');
-        const diff  = d.total_score && d.country_avg ? (d.total_score - d.country_avg).toFixed(1) : '—';
-        const diffColor = parseFloat(diff) > 0 ? 'var(--green)' : 'var(--red)';
-        return `
-        <tr>
-            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td style="font-size:12px;">${d.name || d.user_name || '—'}</td>
-            <td style="font-size:12px;">${d.job_title || d.role || '—'}</td>
-            <td style="font-size:12px;">${d.country || '—'}</td>
-            <td style="font-size:13px;font-weight:700;color:var(--gold);">${d.total_score || '—'}</td>
-            <td><span class="badge badge-teal">${d.energy_level || d.level || '—'}</span></td>
-            <td style="font-size:12px;">${d.country_avg || '—'}</td>
-            <td style="font-size:12px;font-weight:600;color:${diffColor};">${diff !== '—' ? (parseFloat(diff) > 0 ? '+' : '') + diff : '—'}</td>
-        </tr>`;
-    }).join('');
-}
-
-function renderCECharts() {
-    const data = allCareerEnergy;
-
-    // Score Distribution
-    const buckets = { '0-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': 0 };
-    data.filter(d => d.total_score > 0).forEach(d => {
-        const s = d.total_score;
-        if (s <= 20) buckets['0-20']++;
-        else if (s <= 40) buckets['21-40']++;
-        else if (s <= 60) buckets['41-60']++;
-        else if (s <= 80) buckets['61-80']++;
-        else buckets['81-100']++;
+    // Score chart
+    const scoreBuckets = { '0-20': 0, '21-40': 0, '41-60': 0, '61-80': 0, '81-100': 0 };
+    data.forEach(ce => {
+        const s = ce.score || ce.energy_score || 0;
+        if (s <= 20) scoreBuckets['0-20']++;
+        else if (s <= 40) scoreBuckets['21-40']++;
+        else if (s <= 60) scoreBuckets['41-60']++;
+        else if (s <= 80) scoreBuckets['61-80']++;
+        else scoreBuckets['81-100']++;
     });
-    const ctx1 = document.getElementById('ceScoreChart')?.getContext('2d');
-    if (ctx1) {
-        if (ceScoreChart) ceScoreChart.destroy();
-        ceScoreChart = new Chart(ctx1, {
+    const ctx = document.getElementById('ceScoreChart')?.getContext('2d');
+    if (ctx) {
+        if (chartInstances['ceScoreChart']) chartInstances['ceScoreChart'].destroy();
+        chartInstances['ceScoreChart'] = new Chart(ctx, {
             type: 'bar',
-            data: { labels: Object.keys(buckets), datasets: [{ label: 'Utilizadores', data: Object.values(buckets), backgroundColor: '#C9A961', borderRadius: 4 }] },
+            data: { labels: Object.keys(scoreBuckets), datasets: [{ label: 'Utilizadores', data: Object.values(scoreBuckets), backgroundColor: '#C9A961', borderRadius: 4 }] },
             options: { responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { y: { ticks: { font: { size: 10 } } }, x: { ticks: { font: { size: 10 } } } } }
         });
     }
 
-    // Scatter: Score vs Country Happiness
-    const scatterData = data.filter(d => d.total_score > 0 && d.country_avg > 0).map(d => ({ x: d.country_avg, y: d.total_score }));
-    const ctx2 = document.getElementById('ceScatterChart')?.getContext('2d');
-    if (ctx2) new Chart(ctx2, {
-        type: 'scatter',
-        data: { datasets: [{ label: 'Score vs Felicidade País', data: scatterData, backgroundColor: 'rgba(201,169,97,.6)', pointRadius: 5 }] },
-        options: { responsive: true, maintainAspectRatio: true, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { x: { title: { display: true, text: 'Felicidade País', font: { size: 10 } }, ticks: { font: { size: 10 } } }, y: { title: { display: true, text: 'Career Energy Score', font: { size: 10 } }, ticks: { font: { size: 10 } } } } }
-    });
+    setText('ceCount', `${data.length} respostas`);
+    const tbody = document.getElementById('ceTable');
+    if (!tbody) return;
+    if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">Sem dados</td></tr>`; return; }
+    tbody.innerHTML = data.slice(0, 50).map(ce => {
+        const date = new Date(ce.created_at).toLocaleDateString('pt-PT');
+        const score = ce.score || ce.energy_score || 0;
+        const scoreColor = score >= 70 ? 'var(--green)' : score >= 40 ? 'var(--orange)' : 'var(--red)';
+        return `<tr>
+            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
+            <td style="font-size:12px;">${ce.current_role || '—'}</td>
+            <td style="font-size:12px;">${ce.country || '—'}</td>
+            <td style="font-size:12px;">${ce.energy_level || '—'}</td>
+            <td><span style="font-weight:600;color:${scoreColor};">${score}</span></td>
+            <td style="font-size:12px;">${ce.email || '—'}</td>
+        </tr>`;
+    }).join('');
 }
 
 function exportCECSV() {
-    const rows = [['Data','Nome','Cargo','País','Score','Nível','Média País','Diferença']];
-    allCareerEnergy.forEach(d => rows.push([
-        d.created_at?.slice(0,10), d.name||d.user_name||'', d.job_title||d.role||'',
-        d.country||'', d.total_score||'', d.energy_level||d.level||'',
-        d.country_avg||'',
-        d.total_score && d.country_avg ? (d.total_score - d.country_avg).toFixed(1) : ''
-    ]));
+    const rows = [['Data','Cargo','País','Nível','Score','Email']];
+    allCareerEnergy.forEach(ce => rows.push([ce.created_at?.slice(0,10), ce.current_role||'', ce.country||'', ce.energy_level||'', ce.score||ce.energy_score||'', ce.email||'']));
     downloadCSV(rows, 'career_energy.csv');
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  PAGINATION HELPER
+//  SYSTEM: EBOOK DOWNLOADS
 // ═══════════════════════════════════════════════════════════════
-function renderPagination(containerId, current, total, onPage) {
-    const el = document.getElementById(containerId);
-    if (!el || total <= 1) { if (el) el.innerHTML = ''; return; }
+function renderEbookDownloads() {
+    let data = [...allEbookDownloads].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const period = document.getElementById('filterEbookPeriod')?.value || 'all';
+    const search = (document.getElementById('filterEbookSearch')?.value || '').toLowerCase();
+    if (period !== 'all') data = filterByPeriod(data, parseInt(period));
+    if (search) data = data.filter(e => (e.email || '').toLowerCase().includes(search) || (e.name || '').toLowerCase().includes(search));
+    setText('ebookCount', `${data.length} downloads`);
+    const tbody = document.getElementById('ebookTable');
+    if (!tbody) return;
+    if (!data.length) { tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-muted);">Sem downloads</td></tr>`; return; }
+    tbody.innerHTML = data.slice(0, 50).map(e => {
+        const date = new Date(e.created_at).toLocaleDateString('pt-PT');
+        return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td style="font-size:12px;">${e.name || '—'}</td><td style="font-size:12px;">${e.email || '—'}</td><td style="font-size:12px;">${e.source || '—'}</td></tr>`;
+    }).join('');
+}
 
-    let html = '';
-    if (current > 1) html += `<button class="page-btn" onclick="(${onPage.toString()})(${current - 1})">‹</button>`;
-
-    const start = Math.max(1, current - 2);
-    const end   = Math.min(total, current + 2);
-    if (start > 1) html += `<button class="page-btn" onclick="(${onPage.toString()})(1)">1</button>${start > 2 ? '<span style="padding:4px;">…</span>' : ''}`;
-    for (let i = start; i <= end; i++) {
-        html += `<button class="page-btn ${i === current ? 'active' : ''}" onclick="(${onPage.toString()})(${i})">${i}</button>`;
-    }
-    if (end < total) html += `${end < total - 1 ? '<span style="padding:4px;">…</span>' : ''}<button class="page-btn" onclick="(${onPage.toString()})(${total})">${total}</button>`;
-    if (current < total) html += `<button class="page-btn" onclick="(${onPage.toString()})(${current + 1})">›</button>`;
-
-    el.innerHTML = html;
+function exportEbookCSV() {
+    const rows = [['Data','Nome','Email','Fonte']];
+    allEbookDownloads.forEach(e => rows.push([e.created_at?.slice(0,10), e.name||'', e.email||'', e.source||'']));
+    downloadCSV(rows, 'ebook_downloads.csv');
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  CSV DOWNLOAD
+//  SYSTEM: HEALTH LOGS
 // ═══════════════════════════════════════════════════════════════
-function downloadCSV(rows, filename) {
-    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
-    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url; a.download = filename; a.click();
-    URL.revokeObjectURL(url);
+function renderHealthLogs() {
+    const el = document.getElementById('healthTable');
+    if (!el) return;
+    const data = [...allHealthLogs].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 50);
+    if (!data.length) { el.innerHTML = '<p style="color:var(--text-muted);padding:20px;">Sem logs de saúde</p>'; return; }
+    el.innerHTML = `<table class="data-table"><thead><tr><th>Data</th><th>Tipo</th><th>Mensagem</th><th>Estado</th></tr></thead><tbody>
+        ${data.map(h => {
+            const date = new Date(h.created_at).toLocaleString('pt-PT');
+            const typeBadge = h.type === 'error' ? '<span class="badge" style="background:var(--red);color:#fff;">Erro</span>' : h.type === 'warning' ? '<span class="badge" style="background:var(--orange);color:#fff;">Aviso</span>' : '<span class="badge badge-success">OK</span>';
+            return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td>${typeBadge}</td><td style="font-size:12px;">${h.message || '—'}</td><td style="font-size:12px;">${h.status || '—'}</td></tr>`;
+        }).join('')}
+    </tbody></table>`;
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  REFRESH
+//  AFFILIATES
 // ═══════════════════════════════════════════════════════════════
-async function refreshAll() {
-    showToast('A atualizar dados...', 'info');
-    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs(), loadAffiliateData(), loadCouponData(), loadUsersData()]);
-    updateDashboard();
-    updateCharts();
-    // Re-render active tab
-    const activeTab = document.querySelector('.tab-btn.active');
-    if (activeTab) activeTab.click();
-    showToast('Dados atualizados!', 'success');
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════════════════════
-async function init() {
-    // Show dashboard tab
-    document.getElementById('tab-dashboard').style.display = '';
-    document.querySelectorAll('.main > div[id^="tab-"]:not(#tab-dashboard)').forEach(el => el.style.display = 'none');
-
-    await Promise.all([loadAllData(), loadEmailHistory(), loadHealthLogs(), loadAffiliateData(), loadCouponData(), loadUsersData()]);
-    updateDashboard();
-    updateCharts();
-    renderNurturingSegments();
-}
-
-document.addEventListener('DOMContentLoaded', init);
-
-// ═══════════════════════════════════════════════════════════════
-//  AFFILIATES MODULE
-// ═══════════════════════════════════════════════════════════════
-let allAffiliates = [];
-let allAffClicks = [];
-let allAffConversions = [];
-
-async function loadAffiliateData() {
-    try {
-        const [affiliates, clicks, conversions] = await Promise.all([
-            supaFetch('affiliates', 'select=*&order=created_at.desc'),
-            supaFetch('affiliate_clicks', 'select=*&order=created_at.desc&limit=5000'),
-            supaFetch('affiliate_conversions', 'select=*&order=created_at.desc&limit=5000')
-        ]);
-        allAffiliates = Array.isArray(affiliates) ? affiliates : [];
-        allAffClicks = Array.isArray(clicks) ? clicks : [];
-        allAffConversions = Array.isArray(conversions) ? conversions : [];
-    } catch (e) {
-        console.error('Erro ao carregar dados de afiliados:', e);
-    }
-}
-
 function renderAffiliates() {
-    loadAffiliateData().then(() => {
-        renderAffKPIs();
-        renderAffTable();
-        renderAffClicks();
-        renderAffConversions();
-        populateAffClickFilter();
-    });
-}
-
-function renderAffKPIs() {
-    const active = allAffiliates.filter(a => a.active);
-    const totalClicks = allAffClicks.length;
-    const totalSales = allAffConversions.length;
-    const totalRevenue = allAffConversions.reduce((s, c) => s + parseFloat(c.amount || 0), 0);
-    const convRate = totalClicks > 0 ? ((totalSales / totalClicks) * 100).toFixed(1) + '%' : '0%';
-
-    document.getElementById('affKpiTotal').textContent = active.length;
-    document.getElementById('affKpiClicks').textContent = totalClicks;
-    document.getElementById('affKpiSales').textContent = totalSales;
-    document.getElementById('affKpiRevenue').textContent = '€' + totalRevenue.toFixed(2);
-    document.getElementById('affKpiConvRate').textContent = convRate;
-}
-
-function renderAffTable() {
     const tbody = document.getElementById('affTable');
-    if (!allAffiliates.length) {
-        tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum afiliado criado. Clica em "Novo Afiliado" para começar.</td></tr>';
-        return;
-    }
+    if (!tbody) return;
+    const active = allAffiliates.filter(a => a.active);
+    setText('affKpiTotal', allAffiliates.length);
+    setText('affKpiClicks', allAffClicks.length);
+    setText('affKpiSales', allAffConversions.length);
+    const totalRev = allAffConversions.reduce((s, c) => s + (parseFloat(c.amount) || 0), 0);
+    setText('affKpiRevenue', totalRev.toFixed(2) + '€');
 
-    tbody.innerHTML = allAffiliates.map(aff => {
-        const clicks = allAffClicks.filter(c => c.affiliate_code === aff.code).length;
-        const conversions = allAffConversions.filter(c => c.affiliate_code === aff.code);
-        const sales = conversions.length;
-        const revenue = conversions.reduce((s, c) => s + parseFloat(c.amount || 0), 0);
-        const convRate = clicks > 0 ? ((sales / clicks) * 100).toFixed(1) + '%' : '—';
-        const status = aff.active
-            ? '<span class="badge badge-success">Ativo</span>'
-            : '<span class="badge badge-danger">Inativo</span>';
-        const date = new Date(aff.created_at).toLocaleDateString('pt-PT');
-        const baseUrl = 'https://www.share2inspire.pt';
-        const product = aff.product || 'cv-analyser';
-        const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','linkedin-roaster':'LinkedIn Roaster'};
-        const productColors = {'cv-analyser':'var(--blue)','career-path':'var(--gold)','career-intelligence':'#7C3AED','linkedin-roaster':'#0077B5'};
-        const products = product.split(',');
-        const badges = products.map(p => `<span class="badge" style="background:${productColors[p]||'var(--blue)'};color:#fff;font-size:10px;margin:1px;">${esc(productLabels[p]||p)}</span>`).join(' ');
-
+    if (!allAffiliates.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum afiliado</td></tr>'; return; }
+    const productLabels = {'cv-analyser':'CV','career-path':'CP','career-intelligence':'CI','linkedin-roaster':'LR'};
+    tbody.innerHTML = allAffiliates.map(a => {
+        const clicks = allAffClicks.filter(c => c.affiliate_code === a.code).length;
+        const sales = allAffConversions.filter(c => c.affiliate_code === a.code).length;
+        const rev = allAffConversions.filter(c => c.affiliate_code === a.code).reduce((s, c) => s + (parseFloat(c.amount) || 0), 0);
+        const products = (a.product || 'cv-analyser').split(',').map(p => productLabels[p] || p).join(', ');
         return `<tr>
-            <td><strong>${esc(aff.name)}</strong>${aff.email ? '<br><span style="font-size:11px;color:var(--text-muted);">' + esc(aff.email) + '</span>' : ''}</td>
-            <td>${badges}</td>
-            <td><code style="background:#F3F4F6;padding:2px 6px;border-radius:4px;font-size:12px;">${esc(aff.code)}</code></td>
-            <td><button class="btn btn-outline btn-sm" onclick="copyAffLink('${esc(aff.code)}','${esc(product)}')" title="Copiar links"><i class="fas fa-copy"></i></button></td>
-            <td><strong>${clicks}</strong></td>
-            <td><strong class="green">${sales}</strong></td>
-            <td><strong>€${revenue.toFixed(2)}</strong></td>
-            <td>${convRate}</td>
-            <td>${aff.commission_pct || 0}%</td>
-            <td>${status}</td>
-            <td>${date}</td>
-            <td>
-                <button class="btn-icon" onclick="editAffiliate('${aff.id}')" title="Editar"><i class="fas fa-edit"></i></button>
-                <button class="btn-icon" onclick="toggleAffiliate('${aff.id}', ${aff.active})" title="${aff.active ? 'Desativar' : 'Ativar'}"><i class="fas fa-${aff.active ? 'pause' : 'play'}"></i></button>
-            </td>
+            <td style="font-weight:500;">${a.name}</td>
+            <td><code style="font-size:11px;">${a.code}</code></td>
+            <td style="font-size:12px;">${products}</td>
+            <td style="font-size:12px;">${clicks}</td>
+            <td style="font-size:12px;">${sales}</td>
+            <td style="font-size:12px;font-weight:600;color:var(--gold);">${rev.toFixed(2)}€</td>
+            <td><div style="display:flex;gap:4px;">
+                <button class="btn-icon" onclick="editAffiliate('${a.id}')" title="Editar"><i class="fas fa-edit"></i></button>
+                <button class="btn-icon" onclick="toggleAffiliate('${a.id}',${a.active})" title="${a.active?'Desativar':'Ativar'}"><i class="fas fa-${a.active?'pause':'play'}"></i></button>
+                <button class="btn-icon" onclick="copyAffLink('${a.code}','${a.product||'cv-analyser'}')" title="Copiar Link"><i class="fas fa-copy"></i></button>
+            </div></td>
         </tr>`;
     }).join('');
 }
 
 function renderAffClicks() {
-    const tbody = document.getElementById('affClicksTable');
     const filterCode = document.getElementById('filterAffClickCode')?.value || 'all';
-    let clicks = [...allAffClicks];
+    let clicks = [...allAffClicks].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     if (filterCode !== 'all') clicks = clicks.filter(c => c.affiliate_code === filterCode);
-    clicks = clicks.slice(0, 100); // Show last 100
-
-    if (!clicks.length) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">Sem cliques registados.</td></tr>';
-        return;
-    }
-
-    tbody.innerHTML = clicks.map(c => {
-        const date = new Date(c.created_at).toLocaleString('pt-PT', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
-        const referrer = c.referrer ? (() => { try { return new URL(c.referrer).hostname; } catch { return c.referrer; } })() : '—';
-        const countryFlag = c.country ? `<span title="${esc(c.country)}">${esc(c.country)}</span>` : '<span style="color:var(--text-muted)">—</span>';
-        return `<tr>
-            <td>${date}</td>
-            <td><code style="font-size:11px;">${esc(c.affiliate_code)}</code></td>
-            <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(c.landing_page || '')}">${esc(c.landing_page || '—')}</td>
-            <td>${countryFlag}</td>
-            <td style="font-size:12px;color:var(--text-secondary);">${esc(c.city || '—')}</td>
-            <td><span class="badge badge-secondary">${esc(c.device_type || '—')}</span></td>
-            <td>${esc(c.browser || '—')}</td>
-            <td>${esc(c.os || '—')}</td>
-            <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;" title="${esc(c.referrer || '')}">${referrer}</td>
-        </tr>`;
+    const tbody = document.getElementById('affClicksTable');
+    if (!tbody) return;
+    if (!clicks.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">Sem cliques</td></tr>'; return; }
+    tbody.innerHTML = clicks.slice(0, 50).map(c => {
+        const date = new Date(c.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(c.created_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
+        return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td><code style="font-size:11px;">${c.affiliate_code||'—'}</code></td><td style="font-size:12px;">${c.landing_page||'—'}</td><td style="font-size:12px;">${c.device_type||'—'}</td><td style="font-size:12px;">${c.browser||'—'}</td><td style="font-size:12px;">${c.referrer||'—'}</td></tr>`;
     }).join('');
-}
-
-function renderAffConversions() {
-    const tbody = document.getElementById('affConversionsTable');
-    const conversions = allAffConversions.slice(0, 100);
-
-    if (!conversions.length) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Sem conversões registadas.</td></tr>';
-        return;
-    }
-
-    tbody.innerHTML = conversions.map(c => {
-        const date = new Date(c.created_at).toLocaleString('pt-PT', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
-        const productBadge = c.product === 'career_path'
-            ? '<span class="badge badge-career">Career Path</span>'
-            : c.product === 'career_intelligence_pro' || c.product === 'career-intelligence'
-            ? '<span class="badge" style="background:#7C3AED;color:#fff;">CI PRO</span>'
-            : c.product === 'career_intelligence_full'
-            ? '<span class="badge" style="background:#5B21B6;color:#fff;">CI Full</span>'
-            : c.product === 'bundle'
-            ? '<span class="badge badge-purple">Bundle</span>'
-            : c.product === 'linkedin-roaster' || c.product === 'linkedin_roaster'
-            ? '<span class="badge" style="background:#0077B5;color:#fff;">LinkedIn Roaster</span>'
-            : '<span class="badge badge-cv">CV Analyser</span>';
-        return `<tr>
-            <td>${date}</td>
-            <td><code style="font-size:11px;">${esc(c.affiliate_code)}</code></td>
-            <td>${productBadge}</td>
-            <td><strong>€${parseFloat(c.amount).toFixed(2)}</strong></td>
-            <td>${c.currency || 'EUR'}</td>
-            <td>${esc(c.payment_method || '—')}</td>
-            <td>${esc(c.customer_email || '—')}</td>
-            <td style="font-size:11px;">${esc(c.transaction_id || '—')}</td>
-        </tr>`;
-    }).join('');
+    populateAffClickFilter();
 }
 
 function populateAffClickFilter() {
     const select = document.getElementById('filterAffClickCode');
     if (!select) return;
     const codes = [...new Set(allAffClicks.map(c => c.affiliate_code))];
+    const current = select.value;
     select.innerHTML = '<option value="all">Todos</option>' + codes.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    if (current) select.value = current;
 }
 
-// ── Affiliate CRUD ──────────────────────────────────────────
-
-function getSelectedProducts() {
-    return [...document.querySelectorAll('.aff-product-cb:checked')].map(cb => cb.value);
-}
-
-function updateAffLinkPreview() {
-    const products = getSelectedProducts();
-    const code = document.getElementById('affCode').value.trim().toLowerCase();
-    const el = document.getElementById('affLinkPreview');
-    if (!products.length) {
-        el.innerHTML = '<span style="color:var(--red);">Seleciona pelo menos um produto</span>';
-        return;
-    }
-    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','linkedin-roaster':'LinkedIn Roaster'};
-    const slug = code || '...';
-    el.innerHTML = products.map(p => {
-        const links = [`share2inspire.pt/${p}?ref=${slug}`];
-        if (p !== 'linkedin-roaster') links.push(`share2inspire.pt/en/${p}?ref=${slug}`);
-        return `<div style="margin-bottom:4px;"><strong style="color:var(--dark);">${productLabels[p]}:</strong><br>${links.map(l => `<span style="color:var(--blue);">${l}</span>`).join(' &middot; ')}</div>`;
+function renderAffConversions() {
+    const tbody = document.getElementById('affConversionsTable');
+    if (!tbody) return;
+    const data = [...allAffConversions].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    if (!data.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">Sem conversões</td></tr>'; return; }
+    tbody.innerHTML = data.slice(0, 50).map(c => {
+        const date = new Date(c.created_at).toLocaleDateString('pt-PT');
+        return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td><code style="font-size:11px;">${c.affiliate_code||'—'}</code></td><td>${getProductBadge(c)}</td><td style="font-weight:600;color:var(--gold);">${parseFloat(c.amount).toFixed(2)}€</td><td style="font-size:12px;">${c.customer_email||'—'}</td><td style="font-size:12px;">${c.payment_method||'—'}</td></tr>`;
     }).join('');
-}
-
-function setProductCheckboxes(products) {
-    const list = Array.isArray(products) ? products : (products ? products.split(',') : ['cv-analyser']);
-    document.querySelectorAll('.aff-product-cb').forEach(cb => {
-        cb.checked = list.includes(cb.value);
-    });
 }
 
 function openCreateAffiliateModal() {
     document.getElementById('affEditId').value = '';
     document.getElementById('affName').value = '';
     document.getElementById('affEmail').value = '';
-    setProductCheckboxes(['cv-analyser']);
+    document.querySelectorAll('.aff-product-cb').forEach(cb => cb.checked = cb.value === 'cv-analyser');
     document.getElementById('affCode').value = '';
     document.getElementById('affCommission').value = '0';
     document.getElementById('affNotes').value = '';
     document.getElementById('affModalTitle').textContent = 'Novo Afiliado';
     updateAffLinkPreview();
     document.getElementById('affModalOverlay').style.display = 'flex';
-    document.getElementById('affCode').oninput = function() {
-        const code = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
-        this.value = code;
-        updateAffLinkPreview();
-    };
+    document.getElementById('affCode').oninput = function() { this.value = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, ''); updateAffLinkPreview(); };
 }
-
-function closeAffiliateModal() {
-    document.getElementById('affModalOverlay').style.display = 'none';
-}
+function closeAffiliateModal() { document.getElementById('affModalOverlay').style.display = 'none'; }
 
 function editAffiliate(id) {
     const aff = allAffiliates.find(a => a.id === id);
@@ -2441,20 +1766,30 @@ function editAffiliate(id) {
     document.getElementById('affEditId').value = aff.id;
     document.getElementById('affName').value = aff.name || '';
     document.getElementById('affEmail').value = aff.email || '';
-    // Support both old single-product and new multi-product (comma-separated)
     const products = (aff.product || 'cv-analyser').split(',');
-    setProductCheckboxes(products);
+    document.querySelectorAll('.aff-product-cb').forEach(cb => cb.checked = products.includes(cb.value));
     document.getElementById('affCode').value = aff.code || '';
     document.getElementById('affCommission').value = aff.commission_pct || 0;
     document.getElementById('affNotes').value = aff.notes || '';
     document.getElementById('affModalTitle').textContent = 'Editar Afiliado';
     updateAffLinkPreview();
     document.getElementById('affModalOverlay').style.display = 'flex';
-    document.getElementById('affCode').oninput = function() {
-        const code = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
-        this.value = code;
-        updateAffLinkPreview();
-    };
+    document.getElementById('affCode').oninput = function() { this.value = this.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, ''); updateAffLinkPreview(); };
+}
+
+function updateAffLinkPreview() {
+    const products = [...document.querySelectorAll('.aff-product-cb:checked')].map(cb => cb.value);
+    const code = document.getElementById('affCode').value.trim().toLowerCase();
+    const el = document.getElementById('affLinkPreview');
+    if (!el) return;
+    if (!products.length) { el.innerHTML = '<span style="color:var(--red);">Seleciona pelo menos um produto</span>'; return; }
+    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','linkedin-roaster':'LinkedIn Roaster'};
+    const slug = code || '...';
+    el.innerHTML = products.map(p => {
+        const links = [`share2inspire.pt/${p}?ref=${slug}`];
+        if (p !== 'linkedin-roaster') links.push(`share2inspire.pt/en/${p}?ref=${slug}`);
+        return `<div style="margin-bottom:4px;"><strong style="color:var(--dark);">${productLabels[p]}:</strong><br>${links.map(l => `<span style="color:var(--blue);">${l}</span>`).join(' · ')}</div>`;
+    }).join('');
 }
 
 async function saveAffiliate() {
@@ -2462,146 +1797,75 @@ async function saveAffiliate() {
     const name = document.getElementById('affName').value.trim();
     const email = document.getElementById('affEmail').value.trim();
     const code = document.getElementById('affCode').value.trim().toLowerCase();
-    const products = getSelectedProducts();
-    const product = products.join(',');  // Store as comma-separated
+    const products = [...document.querySelectorAll('.aff-product-cb:checked')].map(cb => cb.value);
+    const product = products.join(',');
     const commission = parseFloat(document.getElementById('affCommission').value) || 0;
     const notes = document.getElementById('affNotes').value.trim();
-
     if (!name) { showToast('Nome é obrigatório', 'danger'); return; }
     if (!code) { showToast('Código é obrigatório', 'danger'); return; }
     if (!products.length) { showToast('Seleciona pelo menos um produto', 'danger'); return; }
-    if (!/^[a-z0-9_-]+$/.test(code)) { showToast('Código só pode conter letras minúsculas, números, - e _', 'danger'); return; }
-
     try {
         if (editId) {
             await supaUpdate('affiliates', editId, { name, email: email || null, code, product, commission_pct: commission, notes: notes || null });
             showToast('Afiliado atualizado!', 'success');
         } else {
             await supaInsert('affiliates', { name, email: email || null, code, product, commission_pct: commission, notes: notes || null, active: true });
-            const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','linkedin-roaster':'LinkedIn Roaster'};
-            const labels = products.map(p => productLabels[p] || p).join(', ');
-            showToast(`Afiliado criado para ${labels}!`, 'success');
+            showToast('Afiliado criado!', 'success');
         }
         closeAffiliateModal();
+        await loadAffiliateData();
         renderAffiliates();
-    } catch (e) {
-        console.error('Erro ao guardar afiliado:', e);
-        showToast('Erro ao guardar: ' + (e.message || 'código duplicado?'), 'danger');
-    }
+    } catch (e) { showToast('Erro ao guardar: ' + (e.message || 'código duplicado?'), 'danger'); }
 }
 
 async function toggleAffiliate(id, currentActive) {
     try {
         await supaUpdate('affiliates', id, { active: !currentActive });
         showToast(currentActive ? 'Afiliado desativado' : 'Afiliado ativado', 'success');
+        await loadAffiliateData();
         renderAffiliates();
-    } catch (e) {
-        showToast('Erro ao alterar estado', 'danger');
-    }
+    } catch (e) { showToast('Erro ao alterar estado', 'danger'); }
 }
 
 function copyAffLink(code, product) {
-    product = product || 'cv-analyser';
     const base = 'https://www.share2inspire.pt';
-    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','linkedin-roaster':'LinkedIn Roaster'};
-    // Support comma-separated multi-product
-    const products = product.split(',');
+    const products = (product || 'cv-analyser').split(',');
     const allLinks = [];
-    products.forEach(p => {
-        allLinks.push(`${base}/${p}?ref=${code}`);
-        if (p !== 'linkedin-roaster') {
-            allLinks.push(`${base}/en/${p}?ref=${code}`);
-        }
-    });
-    const text = allLinks.join('\n');
-    const labels = products.map(p => productLabels[p] || p).join(', ');
-    navigator.clipboard.writeText(text).then(() => {
-        showToast(`${allLinks.length} link${allLinks.length > 1 ? 's' : ''} copiado${allLinks.length > 1 ? 's' : ''} (${labels})`, 'success');
-    }).catch(() => {
-        prompt('Copia os links:', text);
-    });
+    products.forEach(p => { allLinks.push(`${base}/${p}?ref=${code}`); if (p !== 'linkedin-roaster') allLinks.push(`${base}/en/${p}?ref=${code}`); });
+    navigator.clipboard.writeText(allLinks.join('\n')).then(() => showToast(`${allLinks.length} link(s) copiado(s)`, 'success')).catch(() => prompt('Copia:', allLinks.join('\n')));
 }
 
-// ── CSV Exports ─────────────────────────────────────────────
-
 function exportAffClicksCSV() {
-    const filterCode = document.getElementById('filterAffClickCode')?.value || 'all';
-    let clicks = [...allAffClicks];
-    if (filterCode !== 'all') clicks = clicks.filter(c => c.affiliate_code === filterCode);
-
-    const header = ['Data','Afiliado','Página','Dispositivo','Browser','OS','Resolução','Referrer','UTM Source','UTM Medium','UTM Campaign','Session ID'];
-    const rows = clicks.map(c => [
-        new Date(c.created_at).toISOString(), c.affiliate_code || '', c.landing_page || '',
-        c.device_type || '', c.browser || '', c.os || '', c.screen_resolution || '',
-        c.referrer || '', c.utm_source || '', c.utm_medium || '', c.utm_campaign || '', c.session_id || ''
-    ]);
-    downloadCSV([header, ...rows], `affiliate_clicks_${new Date().toISOString().slice(0,10)}.csv`);
+    const rows = [['Data','Afiliado','Página','Dispositivo','Browser','Referrer']];
+    allAffClicks.forEach(c => rows.push([c.created_at, c.affiliate_code||'', c.landing_page||'', c.device_type||'', c.browser||'', c.referrer||'']));
+    downloadCSV(rows, 'affiliate_clicks.csv');
 }
 
 function exportAffConversionsCSV() {
-    const header = ['Data','Afiliado','Produto','Valor','Moeda','Método','Email Cliente','Transação'];
-    const rows = allAffConversions.map(c => [
-        new Date(c.created_at).toISOString(), c.affiliate_code || '', c.product || '',
-        c.amount || '', c.currency || '', c.payment_method || '', c.customer_email || '', c.transaction_id || ''
-    ]);
-    downloadCSV([header, ...rows], `affiliate_conversions_${new Date().toISOString().slice(0,10)}.csv`);
+    const rows = [['Data','Afiliado','Produto','Valor','Email','Método']];
+    allAffConversions.forEach(c => rows.push([c.created_at, c.affiliate_code||'', c.product||'', c.amount||'', c.customer_email||'', c.payment_method||'']));
+    downloadCSV(rows, 'affiliate_conversions.csv');
 }
-
-// ── HTML escape helper ──────────────────────────────────────
-function esc(str) {
-    if (!str) return '';
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
 
 // ═══════════════════════════════════════════════════════════════
-//  DISCOUNT COUPONS MODULE
+//  DISCOUNT COUPONS
 // ═══════════════════════════════════════════════════════════════
-let allCoupons = [];
-
-async function loadCouponData() {
-    try {
-        const coupons = await supaFetch('discount_coupons', 'select=*&order=created_at.desc');
-        allCoupons = Array.isArray(coupons) ? coupons : [];
-    } catch (e) {
-        console.error('Erro ao carregar cupões:', e);
-    }
-}
-
 function renderCoupons() {
     const statusFilter = document.getElementById('filterCouponStatus')?.value || 'all';
     const searchFilter = (document.getElementById('filterCouponSearch')?.value || '').toLowerCase();
-
     let filtered = allCoupons.filter(c => {
         if (statusFilter === 'active' && !c.is_active) return false;
         if (statusFilter === 'inactive' && c.is_active) return false;
         if (searchFilter) {
-            const match = (c.code || '').toLowerCase().includes(searchFilter) ||
-                          (c.partner_name || '').toLowerCase().includes(searchFilter) ||
-                          (c.description || '').toLowerCase().includes(searchFilter);
+            const match = (c.code || '').toLowerCase().includes(searchFilter) || (c.partner_name || '').toLowerCase().includes(searchFilter);
             if (!match) return false;
         }
         return true;
     });
-
-    // KPIs
     const active = allCoupons.filter(c => c.is_active);
     const totalUses = allCoupons.reduce((s, c) => s + (c.current_uses || 0), 0);
-    const avgDiscount = allCoupons.length > 0
-        ? (allCoupons.reduce((s, c) => s + (c.discount_percent || 0), 0) / allCoupons.length).toFixed(0)
-        : 0;
-
-    document.getElementById('couponKpiActive').textContent = active.length;
-    document.getElementById('couponKpiUses').textContent = totalUses;
-    document.getElementById('couponKpiAvgDiscount').textContent = avgDiscount + '%';
-    document.getElementById('couponKpiTotal').textContent = allCoupons.length;
-
-    // Table
-    const tbody = document.getElementById('couponsTable');
-    if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum cupão encontrado</td></tr>';
-        return;
-    }
+    setText('couponKpiActive', active.length);
+    setText('couponKpiUses', totalUses);
 
     const productLabels = {
         'cv_analysis': '<span class="badge" style="background:var(--blue);color:#fff;font-size:10px;">CV</span>',
@@ -2611,61 +1875,48 @@ function renderCoupons() {
         'bundle': '<span class="badge" style="background:var(--purple);color:#fff;font-size:10px;">Bundle</span>',
         'linkedin_roaster': '<span class="badge" style="background:#0077B5;color:#fff;font-size:10px;">Roaster</span>'
     };
-
+    const tbody = document.getElementById('couponsTable');
+    if (!tbody) return;
+    if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum cupão encontrado</td></tr>'; return; }
     tbody.innerHTML = filtered.map(c => {
         const products = (c.applicable_products || []).map(p => productLabels[p] || esc(p)).join(' ');
         const uses = c.current_uses || 0;
-        const maxUses = c.max_uses ? c.max_uses : '<span style="color:var(--text-muted);">∞</span>';
-        const validUntil = c.valid_until
-            ? new Date(c.valid_until).toLocaleDateString('pt-PT')
-            : '<span style="color:var(--text-muted);">Sem limite</span>';
+        const maxUses = c.max_uses ? c.max_uses : '∞';
+        const validUntil = c.valid_until ? new Date(c.valid_until).toLocaleDateString('pt-PT') : 'Sem limite';
         const isExpired = c.valid_until && new Date(c.valid_until) < new Date();
-        const statusBadge = c.is_active && !isExpired
-            ? '<span class="badge" style="background:var(--green);color:#fff;">Ativo</span>'
-            : '<span class="badge" style="background:var(--danger);color:#fff;">' + (isExpired ? 'Expirado' : 'Inativo') + '</span>';
-        const created = new Date(c.created_at).toLocaleDateString('pt-PT');
-
+        const statusBadge = c.is_active && !isExpired ? '<span class="badge badge-success">Ativo</span>' : `<span class="badge" style="background:var(--red);color:#fff;">${isExpired ? 'Expirado' : 'Inativo'}</span>`;
         return `<tr>
-            <td><code style="font-size:12px;font-weight:600;letter-spacing:1px;">${esc(c.code)}</code></td>
-            <td>${esc(c.partner_name) || '<span style="color:var(--text-muted);">—</span>'}</td>
+            <td><code style="font-size:12px;font-weight:600;">${esc(c.code)}</code></td>
+            <td style="font-size:12px;">${esc(c.partner_name) || '—'}</td>
             <td><span style="font-weight:600;color:var(--green);">${c.discount_percent}%</span></td>
             <td>${products}</td>
-            <td>${uses}</td>
-            <td>${maxUses}</td>
+            <td>${uses}/${maxUses}</td>
             <td>${validUntil}</td>
             <td>${statusBadge}</td>
-            <td>${created}</td>
-            <td>
-                <div style="display:flex;gap:4px;">
-                    <button class="btn btn-outline btn-sm" onclick="editCoupon('${c.id}')" title="Editar"><i class="fas fa-edit"></i></button>
-                    <button class="btn btn-outline btn-sm" onclick="toggleCoupon('${c.id}', ${c.is_active})" title="${c.is_active ? 'Desativar' : 'Ativar'}">
-                        <i class="fas fa-${c.is_active ? 'pause' : 'play'}"></i>
-                    </button>
-                    <button class="btn btn-outline btn-sm" onclick="copyCouponCode('${esc(c.code)}')" title="Copiar código"><i class="fas fa-copy"></i></button>
-                </div>
-            </td>
+            <td>${new Date(c.created_at).toLocaleDateString('pt-PT')}</td>
+            <td><div style="display:flex;gap:4px;">
+                <button class="btn-icon" onclick="editCoupon('${c.id}')" title="Editar"><i class="fas fa-edit"></i></button>
+                <button class="btn-icon" onclick="toggleCoupon('${c.id}',${c.is_active})" title="${c.is_active?'Desativar':'Ativar'}"><i class="fas fa-${c.is_active?'pause':'play'}"></i></button>
+                <button class="btn-icon" onclick="copyCouponCode('${esc(c.code)}')" title="Copiar"><i class="fas fa-copy"></i></button>
+            </div></td>
         </tr>`;
     }).join('');
 }
 
 function openCreateCouponModal() {
-    document.getElementById('couponModalTitle').textContent = 'Novo Cupão de Desconto';
+    document.getElementById('couponModalTitle').textContent = 'Novo Cupão';
     document.getElementById('couponEditId').value = '';
     document.getElementById('couponCodeInput').value = '';
+    document.getElementById('couponCodeInput').disabled = false;
     document.getElementById('couponPartnerName').value = '';
     document.getElementById('couponDiscount').value = '';
     document.getElementById('couponDescription').value = '';
     document.getElementById('couponMaxUses').value = '';
     document.getElementById('couponValidUntil').value = '';
-    document.getElementById('couponCodeInput').disabled = false;
-    // Reset all product checkboxes to checked
     document.querySelectorAll('.coupon-product-cb').forEach(cb => cb.checked = true);
     document.getElementById('couponModalOverlay').style.display = 'flex';
 }
-
-function closeCouponModal() {
-    document.getElementById('couponModalOverlay').style.display = 'none';
-}
+function closeCouponModal() { document.getElementById('couponModalOverlay').style.display = 'none'; }
 
 function editCoupon(id) {
     const c = allCoupons.find(x => x.id === id);
@@ -2673,17 +1924,14 @@ function editCoupon(id) {
     document.getElementById('couponModalTitle').textContent = 'Editar Cupão';
     document.getElementById('couponEditId').value = c.id;
     document.getElementById('couponCodeInput').value = c.code || '';
-    document.getElementById('couponCodeInput').disabled = true; // Code cannot be changed
+    document.getElementById('couponCodeInput').disabled = true;
     document.getElementById('couponPartnerName').value = c.partner_name || '';
     document.getElementById('couponDiscount').value = c.discount_percent || '';
     document.getElementById('couponDescription').value = c.description || '';
     document.getElementById('couponMaxUses').value = c.max_uses || '';
     document.getElementById('couponValidUntil').value = c.valid_until ? c.valid_until.slice(0, 10) : '';
-    // Set product checkboxes
     const products = c.applicable_products || [];
-    document.querySelectorAll('.coupon-product-cb').forEach(cb => {
-        cb.checked = products.includes(cb.value);
-    });
+    document.querySelectorAll('.coupon-product-cb').forEach(cb => cb.checked = products.includes(cb.value));
     document.getElementById('couponModalOverlay').style.display = 'flex';
 }
 
@@ -2695,99 +1943,34 @@ async function saveCoupon() {
     const description = document.getElementById('couponDescription').value.trim();
     const maxUses = document.getElementById('couponMaxUses').value ? parseInt(document.getElementById('couponMaxUses').value) : null;
     const validUntil = document.getElementById('couponValidUntil').value || null;
-    const products = Array.from(document.querySelectorAll('.coupon-product-cb:checked')).map(cb => cb.value);
-
-    // Validations
-    if (!code) { showToast('O código do cupão é obrigatório', 'danger'); return; }
-    if (!discount || discount < 1 || discount > 100) { showToast('O desconto deve ser entre 1% e 100%', 'danger'); return; }
-    if (products.length === 0) { showToast('Seleciona pelo menos um produto', 'danger'); return; }
-
-    // Check for duplicate code (only on create)
-    if (!editId) {
-        const existing = allCoupons.find(c => c.code === code);
-        if (existing) { showToast('Já existe um cupão com este código', 'danger'); return; }
-    }
-
-    const data = {
-        discount_percent: discount,
-        partner_name: partnerName || null,
-        description: description || null,
-        applicable_products: products,
-        max_uses: maxUses,
-        valid_until: validUntil ? new Date(validUntil + 'T23:59:59Z').toISOString() : null
-    };
-
+    const products = [...document.querySelectorAll('.coupon-product-cb:checked')].map(cb => cb.value);
+    if (!code) { showToast('Código obrigatório', 'danger'); return; }
+    if (!discount || discount < 1 || discount > 100) { showToast('Desconto entre 1-100%', 'danger'); return; }
+    if (!products.length) { showToast('Seleciona pelo menos um produto', 'danger'); return; }
+    if (!editId && allCoupons.find(c => c.code === code)) { showToast('Código já existe', 'danger'); return; }
+    const data = { discount_percent: discount, partner_name: partnerName || null, description: description || null, applicable_products: products, max_uses: maxUses, valid_until: validUntil ? new Date(validUntil + 'T23:59:59Z').toISOString() : null };
     try {
-        if (editId) {
-            await supaUpdate('discount_coupons', editId, data);
-            showToast('Cupão atualizado com sucesso', 'success');
-        } else {
-            data.code = code;
-            data.is_active = true;
-            data.current_uses = 0;
-            await supaInsert('discount_coupons', data);
-            showToast('Cupão criado com sucesso: ' + code, 'success');
-        }
+        if (editId) { await supaUpdate('discount_coupons', editId, data); showToast('Cupão atualizado', 'success'); }
+        else { data.code = code; data.is_active = true; data.current_uses = 0; await supaInsert('discount_coupons', data); showToast('Cupão criado: ' + code, 'success'); }
         closeCouponModal();
         await loadCouponData();
         renderCoupons();
-    } catch (e) {
-        console.error('Erro ao guardar cupão:', e);
-        showToast('Erro ao guardar cupão', 'danger');
-    }
+    } catch (e) { showToast('Erro ao guardar cupão', 'danger'); }
 }
 
 async function toggleCoupon(id, currentActive) {
-    const action = currentActive ? 'desativar' : 'ativar';
-    if (!confirm(`Tens a certeza que queres ${action} este cupão?`)) return;
-    try {
-        await supaUpdate('discount_coupons', id, { is_active: !currentActive });
-        showToast(`Cupão ${currentActive ? 'desativado' : 'ativado'} com sucesso`, 'success');
-        await loadCouponData();
-        renderCoupons();
-    } catch (e) {
-        console.error('Erro ao alterar estado do cupão:', e);
-        showToast('Erro ao alterar estado do cupão', 'danger');
-    }
+    if (!confirm(`${currentActive ? 'Desativar' : 'Ativar'} este cupão?`)) return;
+    try { await supaUpdate('discount_coupons', id, { is_active: !currentActive }); showToast('Estado alterado', 'success'); await loadCouponData(); renderCoupons(); }
+    catch (e) { showToast('Erro', 'danger'); }
 }
 
 function copyCouponCode(code) {
-    navigator.clipboard.writeText(code).then(() => {
-        showToast('Código copiado: ' + code, 'success');
-    }).catch(() => {
-        // Fallback
-        const el = document.createElement('textarea');
-        el.value = code;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-        showToast('Código copiado: ' + code, 'success');
-    });
+    navigator.clipboard.writeText(code).then(() => showToast('Código copiado: ' + code, 'success')).catch(() => prompt('Copia:', code));
 }
 
-
 // ═══════════════════════════════════════════════════════════════
-//  USERS & LICENSES MODULE
+//  USERS & LICENSES
 // ═══════════════════════════════════════════════════════════════
-
-async function loadUsersData() {
-    try {
-        const [authUsers, profiles, subscriptions, userAnalyses] = await Promise.all([
-            supaFetch('admin_auth_users', 'select=id,email,raw_user_meta_data,created_at,last_sign_in_at,email_confirmed_at&order=created_at.desc'),
-            supaFetch('user_profiles', 'select=*&order=created_at.desc'),
-            supaFetch('subscriptions', 'select=*&order=created_at.desc'),
-            supaFetch('user_analyses', 'select=id,user_id,analysis_type,created_at&order=created_at.desc&limit=5000')
-        ]);
-        allAuthUsers    = Array.isArray(authUsers)    ? authUsers    : [];
-        allUserProfiles = Array.isArray(profiles)     ? profiles     : [];
-        allSubscriptions = Array.isArray(subscriptions) ? subscriptions : [];
-        allUserAnalyses = Array.isArray(userAnalyses) ? userAnalyses : [];
-    } catch (e) {
-        console.error('Erro ao carregar dados de utilizadores:', e);
-    }
-}
-
 function getMergedUsers() {
     return allAuthUsers.map(au => {
         const profile = allUserProfiles.find(p => p.id === au.id || p.user_id === au.id || p.email === au.email);
@@ -2795,30 +1978,20 @@ function getMergedUsers() {
         const activeSub = subs.find(s => s.status === 'active' && (!s.expires_at || new Date(s.expires_at) > new Date()));
         const analyses = allUserAnalyses.filter(a => a.user_id === au.id);
         const meta = au.raw_user_meta_data || {};
-
         return {
-            id: au.id,
-            email: au.email,
+            id: au.id, email: au.email,
             first_name: profile?.first_name || meta.first_name || '',
             last_name: profile?.last_name || meta.last_name || '',
-            phone: profile?.phone || '',
-            linkedin_url: profile?.linkedin_url || '',
-            avatar_url: profile?.avatar_url || '',
-            cv_url: profile?.cv_url || '',
-            cv_filename: profile?.cv_filename || '',
-            address: profile?.address || '',
+            phone: profile?.phone || '', linkedin_url: profile?.linkedin_url || '',
+            cv_filename: profile?.cv_filename || '', address: profile?.address || '',
             email_confirmed: au.email_confirmed_at ? true : (meta.email_verified || false),
-            created_at: au.created_at,
-            last_sign_in_at: au.last_sign_in_at,
-            active_sub: activeSub || null,
-            all_subs: subs,
-            analyses: analyses,
+            created_at: au.created_at, last_sign_in_at: au.last_sign_in_at,
+            active_sub: activeSub || null, all_subs: subs, analyses,
             analyses_count: analyses.length,
             cv_analyser_count: analyses.filter(a => a.analysis_type === 'cv_analyser').length,
             career_path_count: analyses.filter(a => a.analysis_type === 'career_path').length,
             career_intelligence_count: analyses.filter(a => a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full').length,
             linkedin_roaster_count: analyses.filter(a => a.analysis_type === 'linkedin_roaster').length,
-            career_energy_count: analyses.filter(a => a.analysis_type === 'career_energy').length,
             profile_complete: !!(profile && profile.first_name && profile.last_name && profile.phone)
         };
     });
@@ -2826,15 +1999,12 @@ function getMergedUsers() {
 
 function renderUsers() {
     const users = getMergedUsers();
-
-    // KPIs
     const totalUsers = users.length;
     const activeSubs = users.filter(u => u.active_sub).length;
     const totalSavedAnalyses = users.reduce((s, u) => s + u.analyses_count, 0);
     const subRevenue = allSubscriptions.reduce((s, sub) => s + (parseFloat(sub.price_eur) || 0), 0);
     const profilesComplete = users.filter(u => u.profile_complete).length;
     const lastReg = users.length > 0 ? new Date(users[0].created_at).toLocaleDateString('pt-PT') : '—';
-
     setText('usersKpiTotal', totalUsers);
     setText('usersKpiActiveSubs', activeSubs);
     setText('usersKpiSavedAnalyses', totalSavedAnalyses);
@@ -2842,100 +2012,47 @@ function renderUsers() {
     setText('usersKpiComplete', `${profilesComplete}/${totalUsers}`);
     setText('usersKpiLastReg', lastReg);
 
-    // Filters
     const statusFilter = document.getElementById('filterUserStatus')?.value || 'all';
     const searchFilter = (document.getElementById('filterUserSearch')?.value || '').toLowerCase();
-
     let filtered = [...users];
     if (statusFilter === 'active_sub') filtered = filtered.filter(u => u.active_sub);
     if (statusFilter === 'no_sub') filtered = filtered.filter(u => !u.active_sub && u.all_subs.length === 0);
     if (statusFilter === 'expired') filtered = filtered.filter(u => !u.active_sub && u.all_subs.length > 0);
-    if (searchFilter) {
-        filtered = filtered.filter(u => {
-            const haystack = `${u.first_name} ${u.last_name} ${u.email} ${u.phone}`.toLowerCase();
-            return haystack.includes(searchFilter);
-        });
-    }
+    if (searchFilter) filtered = filtered.filter(u => `${u.first_name} ${u.last_name} ${u.email} ${u.phone}`.toLowerCase().includes(searchFilter));
 
-    // Pagination
     const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
     usersPage = Math.min(usersPage, totalPages);
     const page = filtered.slice((usersPage - 1) * PAGE_SIZE, usersPage * PAGE_SIZE);
-
     const tbody = document.getElementById('usersTable');
     if (!tbody) return;
-
-    if (!page.length) {
-        tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum utilizador encontrado</td></tr>`;
-        renderPagination('usersPagination', usersPage, totalPages, (p) => { usersPage = p; renderUsers(); });
-        return;
-    }
+    if (!page.length) { tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum utilizador encontrado</td></tr>`; renderPagination('usersPagination', usersPage, totalPages, (p) => { usersPage = p; renderUsers(); }); return; }
 
     tbody.innerHTML = page.map(u => {
-        const name = `${u.first_name} ${u.last_name}`.trim() || '<span style="color:var(--text-muted);">—</span>';
-        const emailBadge = u.email_confirmed
-            ? '<i class="fas fa-check-circle" style="color:var(--green);font-size:10px;margin-left:4px;" title="Email verificado"></i>'
-            : '<i class="fas fa-exclamation-circle" style="color:var(--orange);font-size:10px;margin-left:4px;" title="Email não verificado"></i>';
-        const phone = u.phone || '<span style="color:var(--text-muted);">—</span>';
-        const linkedin = u.linkedin_url
-            ? `<a href="${u.linkedin_url}" target="_blank" style="color:var(--blue);font-size:12px;" title="${u.linkedin_url}"><i class="fab fa-linkedin"></i></a>`
-            : '<span style="color:var(--text-muted);">—</span>';
-
-        // Subscription
-        let subBadge, planBadge, expireDate;
-        if (u.active_sub) {
-            subBadge = '<span class="badge badge-success">Ativa</span>';
-            planBadge = `<span class="badge badge-paid">${u.active_sub.plan || '—'}</span>`;
-            expireDate = u.active_sub.expires_at ? new Date(u.active_sub.expires_at).toLocaleDateString('pt-PT') : 'Sem limite';
-        } else if (u.all_subs.length > 0) {
-            subBadge = '<span class="badge badge-danger">Expirada</span>';
-            const lastSub = u.all_subs[0];
-            planBadge = `<span class="badge badge-secondary">${lastSub.plan || '—'}</span>`;
-            expireDate = lastSub.expires_at ? new Date(lastSub.expires_at).toLocaleDateString('pt-PT') : '—';
-        } else {
-            subBadge = '<span class="badge badge-secondary">Nenhuma</span>';
-            planBadge = '—';
-            expireDate = '—';
-        }
-
-        // Analyses count with breakdown tooltip
-        const analysesHtml = u.analyses_count > 0
-            ? `<span style="font-weight:600;cursor:help;" title="CV: ${u.cv_analyser_count} | Career: ${u.career_path_count} | CI: ${u.career_intelligence_count} | LinkedIn: ${u.linkedin_roaster_count}">${u.analyses_count}</span>`
-            : '<span style="color:var(--text-muted);">0</span>';
-
-        // CV
-        const cvBadge = u.cv_filename
-            ? `<span class="badge badge-teal" title="${u.cv_filename}"><i class="fas fa-file-pdf" style="margin-right:3px;"></i> Sim</span>`
-            : '<span style="color:var(--text-muted);">—</span>';
-
-        const regDate = new Date(u.created_at);
-        const regStr = regDate.toLocaleDateString('pt-PT') + ' ' + regDate.toLocaleTimeString('pt-PT', {hour:'2-digit', minute:'2-digit'});
-        const loginStr = u.last_sign_in_at
-            ? new Date(u.last_sign_in_at).toLocaleDateString('pt-PT') + ' ' + new Date(u.last_sign_in_at).toLocaleTimeString('pt-PT', {hour:'2-digit', minute:'2-digit'})
-            : '<span style="color:var(--text-muted);">Nunca</span>';
-
-        return `
-        <tr>
+        const name = `${u.first_name} ${u.last_name}`.trim() || '—';
+        const emailBadge = u.email_confirmed ? '<i class="fas fa-check-circle" style="color:var(--green);font-size:10px;margin-left:4px;"></i>' : '<i class="fas fa-exclamation-circle" style="color:var(--orange);font-size:10px;margin-left:4px;"></i>';
+        let subBadge;
+        if (u.active_sub) subBadge = '<span class="badge badge-success">Ativa</span>';
+        else if (u.all_subs.length > 0) subBadge = '<span class="badge" style="background:var(--red);color:#fff;">Expirada</span>';
+        else subBadge = '<span class="badge badge-secondary">Nenhuma</span>';
+        const planBadge = u.active_sub ? `<span class="badge badge-paid">${u.active_sub.plan || '—'}</span>` : (u.all_subs.length > 0 ? `<span class="badge badge-secondary">${u.all_subs[0].plan || '—'}</span>` : '—');
+        const analysesHtml = u.analyses_count > 0 ? `<span style="font-weight:600;cursor:help;" title="CV:${u.cv_analyser_count} CP:${u.career_path_count} CI:${u.career_intelligence_count} LR:${u.linkedin_roaster_count}">${u.analyses_count}</span>` : '0';
+        const regDate = new Date(u.created_at).toLocaleDateString('pt-PT');
+        const loginStr = u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString('pt-PT') : 'Nunca';
+        return `<tr>
             <td style="font-weight:500;">${name}</td>
             <td style="font-size:12px;">${u.email}${emailBadge}</td>
-            <td style="font-size:12px;">${phone}</td>
-            <td>${linkedin}</td>
             <td>${subBadge}</td>
             <td>${planBadge}</td>
-            <td style="font-size:12px;">${expireDate}</td>
             <td>${analysesHtml}</td>
-            <td>${cvBadge}</td>
-            <td style="font-size:11px;color:var(--text-muted);">${regStr}</td>
+            <td style="font-size:12px;">${u.cv_filename ? '<i class="fas fa-file-pdf" style="color:var(--teal);"></i>' : '—'}</td>
+            <td style="font-size:11px;color:var(--text-muted);">${regDate}</td>
             <td style="font-size:11px;color:var(--text-muted);">${loginStr}</td>
-            <td>
-                <div style="display:flex;gap:4px;">
-                    <button class="btn-icon" title="Ver Detalhes" onclick="showUserDetail('${u.id}')"><i class="fas fa-eye"></i></button>
-                    <button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${u.email}','${(u.first_name + ' ' + u.last_name).trim().replace(/'/g,"\\'")}')"><i class="fas fa-envelope"></i></button>
-                </div>
-            </td>
+            <td><div style="display:flex;gap:4px;">
+                <button class="btn-icon" title="Ver" onclick="showUserDetail('${u.id}')"><i class="fas fa-eye"></i></button>
+                <button class="btn-icon" title="Email" onclick="openEmailModal('${u.email}','${(u.first_name+' '+u.last_name).trim().replace(/'/g,"\\'")}')"><i class="fas fa-envelope"></i></button>
+            </div></td>
         </tr>`;
     }).join('');
-
     renderPagination('usersPagination', usersPage, totalPages, (p) => { usersPage = p; renderUsers(); });
 }
 
@@ -2943,135 +2060,123 @@ function showUserDetail(userId) {
     const users = getMergedUsers();
     const u = users.find(x => x.id === userId);
     if (!u) return;
-
     const name = `${u.first_name} ${u.last_name}`.trim() || 'Sem nome';
-    const emailStatus = u.email_confirmed ? '✓ Verificado' : '✗ Não verificado';
-    const regDate = new Date(u.created_at).toLocaleString('pt-PT');
-    const loginDate = u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleString('pt-PT') : 'Nunca';
-
-    // Subscription history
-    let subsHtml = '';
-    if (u.all_subs.length > 0) {
-        subsHtml = `<table style="width:100%;margin-top:8px;font-size:12px;">
-            <thead><tr><th>Plano</th><th>Estado</th><th>Preço</th><th>Método</th><th>Início</th><th>Expira</th></tr></thead>
-            <tbody>${u.all_subs.map(s => `
-                <tr>
-                    <td><strong>${s.plan || '—'}</strong></td>
-                    <td>${s.status === 'active' ? '<span class="badge badge-success">Ativa</span>' : '<span class="badge badge-danger">Expirada</span>'}</td>
-                    <td>${s.price_eur ? s.price_eur + '€' : '—'}</td>
-                    <td>${s.payment_method || '—'}</td>
-                    <td>${s.started_at ? new Date(s.started_at).toLocaleDateString('pt-PT') : '—'}</td>
-                    <td>${s.expires_at ? new Date(s.expires_at).toLocaleDateString('pt-PT') : 'Sem limite'}</td>
-                </tr>`).join('')}
-            </tbody>
-        </table>`;
-    } else {
-        subsHtml = '<p style="color:var(--text-muted);font-size:13px;margin-top:8px;">Nenhuma subscrição registada.</p>';
-    }
-
-    // Saved analyses
-    let analysesHtml = '';
-    if (u.analyses.length > 0) {
-        analysesHtml = `<table style="width:100%;margin-top:8px;font-size:12px;">
-            <thead><tr><th>Tipo</th><th>Data</th></tr></thead>
-            <tbody>${u.analyses.map(a => {
-                const typeMap = { cv_analyser: 'CV Analyser', career_path: 'Career Path', career_intelligence_pro: 'CI PRO', career_intelligence_full: 'CI Full', linkedin_roaster: 'LinkedIn Roaster', career_energy: 'Career Energy' };
-                return `<tr>
-                    <td>${typeMap[a.analysis_type] || a.analysis_type}</td>
-                    <td>${new Date(a.created_at).toLocaleString('pt-PT')}</td>
-                </tr>`;
-            }).join('')}
-            </tbody>
-        </table>`;
-    } else {
-        analysesHtml = '<p style="color:var(--text-muted);font-size:13px;margin-top:8px;">Nenhuma análise guardada.</p>';
-    }
-
-    const html = `
-    <div class="modal-overlay" id="userDetailOverlay" onclick="if(event.target===this)this.remove()">
-        <div class="modal-box" style="max-width:700px;">
-            <div class="modal-header">
-                <h3><i class="fas fa-user" style="color:var(--purple);margin-right:8px;"></i> ${name}</h3>
-                <button class="modal-close" onclick="document.getElementById('userDetailOverlay').remove()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <!-- Profile Info -->
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
-                    <div>
-                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Email</div>
-                        <div style="font-size:14px;">${u.email} <span style="font-size:11px;color:${u.email_confirmed ? 'var(--green)' : 'var(--orange)'};">${emailStatus}</span></div>
-                    </div>
-                    <div>
-                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Telefone</div>
-                        <div style="font-size:14px;">${u.phone || '—'}</div>
-                    </div>
-                    <div>
-                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Morada</div>
-                        <div style="font-size:14px;">${u.address || '—'}</div>
-                    </div>
-                    <div>
-                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">LinkedIn</div>
-                        <div style="font-size:14px;">${u.linkedin_url ? `<a href="${u.linkedin_url}" target="_blank" style="color:var(--blue);">${u.linkedin_url}</a>` : '—'}</div>
-                    </div>
-                    <div>
-                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Registado em</div>
-                        <div style="font-size:14px;">${regDate}</div>
-                    </div>
-                    <div>
-                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Último Login</div>
-                        <div style="font-size:14px;">${loginDate}</div>
-                    </div>
-                    <div>
-                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">CV Carregado</div>
-                        <div style="font-size:14px;">${u.cv_filename ? `<span class="badge badge-teal"><i class="fas fa-file-pdf" style="margin-right:3px;"></i> ${u.cv_filename}</span>` : '—'}</div>
-                    </div>
-                    <div>
-                        <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Perfil Completo</div>
-                        <div style="font-size:14px;">${u.profile_complete ? '<span class="badge badge-success">Sim</span>' : '<span class="badge badge-warning">Incompleto</span>'}</div>
-                    </div>
-                </div>
-
-                <!-- Subscriptions -->
-                <div style="margin-bottom:20px;">
-                    <h4 style="font-size:13px;font-weight:600;color:var(--dark);margin-bottom:4px;"><i class="fas fa-credit-card" style="color:var(--gold);margin-right:6px;"></i> Subscrições</h4>
-                    ${subsHtml}
-                </div>
-
-                <!-- Saved Analyses -->
-                <div style="margin-bottom:12px;">
-                    <h4 style="font-size:13px;font-weight:600;color:var(--dark);margin-bottom:4px;"><i class="fas fa-chart-bar" style="color:var(--blue);margin-right:6px;"></i> Análises Guardadas (${u.analyses_count})</h4>
-                    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;margin-bottom:4px;">
-                        <span class="badge badge-cv">CV: ${u.cv_analyser_count}</span>
-                        <span class="badge badge-career">Career: ${u.career_path_count}</span>
-                        <span class="badge" style="background:#EDE9FE;color:#7C3AED;">CI: ${u.career_intelligence_count}</span>
-                        <span class="badge" style="background:#E0F2FE;color:#0077B5;">LinkedIn: ${u.linkedin_roaster_count}</span>
-                    </div>
-                    ${analysesHtml}
-                </div>
-            </div>
+    document.getElementById('userProfileTitle').innerHTML = `<i class="fas fa-user" style="color:var(--gold);margin-right:8px;"></i> ${name}`;
+    document.getElementById('userProfileModal').style.display = 'flex';
+    let subsHtml = u.all_subs.length > 0
+        ? `<table class="data-table" style="font-size:12px;"><thead><tr><th>Plano</th><th>Estado</th><th>Preço</th><th>Início</th><th>Expira</th></tr></thead><tbody>
+            ${u.all_subs.map(s => `<tr><td>${s.plan||'—'}</td><td>${s.status==='active'?'<span class="badge badge-success">Ativa</span>':'<span class="badge" style="background:var(--red);color:#fff;">Expirada</span>'}</td><td>${s.price_eur?s.price_eur+'€':'—'}</td><td>${s.started_at?new Date(s.started_at).toLocaleDateString('pt-PT'):'—'}</td><td>${s.expires_at?new Date(s.expires_at).toLocaleDateString('pt-PT'):'Sem limite'}</td></tr>`).join('')}
+           </tbody></table>` : '<p style="color:var(--text-muted);font-size:13px;">Nenhuma subscrição.</p>';
+    let analysesHtml = u.analyses.length > 0
+        ? `<table class="data-table" style="font-size:12px;"><thead><tr><th>Tipo</th><th>Data</th></tr></thead><tbody>
+            ${u.analyses.map(a => { const typeMap = {cv_analyser:'CV Analyser',career_path:'Career Path',career_intelligence_pro:'CI PRO',career_intelligence_full:'CI Full',linkedin_roaster:'LinkedIn Roaster',career_energy:'Career Energy'}; return `<tr><td>${typeMap[a.analysis_type]||a.analysis_type}</td><td>${new Date(a.created_at).toLocaleString('pt-PT')}</td></tr>`; }).join('')}
+           </tbody></table>` : '<p style="color:var(--text-muted);font-size:13px;">Nenhuma análise.</p>';
+    document.getElementById('userProfileBody').innerHTML = `
+        <div class="profile-section"><h4>Informação</h4>
+            <div class="profile-row"><span>Email</span><span>${u.email} ${u.email_confirmed?'✓':'✗'}</span></div>
+            <div class="profile-row"><span>Telefone</span><span>${u.phone||'—'}</span></div>
+            <div class="profile-row"><span>LinkedIn</span><span>${u.linkedin_url?`<a href="${u.linkedin_url}" target="_blank" style="color:var(--blue);">Ver</a>`:'—'}</span></div>
+            <div class="profile-row"><span>Registado</span><span>${new Date(u.created_at).toLocaleString('pt-PT')}</span></div>
+            <div class="profile-row"><span>Último Login</span><span>${u.last_sign_in_at?new Date(u.last_sign_in_at).toLocaleString('pt-PT'):'Nunca'}</span></div>
         </div>
-    </div>`;
-
-    // Remove existing overlay if any
-    const existing = document.getElementById('userDetailOverlay');
-    if (existing) existing.remove();
-    document.body.insertAdjacentHTML('beforeend', html);
+        <div class="profile-section"><h4>Subscrições</h4>${subsHtml}</div>
+        <div class="profile-section"><h4>Análises (${u.analyses_count})</h4>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+                <span class="badge badge-cv">CV: ${u.cv_analyser_count}</span>
+                <span class="badge badge-career">CP: ${u.career_path_count}</span>
+                <span class="badge" style="background:#EDE9FE;color:#7C3AED;">CI: ${u.career_intelligence_count}</span>
+                <span class="badge" style="background:#E0F2FE;color:#0077B5;">LR: ${u.linkedin_roaster_count}</span>
+            </div>
+            ${analysesHtml}
+        </div>`;
 }
 
 function exportUsersCSV() {
     const users = getMergedUsers();
-    const rows = [['Nome','Email','Telefone','LinkedIn','Subscrição','Plano','Expira','Análises','CV','Registado','Último Login']];
+    const rows = [['Nome','Email','Subscrição','Plano','Análises','CV','Registado','Último Login']];
     users.forEach(u => {
         const name = `${u.first_name} ${u.last_name}`.trim();
         const subStatus = u.active_sub ? 'Ativa' : (u.all_subs.length > 0 ? 'Expirada' : 'Nenhuma');
-        const plan = u.active_sub ? (u.active_sub.plan || '') : (u.all_subs.length > 0 ? (u.all_subs[0].plan || '') : '');
-        const expires = u.active_sub?.expires_at ? new Date(u.active_sub.expires_at).toLocaleDateString('pt-PT') : '';
-        rows.push([
-            name, u.email, u.phone, u.linkedin_url, subStatus, plan, expires,
-            u.analyses_count, u.cv_filename || '', 
-            new Date(u.created_at).toLocaleDateString('pt-PT'),
-            u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString('pt-PT') : ''
-        ]);
+        const plan = u.active_sub ? (u.active_sub.plan || '') : '';
+        rows.push([name, u.email, subStatus, plan, u.analyses_count, u.cv_filename||'', new Date(u.created_at).toLocaleDateString('pt-PT'), u.last_sign_in_at?new Date(u.last_sign_in_at).toLocaleDateString('pt-PT'):'']);
     });
-    downloadCSV(rows, 'utilizadores_s2i_' + new Date().toISOString().slice(0,10) + '.csv');
+    downloadCSV(rows, 'utilizadores.csv');
 }
+
+// ═══════════════════════════════════════════════════════════════
+//  UTILITY: CSV DOWNLOAD & HTML ESCAPE
+// ═══════════════════════════════════════════════════════════════
+function downloadCSV(rows, filename) {
+    const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+}
+
+function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  REFRESH ALL & INIT
+// ═══════════════════════════════════════════════════════════════
+async function refreshAll() {
+    showToast('A atualizar dados...', 'info');
+    await loadAllData();
+    await Promise.all([loadEmailHistory(), loadHealthLogs(), loadAffiliateData(), loadCouponData(), loadUsersData()]);
+    updateDashboard();
+    updateCharts();
+    renderFunnel();
+    renderCRM();
+    renderAutoEmailsMonitoring();
+    renderNurturingSegments();
+    renderAnalyses();
+    renderVouchers();
+    renderEmailHistory();
+    renderJobSearchTable();
+    renderCETable();
+    renderEbookDownloads();
+    renderHealthLogs();
+    renderAffiliates();
+    renderAffClicks();
+    renderAffConversions();
+    renderCoupons();
+    renderUsers();
+    setText('lastUpdate', new Date().toLocaleTimeString('pt-PT'));
+    showToast('Dados atualizados!', 'success');
+}
+
+// ── Init ──
+document.addEventListener('DOMContentLoaded', async () => {
+    showToast('A carregar dados...', 'info');
+    try {
+        await loadAllData();
+        await Promise.all([loadEmailHistory(), loadHealthLogs(), loadAffiliateData(), loadCouponData(), loadUsersData()]);
+        updateDashboard();
+        updateCharts();
+        renderFunnel();
+        renderCRM();
+        renderAutoEmailsMonitoring();
+        renderNurturingSegments();
+        renderAnalyses();
+        renderVouchers();
+        renderEmailHistory();
+        renderJobSearchTable();
+        renderCETable();
+        renderEbookDownloads();
+        renderHealthLogs();
+        renderAffiliates();
+        renderAffClicks();
+        renderAffConversions();
+        renderCoupons();
+        renderUsers();
+        setText('lastUpdate', new Date().toLocaleTimeString('pt-PT'));
+        showToast('Cockpit carregado!', 'success');
+    } catch (e) {
+        console.error('Erro ao inicializar:', e);
+        showToast('Erro ao carregar dados: ' + e.message, 'danger');
+    }
+});
