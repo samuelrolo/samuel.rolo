@@ -129,7 +129,9 @@ function AutomationRiskGauge({ score }: { score: number }) {
 }
 
 const AnalysisResults = ({ data }: { data: AnalysisData }) => {
-  const avgScore = data.quadrants.reduce((sum, q) => sum + q.score, 0) / data.quadrants.length;
+  const quadrants = data.quadrants || [];
+  const keywords = data.keywords || [];
+  const avgScore = quadrants.length > 0 ? quadrants.reduce((sum, q) => sum + (q.score || 0), 0) / quadrants.length : (data.overallScore || 0);
   const percentile = Math.round(Math.min(95, Math.max(5, avgScore * 0.95)));
   // Automation risk: derive from role type - higher for routine/admin roles
   const automationRisk = Math.round(Math.max(15, Math.min(85, 100 - avgScore + (Math.random() * 10 - 5))));
@@ -196,7 +198,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {data.quadrants.map((q: any, i: number) => (
+            {quadrants.map((q: any, i: number) => (
               <QuadrantCard
                 key={i}
                 title={q.title}
@@ -228,7 +230,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
             </div>
           </div>
           <div className="space-y-5">
-            {data.quadrants.map((q, i) => (
+            {quadrants.map((q, i) => (
               <DimensionBar key={i} label={q.title} score={q.score} benchmark={q.benchmark} insight={q.impactPhrase} />
             ))}
           </div>
@@ -278,7 +280,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
               />
             </div>
           </div>
-          <RecruiterPerception roles={data.keywords} perceivedRole={data.perceivedRole} perceivedSeniority={data.perceivedSeniority} />
+          <RecruiterPerception roles={keywords} perceivedRole={data.perceivedRole} perceivedSeniority={data.perceivedSeniority} />
         </div>
 
         {/* ═══ Estimativa Salarial ═══ */}

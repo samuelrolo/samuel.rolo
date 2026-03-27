@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-17015553005');
+    </script>
+    <meta charset="UTF-8">
+    <!-- Preconnect hints para CDNs -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfólio de Projetos | Share2Inspire | Samuel Rolo</title>
+    <link rel="canonical" href="https://www.share2inspire.pt/pages/criacao-conteudos" />
+    <meta property="og:title" content="Criação de Conteúdos | Share2Inspire" />
+    <meta property="og:description" content="Serviço de criação de conteúdos profissionais para LinkedIn, CV e presença digital. Potencia a tua marca pessoal." />
+    <meta property="og:url" content="https://www.share2inspire.pt/pages/criacao-conteudos" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Share2Inspire" />
+    <meta property="og:image" content="https://www.share2inspire.pt/images/og-share2inspire.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Criação de Conteúdos | Share2Inspire" />
+    <meta name="twitter:description" content="Serviço de criação de conteúdos profissionais para LinkedIn, CV e presença digital. Potencia a tua marca pessoal." />
+    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-share2inspire.png" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Criação de Conteúdos | Share2Inspire",
+      "description": "Serviço de criação de conteúdos profissionais para LinkedIn, CV e presença digital. Potencia a tua marca pessoal.",
+      "url": "https://www.share2inspire.pt/pages/criacao-conteudos",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Share2Inspire",
+        "url": "https://www.share2inspire.pt"
+      }
+    }
+    </script>
+    <meta name="description"
+        content="Criação de websites personalizados, agentes de IA e integração de APIs. Conheça o nosso portfólio de projetos.">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/images/favicon-512x512.png">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Header & Footer Shared CSS -->
+    <link rel="stylesheet" href="/css/consolidated-styles.css">
+    <style>
+        :root {
+            --dark-bg: #1A1A1A;
+            --medium-gray: #333333;
+            --light-gray: #666666;
+            --lighter-gray: #F5F5F5;
+            --gold-accent: #BF9A33;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #fff;
+            color: var(--medium-gray);
+        }
+
+        /* Hero Section - Minimalista */
+        .hero-portfolio {
+            padding: 140px 0 80px;
+            background: var(--dark-bg);
+            color: #fff;
+            text-align: center;
+        }
+
+        .hero-portfolio h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-portfolio .lead {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Portfolio Section */
+        .portfolio-section {
+            padding: 80px 0;
+            background: #fff;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .project-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .project-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--dark-bg);
+        }
+
+        .project-card .description {
+            font-size: 0.95rem;
+            color: var(--light-gray);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gold-accent);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .project-link:hover {
+            color: #a58428;
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .screenshot-item {
+            background: #F8F9FA;
+            border-radius: 6px;
+            overflow: hidden;
+            aspect-ratio: 16/10;
+        }
+
+        .screenshot-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .screenshot-item:hover img {
+            transform: scale(1.02);
+        }
+
+        .features-section {
+            margin-top: 20px;
+        }
+
+        .features-section h4 {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--light-gray);
+            margin-bottom: 12px;
+        }
+
+        .features-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .feature-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #F8F9FA;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+            border: 1px solid #e0e0e0;
+        }
+
+        .feature-badge i {
+            color: var(--gold-accent);
+            font-size: 0.9rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 0;
+            background: #2D2D2D;
+            color: #fff;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .cta-section p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .btn-cta {
+            display: inline-block;
+            padding: 14px 40px;
+            background: var(--gold-accent);
+            color: #000;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cta:hover {
+            background: #a58428;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 992px) {
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .screenshots-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-portfolio h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+<noscript>
+</noscript>
+    <link rel="stylesheet" href="/css/side-widgets.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="/css/side-widgets.css"></noscript>
+
+    <style>
+    /* Mega Menu Serviços */
+    .nav-item.mega-dropdown{position:relative}
+    .mega-menu{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);background:#fff;border:1px solid #f0f0f0;box-shadow:0 12px 40px rgba(0,0,0,0.08);padding:16px 20px;min-width:360px;z-index:1050}
+    .nav-item.mega-dropdown:hover .mega-menu,.nav-item.mega-dropdown .mega-menu:hover{display:block}
+    .mega-menu .mega-col{margin-bottom:10px}.mega-menu .mega-col:last-child{margin-bottom:0}
+    .mega-menu .mega-step-label{font-size:0.6rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#C9A961;margin-bottom:4px}
+    .mega-menu .mega-link{display:block;padding:3px 0;font-size:0.8rem;font-weight:400;color:#555;text-decoration:none;transition:color 0.2s}
+    .mega-menu .mega-link:hover{color:#C9A961}
+    
+    .mega-menu .mega-divider{height:1px;background:#f0f0f0;margin:8px 0}
+    @media(max-width:991px){.mega-menu{position:static;transform:none;box-shadow:none;border:none;min-width:auto;padding:8px 12px;background:#fafafa}}
+    </style>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '3865352233767400');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+</head>
+
+<body>
+    <!-- Header e Navegação -->
+    <header class="header">
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="/index.html">
+                    <img fetchpriority="high" src="/images/logo.webp" alt="Share2Inspire Logo" class="logo-img">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                                        <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="/index.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Início</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/cv-analyser" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">CV Analyser</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/career-path" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Career Path</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/pages/servicos.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Serviços</a></li>
+                        <li class="nav-item"><a class="nav-link" href="conhecimento.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Conhecimento</a></li>
+                        <li class="nav-item"><a class="nav-link" href="sobre.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Sobre</a></li>
+                        <li class="nav-item"><a class="nav-link" href="contactos.html" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">Contactos</a></li>
+                        <li class="nav-item ms-2"><a class="nav-link" href="/area-cliente/" style="background:#BF9A33;color:#0a0a0a!important;padding:0.4rem 1rem;border-radius:4px;font-weight:600;transition:all 0.3s;" onmouseover="this.style.background='#d4af5a'" onmouseout="this.style.background='#BF9A33'">Área de Cliente</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-transform:uppercase;letter-spacing:1px;font-size:0.85rem;font-weight:500;">
+                                <i class="fas fa-globe"></i> PT
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                                <li><a class="dropdown-item" href="/en/pages/home">EN</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-portfolio">
+        <div class="container">
+            <h1>Portfólio de Projetos</h1>
+            <p class="lead">Websites, agentes de IA e soluções digitais desenvolvidas para clientes reais</p>
+        </div>
+    </section>
+
+    <!-- Portfolio Grid -->
+    <section class="portfolio-section">
+        <div class="container">
+            <div class="portfolio-grid">
+
+                <!-- Share2Inspire -->
+                <div class="project-card">
+                    <h3>Share2Inspire</h3>
+                    <p class="description">Plataforma de desenvolvimento de carreira com agente de IA e sistema de
+                        pagamentos</p>
+                    <a href="https://share2inspire.pt" target="_blank" class="project-link">
+                        Visitar site <i class="fas fa-external-link-alt"></i>
+                    </a>
+
+                    <div class="screenshots-grid">
+                        <div class="screenshot-item">
+                            <img loading="lazy" src="/images/portfolio/share2inspire-desktop.png" alt="Share2Inspire Desktop">
+                        </div>
+                        <div class="screenshot-item">
+                            <img loading="lazy" src="/images/portfolio/share2inspire-mobile.png" alt="Share2Inspire Mobile">
+                        </div>
+                    </div>
+
+                    <div class="features-section">
+                        <h4>FUNCIONALIDADES</h4>
+                        <div class="features-badges">
+                            <span class="feature-badge">
+                                <i class="fas fa-robot"></i> Agente IA
+                            </span>
+                            <span class="feature-badge">
+                                <i class="fas fa-credit-card"></i> Pagamentos
+                            </span>
+                            <span class="feature-badge">
+                                <i class="fas fa-file-alt"></i> Análise CV
+                            </span>
+                            <span class="feature-badge">
+                                <i class="fas fa-envelope"></i> Email Transacional
+                            </span>
+                            <span class="feature-badge">
+                                <i class="fas fa-chart-line"></i> Analytics
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Marlene Ruivo -->
+                <div class="project-card">
+                    <h3>Marlene Ruivo</h3>
+                    <p class="description">Website profissional para nutricionista com agendamento online e assistente
+                        especializado</p>
+                    <a href="https://marleneruivo.pt" target="_blank" class="project-link">
+                        Visitar site <i class="fas fa-external-link-alt"></i>
+                    </a>
+
+                    <div class="screenshots-grid">
+                        <div class="screenshot-item">
+                            <img loading="lazy" src="/images/portfolio/marlene-desktop.png" alt="Marlene Ruivo Desktop">
+                        </div>
+                        <div class="screenshot-item">
+                            <img loading="lazy" src="/images/portfolio/marlene-mobile.png" alt="Marlene Ruivo Mobile">
+                        </div>
+                    </div>
+
+                    <div class="features-section">
+                        <h4>FUNCIONALIDADES</h4>
+                        <div class="features-badges">
+                            <span class="feature-badge">
+                                <i class="fas fa-robot"></i> Assistente IA FODMAP
+                            </span>
+                            <span class="feature-badge">
+                                <i class="fas fa-calendar-check"></i> Agendamento
+                            </span>
+                            <span class="feature-badge">
+                                <i class="fas fa-user-circle"></i> Área Cliente
+                            </span>
+                            <span class="feature-badge">
+                                <i class="fas fa-certificate"></i> Certificações
+                            </span>
+                            <span class="feature-badge">
+                                <i class="fas fa-comments"></i> Testemunhos
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vando & Anita -->
+                <div class="project-card">
+                    <h3>Vando & Anita</h3>
+                    <p class="description">Convite digital interativo para casamento com sistema de confirmação de
+                        presença</p>
+                    <a href="https://vandoeanita.pt" target="_blank" class="project-link">
+                        Visitar site <i class="fas fa-external-link-alt"></i>
+                    </a>
+
+                    <div class="screenshots-grid">
+                        <div class="screenshot-item">
+                            <img loading="lazy" src="/images/portfolio/vando-desktop.png" alt="Vando & Anita Desktop">
+                        </div>
+                        <div class="screenshot-item">
+                            <img loading="lazy" src="/images/portfolio/vando-mobile.png" alt="Vando & Anita Mobile">
+                        </div>
+                    </div>
+
+                    <div class="features-section">
+                        <h4>FUNCIONALIDADES</h4>
+                        <div class="features-badges">
+                            <span class="feature-badge">
+                                <i class="fas fa-check-circle"></i> RSVP Online
+                            </span>
+                            <span class="feature-badge">
+                                <i class="fas fa-map-marker-alt"></i> Integração Mapas
+                            </span>
+                            <span class="feature-badge">
+                                <i class="fas fa-clock"></i> Contagem Regressiva
+                            </span>
+                            <span class="feature-badge">
+                                <i class="fas fa-mobile-alt"></i> Design Responsivo
+                            </span>
+                            <span class="feature-badge">
+                                <i class="fas fa-magic"></i> Animações Elegantes
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Interessado em criar o seu projeto?</h2>
+            <p>Entre em contacto para discutir as suas necessidades e receber uma proposta personalizada</p>
+            <a href="contactos.html" class="btn-cta">Pedir Consulta</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="footer-brand">
+                        <img loading="lazy" src="/images/logo.webp" alt="Samuel Rolo Logo">
+                    </div>
+                    <p class="footer-text">Partilhar para inspirar carreiras.</p>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5 class="footer-title">Navegação</h5>
+                    <a href="/index.html" class="footer-link">Início</a>
+                    <a href="sobre.html" class="footer-link">Sobre</a>
+                    <a href="servicos.html" class="footer-link">Serviços</a>
+                </div>
+                                <div class="col-lg-2 col-md-4">
+                    <h5 class="footer-title">Ferramentas</h5>
+                    <a href="/cv-analyser" class="footer-link">CV Analyser</a>
+                    <a href="/linkedin-roaster" class="footer-link">LinkedIn Roaster</a>
+                    <a href="/career-path" class="footer-link">Career Path</a>
+                    <a href="/bundle" class="footer-link">Bundle</a>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5 class="footer-title">Legal</h5>
+                    <a href="politica-privacidade.html" class="footer-link">Privacidade</a>
+                    <a href="politica-cookies.html" class="footer-link">Cookies</a>
+                    <a href="informacao-legal.html" class="footer-link">Legal</a>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <h5 class="footer-title">Contacto</h5>
+                    <p class="footer-text small mb-2"><i class="fas fa-envelope text-gold me-2"></i>
+                        geral@share2inspire.pt</p>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="https://www.linkedin.com/in/samuelrolo/" target="_blank" class="text-gold"><i
+                                class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="https://www.instagram.com/share2inspire_/" target="_blank" class="text-gold"><i
+                                class="fab fa-instagram fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copy">&copy; 2026 SHARE2INSPIRE | SAMUEL ROLO. TODOS OS DIREITOS RESERVADOS.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/hub-widget.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/shared-auth.js"></script>
+    <script src="/js/inline-auth.js"></script>
+</body>
+
+</html>

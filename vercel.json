@@ -252,91 +252,91 @@
         },
         {
             "source": "/sobre",
-            "destination": "/pages/sobre"
+            "destination": "/pages/sobre/index.html"
         },
         {
             "source": "/pages/sobre",
-            "destination": "/pages/sobre"
+            "destination": "/pages/sobre/index.html"
         },
         {
             "source": "/servicos",
-            "destination": "/pages/servicos"
+            "destination": "/pages/servicos/index.html"
         },
         {
             "source": "/pages/servicos",
-            "destination": "/pages/servicos"
+            "destination": "/pages/servicos/index.html"
         },
         {
             "source": "/loja",
-            "destination": "/pages/loja"
+            "destination": "/pages/loja/index.html"
         },
         {
             "source": "/pages/loja",
-            "destination": "/pages/loja"
+            "destination": "/pages/loja/index.html"
         },
         {
             "source": "/conhecimento",
-            "destination": "/pages/conhecimento"
+            "destination": "/pages/conhecimento/index.html"
         },
         {
             "source": "/pages/conhecimento",
-            "destination": "/pages/conhecimento"
+            "destination": "/pages/conhecimento/index.html"
         },
         {
             "source": "/contactos",
-            "destination": "/pages/contactos"
+            "destination": "/pages/contactos/index.html"
         },
         {
             "source": "/pages/contactos",
-            "destination": "/pages/contactos"
+            "destination": "/pages/contactos/index.html"
         },
         {
             "source": "/politica-privacidade",
-            "destination": "/pages/politica-privacidade"
+            "destination": "/pages/politica-privacidade/index.html"
         },
         {
             "source": "/pages/politica-privacidade",
-            "destination": "/pages/politica-privacidade"
+            "destination": "/pages/politica-privacidade/index.html"
         },
         {
             "source": "/politica-cookies",
-            "destination": "/pages/politica-cookies"
+            "destination": "/pages/politica-cookies/index.html"
         },
         {
             "source": "/pages/politica-cookies",
-            "destination": "/pages/politica-cookies"
+            "destination": "/pages/politica-cookies/index.html"
         },
         {
             "source": "/informacao-legal",
-            "destination": "/pages/informacao-legal"
+            "destination": "/pages/informacao-legal/index.html"
         },
         {
             "source": "/pages/informacao-legal",
-            "destination": "/pages/informacao-legal"
+            "destination": "/pages/informacao-legal/index.html"
         },
         {
             "source": "/termos-condicoes",
-            "destination": "/pages/termos-condicoes"
+            "destination": "/pages/termos-condicoes/index.html"
         },
         {
             "source": "/pages/termos-condicoes",
-            "destination": "/pages/termos-condicoes"
+            "destination": "/pages/termos-condicoes/index.html"
         },
         {
             "source": "/tratamento-dados",
-            "destination": "/pages/tratamento-dados"
+            "destination": "/pages/tratamento-dados/index.html"
         },
         {
             "source": "/pages/tratamento-dados",
-            "destination": "/pages/tratamento-dados"
+            "destination": "/pages/tratamento-dados/index.html"
         },
         {
             "source": "/admin-analytics",
-            "destination": "/pages/admin-analytics"
+            "destination": "/pages/admin-analytics/index.html"
         },
         {
             "source": "/pages/admin-analytics",
-            "destination": "/pages/admin-analytics"
+            "destination": "/pages/admin-analytics/index.html"
         },
         {
             "source": "/area-cliente",
