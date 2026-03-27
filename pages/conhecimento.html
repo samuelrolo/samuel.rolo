@@ -215,6 +215,61 @@
         /* ── Fade-in ── */
         .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
         .fade-in.visible { opacity: 1; transform: translateY(0); }
+    
+        /* ── Search Bar ── */
+        .search-bar { position: relative; max-width: 420px; margin: 0 auto 2rem; }
+        .search-bar input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.6rem; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 0.82rem; color: #1a1a2e; background: #fff; transition: border-color 0.3s; outline: none; }
+        .search-bar input:focus { border-color: #C9A961; }
+        .search-bar input::placeholder { color: #aaa; }
+        .search-icon { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: #bbb; font-size: 0.8rem; pointer-events: none; }
+
+        /* ── Filter Pills ── */
+        .filter-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+        .filter-pill { padding: 0.45rem 1rem; border: 1px solid rgba(0,0,0,0.1); border-radius: 20px; background: #fff; font-family: 'Poppins', sans-serif; font-size: 0.68rem; font-weight: 500; color: #555; cursor: pointer; transition: all 0.3s; letter-spacing: 0.3px; }
+        .filter-pill:hover { border-color: #C9A961; color: #C9A961; }
+        .filter-pill.active { background: #C9A961; color: #fff; border-color: #C9A961; }
+
+        /* ── Category Sections ── */
+        .category-section { margin-bottom: 3rem; }
+        .cat-title { font-size: 1rem; font-weight: 500; color: #1a1a2e; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
+        .cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .cat-dot.big4 { background: #7C3AED; }
+        .cat-dot.cv { background: #2563EB; }
+        .cat-dot.salario { background: #059669; }
+        .cat-dot.carreira { background: #C9A961; }
+
+        /* ── Featured Card ── */
+        .featured-card { display: block; text-decoration: none; margin-bottom: 1.5rem; border-radius: 10px; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; }
+        .featured-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+        .featured-inner { padding: 2.5rem 2rem; min-height: 180px; display: flex; flex-direction: column; justify-content: flex-end; }
+        .featured-inner.big4-bg { background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%); }
+        .featured-inner.cv-bg { background: linear-gradient(135deg, #1a1a2e 0%, #1e3a5f 100%); }
+        .featured-inner.salario-bg { background: linear-gradient(135deg, #1a1a2e 0%, #064e3b 100%); }
+        .featured-inner.carreira-bg { background: linear-gradient(135deg, #1a1a2e 0%, #3d2e14 100%); }
+        .featured-inner .card-tag { color: #C9A961; font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.5rem; }
+        .featured-inner h3 { color: #fff; font-size: 1.2rem; font-weight: 500; line-height: 1.4; margin-bottom: 0.5rem; }
+        .featured-inner p { color: rgba(255,255,255,0.7); font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.5rem; max-width: 600px; }
+        .featured-inner .card-meta { color: rgba(255,255,255,0.45); font-size: 0.65rem; letter-spacing: 0.5px; }
+
+        /* ── Article Cards (uniform) ── */
+        .article-card { display: flex; flex-direction: column; background: #fff; border: 1px solid rgba(0,0,0,0.06); padding: 1.6rem; border-radius: 6px; text-decoration: none; transition: all 0.3s ease; }
+        .article-card:hover { border-color: #C9A961; box-shadow: 0 6px 24px rgba(0,0,0,0.05); transform: translateY(-2px); }
+        .article-card .card-tag { display: inline-block; font-size: 0.58rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; margin-bottom: 0.5rem; }
+        .article-card h3 { font-size: 0.92rem; font-weight: 500; color: #1a1a2e; line-height: 1.4; margin-bottom: 0.5rem; }
+        .article-card p { color: #666; font-size: 0.78rem; font-weight: 300; line-height: 1.6; margin-bottom: 0.8rem; flex: 1; }
+        .article-card .card-meta { color: #999; font-size: 0.65rem; font-weight: 300; letter-spacing: 0.5px; margin-bottom: 0.6rem; }
+        .article-card .read-link { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; }
+
+        /* ── No Results ── */
+        .no-results { text-align: center; color: #999; font-size: 0.85rem; padding: 2rem 0; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .featured-inner { padding: 1.5rem; min-height: 140px; }
+            .featured-inner h3 { font-size: 1rem; }
+            .articles-grid { grid-template-columns: 1fr !important; }
+        }
+
     </style>
 
     <!-- Google tag (gtag.js) -->
@@ -297,12 +352,17 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     </header>
 
     <!-- ══════════════════════════════════════════════ -->
-    <!-- 1. HERO                                        -->
+        <!-- ══════════════════════════════════════════════ -->
+    <!-- 1. HERO + SEARCH                              -->
     <!-- ══════════════════════════════════════════════ -->
     <section class="hero">
         <div>
             <h1>Knowledge <strong>Hub</strong></h1>
-            <p>Artigos, vídeos e ferramentas para quem quer navegar a transformação do trabalho com propósito. Tudo num só lugar.</p>
+            <p>Guias práticos, estratégias e insights para a tua carreira. Tudo num só lugar.</p>
+            <div class="search-bar">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="articleSearch" placeholder="Pesquisar artigos..." autocomplete="off">
+            </div>
             <div class="hero-nav">
                 <a href="#artigos">Artigos</a>
                 <a href="#video">Vídeo</a>
@@ -314,144 +374,161 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     </section>
 
     <!-- ══════════════════════════════════════════════ -->
-    <!-- 2. ARTIGOS (Visual Grid — all articles equal)  -->
+    <!-- 2. ARTIGOS — Catálogo Inteligente              -->
     <!-- ══════════════════════════════════════════════ -->
     <div class="section fade-in" id="artigos">
         <span class="section-label">Blog</span>
-        <h2 class="section-title">Artigos <strong>recomendados</strong></h2>
+        <h2 class="section-title">Artigos &amp; <strong>Guias</strong></h2>
         <div class="divider"></div>
 
-        <div class="articles-grid">
-            <!-- AI Career Path vs Traditional Coaching -->
-            <article class="article-card">
-                <span class="tag">Career Development</span>
-                <h3>AI Career Path vs Traditional Coaching: Why You're Overpaying</h3>
-                <p>Discover how AI is revolutionising career planning. Compare traditional career coaching costs with instant, data-driven AI career paths.</p>
-                <div class="meta">Samuel Rolo &middot; 4 min de leitura</div>
-                <a href="../blog/artigos/ai-career-path-vs-traditional-coaching.html" class="read-link">Ler artigo &rarr;</a>
-            </article>
+        <!-- Category Filter Pills -->
+        <div class="filter-pills">
+            <button class="filter-pill active" data-filter="all">Todos</button>
+            <button class="filter-pill" data-filter="big4">Big4 &amp; Consultoria</button>
+            <button class="filter-pill" data-filter="cv">CV &amp; Candidaturas</button>
+            <button class="filter-pill" data-filter="salario">Salário &amp; Negociação</button>
+            <button class="filter-pill" data-filter="carreira">Desenvolvimento de Carreira</button>
+        </div>
 
-            <!-- Entrevista Presencial vs Remota -->
-            <article class="article-card">
-                <span class="tag">Guia de Carreira</span>
-                <h3>Entrevista Presencial vs. Remota: Guia Completo de Preparação</h3>
-                <p>Dois formatos, regras diferentes. Dicas práticas, tabela comparativa e checklists interativos para causar a melhor impressão.</p>
-                <div class="meta">Samuel Rolo · 7 min de leitura</div>
-                <a href="../blog/artigos/entrevista-presencial-vs-remota.html" class="read-link">Ler artigo &rarr;</a>
-            </article>
+        <!-- No results message -->
+        <p class="no-results" id="noResults" style="display:none;">Nenhum artigo encontrado. Tenta outra pesquisa.</p>
 
-            <!-- Guia ATS -->
-            <article class="article-card">
-                <span class="tag">Guia Completo</span>
-                <h3>Guia Definitivo: Como Superar o ATS e Fazer o Teu Currículo Chegar ao Recrutador</h3>
-                <p>Estratégias de palavras-chave, formatação e estrutura para passar nos filtros automáticos ATS.</p>
-                <div class="meta">Samuel Rolo · 8 min de leitura</div>
-                <a href="../blog/artigos/guia-superar-ats-curriculo.html" class="read-link">Ler artigo &rarr;</a>
-            </article>
+        <!-- ── Big4 & Consultoria ── -->
+        <div class="category-section" data-category="big4">
+            <h3 class="cat-title"><span class="cat-dot big4"></span>Big4 &amp; Consultoria</h3>
 
-            <!-- Transformar CV -->
-            <article class="article-card">
-                <span class="tag">Estratégia de Carreira</span>
-                <h3>Como Transformar um CV Ignorado num CV que Gera Entrevistas</h3>
-                <p>De descrição para impacto, de genérico para direcionado. Técnicas para tornar o teu CV irresistível.</p>
-                <div class="meta">Samuel Rolo · 6 min de leitura</div>
-                <a href="../blog/artigos/transformar-cv-ignorado-gerar-entrevistas.html" class="read-link">Ler artigo &rarr;</a>
-            </article>
+            <!-- Featured article -->
+            <a href="../blog/artigos/big4-senior-ficar-ou-sair.html" class="featured-card article-item" data-category="big4" data-title="Senior nas Big4: Ficar ou Sair? A Decisão que Define a Próxima Década">
+                <div class="featured-inner big4-bg">
+                    <span class="card-tag">Big4 &middot; Decisão de Carreira</span>
+                    <h3>Senior nas Big4: Ficar ou Sair? A Decisão que Define a Próxima Década</h3>
+                    <p>O que muda quando chegas a Senior, o que ganhas se progredires a Manager e o que perdes se ficares demasiado tempo parado.</p>
+                    <div class="card-meta">Samuel Rolo &middot; 25 Mar 2026 &middot; 12 min</div>
+                </div>
+            </a>
 
-            <!-- 7 Erros -->
-            <article class="article-card">
-                <span class="tag">Desenvolvimento Profissional</span>
-                <h3>7 Erros no CV que Fazem Muitos Candidatos Serem Rejeitados</h3>
-                <p>Os erros mais comuns que reduzem drasticamente as hipóteses de chegar à fase de entrevista.</p>
-                <div class="meta">Samuel Rolo · 8 min de leitura</div>
-                <a href="../blog/artigos/7-erros-cv-candidatos-rejeitados.html" class="read-link">Ler artigo &rarr;</a>
-            </article>
+            <!-- Grid -->
+            <div class="articles-grid">
+                <a href="../blog/artigos/big4-insider-10-anos.html" class="article-card article-item" data-category="big4" data-title="Big4 por Dentro: O que Ninguém te Conta Antes de Entrares">
+                    <span class="card-tag">Big4 &middot; Insider</span>
+                    <h3>Big4 por Dentro: O que Ninguém te Conta Antes de Entrares</h3>
+                    <p>10 anos de experiência nas Big4 condensados num artigo. O que realmente acontece dentro das firmas.</p>
+                    <div class="card-meta">Samuel Rolo &middot; 24 Mar 2026 &middot; 14 min</div>
+                    <span class="read-link">Ler artigo &rarr;</span>
+                </a>
+                <a href="../blog/artigos/recrutamento-big4-guia-candidatos.html" class="article-card article-item" data-category="big4" data-title="Recrutamento nas Big4: Guia Completo para Candidatos 2026">
+                    <span class="card-tag">Consultoria &amp; Big4</span>
+                    <h3>Recrutamento nas Big4: Guia Completo para Candidatos 2026</h3>
+                    <p>Como entrar na Deloitte, PwC, EY ou KPMG. As 5 fases do processo, o que avaliam e erros a evitar.</p>
+                    <div class="card-meta">Samuel Rolo &middot; 19 Mar 2026 &middot; 12 min</div>
+                    <span class="read-link">Ler artigo &rarr;</span>
+                </a>
+            </div>
+        </div>
 
-            <!-- CV ou LinkedIn -->
-            <article class="article-card">
-                <span class="tag">Estratégia de Carreira</span>
-                <h3>CV ou LinkedIn: Qual é Mais Importante para a Tua Carreira?</h3>
-                <p>Ambos são essenciais, mas desempenham funções diferentes. Descobre o equilíbrio ideal.</p>
-                <div class="meta">Samuel Rolo · 7 min de leitura</div>
-                <a href="../blog/artigos/cv-linkedin-importancia.html" class="read-link">Ler artigo &rarr;</a>
-            </article>
+        <!-- ── CV & Candidaturas ── -->
+        <div class="category-section" data-category="cv">
+            <h3 class="cat-title"><span class="cat-dot cv"></span>CV &amp; Candidaturas</h3>
 
-            <!-- Melhorar LinkedIn -->
-            <article class="article-card">
-                <span class="tag">Visibilidade Online</span>
-                <h3>Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores</h3>
-                <p>Pequenos ajustes no perfil que podem aumentar significativamente a tua visibilidade.</p>
-                <div class="meta">Samuel Rolo · 9 min de leitura</div>
-                <a href="../blog/artigos/melhorar-linkedin-pesquisas.html" class="read-link">Ler artigo &rarr;</a>
-            </article>
+            <!-- Featured article -->
+            <a href="../blog/artigos/guia-superar-ats-curriculo.html" class="featured-card article-item" data-category="cv" data-title="O Currículo Não é o Que Parece: 5 Lições sobre Empregabilidade Algorítmica">
+                <div class="featured-inner cv-bg">
+                    <span class="card-tag">Empregabilidade 2026</span>
+                    <h3>O Currículo Não é o Que Parece: 5 Lições sobre Empregabilidade Algorítmica</h3>
+                    <p>A empregabilidade moderna exige a passagem da perceção para os dados acionáveis.</p>
+                    <div class="card-meta">Samuel Rolo &middot; 10 min</div>
+                </div>
+            </a>
 
-            <!-- Posicionamento no Mercado -->
-            <article class="article-card">
-                <span class="tag">Avaliação de Carreira</span>
-                <h3>Como Saber se Estás Bem Posicionado no Mercado de Trabalho</h3>
-                <p>Indicadores, benchmarks e clareza sobre os próximos passos da tua carreira.</p>
-                <div class="meta">Samuel Rolo · 8 min de leitura</div>
-                <a href="../blog/artigos/posicionamento-mercado.html" class="read-link">Ler artigo &rarr;</a>
-            </article>
+            <!-- Grid -->
+            <div class="articles-grid">
+                <a href="../blog/artigos/guia-superar-ats-curriculo.html" class="article-card article-item" data-category="cv" data-title="Guia Definitivo: Como Superar o ATS e Fazer o Teu Currículo Chegar ao Recrutador">
+                    <span class="card-tag">Literacia Algorítmica</span>
+                    <h3>Guia Definitivo: Como Superar o ATS e Fazer o Teu Currículo Chegar ao Recrutador</h3>
+                    <p>Estratégias práticas para ultrapassar os filtros automáticos que eliminam 75% dos CVs.</p>
+                    <div class="card-meta">Samuel Rolo &middot; 12 min</div>
+                    <span class="read-link">Ler artigo &rarr;</span>
+                </a>
+                <a href="../blog/artigos/transformar-cv-ignorado-gerar-entrevistas.html" class="article-card article-item" data-category="cv" data-title="Como Transformar um CV Ignorado num CV que Gera Entrevistas">
+                    <span class="card-tag">CV &amp; Candidaturas</span>
+                    <h3>Como Transformar um CV Ignorado num CV que Gera Entrevistas</h3>
+                    <p>Técnicas comprovadas para tornar o teu currículo num íman de entrevistas.</p>
+                    <div class="card-meta">Samuel Rolo &middot; 10 min</div>
+                    <span class="read-link">Ler artigo &rarr;</span>
+                </a>
+                <a href="../blog/artigos/7-erros-cv-candidatos-rejeitados.html" class="article-card article-item" data-category="cv" data-title="7 Erros no CV que Fazem Muitos Candidatos Serem Rejeitados">
+                    <span class="card-tag">CV &amp; Candidaturas</span>
+                    <h3>7 Erros no CV que Fazem Muitos Candidatos Serem Rejeitados</h3>
+                    <p>Os erros mais comuns que sabotam candidaturas — e como corrigi-los rapidamente.</p>
+                    <div class="card-meta">Samuel Rolo &middot; 8 min</div>
+                    <span class="read-link">Ler artigo &rarr;</span>
+                </a>
+                <a href="../blog/artigos/entrevista-presencial-vs-remota.html" class="article-card article-item" data-category="cv" data-title="Entrevista Presencial vs. Remota: Guia Completo de Preparação">
+                    <span class="card-tag">Entrevistas</span>
+                    <h3>Entrevista Presencial vs. Remota: Guia Completo de Preparação</h3>
+                    <p>Como te preparares para ambos os formatos e maximizar as tuas hipóteses de sucesso.</p>
+                    <div class="card-meta">Samuel Rolo &middot; 10 min</div>
+                    <span class="read-link">Ler artigo &rarr;</span>
+                </a>
+                <a href="../blog/artigos/ai-career-path-vs-traditional-coaching.html" class="article-card article-item" data-category="cv" data-title="AI Career Path vs Traditional Coaching: Why You're Overpaying">
+                    <span class="card-tag">IA &amp; Carreira</span>
+                    <h3>AI Career Path vs Traditional Coaching: Why You're Overpaying</h3>
+                    <p>Comparação detalhada entre ferramentas de IA e coaching tradicional para decisões de carreira.</p>
+                    <div class="card-meta">Samuel Rolo &middot; 8 min</div>
+                    <span class="read-link">Ler artigo &rarr;</span>
+                </a>
+            </div>
+        </div>
 
-            <!-- ATS Guardião Digital -->
-            <article class="article-card">
-                <span class="tag">Literacia Algorítmica</span>
-                <h3>Guia Essencial: O ATS como Guardião Digital da Carreira</h3>
-                <p>O currículo é um objeto técnico que precisa de ser estruturado para ser interpretado por algoritmos de extração.</p>
-                <div class="meta">Samuel Rolo · 12 min de leitura</div>
-                <a href="../blog/artigos/guia-superar-ats-curriculo.html" class="read-link">Ler artigo &rarr;</a>
-            </article>
+        <!-- ── Salário & Negociação ── -->
+        <div class="category-section" data-category="salario">
+            <h3 class="cat-title"><span class="cat-dot salario"></span>Salário &amp; Negociação</h3>
 
-            <!-- Empregabilidade Algorítmica -->
-            <article class="article-card">
-                <span class="tag">Empregabilidade 2026</span>
-                <h3>O Currículo Não é o Que Parece: 5 Lições sobre Empregabilidade Algorítmica</h3>
-                <p>A empregabilidade moderna exige a passagem da perceção para os dados acionáveis.</p>
-                <div class="meta">Samuel Rolo · 10 min de leitura</div>
-                <a href="../blog/artigos/guia-superar-ats-curriculo.html" class="read-link">Ler artigo &rarr;</a>
-            </article>
+            <!-- Featured article -->
+            <a href="../blog/artigos/como-negociar-salario-portugal.html" class="featured-card article-item" data-category="salario" data-title="Como Negociar Salário em Portugal: Guia Completo 2026">
+                <div class="featured-inner salario-bg">
+                    <span class="card-tag">Negociação Salarial</span>
+                    <h3>Como Negociar Salário em Portugal: Guia Completo 2026</h3>
+                    <p>Quando pedir, o que dizer, como usar dados de mercado e os erros que custam dinheiro. Guia prático com scripts reais.</p>
+                    <div class="card-meta">Samuel Rolo &middot; 9 min</div>
+                </div>
+            </a>
+        </div>
 
-            <!-- Negociação Salarial -->
-            <article class="article-card">
-                <span class="tag">Negociação Salarial</span>
-                <h3>Como Negociar Salário em Portugal: Guia Completo 2026</h3>
-                <p>Quando pedir, o que dizer, como usar dados de mercado e os erros que custam dinheiro. Guia prático com scripts reais para profissionais portugueses.</p>
-                <div class="meta">Samuel Rolo · 9 min de leitura</div>
-                <a href="../blog/artigos/como-negociar-salario-portugal.html" class="read-link">Ler artigo &rarr;</a>
-            </article>
+        <!-- ── Desenvolvimento de Carreira ── -->
+        <div class="category-section" data-category="carreira">
+            <h3 class="cat-title"><span class="cat-dot carreira"></span>Desenvolvimento de Carreira</h3>
 
-            <!-- Article: Recrutamento Big4 -->
-            <article class="article-card">
-                <span class="tag">Consultoria &amp; Big4</span>
-                <h3>Recrutamento nas Big4: Guia Completo para Candidatos 2026</h3>
-                <p>Como entrar na Deloitte, PwC, EY ou KPMG. As 5 fases do processo, o que avaliam em cada ronda, erros a evitar e checklists de preparação.</p>
-                <div class="meta">Samuel Rolo &nbsp;&middot;&nbsp; 19 Mar 2026 &nbsp;&middot;&nbsp; 12 min</div>
-                <a href="../blog/artigos/recrutamento-big4-guia-candidatos.html" class="read-link">Ler artigo &rarr;</a>
-            </article>
+            <!-- Featured article -->
+            <a href="../blog/artigos/posicionamento-mercado.html" class="featured-card article-item" data-category="carreira" data-title="Como Saber se Estás Bem Posicionado no Mercado de Trabalho">
+                <div class="featured-inner carreira-bg">
+                    <span class="card-tag">Avaliação de Carreira</span>
+                    <h3>Como Saber se Estás Bem Posicionado no Mercado de Trabalho</h3>
+                    <p>Indicadores, benchmarks e clareza sobre os próximos passos da tua carreira.</p>
+                    <div class="card-meta">Samuel Rolo &middot; 8 min</div>
+                </div>
+            </a>
 
-            <!-- Article: Big4 Insider 10 Anos -->
-            <article class="article-card" style="border-left:3px solid #C9A961;">
-                <span class="tag">Big4 &middot; Insider</span>
-                <h3>Big4 por Dentro: O que Ninguém te Conta Antes de Entrares</h3>
-                <p>10 anos de experiência nas Big4 condensados num artigo. O que realmente acontece dentro das firmas, o que aprendes, o que pagas e se vale mesmo a pena.</p>
-                <div class="meta">Samuel Rolo &nbsp;&middot;&nbsp; 24 Mar 2026 &nbsp;&middot;&nbsp; 14 min</div>
-                <a href="../blog/artigos/big4-insider-10-anos.html" class="read-link">Ler artigo &rarr;</a>
-            </article>
-
-            <!-- Article: Big4 Senior Ficar ou Sair -->
-            <article class="article-card" style="border-left:3px solid #C9A961;">
-                <span class="tag">Big4 &middot; Decisão de Carreira</span>
-                <h3>Senior nas Big4: Ficar ou Sair? A Decisão que Define a Próxima Década</h3>
-                <p>O que muda quando chegas a Senior, o que ganhas se progredires a Manager e o que perdes se ficares demasiado tempo parado. A visão honesta de quem esteve lá mais de 10 anos.</p>
-                <div class="meta">Samuel Rolo &nbsp;&middot;&nbsp; 25 Mar 2026 &nbsp;&middot;&nbsp; 12 min</div>
-                <a href="../blog/artigos/big4-senior-ficar-ou-sair.html" class="read-link">Ler artigo &rarr;</a>
-            </article>
+            <!-- Grid -->
+            <div class="articles-grid">
+                <a href="../blog/artigos/cv-linkedin-importancia.html" class="article-card article-item" data-category="carreira" data-title="CV ou LinkedIn: Qual é Mais Importante para a Tua Carreira?">
+                    <span class="card-tag">Visibilidade Online</span>
+                    <h3>CV ou LinkedIn: Qual é Mais Importante para a Tua Carreira?</h3>
+                    <p>Análise comparativa dos dois pilares da tua presença profissional.</p>
+                    <div class="card-meta">Samuel Rolo &middot; 8 min</div>
+                    <span class="read-link">Ler artigo &rarr;</span>
+                </a>
+                <a href="../blog/artigos/melhorar-linkedin-pesquisas.html" class="article-card article-item" data-category="carreira" data-title="Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores">
+                    <span class="card-tag">Visibilidade Online</span>
+                    <h3>Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores</h3>
+                    <p>Pequenos ajustes no perfil que podem aumentar significativamente a tua visibilidade.</p>
+                    <div class="card-meta">Samuel Rolo &middot; 9 min</div>
+                    <span class="read-link">Ler artigo &rarr;</span>
+                </a>
+            </div>
         </div>
     </div>
-
-    <!-- ══════════════════════════════════════════════ -->
-    <!-- 3. ESTUDO LINKEDIN (Highlight card)            -->
+<!-- 3. ESTUDO LINKEDIN (Highlight card)            -->
     <!-- ══════════════════════════════════════════════ -->
     <div class="section-light">
         <div class="section-inner fade-in">
@@ -823,6 +900,78 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/shared-auth.js"></script>
     <script src="../js/inline-auth.js"></script>
+
+    <!-- Category Filter + Search -->
+    <script>
+    (function() {
+        // Category filter
+        var pills = document.querySelectorAll('.filter-pill');
+        var sections = document.querySelectorAll('.category-section');
+        var items = document.querySelectorAll('.article-item');
+        var noResults = document.getElementById('noResults');
+        var searchInput = document.getElementById('articleSearch');
+
+        pills.forEach(function(pill) {
+            pill.addEventListener('click', function() {
+                pills.forEach(function(p) { p.classList.remove('active'); });
+                this.classList.add('active');
+                var filter = this.getAttribute('data-filter');
+                searchInput.value = '';
+                applyFilters(filter, '');
+            });
+        });
+
+        // Search filter
+        searchInput.addEventListener('input', function() {
+            var query = this.value.toLowerCase().trim();
+            // Reset category to "all" when searching
+            pills.forEach(function(p) { p.classList.remove('active'); });
+            document.querySelector('.filter-pill[data-filter="all"]').classList.add('active');
+            applyFilters('all', query);
+        });
+
+        function applyFilters(category, query) {
+            var visibleCount = 0;
+
+            sections.forEach(function(section) {
+                var sectionCat = section.getAttribute('data-category');
+                var catMatch = (category === 'all' || sectionCat === category);
+
+                if (!catMatch && !query) {
+                    section.style.display = 'none';
+                    return;
+                }
+
+                if (!query && catMatch) {
+                    section.style.display = '';
+                    // Show all items in this section
+                    section.querySelectorAll('.article-item').forEach(function(item) {
+                        item.style.display = '';
+                    });
+                    visibleCount++;
+                    return;
+                }
+
+                // Search mode: show section if any item matches
+                var sectionHasMatch = false;
+                section.querySelectorAll('.article-item').forEach(function(item) {
+                    var title = (item.getAttribute('data-title') || '').toLowerCase();
+                    var tag = item.querySelector('.card-tag');
+                    var tagText = tag ? tag.textContent.toLowerCase() : '';
+                    var match = title.indexOf(query) !== -1 || tagText.indexOf(query) !== -1;
+                    item.style.display = match ? '' : 'none';
+                    if (match) sectionHasMatch = true;
+                });
+
+                section.style.display = sectionHasMatch ? '' : 'none';
+                if (sectionHasMatch) visibleCount++;
+            });
+
+            noResults.style.display = visibleCount === 0 ? '' : 'none';
+        }
+    })();
+    </script>
+
 </body>
 
 </html>
