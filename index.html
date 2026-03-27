@@ -315,7 +315,536 @@
             50% { transform: translateX(-50%) translateY(8px); }
         }
 
-        /* --- Career Path CTA --- */
+        /* --- Carrossel de Serviços (CSS keyframes, sem bibliotecas) --- */
+        .services-carousel-section {
+            padding: 80px 0;
+            background: #fff;
+            overflow: hidden;
+        }
+        .services-carousel-section h2 {
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: -0.3px;
+            color: #1A1A1A;
+            text-align: center;
+            margin-bottom: 0;
+        }
+        .services-carousel-section h2 strong {
+            font-weight: 600;
+        }
+        .carousel-track-wrapper {
+            overflow: hidden;
+            margin-top: 3rem;
+        }
+        .carousel-track {
+            display: flex;
+            gap: 1.5rem;
+            animation: scrollCarousel 30s linear infinite;
+            width: max-content;
+        }
+        .carousel-track:hover {
+            animation-play-state: paused;
+        }
+        @keyframes scrollCarousel {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .service-card {
+            flex: 0 0 280px;
+            background: #fafaf8;
+            border: 1px solid #f0ede5;
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .service-card:hover {
+            border-color: rgba(201, 169, 97, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+        }
+        .service-card-icon {
+            font-size: 1.8rem;
+            color: #C9A961;
+            margin-bottom: 1rem;
+        }
+        .service-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 0.5rem;
+        }
+        .service-card p {
+            font-size: 0.82rem;
+            font-weight: 300;
+            color: #777;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .service-card-link {
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: #C9A961;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .service-card-link:hover {
+            color: #1A1A1A;
+        }
+
+        /* --- Hero Decision Cards --- */
+        .hero-decision-cards {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 680px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero-decision-card {
+            flex: 1 1 280px;
+            max-width: 320px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(201,169,97,0.25);
+            border-radius: 12px;
+            padding: 1.8rem 1.5rem;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        .hero-decision-card:hover {
+            background: rgba(255,255,255,0.14);
+            border-color: rgba(201,169,97,0.5);
+            transform: translateY(-3px);
+        }
+        .hero-decision-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .hero-decision-card p {
+            font-size: 0.82rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        .hero-decision-card .hdc-cta {
+            display: inline-block;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #C9A961, #B8943D);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .hero-decision-card .hdc-cta:hover {
+            background: #fff;
+            color: #1A1A1A;
+        }
+        @media (max-width: 640px) {
+            .hero-decision-cards { flex-direction: column; align-items: center; }
+            .hero-decision-card { max-width: 100%; }
+        }
+
+        /* --- Valor Rápido --- */
+        .valor-rapido-section {
+            padding: 60px 0;
+            background: #fff;
+        }
+        .valor-rapido-inner {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .vr-item {
+            flex: 1 1 180px;
+            max-width: 220px;
+            text-align: center;
+        }
+        .vr-item .vr-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(201,169,97,0.08);
+            border-radius: 50%;
+        }
+        .vr-item p {
+            font-size: 0.88rem;
+            font-weight: 400;
+            color: #444;
+            line-height: 1.6;
+        }
+        @media (max-width: 640px) {
+            .valor-rapido-inner { flex-direction: column; align-items: center; }
+            .vr-item { max-width: 100%; }
+        }
+
+        /* --- Ecossistema Explicado --- */
+        .ecossistema-section {
+            padding: 80px 0 20px;
+            background: var(--s2i-bg, #faf8f4);
+            text-align: center;
+        }
+        .ecossistema-section h2 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: #1A1A1A;
+            margin-bottom: 0.8rem;
+        }
+        .ecossistema-section h2 strong {
+            font-weight: 600;
+        }
+        .ecossistema-section .eco-text {
+            font-size: 0.95rem;
+            font-weight: 300;
+            color: #666;
+            line-height: 1.7;
+            max-width: 620px;
+            margin: 0 auto 0;
+        }
+
+        /* --- Para Quem É --- */
+        .para-quem-section {
+            padding: 80px 0;
+            background: #fff;
+        }
+        .para-quem-section h2 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: #1A1A1A;
+            text-align: center;
+            margin-bottom: 0;
+        }
+        .para-quem-section h2 strong {
+            font-weight: 600;
+        }
+        .pq-grid {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 2rem;
+        }
+        .pq-card {
+            flex: 1 1 220px;
+            max-width: 260px;
+            background: #fafaf8;
+            border: 1px solid #f0ede5;
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .pq-card:hover {
+            border-color: rgba(201,169,97,0.3);
+            transform: translateY(-3px);
+        }
+        .pq-card .pq-icon {
+            font-size: 1.5rem;
+            color: #C9A961;
+            margin-bottom: 1rem;
+        }
+        .pq-card p {
+            font-size: 0.88rem;
+            font-weight: 400;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* --- Autoridade --- */
+        .autoridade-section {
+            padding: 80px 0;
+            background: var(--s2i-bg, #faf8f4);
+            text-align: center;
+        }
+        .autoridade-section h2 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: #1A1A1A;
+            margin-bottom: 0.8rem;
+        }
+        .autoridade-section h2 strong {
+            font-weight: 600;
+        }
+        .autoridade-section .aut-text {
+            font-size: 0.95rem;
+            font-weight: 300;
+            color: #666;
+            line-height: 1.7;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* --- CTA Final com Escolha --- */
+        .cta-final-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-final-section::before {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 250px; height: 250px;
+            background: radial-gradient(circle, rgba(201,169,97,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .cta-final-inner {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        .cta-final-cards {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 0;
+        }
+        .cta-final-card {
+            flex: 1 1 280px;
+            max-width: 320px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(201,169,97,0.2);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        .cta-final-card:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(201,169,97,0.4);
+            transform: translateY(-3px);
+        }
+        .cta-final-card .cfc-condition {
+            font-size: 0.78rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
+            margin-bottom: 1.2rem;
+        }
+        .cta-final-card .cfc-button {
+            display: inline-block;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #C9A961, #B8943D);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .cta-final-card .cfc-button:hover {
+            background: #fff;
+            color: #1A1A1A;
+        }
+        @media (max-width: 640px) {
+            .cta-final-cards { flex-direction: column; align-items: center; }
+            .cta-final-card { max-width: 100%; }
+        }
+
+        /* --- Subscrição CTA (hidden - preserved) --- */
+        .subscription-cta {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .subscription-cta::before {
+            content: '';
+            position: absolute;
+            top: -30px; right: -30px;
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(201,169,97,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .subscription-cta .sub-inner {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        .subscription-cta .sub-label {
+            display: inline-block;
+            background: linear-gradient(135deg, #C9A961, #E8D5A3);
+            color: #1a1a2e;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 1.2rem;
+        }
+        .subscription-cta h2 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: #fff;
+            line-height: 1.35;
+            margin-bottom: 0.8rem;
+        }
+        .subscription-cta h2 strong {
+            font-weight: 600;
+            color: #C9A961;
+        }
+        .subscription-cta .sub-text {
+            font-size: 0.95rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+        .subscription-cta .sub-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .subscription-cta .sub-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(201,169,97,0.2);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+        }
+        .subscription-cta .sub-feature span {
+            font-size: 0.78rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.8);
+        }
+        .subscription-cta .sub-button {
+            display: inline-block;
+            padding: 14px 44px;
+            background: linear-gradient(135deg, #C9A961, #B8943D);
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: none;
+            border-radius: 6px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        .subscription-cta .sub-button:hover {
+            background: #fff;
+            color: #1A1A1A;
+            transform: translateY(-2px);
+        }
+        .subscription-cta .sub-note {
+            font-size: 0.72rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.4);
+            margin-top: 1rem;
+        }
+        @media (max-width: 768px) {
+            .subscription-cta { padding: 60px 0; }
+            .subscription-cta h2 { font-size: 1.5rem; }
+        }
+
+        /* --- Testemunhos Carrossel --- */
+        .testimonials-carousel-section {
+            padding: 80px 0;
+            background: var(--s2i-bg, #faf8f4);
+            overflow: hidden;
+        }
+        .testimonials-carousel-section h2 {
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: -0.3px;
+            color: #1A1A1A;
+            text-align: center;
+            margin-bottom: 0;
+        }
+        .testimonials-carousel-section h2 strong {
+            font-weight: 600;
+        }
+        .testimonials-track-wrapper {
+            overflow: hidden;
+            margin-top: 3rem;
+        }
+        .testimonials-track {
+            display: flex;
+            gap: 1.5rem;
+            animation: scrollTestimonials 35s linear infinite;
+            width: max-content;
+        }
+        .testimonials-track:hover {
+            animation-play-state: paused;
+        }
+        @keyframes scrollTestimonials {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .testimonial-card {
+            flex: 0 0 320px;
+            background: #fff;
+            border: 1px solid #f0ede5;
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+        .testimonial-card img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            object-fit: cover;
+        }
+        .testimonial-card .testimonial-quote {
+            font-size: 0.85rem;
+            font-weight: 300;
+            font-style: italic;
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        .testimonial-card .testimonial-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #1A1A1A;
+        }
+        .testimonial-card .testimonial-role {
+            font-size: 0.7rem;
+            color: #999;
+        }
+
+        /* --- Career Path CTA (hidden — preserved) --- */
         .career-path-cta {
             background: #fff;
             padding: 80px 0;
@@ -1089,25 +1618,22 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     </header>
 
     <!-- ============================
-         HERO — Uma mensagem. Espaço.
+         SECÇÃO 1 — HERO: VISÃO + DIREÇÃO
          ============================ -->
     <section class="hero-minimal">
         <div class="hero-inner">
-            <h1>Clareza para decidir<br>o que vem <strong>a seguir</strong></h1>
-            <p>Diagnóstico com IA e orientação estratégica para profissionais<br>em momentos de dúvida, transição ou reorientação.</p>
-            <button type="button" class="hero-cta" onclick="window.location.href='/cv-analyser'">Começar diagnóstico</button>
-            <div class="hero-proofs">
-                <div class="proof-item">
-                    <div class="proof-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-                    <div class="proof-text"><strong>Diagnóstico gratuito</strong> em menos de 30 segundos</div>
+            <h1>Constrói a tua carreira com <strong>estratégia</strong>,<br>não por tentativa e erro</h1>
+            <p>Um ecossistema completo para perceberes onde estás,<br>o que ajustar e qual o próximo passo certo.</p>
+            <div class="hero-decision-cards">
+                <div class="hero-decision-card">
+                    <h3>Quero melhorar o meu CV</h3>
+                    <p>Percebe porque não estás a ser chamado e o que mudar.</p>
+                    <a href="/cv-analyser" class="hdc-cta">Analisar o meu CV</a>
                 </div>
-                <div class="proof-item">
-                    <div class="proof-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>
-                    <div class="proof-text"><strong>Compatível com ATS</strong> usados por recrutadores</div>
-                </div>
-                <div class="proof-item">
-                    <div class="proof-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
-                    <div class="proof-text"><strong>Recomendações práticas</strong> para melhorar o teu CV</div>
+                <div class="hero-decision-card">
+                    <h3>Quero definir o meu próximo passo</h3>
+                    <p>Descobre que caminho faz sentido para a tua evolução.</p>
+                    <a href="/career-path" class="hdc-cta">Explorar o meu caminho</a>
                 </div>
             </div>
         </div>
@@ -1115,8 +1641,174 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     </section>
 
     <!-- ============================
-         CAREER PATH CTA — Antes do fold
+         SECÇÃO 2 — VALOR RÁPIDO
          ============================ -->
+    <section class="valor-rapido-section fade-up">
+        <div class="valor-rapido-inner">
+            <div class="vr-item">
+                <div class="vr-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+                <p>Diagnóstico em segundos, sem complexidade</p>
+            </div>
+            <div class="vr-item">
+                <div class="vr-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                </div>
+                <p>Baseado em critérios reais de recrutamento</p>
+            </div>
+            <div class="vr-item">
+                <div class="vr-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                </div>
+                <p>Recomendações claras e acionáveis</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         SECÇÃO 3 — O ECOSSISTEMA EXPLICADO
+         ============================ -->
+    <section class="ecossistema-section fade-up">
+        <div class="container">
+            <h2>O Share2Inspire não é uma <strong>ferramenta isolada</strong></h2>
+            <p class="eco-text">É um sistema que liga Análise, Posicionamento e Decisão — para garantir que cada passo na tua carreira tem intenção e direção.</p>
+        </div>
+    </section>
+
+    <!-- ============================
+         CARROSSEL DE SERVIÇOS — Cards horizontais automáticos
+         ============================ -->
+    <section class="services-carousel-section fade-up">
+        <div class="container">
+            <h2>As nossas <strong>ferramentas</strong></h2>
+            <div class="gold-line"></div>
+        </div>
+        <div class="carousel-track-wrapper">
+            <div class="carousel-track">
+                <!-- Set 1 -->
+                <div class="service-card">
+                    <div class="service-card-icon"><i class="fas fa-file-alt"></i></div>
+                    <h3>CV Analyser</h3>
+                    <p>Diagnóstico do teu CV com IA em 30 segundos. ATS Score, benchmarks e sugestões de melhoria.</p>
+                    <a href="/cv-analyser" class="service-card-link">Analisar CV <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-card-icon"><i class="fab fa-linkedin"></i></div>
+                    <h3>LinkedIn Roaster</h3>
+                    <p>Análise brutal e honesta do teu perfil LinkedIn. Descobre o que os recrutadores realmente veem.</p>
+                    <a href="/linkedin-roaster" class="service-card-link">Analisar perfil <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-card-icon"><i class="fas fa-route"></i></div>
+                    <h3>Career Path</h3>
+                    <p>Roadmap de carreira personalizado com IA. 3 funções ideais, gap de competências e plano de acção.</p>
+                    <a href="/career-path" class="service-card-link">Criar roadmap <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-card-icon"><i class="fas fa-brain"></i></div>
+                    <h3>Career Intelligence</h3>
+                    <p>Comparação estratégica dos 3 caminhos de carreira com trade-offs e recomendação final.</p>
+                    <a href="/career-path" class="service-card-link">Saber mais <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-card-icon"><i class="fas fa-rocket"></i></div>
+                    <h3>KickStart Pro</h3>
+                    <p>Sessão estratégica para parar, pensar e recentrar. Clarifica opções e define próximos passos.</p>
+                    <a href="pages/servicos.html" class="service-card-link">Agendar sessão <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
+                </div>
+                <!-- Set 2 (duplicado para loop infinito) -->
+                <div class="service-card">
+                    <div class="service-card-icon"><i class="fas fa-file-alt"></i></div>
+                    <h3>CV Analyser</h3>
+                    <p>Diagnóstico do teu CV com IA em 30 segundos. ATS Score, benchmarks e sugestões de melhoria.</p>
+                    <a href="/cv-analyser" class="service-card-link">Analisar CV <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-card-icon"><i class="fab fa-linkedin"></i></div>
+                    <h3>LinkedIn Roaster</h3>
+                    <p>Análise brutal e honesta do teu perfil LinkedIn. Descobre o que os recrutadores realmente veem.</p>
+                    <a href="/linkedin-roaster" class="service-card-link">Analisar perfil <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-card-icon"><i class="fas fa-route"></i></div>
+                    <h3>Career Path</h3>
+                    <p>Roadmap de carreira personalizado com IA. 3 funções ideais, gap de competências e plano de acção.</p>
+                    <a href="/career-path" class="service-card-link">Criar roadmap <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-card-icon"><i class="fas fa-brain"></i></div>
+                    <h3>Career Intelligence</h3>
+                    <p>Comparação estratégica dos 3 caminhos de carreira com trade-offs e recomendação final.</p>
+                    <a href="/career-path" class="service-card-link">Saber mais <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-card-icon"><i class="fas fa-rocket"></i></div>
+                    <h3>KickStart Pro</h3>
+                    <p>Sessão estratégica para parar, pensar e recentrar. Clarifica opções e define próximos passos.</p>
+                    <a href="pages/servicos.html" class="service-card-link">Agendar sessão <i class="fas fa-arrow-right" style="font-size:0.6rem;margin-left:4px;"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         SECÇÃO 4 — PARA QUEM É
+         ============================ -->
+    <section class="para-quem-section fade-up">
+        <div class="container">
+            <h2>Para quem é o <strong>Share2Inspire</strong>?</h2>
+            <div class="gold-line"></div>
+        </div>
+        <div class="pq-grid">
+            <div class="pq-card">
+                <div class="pq-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                <p>Profissionais que não estão a ter respostas às candidaturas</p>
+            </div>
+            <div class="pq-card">
+                <div class="pq-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="1.5"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg></div>
+                <p>Pessoas em transição de carreira</p>
+            </div>
+            <div class="pq-card">
+                <div class="pq-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+                <p>Quem quer crescer mas sente falta de direção</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         SECÇÃO 5 — AUTORIDADE
+         ============================ -->
+    <section class="autoridade-section fade-up">
+        <div class="container">
+            <h2>Criado com base em <strong>experiência real</strong></h2>
+            <div class="gold-line"></div>
+            <p class="aut-text">Não é uma tool genérica com IA. É um sistema construído com base em anos de experiência em consultoria, transformação organizacional e gestão de talento.</p>
+        </div>
+    </section>
+
+    <!-- ============================
+         SECÇÃO 6 — CTA FINAL COM ESCOLHA
+         ============================ -->
+    <section class="cta-final-section fade-up">
+        <div class="cta-final-inner">
+            <div class="cta-final-cards">
+                <div class="cta-final-card">
+                    <p class="cfc-condition">Se queres resultados mais rápidos nas candidaturas</p>
+                    <a href="/cv-analyser" class="cfc-button">Analisa o teu CV</a>
+                </div>
+                <div class="cta-final-card">
+                    <p class="cfc-condition">Se queres clareza sobre o teu futuro profissional</p>
+                    <a href="/career-path" class="cfc-button">Explora o teu caminho</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         CAREER PATH CTA — ORIGINAL (escondido)
+         ============================ -->
+    <!-- [HIDDEN — Career Path CTA original preservado]
     <section class="career-path-cta fade-up">
         <div class="cta-inner">
             <span class="cta-label">Career Path</span>
@@ -1146,7 +1838,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             <p class="cta-price">Pagamento único · <span class="price-value">€19,99</span></p>
             <a href="/career-path" class="cta-button">Gerar o meu Career Path</a>
             <p class="cta-note">Resultados em menos de 60 segundos · Sem subscrição</p>
-            <!-- Career Intelligence PRO mention -->
+            [COMMENT: Career Intelligence PRO mention]
             <div style="margin-top:2rem;padding:1rem 1.2rem;background:linear-gradient(135deg,rgba(26,26,46,0.04),rgba(201,169,97,0.06));border:1px solid rgba(201,169,97,0.2);border-radius:10px;text-align:left;max-width:480px;margin-left:auto;margin-right:auto;">
                 <div style="display:flex;align-items:center;gap:6px;margin-bottom:0.4rem;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A961" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -1157,11 +1849,9 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 <a href="/career-path" style="font-size:0.72rem;font-weight:600;color:#C9A961;text-decoration:none;border-bottom:1px solid rgba(201,169,97,0.3);padding-bottom:1px;">Começar Career Path &rarr;</a>
             </div>
         </div>
-    </section>
+    -->
 
-    <!-- ============================
-         BUNDLE CTA — Oferta principal
-         ============================ -->
+    <!-- [HIDDEN — Bundle CTA original preservado]
     <section class="bundle-cta fade-up" style="padding:3rem 0;">
         <div style="max-width:720px;margin:0 auto;padding:0 1.5rem;">
             <div style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border-radius:16px;padding:2.5rem 2rem;position:relative;overflow:hidden;">
@@ -1179,11 +1869,9 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 </div>
             </div>
         </div>
-    </section>
+    -->
 
-    <!-- ============================
-         PROPÓSITO — Uma ideia central.
-         ============================ -->
+    <!-- [HIDDEN — Propósito original preservado]
     <section class="section-serene proposito-section fade-up">
         <div class="container">
             <div class="row justify-content-center">
@@ -1199,7 +1887,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 </div>
             </div>
         </div>
-    </section>
+    -->
 
     <!-- ============================
          E-BOOK — Lead magnet limpo.
@@ -1220,12 +1908,8 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             </div>
         </div>
     </section>
-    <!-- ============================
-         CAREER ENERGY DIAGNOSTIC — Survey interativo gratuito
-         ============================ -->
-    <!-- ============================
-         CAREER ENERGY — Diagnóstico Gratuito
-         ============================ -->
+
+    <!-- [HIDDEN — Career Energy Diagnostic original preservado]
     <section class="section-serene career-energy-section fade-up" id="career-energy">
         <div class="container">
             <div class="row justify-content-center">
@@ -1240,12 +1924,12 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         </div>
     </section>
 
-    <!-- Career Energy Modal -->
+    [COMMENT: Career Energy Modal]
     <div class="ce-modal-overlay" id="ceModalOverlay">
         <div class="ce-modal" id="ceModal">
             <button class="ce-modal-close" onclick="closeCEModal()">&times;</button>
 
-            <!-- Step 1: Profile (optional) -->
+            [COMMENT: Step 1: Profile (optional)]
             <div class="ce-profile-step" id="ceProfileStep">
                 <p class="ce-badge" style="margin-bottom:1rem;">CAREER ENERGY</p>
                 <h3>Antes de começar</h3>
@@ -1348,7 +2032,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 </div>
             </div>
 
-            <!-- Step 2: Quiz -->
+            [COMMENT: Step 2: Quiz]
             <div class="ce-quiz-step" id="ceQuizStep">
                 <div class="ce-progress-bar">
                     <div class="ce-progress-fill" id="ceProgressFill"></div>
@@ -1361,7 +2045,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 </div>
             </div>
 
-            <!-- Step 3: Results -->
+            [COMMENT: Step 3: Results]
             <div class="ce-results-step" id="ceResultsStep">
                 <div class="ce-score-section">
                     <div class="ce-score-circle">
@@ -1395,14 +2079,14 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                     <div class="ce-dim"><div class="ce-dim-header"><span class="ce-dim-icon">🧭</span><span class="ce-dim-name">Propósito e Progressão</span><span class="ce-dim-score" id="ceDimScore3">0</span></div><div class="ce-dim-bar"><div class="ce-dim-fill" id="ceDimFill3"></div></div><p class="ce-dim-insight" id="ceDimInsight3"></p></div>
                 </div>
 
-                <!-- LinkedIn Share -->
+                [COMMENT: LinkedIn Share]
                 <div class="ce-result-actions">
                     <button class="ce-btn-linkedin" id="ceBtnLinkedIn" onclick="copyCELinkedInPost()">
                         <i class="fab fa-linkedin"></i> Copiar Post LinkedIn
                     </button>
                 </div>
 
-                <!-- CTAs -->
+                [COMMENT: CTAs]
                 <div class="ce-ctas">
                     <h4>Próximos passos</h4>
                     <div class="ce-cta-grid">
@@ -1425,11 +2109,9 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 </div>
             </div>
         </div>
-    </div>
+    -->
 
-    <!-- ============================
-         SERVIÇOS — Texto limpo, sem caixas.
-         ============================ -->
+    <!-- [HIDDEN — Serviços vertical original preservado]
     <section class="section-serene servicos-section fade-up">
         <div class="container">
             <div class="row justify-content-center">
@@ -1471,11 +2153,9 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 </div>
             </div>
         </div>
-    </section>
+    -->
 
-    <!-- ============================
-         ESTUDO EM DESTAQUE
-         ============================ -->
+    <!-- [HIDDEN — Estudo em destaque original preservado]
     <section class="estudo-destaque fade-up">
         <div class="container">
             <div class="row justify-content-center">
@@ -1490,7 +2170,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 </div>
             </div>
         </div>
-    </section>
+    -->
 
     <!-- ============================
          VALORES — Tipografia como elemento visual.
@@ -1527,6 +2207,58 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                         <div class="valor-word">Impacto</div>
                         <p class="valor-desc">Mudanças que se sentem.</p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         TESTEMUNHOS — Carrossel horizontal automático
+         ============================ -->
+    <section class="testimonials-carousel-section fade-up">
+        <div class="container">
+            <h2>O que dizem os nossos <strong>utilizadores</strong></h2>
+            <div class="gold-line"></div>
+        </div>
+        <div class="testimonials-track-wrapper">
+            <div class="testimonials-track">
+                <!-- Set 1 -->
+                <div class="testimonial-card">
+                    <img src="/images/avatars/ana.png" alt="Ana M." loading="lazy">
+                    <p class="testimonial-quote">“Passei de 45 para 82 pontos ATS em 10 minutos. Absolutamente essencial para quem procura emprego hoje em dia.”</p>
+                    <p class="testimonial-name">Ana M.</p>
+                    <p class="testimonial-role">Senior Manager</p>
+                </div>
+                <div class="testimonial-card">
+                    <img src="/images/avatars/diogo.png" alt="Diogo S." loading="lazy">
+                    <p class="testimonial-quote">“O LinkedIn Roaster deu-me feedback que nunca tinha recebido. O meu perfil está muito mais forte e a receber mais visitas.”</p>
+                    <p class="testimonial-name">Diogo S.</p>
+                    <p class="testimonial-role">Software Engineer</p>
+                </div>
+                <div class="testimonial-card">
+                    <img src="/images/avatars/mariana.png" alt="Mariana C." loading="lazy">
+                    <p class="testimonial-quote">“Finalmente uma ferramenta que me diz exatamente o que os recrutadores querem ver. O CV Analyser é um game-changer.”</p>
+                    <p class="testimonial-name">Mariana C.</p>
+                    <p class="testimonial-role">Product Manager</p>
+                </div>
+                <!-- Set 2 (duplicado para loop infinito) -->
+                <div class="testimonial-card">
+                    <img src="/images/avatars/ana.png" alt="Ana M." loading="lazy">
+                    <p class="testimonial-quote">“Passei de 45 para 82 pontos ATS em 10 minutos. Absolutamente essencial para quem procura emprego hoje em dia.”</p>
+                    <p class="testimonial-name">Ana M.</p>
+                    <p class="testimonial-role">Senior Manager</p>
+                </div>
+                <div class="testimonial-card">
+                    <img src="/images/avatars/diogo.png" alt="Diogo S." loading="lazy">
+                    <p class="testimonial-quote">“O LinkedIn Roaster deu-me feedback que nunca tinha recebido. O meu perfil está muito mais forte e a receber mais visitas.”</p>
+                    <p class="testimonial-name">Diogo S.</p>
+                    <p class="testimonial-role">Software Engineer</p>
+                </div>
+                <div class="testimonial-card">
+                    <img src="/images/avatars/mariana.png" alt="Mariana C." loading="lazy">
+                    <p class="testimonial-quote">“Finalmente uma ferramenta que me diz exatamente o que os recrutadores querem ver. O CV Analyser é um game-changer.”</p>
+                    <p class="testimonial-name">Mariana C.</p>
+                    <p class="testimonial-role">Product Manager</p>
                 </div>
             </div>
         </div>
@@ -2224,37 +2956,5 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     <script src="/js/shared-auth.js"></script>
     <script src="/js/inline-auth.js"></script>
     <script src="/js/save-to-account.js"></script>
-</body>
-
-</html>
-</script>
-
-<!-- ========== TESTEMUNHOS ========== -->
-<section class="py-20 bg-white">
-    <div class="container max-w-4xl mx-auto px-4">
-        <h2 class="text-2xl font-semibold text-[#1a1a1a] mb-8 text-center">O que dizem os nossos utilizadores</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-[#f7f7f6] border border-[#e5e5e5] rounded-lg p-6 text-center">
-                <img src="/images/avatars/ana.png" alt="Ana M." class="w-12 h-12 rounded-full mx-auto mb-4">
-                <p class="text-sm text-[#555] font-light italic mb-4">"Passei de 45 para 82 pontos ATS em 10 minutos. Absolutamente essencial para quem procura emprego hoje em dia."</p>
-                <p class="text-xs font-semibold text-[#1a1a1a]">Ana M.</p>
-                <p class="text-[10px] text-[#999]">Senior Manager</p>
-            </div>
-            <div class="bg-[#f7f7f6] border border-[#e5e5e5] rounded-lg p-6 text-center">
-                <img src="/images/avatars/diogo.png" alt="Diogo S." class="w-12 h-12 rounded-full mx-auto mb-4">
-                <p class="text-sm text-[#555] font-light italic mb-4">"O LinkedIn Roaster deu-me feedback que nunca tinha recebido. O meu perfil está muito mais forte e a receber mais visitas."</p>
-                <p class="text-xs font-semibold text-[#1a1a1a]">Diogo S.</p>
-                <p class="text-[10px] text-[#999]">Software Engineer</p>
-            </div>
-            <div class="bg-[#f7f7f6] border border-[#e5e5e5] rounded-lg p-6 text-center">
-                <img src="/images/avatars/mariana.png" alt="Mariana C." class="w-12 h-12 rounded-full mx-auto mb-4">
-                <p class="text-sm text-[#555] font-light italic mb-4">"Finalmente uma ferramenta que me diz exatamente o que os recrutadores querem ver. O CV Analyser é um game-changer."</p>
-                <p class="text-xs font-semibold text-[#1a1a1a]">Mariana C.</p>
-                <p class="text-[10px] text-[#999]">Product Manager</p>
-            </div>
-        </div>
-    </div>
-</section>
-
 </body>
 </html>

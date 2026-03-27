@@ -108,16 +108,106 @@
         .svc-card-new .card-icon.blue { background: rgba(10,102,194,0.08); color: #0A66C2; }
         .svc-card-new .card-icon.green { background: rgba(46,125,50,0.08); color: #2E7D32; }
         .svc-card-new .card-icon.purple { background: rgba(124,58,237,0.08); color: #7C3AED; }
-        .svc-card-new h3 { font-size: 1.05rem; font-weight: 600; color: var(--dark); margin-bottom: 0.3rem; display: flex; align-items: center; gap: 8px; }
+        .svc-card-new h3 { font-size: 0.94rem; font-weight: 600; color: var(--dark); margin-bottom: 0.3rem; display: flex; align-items: center; gap: 8px; }
         .svc-card-new h3 .badge-sm { font-size: 0.5rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; color: #fff; }
-        .svc-card-new .card-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; flex: 1; }
+        .svc-card-new .card-desc { font-size: 0.76rem; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; flex: 1; }
         .svc-card-new .card-features { list-style: none; padding: 0; margin: 0 0 1.2rem; }
-        .svc-card-new .card-features li { font-size: 0.8rem; color: #555; padding: 0.3rem 0; display: flex; align-items: flex-start; gap: 8px; }
+        .svc-card-new .card-features li { font-size: 0.72rem; color: #555; padding: 0.3rem 0; display: flex; align-items: flex-start; gap: 8px; }
         .svc-card-new .card-features li::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 7px; }
         .svc-card-new .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; border-top: 1px solid #f0f0f0; margin-top: auto; }
-        .svc-card-new .card-price { font-size: 0.82rem; color: var(--muted); }
-        .svc-card-new .card-price strong { font-size: 1.1rem; font-weight: 700; color: var(--dark); }
+        .svc-card-new .card-price { font-size: 0.74rem; color: var(--muted); }
+        .svc-card-new .card-price strong { font-size: 0.98rem; font-weight: 700; color: var(--dark); }
 
+
+        /* Ajuste 1: max-width dos cards nas Etapas 1 e 3 */
+        .svc-card-constrained { max-width: 500px; margin-left: auto; margin-right: auto; }
+        /* Ajuste 3: bundle section container */
+        .bundle-section-inner { max-width: 1100px; margin: 0 auto; }
+
+        /* ─── Infinite Marquee Carousel ─── */
+        .marquee-section {
+            overflow: hidden;
+            padding: 50px 0;
+            background: var(--light-bg);
+        }
+        .marquee-section .section-label {
+            text-align: center;
+            font-size: 1.05rem;
+            font-weight: 400;
+            color: #555;
+            margin-bottom: 2rem;
+        }
+        .marquee-wrapper {
+            overflow: hidden;
+            width: 100%;
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+        }
+        .marquee-track {
+            display: flex;
+            gap: 1rem;
+            width: max-content;
+            animation: marquee-scroll 38s linear infinite;
+        }
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+        @keyframes marquee-scroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        /* Stat badge cards */
+        .marquee-stat {
+            flex-shrink: 0;
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            border-radius: 12px;
+            padding: 1.2rem 1.8rem;
+            text-align: center;
+            min-width: 140px;
+        }
+        .marquee-stat .stat-num {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            line-height: 1.1;
+        }
+        .marquee-stat .stat-label {
+            font-size: 0.72rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+        /* Testimonial cards */
+        .marquee-testi {
+            flex-shrink: 0;
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 1.4rem 1.6rem;
+            width: 280px;
+        }
+        .marquee-testi .testi-stars {
+            color: var(--gold);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.6rem;
+        }
+        .marquee-testi .testi-text {
+            font-size: 0.78rem;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+            font-style: italic;
+        }
+        .marquee-testi .testi-author {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .marquee-testi .testi-author span {
+            font-weight: 400;
+            color: #999;
+        }
         .btn-gold { display: inline-flex; align-items: center; gap: 6px; background: var(--gold); color: #fff; font-size: 0.78rem; font-weight: 600; padding: 8px 18px; border-radius: 8px; text-decoration: none; transition: all 0.3s; border: none; }
         .btn-gold:hover { background: #b8943d; color: #fff; }
         .btn-outline-gold { display: inline-flex; align-items: center; gap: 6px; background: transparent; color: var(--gold); font-size: 0.78rem; font-weight: 600; padding: 8px 18px; border-radius: 8px; text-decoration: none; transition: all 0.3s; border: 1px solid var(--gold-border); }
@@ -243,7 +333,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 
             <div class="row g-4">
                 <div class="col-md-6">
-                    <div class="svc-card-new">
+                    <div class="svc-card-new svc-card-constrained">
                         <div class="card-icon gold"><i class="fas fa-file-alt"></i></div>
                         <h3>CV Analyser <span class="badge-sm" style="background:var(--gold);">Start Free</span></h3>
                         <p class="card-desc">Instant AI-powered CV diagnosis. Maturity score, ATS rejection rate, and actionable recommendations.</p>
@@ -261,7 +351,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 </div>
 
                 <div class="col-md-6">
-                    <div class="svc-card-new">
+                    <div class="svc-card-new svc-card-constrained">
                         <div class="card-icon blue"><i class="fab fa-linkedin-in"></i></div>
                         <h3>LinkedIn Roaster <span class="badge-sm" style="background:#0A66C2;">New</span></h3>
                         <p class="card-desc">Complete LinkedIn profile audit. Visibility score, critical errors, and SEO keywords.</p>
@@ -312,8 +402,8 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                     </div>
                 </div> -->
 
-                <!-- CV by Specialist -->
-                <div class="col-md-8 mx-auto">
+                <!-- CV by Specialist (Hidden) -->
+                <!-- <div class="col-md-8 mx-auto">
                     <div class="svc-card-new">
                         <div class="card-icon gold"><i class="fas fa-user-tie"></i></div>
                         <h3>CV by Specialist</h3>
@@ -328,7 +418,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                             <button class="btn-outline-gold" onclick="new bootstrap.Modal(document.getElementById('cvReviewModal')).show();">Request review <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></button>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </section>
@@ -347,7 +437,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 
             <div class="row g-4">
                 <div class="col-md-6">
-                    <div class="svc-card-new featured">
+                    <div class="svc-card-new svc-card-constrained featured">
                         <span class="card-badge">Recommended</span>
                         <div class="card-icon gold"><i class="fas fa-route"></i></div>
                         <h3>Career Path</h3>
@@ -369,7 +459,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 </div>
 
                 <div class="col-md-6">
-                    <div class="svc-card-new" style="border-color:var(--gold-border);">
+                    <div class="svc-card-new svc-card-constrained" style="border-color:var(--gold-border);">
                         <div class="card-icon purple"><i class="fas fa-brain"></i></div>
                         <h3>Career Intelligence <span class="badge-sm" style="background:#7C3AED;">Full</span></h3>
                         <p class="card-desc">Everything in Career Path + strategic decision. Side-by-side comparison, trade-offs, and a justified recommendation.</p>
@@ -397,7 +487,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     <section class="svc-section fade-up">
         <div class="container" style="max-width:960px;">
             <div class="row g-4">
-                <div class="col-md-8 mx-auto">
+                <div class="col-12">
                     <div class="svc-card-new" style="flex-direction:row;align-items:center;gap:2rem;flex-wrap:wrap;">
                         <div style="flex:1;min-width:240px;">
                             <div class="card-icon gold" style="margin-bottom:0.8rem;"><i class="fas fa-rocket"></i></div>
@@ -437,41 +527,76 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         </div>
     </section>
 
-    <!-- ========== SOCIAL PROOF ========== -->
-    <section style="padding:50px 0;background:var(--light-bg);" class="fade-up">
-        <div class="container" style="max-width:960px;">
-            <div class="stats-row" style="margin-bottom:3rem;">
-                <div class="stat-item">
+    <!-- ========== SOCIAL PROOF — MARQUEE ========== -->
+    <section class="marquee-section fade-up">
+        <p class="section-label">What our clients say</p>
+        <div class="marquee-wrapper">
+            <div class="marquee-track">
+                <!-- Set 1 -->
+                <div class="marquee-stat">
                     <div class="stat-num">+500</div>
                     <div class="stat-label">Professionals helped</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-num">5<span style="font-size:1.1rem;">&#9733;</span></div>
-                    <div class="stat-label">Average rating</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-num">98%</div>
-                    <div class="stat-label">Satisfaction rate</div>
-                </div>
-            </div>
-
-            <h3 style="text-align:center;font-size:1.05rem;font-weight:400;color:#555;margin-bottom:1.5rem;">What our clients say</h3>
-            <div class="testi-grid">
-                <div class="testi-card">
+                <div class="marquee-testi">
                     <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
                     <p class="testi-text">&ldquo;Career Path gave me a clear vision of my next step. I recommend it to any professional in transition.&rdquo;</p>
                     <div class="testi-author">Ana M. &mdash; <span>Senior Manager</span></div>
                 </div>
-                <div class="testi-card">
+                <div class="marquee-stat">
+                    <div class="stat-num">5&#9733;</div>
+                    <div class="stat-label">Average rating</div>
+                </div>
+                <div class="marquee-testi">
                     <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
                     <p class="testi-text">&ldquo;CV Analyser identified points I would never have seen. Free and extremely useful.&rdquo;</p>
                     <div class="testi-author">Ricardo P. &mdash; <span>Consultant</span></div>
                 </div>
-
-                <div class="testi-card">
+                <div class="marquee-stat">
+                    <div class="stat-num">98%</div>
+                    <div class="stat-label">Satisfaction rate</div>
+                </div>
+                <div class="marquee-testi">
+                    <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testi-text">&ldquo;The KickStart Pro session was transformative. In 30 minutes I had a concrete action plan.&rdquo;</p>
+                    <div class="testi-author">Marta S. &mdash; <span>HR Director</span></div>
+                </div>
+                <div class="marquee-testi">
                     <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
                     <p class="testi-text">&ldquo;LinkedIn Roaster completely changed how I present myself. Got 3 contacts the following week.&rdquo;</p>
-                    <div class="testi-author">João F. &mdash; <span>Tech Lead</span></div>
+                    <div class="testi-author">Jo&atilde;o F. &mdash; <span>Tech Lead</span></div>
+                </div>
+                <!-- Set 2 (duplicate for seamless loop) -->
+                <div class="marquee-stat">
+                    <div class="stat-num">+500</div>
+                    <div class="stat-label">Professionals helped</div>
+                </div>
+                <div class="marquee-testi">
+                    <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testi-text">&ldquo;Career Path gave me a clear vision of my next step. I recommend it to any professional in transition.&rdquo;</p>
+                    <div class="testi-author">Ana M. &mdash; <span>Senior Manager</span></div>
+                </div>
+                <div class="marquee-stat">
+                    <div class="stat-num">5&#9733;</div>
+                    <div class="stat-label">Average rating</div>
+                </div>
+                <div class="marquee-testi">
+                    <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testi-text">&ldquo;CV Analyser identified points I would never have seen. Free and extremely useful.&rdquo;</p>
+                    <div class="testi-author">Ricardo P. &mdash; <span>Consultant</span></div>
+                </div>
+                <div class="marquee-stat">
+                    <div class="stat-num">98%</div>
+                    <div class="stat-label">Satisfaction rate</div>
+                </div>
+                <div class="marquee-testi">
+                    <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testi-text">&ldquo;The KickStart Pro session was transformative. In 30 minutes I had a concrete action plan.&rdquo;</p>
+                    <div class="testi-author">Marta S. &mdash; <span>HR Director</span></div>
+                </div>
+                <div class="marquee-testi">
+                    <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testi-text">&ldquo;LinkedIn Roaster completely changed how I present myself. Got 3 contacts the following week.&rdquo;</p>
+                    <div class="testi-author">Jo&atilde;o F. &mdash; <span>Tech Lead</span></div>
                 </div>
             </div>
         </div>
