@@ -804,10 +804,6 @@ export default function MemberArea() {
     return groups;
   }, [savedAnalyses]);
 
-  // ─── Routing: sem subscrição → UpgradePage ─────────────────────────────
-  const hasActiveSub = subscription && subscription.status === 'active' && new Date(subscription.expires_at) > new Date();
-  if (!hasActiveSub) return <UpgradePage />;
-
   // ─── Smart next step recommendation ─────────────────────────────────────
   const nextStepSuggestion = useMemo(() => {
     const cvAnalyses = savedAnalyses.filter(a => a.analysis_type === 'cv_analyser');
@@ -855,6 +851,10 @@ export default function MemberArea() {
     };
     return { label: typeLabels[latest.analysis_type] || t('member.lastActivity'), time: timeStr };
   }, [savedAnalyses, t]);
+
+  // ─── Routing: sem subscrição → UpgradePage ─────────────────────────────
+  const hasActiveSub = subscription && subscription.status === 'active' && new Date(subscription.expires_at) > new Date();
+  if (!hasActiveSub) return <UpgradePage />;
 
   return (
     <div className="min-h-screen pt-24 pb-20 bg-[#fafaf9]">
