@@ -360,13 +360,14 @@ export default function CareerProgress({ variant = 'detailed' }: CareerProgressP
                 >
                   {lv.icon} {lv.name}
                 </span>
-                {/* Info icon */}
+                {/* Info / Learn more button */}
                 <button
                   onClick={() => setShowInfo(true)}
-                  className="w-5 h-5 rounded-full bg-[#f5f5f4] hover:bg-[#e5e5e5] flex items-center justify-center transition-colors"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#f5f5f4] hover:bg-gold/10 border border-transparent hover:border-gold/20 transition-all text-[9px] font-medium text-[#888] hover:text-gold"
                   title={t('cp.info.title')}
                 >
-                  <Info className="w-3 h-3 text-[#999]" />
+                  <Info className="w-3 h-3" />
+                  <span>{t('cp.learnMore')}</span>
                 </button>
               </div>
               <p className="text-[11px] text-[#666] leading-relaxed mb-2 line-clamp-2">{lv.desc}</p>
@@ -423,13 +424,14 @@ export default function CareerProgress({ variant = 'detailed' }: CareerProgressP
                 >
                   {lv.icon} {t('cp.level')} {lvIdx + 1}
                 </span>
-                {/* Info icon */}
+                {/* Info / Learn more button */}
                 <button
                   onClick={() => setShowInfo(true)}
-                  className="w-5 h-5 rounded-full bg-[#f5f5f4] hover:bg-[#e5e5e5] flex items-center justify-center transition-colors"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#f5f5f4] hover:bg-gold/10 border border-transparent hover:border-gold/20 transition-all text-[10px] font-medium text-[#888] hover:text-gold"
                   title={t('cp.info.title')}
                 >
-                  <Info className="w-3 h-3 text-[#999]" />
+                  <Info className="w-3 h-3" />
+                  <span>{t('cp.learnMore')}</span>
                 </button>
               </div>
               <h3 className="text-lg font-semibold text-[#1a1a1a] mb-0.5" style={{ fontFamily: "'Cormorant Garamond', serif" }}>

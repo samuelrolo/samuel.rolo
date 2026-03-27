@@ -347,8 +347,6 @@ export default function MemberArea() {
 
   // Career Intelligence states
   const [monthlyCareerIntelUsed, setMonthlyCareerIntelUsed] = useState(0);
-  const [ciCountry, setCiCountry] = useState('Portugal');
-  const [ciRegion, setCiRegion] = useState('');
 
   // Tab navigation
   const [activeTab, setActiveTab] = useState<TabId>('tools');
@@ -366,8 +364,6 @@ export default function MemberArea() {
 
   const selectedCountryData = countries.find(c => c.country === cpCountry);
   const availableRegions = selectedCountryData?.regions || [];
-  const ciSelectedCountryData = countries.find(c => c.country === ciCountry);
-  const ciAvailableRegions = ciSelectedCountryData?.regions || [];
 
   // ─── Fetch content ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -618,14 +614,14 @@ export default function MemberArea() {
       const extractionResult = await fetchWithRetry(extractionBody);
       const analysisSource = extractionResult.analysis || extractionResult;
       const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
-      const ciBody: any = { mode: 'career_intelligence', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: profile?.linkedin_url || '', country: ciCountry, region: ciRegion, lang };
+      const ciBody: any = { mode: 'career_intelligence', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: profile?.linkedin_url || '', country: cpCountry, region: cpRegion, lang };
       const result = await fetchWithRetry(ciBody);
       setAnalysisResult(result);
-      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_intelligence', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: ciCountry, region: ciRegion, captured_at: new Date().toISOString(), email: profile?.email } });
+      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_intelligence', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email } });
       setMonthlyCareerIntelUsed(prev => prev + 1);
     } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
     finally { setAnalyzing(false); }
-  }, [user?.id, subscription, planTier, monthlyCareerIntelUsed, profile, ciCountry, ciRegion, lang, getCvData, fetchWithRetry]);
+  }, [user?.id, subscription, planTier, monthlyCareerIntelUsed, profile, cpCountry, cpRegion, lang, getCvData, fetchWithRetry]);
 
   // ─── Toggle tool panel ──────────────────────────────────────────────────
   const toggleTool = (key: string) => {
@@ -735,29 +731,6 @@ export default function MemberArea() {
           <button onClick={runCareerPath} disabled={analyzing || !cpAvailable || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
             {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar Career Path...' : 'Generating Career Path...'}</>) : (<><Route className="w-4 h-4" />{lang === 'pt' ? 'Gerar Career Path' : 'Generate Career Path'}</>)}
           </button>
-          {!cpAvailable && (
-            <div className="mt-3 rounded-lg border border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 p-3">
-              <div className="flex items-center gap-1.5 mb-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">{lang === 'pt' ? 'Oferta Exclusiva' : 'Exclusive Offer'}</span>
-                <span className="text-[10px] text-amber-600">{lang === 'pt' ? '75% desconto — só para subscritores Pro' : '75% off — Pro subscribers only'}</span>
-              </div>
-              <p className="text-xs text-[#555] mb-2.5">
-                {lang === 'pt' ? 'Já usaste o teu Career Path mensal. Obtém uma análise adicional a preço especial.' : 'You have used your monthly Career Path. Get an additional analysis at a special price.'}
-              </p>
-              <a
-                href={lang === 'pt' ? '/career-path?addon=true&price=4.99' : '/en/career-path?addon=true&price=4.99'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between w-full px-3 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs font-semibold rounded-lg hover:from-amber-600 hover:to-amber-700 transition-all shadow-sm"
-              >
-                <span>{lang === 'pt' ? 'Obter análise adicional' : 'Get additional analysis'}</span>
-                <span className="flex items-center gap-1.5">
-                  <span className="line-through text-amber-200 font-normal">19€</span>
-                  <span className="text-white font-bold">4,99€</span>
-                </span>
-              </a>
-            </div>
-          )}
         </div>
       );
     }
@@ -785,39 +758,16 @@ export default function MemberArea() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><Globe className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'País' : 'Country'}</label>
-              <select value={ciCountry} onChange={e => { setCiCountry(e.target.value); setCiRegion(''); }} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white">{countries.map(c => (<option key={c.code} value={c.country}>{c.country}</option>))}</select>
+              <select value={cpCountry} onChange={e => { setCpCountry(e.target.value); setCpRegion(''); }} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white">{countries.map(c => (<option key={c.code} value={c.country}>{c.country}</option>))}</select>
             </div>
             <div>
               <label className="text-[10px] text-[#999] uppercase tracking-wider mb-1 block"><MapPin className="w-3 h-3 inline mr-1" />{lang === 'pt' ? 'Região' : 'Region'}</label>
-              <select value={ciRegion} onChange={e => setCiRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"><option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>{ciAvailableRegions.map(r => (<option key={r} value={r}>{r}</option>))}</select>
+              <select value={cpRegion} onChange={e => setCpRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"><option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>{availableRegions.map(r => (<option key={r} value={r}>{r}</option>))}</select>
             </div>
           </div>
           <button onClick={runCareerIntelligence} disabled={analyzing || !ciAvailable || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
             {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar análise...' : 'Generating analysis...'}</>) : (<><Sparkles className="w-4 h-4" />{lang === 'pt' ? 'Gerar Career Intelligence' : 'Generate Career Intelligence'}</>)}
           </button>
-          {!ciAvailable && (
-            <div className="mt-3 rounded-lg border border-violet-200 bg-gradient-to-r from-violet-50 to-purple-50 p-3">
-              <div className="flex items-center gap-1.5 mb-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-violet-700 bg-violet-100 px-2 py-0.5 rounded-full">{lang === 'pt' ? 'Oferta Exclusiva' : 'Exclusive Offer'}</span>
-                <span className="text-[10px] text-violet-600">{lang === 'pt' ? '75% desconto — só para subscritores Pro' : '75% off — Pro subscribers only'}</span>
-              </div>
-              <p className="text-xs text-[#555] mb-2.5">
-                {lang === 'pt' ? 'Já usaste o teu Career Intelligence mensal. Obtém uma análise adicional a preço especial.' : 'You have used your monthly Career Intelligence. Get an additional analysis at a special price.'}
-              </p>
-              <a
-                href={lang === 'pt' ? '/career-intelligence?addon=true&price=9.99' : '/en/career-intelligence?addon=true&price=9.99'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between w-full px-3 py-2.5 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-xs font-semibold rounded-lg hover:from-violet-700 hover:to-purple-700 transition-all shadow-sm"
-              >
-                <span>{lang === 'pt' ? 'Obter análise adicional' : 'Get additional analysis'}</span>
-                <span className="flex items-center gap-1.5">
-                  <span className="line-through text-violet-300 font-normal">39€</span>
-                  <span className="text-white font-bold">9,99€</span>
-                </span>
-              </a>
-            </div>
-          )}
         </div>
       );
     }
@@ -854,6 +804,10 @@ export default function MemberArea() {
     return groups;
   }, [savedAnalyses]);
 
+  // ─── Routing: sem subscrição → UpgradePage ─────────────────────────────
+  const hasActiveSub = subscription && subscription.status === 'active' && new Date(subscription.expires_at) > new Date();
+  if (!hasActiveSub) return <UpgradePage />;
+
   // ─── Smart next step recommendation ─────────────────────────────────────
   const nextStepSuggestion = useMemo(() => {
     const cvAnalyses = savedAnalyses.filter(a => a.analysis_type === 'cv_analyser');
@@ -885,6 +839,57 @@ export default function MemberArea() {
     return { icon: '🚀', text: t('member.suggestion.keepGoing'), action: 'tools' as const };
   }, [savedAnalyses, profile, planTier, t]);
 
+  // ─── Dynamic insight message (contextual to user state) ────────────────
+  const dynamicInsight = useMemo(() => {
+    const cvAnalyses = savedAnalyses.filter(a => a.analysis_type === 'cv_analyser');
+    const liAnalyses = savedAnalyses.filter(a => a.analysis_type === 'linkedin_roaster');
+    const cpAnalyses = savedAnalyses.filter(a => a.analysis_type === 'career_path');
+    const hasCv = !!profile?.cv_url;
+    const bestCvScore = cvAnalyses.reduce((best, a) => {
+      const s = a.data?.overall_score || a.data?.score || a.data?.ats_score || 0;
+      return Math.max(best, typeof s === 'number' ? s : 0);
+    }, 0);
+    const bestLiScore = liAnalyses.reduce((best, a) => {
+      const s = a.data?.overall_score || a.data?.score || 0;
+      return Math.max(best, typeof s === 'number' ? s : 0);
+    }, 0);
+
+    // Calculate career score for elite check
+    const toolsUsed = new Set(savedAnalyses.map(a => a.analysis_type));
+    const usedCount = ['cv_analyser', 'linkedin_roaster', 'career_path', 'career_intelligence'].filter(t => toolsUsed.has(t)).length;
+    const estimatedScore = (cvAnalyses.length > 0 ? 50 : 0) + (bestCvScore >= 60 ? 75 : 0) + (bestCvScore >= 85 ? 125 : 0)
+      + (liAnalyses.length > 0 ? 50 : 0) + (bestLiScore >= 60 ? 75 : 0) + (bestLiScore >= 85 ? 125 : 0)
+      + (cpAnalyses.length > 0 ? 75 : 0) + (usedCount >= 2 ? 30 : 0);
+
+    if (estimatedScore >= 700) return { key: 'member.insight.elite', action: 'tools' as const };
+    if (!hasCv || cvAnalyses.length === 0) return { key: 'member.insight.noCv', action: 'cv' as const };
+    if (bestCvScore > 0 && bestCvScore < 70) return { key: 'member.insight.lowCvScore', action: 'cv' as const };
+    if (bestCvScore >= 70 && liAnalyses.length === 0) return { key: 'member.insight.goodCvScore', action: 'linkedin' as const };
+    if (liAnalyses.length === 0) return { key: 'member.insight.noLinkedin', action: 'linkedin' as const };
+    if (bestLiScore > 0 && bestLiScore < 70) return { key: 'member.insight.lowLiScore', action: 'linkedin' as const };
+    if (cpAnalyses.length === 0 && planTier !== 'essential') return { key: 'member.insight.noCareerPath', action: 'careerPath' as const };
+    if (usedCount >= 3) return { key: 'member.insight.proTip', action: 'tools' as const };
+    return { key: 'member.insight.default', action: 'cv' as const };
+  }, [savedAnalyses, profile, planTier]);
+
+  // ─── Navigate to tool from next step / insight ─────────────────────────
+  const navigateToAction = (action: string) => {
+    if (action === 'profile') { window.location.href = '/area-cliente/perfil'; return; }
+    setActiveTab('tools');
+    const toolKeyMap: Record<string, string> = {
+      cv: 'cvAnalyzer', linkedin: 'linkedinRoster', careerPath: 'careerPath',
+      careerIntelligence: 'careerIntelligence', tools: '',
+    };
+    const toolKey = toolKeyMap[action];
+    if (toolKey) {
+      setExpandedTool(toolKey);
+      setTimeout(() => {
+        const el = document.querySelector(`[data-tool-key="${toolKey}"]`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 150);
+    }
+  };
+
   // ─── Last activity ─────────────────────────────────────────────────────
   const lastActivity = useMemo(() => {
     if (savedAnalyses.length === 0) return null;
@@ -901,10 +906,6 @@ export default function MemberArea() {
     };
     return { label: typeLabels[latest.analysis_type] || t('member.lastActivity'), time: timeStr };
   }, [savedAnalyses, t]);
-
-  // ─── Routing: sem subscrição → UpgradePage ─────────────────────────────
-  const hasActiveSub = subscription && subscription.status === 'active' && new Date(subscription.expires_at) > new Date();
-  if (!hasActiveSub) return <UpgradePage />;
 
   return (
     <div className="min-h-screen pt-24 pb-20 bg-[#fafaf9]">
@@ -942,11 +943,20 @@ export default function MemberArea() {
             </div>
           </div>
 
-          {/* Micro insight */}
-          <div className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-gold/5 to-transparent border border-gold/10 rounded-lg">
-            <Sparkles className="w-3.5 h-3.5 text-gold shrink-0" />
-            <p className="text-[11px] text-[#666] italic">{t('member.insight')}</p>
-          </div>
+          {/* Dynamic contextual insight banner */}
+          <button
+            onClick={() => navigateToAction(dynamicInsight.action)}
+            className="w-full flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-gold/8 via-gold/4 to-transparent border border-gold/15 rounded-xl hover:border-gold/30 hover:shadow-sm transition-all group cursor-pointer text-left"
+          >
+            <div className="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center shrink-0 group-hover:bg-gold/15 transition-colors">
+              <Sparkles className="w-4 h-4 text-gold" />
+            </div>
+            <p className="flex-1 text-xs text-[#555] leading-relaxed">{t(dynamicInsight.key)}</p>
+            <span className="shrink-0 flex items-center gap-1 text-[10px] font-semibold text-gold uppercase tracking-wider opacity-80 group-hover:opacity-100 transition-opacity">
+              {t('member.insight.action')}
+              <ArrowRight className="w-3 h-3" />
+            </span>
+          </button>
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════════ */}
@@ -958,15 +968,20 @@ export default function MemberArea() {
 
           {/* Insights row */}
           <div className="mt-4 pt-4 border-t border-[#f0f0f0] grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {/* Next step recommendation */}
-            <div className="flex items-start gap-3 p-3 bg-[#fafaf9] border border-[#f0f0f0] rounded-lg">
+            {/* Next step recommendation — clickable */}
+            <button
+              onClick={() => navigateToAction(nextStepSuggestion.action)}
+              className="flex items-start gap-3 p-3 bg-[#fafaf9] border border-[#f0f0f0] rounded-lg hover:border-gold/20 hover:bg-gold/3 transition-all group cursor-pointer text-left w-full"
+            >
               <span className="text-lg leading-none mt-0.5">{nextStepSuggestion.icon}</span>
               <div className="flex-1 min-w-0">
                 <p className="text-[10px] text-gold font-medium uppercase tracking-wider mb-0.5">{t('member.nextStep')}</p>
                 <p className="text-[11px] text-[#555] leading-relaxed">{nextStepSuggestion.text}</p>
               </div>
-              <ArrowRight className="w-3.5 h-3.5 text-[#ccc] shrink-0 mt-1" />
-            </div>
+              <div className="shrink-0 mt-0.5 w-6 h-6 rounded-full bg-gold/10 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
+                <ArrowRight className="w-3 h-3 text-gold" />
+              </div>
+            </button>
 
             {/* Last activity */}
             <div className="flex items-start gap-3 p-3 bg-[#fafaf9] border border-[#f0f0f0] rounded-lg">
