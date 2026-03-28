@@ -433,6 +433,9 @@
             color: #1A1A1A;
         }
         @media (max-width: 768px) {
+            /* Hide scroll-hint (white vertical line) on mobile
+               to prevent overlap with hdc-cta button */
+            .scroll-hint { display: none; }
             .hero-decision-cards {
                 flex-direction: column;
                 align-items: stretch;
@@ -496,9 +499,22 @@
             color: #444;
             line-height: 1.6;
         }
-        @media (max-width: 640px) {
-            .valor-rapido-inner { flex-direction: column; align-items: center; }
-            .vr-item { max-width: 100%; }
+        @media (max-width: 768px) {
+            .valor-rapido-section { padding: 36px 0; }
+            .valor-rapido-inner {
+                flex-direction: column;
+                align-items: center;
+                gap: 1.2rem;
+                padding: 0 1.5rem;
+            }
+            .vr-item {
+                max-width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+                text-align: left;
+            }
+            .vr-item .vr-icon { margin: 0; flex-shrink: 0; }
         }
 
         /* --- Ecosystem Explained --- */
