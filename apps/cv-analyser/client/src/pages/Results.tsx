@@ -1150,8 +1150,10 @@ export default function Results() {
         if (plan.includes_career_path) {
           sessionStorage.setItem('careerPathIncluded', 'true');
         }
-        // Send voucher code by email automatically
-        await sendVoucherEmail(userEmail, code, plan.name, plan.analyses);
+        // Send voucher code by email — but NOT for bundles (analysis is immediate)
+        if (!plan.includes_career_path) {
+          await sendVoucherEmail(userEmail, code, plan.name, plan.analyses);
+        }
       }
     } catch (err) {
       console.error('[VOUCHER] Erro ao criar:', err);
