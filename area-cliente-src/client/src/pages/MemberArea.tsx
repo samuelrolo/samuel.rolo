@@ -23,6 +23,7 @@ import {
   ChevronDown, ChevronUp, Tag, ArrowRight, Globe, MapPin,
   Search, BookOpen, Play, Headphones, Mail, Megaphone, Briefcase,
   Clock, Trash2, RefreshCw, Compass, FileSearch, Wrench, Download, Send,
+  Target, Layers, TrendingUp,
 } from 'lucide-react';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
@@ -124,10 +125,13 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
   };
 
   const analysis = raw;
-  const isCareerPath = data?.career_paths || data?.market_analysis || analysis?.career_paths;
-  const cpData = isCareerPath ? (data?.career_paths ? data : analysis) : null;
+  const isCareerPath = data?.career_paths || data?.market_analysis || analysis?.career_paths || analysis?.career_path || data?.career_path;
+  const cpData = isCareerPath ? (data?.career_path || analysis?.career_path || data?.career_paths ? data : analysis) : null;
   const isLinkedInFormat = analysis?.candidate_profile || data?.candidate_profile;
   const linkedinData = isLinkedInFormat ? (data?.candidate_profile ? data : analysis) : null;
+  // Detect linkedin_roast format (teaser + analise_completa)
+  const isLinkedInRoast = !!(analysis?.teaser || analysis?.analise_completa || data?.teaser || data?.analise_completa);
+  const roastData = isLinkedInRoast ? (analysis?.teaser ? analysis : data) : null;
 
   // Normalized fields for standard/fallback rendering
   const nScore = normalizeScore(analysis);
@@ -151,44 +155,480 @@ function AnalysisResult({ data, onClose, lang }: { data: any; onClose: () => voi
         </button>
       </div>
 
-      {/* Career Path */}
-      {cpData && (
-        <div className="space-y-4">
-          {cpData.career_paths && Array.isArray(cpData.career_paths) && (
-            <div>
-              <h5 className="text-xs font-medium text-emerald-700 uppercase tracking-wider mb-3">
-                {lang === 'pt' ? 'Caminhos de Carreira Sugeridos' : 'Suggested Career Paths'}
-              </h5>
-              {cpData.career_paths.map((path: any, i: number) => (
-                <div key={i} className="mb-3 p-3 bg-white border border-[#e5e5e5] rounded">
-                  <h6 className="text-sm font-medium text-[#1a1a1a] mb-1">{path.title || path.role || `Caminho ${i + 1}`}</h6>
-                  <p className="text-xs text-[#666] leading-relaxed">{path.description || path.summary}</p>
-                  {path.salary_range && <p className="text-xs text-gold mt-1">{path.salary_range}</p>}
+      {/* Career Path / Career Intelligence */}
+      {cpData && (() => {
+        const cp = cpData.career_path || cpData;
+        const name = cpData.name || cpData.candidate_name || '';
+        const currentRole = cpData.current_role || '';
+        return (
+          <div className="space-y-5">
+            {/* Header with name and role */}
+            {(name || currentRole) && (
+              <div className="flex items-center gap-3 pb-3 border-b border-[#e5e5e5]">
+                <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center"><span className="text-sm font-bold text-emerald-700">{name.charAt(0) || '?'}</span></div>
+                <div>
+                  {name && <p className="text-sm font-semibold text-[#1a1a1a]">{name}</p>}
+                  {currentRole && <p className="text-xs text-[#666]">{currentRole}</p>}
                 </div>
-              ))}
+              </div>
+            )}
+
+            {/* Market Context (Career Intelligence) */}
+            {cp.market_context && (
+              <div className="p-4 bg-white border border-[#e5e5e5] rounded-lg space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full border border-gold/30 bg-gold/5 flex items-center justify-center shrink-0"><Globe className="w-4 h-4 text-gold" /></div>
+                  <h5 className="text-xs font-semibold text-[#666] uppercase tracking-wider">{lang === 'pt' ? 'Contexto de Mercado' : 'Market Context'}</h5>
+                </div>
+                {cp.market_context.aligned_companies && (
+                  <div className="p-3 bg-[#fafaf9] rounded border border-[#eee]">
+                    <p className="text-[10px] font-semibold text-gold mb-2">{lang === 'pt' ? 'EMPRESAS ALINHADAS' : 'ALIGNED COMPANIES'}</p>
+                    {typeof cp.market_context.aligned_companies === 'object' && !Array.isArray(cp.market_context.aligned_companies) ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {Object.entries(cp.market_context.aligned_companies).filter(([key]) => key !== 'aligned_companies_note').map(([sector, companies]: [string, any]) => (
+                          <div key={sector} className="space-y-1">
+                            <p className="text-[10px] font-bold text-[#666] uppercase tracking-wider">{sector}</p>
+                            <ul className="space-y-0.5">{(Array.isArray(companies) ? companies : [companies]).map((c: string, idx: number) => (<li key={idx} className="text-xs text-[#666] flex items-start gap-1"><span className="text-gold mt-0.5 shrink-0">•</span><span>{c}</span></li>))}</ul>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-[#666]">{typeof cp.market_context.aligned_companies === 'string' ? cp.market_context.aligned_companies : JSON.stringify(cp.market_context.aligned_companies)}</p>
+                    )}
+                  </div>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {cp.market_context.demand_level && (
+                    <div className="p-3 bg-[#fafaf9] rounded border border-[#eee]"><p className="text-[10px] font-semibold text-gold mb-1">{lang === 'pt' ? 'NÍVEL DE PROCURA' : 'DEMAND LEVEL'}</p><p className="text-xs text-[#666]">{cp.market_context.demand_level}</p></div>
+                  )}
+                  {cp.market_context.competitiveness && (
+                    <div className="p-3 bg-[#fafaf9] rounded border border-[#eee]"><p className="text-[10px] font-semibold text-gold mb-1">{lang === 'pt' ? 'COMPETITIVIDADE' : 'COMPETITIVENESS'}</p><p className="text-xs text-[#666]">{cp.market_context.competitiveness}</p></div>
+                  )}
+                </div>
+                {cp.market_context.differentiator && (
+                  <div className="p-3 bg-gold/5 rounded border border-gold/20"><p className="text-[10px] font-semibold text-gold mb-1">{lang === 'pt' ? 'O QUE TE DIFERENCIA' : 'WHAT SETS YOU APART'}</p><p className="text-xs text-[#666]">{cp.market_context.differentiator}</p></div>
+                )}
+              </div>
+            )}
+
+            {/* Current Positioning */}
+            {cp.current_positioning && (
+              <div className="p-4 bg-white border border-[#e5e5e5] rounded-lg space-y-3">
+                <h5 className="text-xs font-semibold text-[#666] uppercase tracking-wider">{lang === 'pt' ? 'Posicionamento Atual' : 'Current Positioning'}</h5>
+                <div className="grid grid-cols-2 gap-2">
+                  {cp.current_positioning.seniority_level && (
+                    <div className="p-2 bg-[#fafaf9] rounded"><p className="text-[10px] text-[#999] uppercase">{lang === 'pt' ? 'Senioridade' : 'Seniority'}</p><p className="text-xs font-medium text-[#1a1a1a]">{cp.current_positioning.seniority_level}</p></div>
+                  )}
+                  {cp.current_positioning.primary_domain && (
+                    <div className="p-2 bg-[#fafaf9] rounded"><p className="text-[10px] text-[#999] uppercase">{lang === 'pt' ? 'Domínio Principal' : 'Primary Domain'}</p><p className="text-xs font-medium text-[#1a1a1a]">{cp.current_positioning.primary_domain}</p></div>
+                  )}
+                </div>
+                {cp.current_positioning.seniority_justification && <p className="text-xs text-[#666] leading-relaxed">{cp.current_positioning.seniority_justification}</p>}
+                {cp.current_positioning.market_value_assessment && (
+                  <div className="p-2 bg-emerald-50 border border-emerald-100 rounded"><p className="text-[10px] text-emerald-700 uppercase font-medium mb-1">{lang === 'pt' ? 'Valor de Mercado' : 'Market Value'}</p><p className="text-xs text-emerald-800 leading-relaxed">{cp.current_positioning.market_value_assessment}</p></div>
+                )}
+                {cp.current_positioning.competitive_advantages && Array.isArray(cp.current_positioning.competitive_advantages) && cp.current_positioning.competitive_advantages.length > 0 && (
+                  <div><p className="text-[10px] text-emerald-700 uppercase font-medium mb-1">{lang === 'pt' ? 'Vantagens Competitivas' : 'Competitive Advantages'}</p><ul className="space-y-1">{cp.current_positioning.competitive_advantages.map((a: string, i: number) => (<li key={i} className="text-xs text-[#333] flex items-start gap-1.5"><span className="text-emerald-500 mt-0.5">+</span><span>{a}</span></li>))}</ul></div>
+                )}
+                {cp.current_positioning.blind_spots && Array.isArray(cp.current_positioning.blind_spots) && cp.current_positioning.blind_spots.length > 0 && (
+                  <div><p className="text-[10px] text-amber-700 uppercase font-medium mb-1">{lang === 'pt' ? 'Pontos Cegos' : 'Blind Spots'}</p><ul className="space-y-1">{cp.current_positioning.blind_spots.map((b: string, i: number) => (<li key={i} className="text-xs text-[#333] flex items-start gap-1.5"><span className="text-amber-500 mt-0.5">!</span><span>{b}</span></li>))}</ul></div>
+                )}
+              </div>
+            )}
+
+            {/* CV-LinkedIn Cross Analysis */}
+            {cp.cv_linkedin_cross_analysis && (
+              <div className="p-4 bg-white border border-[#e5e5e5] rounded-lg space-y-2">
+                <h5 className="text-xs font-semibold text-[#666] uppercase tracking-wider">{lang === 'pt' ? 'Análise Cruzada CV-LinkedIn' : 'CV-LinkedIn Cross Analysis'}</h5>
+                {cp.cv_linkedin_cross_analysis.consistency_score && (
+                  <div className="flex items-center gap-2"><span className="text-xs text-[#999]">{lang === 'pt' ? 'Consistência:' : 'Consistency:'}</span><span className={`text-xs font-semibold ${cp.cv_linkedin_cross_analysis.consistency_score === 'High' ? 'text-emerald-600' : cp.cv_linkedin_cross_analysis.consistency_score === 'Medium' ? 'text-amber-600' : 'text-red-600'}`}>{cp.cv_linkedin_cross_analysis.consistency_score}</span></div>
+                )}
+                {cp.cv_linkedin_cross_analysis.optimization_suggestions && Array.isArray(cp.cv_linkedin_cross_analysis.optimization_suggestions) && (
+                  <ul className="space-y-1">{cp.cv_linkedin_cross_analysis.optimization_suggestions.map((s: string, i: number) => (<li key={i} className="text-xs text-[#333] flex items-start gap-1.5"><span className="text-blue-500 mt-0.5">→</span><span>{s}</span></li>))}</ul>
+                )}
+              </div>
+            )}
+
+            {/* Next Roles */}
+            {cp.next_roles && Array.isArray(cp.next_roles) && cp.next_roles.length > 0 && (
+              <div>
+                <h5 className="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-3">{lang === 'pt' ? 'Próximos Papéis Sugeridos' : 'Suggested Next Roles'}</h5>
+                <div className="space-y-3">
+                  {cp.next_roles.map((role: any, i: number) => (
+                    <div key={i} className="p-3 bg-white border border-[#e5e5e5] rounded-lg">
+                      <div className="flex items-center justify-between mb-1">
+                        <h6 className="text-sm font-medium text-[#1a1a1a]">{role.role_title}</h6>
+                        {role.fit_percentage && <span className="text-xs font-bold text-gold">{role.fit_percentage}% fit</span>}
+                      </div>
+                      {role.timeline && <span className={`inline-block text-[10px] px-2 py-0.5 rounded-full mb-2 ${role.timeline.includes('Short') || role.timeline.includes('Curto') ? 'bg-emerald-50 text-emerald-700' : role.timeline.includes('Medium') || role.timeline.includes('Médio') ? 'bg-amber-50 text-amber-700' : 'bg-blue-50 text-blue-700'}`}>{role.timeline}</span>}
+                      {role.why_this_role && <p className="text-xs text-[#666] leading-relaxed mb-2">{role.why_this_role}</p>}
+                      {role.salary_range && <p className="text-xs text-gold font-medium">{role.salary_range}</p>}
+                      {role.typical_companies && Array.isArray(role.typical_companies) && (
+                        <div className="mt-2 flex flex-wrap gap-1">{role.typical_companies.map((c: string, j: number) => (<span key={j} className="px-2 py-0.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-[10px] text-[#666]">{c}</span>))}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Strategic Paths (Career Intelligence format with success_probability/logic/ideal_for) */}
+            {cp.strategic_paths && Array.isArray(cp.strategic_paths) && cp.strategic_paths.length > 0 && (
+              <div className="p-4 bg-white border border-[#e5e5e5] rounded-lg space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full border border-gold/30 bg-gold/5 flex items-center justify-center shrink-0"><Compass className="w-4 h-4 text-gold" /></div>
+                  <div>
+                    <h5 className="text-xs font-semibold text-[#666] uppercase tracking-wider">{lang === 'pt' ? 'Caminhos Estratégicos de Carreira' : 'Strategic Career Paths'}</h5>
+                    <p className="text-[10px] text-[#999] mt-0.5">{lang === 'pt' ? 'Caminhos distintos baseados no teu perfil' : 'Distinct paths based on your profile'}</p>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  {cp.strategic_paths.map((path: any, i: number) => (
+                    <div key={i} className="border border-[#e5e5e5] rounded-lg overflow-hidden">
+                      <div className="p-3 bg-[#fafaf9] flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-gold bg-gold/10 px-2 py-0.5 rounded">{lang === 'pt' ? 'CAMINHO' : 'PATH'} {i + 1}</span>
+                          <span className="text-sm font-semibold text-[#1a1a1a]">{path.path_name || path.name}</span>
+                        </div>
+                        {path.success_probability && (
+                          <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">{path.success_probability}% {lang === 'pt' ? 'sucesso' : 'success'}</span>
+                        )}
+                      </div>
+                      <div className="p-3 space-y-2">
+                        {path.logic && <p className="text-xs text-[#666] leading-relaxed">{path.logic}</p>}
+                        {path.description && !path.logic && <p className="text-xs text-[#666] leading-relaxed">{path.description}</p>}
+                        {path.ideal_for && (
+                          <div className="p-2 bg-[#fafaf9] rounded border border-[#eee]"><p className="text-[10px] font-semibold text-gold mb-1">{lang === 'pt' ? 'IDEAL PARA' : 'IDEAL FOR'}</p><p className="text-xs text-[#666]">{path.ideal_for}</p></div>
+                        )}
+                        {path.associated_roles && Array.isArray(path.associated_roles) && path.associated_roles.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1">{path.associated_roles.map((role: string, j: number) => (<span key={j} className="text-[10px] bg-[#f5f5f4] px-2 py-0.5 rounded text-[#666] border border-[#e5e5e5]">{role}</span>))}</div>
+                        )}
+                        {path.target_roles && Array.isArray(path.target_roles) && !path.associated_roles && (
+                          <div className="flex flex-wrap gap-1 mt-1">{path.target_roles.map((r: string, j: number) => (<span key={j} className="px-2 py-0.5 bg-violet-50 border border-violet-100 rounded text-[10px] text-violet-700">{r}</span>))}</div>
+                        )}
+                        {path.required_skills && Array.isArray(path.required_skills) && (
+                          <div className="flex flex-wrap gap-1 mt-2">{path.required_skills.map((s: string, j: number) => (<span key={j} className="px-2 py-0.5 bg-blue-50 border border-blue-100 rounded text-[10px] text-blue-700">{s}</span>))}</div>
+                        )}
+                        {path.timeline && <p className="text-[10px] text-[#999] mt-2">{path.timeline}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Development Plan */}
+            {cp.development_plan && (
+              <div className="p-4 bg-white border border-[#e5e5e5] rounded-lg space-y-3">
+                <h5 className="text-xs font-semibold text-[#666] uppercase tracking-wider">{lang === 'pt' ? 'Plano de Desenvolvimento' : 'Development Plan'}</h5>
+                {cp.development_plan.immediate_actions && Array.isArray(cp.development_plan.immediate_actions) && (
+                  <div><p className="text-[10px] text-emerald-700 uppercase font-medium mb-1">{lang === 'pt' ? 'Ações Imediatas (0-3 meses)' : 'Immediate Actions (0-3 months)'}</p><ul className="space-y-1">{cp.development_plan.immediate_actions.map((a: any, i: number) => (<li key={i} className="text-xs text-[#333] flex items-start gap-1.5"><span className="text-emerald-500 mt-0.5">→</span><span>{typeof a === 'string' ? a : a.action || a.description || JSON.stringify(a)}</span></li>))}</ul></div>
+                )}
+                {cp.development_plan.medium_term_goals && Array.isArray(cp.development_plan.medium_term_goals) && (
+                  <div><p className="text-[10px] text-amber-700 uppercase font-medium mb-1">{lang === 'pt' ? 'Objetivos Médio Prazo (3-12 meses)' : 'Medium-term Goals (3-12 months)'}</p><ul className="space-y-1">{cp.development_plan.medium_term_goals.map((g: any, i: number) => (<li key={i} className="text-xs text-[#333] flex items-start gap-1.5"><span className="text-amber-500 mt-0.5">→</span><span>{typeof g === 'string' ? g : g.goal || g.description || JSON.stringify(g)}</span></li>))}</ul></div>
+                )}
+                {cp.development_plan.long_term_vision && (
+                  <div className="p-2 bg-blue-50 border border-blue-100 rounded"><p className="text-[10px] text-blue-700 uppercase font-medium mb-1">{lang === 'pt' ? 'Visão de Longo Prazo' : 'Long-term Vision'}</p><p className="text-xs text-blue-800 leading-relaxed">{typeof cp.development_plan.long_term_vision === 'string' ? cp.development_plan.long_term_vision : JSON.stringify(cp.development_plan.long_term_vision)}</p></div>
+                )}
+              </div>
+            )}
+
+            {/* Action Plan by Path (Career Intelligence) */}
+            {cp.action_plan_by_path && Array.isArray(cp.action_plan_by_path) && cp.action_plan_by_path.length > 0 && (
+              <div className="p-4 bg-white border border-[#e5e5e5] rounded-lg space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full border border-gold/30 bg-gold/5 flex items-center justify-center shrink-0"><Target className="w-4 h-4 text-gold" /></div>
+                  <h5 className="text-xs font-semibold text-[#666] uppercase tracking-wider">{lang === 'pt' ? 'Plano de Acção por Caminho' : 'Action Plan by Path'}</h5>
+                </div>
+                <div className="space-y-3">
+                  {cp.action_plan_by_path.map((plan: any, i: number) => (
+                    <div key={i} className="border border-[#e5e5e5] rounded-lg overflow-hidden">
+                      <div className="p-3 bg-[#fafaf9] flex items-center gap-2">
+                        <span className="text-xs font-bold text-gold bg-gold/10 px-2 py-0.5 rounded">{lang === 'pt' ? 'CAMINHO' : 'PATH'} {i + 1}</span>
+                        <span className="text-sm font-semibold text-[#1a1a1a]">{plan.path_name}</span>
+                        {plan.is_recommended && <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">{lang === 'pt' ? 'Recomendado' : 'Recommended'}</span>}
+                      </div>
+                      <div className="p-3 space-y-2">
+                        {plan.actions && Array.isArray(plan.actions) && plan.actions.map((action: any, j: number) => (
+                          <div key={j} className="flex items-start gap-3 p-2 border border-[#eee] rounded-lg">
+                            <span className="text-[10px] font-bold text-white bg-gold px-1.5 py-0.5 rounded shrink-0 mt-0.5">{action.timeframe}</span>
+                            <div>
+                              <p className="text-xs font-semibold text-[#1a1a1a]">{action.action}</p>
+                              {action.is_critical === true && <span className="text-[10px] text-amber-600 font-semibold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">{lang === 'pt' ? 'Passo-chave' : 'Key step'}</span>}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Strategic Comparison (table format) */}
+            {cp.strategic_comparison && Array.isArray(cp.strategic_comparison) && cp.strategic_comparison.length > 0 && (
+              <div className="p-4 bg-white border border-[#e5e5e5] rounded-lg space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full border border-gold/30 bg-gold/5 flex items-center justify-center shrink-0"><BarChart3 className="w-4 h-4 text-gold" /></div>
+                  <h5 className="text-xs font-semibold text-[#666] uppercase tracking-wider">{lang === 'pt' ? 'Comparação Estratégica' : 'Strategic Comparison'}</h5>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-[#e5e5e5]">
+                        <th className="text-left py-2 pr-3 font-semibold text-[#999]">{lang === 'pt' ? 'Critério' : 'Criteria'}</th>
+                        {cp.strategic_comparison.map((item: any, i: number) => (<th key={i} className="text-center py-2 px-2 font-semibold text-[#1a1a1a]">{item.path_name}</th>))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[{ key: 'success_probability', label: lang === 'pt' ? 'Probabilidade de sucesso' : 'Success probability', suffix: '%' }, { key: 'estimated_time', label: lang === 'pt' ? 'Tempo estimado' : 'Estimated time', suffix: '' }, { key: 'effort_level', label: lang === 'pt' ? 'Esforço' : 'Effort', suffix: '' }, { key: 'risk_level', label: lang === 'pt' ? 'Risco' : 'Risk', suffix: '' }, { key: 'salary_impact', label: lang === 'pt' ? 'Impacto salarial' : 'Salary impact', suffix: '' }, { key: 'profile_fit', label: lang === 'pt' ? 'Alinhamento' : 'Profile fit', suffix: '' }].filter(row => cp.strategic_comparison.some((item: any) => item[row.key])).map((row) => (
+                        <tr key={row.key} className="border-b border-[#eee]">
+                          <td className="py-2 pr-3 text-[#666] font-medium">{row.label}</td>
+                          {cp.strategic_comparison.map((item: any, i: number) => (<td key={i} className="text-center py-2 px-2 text-[#1a1a1a]">{item[row.key]}{row.suffix}</td>))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {/* Fallback: pros/cons format */}
+                {cp.strategic_comparison[0]?.pros && (
+                  <div className="space-y-2 mt-3">
+                    {cp.strategic_comparison.map((comp: any, i: number) => (
+                      <div key={i} className="p-3 bg-[#fafaf9] rounded border border-[#eee]">
+                        <h6 className="text-xs font-medium text-[#1a1a1a] mb-1">{comp.path_name}</h6>
+                        {comp.pros && Array.isArray(comp.pros) && <div className="mb-1"><span className="text-[10px] text-emerald-700 font-medium">Pros:</span> <span className="text-xs text-[#666]">{comp.pros.join(', ')}</span></div>}
+                        {comp.cons && Array.isArray(comp.cons) && <div><span className="text-[10px] text-red-700 font-medium">Cons:</span> <span className="text-xs text-[#666]">{comp.cons.join(', ')}</span></div>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Trade-offs (Career Intelligence) */}
+            {cp.tradeoffs && Array.isArray(cp.tradeoffs) && cp.tradeoffs.length > 0 && (
+              <div className="p-4 bg-white border border-[#e5e5e5] rounded-lg space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full border border-gold/30 bg-gold/5 flex items-center justify-center shrink-0"><Layers className="w-4 h-4 text-gold" /></div>
+                  <h5 className="text-xs font-semibold text-[#666] uppercase tracking-wider">{lang === 'pt' ? 'Trade-offs por Caminho' : 'Trade-offs by Path'}</h5>
+                </div>
+                <div className="space-y-3">
+                  {cp.tradeoffs.map((t: any, i: number) => (
+                    <div key={i} className="border border-[#e5e5e5] rounded-lg p-3 space-y-3">
+                      <p className="text-sm font-semibold text-[#1a1a1a] flex items-center gap-2">
+                        <span className="text-xs font-bold text-gold bg-gold/10 px-2 py-0.5 rounded">{i + 1}</span>
+                        {t.path_name}
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div className="p-2 bg-emerald-50 rounded-lg border border-emerald-100">
+                          <p className="text-[10px] font-semibold text-emerald-600 mb-1">{lang === 'pt' ? 'GANHAS' : 'YOU GAIN'}</p>
+                          <p className="text-xs text-[#666]">{t.you_gain}</p>
+                        </div>
+                        <div className="p-2 bg-red-50 rounded-lg border border-red-100">
+                          <p className="text-[10px] font-semibold text-red-500 mb-1">{lang === 'pt' ? 'ABDICAS' : 'YOU GIVE UP'}</p>
+                          <p className="text-xs text-[#666]">{t.you_give_up}</p>
+                        </div>
+                      </div>
+                      {t.hidden_risk && (
+                        <div className="p-2 bg-amber-50 rounded-lg border border-amber-100">
+                          <p className="text-[10px] font-semibold text-amber-600 mb-1">{lang === 'pt' ? 'RISCO OCULTO' : 'HIDDEN RISK'}</p>
+                          <p className="text-xs text-[#666]">{t.hidden_risk}</p>
+                        </div>
+                      )}
+                      {t.real_scenario && (
+                        <div className="p-2 bg-[#fafaf9] rounded-lg border border-[#eee]">
+                          <p className="text-[10px] font-semibold text-[#999] mb-1">{lang === 'pt' ? 'CENÁRIO REAL' : 'REAL SCENARIO'}</p>
+                          <p className="text-xs text-[#666]">{t.real_scenario}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Decision Recommendation */}
+            {cp.decision_recommendation && (
+              <div className="p-4 bg-gold/5 border-2 border-gold/20 rounded-xl space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full border border-gold/30 bg-gold/10 flex items-center justify-center shrink-0"><Sparkles className="w-4 h-4 text-gold" /></div>
+                  <h5 className="text-xs font-semibold text-gold uppercase tracking-wider">{lang === 'pt' ? 'Decisão Recomendada' : 'Recommended Decision'}</h5>
+                </div>
+                <div className="p-3 bg-white rounded-lg border border-[#e5e5e5]">
+                  {cp.decision_recommendation.recommended_path && <p className="text-sm font-bold text-[#1a1a1a] mb-2">{cp.decision_recommendation.recommended_path}</p>}
+                  {cp.decision_recommendation.justification && <p className="text-xs text-[#666] leading-relaxed">{cp.decision_recommendation.justification}</p>}
+                </div>
+                {cp.decision_recommendation.when_to_switch && (
+                  <div className="p-3 bg-white rounded-lg border border-[#e5e5e5]">
+                    <p className="text-[10px] font-semibold text-amber-600 mb-1">{lang === 'pt' ? 'QUANDO CONSIDERAR OUTRO CAMINHO' : 'WHEN TO CONSIDER ANOTHER PATH'}</p>
+                    <p className="text-xs text-[#666]">{cp.decision_recommendation.when_to_switch}</p>
+                  </div>
+                )}
+                {cp.decision_recommendation.why_better_than_others && (
+                  <div className="p-3 bg-white rounded-lg border border-[#e5e5e5]">
+                    <p className="text-[10px] font-semibold text-emerald-600 mb-1">{lang === 'pt' ? 'PORQUE ESTE CAMINHO É O MELHOR PARA TI' : 'WHY THIS PATH IS BEST FOR YOU'}</p>
+                    <p className="text-xs text-[#666]">{cp.decision_recommendation.why_better_than_others}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Career Potential Score */}
+            {cp.career_potential_score && (
+              <div className="p-4 bg-white border border-[#e5e5e5] rounded-lg space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full border border-gold/30 bg-gold/5 flex items-center justify-center shrink-0"><TrendingUp className="w-4 h-4 text-gold" /></div>
+                  <h5 className="text-xs font-semibold text-[#666] uppercase tracking-wider">{lang === 'pt' ? 'Score de Potencial de Carreira' : 'Career Potential Score'}</h5>
+                </div>
+                {typeof cp.career_potential_score === 'object' ? (
+                  <div className="space-y-2">
+                    {Object.entries(cp.career_potential_score).map(([key, val]: [string, any]) => (
+                      <div key={key} className="flex items-center justify-between p-2 bg-[#fafaf9] rounded border border-[#eee]">
+                        <span className="text-xs text-[#666] capitalize">{key.replace(/_/g, ' ')}</span>
+                        <span className="text-xs font-semibold text-[#1a1a1a]">{typeof val === 'number' ? `${val}/100` : String(val)}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-[#666]">{String(cp.career_potential_score)}</p>
+                )}
+              </div>
+            )}
+
+            {/* Fallback: render any remaining fields */}
+            {!cp.current_positioning && !cp.next_roles && !cp.strategic_paths && (
+              <div className="space-y-3">
+                {Object.entries(cp).filter(([k]) => !['success', 'mode', 'name', 'candidate_name', 'current_role'].includes(k)).map(([key, val]) => {
+                  if (typeof val === 'string' && val.trim()) return (<div key={key} className="mb-2"><h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-1">{key.replace(/_/g, ' ')}</h5><p className="text-sm text-[#333] leading-relaxed">{val}</p></div>);
+                  if (typeof val === 'object' && val !== null) return (<div key={key} className="mb-2"><h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-1">{key.replace(/_/g, ' ')}</h5><pre className="text-xs text-[#666] whitespace-pre-wrap bg-[#fafaf9] p-2 rounded border border-[#eee]">{JSON.stringify(val, null, 2)}</pre></div>);
+                  return null;
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
+      {/* LinkedIn Roast (new format: teaser + analise_completa) */}
+      {roastData && !cpData && (
+        <div className="space-y-4">
+          {/* Score + Hook */}
+          {roastData.teaser && (
+            <div className="flex items-center gap-4 mb-2">
+              <div className="w-16 h-16 rounded-full border-2 border-gold/30 flex items-center justify-center bg-gold/5">
+                <span className="text-lg font-bold text-gold">{roastData.teaser.nota_geral}</span>
+              </div>
+              <div className="flex-1">
+                <p className="text-xs text-[#999] uppercase tracking-wider mb-0.5">{lang === 'pt' ? 'Nota Global' : 'Overall Score'}</p>
+                <p className="text-sm text-[#333] leading-relaxed">{roastData.teaser.hook_vendas}</p>
+              </div>
             </div>
           )}
-          {cpData.market_analysis && (
-            <div>
-              <h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Análise de Mercado' : 'Market Analysis'}</h5>
-              <p className="text-sm text-[#333] leading-relaxed">{typeof cpData.market_analysis === 'string' ? cpData.market_analysis : JSON.stringify(cpData.market_analysis)}</p>
+          {/* Executive Summary */}
+          {roastData.analise_completa?.sumario_executivo && (
+            <div className="p-3 bg-white border border-[#e5e5e5] rounded-lg">
+              <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-2">{lang === 'pt' ? 'Sumário Executivo' : 'Executive Summary'}</h5>
+              <p className="text-sm text-[#333] leading-relaxed">{roastData.analise_completa.sumario_executivo}</p>
             </div>
           )}
-          {cpData.recommendations && Array.isArray(cpData.recommendations) && (
+          {/* Algorithm Visibility */}
+          {roastData.analise_completa?.visibilidade_algoritmo && (
+            <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-100 rounded">
+              <span className="text-xs font-medium text-blue-700">{lang === 'pt' ? 'Visibilidade no Algoritmo:' : 'Algorithm Visibility:'}</span>
+              <span className="text-xs text-blue-800 font-semibold">{roastData.analise_completa.visibilidade_algoritmo}</span>
+            </div>
+          )}
+          {/* Dimensions */}
+          {roastData.analise_completa?.dimensoes && (
             <div>
-              <h5 className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Recomendações' : 'Recommendations'}</h5>
-              <ul className="space-y-1">
-                {cpData.recommendations.map((r: string, i: number) => (
-                  <li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-amber-500 mt-0.5">→</span><span>{r}</span></li>
+              <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-3">{lang === 'pt' ? 'Avaliação por Dimensão' : 'Dimension Assessment'}</h5>
+              <div className="space-y-2">
+                {Object.entries(roastData.analise_completa.dimensoes).map(([key, dim]: [string, any]) => (
+                  <div key={key} className="p-3 bg-white border border-[#e5e5e5] rounded-lg">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-medium text-[#1a1a1a] capitalize">{key.replace(/_/g, ' ')}</span>
+                      <span className={`text-xs font-bold ${dim.score >= 7 ? 'text-emerald-600' : dim.score >= 5 ? 'text-amber-600' : 'text-red-600'}`}>{dim.score}/10</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-[#f0f0f0] rounded-full mb-2"><div className={`h-full rounded-full ${dim.score >= 7 ? 'bg-emerald-500' : dim.score >= 5 ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${dim.score * 10}%` }} /></div>
+                    <p className="text-xs text-[#666] leading-relaxed">{dim.analise}</p>
+                  </div>
                 ))}
-              </ul>
+              </div>
+            </div>
+          )}
+          {/* Strengths */}
+          {roastData.analise_completa?.pontos_fortes && roastData.analise_completa.pontos_fortes.length > 0 && (
+            <div>
+              <h5 className="text-xs font-medium text-emerald-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Pontos Fortes' : 'Strengths'}</h5>
+              <ul className="space-y-1">{roastData.analise_completa.pontos_fortes.map((s: string, i: number) => (<li key={i} className="text-sm text-[#333] flex items-start gap-2"><span className="text-emerald-500 mt-0.5">+</span><span>{s}</span></li>))}</ul>
+            </div>
+          )}
+          {/* Areas to Improve */}
+          {roastData.analise_completa?.areas_melhoria && roastData.analise_completa.areas_melhoria.length > 0 && (
+            <div>
+              <h5 className="text-xs font-medium text-amber-700 uppercase tracking-wider mb-3">{lang === 'pt' ? 'Áreas de Melhoria' : 'Areas to Improve'}</h5>
+              <div className="space-y-3">
+                {roastData.analise_completa.areas_melhoria.map((item: any, i: number) => (
+                  <div key={i} className="p-3 bg-white border border-[#e5e5e5] rounded-lg">
+                    <h6 className="text-sm font-medium text-[#1a1a1a] mb-1">{item.area}</h6>
+                    <p className="text-xs text-[#666] leading-relaxed mb-2">{item.diagnostico}</p>
+                    <div className="p-2 bg-emerald-50 border border-emerald-100 rounded">
+                      <p className="text-[10px] text-emerald-700 uppercase font-medium mb-1">{lang === 'pt' ? 'Recomendação' : 'Recommendation'}</p>
+                      <p className="text-xs text-emerald-800 leading-relaxed">{item.recomendacao}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {/* Suggested Headlines */}
+          {roastData.analise_completa?.headlines_sugeridas && roastData.analise_completa.headlines_sugeridas.length > 0 && (
+            <div>
+              <h5 className="text-xs font-medium text-violet-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Headlines Sugeridas' : 'Suggested Headlines'}</h5>
+              <div className="space-y-1.5">
+                {roastData.analise_completa.headlines_sugeridas.map((h: string, i: number) => (
+                  <div key={i} className="p-2 bg-violet-50 border border-violet-100 rounded text-xs text-violet-800">"{h}"</div>
+                ))}
+              </div>
+            </div>
+          )}
+          {/* SEO Keywords */}
+          {roastData.analise_completa?.dicas_seo && roastData.analise_completa.dicas_seo.length > 0 && (
+            <div>
+              <h5 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2">{lang === 'pt' ? 'Palavras-chave SEO' : 'SEO Keywords'}</h5>
+              <div className="flex flex-wrap gap-1.5">
+                {roastData.analise_completa.dicas_seo.map((kw: string, i: number) => (
+                  <span key={i} className="px-2.5 py-1 bg-blue-50 border border-blue-200 rounded-full text-[11px] text-blue-700 font-medium">{kw}</span>
+                ))}
+              </div>
+            </div>
+          )}
+          {/* Education Analysis */}
+          {roastData.analise_completa?.analise_formacao && (
+            <div className="p-3 bg-white border border-[#e5e5e5] rounded-lg">
+              <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-2">{lang === 'pt' ? 'Análise de Formação' : 'Education Analysis'}</h5>
+              <p className="text-sm text-[#333] leading-relaxed">{roastData.analise_completa.analise_formacao}</p>
+            </div>
+          )}
+          {/* Network Analysis */}
+          {roastData.analise_completa?.analise_rede && (
+            <div className="p-3 bg-white border border-[#e5e5e5] rounded-lg">
+              <h5 className="text-xs font-medium text-[#666] uppercase tracking-wider mb-2">{lang === 'pt' ? 'Análise de Rede' : 'Network Analysis'}</h5>
+              <p className="text-sm text-[#333] leading-relaxed">{roastData.analise_completa.analise_rede}</p>
+            </div>
+          )}
+          {/* Priority Recommendation */}
+          {roastData.analise_completa?.recomendacao_prioritaria && (
+            <div className="p-3 bg-gold/5 border border-gold/20 rounded-lg">
+              <h5 className="text-xs font-medium text-gold uppercase tracking-wider mb-2">{lang === 'pt' ? 'Recomendação Prioritária' : 'Priority Recommendation'}</h5>
+              <p className="text-sm text-[#333] leading-relaxed font-medium">{roastData.analise_completa.recomendacao_prioritaria}</p>
             </div>
           )}
         </div>
       )}
 
-      {/* LinkedIn Roaster */}
-      {linkedinData && !cpData && (
+      {/* LinkedIn Roaster (legacy format: candidate_profile) */}
+      {linkedinData && !cpData && !roastData && (
         <div className="space-y-4">
           {linkedinData.executive_summary?.global_score && (
             <div className="flex items-center gap-3 mb-2">
@@ -358,6 +798,11 @@ export default function MemberArea() {
   const [expandedAnalysisType, setExpandedAnalysisType] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [viewingAnalysis, setViewingAnalysis] = useState<SavedAnalysis | null>(null);
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [emailTo, setEmailTo] = useState('');
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   const planTier = getPlanTier(subscription?.plan);
   const weeklyLimit = WEEKLY_LIMITS[planTier] || 2;
@@ -483,9 +928,11 @@ export default function MemberArea() {
     } else {
       text = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result as string); reader.onerror = () => reject(new Error('Erro ao ler.')); reader.readAsText(file); });
     }
-    if (text.trim().length < 50 && isPdf) {
+    if (isPdf) {
+      // Always include base64 for PDFs so backend can use Gemini's native PDF reading
+      // This is much more reliable than pdfjs-dist text extraction in the browser
       const base64 = await toBase64(file);
-      return { text, base64, filename: file.name };
+      return { text: text.substring(0, 8000), base64, filename: file.name };
     }
     return { text: text.substring(0, 8000) };
   }, [extractPdfText, toBase64]);
@@ -498,15 +945,42 @@ export default function MemberArea() {
       const markerIndex = storagePath.indexOf(bucketMarker);
       if (markerIndex !== -1) storagePath = storagePath.substring(markerIndex + bucketMarker.length);
       let blob: Blob | null = null;
-      try { const { data } = await supabase.storage.from('user-cvs').download(storagePath); if (data) blob = data; } catch (e) { console.warn('[CV] Storage download failed:', e); }
-      if (!blob && profile.cv_url.startsWith('http')) { try { const resp = await fetch(profile.cv_url); if (resp.ok) blob = await resp.blob(); } catch (e) { console.warn('[CV] Direct fetch failed:', e); } }
+      // Method 1: Supabase Storage SDK download (uses auth session)
+      try {
+        const { data, error } = await supabase.storage.from('user-cvs').download(storagePath);
+        if (error) console.warn('[CV] Storage download error:', error.message);
+        if (data) blob = data;
+      } catch (e) { console.warn('[CV] Storage download exception:', e); }
+      // Method 2: Signed URL fallback
+      if (!blob) {
+        try {
+          const { data: signedData, error: signedError } = await supabase.storage.from('user-cvs').createSignedUrl(storagePath, 300);
+          if (signedError) console.warn('[CV] Signed URL error:', signedError.message);
+          if (signedData?.signedUrl) {
+            const resp = await fetch(signedData.signedUrl);
+            if (resp.ok) blob = await resp.blob();
+          }
+        } catch (e) { console.warn('[CV] Signed URL fallback failed:', e); }
+      }
+      // Method 3: Direct fetch (for public URLs)
+      if (!blob && profile.cv_url.startsWith('http')) {
+        try { const resp = await fetch(profile.cv_url); if (resp.ok) blob = await resp.blob(); } catch (e) { console.warn('[CV] Direct fetch failed:', e); }
+      }
       if (blob) {
         const isPdf = profile.cv_url.toLowerCase().endsWith('.pdf') || blob.type === 'application/pdf';
+        const filename = profile.cv_url.split('/').pop() || 'cv.pdf';
         let text = '';
-        if (isPdf) { try { const ab = await blob.arrayBuffer(); text = await extractPdfText(ab); } catch (e) { console.warn('[CV] Profile PDF extraction failed:', e); } } else { text = await blob.text(); }
-        if (text.trim().length < 50 && isPdf) { const base64 = await toBase64(blob); return { text, base64, filename: profile.cv_url.split('/').pop() || 'cv.pdf' }; }
+        if (isPdf) {
+          try { const ab = await blob.arrayBuffer(); text = await extractPdfText(ab); } catch (e) { console.warn('[CV] Profile PDF extraction failed:', e); }
+          // Always include base64 for PDFs so backend can do OCR if text extraction is poor
+          const base64 = await toBase64(blob);
+          return { text: text.substring(0, 8000), base64, filename };
+        } else {
+          text = await blob.text();
+        }
         return { text: text.substring(0, 8000) };
       }
+      console.error('[CV] All download methods failed for:', storagePath);
     } catch (e) { console.error('Error downloading CV:', e); }
     return null;
   }, [profile?.cv_url, extractPdfText, toBase64]);
@@ -519,7 +993,19 @@ export default function MemberArea() {
 
   const buildCvRequestBody = (cvData: { text: string; base64?: string; filename?: string }, mode: string, extra?: Record<string, any>): any => {
     const body: any = { mode, language: lang };
-    if (cvData.text.trim().length < 50 && cvData.base64) { body.file = cvData.base64; body.filename = cvData.filename; } else { body.cv_text = cvData.text.substring(0, 8000); }
+    // If we have the original PDF file as base64, prefer sending it to the backend
+    // The backend uses Gemini's native PDF reading which is much more reliable than pdfjs-dist text extraction
+    if (cvData.base64) {
+      body.file = cvData.base64;
+      body.filename = cvData.filename || 'cv.pdf';
+      // Don't send cv_text when we have the file — let backend extract from PDF directly
+      console.log('[CV] Sending PDF file to backend for native extraction (' + (cvData.base64.length / 1024).toFixed(0) + 'KB base64)');
+    } else if (cvData.text.trim().length > 0) {
+      // Only send text when we don't have the original file (e.g. DOCX, plain text)
+      body.cv_text = cvData.text.substring(0, 8000);
+      console.log('[CV] Sending extracted text to backend (' + cvData.text.trim().length + ' chars)');
+    }
+    // If no text and no file, this will fail at the caller level
     if (extra) Object.assign(body, extra);
     return body;
   };
@@ -572,8 +1058,16 @@ export default function MemberArea() {
     setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
       const cvData = await getCvData();
-      const body: any = { mode: 'cv_extraction', linkedin_url: linkedinUrl, language: lang };
-      if (cvData && (cvData.text.trim().length >= 50 || cvData.base64)) { if (cvData.text.trim().length < 50 && cvData.base64) { body.file = cvData.base64; body.filename = cvData.filename; } else { body.cv_text = cvData.text.substring(0, 8000); } }
+      const body: any = { mode: 'linkedin_roast', linkedin_url: linkedinUrl, language: lang };
+      if (cvData && (cvData.text.trim().length >= 50 || cvData.base64)) {
+        if (cvData.base64) {
+          // Prefer sending the original PDF file for better extraction
+          body.file = cvData.base64;
+          body.filename = cvData.filename;
+        } else {
+          body.cv_text = cvData.text.substring(0, 8000);
+        }
+      }
       const result = await fetchWithRetry(body);
       setAnalysisResult(result);
       await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'linkedin_roaster', data: { source: 'member_area', plan: subscription.plan, tier: planTier, linkedin_url: linkedinUrl, captured_at: new Date().toISOString(), email: profile?.email, analysis: result } });
@@ -585,7 +1079,7 @@ export default function MemberArea() {
   const runCareerPath = useCallback(async () => {
     if (!user?.id || !subscription) return;
     const limit = planTier === 'pro' ? 3 : planTier === 'growth' ? 2 : 0;
-    if (monthlyCareerPathUsed >= limit) { setAnalysisError(lang === 'pt' ? `Atingiste o limite mensal de Career Path (${limit}/mês).` : `Monthly Career Path limit reached.`); return; }
+    const isExtra = monthlyCareerPathUsed >= limit;
     setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
       const cvData = await getCvData();
@@ -593,15 +1087,13 @@ export default function MemberArea() {
       const extractionBody = buildCvRequestBody(cvData, 'cv_extraction');
       const extractionResult = await fetchWithRetry(extractionBody);
       const analysisSource = extractionResult.analysis || extractionResult;
-      // Check raw_text at multiple levels: extractionResult.raw_text (top-level), analysisSource.raw_text, or fallback to cvData.text
-      const cvText = (extractionResult.raw_text || analysisSource.raw_text || cvData.text || '').substring(0, 8000);
+      const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
       const linkedinForCp = cpLinkedinUrl.trim() || profile?.linkedin_url || '';
       const careerPathBody: any = { mode: 'career_path', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: linkedinForCp, country: cpCountry, region: cpRegion, language: lang };
-      // If cv_text is still too short and we have the file base64, send it as fallback so the edge function can extract directly
-      if (cvText.trim().length < 50 && cvData.base64) { careerPathBody.file = cvData.base64; careerPathBody.filename = cvData.filename; }
       const result = await fetchWithRetry(careerPathBody);
       setAnalysisResult(result);
-      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_path', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email, analysis: result } });
+      const extraPrice = isExtra ? (planTier === 'pro' ? 4.75 : 9.50) : 0;
+      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_path', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email, is_extra: isExtra, extra_price: extraPrice, analysis: result } });
       setMonthlyCareerPathUsed(prev => prev + 1);
     } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
     finally { setAnalyzing(false); }
@@ -610,7 +1102,7 @@ export default function MemberArea() {
   const runCareerIntelligence = useCallback(async () => {
     if (!user?.id || !subscription) return;
     const limit = planTier === 'pro' ? 3 : planTier === 'growth' ? 2 : 0;
-    if (monthlyCareerIntelUsed >= limit) { setAnalysisError(lang === 'pt' ? `Atingiste o limite mensal de Career Intelligence (${limit}/mês).` : `Monthly Career Intelligence limit reached.`); return; }
+    const isExtra = monthlyCareerIntelUsed >= limit;
     setAnalyzing(true); setAnalysisError(null); setAnalysisResult(null);
     try {
       const cvData = await getCvData();
@@ -618,15 +1110,13 @@ export default function MemberArea() {
       const extractionBody = buildCvRequestBody(cvData, 'cv_extraction');
       const extractionResult = await fetchWithRetry(extractionBody);
       const analysisSource = extractionResult.analysis || extractionResult;
-      // Check raw_text at multiple levels: extractionResult.raw_text (top-level), analysisSource.raw_text, or fallback to cvData.text
-      const cvText = (extractionResult.raw_text || analysisSource.raw_text || cvData.text || '').substring(0, 8000);
+      const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
       const linkedinForCi = cpLinkedinUrl.trim() || profile?.linkedin_url || '';
       const ciBody: any = { mode: 'career_path', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: linkedinForCi, country: cpCountry, region: cpRegion, language: lang };
-      // If cv_text is still too short and we have the file base64, send it as fallback
-      if (cvText.trim().length < 50 && cvData.base64) { ciBody.file = cvData.base64; ciBody.filename = cvData.filename; }
       const result = await fetchWithRetry(ciBody);
       setAnalysisResult(result);
-      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_intelligence', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email, analysis: result } });
+      const extraPrice = isExtra ? (planTier === 'pro' ? 9.75 : 19.50) : 0;
+      await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_intelligence', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email, is_extra: isExtra, extra_price: extraPrice, analysis: result } });
       setMonthlyCareerIntelUsed(prev => prev + 1);
     } catch (err: any) { setAnalysisError(err.name === 'AbortError' ? (lang === 'pt' ? 'A análise demorou demasiado.' : 'Analysis took too long.') : (err.message || 'Erro inesperado.')); }
     finally { setAnalyzing(false); }
@@ -655,8 +1145,14 @@ export default function MemberArea() {
   // ─── Render inline panel content ────────────────────────────────────────
   const renderInlinePanel = (tool: ToolDef) => {
     if (tool.action === 'cv') {
+      const weeklyAvailable = weeklyUsage < weeklyLimit;
       return (
         <div className="space-y-4">
+          <div className={`flex items-center gap-2 text-xs rounded px-3 py-2 ${weeklyAvailable ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' : 'text-amber-700 bg-amber-50 border border-amber-200'}`}>
+            {weeklyAvailable ? <CheckCircle className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
+            <span>{lang === 'pt' ? `${weeklyLimit === 999 ? 'Ilimitado' : `${weeklyLimit}/semana no plano ${planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'}`}` : `${weeklyLimit === 999 ? 'Unlimited' : `${weeklyLimit}/week on ${planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'} plan`}`} ({weeklyUsage}/{weeklyLimit === 999 ? '∞' : weeklyLimit})</span>
+            {!weeklyAvailable && <span className="ml-auto text-red-600 font-medium text-[10px]">{lang === 'pt' ? '(limite atingido esta semana)' : '(limit reached this week)'}</span>}
+          </div>
           <div>
             {profile?.cv_url ? (
               <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-3 py-2">
@@ -685,8 +1181,14 @@ export default function MemberArea() {
     }
 
     if (tool.action === 'linkedin') {
+      const weeklyAvailable = weeklyUsage < weeklyLimit;
       return (
         <div className="space-y-4">
+          <div className={`flex items-center gap-2 text-xs rounded px-3 py-2 ${weeklyAvailable ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' : 'text-amber-700 bg-amber-50 border border-amber-200'}`}>
+            {weeklyAvailable ? <CheckCircle className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
+            <span>{lang === 'pt' ? `${weeklyLimit === 999 ? 'Ilimitado' : `${weeklyLimit}/semana no plano ${planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'}`}` : `${weeklyLimit === 999 ? 'Unlimited' : `${weeklyLimit}/week on ${planTier === 'pro' ? 'Pro' : planTier === 'growth' ? 'Growth' : 'Essential'} plan`}`} ({weeklyUsage}/{weeklyLimit === 999 ? '∞' : weeklyLimit})</span>
+            {!weeklyAvailable && <span className="ml-auto text-red-600 font-medium text-[10px]">{lang === 'pt' ? '(limite atingido esta semana)' : '(limit reached this week)'}</span>}
+          </div>
           <div>
             {profile?.linkedin_url ? (
               <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-3 py-2">
@@ -710,13 +1212,21 @@ export default function MemberArea() {
     if (tool.action === 'careerPath') {
       const cpLimit = planTier === 'pro' ? 3 : planTier === 'growth' ? 2 : 0;
       const cpAvailable = monthlyCareerPathUsed < cpLimit;
+      const cpExtraPrice = planTier === 'pro' ? '4,75€' : '9,50€';
+      const cpOriginalPrice = '19€';
       return (
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-3 py-2">
-            <CheckCircle className="w-3.5 h-3.5" />
+          <div className={`flex items-center gap-2 text-xs rounded px-3 py-2 ${cpAvailable ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' : 'text-amber-700 bg-amber-50 border border-amber-200'}`}>
+            {cpAvailable ? <CheckCircle className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
             <span>{lang === 'pt' ? `${cpLimit} Career Path incluído${cpLimit > 1 ? 's' : ''} por mês no plano ${planTier === 'pro' ? 'Pro' : 'Growth'}` : `${cpLimit} Career Path included per month on ${planTier === 'pro' ? 'Pro' : 'Growth'} plan`} ({monthlyCareerPathUsed}/{cpLimit})</span>
-            {!cpAvailable && <span className="ml-auto text-amber-600 font-medium">{lang === 'pt' ? '(limite atingido este mês)' : '(limit reached this month)'}</span>}
+            {!cpAvailable && <span className="ml-auto text-red-600 font-medium text-[10px]">{lang === 'pt' ? '(limite atingido este mês)' : '(limit reached this month)'}</span>}
           </div>
+          {!cpAvailable && (
+            <div className="flex items-center gap-2 text-xs text-[#666] bg-[#fafaf9] border border-[#e5e5e5] rounded px-3 py-2">
+              <Sparkles className="w-3.5 h-3.5 text-gold" />
+              <span>{lang === 'pt' ? `Análise extra disponível por ${cpExtraPrice}` : `Extra analysis available for ${cpExtraPrice}`} <span className="line-through text-[10px] text-[#999]">{cpOriginalPrice}</span></span>
+            </div>
+          )}
           <div>
             {profile?.cv_url ? (
               <div className="flex items-center gap-2 text-xs text-emerald-700/70 bg-emerald-50/50 border border-emerald-200/50 rounded px-3 py-2"><CheckCircle className="w-3.5 h-3.5" /><span>{lang === 'pt' ? 'CV do perfil' : 'Profile CV'}: {profile.cv_filename || 'CV'}</span></div>
@@ -743,8 +1253,8 @@ export default function MemberArea() {
               <select value={cpRegion} onChange={e => setCpRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"><option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>{availableRegions.map(r => (<option key={r} value={r}>{r}</option>))}</select>
             </div>
           </div>
-          <button onClick={runCareerPath} disabled={analyzing || !cpAvailable || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
-            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar Career Path...' : 'Generating Career Path...'}</>) : (<><Route className="w-4 h-4" />{lang === 'pt' ? 'Gerar Career Path' : 'Generate Career Path'}</>)}
+          <button onClick={runCareerPath} disabled={analyzing || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
+            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar Career Path...' : 'Generating Career Path...'}</>) : (<><Route className="w-4 h-4" />{cpAvailable ? (lang === 'pt' ? 'Gerar Career Path' : 'Generate Career Path') : (lang === 'pt' ? `Gerar Career Path — ${cpExtraPrice}` : `Generate Career Path — ${cpExtraPrice}`)}</>)}
           </button>
         </div>
       );
@@ -753,13 +1263,21 @@ export default function MemberArea() {
     if (tool.action === 'careerIntelligence') {
       const ciLimit = planTier === 'pro' ? 3 : planTier === 'growth' ? 2 : 0;
       const ciAvailable = monthlyCareerIntelUsed < ciLimit;
+      const ciExtraPrice = planTier === 'pro' ? '9,75€' : '19,50€';
+      const ciOriginalPrice = '39€';
       return (
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-3 py-2">
-            <CheckCircle className="w-3.5 h-3.5" />
+          <div className={`flex items-center gap-2 text-xs rounded px-3 py-2 ${ciAvailable ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' : 'text-amber-700 bg-amber-50 border border-amber-200'}`}>
+            {ciAvailable ? <CheckCircle className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
             <span>{lang === 'pt' ? `${ciLimit} Career Intelligence incluído${ciLimit > 1 ? 's' : ''} por mês no plano ${planTier === 'pro' ? 'Pro' : 'Growth'}` : `${ciLimit} Career Intelligence included per month on ${planTier === 'pro' ? 'Pro' : 'Growth'} plan`} ({monthlyCareerIntelUsed}/{ciLimit})</span>
-            {!ciAvailable && <span className="ml-auto text-amber-600 font-medium">{lang === 'pt' ? '(limite atingido este mês)' : '(limit reached this month)'}</span>}
+            {!ciAvailable && <span className="ml-auto text-red-600 font-medium text-[10px]">{lang === 'pt' ? '(limite atingido este mês)' : '(limit reached this month)'}</span>}
           </div>
+          {!ciAvailable && (
+            <div className="flex items-center gap-2 text-xs text-[#666] bg-[#fafaf9] border border-[#e5e5e5] rounded px-3 py-2">
+              <Sparkles className="w-3.5 h-3.5 text-gold" />
+              <span>{lang === 'pt' ? `Análise extra disponível por ${ciExtraPrice}` : `Extra analysis available for ${ciExtraPrice}`} <span className="line-through text-[10px] text-[#999]">{ciOriginalPrice}</span></span>
+            </div>
+          )}
           <div>
             {profile?.cv_url ? (
               <div className="flex items-center gap-2 text-xs text-emerald-700/70 bg-emerald-50/50 border border-emerald-200/50 rounded px-3 py-2"><CheckCircle className="w-3.5 h-3.5" /><span>{lang === 'pt' ? 'CV do perfil' : 'Profile CV'}: {profile.cv_filename || 'CV'}</span></div>
@@ -786,8 +1304,8 @@ export default function MemberArea() {
               <select value={cpRegion} onChange={e => setCpRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"><option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>{availableRegions.map(r => (<option key={r} value={r}>{r}</option>))}</select>
             </div>
           </div>
-          <button onClick={runCareerIntelligence} disabled={analyzing || !ciAvailable || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
-            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar análise...' : 'Generating analysis...'}</>) : (<><Sparkles className="w-4 h-4" />{lang === 'pt' ? 'Gerar Career Intelligence' : 'Generate Career Intelligence'}</>)}
+          <button onClick={runCareerIntelligence} disabled={analyzing || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
+            {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar análise...' : 'Generating analysis...'}</>) : (<><Sparkles className="w-4 h-4" />{ciAvailable ? (lang === 'pt' ? 'Gerar Career Intelligence' : 'Generate Career Intelligence') : (lang === 'pt' ? `Gerar Career Intelligence — ${ciExtraPrice}` : `Generate Career Intelligence — ${ciExtraPrice}`)}</>)}
           </button>
         </div>
       );
@@ -929,6 +1447,43 @@ export default function MemberArea() {
     };
     return { label: typeLabels[latest.analysis_type] || t('member.lastActivity'), time: timeStr };
   }, [savedAnalyses, t]);
+
+  // ─── Send Analysis by Email ──────────────────────────────────────────────
+  const SEND_EMAIL_URL = `${SUPABASE_URL}/functions/v1/send-analysis-email`;
+
+  const openEmailModal = () => {
+    setEmailTo(profile?.email || user?.email || '');
+    setEmailSent(false);
+    setEmailError(null);
+    setEmailModalOpen(true);
+  };
+
+  const sendAnalysisEmail = async () => {
+    if (!emailTo || !emailTo.includes('@')) {
+      setEmailError(lang === 'pt' ? 'Introduz um e-mail válido.' : 'Enter a valid email.');
+      return;
+    }
+    setEmailSending(true);
+    setEmailError(null);
+    try {
+      const el = document.querySelector('[data-analysis-result]') || document.querySelector('.animate-in.fade-in');
+      const htmlContent = el ? el.innerHTML : '<p>Análise não disponível. Acede à tua área de membro para ver o resultado.</p>';
+      const toolName = expandedTool || 'Análise';
+      const typeMap: Record<string, string> = { cv_analyser: 'CV Analyser', linkedin_roaster: 'LinkedIn Roaster', career_path: 'Career Path', career_intelligence: 'Career Intelligence' };
+      const analysisType = typeMap[toolName] || toolName;
+      const resp = await fetch(SEND_EMAIL_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+        body: JSON.stringify({ to_email: emailTo, to_name: profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : '', subject: `Share2Inspire — ${analysisType}`, html_content: htmlContent, analysis_type: analysisType }),
+      });
+      const data = await resp.json();
+      if (data.success) { setEmailSent(true); } else { setEmailError(data.error || (lang === 'pt' ? 'Erro ao enviar.' : 'Failed to send.')); }
+    } catch (err: any) {
+      setEmailError(err.message || (lang === 'pt' ? 'Erro de rede.' : 'Network error.'));
+    } finally {
+      setEmailSending(false);
+    }
+  };
 
   // ─── Routing: sem subscrição → UpgradePage ─────────────────────────────
   // MUST be after all hooks to respect React's rules of hooks
@@ -1110,10 +1665,10 @@ export default function MemberArea() {
                         <p className="text-[11px] text-[#999] font-light truncate">{tool.desc}</p>
                       </div>
                       {tool.action === 'careerPath' && (planTier === 'pro' || planTier === 'growth') && (
-                        <span className="px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium shrink-0 mr-2">{monthlyCareerPathUsed < (planTier === 'pro' ? 3 : 2) ? `${(planTier === 'pro' ? 3 : 2) - monthlyCareerPathUsed} ${t('member.includedMonth')}` : t('member.used')}</span>
+                        <span className={`px-2 py-1 rounded text-[10px] font-medium shrink-0 mr-2 ${monthlyCareerPathUsed < (planTier === 'pro' ? 3 : 2) ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'bg-amber-50 border border-amber-200 text-amber-700'}`}>{monthlyCareerPathUsed < (planTier === 'pro' ? 3 : 2) ? `${(planTier === 'pro' ? 3 : 2) - monthlyCareerPathUsed} ${t('member.includedMonth')}` : (planTier === 'pro' ? '4,75€' : '9,50€')}</span>
                       )}
                       {tool.action === 'careerIntelligence' && (planTier === 'pro' || planTier === 'growth') && (
-                        <span className="px-2 py-1 bg-emerald-50 border border-emerald-200 rounded text-[10px] text-emerald-700 font-medium shrink-0 mr-2">{monthlyCareerIntelUsed < (planTier === 'pro' ? 3 : 2) ? `${(planTier === 'pro' ? 3 : 2) - monthlyCareerIntelUsed} ${t('member.includedMonth')}` : t('member.used')}</span>
+                        <span className={`px-2 py-1 rounded text-[10px] font-medium shrink-0 mr-2 ${monthlyCareerIntelUsed < (planTier === 'pro' ? 3 : 2) ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'bg-amber-50 border border-amber-200 text-amber-700'}`}>{monthlyCareerIntelUsed < (planTier === 'pro' ? 3 : 2) ? `${(planTier === 'pro' ? 3 : 2) - monthlyCareerIntelUsed} ${t('member.includedMonth')}` : (planTier === 'pro' ? '9,75€' : '19,50€')}</span>
                       )}
                       {expandedTool === tool.key ? <ChevronUp className="w-4 h-4 text-gold shrink-0" /> : <ChevronDown className="w-4 h-4 text-[#ccc] group-hover:text-gold/50 transition-colors shrink-0" />}
                     </button>
@@ -1125,10 +1680,10 @@ export default function MemberArea() {
                           analysisResult._enriched ? (
                             <div className="mt-4 border border-gold/20 rounded-lg bg-[#fafaf9] p-4 animate-in fade-in duration-500">
                               <div className="flex items-center justify-between mb-4"><div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-600" /><h4 className="text-sm font-semibold text-[#1a1a1a]">{lang === 'pt' ? 'Análise concluída' : 'Analysis complete'}</h4></div><button onClick={() => setAnalysisResult(null)} className="text-xs text-[#999] hover:text-[#1a1a1a] transition-colors">{lang === 'pt' ? 'Fechar' : 'Close'}</button></div>
-                              <AnalysisResultsFull data={analysisResult._enriched} />
+                              <AnalysisResultsFull data={analysisResult._enriched} isPaid={true} />
                               <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gold/10">
                                 <button onClick={() => { const el = document.querySelector('[data-analysis-result]'); if (el) { const printWin = window.open('', '_blank'); if (printWin) { printWin.document.write('<html><head><title>An\u00e1lise Share2Inspire</title><style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:800px;margin:0 auto;color:#1a1a1a}h1,h2,h3,h4,h5{margin-top:1.5rem}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}</style></head><body>' + el.innerHTML + '</body></html>'); printWin.document.close(); printWin.print(); } } }} className="flex items-center gap-1.5 px-3 py-1.5 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium hover:bg-gold/20 transition-colors"><Download className="w-3.5 h-3.5" />{lang === 'pt' ? 'Guardar / Imprimir' : 'Save / Print'}</button>
-                                <button onClick={() => { const subject = encodeURIComponent(lang === 'pt' ? 'A minha an\u00e1lise Share2Inspire' : 'My Share2Inspire Analysis'); const body = encodeURIComponent(lang === 'pt' ? 'Segue em anexo a minha an\u00e1lise. Para ver o resultado completo, acede \u00e0 tua \u00e1rea de membro em https://www.share2inspire.pt/area-cliente/membros' : 'Please find my analysis attached. For the full result, visit your member area at https://www.share2inspire.pt/area-cliente/membros'); window.open(`mailto:?subject=${subject}&body=${body}`, '_blank'); }} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5" />{lang === 'pt' ? 'Enviar por e-mail' : 'Send by email'}</button>
+                                <button onClick={openEmailModal} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5" />{lang === 'pt' ? 'Enviar por e-mail' : 'Send by email'}</button>
                               </div>
                             </div>
                           ) : (
@@ -1136,7 +1691,7 @@ export default function MemberArea() {
                               <AnalysisResult data={analysisResult} onClose={() => setAnalysisResult(null)} lang={lang} />
                               <div className="flex items-center gap-3 mt-3">
                                 <button onClick={() => { const el = document.querySelector('[data-analysis-result]') || document.querySelector('.animate-in.fade-in'); if (el) { const printWin = window.open('', '_blank'); if (printWin) { printWin.document.write('<html><head><title>An\u00e1lise Share2Inspire</title><style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:800px;margin:0 auto;color:#1a1a1a}h1,h2,h3,h4,h5{margin-top:1.5rem}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}</style></head><body>' + el.innerHTML + '</body></html>'); printWin.document.close(); printWin.print(); } } }} className="flex items-center gap-1.5 px-3 py-1.5 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium hover:bg-gold/20 transition-colors"><Download className="w-3.5 h-3.5" />{lang === 'pt' ? 'Guardar / Imprimir' : 'Save / Print'}</button>
-                                <button onClick={() => { const subject = encodeURIComponent(lang === 'pt' ? 'A minha an\u00e1lise Share2Inspire' : 'My Share2Inspire Analysis'); const body = encodeURIComponent(lang === 'pt' ? 'Segue em anexo a minha an\u00e1lise. Para ver o resultado completo, acede \u00e0 tua \u00e1rea de membro em https://www.share2inspire.pt/area-cliente/membros' : 'Please find my analysis attached. For the full result, visit your member area at https://www.share2inspire.pt/area-cliente/membros'); window.open(`mailto:?subject=${subject}&body=${body}`, '_blank'); }} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5" />{lang === 'pt' ? 'Enviar por e-mail' : 'Send by email'}</button>
+                                <button onClick={openEmailModal} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5" />{lang === 'pt' ? 'Enviar por e-mail' : 'Send by email'}</button>
                               </div>
                             </div>
                           )
@@ -1393,8 +1948,49 @@ export default function MemberArea() {
               </button>
             </div>
             <div className="p-6">
-              <AnalysisResult data={viewingAnalysis.data} onClose={() => setViewingAnalysis(null)} lang={lang} />
+              {viewingAnalysis.analysis_type === 'cv_analyser' && viewingAnalysis.data?.enriched ? (
+                <AnalysisResultsFull data={viewingAnalysis.data.enriched} isPaid={true} />
+              ) : (
+                <AnalysisResult data={viewingAnalysis.data} onClose={() => setViewingAnalysis(null)} lang={lang} />
+              )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════ EMAIL MODAL ═══════════════════ */}
+      {emailModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setEmailModalOpen(false)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6 animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center"><Mail className="w-5 h-5 text-gold" /></div>
+              <div>
+                <h3 className="text-sm font-semibold text-[#1a1a1a]">{lang === 'pt' ? 'Enviar análise por e-mail' : 'Send analysis by email'}</h3>
+                <p className="text-[11px] text-[#999]">{lang === 'pt' ? 'Receberás o relatório completo no teu e-mail.' : 'You will receive the full report in your email.'}</p>
+              </div>
+            </div>
+            {emailSent ? (
+              <div className="text-center py-6">
+                <CheckCircle className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
+                <p className="text-sm font-semibold text-[#1a1a1a] mb-1">{lang === 'pt' ? 'Email enviado com sucesso!' : 'Email sent successfully!'}</p>
+                <p className="text-xs text-[#999] mb-4">{lang === 'pt' ? `Enviado para ${emailTo}` : `Sent to ${emailTo}`}</p>
+                <button onClick={() => setEmailModalOpen(false)} className="px-4 py-2 bg-gold text-white text-xs font-medium rounded-lg hover:bg-gold/90 transition-colors">{lang === 'pt' ? 'Fechar' : 'Close'}</button>
+              </div>
+            ) : (
+              <>
+                <div className="mb-4">
+                  <label className="block text-xs font-medium text-[#666] mb-1.5">{lang === 'pt' ? 'E-mail de destino' : 'Destination email'}</label>
+                  <input type="email" value={emailTo} onChange={e => setEmailTo(e.target.value)} placeholder="email@exemplo.com" className="w-full px-3 py-2.5 text-sm border border-[#e5e5e5] rounded-lg focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold/50 bg-[#fafaf9]" />
+                </div>
+                {emailError && (<div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4"><AlertCircle className="w-3.5 h-3.5 shrink-0" /><span>{emailError}</span></div>)}
+                <div className="flex items-center gap-3">
+                  <button onClick={() => setEmailModalOpen(false)} className="flex-1 px-4 py-2.5 text-xs font-medium text-[#666] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-colors">{lang === 'pt' ? 'Cancelar' : 'Cancel'}</button>
+                  <button onClick={sendAnalysisEmail} disabled={emailSending} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-medium text-white bg-gold rounded-lg hover:bg-gold/90 transition-colors disabled:opacity-50">
+                    {emailSending ? (<><Loader2 className="w-3.5 h-3.5 animate-spin" />{lang === 'pt' ? 'A enviar...' : 'Sending...'}</>) : (<><Send className="w-3.5 h-3.5" />{lang === 'pt' ? 'Enviar' : 'Send'}</>)}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

@@ -128,7 +128,7 @@ function AutomationRiskGauge({ score }: { score: number }) {
   );
 }
 
-const AnalysisResults = ({ data }: { data: AnalysisData }) => {
+const AnalysisResults = ({ data, isPaid = false }: { data: AnalysisData; isPaid?: boolean }) => {
   const quadrants = data.quadrants || [];
   const keywords = data.keywords || [];
   const avgScore = quadrants.length > 0 ? quadrants.reduce((sum, q) => sum + (q.score || 0), 0) / quadrants.length : (data.overallScore || 0);
@@ -177,7 +177,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
 
         {/* ═══ ATS Rejection com interpretação ═══ */}
         <div className="space-y-2">
-          <ATSRejectionBlock rejectionRate={data.atsRejectionRate} topFactor={data.atsTopFactor} />
+          <ATSRejectionBlock rejectionRate={data.atsRejectionRate} topFactor={data.atsTopFactor} isPaid={isPaid} detailedFactors={data.detailedAtsAnalysis?.factors} atsSystems={data.detailedAtsAnalysis?.atsSystems} quickFixes={data.detailedAtsAnalysis?.quickFixes} />
           <p className="text-sm text-muted-foreground px-2 leading-relaxed">
             {atsInterpretation(data.atsRejectionRate)}
           </p>
@@ -280,7 +280,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
               />
             </div>
           </div>
-          <RecruiterPerception roles={keywords} perceivedRole={data.perceivedRole} perceivedSeniority={data.perceivedSeniority} />
+          <RecruiterPerception roles={keywords} perceivedRole={data.perceivedRole} perceivedSeniority={data.perceivedSeniority} isPaid={isPaid} />
         </div>
 
         {/* ═══ Estimativa Salarial ═══ */}
