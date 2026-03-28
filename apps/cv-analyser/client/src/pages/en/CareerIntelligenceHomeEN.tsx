@@ -248,6 +248,8 @@ export default function CareerIntelligenceHomeEN() {
         sessionStorage.setItem('careerPathPaid', 'true');
         sessionStorage.setItem('careerIntelligenceProPaid', 'true');
         sessionStorage.setItem('careerIntelligenceFull', 'true');
+        sessionStorage.setItem('ciNeedsRegeneration', 'true');
+        sessionStorage.removeItem('careerPathData');
         sessionStorage.setItem('cpOrderId', `CI-VOUCHER-${v.code}`);
         if (v.email) sessionStorage.setItem('cpPaymentEmail', v.email);
         trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: currencyCodeUpper, payment_method: 'voucher', customer_email: v.email || '', transaction_id: `CI-VOUCHER-${v.code}` });
@@ -498,6 +500,8 @@ export default function CareerIntelligenceHomeEN() {
     sessionStorage.setItem('careerPathPaid', 'true');
     sessionStorage.setItem('careerIntelligenceProPaid', 'true');
     sessionStorage.setItem('careerIntelligenceFull', 'true');
+    sessionStorage.setItem('ciNeedsRegeneration', 'true');
+    sessionStorage.removeItem('careerPathData');
     trackPurchase('career_intelligence_full', FINAL_PRICE, orderId);
     trackAffiliateConversion({ product: 'career_intelligence_full', amount: FINAL_PRICE, currency: currencyCodeUpper, payment_method: paymentMethod, customer_email: email, transaction_id: orderId });
     try {
@@ -531,7 +535,7 @@ export default function CareerIntelligenceHomeEN() {
 
   const handlePaymentSuccess = () => {
     if (currentOrderId) { unlockAndRedirect(currentOrderId); }
-    else { setShowPaymentModal(false); sessionStorage.setItem('careerPathPaid', 'true'); sessionStorage.setItem('careerIntelligenceProPaid', 'true'); sessionStorage.setItem('careerIntelligenceFull', 'true'); setTimeout(() => { setLocation('/results'); }, 400); }
+    else { setShowPaymentModal(false); sessionStorage.setItem('careerPathPaid', 'true'); sessionStorage.setItem('careerIntelligenceProPaid', 'true'); sessionStorage.setItem('careerIntelligenceFull', 'true'); sessionStorage.setItem('ciNeedsRegeneration', 'true'); sessionStorage.removeItem('careerPathData'); setTimeout(() => { setLocation('/results'); }, 400); }
   };
 
   return (
@@ -858,6 +862,8 @@ export default function CareerIntelligenceHomeEN() {
                       sessionStorage.setItem('careerPathPaid', 'true');
                       sessionStorage.setItem('careerIntelligenceProPaid', 'true');
                       sessionStorage.setItem('careerIntelligenceFull', 'true');
+                      sessionStorage.setItem('ciNeedsRegeneration', 'true');
+                      sessionStorage.removeItem('careerPathData');
                       sessionStorage.setItem('cpOrderId', `CI-FREE-${discountCode || 'PROMO'}`);
                       if (email) sessionStorage.setItem('cpPaymentEmail', email);
                       setLocation('/results');

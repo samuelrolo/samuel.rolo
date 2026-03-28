@@ -227,14 +227,25 @@ export default function CareerIntelligenceResults() {
 
     if (linkedin) setLinkedinUrl(linkedin);
 
-    if (paidFlag === 'true' && savedData) {
-      try {
-        setCareerData(JSON.parse(savedData));
+    if (paidFlag === 'true') {
+      const ciFullFlag = sessionStorage.getItem('careerIntelligenceFull');
+      const ciNeedsRegen = sessionStorage.getItem('ciNeedsRegeneration');
+      
+      if (ciFullFlag === 'true' && (ciNeedsRegen === 'true' || !savedData)) {
+        // Career Intelligence was paid — always generate fresh analysis with the
+        // country/region the user selected in the CI form (not from Career Path).
+        sessionStorage.removeItem('ciNeedsRegeneration');
         setIsPaid(true);
-      } catch { /* ignore */ }
-    } else if (paidFlag === 'true' && !savedData) {
-      setIsPaid(true);
-      setTimeout(() => { generateAnalysis(); }, 300);
+        setTimeout(() => { generateAnalysis(); }, 300);
+      } else if (savedData) {
+        try {
+          setCareerData(JSON.parse(savedData));
+          setIsPaid(true);
+        } catch { /* ignore */ }
+      } else {
+        setIsPaid(true);
+        setTimeout(() => { generateAnalysis(); }, 300);
+      }
     }
 
     // Check for Stripe payment return

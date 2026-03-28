@@ -250,6 +250,9 @@ export default function CareerIntelligenceHome() {
         sessionStorage.setItem('careerPathPaid', 'true');
         sessionStorage.setItem('careerIntelligenceProPaid', 'true');
         sessionStorage.setItem('careerIntelligenceFull', 'true');
+        // Force fresh generation with the country selected in THIS form
+        sessionStorage.setItem('ciNeedsRegeneration', 'true');
+        sessionStorage.removeItem('careerPathData');
         sessionStorage.setItem('cpOrderId', `CI-VOUCHER-${v.code}`);
         if (v.email) sessionStorage.setItem('cpPaymentEmail', v.email);
         trackAffiliateConversion({ product: 'career_intelligence_full', amount: 0, currency: 'EUR', payment_method: 'voucher', customer_email: v.email || '', transaction_id: `CI-VOUCHER-${v.code}` });
@@ -570,6 +573,9 @@ export default function CareerIntelligenceHome() {
     sessionStorage.setItem('careerPathPaid', 'true');
     sessionStorage.setItem('careerIntelligenceProPaid', 'true');
     sessionStorage.setItem('careerIntelligenceFull', 'true');
+    // Force fresh generation with the country selected in THIS form
+    sessionStorage.setItem('ciNeedsRegeneration', 'true');
+    sessionStorage.removeItem('careerPathData');
     trackPurchase('career_intelligence_full', FINAL_PRICE, orderId);
     if (typeof window.fbq === 'function') window.fbq('track', 'Purchase', {value: FINAL_PRICE, currency: 'EUR'});
     trackAffiliateConversion({ product: 'career_intelligence_full', amount: FINAL_PRICE, currency: 'EUR', payment_method: paymentMethod, customer_email: email, transaction_id: orderId });
@@ -620,6 +626,9 @@ export default function CareerIntelligenceHome() {
       sessionStorage.setItem('careerPathPaid', 'true');
       sessionStorage.setItem('careerIntelligenceProPaid', 'true');
       sessionStorage.setItem('careerIntelligenceFull', 'true');
+      // Force fresh generation with the country selected in THIS form
+      sessionStorage.setItem('ciNeedsRegeneration', 'true');
+      sessionStorage.removeItem('careerPathData');
       setTimeout(() => { setLocation('/results'); }, 400);
     }
   };
@@ -1233,6 +1242,9 @@ export default function CareerIntelligenceHome() {
                       sessionStorage.setItem('careerPathPaid', 'true');
                       sessionStorage.setItem('careerIntelligenceProPaid', 'true');
                       sessionStorage.setItem('careerIntelligenceFull', 'true');
+                      // Force fresh generation with the country selected in THIS form
+                      sessionStorage.setItem('ciNeedsRegeneration', 'true');
+                      sessionStorage.removeItem('careerPathData');
                       sessionStorage.setItem('cpOrderId', `CI-FREE-${discountCode || 'PROMO'}`);
                       if (email) sessionStorage.setItem('cpPaymentEmail', email);
                       setLocation('/results');
