@@ -432,9 +432,33 @@
             background: #fff;
             color: #1A1A1A;
         }
-        @media (max-width: 640px) {
-            .hero-decision-cards { flex-direction: column; align-items: center; }
-            .hero-decision-card { max-width: 100%; }
+        @media (max-width: 768px) {
+            .hero-decision-cards {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+                max-width: 100%;
+                padding: 0 1rem;
+            }
+            .hero-decision-card {
+                flex: none;
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+                min-height: unset;
+                padding: 1.4rem 1.2rem;
+                box-sizing: border-box;
+            }
+            .hero-decision-card .hdc-cta {
+                display: block;
+                width: 100%;
+                text-align: center;
+                white-space: nowrap;
+                padding: 12px 16px;
+                box-sizing: border-box;
+                font-size: 0.68rem;
+                letter-spacing: 1px;
+            }
         }
 
         /* --- Quick Value --- */
