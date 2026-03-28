@@ -668,4 +668,22 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/videos/big4-insider-roi-post-big4"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/videos/big4-insider-roi-pos-big4" />
   </url>
+  <url>
+    <loc>https://www.share2inspire.pt/videos/big4-manager-senior-manager-promocao</loc>
+    <lastmod>2026-03-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/videos/big4-manager-senior-manager-promocao"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/videos/big4-manager-senior-manager-promotion"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/videos/big4-manager-senior-manager-promocao"/>
+  </url>
+  <url>
+    <loc>https://www.share2inspire.pt/en/videos/big4-manager-senior-manager-promotion</loc>
+    <lastmod>2026-03-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/videos/big4-manager-senior-manager-promocao"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/videos/big4-manager-senior-manager-promotion"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/videos/big4-manager-senior-manager-promocao"/>
+  </url>
 </urlset>
