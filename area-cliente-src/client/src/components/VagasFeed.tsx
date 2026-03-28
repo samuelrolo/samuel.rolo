@@ -24,10 +24,64 @@ const ADZUNA_SUPPORTED: Record<string, string> = {
 };
 
 const ADZUNA_FALLBACK: Record<string, string> = {
-  PT: 'es', IE: 'gb', SE: 'gb', DK: 'gb', NO: 'gb', FI: 'gb',
+  PT: 'gb', IE: 'gb', SE: 'gb', DK: 'gb', NO: 'gb', FI: 'gb',
   AE: 'gb', HK: 'sg', JP: 'gb', KR: 'gb', CN: 'sg',
   AR: 'br', CL: 'br', CO: 'br', PE: 'br',
 };
+
+// Map of common PT keywords to EN equivalents for international search
+const PT_TO_EN_KEYWORDS: Record<string, string> = {
+  'recursos humanos': 'human resources',
+  'gestão': 'management',
+  'marketing': 'marketing',
+  'engenharia': 'engineering',
+  'tecnologia': 'technology',
+  'saúde': 'healthcare',
+  'educação': 'education',
+  'finanças': 'finance',
+  'vendas': 'sales',
+  'design': 'design',
+  'comunicação': 'communications',
+  'logística': 'logistics',
+  'administração': 'administration',
+  'contabilidade': 'accounting',
+  'direito': 'law',
+  'consultoria': 'consulting',
+  'fisioterapia': 'physiotherapy',
+  'fisioterapeuta': 'physiotherapist',
+  'enfermagem': 'nursing',
+  'medicina': 'medicine',
+  'farmácia': 'pharmacy',
+  'arquitectura': 'architecture',
+  'arquitecto': 'architect',
+  'psicologia': 'psychology',
+  'nutrição': 'nutrition',
+  'desporto': 'sports',
+  'turismo': 'tourism',
+  'hotelaria': 'hospitality',
+  'transformação digital': 'digital transformation',
+  'excelência de processos': 'process excellence',
+  'gestão de mudança': 'change management',
+  'liderança': 'leadership',
+  'desenvolvimento': 'development',
+  'programação': 'programming',
+  'dados': 'data',
+  'inteligência artificial': 'artificial intelligence',
+};
+
+function translateKeywordsToEnglish(keywords: string[]): string[] {
+  return keywords.map(kw => {
+    const lower = kw.toLowerCase().trim();
+    // Direct match
+    if (PT_TO_EN_KEYWORDS[lower]) return PT_TO_EN_KEYWORDS[lower];
+    // Partial match — check if any PT key is contained in the keyword
+    for (const [pt, en] of Object.entries(PT_TO_EN_KEYWORDS)) {
+      if (lower.includes(pt)) return kw.toLowerCase().replace(pt, en);
+    }
+    // Return original if no translation found (might already be English)
+    return kw;
+  });
+}
 
 const ADZUNA_DOMAINS: Record<string, string> = {
   at: 'www.adzuna.at', au: 'www.adzuna.com.au', be: 'www.adzuna.be',
@@ -163,12 +217,14 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
     }
   }, [user?.id]);
 
-  const buildSearchQuery = useCallback((keywords: string[]): string => {
+  const buildSearchQuery = useCallback((keywords: string[], forceEnglish = false): string => {
+    const useEnglish = forceEnglish || isUnsupportedCountry;
     if (keywords.length > 0) {
-      return keywords.slice(0, 3).join(' ');
+      const kws = useEnglish ? translateKeywordsToEnglish(keywords) : keywords;
+      return kws.slice(0, 3).join(' ');
     }
-    return lang === 'pt' ? 'recursos humanos gestão' : 'human resources management';
-  }, [lang]);
+    return (lang === 'pt' && !useEnglish) ? 'recursos humanos gestão' : 'human resources management';
+  }, [lang, isUnsupportedCountry]);
 
   const fetchVagas = useCallback(async () => {
     setLoading(true);
@@ -261,8 +317,8 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
 
   const sourceLabel = isUnsupportedCountry
     ? (lang === 'pt'
-      ? `Vagas via Adzuna (${ADZUNA_DOMAINS[adzunaCountry]?.replace('www.', '') || 'adzuna.es'}) · Mercado mais próximo de ${countryName}`
-      : `Jobs via Adzuna (${ADZUNA_DOMAINS[adzunaCountry]?.replace('www.', '') || 'adzuna.es'}) · Nearest market to ${countryName}`)
+      ? `A mostrar vagas do mercado internacional. Para vagas exclusivas de ${countryName}, usa o LinkedIn Jobs.`
+      : `Showing international jobs. For jobs exclusive to ${countryName}, use LinkedIn Jobs.`)
     : '';
 
   const linkedInSearchUrl = getLinkedInJobsUrl(
@@ -431,7 +487,7 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
           </div>
           <div className="text-[10px] text-[#999] mt-1 text-center">
             Powered by Adzuna API
-            {isUnsupportedCountry && ` · ${lang === 'pt' ? `Mercado: ${ADZUNA_DOMAINS[adzunaCountry]?.replace('www.adzuna.', '').toUpperCase() || 'ES'}` : `Market: ${ADZUNA_DOMAINS[adzunaCountry]?.replace('www.adzuna.', '').toUpperCase() || 'ES'}`}`}
+            {isUnsupportedCountry && ` · ${lang === 'pt' ? 'Vagas Internacionais' : 'International Jobs'}`}
             {userKeywords.length > 0 && ` · ${lang === 'pt' ? 'Personalizado ao teu perfil' : 'Personalized to your profile'}`}
           </div>
         </div>
