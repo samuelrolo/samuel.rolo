@@ -593,9 +593,12 @@ export default function MemberArea() {
       const extractionBody = buildCvRequestBody(cvData, 'cv_extraction');
       const extractionResult = await fetchWithRetry(extractionBody);
       const analysisSource = extractionResult.analysis || extractionResult;
-      const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
+      // Check raw_text at multiple levels: extractionResult.raw_text (top-level), analysisSource.raw_text, or fallback to cvData.text
+      const cvText = (extractionResult.raw_text || analysisSource.raw_text || cvData.text || '').substring(0, 8000);
       const linkedinForCp = cpLinkedinUrl.trim() || profile?.linkedin_url || '';
       const careerPathBody: any = { mode: 'career_path', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: linkedinForCp, country: cpCountry, region: cpRegion, language: lang };
+      // If cv_text is still too short and we have the file base64, send it as fallback so the edge function can extract directly
+      if (cvText.trim().length < 50 && cvData.base64) { careerPathBody.file = cvData.base64; careerPathBody.filename = cvData.filename; }
       const result = await fetchWithRetry(careerPathBody);
       setAnalysisResult(result);
       await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_path', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email, analysis: result } });
@@ -615,9 +618,12 @@ export default function MemberArea() {
       const extractionBody = buildCvRequestBody(cvData, 'cv_extraction');
       const extractionResult = await fetchWithRetry(extractionBody);
       const analysisSource = extractionResult.analysis || extractionResult;
-      const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
+      // Check raw_text at multiple levels: extractionResult.raw_text (top-level), analysisSource.raw_text, or fallback to cvData.text
+      const cvText = (extractionResult.raw_text || analysisSource.raw_text || cvData.text || '').substring(0, 8000);
       const linkedinForCi = cpLinkedinUrl.trim() || profile?.linkedin_url || '';
       const ciBody: any = { mode: 'career_path', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: linkedinForCi, country: cpCountry, region: cpRegion, language: lang };
+      // If cv_text is still too short and we have the file base64, send it as fallback
+      if (cvText.trim().length < 50 && cvData.base64) { ciBody.file = cvData.base64; ciBody.filename = cvData.filename; }
       const result = await fetchWithRetry(ciBody);
       setAnalysisResult(result);
       await supabase.from('user_analyses').insert({ user_id: user.id, analysis_type: 'career_intelligence', data: { source: 'member_area_pro', plan: subscription.plan, tier: planTier, country: cpCountry, region: cpRegion, captured_at: new Date().toISOString(), email: profile?.email, analysis: result } });

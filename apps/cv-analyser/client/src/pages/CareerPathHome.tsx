@@ -329,8 +329,10 @@ export default function CareerPathHome() {
       const analysisSource = responseData.analysis || responseData;
 
       // If server-side extraction was used, update cvText from the extracted data
-      if (useServerExtraction && analysisSource.raw_text) {
-        cvText = analysisSource.raw_text;
+      // Check raw_text at top level (responseData.raw_text) and nested (analysisSource.raw_text)
+      if (useServerExtraction) {
+        const extractedText = responseData.raw_text || analysisSource.raw_text;
+        if (extractedText) cvText = extractedText;
       }
 
       // Store CV data and LinkedIn URL for the results page

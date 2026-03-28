@@ -398,20 +398,28 @@ export default function CareerPathResults() {
     setGenerateError(null);
     try {
       const cvText = sessionStorage.getItem('careerPathCvText') || '';
+      const cvFile = sessionStorage.getItem('careerPathCvFile') || '';
+      const cvFilename = sessionStorage.getItem('careerPathCvFilename') || 'cv.pdf';
+      const requestBody: any = {
+        mode: 'career_path',
+        cv_text: cvText,
+        linkedin_url: linkedinUrl || undefined,
+        language: sessionStorage.getItem('analysisLang') || 'pt',
+        country: sessionStorage.getItem('analysisCountry') || undefined,
+        region: sessionStorage.getItem('analysisRegion') || undefined,
+      };
+      // If cv_text is too short but we have the file base64, send it as fallback
+      if (cvText.trim().length < 50 && cvFile) {
+        requestBody.file = cvFile;
+        requestBody.filename = cvFilename;
+      }
       const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          mode: 'career_path',
-          cv_text: cvText,
-          linkedin_url: linkedinUrl || undefined,
-          language: sessionStorage.getItem('analysisLang') || 'pt',
-          country: sessionStorage.getItem('analysisCountry') || undefined,
-          region: sessionStorage.getItem('analysisRegion') || undefined,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
