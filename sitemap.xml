@@ -599,6 +599,57 @@
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/en/blog/artigos/big4-insider-10-years"/>
     </url>
 
+    <!-- Big4 Manager → Sénior Manager -->
+    <url>
+        <loc>https://www.share2inspire.pt/blog/artigos/big4-manager-senior-manager-transicao</loc>
+        <lastmod>2026-03-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/blog/artigos/big4-manager-senior-manager-transicao"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/big4-manager-senior-manager-transition"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/big4-manager-senior-manager-transicao"/>
+    </url>
+    <url>
+        <loc>https://www.share2inspire.pt/en/blog/artigos/big4-manager-senior-manager-transition</loc>
+        <lastmod>2026-03-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/big4-manager-senior-manager-transition"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/blog/artigos/big4-manager-senior-manager-transicao"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/big4-manager-senior-manager-transicao"/>
+    </url>
+
+    <!-- Big4 Senior: Ficar ou Sair -->
+    <url>
+        <loc>https://www.share2inspire.pt/blog/artigos/big4-senior-ficar-ou-sair</loc>
+        <lastmod>2026-03-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/blog/artigos/big4-senior-ficar-ou-sair"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/big4-senior-stay-or-leave"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/big4-senior-ficar-ou-sair"/>
+    </url>
+    <url>
+        <loc>https://www.share2inspire.pt/en/blog/artigos/big4-senior-stay-or-leave</loc>
+        <lastmod>2026-03-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/big4-senior-stay-or-leave"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/blog/artigos/big4-senior-ficar-ou-sair"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/big4-senior-ficar-ou-sair"/>
+    </url>
+
+    <!-- Blog index EN -->
+    <url>
+        <loc>https://www.share2inspire.pt/en/blog</loc>
+        <lastmod>2026-03-28</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/blog"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog"/>
+    </url>
+
   <url>
     <loc>https://www.share2inspire.pt/videos/big4-insider-roi-pos-big4</loc>
     <lastmod>2026-03-27</lastmod>
