@@ -1557,20 +1557,67 @@ function renderJobSearchTable() {
     renderBarChart('chartKeywordGaps', topGaps, 'Gaps', '#EF4444');
     renderBarChart('chartSeniority', senEntries, 'Senioridade', '#7C3AED');
 
+    // Update KPIs
+    const uniqueRoles = Object.keys(roleCounts).length;
+    const withJob = data.filter(j => j.has_job_posting || j.adzuna_results_count > 0).length;
+    const noJob = data.length - withJob;
+    setText('kpiJobTotal', data.length);
+    setText('kpiJobWithJob', withJob);
+    setText('kpiJobNoJob', noJob);
+    setText('kpiJobUniqueRoles', uniqueRoles);
+
+    // Update count
+    setText('jobSearchCount', `${data.length} pesquisas`);
+
+    // Populate seniority filter options
+    const senFilter = document.getElementById('filterJobSeniority');
+    if (senFilter && senFilter.options.length <= 1) {
+        Object.keys(senCounts).sort().forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s; opt.textContent = s;
+            senFilter.appendChild(opt);
+        });
+    }
+
+    // Render table body
+    const tbody = document.getElementById('jobSearchTable');
+    if (tbody) {
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Sem dados de pesquisa de emprego.</td></tr>';
+        } else {
+            tbody.innerHTML = data.slice(0, 200).map(j => {
+                const date = j.created_at ? new Date(j.created_at).toLocaleDateString('pt-PT') : '--';
+                const name = j.user_name || j.user_email || '--';
+                const role = j.desired_role || '--';
+                const sen = j.seniority_level || '--';
+                const skills = (j.top_skills || []).slice(0, 3).map(s => `<span class="badge badge-blue">${s}</span>`).join(' ') || '--';
+                const hasJob = (j.has_job_posting || j.adzuna_results_count > 0) ? '<span class="badge badge-green">Sim</span>' : '<span class="badge badge-muted">Não</span>';
+                const ats = j.ats_score != null ? j.ats_score : '--';
+                return `<tr><td>${date}</td><td>${name}</td><td>${role}</td><td>${sen}</td><td>${skills}</td><td>${hasJob}</td><td>${ats}</td></tr>`;
+            }).join('');
+        }
+    }
+
     // Cross-reference with Career Energy
     const crossEl = document.getElementById('marketCrossRef');
-    if (crossEl && allCareerEnergy.length > 0 && data.length > 0) {
-        const ceRoles = {};
-        allCareerEnergy.forEach(ce => {
-            const role = ce.current_role || ce.desired_role || '';
-            if (role) ceRoles[role] = (ceRoles[role] || 0) + 1;
-        });
-        const overlap = topRoles.filter(([role]) => ceRoles[role]);
-        const crossText = overlap.length > 0
-            ? `<strong>${overlap.length}</strong> dos top ${topRoles.length} cargos procurados também aparecem no Career Energy. Cargos em comum: ${overlap.map(([r]) => `<span class="badge badge-teal">${r}</span>`).join(' ')}`
-            : 'Sem sobreposição directa entre cargos procurados e Career Energy.';
-        setText('marketCrossRefText', '');
-        crossEl.innerHTML = `<div style="padding:12px;background:var(--teal-bg);border-radius:8px;border-left:3px solid var(--teal);font-size:13px;">${crossText}</div>`;
+    if (crossEl) {
+        if (allCareerEnergy.length > 0 && data.length > 0) {
+            const ceRoles = {};
+            allCareerEnergy.forEach(ce => {
+                const role = ce.current_role || ce.desired_role || '';
+                if (role) ceRoles[role] = (ceRoles[role] || 0) + 1;
+            });
+            const overlap = topRoles.filter(([role]) => ceRoles[role]);
+            const crossText = overlap.length > 0
+                ? `<strong>${overlap.length}</strong> dos top ${topRoles.length} cargos procurados também aparecem no Career Energy. Cargos em comum: ${overlap.map(([r]) => `<span class="badge badge-teal">${r}</span>`).join(' ')}`
+                : 'Sem sobreposição directa entre cargos procurados e Career Energy.';
+            setText('marketCrossRefText', '');
+            crossEl.innerHTML = `<div style="padding:12px;background:var(--teal-bg);border-radius:8px;border-left:3px solid var(--teal);font-size:13px;">${crossText}</div>`;
+        } else if (data.length > 0) {
+            crossEl.innerHTML = `<div style="padding:12px;background:var(--teal-bg);border-radius:8px;border-left:3px solid var(--teal);font-size:13px;"><strong>${data.length}</strong> pesquisas de emprego registadas. <strong>${uniqueRoles}</strong> cargos únicos. Top cargo: <span class="badge badge-teal">${topRoles[0] ? topRoles[0][0] : 'N/A'}</span></div>`;
+        } else {
+            crossEl.innerHTML = `<div style="padding:12px;background:#f5f5f5;border-radius:8px;font-size:13px;color:var(--text-muted);">Sem dados suficientes para cruzamento.</div>`;
+        }
     }
 }
 
