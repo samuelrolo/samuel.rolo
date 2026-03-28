@@ -61,7 +61,12 @@ export function transformGeminiResponse(analysis: any): any {
         const rawTitle = (q.title || '').toLowerCase().trim();
         const normalizedTitle = titleMapping[rawTitle] || q.title;
         const score = typeof q.score === 'string' ? parseInt(q.score, 10) : (q.score || 50);
-        const benchmark = typeof q.benchmark === 'string' ? parseInt(q.benchmark, 10) : (q.benchmark || 65);
+        let benchmark = typeof q.benchmark === 'string' ? parseInt(q.benchmark, 10) : (q.benchmark || 65);
+        // If benchmark came as text description instead of number, use sensible defaults
+        if (isNaN(benchmark)) {
+          const defaultBenchmarks: Record<string, number> = { 'Estrutura': 65, 'Conteúdo': 70, 'Formação': 60, 'Experiência': 70 };
+          benchmark = defaultBenchmarks[normalizedTitle] || 65;
+        }
         quadrants.push({
           title: normalizedTitle,
           score: Math.min(100, Math.max(0, score)),
