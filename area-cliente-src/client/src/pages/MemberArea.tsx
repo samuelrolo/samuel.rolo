@@ -1450,7 +1450,8 @@ export default function MemberArea() {
   }, [savedAnalyses, t]);
 
   // ─── Send Analysis by Email ──────────────────────────────────────────────
-  const SEND_EMAIL_URL = `${SUPABASE_URL}/functions/v1/send-analysis-email`;
+  const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+  const SEND_EMAIL_URL = `${BACKEND_URL}/api/email/send`;
 
   const openEmailModal = () => {
     setEmailTo(profile?.email || user?.email || '');
@@ -1474,7 +1475,7 @@ export default function MemberArea() {
       const analysisType = typeMap[toolName] || toolName;
       const resp = await fetch(SEND_EMAIL_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ to_email: emailTo, to_name: profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : '', subject: `Share2Inspire — ${analysisType}`, html_content: htmlContent, analysis_type: analysisType }),
       });
       const data = await resp.json();
