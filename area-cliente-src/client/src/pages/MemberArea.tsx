@@ -23,7 +23,7 @@ import {
   ChevronDown, ChevronUp, Tag, ArrowRight, Globe, MapPin,
   Search, BookOpen, Play, Headphones, Mail, Megaphone, Briefcase,
   Clock, Trash2, RefreshCw, Compass, FileSearch, Wrench, Download, Send,
-  Target, Layers, TrendingUp,
+  Target, Layers, TrendingUp, Euro,
 } from 'lucide-react';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
@@ -803,6 +803,7 @@ export default function MemberArea() {
   const [emailSending, setEmailSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [pendingExtraRun, setPendingExtraRun] = useState<'career_path' | 'career_intelligence' | null>(null);
 
   const planTier = getPlanTier(subscription?.plan);
   const weeklyLimit = WEEKLY_LIMITS[planTier] || 2;
@@ -1253,7 +1254,7 @@ export default function MemberArea() {
               <select value={cpRegion} onChange={e => setCpRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"><option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>{availableRegions.map(r => (<option key={r} value={r}>{r}</option>))}</select>
             </div>
           </div>
-          <button onClick={runCareerPath} disabled={analyzing || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
+          <button onClick={() => { if (!cpAvailable) { setPendingExtraRun('career_path'); } else { runCareerPath(); } }} disabled={analyzing || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
             {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar Career Path...' : 'Generating Career Path...'}</>) : (<><Route className="w-4 h-4" />{cpAvailable ? (lang === 'pt' ? 'Gerar Career Path' : 'Generate Career Path') : (lang === 'pt' ? `Gerar Career Path — ${cpExtraPrice}` : `Generate Career Path — ${cpExtraPrice}`)}</>)}
           </button>
         </div>
@@ -1304,7 +1305,7 @@ export default function MemberArea() {
               <select value={cpRegion} onChange={e => setCpRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded text-xs text-[#1a1a1a] focus:border-gold/30 focus:outline-none bg-white"><option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>{availableRegions.map(r => (<option key={r} value={r}>{r}</option>))}</select>
             </div>
           </div>
-          <button onClick={runCareerIntelligence} disabled={analyzing || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
+          <button onClick={() => { if (!ciAvailable) { setPendingExtraRun('career_intelligence'); } else { runCareerIntelligence(); } }} disabled={analyzing || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
             {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar análise...' : 'Generating analysis...'}</>) : (<><Sparkles className="w-4 h-4" />{ciAvailable ? (lang === 'pt' ? 'Gerar Career Intelligence' : 'Generate Career Intelligence') : (lang === 'pt' ? `Gerar Career Intelligence — ${ciExtraPrice}` : `Generate Career Intelligence — ${ciExtraPrice}`)}</>)}
           </button>
         </div>
@@ -1680,17 +1681,23 @@ export default function MemberArea() {
                           analysisResult._enriched ? (
                             <div className="mt-4 border border-gold/20 rounded-lg bg-[#fafaf9] p-4 animate-in fade-in duration-500">
                               <div className="flex items-center justify-between mb-4"><div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-600" /><h4 className="text-sm font-semibold text-[#1a1a1a]">{lang === 'pt' ? 'Análise concluída' : 'Analysis complete'}</h4></div><button onClick={() => setAnalysisResult(null)} className="text-xs text-[#999] hover:text-[#1a1a1a] transition-colors">{lang === 'pt' ? 'Fechar' : 'Close'}</button></div>
-                              <AnalysisResultsFull data={analysisResult._enriched} isPaid={true} />
+                              <div data-analysis-result="true">
+                                <AnalysisResultsFull data={analysisResult._enriched} isPaid={true} />
+                              </div>
                               <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gold/10">
-                                <button onClick={() => { const el = document.querySelector('[data-analysis-result]'); if (el) { const printWin = window.open('', '_blank'); if (printWin) { printWin.document.write('<html><head><title>An\u00e1lise Share2Inspire</title><style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:800px;margin:0 auto;color:#1a1a1a}h1,h2,h3,h4,h5{margin-top:1.5rem}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}</style></head><body>' + el.innerHTML + '</body></html>'); printWin.document.close(); printWin.print(); } } }} className="flex items-center gap-1.5 px-3 py-1.5 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium hover:bg-gold/20 transition-colors"><Download className="w-3.5 h-3.5" />{lang === 'pt' ? 'Guardar / Imprimir' : 'Save / Print'}</button>
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-700 font-medium"><CheckCircle className="w-3.5 h-3.5" />{lang === 'pt' ? 'Guardado na biblioteca' : 'Saved to library'}</div>
+                                <button onClick={() => { const el = document.querySelector('[data-analysis-result]'); if (el) { const printWin = window.open('', '_blank'); if (printWin) { printWin.document.write('<html><head><title>An\u00e1lise Share2Inspire</title><style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:800px;margin:0 auto;color:#1a1a1a}h1,h2,h3,h4,h5{margin-top:1.5rem}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}</style></head><body>' + el.innerHTML + '</body></html>'); printWin.document.close(); printWin.print(); } } }} className="flex items-center gap-1.5 px-3 py-1.5 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium hover:bg-gold/20 transition-colors"><Download className="w-3.5 h-3.5" />{lang === 'pt' ? 'Imprimir' : 'Print'}</button>
                                 <button onClick={openEmailModal} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5" />{lang === 'pt' ? 'Enviar por e-mail' : 'Send by email'}</button>
                               </div>
                             </div>
                           ) : (
                             <div>
-                              <AnalysisResult data={analysisResult} onClose={() => setAnalysisResult(null)} lang={lang} />
+                              <div data-analysis-result="true">
+                                <AnalysisResult data={analysisResult} onClose={() => setAnalysisResult(null)} lang={lang} />
+                              </div>
                               <div className="flex items-center gap-3 mt-3">
-                                <button onClick={() => { const el = document.querySelector('[data-analysis-result]') || document.querySelector('.animate-in.fade-in'); if (el) { const printWin = window.open('', '_blank'); if (printWin) { printWin.document.write('<html><head><title>An\u00e1lise Share2Inspire</title><style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:800px;margin:0 auto;color:#1a1a1a}h1,h2,h3,h4,h5{margin-top:1.5rem}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}</style></head><body>' + el.innerHTML + '</body></html>'); printWin.document.close(); printWin.print(); } } }} className="flex items-center gap-1.5 px-3 py-1.5 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium hover:bg-gold/20 transition-colors"><Download className="w-3.5 h-3.5" />{lang === 'pt' ? 'Guardar / Imprimir' : 'Save / Print'}</button>
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-700 font-medium"><CheckCircle className="w-3.5 h-3.5" />{lang === 'pt' ? 'Guardado na biblioteca' : 'Saved to library'}</div>
+                                <button onClick={() => { const el = document.querySelector('[data-analysis-result]'); if (el) { const printWin = window.open('', '_blank'); if (printWin) { printWin.document.write('<html><head><title>An\u00e1lise Share2Inspire</title><style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:800px;margin:0 auto;color:#1a1a1a}h1,h2,h3,h4,h5{margin-top:1.5rem}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}</style></head><body>' + el.innerHTML + '</body></html>'); printWin.document.close(); printWin.print(); } } }} className="flex items-center gap-1.5 px-3 py-1.5 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium hover:bg-gold/20 transition-colors"><Download className="w-3.5 h-3.5" />{lang === 'pt' ? 'Imprimir' : 'Print'}</button>
                                 <button onClick={openEmailModal} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5" />{lang === 'pt' ? 'Enviar por e-mail' : 'Send by email'}</button>
                               </div>
                             </div>
@@ -1953,6 +1960,46 @@ export default function MemberArea() {
               ) : (
                 <AnalysisResult data={viewingAnalysis.data} onClose={() => setViewingAnalysis(null)} lang={lang} />
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════ EXTRA PAYMENT CONFIRMATION MODAL ═══════════════════ */}
+      {pendingExtraRun && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setPendingExtraRun(null)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6 animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center"><Euro className="w-5 h-5 text-amber-600" /></div>
+              <div>
+                <h3 className="text-sm font-semibold text-[#1a1a1a]">{lang === 'pt' ? 'Confirmar análise extra' : 'Confirm extra analysis'}</h3>
+                <p className="text-[11px] text-[#999]">{lang === 'pt' ? 'Já atingiste o limite mensal do teu plano.' : 'You have reached your monthly plan limit.'}</p>
+              </div>
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-5 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-[#1a1a1a] font-medium">{pendingExtraRun === 'career_path' ? 'Career Path' : 'Career Intelligence'}</span>
+                <span className="text-sm font-bold text-[#1a1a1a]">
+                  {pendingExtraRun === 'career_path' ? (planTier === 'pro' ? '4,75€' : '9,50€') : (planTier === 'pro' ? '9,75€' : '19,50€')}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs text-[#999]">
+                <span>{lang === 'pt' ? 'Preço normal' : 'Normal price'}</span>
+                <span className="line-through">{pendingExtraRun === 'career_path' ? '19€' : '39€'}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs text-emerald-600">
+                <span>{lang === 'pt' ? 'Desconto membro' : 'Member discount'}</span>
+                <span className="font-medium">
+                  {pendingExtraRun === 'career_path' ? (planTier === 'pro' ? '-75%' : '-50%') : (planTier === 'pro' ? '-75%' : '-50%')}
+                </span>
+              </div>
+            </div>
+            <p className="text-xs text-[#999] mb-5">{lang === 'pt' ? 'O valor será adicionado à tua próxima fatura. Podes cancelar a qualquer momento.' : 'The amount will be added to your next invoice. You can cancel at any time.'}</p>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setPendingExtraRun(null)} className="flex-1 px-4 py-2.5 text-xs font-medium text-[#666] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-colors">{lang === 'pt' ? 'Cancelar' : 'Cancel'}</button>
+              <button onClick={() => { const type = pendingExtraRun; setPendingExtraRun(null); if (type === 'career_path') runCareerPath(); else runCareerIntelligence(); }} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-medium text-white bg-gradient-to-r from-[#1a1a1a] to-[#333] rounded-lg hover:from-[#333] hover:to-[#444] transition-all">
+                <Sparkles className="w-3.5 h-3.5" />{lang === 'pt' ? 'Confirmar e gerar' : 'Confirm and generate'}
+              </button>
             </div>
           </div>
         </div>

@@ -9,7 +9,7 @@ import ATSRejectionBlock from "./ATSRejectionBlock";
 import RecruiterPerception from "./RecruiterPerception";
 import DimensionBar from "./DimensionBar";
 import ScoreGauge from "./ScoreGauge";
-import { Info, HelpCircle, FileCheck, BarChart3, Grid2x2, TrendingUp, Eye, Target, Layers, BookOpen, Briefcase, AlertTriangle, Euro, Bot } from "lucide-react";
+import { Info, HelpCircle, FileCheck, BarChart3, Grid2x2, TrendingUp, Eye, Target, Layers, BookOpen, Briefcase, AlertTriangle, Euro, Bot, Sparkles, Calendar } from "lucide-react";
 import type { AnalysisData } from "@/types/analysis";
 
 /** Tooltip component reusable */
@@ -364,6 +364,168 @@ const AnalysisResults = ({ data, isPaid = false }: { data: AnalysisData; isPaid?
             → Estás no <span className="font-semibold text-foreground">percentil {percentile}</span>, o que significa que o teu CV é melhor que {percentile}% dos CVs analisados. {percentileInterpretation(percentile)}
           </p>
         </div>
+
+        {/* ═══ PAID SECTIONS (always shown for members) ═══ */}
+        {isPaid && (
+          <div className="space-y-6">
+            {/* ═══ Análise Detalhada por Dimensão ═══ */}
+            <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <GoldIcon size="w-8 h-8">
+                  <BarChart3 className="w-4 h-4 text-[#C9A961]" />
+                </GoldIcon>
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground">ANÁLISE DETALHADA POR DIMENSÃO</p>
+              </div>
+              <div className="space-y-4">
+                {quadrants.map((q: any, idx: number) => {
+                  const gap = q.score - q.benchmark;
+                  const isStrong = gap >= 10;
+                  const isWeak = gap <= 0;
+                  return (
+                    <div key={idx} className="p-3 bg-muted/20 rounded-lg space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-foreground">{q.title}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-foreground">{q.score}/100</span>
+                          <span className={`text-xs font-medium px-2 py-0.5 rounded ${isStrong ? 'text-green-600 bg-green-500/10' : isWeak ? 'text-red-600 bg-red-500/10' : 'text-yellow-600 bg-yellow-500/10'}`}>
+                            {gap >= 0 ? '+' : ''}{gap} vs benchmark
+                          </span>
+                        </div>
+                      </div>
+                      {q.detailed_feedback ? (
+                        <p className="text-sm text-muted-foreground">{q.detailed_feedback}</p>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">
+                          {isStrong ? (
+                            <>✅ <strong>Ponto forte.</strong> Estás {gap} pontos acima do benchmark ({q.benchmark}).</>
+                          ) : isWeak ? (
+                            <>⚠️ <strong>Área de melhoria.</strong> Estás {Math.abs(gap)} pontos abaixo do benchmark ({q.benchmark}).</>
+                          ) : (
+                            <>→ <strong>Acima da média.</strong> Estás {gap} pontos acima do benchmark ({q.benchmark}).</>
+                          )}
+                        </p>
+                      )}
+                      {q.strengths && q.strengths.length > 0 && (
+                        <div className="mt-1">
+                          {q.strengths.map((s: string, i: number) => (
+                            <p key={i} className="text-sm text-green-600 flex items-start gap-1.5"><span className="shrink-0">✅</span> {s}</p>
+                          ))}
+                        </div>
+                      )}
+                      {q.weaknesses && q.weaknesses.length > 0 && (
+                        <div className="mt-1">
+                          {q.weaknesses.map((w: string, i: number) => (
+                            <p key={i} className="text-sm text-red-500 flex items-start gap-1.5"><span className="shrink-0">⚠️</span> {w}</p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* ═══ Matriz de Prioridades ═══ */}
+            <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <GoldIcon size="w-8 h-8">
+                  <Target className="w-4 h-4 text-[#C9A961]" />
+                </GoldIcon>
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground">MATRIZ DE PRIORIDADES</p>
+              </div>
+              <p className="text-sm text-muted-foreground">Dimensões ordenadas por urgência de melhoria (maior gap = maior prioridade):</p>
+              <div className="space-y-2">
+                {[...quadrants].sort((a: any, b: any) => (a.score - a.benchmark) - (b.score - b.benchmark)).map((dim: any, i: number) => {
+                  const gap = dim.score - dim.benchmark;
+                  const priority = gap <= 0 ? 'Alta' : gap <= 10 ? 'Média' : 'Baixa';
+                  const prColor = priority === 'Alta' ? 'bg-red-500/10 text-red-600 border-red-500/20' : priority === 'Média' ? 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20' : 'bg-green-500/10 text-green-600 border-green-500/20';
+                  return (
+                    <div key={i} className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold text-muted-foreground w-6">#{i + 1}</span>
+                        <span className="text-sm font-medium text-foreground">{dim.title}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">{dim.score}/{dim.benchmark}</span>
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${prColor}`}>{priority}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* ═══ Acções de Melhoria com Antes/Depois ═══ */}
+            {data.improvementActions && data.improvementActions.length > 0 && (
+              <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <GoldIcon size="w-8 h-8">
+                    <Sparkles className="w-4 h-4 text-[#C9A961]" />
+                  </GoldIcon>
+                  <p className="text-xs font-semibold tracking-wider text-muted-foreground">ACÇÕES DE MELHORIA — ANTES vs DEPOIS</p>
+                </div>
+                <p className="text-sm text-muted-foreground">Acções concretas para melhorar o teu CV, com o impacto estimado de cada uma:</p>
+                <div className="space-y-4">
+                  {data.improvementActions.map((action: any, i: number) => (
+                    <div key={i} className="border border-border rounded-lg overflow-hidden">
+                      <div className="p-3 bg-muted/30 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">#{i + 1}</span>
+                          <span className="text-sm font-semibold text-foreground">{action.action}</span>
+                        </div>
+                        <span className="text-xs font-medium text-green-600 bg-green-500/10 px-2 py-0.5 rounded">+{action.impact} pontos</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border">
+                        <div className="p-3">
+                          <p className="text-[10px] font-semibold text-red-500 mb-1">❌ ANTES</p>
+                          <p className="text-sm text-muted-foreground">{typeof action.before === 'object' ? JSON.stringify(action.before) : String(action.before || '')}</p>
+                        </div>
+                        <div className="p-3">
+                          <p className="text-[10px] font-semibold text-green-600 mb-1">✅ DEPOIS</p>
+                          <p className="text-sm text-muted-foreground">{typeof action.after === 'object' ? JSON.stringify(action.after) : String(action.after || '')}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="p-3 bg-[#C9A961]/5 rounded-lg border border-[#C9A961]/20">
+                  <p className="text-sm text-foreground font-medium">
+                    🎯 Score estimado após melhorias: <strong className="text-[#C9A961]">{Math.min(100, Math.round(avgScore) + (data.improvementActions?.reduce((sum: number, a: any) => sum + (a.impact === 'Alto' ? 8 : a.impact === 'Médio' ? 5 : typeof a.impact === 'number' ? a.impact : 3), 0) || 0))}/100</strong>
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* ═══ Plano de Acção 30 Dias ═══ */}
+            <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <GoldIcon size="w-8 h-8">
+                  <Calendar className="w-4 h-4 text-[#C9A961]" />
+                </GoldIcon>
+                <p className="text-xs font-semibold tracking-wider text-muted-foreground">PLANO DE ACÇÃO — 30 DIAS</p>
+              </div>
+              <div className="space-y-3">
+                {(data.actionPlan || [
+                  { week: 'Semana 1-2', title: 'Optimização de Conteúdo', tasks: ['Reescrever resumo profissional com métricas de impacto', 'Adicionar resultados quantificáveis a cada experiência', 'Alinhar keywords com as funções-alvo'] },
+                  { week: 'Semana 3', title: 'Estrutura e Formatação', tasks: ['Optimizar hierarquia visual e espaçamento', 'Garantir compatibilidade ATS (formato, fontes, secções)', 'Adicionar secções em falta (certificações, idiomas, etc.)'] },
+                  { week: 'Semana 4', title: 'Validação e Ajustes', tasks: ['Pedir feedback a 2-3 profissionais da área', 'Testar em diferentes sistemas ATS', 'Personalizar versões para candidaturas específicas'] },
+                ]).map((phase: any, i: number) => (
+                  <div key={i} className="p-3 bg-muted/20 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">{phase.week}</span>
+                      <span className="text-sm font-semibold text-foreground">{phase.title}</span>
+                    </div>
+                    {phase.tasks.map((task: string, j: number) => (
+                      <p key={j} className="text-sm text-muted-foreground ml-4 flex items-start gap-2 mb-1">
+                        <span className="text-muted-foreground/50 shrink-0">○</span> {task}
+                      </p>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
