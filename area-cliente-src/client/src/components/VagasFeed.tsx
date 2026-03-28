@@ -221,7 +221,9 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
     const useEnglish = forceEnglish || isUnsupportedCountry;
     if (keywords.length > 0) {
       const kws = useEnglish ? translateKeywordsToEnglish(keywords) : keywords;
-      return kws.slice(0, 3).join(' ');
+      // For unsupported countries (GB fallback), use only 1 keyword to avoid overly restrictive queries
+      const limit = isUnsupportedCountry ? 1 : 3;
+      return kws.slice(0, limit).join(' ');
     }
     return (lang === 'pt' && !useEnglish) ? 'recursos humanos gestão' : 'human resources management';
   }, [lang, isUnsupportedCountry]);
@@ -283,6 +285,46 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
         mapped.sort((a, b) => b.match - a.match);
         setVagas(mapped);
         setIsApiData(true);
+      } else if (isUnsupportedCountry && query !== 'management') {
+        // Retry with a broader generic keyword for unsupported countries
+        const retryParams = new URLSearchParams({
+          country: adzunaCountry,
+          what: 'management',
+          results_per_page: '10',
+        });
+        const retryUrl = `${ADZUNA_PROXY_URL}?${retryParams.toString()}`;
+        const retryRes = await fetch(retryUrl);
+        const retryData = await retryRes.json();
+        if (retryData.results?.length) {
+          const currencySymbol = adzunaCountry === 'gb' ? '£' : adzunaCountry === 'us' ? '$' : '€';
+          const mapped: Vaga[] = retryData.results.map((j: any) => {
+            const title = (j.title || '').replace(/<\/?[^>]+(>|$)/g, '');
+            const company = j.company?.display_name || '';
+            const loc = j.location?.display_name || countryName || '';
+            const isRemote = /remot/i.test(title + ' ' + (j.description || '') + ' ' + loc);
+            const tags: string[] = [];
+            if (j.category?.label) tags.push(j.category.label);
+            const match = 60 + Math.floor(Math.random() * 15);
+            return {
+              title, company, location: loc,
+              salary: j.salary_min && j.salary_max
+                ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}–${Math.round(j.salary_max / 12).toLocaleString()}`
+                : j.salary_min ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}+` : null,
+              remote: isRemote, tags, match,
+              key: (j.category?.label || '').toLowerCase(),
+              url: j.redirect_url || getAdzunaSearchUrl(adzunaCountry, title, loc),
+            };
+          });
+          mapped.sort((a, b) => b.match - a.match);
+          setVagas(mapped);
+          setIsApiData(true);
+        } else {
+          setVagas([]);
+          setIsApiData(false);
+          setError(lang === 'pt'
+            ? 'Sem vagas encontradas para esta pesquisa. Tenta alterar o país ou região.'
+            : 'No jobs found for this search. Try changing the country or region.');
+        }
       } else {
         setVagas([]);
         setIsApiData(false);
