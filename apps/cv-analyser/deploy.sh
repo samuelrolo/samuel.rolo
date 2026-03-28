@@ -20,19 +20,21 @@ BUILD_DIR="$SCRIPT_DIR/dist/public"
 DEPLOY_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 COMMIT_MSG="${1:-deploy: update CV Analyser assets}"
 
-# All 4 SPA directories that share the same build output
-SPA_DIRS=("cv-analyser" "en/cv-analyser" "career-path" "en/career-path")
+# All 6 SPA directories that share the same build output
+SPA_DIRS=("cv-analyser" "en/cv-analyser" "career-path" "en/career-path" "career-intelligence" "en/career-intelligence")
 
-# All 8 routes to verify after deploy
+# All 12 routes to verify after deploy
 ROUTES=(
   "https://www.share2inspire.pt/cv-analyser"
   "https://www.share2inspire.pt/cv-analyser/results"
   "https://www.share2inspire.pt/career-path"
   "https://www.share2inspire.pt/career-path/results"
+  "https://www.share2inspire.pt/career-intelligence"
   "https://www.share2inspire.pt/en/cv-analyser"
   "https://www.share2inspire.pt/en/cv-analyser/results"
   "https://www.share2inspire.pt/en/career-path"
   "https://www.share2inspire.pt/en/career-path/results"
+  "https://www.share2inspire.pt/en/career-intelligence"
 )
 
 echo "═══════════════════════════════════════"
@@ -154,7 +156,7 @@ done
 echo ""
 if [ "$ALL_OK" = true ]; then
   echo "═══════════════════════════════════════"
-  echo "  ✓ ALL 8 ROUTES OK — Deploy complete!"
+  echo "  ✓ ALL ROUTES OK — Deploy complete!"
   echo "═══════════════════════════════════════"
 else
   echo "═══════════════════════════════════════"
