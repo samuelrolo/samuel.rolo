@@ -12,6 +12,7 @@ import { supabase, type MemberContent } from '@/lib/supabase';
 import { Link } from 'wouter';
 import CareerProgress from '@/components/CareerProgress';
 import UpgradePage from './UpgradePage';
+import ExtraAnalysisPaymentModal, { type ExtraAnalysisProduct } from '@/components/ExtraAnalysisPaymentModal';
 import VagasFeed from '@/components/VagasFeed';
 import AnalysisResultsFull from '@/components/AnalysisResults';
 import { transformGeminiResponse } from '@/lib/analysisTransformer';
@@ -1113,7 +1114,7 @@ export default function MemberArea() {
       const analysisSource = extractionResult.analysis || extractionResult;
       const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
       const linkedinForCi = cpLinkedinUrl.trim() || profile?.linkedin_url || '';
-      const ciBody: any = { mode: 'career_path', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: linkedinForCi, country: cpCountry, region: cpRegion, language: lang };
+      const ciBody: any = { mode: 'career_intelligence', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: linkedinForCi, country: cpCountry, region: cpRegion, language: lang };
       const result = await fetchWithRetry(ciBody);
       setAnalysisResult(result);
       const extraPrice = isExtra ? (planTier === 'pro' ? 9.75 : 19.50) : 0;
@@ -1450,7 +1451,8 @@ export default function MemberArea() {
   }, [savedAnalyses, t]);
 
   // ─── Send Analysis by Email ──────────────────────────────────────────────
-  const SEND_EMAIL_URL = `${SUPABASE_URL}/functions/v1/send-analysis-email`;
+  const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+  const SEND_EMAIL_URL = `${BACKEND_URL}/api/email/send`;
 
   const openEmailModal = () => {
     setEmailTo(profile?.email || user?.email || '');
@@ -1474,7 +1476,7 @@ export default function MemberArea() {
       const analysisType = typeMap[toolName] || toolName;
       const resp = await fetch(SEND_EMAIL_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ to_email: emailTo, to_name: profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : '', subject: `Share2Inspire — ${analysisType}`, html_content: htmlContent, analysis_type: analysisType }),
       });
       const data = await resp.json();
@@ -1967,42 +1969,30 @@ export default function MemberArea() {
 
       {/* ═══════════════════ EXTRA PAYMENT CONFIRMATION MODAL ═══════════════════ */}
       {pendingExtraRun && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setPendingExtraRun(null)}>
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6 animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center"><Euro className="w-5 h-5 text-amber-600" /></div>
-              <div>
-                <h3 className="text-sm font-semibold text-[#1a1a1a]">{lang === 'pt' ? 'Confirmar análise extra' : 'Confirm extra analysis'}</h3>
-                <p className="text-[11px] text-[#999]">{lang === 'pt' ? 'Já atingiste o limite mensal do teu plano.' : 'You have reached your monthly plan limit.'}</p>
-              </div>
-            </div>
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-5 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-[#1a1a1a] font-medium">{pendingExtraRun === 'career_path' ? 'Career Path' : 'Career Intelligence'}</span>
-                <span className="text-sm font-bold text-[#1a1a1a]">
-                  {pendingExtraRun === 'career_path' ? (planTier === 'pro' ? '4,75€' : '9,50€') : (planTier === 'pro' ? '9,75€' : '19,50€')}
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-xs text-[#999]">
-                <span>{lang === 'pt' ? 'Preço normal' : 'Normal price'}</span>
-                <span className="line-through">{pendingExtraRun === 'career_path' ? '19€' : '39€'}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs text-emerald-600">
-                <span>{lang === 'pt' ? 'Desconto membro' : 'Member discount'}</span>
-                <span className="font-medium">
-                  {pendingExtraRun === 'career_path' ? (planTier === 'pro' ? '-75%' : '-50%') : (planTier === 'pro' ? '-75%' : '-50%')}
-                </span>
-              </div>
-            </div>
-            <p className="text-xs text-[#999] mb-5">{lang === 'pt' ? 'O valor será adicionado à tua próxima fatura. Podes cancelar a qualquer momento.' : 'The amount will be added to your next invoice. You can cancel at any time.'}</p>
-            <div className="flex items-center gap-3">
-              <button onClick={() => setPendingExtraRun(null)} className="flex-1 px-4 py-2.5 text-xs font-medium text-[#666] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-colors">{lang === 'pt' ? 'Cancelar' : 'Cancel'}</button>
-              <button onClick={() => { const type = pendingExtraRun; setPendingExtraRun(null); if (type === 'career_path') runCareerPath(); else runCareerIntelligence(); }} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-medium text-white bg-gradient-to-r from-[#1a1a1a] to-[#333] rounded-lg hover:from-[#333] hover:to-[#444] transition-all">
-                <Sparkles className="w-3.5 h-3.5" />{lang === 'pt' ? 'Confirmar e gerar' : 'Confirm and generate'}
-              </button>
-            </div>
-          </div>
-        </div>
+        <ExtraAnalysisPaymentModal
+          product={pendingExtraRun === 'career_path' ? {
+            type: 'career_path',
+            label: 'Career Path',
+            price: planTier === 'pro' ? 4.75 : 9.50,
+            originalPrice: 19,
+            discountLabel: planTier === 'pro' ? '-75%' : '-50%',
+            stripeProductType: planTier === 'pro' ? 'career_path_member_pro' : 'career_path_member_growth',
+          } : {
+            type: 'career_intelligence',
+            label: 'Career Intelligence',
+            price: planTier === 'pro' ? 9.75 : 19.50,
+            originalPrice: 39,
+            discountLabel: planTier === 'pro' ? '-75%' : '-50%',
+            stripeProductType: 'career_intelligence_member_pro',
+          }}
+          onClose={() => setPendingExtraRun(null)}
+          onPaymentSuccess={() => {
+            const type = pendingExtraRun;
+            setPendingExtraRun(null);
+            if (type === 'career_path') runCareerPath();
+            else runCareerIntelligence();
+          }}
+        />
       )}
 
       {/* ═══════════════════ EMAIL MODAL ═══════════════════ */}

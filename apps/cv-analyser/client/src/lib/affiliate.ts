@@ -244,7 +244,7 @@ const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 export async function incrementCouponUsage(couponCode: string): Promise<void> {
   try {
     // Primary: use backend endpoint (handles deactivation when max_uses reached)
-    const backendRes = await fetch(`${BACKEND_URL}/use-coupon`, {
+    const backendRes = await fetch(`${BACKEND_URL}/api/payment/use-coupon`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code: couponCode }),
