@@ -15,7 +15,7 @@ import UpgradePage from './UpgradePage';
 import ExtraAnalysisPaymentModal, { type ExtraAnalysisProduct } from '@/components/ExtraAnalysisPaymentModal';
 import VagasFeed from '@/components/VagasFeed';
 import AnalysisResultsFull from '@/components/AnalysisResults';
-import { transformGeminiResponse } from '@/lib/analysisTransformer';
+import { transformGeminiResponse } from '@/lib/transformGeminiResponse';
 import { countries } from '@/lib/countries';
 import * as pdfjsLib from 'pdfjs-dist';
 import {

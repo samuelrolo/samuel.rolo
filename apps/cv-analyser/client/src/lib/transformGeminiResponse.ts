@@ -163,12 +163,30 @@ export function transformGeminiResponse(analysis: any): any {
     const order = ['Estrutura', 'Conteúdo', 'Formação', 'Experiência'];
     quadrants.sort((a: any, b: any) => order.indexOf(a.title) - order.indexOf(b.title));
 
-    // ─── 3. KEYWORDS ────────────────────────────────────────────────────
-    if (analysis.candidate_profile?.key_skills?.length > 0) {
+    // ─── 2b. OVERRIDE: If Gemini returned atsRejectionRate directly, use it ───
+    if (typeof analysis.atsRejectionRate === 'number') {
+      console.log('[CV_ENGINE] Using Gemini-provided atsRejectionRate:', analysis.atsRejectionRate);
+      atsRejectionRate = analysis.atsRejectionRate;
+    }
+    if (typeof analysis.atsTopFactor === 'string' && analysis.atsTopFactor.trim()) {
+      atsTopFactor = analysis.atsTopFactor;
+    }
+    if (typeof analysis.perceivedRole === 'string' && analysis.perceivedRole.trim()) {
+      perceivedRole = analysis.perceivedRole;
+    }
+    if (typeof analysis.perceivedSeniority === 'string' && analysis.perceivedSeniority.trim()) {
+      perceivedSeniority = analysis.perceivedSeniority;
+    }
+    if (Array.isArray(analysis.keywords) && analysis.keywords.length > 0) {
+      keywords = analysis.keywords.slice(0, 10);
+    }
+
+    // ─── 3. KEYWORDS (fallback if not already set) ─────────────────────
+    if (keywords.length === 0 && analysis.candidate_profile?.key_skills?.length > 0) {
       keywords = analysis.candidate_profile.key_skills.slice(0, 6);
-    } else if (analysis.keywords_extracted?.length > 0) {
+    } else if (keywords.length === 0 && analysis.keywords_extracted?.length > 0) {
       keywords = analysis.keywords_extracted;
-    } else if (analysis.suitability_for_roles) {
+    } else if (keywords.length === 0 && analysis.suitability_for_roles) {
       const roles = analysis.suitability_for_roles;
       keywords = [roles.primary, ...(roles.secondary || [])].filter(Boolean).slice(0, 6);
     }
@@ -329,43 +347,103 @@ export function transformGeminiResponse(analysis: any): any {
       return (urgencyOrder[a.urgency] || 1) - (urgencyOrder[b.urgency] || 1);
     });
 
-    // ─── 10. DETAILED ATS ANALYSIS ──────────────────────────────────────
-    detailedAtsAnalysis = {
-      factors: [
-        atsTopFactor || 'Optimizar palavras-chave para a função-alvo',
-        ...(analysis.global_summary?.improvements || []).slice(0, 3),
-      ].filter(Boolean),
-      atsSystems: ['Workday', 'Taleo', 'Greenhouse', 'SAP SuccessFactors', 'iCIMS'],
-      quickFixes: [
-        'Usar formato cronológico inverso',
-        'Evitar tabelas, colunas e gráficos',
-        'Incluir palavras-chave do anúncio de emprego',
-        'Usar fontes standard (Arial, Calibri, Times)',
-        'Guardar em PDF com texto seleccionável',
-      ],
-    };
+    // ─── 10. DETAILED ATS ANALYSIS — prefer Gemini-provided data ──────
+    if (analysis.detailedAtsAnalysis && typeof analysis.detailedAtsAnalysis === 'object') {
+      console.log('[CV_ENGINE] Using Gemini-provided detailedAtsAnalysis');
+      const da = analysis.detailedAtsAnalysis;
+      // Normalize factors: Gemini may return [{factor, status, detail}] or string[]
+      let factors: string[] = [];
+      if (Array.isArray(da.factors)) {
+        factors = da.factors.map((f: any) => {
+          if (typeof f === 'string') return f;
+          if (f && typeof f === 'object') return f.detail || f.factor || JSON.stringify(f);
+          return '';
+        }).filter(Boolean);
+      }
+      // Normalize atsSystems: Gemini may return [{name, compatibility}] or string[]
+      let atsSystems: string[] = [];
+      if (Array.isArray(da.atsSystems)) {
+        atsSystems = da.atsSystems.map((s: any) => {
+          if (typeof s === 'string') return s;
+          if (s && typeof s === 'object') return s.name || '';
+          return '';
+        }).filter(Boolean);
+      }
+      detailedAtsAnalysis = {
+        factors: factors.length > 0 ? factors : [atsTopFactor || 'Optimizar palavras-chave para a função-alvo'],
+        atsSystems: atsSystems.length > 0 ? atsSystems : ['Workday', 'Taleo', 'Greenhouse', 'SAP SuccessFactors', 'iCIMS'],
+        quickFixes: Array.isArray(da.quickFixes) ? da.quickFixes : [
+          'Usar formato cronológico inverso',
+          'Evitar tabelas, colunas e gráficos',
+          'Incluir palavras-chave do anúncio de emprego',
+          'Usar fontes standard (Arial, Calibri, Times)',
+          'Guardar em PDF com texto seleccionável',
+        ],
+      };
+    } else {
+      detailedAtsAnalysis = {
+        factors: [
+          atsTopFactor || 'Optimizar palavras-chave para a função-alvo',
+          ...(analysis.global_summary?.improvements || []).slice(0, 3),
+        ].filter(Boolean),
+        atsSystems: ['Workday', 'Taleo', 'Greenhouse', 'SAP SuccessFactors', 'iCIMS'],
+        quickFixes: [
+          'Usar formato cronológico inverso',
+          'Evitar tabelas, colunas e gráficos',
+          'Incluir palavras-chave do anúncio de emprego',
+          'Usar fontes standard (Arial, Calibri, Times)',
+          'Guardar em PDF com texto seleccionável',
+        ],
+      };
+    }
 
-    // ─── 11. RECRUITER DEEP ANALYSIS ────────────────────────────────────
-    recruiterDeepAnalysis = {
-      attentionMap: [
-        'Nome e título profissional (0-2 segundos)',
-        'Experiência mais recente (2-5 segundos)',
-        'Formação académica (5-8 segundos)',
-        'Competências-chave e certificações (8-15 segundos)',
-        'Coerência geral e formatação (15-30 segundos)',
-      ],
-      frictionPoints: [
-        ...(analysis.global_summary?.improvements || []).slice(0, 2),
-        ...(quadrants.filter((q: any) => q.score < q.benchmark).map((q: any) => `${q.title}: abaixo do benchmark (${q.score} vs ${q.benchmark})`)),
-      ].filter(Boolean).slice(0, 4),
-      positiveSignals: [
-        ...(analysis.global_summary?.strengths || []).slice(0, 2),
-        ...(quadrants.filter((q: any) => q.score >= q.benchmark).map((q: any) => `${q.title}: acima do benchmark (+${q.score - q.benchmark})`)),
-      ].filter(Boolean).slice(0, 4),
-      readingFlow: `O recrutador identifica rapidamente o perfil como ${perceivedRole || 'profissional qualificado'} (${perceivedSeniority || 'nível não determinado'}). ${quadrants.filter((q: any) => q.score >= q.benchmark).length >= 3 ? 'A maioria das dimensões está acima do benchmark, transmitindo uma imagem sólida.' : 'Algumas dimensões estão abaixo do benchmark, o que pode gerar hesitação na triagem inicial.'}`,
-    };
+    // ─── 11. RECRUITER DEEP ANALYSIS — prefer Gemini-provided data ────
+    if (analysis.recruiterDeepAnalysis && typeof analysis.recruiterDeepAnalysis === 'object') {
+      console.log('[CV_ENGINE] Using Gemini-provided recruiterDeepAnalysis');
+      const rd = analysis.recruiterDeepAnalysis;
+      recruiterDeepAnalysis = {
+        firstImpression: rd.firstImpression || rd.first_impression || '',
+        attentionMap: Array.isArray(rd.attentionMap) ? rd.attentionMap : Array.isArray(rd.attention_map) ? rd.attention_map : [
+          'Nome e título profissional (0-2 segundos)',
+          'Experiência mais recente (2-5 segundos)',
+          'Formação académica (5-8 segundos)',
+        ],
+        frictionPoints: Array.isArray(rd.frictionPoints) ? rd.frictionPoints : Array.isArray(rd.redFlags) ? rd.redFlags : Array.isArray(rd.friction_points) ? rd.friction_points : [],
+        positiveSignals: Array.isArray(rd.positiveSignals) ? rd.positiveSignals : Array.isArray(rd.greenFlags) ? rd.greenFlags : Array.isArray(rd.positive_signals) ? rd.positive_signals : [],
+        readingFlow: rd.readingFlow || rd.reading_flow || '',
+        interviewLikelihood: rd.interviewLikelihood || rd.interview_likelihood || '',
+        interviewLikelihoodReason: rd.interviewLikelihoodReason || rd.interview_likelihood_reason || '',
+      };
+    } else {
+      recruiterDeepAnalysis = {
+        attentionMap: [
+          'Nome e título profissional (0-2 segundos)',
+          'Experiência mais recente (2-5 segundos)',
+          'Formação académica (5-8 segundos)',
+          'Competências-chave e certificações (8-15 segundos)',
+          'Coerência geral e formatação (15-30 segundos)',
+        ],
+        frictionPoints: [
+          ...(analysis.global_summary?.improvements || []).slice(0, 2),
+          ...(quadrants.filter((q: any) => q.score < q.benchmark).map((q: any) => `${q.title}: abaixo do benchmark (${q.score} vs ${q.benchmark})`)),
+        ].filter(Boolean).slice(0, 4),
+        positiveSignals: [
+          ...(analysis.global_summary?.strengths || []).slice(0, 2),
+          ...(quadrants.filter((q: any) => q.score >= q.benchmark).map((q: any) => `${q.title}: acima do benchmark (+${q.score - q.benchmark})`)),
+        ].filter(Boolean).slice(0, 4),
+        readingFlow: `O recrutador identifica rapidamente o perfil como ${perceivedRole || 'profissional qualificado'} (${perceivedSeniority || 'nível não determinado'}). ${quadrants.filter((q: any) => q.score >= q.benchmark).length >= 3 ? 'A maioria das dimensões está acima do benchmark, transmitindo uma imagem sólida.' : 'Algumas dimensões estão abaixo do benchmark, o que pode gerar hesitação na triagem inicial.'}`,
+      };
+    }
 
-    // ─── 12. 30-DAY ACTION PLAN ─────────────────────────────────────────
+    // ─── 12. 30-DAY ACTION PLAN — prefer Gemini-provided data ─────────
+    if (Array.isArray(analysis.actionPlan) && analysis.actionPlan.length > 0) {
+      console.log('[CV_ENGINE] Using Gemini-provided actionPlan');
+      actionPlan30Days = analysis.actionPlan.map((a: any) => ({
+        week: a.week || '',
+        title: a.title || '',
+        actions: Array.isArray(a.tasks) ? a.tasks : Array.isArray(a.actions) ? a.actions : [],
+      }));
+    } else {
     actionPlan30Days = [
       {
         week: 'Semana 1-2',
@@ -395,6 +473,7 @@ export function transformGeminiResponse(analysis: any): any {
         ],
       },
     ];
+    } // end actionPlan else
 
   } catch (err) {
     console.error('[CV_ENGINE] Erro ao transformar resposta Gemini:', err);
