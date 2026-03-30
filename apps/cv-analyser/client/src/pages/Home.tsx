@@ -16,6 +16,7 @@ import * as pdfjsLib from "pdfjs-dist";
 import { trackCVUpload, trackAnalysisStart, trackAnalysisComplete, trackPaymentStart, trackPurchase } from "@/lib/gtag";
 import mammoth from "mammoth";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
+import { countries } from "./en/countries";
 
 // Configure pdf.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -286,6 +287,11 @@ export default function Home() {
   const [linkedInVoucherError, setLinkedInVoucherError] = useState<string | null>(null);
   const [linkedInVoucherValidating, setLinkedInVoucherValidating] = useState(false);
   // LinkedIn paywall inline payment
+  // Country and region for localised analysis
+  const [selectedCountry, setSelectedCountry] = useState<string>('Portugal');
+  const [selectedRegion, setSelectedRegion] = useState<string>('');
+  const countryData = countries.find(c => c.country === selectedCountry);
+
   // Mandatory email for analysis
   const [analysisEmail, setAnalysisEmail] = useState("");
   const [analysisEmailError, setAnalysisEmailError] = useState<string | null>(null);
@@ -343,6 +349,10 @@ export default function Home() {
 
   const handleAnalyze = async () => {
     if (!file) return;
+    if (!selectedCountry) {
+      setError('Selecciona o teu país para resultados localizados.');
+      return;
+    }
     // Validate mandatory email
     const emailCheck = validateEmail(analysisEmail);
     if (!emailCheck.valid) {
@@ -400,6 +410,8 @@ export default function Home() {
         try {
           const requestBody: any = {
             mode: 'cv_extraction',
+            country: selectedCountry,
+            region: selectedRegion || undefined,
             ...(jobInput.trim() ? { job_description: jobInput.trim().substring(0, 3000) } : {})
           };
           if (useServerExtraction) {
@@ -473,6 +485,8 @@ export default function Home() {
       sessionStorage.setItem('cvFile', base64Content);
       sessionStorage.setItem('cvFilename', file.name);
       sessionStorage.setItem('analysisLang', 'pt');
+      sessionStorage.setItem('analysisCountry', selectedCountry);
+      sessionStorage.setItem('analysisRegion', selectedRegion);
       if (jobInput.trim()) {
         sessionStorage.setItem('jobDescription', jobInput.trim());
       } else {
@@ -601,6 +615,10 @@ export default function Home() {
       setError('Introduz um URL de LinkedIn válido (ex: https://linkedin.com/in/o-teu-perfil)');
       return;
     }
+    if (!selectedCountry) {
+      setError('Selecciona o teu país para resultados localizados.');
+      return;
+    }
     if (!acceptedTerms) {
       setError('Aceita a Política de Privacidade para continuar.');
       return;
@@ -664,6 +682,8 @@ export default function Home() {
 
       const requestBody: any = {
         mode: 'cv_extraction',
+        country: selectedCountry,
+        region: selectedRegion || undefined,
         cv_text: scrapeData.cv_text.substring(0, 8000),
         linkedin_url: linkedInUrl,
         ...(jobInput.trim() ? { job_description: jobInput.trim().substring(0, 3000) } : {})
@@ -706,6 +726,8 @@ export default function Home() {
       sessionStorage.setItem('cvFile', '');
       sessionStorage.setItem('cvFilename', 'linkedin-profile');
       sessionStorage.setItem('analysisLang', 'pt');
+      sessionStorage.setItem('analysisCountry', selectedCountry);
+      sessionStorage.setItem('analysisRegion', selectedRegion);
       sessionStorage.setItem('linkedinUrl', linkedInUrl);
       // LinkedIn analysis is always paid - keep isPaid flag
       sessionStorage.setItem('isPaid', 'true');
@@ -1416,6 +1438,41 @@ export default function Home() {
             )}
           </div>
 
+          {/* Country/Region Selector */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-foreground flex items-center gap-1">
+              <Globe className="w-4 h-4 text-[#C9A961]" />
+              País e região <span className="text-red-500">*</span>
+            </label>
+            <div className="grid grid-cols-1 gap-2">
+              <select
+                value={selectedCountry}
+                onChange={(e) => { setSelectedCountry(e.target.value); setSelectedRegion(''); }}
+                className="w-full px-3 py-2.5 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
+                disabled={loading}
+              >
+                <option value="">Selecciona o teu país...</option>
+                {countries.map(c => (
+                  <option key={c.code} value={c.country}>{c.country}</option>
+                ))}
+              </select>
+              {countryData && countryData.regions.length > 1 && (
+                <select
+                  value={selectedRegion}
+                  onChange={(e) => setSelectedRegion(e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#C9A961]/50 focus:border-[#C9A961]"
+                  disabled={loading}
+                >
+                  <option value="">Selecciona a região (opcional)...</option>
+                  {countryData.regions.map(r => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+              )}
+            </div>
+            <p className="text-[11px] text-muted-foreground/70">Para estimativas salariais e recomendações adaptadas ao teu mercado.</p>
+          </div>
+
           {/* Mandatory Email Field */}
           <div className="space-y-1">
             <label htmlFor="analysis-email" className="text-sm font-medium text-foreground flex items-center gap-1">
@@ -1472,7 +1529,7 @@ export default function Home() {
                 handleAnalyze();
               }
             }}
-            disabled={loading || !acceptedTerms || !analysisEmail.trim() || (!file && !(linkedInUrl && linkedInUrl.toLowerCase().includes('linkedin.com') && showLinkedIn))}
+            disabled={loading || !acceptedTerms || !analysisEmail.trim() || !selectedCountry || (!file && !(linkedInUrl && linkedInUrl.toLowerCase().includes('linkedin.com') && showLinkedIn))}
             className="w-full h-12 text-base font-semibold bg-[#C9A961] hover:bg-[#A88B4E] text-white disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
