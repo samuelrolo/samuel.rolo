@@ -1086,12 +1086,10 @@ export default function MemberArea() {
     try {
       const cvData = await getCvData();
       if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) { setAnalysisError(lang === 'pt' ? 'Não foi possível ler o CV.' : 'Could not read CV.'); setAnalyzing(false); return; }
-      const extractionBody = buildCvRequestBody(cvData, 'cv_extraction');
-      const extractionResult = await fetchWithRetry(extractionBody);
-      const analysisSource = extractionResult.analysis || extractionResult;
-      const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
+      const cvText = cvData.text.substring(0, 8000);
       const linkedinForCp = cpLinkedinUrl.trim() || profile?.linkedin_url || '';
-      const careerPathBody: any = { mode: 'career_path', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: linkedinForCp, country: cpCountry, region: cpRegion, language: lang };
+      const careerPathBody: any = { mode: 'career_path', cv_text: cvText, linkedin_url: linkedinForCp, country: cpCountry, region: cpRegion, language: lang };
+      if (cvData.base64) { careerPathBody.file = cvData.base64; careerPathBody.filename = 'cv.pdf'; }
       const result = await fetchWithRetry(careerPathBody);
       setAnalysisResult(result);
       const extraPrice = isExtra ? (planTier === 'pro' ? 4.75 : 9.50) : 0;
