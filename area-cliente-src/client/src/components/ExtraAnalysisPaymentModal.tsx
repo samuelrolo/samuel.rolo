@@ -1,7 +1,7 @@
 /**
  * ExtraAnalysisPaymentModal
  * Modal de pagamento para análises extra (quando o utilizador excede o limite do plano).
- * Suporta: MB WAY, Multibanco, Stripe, PayPal
+ * Suporta: MB WAY, Stripe (Cartão), PayPal — alinhado com o standalone.
  * Após pagamento confirmado, executa a análise automaticamente via onPaymentSuccess callback.
  * Backend: share2inspire-beckend.lm.r.appspot.com
  */
@@ -9,23 +9,23 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
 import {
-  X, Smartphone, ArrowRight, ArrowLeft, Check,
-  Copy, Loader2, AlertCircle, CreditCard, Building2,
+  X, Smartphone, ArrowLeft, Check,
+  Copy, Loader2, AlertCircle, CreditCard,
   Sparkles, CheckCircle2,
 } from 'lucide-react';
 
-type PayMethod = 'mbway' | 'multibanco' | 'stripe' | 'paypal';
-type Step = 'select' | 'form' | 'processing' | 'polling' | 'mbref' | 'success' | 'error';
+type PayMethod = 'mbway' | 'stripe' | 'paypal';
+type Step = 'method' | 'processing' | 'polling' | 'success' | 'error';
 
 const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 
 export type ExtraAnalysisProduct = {
   type: 'career_path' | 'career_intelligence';
   label: string;
-  price: number;          // final price after member discount (e.g. 9.75)
-  originalPrice: number;  // original price (e.g. 39)
-  discountLabel: string;  // e.g. "-75%"
-  stripeProductType: string; // e.g. 'career_intelligence_member_pro'
+  price: number;
+  originalPrice: number;
+  discountLabel: string;
+  stripeProductType: string;
 };
 
 type Props = {
@@ -36,14 +36,6 @@ type Props = {
 
 function formatPrice(price: number) {
   return price.toFixed(2).replace('.', ',') + ' €';
-}
-
-function formatPhone(phone: string) {
-  const clean = phone.replace(/\D/g, '');
-  if (clean.length >= 9) {
-    return `${clean.slice(0, 3)} ${clean.slice(3, 6)} ${clean.slice(6, 9)}`;
-  }
-  return phone;
 }
 
 // ── Tracking helpers ──────────────────────────────────────────
@@ -87,17 +79,12 @@ function trackPurchase(value: number, transactionId: string, productLabel: strin
 export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentSuccess }: Props) {
   const { t, lang } = useI18n();
   const { user, profile } = useAuth();
-  const [method, setMethod] = useState<PayMethod | null>(null);
-  const [step, setStep] = useState<Step>('select');
+  const [method, setMethod] = useState<PayMethod>('mbway');
+  const [step, setStep] = useState<Step>('method');
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
-  const [copied, setCopied] = useState(false);
-
-  // Multibanco reference data
-  const [mbEntity, setMbEntity] = useState('');
-  const [mbReference, setMbReference] = useState('');
   const [orderId, setOrderId] = useState('');
 
   // MB WAY polling state
@@ -126,23 +113,6 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
       if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
     };
   }, []);
-
-  function selectMethod(m: PayMethod) {
-    setMethod(m);
-    setStep('form');
-    setError('');
-  }
-
-  function goBack() {
-    if (step === 'form') {
-      setMethod(null);
-      setStep('select');
-      setError('');
-    } else if (step === 'error') {
-      setStep('form');
-      setError('');
-    }
-  }
 
   // ── MB WAY polling ────────────────────────────────────────
   const startPolling = (oid: string) => {
@@ -178,7 +148,6 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
           clearInterval(pollingIntervalRef.current!);
           trackPurchase(finalPrice, oid, product.label);
           setStep('success');
-          // Trigger the analysis after a brief delay
           setTimeout(() => onPaymentSuccess(), 1500);
           return;
         }
@@ -239,7 +208,7 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
   async function handleMbWay() {
     const cleanPhone = phone.replace(/\D/g, '').replace(/^(\+?351)/, '');
     if (cleanPhone.length < 9) { setError(lang === 'pt' ? 'Número de telemóvel inválido' : 'Invalid phone number'); return; }
-    if (!name.trim()) { setError(lang === 'pt' ? 'Introduz o teu nome' : 'Enter your name'); return; }
+    if (!email) { setError(lang === 'pt' ? 'Introduz o teu email' : 'Enter your email'); return; }
     setStep('processing');
     setError('');
     const oid = `S2I-EXTRA-MBWAY-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
@@ -276,41 +245,6 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
     }
   }
 
-  // ── Multibanco payment ────────────────────────────────────
-  async function handleMultibanco() {
-    if (!name.trim()) { setError(lang === 'pt' ? 'Introduz o teu nome' : 'Enter your name'); return; }
-    setStep('processing');
-    setError('');
-    const oid = `S2I-EXTRA-MB-${Date.now()}`;
-    setOrderId(oid);
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/payment/multibanco`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId: oid,
-          amount: finalPrice.toFixed(2),
-          customerName: name,
-          customerEmail: email,
-          description: `Share2Inspire - ${product.label} (Extra)`,
-        }),
-      });
-      const data = await res.json();
-      if (data.success && data.entity && data.reference) {
-        setMbEntity(data.entity);
-        setMbReference(data.reference);
-        setStep('mbref');
-        trackPurchase(finalPrice, oid, product.label);
-      } else {
-        setError(data.error || data.message || (lang === 'pt' ? 'Erro ao gerar referência' : 'Error generating reference'));
-        setStep('error');
-      }
-    } catch {
-      setError(lang === 'pt' ? 'Erro ao processar pagamento' : 'Payment processing error');
-      setStep('error');
-    }
-  }
-
   // ── Stripe payment ────────────────────────────────────────
   async function handleStripe() {
     if (!email) { setError(lang === 'pt' ? 'Introduz o teu email' : 'Enter your email'); return; }
@@ -335,7 +269,6 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
       });
       const data = await res.json();
       if (!data.success || !data.url) throw new Error(data.error || 'Erro ao criar sessão de pagamento');
-      // Store info for post-payment callback
       sessionStorage.setItem('s2iExtraOrderId', oid);
       sessionStorage.setItem('s2iExtraType', product.type);
       window.location.href = data.url;
@@ -349,6 +282,8 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
   async function handlePayPal() {
     if (!email) { setError(lang === 'pt' ? 'Introduz o teu email' : 'Enter your email'); return; }
     const oid = `S2I-EXTRA-PAYPAL-${Date.now()}`;
+    sessionStorage.setItem('s2iExtraOrderId', oid);
+    sessionStorage.setItem('s2iExtraType', product.type);
     window.open(`https://paypal.me/SamuelRolo/${finalPrice.toFixed(2)}EUR`, '_blank');
     trackPurchase(finalPrice, oid, product.label);
     setStep('success');
@@ -357,24 +292,8 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
 
   function handleConfirm() {
     if (method === 'mbway') handleMbWay();
-    else if (method === 'multibanco') handleMultibanco();
     else if (method === 'stripe') handleStripe();
     else if (method === 'paypal') handlePayPal();
-  }
-
-  async function copyReference() {
-    try {
-      await navigator.clipboard.writeText(mbReference);
-    } catch {
-      const input = document.createElement('input');
-      input.value = mbReference;
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand('copy');
-      document.body.removeChild(input);
-    }
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   }
 
   return (
@@ -387,8 +306,8 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#e5e5e5] sticky top-0 bg-[#F0F0EE] z-10">
           <div className="flex items-center gap-3">
-            {(step === 'form' || step === 'error') && (
-              <button onClick={goBack} className="text-[#999] hover:text-[#1a1a1a] transition-colors">
+            {step === 'error' && (
+              <button onClick={() => { setStep('method'); setError(''); }} className="text-[#999] hover:text-[#1a1a1a] transition-colors">
                 <ArrowLeft className="w-4 h-4" />
               </button>
             )}
@@ -421,86 +340,80 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
             </div>
           </div>
 
-          {/* ── Step: Select payment method ── */}
-          {step === 'select' && (
-            <div className="space-y-3">
-              <p className="text-xs text-[#999] mb-3">
-                {lang === 'pt' ? 'Escolhe o método de pagamento:' : 'Choose payment method:'}
-              </p>
-              <button onClick={() => selectMethod('mbway')} className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-[#e5e5e5] rounded-lg hover:border-[#1a1a1a] transition-colors group">
-                <Smartphone className="w-5 h-5 text-[#999] group-hover:text-[#1a1a1a]" />
-                <div className="flex-1 text-left">
-                  <span className="text-sm font-medium text-[#1a1a1a]">MB WAY</span>
-                  <p className="text-[10px] text-[#999]">{lang === 'pt' ? 'Pagamento instantâneo' : 'Instant payment'}</p>
+          {/* ── Step: Method selection + form (inline like standalone) ── */}
+          {step === 'method' && (
+            <div className="space-y-5">
+              {/* Method tabs — grid 3 cols like standalone */}
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#1a1a1a]">
+                  {lang === 'pt' ? 'Método de pagamento' : 'Payment method'}
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(['mbway', 'stripe', 'paypal'] as PayMethod[]).map(m => (
+                    <button
+                      key={m}
+                      onClick={() => { setMethod(m); setError(''); }}
+                      className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+                        method === m
+                          ? 'border-[#C9A961] bg-[#C9A961]/5 text-[#1a1a1a]'
+                          : 'border-[#e5e5e5] text-[#999] hover:border-[#C9A961]/50'
+                      }`}
+                    >
+                      {m === 'mbway' ? 'MB WAY' : m === 'stripe' ? (lang === 'pt' ? 'Cartão' : 'Card') : 'PayPal'}
+                    </button>
+                  ))}
                 </div>
-                <ArrowRight className="w-4 h-4 text-[#ccc] group-hover:text-[#1a1a1a]" />
-              </button>
-              <button onClick={() => selectMethod('multibanco')} className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-[#e5e5e5] rounded-lg hover:border-[#1a1a1a] transition-colors group">
-                <Building2 className="w-5 h-5 text-[#999] group-hover:text-[#1a1a1a]" />
-                <div className="flex-1 text-left">
-                  <span className="text-sm font-medium text-[#1a1a1a]">Multibanco</span>
-                  <p className="text-[10px] text-[#999]">{lang === 'pt' ? 'Referência para pagamento' : 'Payment reference'}</p>
-                </div>
-                <ArrowRight className="w-4 h-4 text-[#ccc] group-hover:text-[#1a1a1a]" />
-              </button>
-              <button onClick={() => selectMethod('stripe')} className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-[#e5e5e5] rounded-lg hover:border-[#1a1a1a] transition-colors group">
-                <CreditCard className="w-5 h-5 text-[#999] group-hover:text-[#1a1a1a]" />
-                <div className="flex-1 text-left">
-                  <span className="text-sm font-medium text-[#1a1a1a]">{lang === 'pt' ? 'Cartão de Crédito / Débito' : 'Credit / Debit Card'}</span>
-                  <p className="text-[10px] text-[#999]">Visa, Mastercard, Apple Pay</p>
-                </div>
-                <ArrowRight className="w-4 h-4 text-[#ccc] group-hover:text-[#1a1a1a]" />
-              </button>
-              <button onClick={() => selectMethod('paypal')} className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-[#e5e5e5] rounded-lg hover:border-[#1a1a1a] transition-colors group">
-                <span className="text-sm font-bold text-[#003087]">P</span>
-                <div className="flex-1 text-left">
-                  <span className="text-sm font-medium text-[#1a1a1a]">PayPal</span>
-                  <p className="text-[10px] text-[#999]">{lang === 'pt' ? 'Pagar com PayPal' : 'Pay with PayPal'}</p>
-                </div>
-                <ArrowRight className="w-4 h-4 text-[#ccc] group-hover:text-[#1a1a1a]" />
-              </button>
-            </div>
-          )}
+              </div>
 
-          {/* ── Step: Form ── */}
-          {step === 'form' && (
-            <div className="space-y-4">
-              {method === 'mbway' && (
-                <>
-                  <div>
-                    <label className="block text-xs font-medium text-[#666] mb-1">{lang === 'pt' ? 'Nome' : 'Name'}</label>
-                    <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2 text-sm bg-white border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#1a1a1a]" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-[#666] mb-1">{lang === 'pt' ? 'Telemóvel' : 'Phone'}</label>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-[#999]">+351</span>
-                      <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="912 345 678" className="flex-1 px-3 py-2 text-sm bg-white border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#1a1a1a]" />
-                    </div>
-                  </div>
-                </>
-              )}
-              {method === 'multibanco' && (
-                <div>
-                  <label className="block text-xs font-medium text-[#666] mb-1">{lang === 'pt' ? 'Nome' : 'Name'}</label>
-                  <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2 text-sm bg-white border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#1a1a1a]" />
-                </div>
-              )}
-              {(method === 'stripe' || method === 'paypal') && (
+              {/* Form fields based on selected method */}
+              <div className="space-y-3">
+                {/* Email — always shown */}
                 <div>
                   <label className="block text-xs font-medium text-[#666] mb-1">Email</label>
-                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full px-3 py-2 text-sm bg-white border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#1a1a1a]" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    className="w-full px-3 py-2 text-sm bg-white border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#1a1a1a]"
+                  />
                 </div>
-              )}
+
+                {/* Phone — only for MB WAY */}
+                {method === 'mbway' && (
+                  <div>
+                    <label className="block text-xs font-medium text-[#666] mb-1">
+                      {lang === 'pt' ? 'Telemóvel' : 'Phone'}
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-[#999]">+351</span>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={e => setPhone(e.target.value)}
+                        placeholder="912 345 678"
+                        className="flex-1 px-3 py-2 text-sm bg-white border border-[#e5e5e5] rounded-lg focus:outline-none focus:border-[#1a1a1a]"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {error && (
                 <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   {error}
                 </div>
               )}
-              <div className="flex items-center justify-between pt-2">
-                <span className="text-sm font-semibold text-[#1a1a1a]">{lang === 'pt' ? 'Total:' : 'Total:'} {formatPrice(finalPrice)}</span>
-                <button onClick={handleConfirm} className="flex items-center gap-2 px-5 py-2.5 text-xs font-medium text-white bg-gradient-to-r from-[#1a1a1a] to-[#333] rounded-lg hover:from-[#333] hover:to-[#444] transition-all">
+
+              {/* Confirm button */}
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-sm font-semibold text-[#1a1a1a]">
+                  {lang === 'pt' ? 'Total:' : 'Total:'} {formatPrice(finalPrice)}
+                </span>
+                <button
+                  onClick={handleConfirm}
+                  className="flex items-center gap-2 px-5 py-2.5 text-xs font-medium text-white bg-gradient-to-r from-[#1a1a1a] to-[#333] rounded-lg hover:from-[#333] hover:to-[#444] transition-all"
+                >
                   <Sparkles className="w-3.5 h-3.5" />
                   {lang === 'pt' ? 'Pagar e gerar' : 'Pay and generate'}
                 </button>
@@ -529,39 +442,6 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
             </div>
           )}
 
-          {/* ── Step: Multibanco reference ── */}
-          {step === 'mbref' && (
-            <div className="space-y-4 py-2">
-              <div className="bg-white border border-[#e5e5e5] rounded-lg p-4 space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#999]">{lang === 'pt' ? 'Entidade' : 'Entity'}</span>
-                  <span className="font-mono font-semibold text-[#1a1a1a]">{mbEntity}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#999]">{lang === 'pt' ? 'Referência' : 'Reference'}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono font-semibold text-[#1a1a1a]">{mbReference}</span>
-                    <button onClick={copyReference} className="text-[#999] hover:text-[#1a1a1a]">
-                      {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-                    </button>
-                  </div>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#999]">{lang === 'pt' ? 'Valor' : 'Amount'}</span>
-                  <span className="font-semibold text-[#1a1a1a]">{formatPrice(finalPrice)}</span>
-                </div>
-              </div>
-              <p className="text-xs text-[#999] text-center">
-                {lang === 'pt'
-                  ? 'Após o pagamento, a análise será gerada automaticamente. Podes fechar esta janela.'
-                  : 'After payment, the analysis will be generated automatically. You can close this window.'}
-              </p>
-              <button onClick={onClose} className="w-full px-4 py-2.5 text-xs font-medium text-[#666] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-colors">
-                {lang === 'pt' ? 'Fechar' : 'Close'}
-              </button>
-            </div>
-          )}
-
           {/* ── Step: Success ── */}
           {step === 'success' && (
             <div className="flex flex-col items-center gap-4 py-8">
@@ -587,7 +467,7 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
                 <AlertCircle className="w-7 h-7 text-red-600" />
               </div>
               <p className="text-sm text-red-700 text-center">{error}</p>
-              <button onClick={goBack} className="px-4 py-2 text-xs font-medium text-[#666] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-colors">
+              <button onClick={() => { setStep('method'); setError(''); }} className="px-4 py-2 text-xs font-medium text-[#666] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-colors">
                 {lang === 'pt' ? 'Tentar novamente' : 'Try again'}
               </button>
             </div>
