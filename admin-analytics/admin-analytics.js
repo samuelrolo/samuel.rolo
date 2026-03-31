@@ -879,6 +879,18 @@ function renderFunnel() {
     setText('funnelFree', freeCount);
     setText('funnelPaid', paidCount);
     setText('funnelCP', cpCount);
+    // Inject CI KPI card if not present in HTML
+    if (!document.getElementById('funnelCI')) {
+        const cpCard = document.getElementById('funnelCP')?.closest('.kpi-card');
+        if (cpCard && cpCard.parentElement) {
+            const ciCard = document.createElement('div');
+            ciCard.className = 'kpi-card';
+            ciCard.style.cssText = 'text-align:center;border-top:3px solid #7C3AED;';
+            ciCard.innerHTML = `<div class="kpi-label">Career Intelligence</div><div class="kpi-value" style="color:#7C3AED;" id="funnelCI">--</div><div class="kpi-sub" id="funnelCIConv">--% do Career Path</div>`;
+            cpCard.parentElement.appendChild(ciCard);
+            cpCard.parentElement.style.gridTemplateColumns = 'repeat(5,1fr)';
+        }
+    }
     setText('funnelCI', ciCount);
     setText('funnelFreeConv', lrTotal ? `${Math.round(freeCount / lrTotal * 100)}% do topo` : '—');
     setText('funnelPaidConv', freeCount ? `${Math.round(paidCount / (freeCount + paidCount) * 100)}% do grátis` : '—');
