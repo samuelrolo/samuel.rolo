@@ -293,6 +293,16 @@
             <div class="kpi-value purple" id="kpiCareerPaths">--</div>
             <div class="kpi-sub" id="kpiCPPct">--% dos pagantes</div>
         </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:#7C3AED;"></div>
+            <div class="kpi-label">Career Intelligence</div>
+            <div class="kpi-value" style="color:#7C3AED;" id="kpiCI">--</div>
+            <div class="kpi-sub" id="kpiCISub">área de membros</div>
+        </div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:var(--teal);"></div>
+            <div class="kpi-label">Membros Ativos</div>
+            <div class="kpi-value" style="color:var(--teal);" id="kpiMembers">--</div>
+            <div class="kpi-sub" id="kpiMembersSub">subscrições</div>
+        </div>
         <div class="kpi-card"><div class="kpi-accent" style="background:var(--orange);"></div>
             <div class="kpi-label">Últimos 7 dias</div>
             <div class="kpi-value" style="color:var(--orange);" id="kpi7d">--</div>
@@ -316,6 +326,7 @@
                             <th style="text-align:center;">Gratuitas</th>
                             <th style="text-align:center;">Pagas</th>
                             <th style="text-align:center;">Voucher</th>
+                            <th style="text-align:center;">Membros</th>
                             <th style="text-align:center;">Conversão</th>
                             <th style="text-align:right;">Receita</th>
                             <th style="text-align:right;">Ticket Médio</th>
@@ -323,7 +334,7 @@
                         </tr>
                     </thead>
                     <tbody id="pivotBody">
-                        <tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:24px;">A carregar...</td></tr>
+                        <tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:24px;">A carregar...</td></tr>
                     </tbody>
                     <tfoot id="pivotFoot" style="display:none;">
                         <tr style="background:var(--gold-bg);font-weight:600;">
@@ -332,6 +343,7 @@
                             <td style="text-align:center;" id="pivotTotalFree">--</td>
                             <td style="text-align:center;" id="pivotTotalPaid">--</td>
                             <td style="text-align:center;" id="pivotTotalVoucher">--</td>
+                            <td style="text-align:center;" id="pivotTotalMembers">--</td>
                             <td style="text-align:center;" id="pivotTotalConv">--</td>
                             <td style="text-align:right;color:var(--gold);" id="pivotTotalRevenue">--</td>
                             <td style="text-align:right;color:var(--gold);" id="pivotTotalTicket">--</td>
@@ -1259,8 +1271,7 @@
                 <select class="form-select" id="voucherPlan" style="width:100%;">
                     <option value="CV Analyser|1|9.99|standard|false">CV Analyser — 1 análise (9,99€)</option>
                     <option value="Career Path|1|19.99|career_path|true">Career Path — 1 análise (19,99€)</option>
-                    <option value="CI PRO Upgrade|1|29.00|career_intelligence_pro|false">CI PRO Upgrade — (29,00€)</option>
-                    <option value="Career Intelligence Full|1|49.00|career_intelligence_full|false">Career Intelligence Full — (49,00€)</option>
+                    <option value="Career Intelligence|1|29.00|career_intelligence|false">Career Intelligence — (29,00€)</option>
                     <option value="Bundle CV + Career Path|1|29.00|career_path|true">Bundle CV + Career Path (29,00€)</option>
                     <option value="LinkedIn Roaster|1|4.99|linkedin_roaster|false">LinkedIn Roaster (4,99€)</option>
                     <option value="PACK_TESTE_PARCERIA">Pack Teste Parceria (CV + Career + Roaster)</option>
@@ -1399,12 +1410,8 @@
                         <span class="badge" style="background:var(--gold);color:#fff;font-size:11px;">Career Path</span>
                     </label>
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
-                        <input type="checkbox" class="coupon-product-cb" value="career_intelligence_pro" checked>
-                        <span class="badge" style="background:#7C3AED;color:#fff;font-size:11px;">CI PRO (29€)</span>
-                    </label>
-                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
-                        <input type="checkbox" class="coupon-product-cb" value="career_intelligence_full" checked>
-                        <span class="badge" style="background:#5B21B6;color:#fff;font-size:11px;">CI Full (49€)</span>
+                        <input type="checkbox" class="coupon-product-cb" value="career_intelligence" checked>
+                        <span class="badge" style="background:#7C3AED;color:#fff;font-size:11px;">Career Intelligence</span>
                     </label>
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
                         <input type="checkbox" class="coupon-product-cb" value="bundle" checked>
