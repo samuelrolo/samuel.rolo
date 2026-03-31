@@ -1894,24 +1894,25 @@ function renderHealthLogs() {
 
     // Service Cards
     const cardsEl = document.getElementById('healthServiceCards');
-    cardsEl.innerHTML = latestRun.map(h => {
+    // Group services by category
+    const frontendServices = latestRun.filter(h => h.endpoint_name.startsWith('Frontend'));
+    const backendServices = latestRun.filter(h => h.endpoint_name.startsWith('Backend'));
+    const edgeServices = latestRun.filter(h => !h.endpoint_name.startsWith('Frontend') && !h.endpoint_name.startsWith('Backend'));
+
+    function buildCard(h) {
         const color = getStatusColor(h.status);
         const icon = getServiceIcon(h.endpoint_name);
         const label = getStatusLabel(h.status);
         const rec = getRecommendation(h);
         const ttfb = h.ttfb_ms != null ? `${h.ttfb_ms}ms` : 'N/A';
         const httpBadge = h.http_code ? (h.http_code >= 200 && h.http_code < 300 ? `<span style="color:var(--green);font-weight:600;">${h.http_code}</span>` : `<span style="color:var(--orange);font-weight:600;">${h.http_code}</span>`) : '<span style="color:var(--red);font-weight:600;">N/A</span>';
-
-        // Calculate uptime from history for this endpoint
         const endpointHistory = allHealthLogs.filter(l => l.endpoint_name === h.endpoint_name);
         const totalChecks = endpointHistory.length;
         const healthyChecks = endpointHistory.filter(l => l.status === 'healthy').length;
         const uptime = totalChecks > 0 ? Math.round((healthyChecks / totalChecks) * 100) : 0;
         const uptimeColor = uptime >= 95 ? 'var(--green)' : uptime >= 85 ? 'var(--orange)' : 'var(--red)';
-
         const recIcon = rec.severity === 'critical' ? '🚨' : rec.severity === 'warning' ? '⚠️' : rec.severity === 'info' ? 'ℹ️' : '✅';
-
-        return `<div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:16px;border-left:4px solid ${color};">
+        return `<div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;border-left:4px solid ${color};">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
                 <div style="display:flex;align-items:center;gap:8px;">
                     <i class="fas ${icon}" style="color:${color};font-size:16px;"></i>
@@ -1920,25 +1921,39 @@ function renderHealthLogs() {
                 <span style="background:${color};color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;">${label}</span>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
-                <div style="text-align:center;">
-                    <div style="font-size:11px;color:var(--text-muted);">TTFB</div>
-                    <div style="font-size:14px;font-weight:600;">${ttfb}</div>
-                </div>
-                <div style="text-align:center;">
-                    <div style="font-size:11px;color:var(--text-muted);">HTTP</div>
-                    <div style="font-size:14px;">${httpBadge}</div>
-                </div>
-                <div style="text-align:center;">
-                    <div style="font-size:11px;color:var(--text-muted);">Uptime</div>
-                    <div style="font-size:14px;font-weight:600;color:${uptimeColor};">${uptime}%</div>
-                </div>
+                <div style="text-align:center;"><div style="font-size:11px;color:var(--text-muted);">TTFB</div><div style="font-size:14px;font-weight:600;">${ttfb}</div></div>
+                <div style="text-align:center;"><div style="font-size:11px;color:var(--text-muted);">HTTP</div><div style="font-size:14px;">${httpBadge}</div></div>
+                <div style="text-align:center;"><div style="font-size:11px;color:var(--text-muted);">Uptime</div><div style="font-size:14px;font-weight:600;color:${uptimeColor};">${uptime}%</div></div>
             </div>
-            <div style="background:var(--bg);border-radius:6px;padding:8px 10px;font-size:12px;color:var(--text-muted);">
-                ${recIcon} ${rec.text}
-            </div>
+            <div style="background:var(--bg);border-radius:6px;padding:8px 10px;font-size:12px;color:var(--text-muted);">${recIcon} ${rec.text}</div>
             ${h.error_message ? `<div style="margin-top:6px;font-size:11px;color:var(--red);background:rgba(239,68,68,0.08);padding:4px 8px;border-radius:4px;"><i class="fas fa-bug"></i> ${h.error_message}</div>` : ''}
         </div>`;
-    }).join('');
+    }
+
+    function buildSection(title, icon, services, accentColor) {
+        if (!services.length) return '';
+        const downCount = services.filter(s => s.status === 'down').length;
+        const healthyCount = services.filter(s => s.status === 'healthy').length;
+        const statusText = downCount > 0 ? `<span style="color:var(--red);font-weight:600;">${downCount} indisponível</span>` : `<span style="color:var(--green);">${healthyCount}/${services.length} operacionais</span>`;
+        return `<div style="margin-bottom:24px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid ${accentColor};">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <i class="fas ${icon}" style="color:${accentColor};font-size:16px;"></i>
+                    <span style="font-size:14px;font-weight:700;color:var(--dark);">${title}</span>
+                    <span style="font-size:12px;color:var(--text-muted);">(${services.length})</span>
+                </div>
+                <div style="font-size:12px;">${statusText}</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;">
+                ${services.map(buildCard).join('')}
+            </div>
+        </div>`;
+    }
+
+    cardsEl.innerHTML =
+        buildSection('Frontend', 'fa-globe', frontendServices, 'var(--blue)') +
+        buildSection('Backend', 'fa-server', backendServices, 'var(--orange)') +
+        buildSection('Edge Functions', 'fa-bolt', edgeServices, 'var(--purple)');
 
     // Populate history filter
     const filterEl = document.getElementById('healthHistoryFilter');
