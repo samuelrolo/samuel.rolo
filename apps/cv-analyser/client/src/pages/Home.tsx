@@ -9,7 +9,7 @@ declare global {
 }
 
 import { useState, useEffect } from "react";
-import { Upload, FileText, Loader2, Home as HomeIcon, FileCheck, BarChart3, Grid2x2, TrendingUp, Eye, ChevronDown, ChevronUp, Star, Users, Award, Zap, Shield, Target, Clock, CheckCircle2, XCircle, Minus, Compass, Briefcase, Link, Globe, Check } from "lucide-react";
+import { Upload, FileText, Loader2, Home as HomeIcon, FileCheck, BarChart3, Grid2x2, TrendingUp, Eye, ChevronDown, ChevronUp, Star, Users, Award, Zap, Shield, Target, Clock, CheckCircle2, XCircle, Minus, Compass, Briefcase, Link, Globe, Check, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import * as pdfjsLib from "pdfjs-dist";
@@ -272,6 +272,22 @@ export default function Home() {
   const [emailForLink, setEmailForLink] = useState("");
   const [emailSent, setEmailSent] = useState(false);
   const [showLinkedIn, setShowLinkedIn] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Rotating headlines
+  const headlines = [
+    { text: "Vê se o teu CV passa nos filtros", highlight: "das empresas" },
+    { text: "O teu CV está a ser", highlight: "rejeitado sem saberes?" },
+    { text: "O que os recrutadores veem no teu CV em", highlight: "30 segundos" },
+    { text: "Descobre o teu", highlight: "Score ATS" },
+  ];
+  const [headlineIdx, setHeadlineIdx] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeadlineIdx(prev => (prev + 1) % headlines.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
   const [linkedInUrl, setLinkedInUrl] = useState("");
   const [showBuyVoucher, setShowBuyVoucher] = useState(false);
   const [voucherEmail, setVoucherEmail] = useState("");
@@ -996,28 +1012,47 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-foreground/10 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <FileCheck className="w-6 h-6 text-[#C9A961]" />
-            <span className="text-lg font-semibold text-foreground">CV Analyser</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <a href="/career-path" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden sm:block">Career Path</a>
-            <a href="/en/cv-analyser" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-colors text-sm font-medium text-[#C9A961]">
-              <Globe className="w-3.5 h-3.5" />
-              <span>EN</span>
+      {/* Header — Unified */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+          <a href="https://www.share2inspire.pt" className="flex items-center gap-2 shrink-0">
+            <img src="https://www.share2inspire.pt/images/logo.webp" alt="Share2Inspire" className="h-8" />
+          </a>
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex items-center gap-5 text-[0.8rem] font-medium tracking-wide uppercase">
+            <a href="https://www.share2inspire.pt" className="text-slate-500 hover:text-[#C9A961] transition-colors">Início</a>
+            <a href="/cv-analyser" className="text-[#C9A961]">CV Analyser</a>
+            <a href="/career-path" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Path</a>
+            <a href="https://www.share2inspire.pt/pages/servicos.html" className="text-slate-500 hover:text-[#C9A961] transition-colors">Serviços</a>
+            <a href="https://www.share2inspire.pt/pages/sobre.html" className="text-slate-500 hover:text-[#C9A961] transition-colors">Sobre</a>
+            <a href="https://www.share2inspire.pt/pages/contactos" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contactos</a>
+          </nav>
+          <div className="hidden lg:flex items-center gap-3">
+            <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Área de Cliente</a>
+            <a href="/en/cv-analyser" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-colors text-xs font-medium text-[#C9A961]">
+              <Globe className="w-3.5 h-3.5" /><span>EN</span>
             </a>
-            <a 
-              href="https://www.share2inspire.pt" 
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm font-medium text-foreground"
-            >
-              <HomeIcon className="w-4 h-4" />
-              <span>Homepage</span>
-            </a>
           </div>
+          {/* Mobile hamburger */}
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-600 hover:text-slate-900">
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden border-t border-slate-200 bg-white px-6 py-4 space-y-3">
+            <a href="https://www.share2inspire.pt" className="block text-sm text-slate-600 hover:text-[#C9A961]">Início</a>
+            <a href="/cv-analyser" className="block text-sm text-[#C9A961] font-semibold">CV Analyser</a>
+            <a href="/career-path" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Path</a>
+            <a href="https://www.share2inspire.pt/pages/servicos.html" className="block text-sm text-slate-600 hover:text-[#C9A961]">Serviços</a>
+            <a href="https://www.share2inspire.pt/pages/sobre.html" className="block text-sm text-slate-600 hover:text-[#C9A961]">Sobre</a>
+            <a href="https://www.share2inspire.pt/pages/contactos" className="block text-sm text-slate-600 hover:text-[#C9A961]">Contactos</a>
+            <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+              <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold">Área de Cliente</a>
+              <a href="/en/cv-analyser" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 text-xs font-medium text-[#C9A961]"><Globe className="w-3.5 h-3.5" />EN</a>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Bundle Banner — Main offer */}
@@ -1034,8 +1069,8 @@ export default function Home() {
       {/* Hero Section */}
       <main className="max-w-4xl mx-auto px-6 py-6 md:py-16">
         <div className="text-center space-y-3 md:space-y-6 mb-6 md:mb-12">
-          <h1 className="text-2xl md:text-5xl font-bold text-foreground leading-tight">
-            Descobre o teu <span className="text-[#C9A961]">Score ATS</span>
+          <h1 className="text-2xl md:text-5xl font-bold text-foreground leading-tight transition-opacity duration-500" key={headlineIdx}>
+            {headlines[headlineIdx].text} <span className="text-[#C9A961]">{headlines[headlineIdx].highlight}</span>
           </h1>
           <p className="text-sm md:text-lg text-muted-foreground max-w-2xl mx-auto">
             Análise gratuita em 30 segundos. Descobre se o teu CV passa nos sistemas de recrutamento.
@@ -1981,42 +2016,20 @@ export default function Home() {
             Porquê o CV Analyser?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-card border border-border rounded-xl p-6 space-y-3">
-              <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
-                <Target className="w-6 h-6 text-[#C9A961]" />
+            {[
+              { icon: <Target className="w-6 h-6 text-[#C9A961]" />, title: "Feito para Portugal", desc: "Análise adaptada ao mercado português. Relatórios em português de Portugal, com benchmarks locais e referências salariais nacionais." },
+              { icon: <TrendingUp className="w-6 h-6 text-[#C9A961]" />, title: "Curva Normal Exclusiva", desc: "Vê exactamente onde te posicionas face a outros candidatos. Nenhum outro serviço oferece este nível de comparação visual." },
+              { icon: <Clock className="w-6 h-6 text-[#C9A961]" />, title: "Resultados em 30 Segundos", desc: "Enquanto outros serviços demoram horas ou dias, o CV Analyser dá-te feedback imediato com IA de última geração." },
+              { icon: <Shield className="w-6 h-6 text-[#C9A961]" />, title: "Preço Justo, Sem Subscrição", desc: "Paga apenas quando precisas. Sem mensalidades, sem compromissos. A partir de €9,99 por análise completa." },
+            ].map((card, i) => (
+              <div key={i} className="bg-card border border-border rounded-xl p-6 space-y-3 flex flex-col min-h-[180px]">
+                <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center shrink-0">
+                  {card.icon}
+                </div>
+                <h3 className="text-lg font-semibold text-foreground">{card.title}</h3>
+                <p className="text-sm text-muted-foreground flex-1">{card.desc}</p>
               </div>
-              <h3 className="text-lg font-semibold text-foreground">Feito para Portugal</h3>
-              <p className="text-sm text-muted-foreground">
-                Análise adaptada ao mercado português. Relatórios em português de Portugal, com benchmarks locais e referências salariais nacionais.
-              </p>
-            </div>
-            <div className="bg-card border border-border rounded-xl p-6 space-y-3">
-              <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-[#C9A961]" />
-              </div>
-              <h3 className="text-lg font-semibold text-foreground">Curva Normal Exclusiva</h3>
-              <p className="text-sm text-muted-foreground">
-                Vê exactamente onde te posicionas face a outros candidatos. Nenhum outro serviço oferece este nível de comparação visual.
-              </p>
-            </div>
-            <div className="bg-card border border-border rounded-xl p-6 space-y-3">
-              <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
-                <Clock className="w-6 h-6 text-[#C9A961]" />
-              </div>
-              <h3 className="text-lg font-semibold text-foreground">Resultados em 30 Segundos</h3>
-              <p className="text-sm text-muted-foreground">
-                Enquanto outros serviços demoram horas ou dias, o CV Analyser dá-te feedback imediato com IA de última geração.
-              </p>
-            </div>
-            <div className="bg-card border border-border rounded-xl p-6 space-y-3">
-              <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
-                <Shield className="w-6 h-6 text-[#C9A961]" />
-              </div>
-              <h3 className="text-lg font-semibold text-foreground">Preço Justo, Sem Subscrição</h3>
-              <p className="text-sm text-muted-foreground">
-                Paga apenas quando precisas. Sem mensalidades, sem compromissos. A partir de €9,99 por análise completa.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
 

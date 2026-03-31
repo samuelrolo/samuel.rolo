@@ -2,7 +2,7 @@
 // Upload CV + LinkedIn → Pagamento → Ambos os motores correm → Resultados
 // Preço PT: €29,00
 import { useState, useEffect } from "react";
-import { Upload, FileText, Loader2, Compass, Target, TrendingUp, CheckCircle2, Linkedin, CreditCard, AlertCircle, Ticket, Briefcase, Sparkles, Shield, Check, ArrowRight, Lock, BarChart3, Zap, Globe } from "lucide-react";
+import { Upload, FileText, Loader2, Compass, Target, TrendingUp, CheckCircle2, Linkedin, CreditCard, AlertCircle, Ticket, Briefcase, Sparkles, Shield, Check, ArrowRight, Lock, BarChart3, Zap, Globe, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLocation } from "wouter";
@@ -106,6 +106,7 @@ export default function BundleHome() {
   // Analysis
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [analysisMsg, setAnalysisMsg] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isValidLinkedinUrl = (url: string) => {
     const trimmed = url.trim().toLowerCase();
@@ -550,23 +551,52 @@ export default function BundleHome() {
   /* ─── RENDER ─── */
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      {/* Nav */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2">
+      {/* Header — Unified */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+          <a href="https://www.share2inspire.pt" className="flex items-center gap-2 shrink-0">
             <img src="https://www.share2inspire.pt/images/logo.webp" alt="Share2Inspire" className="h-8" />
           </a>
-          <nav className="hidden sm:flex items-center gap-6 text-sm text-slate-600">
-            <a href="/cv-analyser" className="hover:text-slate-900 transition-colors">CV Analyser</a>
-            <a href="/career-path" className="hover:text-slate-900 transition-colors">Career Path</a>
-            <a href="/servicos" className="hover:text-slate-900 transition-colors">Serviços</a>
+          <nav className="hidden lg:flex items-center gap-5 text-[0.8rem] font-medium tracking-wide uppercase">
+            <a href="https://www.share2inspire.pt" className="text-slate-500 hover:text-[#C9A961] transition-colors">Início</a>
+            <a href="/cv-analyser" className="text-slate-500 hover:text-[#C9A961] transition-colors">CV Analyser</a>
+            <a href="/career-path" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Path</a>
+            <a href="/bundle" className="text-[#C9A961]">Bundle</a>
+            <a href="https://www.share2inspire.pt/pages/servicos.html" className="text-slate-500 hover:text-[#C9A961] transition-colors">Serviços</a>
+            <a href="https://www.share2inspire.pt/pages/sobre.html" className="text-slate-500 hover:text-[#C9A961] transition-colors">Sobre</a>
+            <a href="https://www.share2inspire.pt/pages/contactos" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contactos</a>
           </nav>
+          <div className="hidden lg:flex items-center gap-3">
+            <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Área de Cliente</a>
+            <a href="/en/bundle" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-colors text-xs font-medium text-[#C9A961]">
+              <Globe className="w-3.5 h-3.5" /><span>EN</span>
+            </a>
+          </div>
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-600 hover:text-slate-900">
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
+        {mobileMenuOpen && (
+          <div className="lg:hidden border-t border-slate-200 bg-white px-6 py-4 space-y-3">
+            <a href="https://www.share2inspire.pt" className="block text-sm text-slate-600 hover:text-[#C9A961]">Início</a>
+            <a href="/cv-analyser" className="block text-sm text-slate-600 hover:text-[#C9A961]">CV Analyser</a>
+            <a href="/career-path" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Path</a>
+            <a href="/bundle" className="block text-sm text-[#C9A961] font-semibold">Bundle</a>
+            <a href="https://www.share2inspire.pt/pages/servicos.html" className="block text-sm text-slate-600 hover:text-[#C9A961]">Serviços</a>
+            <a href="https://www.share2inspire.pt/pages/sobre.html" className="block text-sm text-slate-600 hover:text-[#C9A961]">Sobre</a>
+            <a href="https://www.share2inspire.pt/pages/contactos" className="block text-sm text-slate-600 hover:text-[#C9A961]">Contactos</a>
+            <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+              <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold">Área de Cliente</a>
+              <a href="/en/bundle" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 text-xs font-medium text-[#C9A961]"><Globe className="w-3.5 h-3.5" />EN</a>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* ─── HERO ─── */}
       {step === 'hero' && (
-        <div className="max-w-4xl mx-auto px-6 py-12 md:py-20">
+        <div className="max-w-5xl mx-auto px-6 py-12 md:py-20">
+          {/* ─── Hero ─── */}
           <div className="text-center space-y-6">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#C9A961]/10 to-[#C9A961]/5 text-[#C9A961] text-xs font-bold px-4 py-2 rounded-full border border-[#C9A961]/20 uppercase tracking-wider">
               <Sparkles className="w-4 h-4" />
@@ -587,67 +617,142 @@ export default function BundleHome() {
                   <span className="text-4xl font-bold text-green-600">{finalPriceStr}€</span>
                 </>
               ) : (
-                <span className="text-4xl font-bold text-slate-900">{PRICE}€</span>
+                <>
+                  <span className="text-lg line-through text-slate-400">39,98€</span>
+                  <span className="text-4xl font-bold text-slate-900">{PRICE}€</span>
+                  <span className="text-sm font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">Poupas 10€</span>
+                </>
               )}
             </div>
 
-            {/* What's included */}
-            <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto mt-8">
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 text-left space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
-                    <BarChart3 className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <h3 className="font-bold text-slate-900">CV Analyser</h3>
-                </div>
-                <ul className="space-y-2 text-sm text-slate-600">
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Análise ATS completa</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Score de posicionamento</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Estimativa salarial detalhada</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Sugestões de melhoria</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Certificação LinkedIn</li>
-                </ul>
-              </div>
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 text-left space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">
-                    <Compass className="w-5 h-5 text-[#C9A961]" />
-                  </div>
-                  <h3 className="font-bold text-slate-900">Career Path</h3>
-                </div>
-                <ul className="space-y-2 text-sm text-slate-600">
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Roadmap de carreira a 5 anos</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Próximos cargos recomendados</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Formações sugeridas</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Estratégia de networking</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Skills gap analysis</li>
-                </ul>
-              </div>
-            </div>
-
+            {/* Primary CTA — large and prominent */}
             <Button
               onClick={() => setStep('upload')}
-              className="h-14 px-10 text-base font-semibold rounded-xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all mt-6"
+              className="h-16 px-12 text-lg font-bold rounded-2xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] mt-4"
             >
-              Começar agora <ArrowRight className="w-5 h-5 ml-2" />
+              Começar agora <ArrowRight className="w-6 h-6 ml-2" />
             </Button>
             <p className="text-xs text-slate-400">Pagamento único · Sem subscrição · Resultados imediatos</p>
+          </div>
 
-            {/* ─── Member Area CTA ─── */}
-            <div className="mt-10 p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-3xl mx-auto">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Sparkles className="w-4 h-4 text-[#C9A961]" />
-                <p className="text-sm font-bold text-slate-800">Queres acesso regular a estas ferramentas?</p>
+          {/* ─── What's included ─── */}
+          <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto mt-14">
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 text-left space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5 text-blue-600" />
+                </div>
+                <h3 className="font-bold text-slate-900">CV Analyser</h3>
               </div>
-              <p className="text-xs text-slate-500 mb-4 leading-relaxed">Com um plano de subscrição, tens análises incluídas todas as semanas, conteúdos exclusivos, feed de vagas personalizado e muito mais — tudo numa única plataforma.</p>
-              <a
-                href="https://www.share2inspire.pt/area-cliente/planos"
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
-              >
-                Ver planos de subscrição <ArrowRight className="w-4 h-4" />
-              </a>
-              <p className="text-[10px] text-slate-400 mt-2">A partir de 9,99€/mês · Cancela quando quiseres</p>
+              <ul className="space-y-2 text-sm text-slate-600">
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Análise ATS completa</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Score de posicionamento</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Estimativa salarial detalhada</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Sugestões de melhoria</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Certificação LinkedIn</li>
+              </ul>
             </div>
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 text-left space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">
+                  <Compass className="w-5 h-5 text-[#C9A961]" />
+                </div>
+                <h3 className="font-bold text-slate-900">Career Path</h3>
+              </div>
+              <ul className="space-y-2 text-sm text-slate-600">
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Roadmap de carreira a 5 anos</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Próximos cargos recomendados</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Formações sugeridas</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Estratégia de networking</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Skills gap analysis</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* ─── How it works ─── */}
+          <div className="mt-16 max-w-3xl mx-auto">
+            <h2 className="text-xl font-bold text-center text-slate-900 mb-8">Como funciona?</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { num: "1", icon: <Upload className="w-5 h-5 text-[#C9A961]" />, title: "Carrega o teu CV", desc: "Faz upload do teu CV em PDF ou DOCX e indica o teu perfil LinkedIn." },
+                { num: "2", icon: <CreditCard className="w-5 h-5 text-[#C9A961]" />, title: "Pagamento seguro", desc: "Paga via MB WAY ou PayPal. Pagamento único, sem subscrição." },
+                { num: "3", icon: <Zap className="w-5 h-5 text-[#C9A961]" />, title: "Resultados imediatos", desc: "Recebe o diagnóstico do CV e o roadmap de carreira em menos de 1 minuto." },
+              ].map((s, i) => (
+                <div key={i} className="text-center space-y-3">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-[#C9A961]/10 border border-[#C9A961]/20 flex items-center justify-center">
+                    {s.icon}
+                  </div>
+                  <h3 className="font-semibold text-slate-900">{s.title}</h3>
+                  <p className="text-sm text-slate-500">{s.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ─── Why the bundle ─── */}
+          <div className="mt-16 max-w-3xl mx-auto">
+            <h2 className="text-xl font-bold text-center text-slate-900 mb-8">Porquê o Bundle?</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[
+                { icon: <Shield className="w-5 h-5 text-[#C9A961]" />, title: "Poupas 10€", desc: "Separadamente custariam 39,98€. Em bundle, pagas apenas 29€." },
+                { icon: <Zap className="w-5 h-5 text-[#C9A961]" />, title: "Upload único", desc: "Carregas o CV uma vez e os dois motores correm em paralelo." },
+                { icon: <Target className="w-5 h-5 text-[#C9A961]" />, title: "Visão completa", desc: "Sabes onde estás (CV Analyser) e para onde ir (Career Path)." },
+                { icon: <TrendingUp className="w-5 h-5 text-[#C9A961]" />, title: "Decisões com dados", desc: "Relatório integrado com score, salários e roadmap num só lugar." },
+              ].map((card, i) => (
+                <div key={i} className="flex items-start gap-4 p-4 bg-white border border-slate-100 rounded-xl">
+                  <div className="w-10 h-10 shrink-0 rounded-lg bg-[#C9A961]/10 flex items-center justify-center">{card.icon}</div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900 text-sm">{card.title}</h3>
+                    <p className="text-sm text-slate-500 mt-1">{card.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ─── Social proof ─── */}
+          <div className="mt-16 max-w-3xl mx-auto">
+            <div className="grid grid-cols-3 gap-6 text-center">
+              <div>
+                <p className="text-3xl font-bold text-[#C9A961]">+500</p>
+                <p className="text-xs text-slate-500 mt-1">Profissionais ajudados</p>
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-[#C9A961]">5★</p>
+                <p className="text-xs text-slate-500 mt-1">Avaliação média</p>
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-[#C9A961]">98%</p>
+                <p className="text-xs text-slate-500 mt-1">Taxa de satisfação</p>
+              </div>
+            </div>
+          </div>
+
+          {/* ─── Second CTA ─── */}
+          <div className="mt-14 text-center">
+            <Button
+              onClick={() => setStep('upload')}
+              className="h-16 px-12 text-lg font-bold rounded-2xl bg-[#C9A961] hover:bg-[#b8954f] text-white transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]"
+            >
+              Começar agora <ArrowRight className="w-6 h-6 ml-2" />
+            </Button>
+            <p className="text-xs text-slate-400 mt-3">Pagamento seguro via MB WAY ou PayPal</p>
+          </div>
+
+          {/* ─── Member Area CTA ─── */}
+          <div className="mt-14 p-6 bg-gradient-to-r from-[#f9f6ef] to-[#faf8f3] border border-[#C9A961]/20 rounded-2xl text-center max-w-3xl mx-auto">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Sparkles className="w-4 h-4 text-[#C9A961]" />
+              <p className="text-sm font-bold text-slate-800">Queres acesso regular a estas ferramentas?</p>
+            </div>
+            <p className="text-xs text-slate-500 mb-4 leading-relaxed">Com um plano de subscrição, tens análises incluídas todas as semanas, conteúdos exclusivos, feed de vagas personalizado e muito mais — tudo numa única plataforma.</p>
+            <a
+              href="https://www.share2inspire.pt/area-cliente/planos"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#C9A961] hover:bg-[#b8954f] text-white text-sm font-semibold rounded-xl transition-all shadow-sm hover:shadow-md"
+            >
+              Ver planos de subscrição <ArrowRight className="w-4 h-4" />
+            </a>
+            <p className="text-[10px] text-slate-400 mt-2">A partir de 9,99€/mês · Cancela quando quiseres</p>
           </div>
         </div>
       )}

@@ -3,7 +3,7 @@
 // Includes country/region selector for geolocalised analysis
 
 import { useState, useEffect } from "react";
-import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, XCircle, ChevronDown, ChevronUp, Linkedin, Globe, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, DollarSign, Zap, Lock, ArrowRight, Shield, Check, Eye, Brain } from "lucide-react";
+import { Upload, FileText, Loader2, Home as HomeIcon, Compass, Target, TrendingUp, Award, Users, Star, CheckCircle2, XCircle, ChevronDown, ChevronUp, Linkedin, Globe, CreditCard, AlertCircle, Ticket, Unlock, Briefcase, BookOpen, Calendar, ExternalLink, Sparkles, Search, DollarSign, Zap, Lock, ArrowRight, Shield, Check, Eye, Brain, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLocation } from "wouter";
@@ -116,6 +116,7 @@ export default function CareerPathHomeEN() {
   const [discountLoading, setDiscountLoading] = useState(false);
   const [discountError, setDiscountError] = useState<string | null>(null);
   const [discountValid, setDiscountValid] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Member pricing detection
   const memberTier = getMemberPlanTier();
@@ -399,25 +400,44 @@ export default function CareerPathHomeEN() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-foreground/10 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Compass className="w-6 h-6 text-[#C9A961]" />
-            <span className="text-lg font-semibold text-foreground">Career Path</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] font-medium">EN</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <a href="/en/cv-analyser" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden sm:block">CV Analyser</a>
-            <a href="/career-path" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-colors text-sm font-medium text-[#C9A961]">
-              <Globe className="w-3.5 h-3.5" />
-              <span>PT</span>
+      {/* Header — Unified */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+          <a href="https://www.share2inspire.pt/en/pages/home" className="flex items-center gap-2 shrink-0">
+            <img src="https://www.share2inspire.pt/images/logo.webp" alt="Share2Inspire" className="h-8" />
+          </a>
+          <nav className="hidden lg:flex items-center gap-5 text-[0.8rem] font-medium tracking-wide uppercase">
+            <a href="https://www.share2inspire.pt/en/pages/home" className="text-slate-500 hover:text-[#C9A961] transition-colors">Home</a>
+            <a href="/en/cv-analyser" className="text-slate-500 hover:text-[#C9A961] transition-colors">CV Analyser</a>
+            <a href="/en/career-path" className="text-[#C9A961]">Career Path</a>
+            <a href="https://www.share2inspire.pt/en/pages/services" className="text-slate-500 hover:text-[#C9A961] transition-colors">Services</a>
+            <a href="https://www.share2inspire.pt/en/pages/about" className="text-slate-500 hover:text-[#C9A961] transition-colors">About</a>
+            <a href="https://www.share2inspire.pt/en/pages/contacts" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contacts</a>
+          </nav>
+          <div className="hidden lg:flex items-center gap-3">
+            <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Client Area</a>
+            <a href="/career-path" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 bg-[#C9A961]/10 hover:bg-[#C9A961]/20 transition-colors text-xs font-medium text-[#C9A961]">
+              <Globe className="w-3.5 h-3.5" /><span>PT</span>
             </a>
-            <a href="https://www.share2inspire.pt" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-sm font-medium text-foreground">
-              <HomeIcon className="w-4 h-4" /><span>Homepage</span>
-            </a>
           </div>
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-slate-600 hover:text-slate-900">
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
+        {mobileMenuOpen && (
+          <div className="lg:hidden border-t border-slate-200 bg-white px-6 py-4 space-y-3">
+            <a href="https://www.share2inspire.pt/en/pages/home" className="block text-sm text-slate-600 hover:text-[#C9A961]">Home</a>
+            <a href="/en/cv-analyser" className="block text-sm text-slate-600 hover:text-[#C9A961]">CV Analyser</a>
+            <a href="/en/career-path" className="block text-sm text-[#C9A961] font-semibold">Career Path</a>
+            <a href="https://www.share2inspire.pt/en/pages/services" className="block text-sm text-slate-600 hover:text-[#C9A961]">Services</a>
+            <a href="https://www.share2inspire.pt/en/pages/about" className="block text-sm text-slate-600 hover:text-[#C9A961]">About</a>
+            <a href="https://www.share2inspire.pt/en/pages/contacts" className="block text-sm text-slate-600 hover:text-[#C9A961]">Contacts</a>
+            <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+              <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold">Client Area</a>
+              <a href="/career-path" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 text-xs font-medium text-[#C9A961]"><Globe className="w-3.5 h-3.5" />PT</a>
+            </div>
+          </div>
+        )}
       </header>
 
       <main className="max-w-4xl mx-auto px-6 py-12">
