@@ -492,6 +492,11 @@
             <div class="kpi-value blue" id="funnelCP">--</div>
             <div class="kpi-sub" id="funnelCPConv">--% dos pagantes</div>
         </div>
+        <div class="kpi-card" style="text-align:center;border-top:3px solid #7C3AED;">
+            <div class="kpi-label">Career Intelligence</div>
+            <div class="kpi-value" style="color:#7C3AED;" id="funnelCI">--</div>
+            <div class="kpi-sub" id="funnelCIConv">--% do Career Path</div>
+        </div>
     </div>
 
     <!-- Funil Visual + Chart -->
@@ -660,8 +665,8 @@
         <div class="card">
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Data</th><th>Nome</th><th>Email</th><th>Tipo</th><th>Score</th><th>Área</th><th>Pagamento</th><th>Valor</th><th>Rating</th><th></th></tr></thead>
-                    <tbody id="analysesTable"><tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                    <thead><tr><th>Data</th><th>Nome</th><th>Email</th><th>Score</th><th>Tipo</th><th>Produto</th><th>Valor</th><th>Ações</th></tr></thead>
+                    <tbody id="analysesTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
                 </table>
             </div>
             <div class="pagination" id="analysesPagination"></div>
@@ -692,8 +697,8 @@
         <div class="card">
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Data</th><th>Email</th><th>Plano</th><th>Código</th><th>Método</th><th>Valor</th><th>Estado</th><th>Usadas</th></tr></thead>
-                    <tbody id="vouchersTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                    <thead><tr><th>Código</th><th>Email</th><th>Plano</th><th>Valor</th><th>Estado</th><th>Data</th><th>Ações</th></tr></thead>
+                    <tbody id="vouchersTable"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -832,9 +837,10 @@
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Data</th><th>Para</th><th>Assunto</th><th>Tipo</th><th>Estado</th></tr></thead>
-                    <tbody id="historyTable"><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                    <tbody id="emailHistoryTable"><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
                 </table>
             </div>
+            <div class="pagination" id="emailHistoryPagination"></div>
         </div>
     </div>
 
@@ -1007,8 +1013,8 @@
         <div class="card">
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Nome</th><th>Produto</th><th>Código</th><th>Link</th><th>Cliques</th><th>Vendas</th><th>Receita</th><th>Conversão</th><th>Comissão %</th><th>Estado</th><th>Criado</th><th>Ações</th></tr></thead>
-                    <tbody id="affTable"><tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                    <thead><tr><th>Nome</th><th>Código</th><th>Produtos</th><th>Cliques</th><th>Vendas</th><th>Receita</th><th>Ações</th></tr></thead>
+                    <tbody id="affTable"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -1066,8 +1072,8 @@
             </div>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Data</th><th>Afiliado</th><th>Produto</th><th>Valor</th><th>Moeda</th><th>Método</th><th>Email Cliente</th><th>Transação</th></tr></thead>
-                    <tbody id="affConversionsTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                    <thead><tr><th>Data</th><th>Afiliado</th><th>Produto</th><th>Valor</th><th>Email Cliente</th><th>Método</th></tr></thead>
+                    <tbody id="affConversionsTable"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -1130,11 +1136,11 @@
         <div class="table-wrap">
             <table>
                 <thead><tr>
-                    <th>Nome</th><th>Email</th><th>Telefone</th><th>LinkedIn</th>
-                    <th>Subscrição</th><th>Plano</th><th>Expira</th><th>Análises</th>
+                    <th>Nome</th><th>Email</th>
+                    <th>Subscrição</th><th>Plano</th><th>Análises</th>
                     <th>CV</th><th>Registado</th><th>Último Login</th><th>Ações</th>
                 </tr></thead>
-                <tbody id="usersTable"><tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                <tbody id="usersTable"><tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
             </table>
         </div>
         <div id="usersPagination" class="pagination"></div>
@@ -1153,7 +1159,7 @@
     <!-- System Sub-navigation -->
     <div class="crm-subnav" style="margin-bottom:20px;">
         <button class="crm-subtab active" onclick="switchSystemSubtab('health',this)"><i class="fas fa-heartbeat"></i> Backend Health</button>
-        <button class="crm-subtab" onclick="switchSystemSubtab('ebook',this)"><i class="fas fa-book"></i> eBook Downloads</button>
+
     </div>
 
     <!-- System Sub: Health -->
@@ -1177,31 +1183,7 @@
         </div>
     </div>
 
-    <!-- System Sub: eBook Downloads -->
-    <div id="system-sub-ebook" style="display:none;">
-        <div class="filter-bar">
-            <label>Período</label>
-            <select class="form-select" id="filterEbookPeriod" onchange="renderEbookDownloads()">
-                <option value="all">Todos</option>
-                <option value="7d">7 dias</option>
-                <option value="30d">30 dias</option>
-                <option value="90d">90 dias</option>
-            </select>
-            <input class="form-input" type="text" id="filterEbookSearch" placeholder="Pesquisar email..." oninput="renderEbookDownloads()" style="width:200px;">
-            <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-                <span style="font-size:12px;color:var(--text-muted);" id="ebookCount">--</span>
-                <button class="btn btn-outline btn-sm" onclick="exportEbookCSV()"><i class="fas fa-download"></i> CSV</button>
-            </div>
-        </div>
-        <div class="card">
-            <div class="table-wrap">
-                <table>
-                    <thead><tr><th>Data</th><th>E-mail</th><th>Nome</th><th>Source</th><th>Estado</th></tr></thead>
-                    <tbody id="ebookTable"><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+
 </div>
 
 </main>

@@ -177,7 +177,7 @@ function getLangBadge(lang) {
 }
 function getProductBadge(a) {
     if (a._source === 'linkedin_roaster') return '<span class="badge" style="background:#0077B5;color:#fff;">LinkedIn Roaster</span>';
-    if (a.analysis_type === 'career_intelligence') return '<span class="badge" style="background:#7C3AED;color:#fff;font-weight:600;">Career Intelligence</span>';
+    if (a.analysis_type === 'career_intelligence' || a.analysis_type === 'career_intelligence_pro' || a.analysis_type === 'career_intelligence_full') return '<span class="badge" style="background:#7C3AED;color:#fff;font-weight:600;">Career Intelligence</span>';
     if (a.analysis_type === 'bundle') return '<span class="badge" style="background:var(--gold);color:#1a1a1a;font-weight:600;">Bundle</span>';
     if (a.analysis_type === 'career_path') return '<span class="badge badge-career">Career Path</span>';
     return '<span class="badge badge-cv">CV Analyser</span>';
@@ -258,7 +258,7 @@ function switchCrmSubtab(name, btn) {
     if (name === 'automation') renderAutoEmailsMonitoring();
     if (name === 'campaigns') renderNurturingSegments();
     if (name === 'history') renderEmailHistory();
-    if (name === 'messages') renderEmailHistory();
+    if (name === 'messages') renderContactMessages();
 }
 
 function switchMarketSubtab(name, btn) {
@@ -868,27 +868,26 @@ function renderFunnel() {
     const lrFiltered = filterByPeriod(allLinkedinRoaster, funnelPeriodDays);
     const lrTotal     = lrFiltered.length;
     const lrPaidCount = lrFiltered.filter(a => a.payment_status === 'paid').length;
-    const ceTotal     = allCareerEnergy.length;
     const freeCount   = data.filter(a => getAnalysisType(a) === 'free').length;
     const paidCount   = data.filter(a => getAnalysisType(a) === 'paid' && a.analysis_type !== 'career_path' && a.analysis_type !== 'career_intelligence').length;
     const cpCount     = data.filter(a => a.analysis_type === 'career_path').length;
     // CI count comes from user_analyses (member area), not cv_analysis
-    const ciCount     = filterByPeriod(allUserAnalyses.filter(a => a.analysis_type === 'career_intelligence'), funnelPeriodDays).length;
+    const ciCount     = filterByPeriod((typeof allUserAnalyses !== 'undefined' ? allUserAnalyses : []).filter(a => a.analysis_type === 'career_intelligence'), funnelPeriodDays).length;
 
     setText('funnelLR', lrTotal);
     setText('funnelLRConv', `${lrPaidCount} pagas`);
-    setText('funnelCE', ceTotal || freeCount + paidCount + cpCount);
     setText('funnelFree', freeCount);
     setText('funnelPaid', paidCount);
     setText('funnelCP', cpCount);
-    setText('funnelFreeConv', ceTotal ? `${Math.round(freeCount / ceTotal * 100)}% do CE` : '—');
+    setText('funnelCI', ciCount);
+    setText('funnelFreeConv', lrTotal ? `${Math.round(freeCount / lrTotal * 100)}% do topo` : '—');
     setText('funnelPaidConv', freeCount ? `${Math.round(paidCount / (freeCount + paidCount) * 100)}% do grátis` : '—');
     setText('funnelCPConv', paidCount ? `${Math.round(cpCount / paidCount * 100)}% dos pagantes` : '—');
+    setText('funnelCIConv', cpCount ? `${Math.round(ciCount / cpCount * 100)}% do Career Path` : '—');
 
     // Funil Visual
     const steps = [
         { name: 'LinkedIn Roaster (Topo)', count: lrTotal, color: '#0077B5' },
-        { name: 'Career Energy (Diagnóstico)', count: ceTotal || (freeCount + paidCount + cpCount), color: '#6B7280' },
         { name: 'CV Analyser Grátis', count: freeCount, color: '#C9A961' },
         { name: 'CV Analyser Pago', count: paidCount, color: '#10B981' },
         { name: 'Career Path', count: cpCount, color: '#3B82F6' },
@@ -1320,7 +1319,7 @@ function renderVouchers() {
     setText('vouchersCount', `${data.length} vouchers`);
     const tbody = document.getElementById('vouchersTable');
     if (!tbody) return;
-    if (!data.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum voucher encontrado</td></tr>`; return; }
+    if (!data.length) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum voucher encontrado</td></tr>`; return; }
     tbody.innerHTML = data.map(v => {
         const isActive = v.is_active === true || (v.is_active !== false && (v.used_analyses || 0) < (v.total_analyses || 1));
         const date = new Date(v.created_at).toLocaleDateString('pt-PT');
@@ -1540,15 +1539,20 @@ function renderEmailHistory() {
     let data = [...allEmailHistory].sort((a, b) => new Date(b.sent_at) - new Date(a.sent_at));
     const type = document.getElementById('filterHistoryType')?.value || 'all';
     const search = (document.getElementById('filterHistorySearch')?.value || '').toLowerCase();
-    if (type !== 'all') data = data.filter(e => e.email_type === type);
+    if (type !== 'all') {
+        if (type === 'auto') data = data.filter(e => e.email_type === 'upsell_auto_2h' || e.email_type === 'upsell_auto_7d');
+        else if (type === 'manual') data = data.filter(e => e.email_type === 'manual');
+        else if (type === 'bulk') data = data.filter(e => e.email_type === 'campaign');
+        else data = data.filter(e => e.email_type === type);
+    }
     if (search) data = data.filter(e => (e.recipient_email || '').toLowerCase().includes(search) || (e.subject || '').toLowerCase().includes(search));
-    setText('messagesCount', `${data.length} mensagens`);
+    setText('historyCount', `${data.length} emails`);
     const totalPages = Math.ceil(data.length / PAGE_SIZE);
     historyPage = Math.min(historyPage, totalPages || 1);
     const page = data.slice((historyPage - 1) * PAGE_SIZE, historyPage * PAGE_SIZE);
-    const tbody = document.getElementById('autoEmailsTable');
+    const tbody = document.getElementById('emailHistoryTable');
     if (!tbody) return;
-    if (!page.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma mensagem encontrada</td></tr>`; return; }
+    if (!page.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum email encontrado</td></tr>`; return; }
     tbody.innerHTML = page.map(e => {
         const date = new Date(e.sent_at).toLocaleDateString('pt-PT') + ' ' + new Date(e.sent_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
         const typeMap = { manual: 'Manual', campaign: 'Campanha', upsell_auto_2h: 'Auto 2h', upsell_auto_7d: 'Auto 7d', welcome: 'Boas-vindas' };
@@ -1559,6 +1563,29 @@ function renderEmailHistory() {
             <td style="font-size:12px;">${e.subject || '—'}</td>
             <td>${typeBadge}</td>
             <td><span class="badge badge-success">Enviado</span></td>
+        </tr>`;
+    }).join('');
+    renderPagination('emailHistoryPagination', historyPage, totalPages, (p) => { historyPage = p; renderEmailHistory(); });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CONTACT MESSAGES
+// ═══════════════════════════════════════════════════════════════
+function renderContactMessages() {
+    const data = [...allContacts].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    setText('messagesCount', `${data.length} mensagens`);
+    const tbody = document.getElementById('contactsTable');
+    if (!tbody) return;
+    if (!data.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma mensagem recebida</td></tr>'; return; }
+    tbody.innerHTML = data.map(m => {
+        const date = new Date(m.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(m.created_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
+        const msgPreview = (m.message || '').length > 80 ? (m.message || '').slice(0, 80) + '…' : (m.message || '—');
+        return `<tr>
+            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
+            <td style="font-size:12px;">${esc(m.name || '—')}</td>
+            <td style="font-size:12px;">${esc(m.email || '—')}</td>
+            <td style="font-size:12px;">${esc(m.subject || '—')}</td>
+            <td style="font-size:12px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(m.message || '')}">${esc(msgPreview)}</td>
         </tr>`;
     }).join('');
 }
@@ -1831,7 +1858,7 @@ function renderAffiliates() {
     setText('affKpiRevenue', totalRev.toFixed(2) + '€');
 
     if (!allAffiliates.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum afiliado</td></tr>'; return; }
-    const productLabels = {'cv-analyser':'CV','career-path':'CP','career-intelligence':'CI','linkedin-roaster':'LR'};
+    const productLabels = {'cv-analyser':'CV','career-path':'CP','career-intelligence':'CI','career-intelligence-pro':'CI PRO','career-intelligence-full':'CI Full','linkedin-roaster':'LR'};
     tbody.innerHTML = allAffiliates.map(a => {
         const clicks = allAffClicks.filter(c => c.affiliate_code === a.code).length;
         const sales = allAffConversions.filter(c => c.affiliate_code === a.code).length;
@@ -1925,7 +1952,7 @@ function updateAffLinkPreview() {
     const el = document.getElementById('affLinkPreview');
     if (!el) return;
     if (!products.length) { el.innerHTML = '<span style="color:var(--red);">Seleciona pelo menos um produto</span>'; return; }
-    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','linkedin-roaster':'LinkedIn Roaster'};
+    const productLabels = {'cv-analyser':'CV Analyser','career-path':'Career Path','career-intelligence':'Career Intelligence','career-intelligence-pro':'CI PRO','career-intelligence-full':'CI Full','linkedin-roaster':'LinkedIn Roaster'};
     const slug = code || '...';
     el.innerHTML = products.map(p => {
         const links = [`share2inspire.pt/${p}?ref=${slug}`];
@@ -2014,6 +2041,8 @@ function renderCoupons() {
         'cv_pro': '<span class="badge" style="background:var(--blue);color:#fff;font-size:10px;">CV PRO</span>',
         'career_path': '<span class="badge" style="background:var(--gold);color:#fff;font-size:10px;">Career</span>',
         'career_intelligence': '<span class="badge" style="background:#7C3AED;color:#fff;font-size:10px;">Career Intel</span>',
+        'career_intelligence_pro': '<span class="badge" style="background:#7C3AED;color:#fff;font-size:10px;">CI PRO</span>',
+        'career_intelligence_full': '<span class="badge" style="background:#7C3AED;color:#fff;font-size:10px;">CI Full</span>',
         'bundle': '<span class="badge" style="background:var(--purple);color:#fff;font-size:10px;">Bundle</span>',
         'linkedin_roaster': '<span class="badge" style="background:#0077B5;color:#fff;font-size:10px;">Roaster</span>',
         'cv_maker': '<span class="badge" style="background:#059669;color:#fff;font-size:10px;">CV Maker</span>',
@@ -2172,7 +2201,7 @@ function renderUsers() {
     const page = filtered.slice((usersPage - 1) * PAGE_SIZE, usersPage * PAGE_SIZE);
     const tbody = document.getElementById('usersTable');
     if (!tbody) return;
-    if (!page.length) { tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum utilizador encontrado</td></tr>`; renderPagination('usersPagination', usersPage, totalPages, (p) => { usersPage = p; renderUsers(); }); return; }
+    if (!page.length) { tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum utilizador encontrado</td></tr>`; renderPagination('usersPagination', usersPage, totalPages, (p) => { usersPage = p; renderUsers(); }); return; }
 
     tbody.innerHTML = page.map(u => {
         const name = `${u.first_name} ${u.last_name}`.trim() || '—';
@@ -2283,9 +2312,8 @@ async function refreshAll() {
     renderAnalyses();
     renderVouchers();
     renderEmailHistory();
+    renderContactMessages();
     renderJobSearchTable();
-    renderCETable();
-    renderEbookDownloads();
     renderHealthLogs();
     renderAffiliates();
     renderAffClicks();
@@ -2311,9 +2339,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderAnalyses();
         renderVouchers();
         renderEmailHistory();
+        renderContactMessages();
         renderJobSearchTable();
-        renderCETable();
-        renderEbookDownloads();
         renderHealthLogs();
         renderAffiliates();
         renderAffClicks();
