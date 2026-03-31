@@ -214,7 +214,7 @@
       "destination": "/cv-analyser/index.html"
     },
     {
-      "source": "/bundle/(.*)",
+      "source": "/bundle/:path*",
       "destination": "/cv-analyser/index.html"
     },
     {
@@ -230,7 +230,7 @@
       "destination": "/cv-analyser/index.html"
     },
     {
-      "source": "/cv-analyser/(.*)",
+      "source": "/cv-analyser/:path*",
       "destination": "/cv-analyser/index.html"
     },
     {
@@ -242,7 +242,7 @@
       "destination": "/career-path/index.html"
     },
     {
-      "source": "/career-path/(.*)",
+      "source": "/career-path/:path*",
       "destination": "/career-path/index.html"
     },
     {
@@ -254,7 +254,7 @@
       "destination": "/career-intelligence/demo/index.html"
     },
     {
-      "source": "/career-intelligence/(.*)",
+      "source": "/career-intelligence/:path*",
       "destination": "/career-intelligence/index.html"
     },
     {
@@ -262,7 +262,7 @@
       "destination": "/en/cv-analyser/index.html"
     },
     {
-      "source": "/en/bundle/(.*)",
+      "source": "/en/bundle/:path*",
       "destination": "/en/cv-analyser/index.html"
     },
     {
@@ -270,7 +270,7 @@
       "destination": "/en/cv-analyser/index.html"
     },
     {
-      "source": "/en/cv-analyser/(.*)",
+      "source": "/en/cv-analyser/:path*",
       "destination": "/en/cv-analyser/index.html"
     },
     {
@@ -282,7 +282,7 @@
       "destination": "/en/career-path/index.html"
     },
     {
-      "source": "/en/career-path/(.*)",
+      "source": "/en/career-path/:path*",
       "destination": "/en/career-path/index.html"
     },
     {
@@ -294,7 +294,7 @@
       "destination": "/en/career-intelligence/demo/index.html"
     },
     {
-      "source": "/en/career-intelligence/(.*)",
+      "source": "/en/career-intelligence/:path*",
       "destination": "/en/career-intelligence/index.html"
     },
     {
@@ -302,7 +302,7 @@
       "destination": "/linkedin-roaster/index.html"
     },
     {
-      "source": "/linkedin-roaster/(.*)",
+      "source": "/linkedin-roaster/:path*",
       "destination": "/linkedin-roaster/index.html"
     },
     {
@@ -310,7 +310,7 @@
       "destination": "/estudos/index.html"
     },
     {
-      "source": "/estudos/(.*)",
+      "source": "/estudos/:path*",
       "destination": "/estudos/index.html"
     },
     {
@@ -406,7 +406,7 @@
       "destination": "/area-cliente/index.html"
     },
     {
-      "source": "/area-cliente/(.*)",
+      "source": "/area-cliente/:path*",
       "destination": "/area-cliente/index.html"
     },
     {
