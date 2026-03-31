@@ -285,15 +285,7 @@ function switchPartnerSubtab(name, btn) {
     if (name === 'conversions') renderAffConversions();
 }
 
-function switchSystemSubtab(name, btn) {
-    document.querySelectorAll('[id^="system-sub-"]').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('#tab-system .crm-subtab').forEach(b => b.classList.remove('active'));
-    const sub = document.getElementById('system-sub-' + name);
-    if (sub) sub.style.display = '';
-    if (btn) btn.classList.add('active');
-    if (name === 'health') renderHealthLogs();
-    if (name === 'ebook') renderEbookDownloads();
-}
+// switchSystemSubtab removed - eBook tab removed, health is now the only view
 
 // ═══════════════════════════════════════════════════════════════
 //  GLOBAL LANGUAGE FILTER
@@ -1720,20 +1712,223 @@ function exportEbookCSV() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  SYSTEM: HEALTH LOGS
+//  SYSTEM: HEALTH DASHBOARD (Redesigned)
 // ═══════════════════════════════════════════════════════════════
+
+function getServiceIcon(name) {
+    if (name.includes('Frontend')) return 'fa-globe';
+    if (name.includes('Supabase')) return 'fa-database';
+    if (name.includes('Backend')) return 'fa-server';
+    return 'fa-circle';
+}
+
+function getStatusColor(status) {
+    if (status === 'healthy') return 'var(--green)';
+    if (status === 'warning') return 'var(--orange)';
+    return 'var(--red)';
+}
+
+function getStatusLabel(status) {
+    if (status === 'healthy') return 'Operacional';
+    if (status === 'warning') return 'Lento';
+    if (status === 'down') return 'Indisponível';
+    return status || 'Desconhecido';
+}
+
+function getRecommendation(entry) {
+    if (entry.status === 'down') {
+        if (entry.error_message?.includes('timed out')) return { text: 'Timeout detetado. Verificar se o serviço está a correr e se não há cold starts excessivos.', severity: 'critical' };
+        return { text: 'Serviço indisponível. Verificar logs do servidor e reiniciar se necessário.', severity: 'critical' };
+    }
+    if (entry.status === 'warning') {
+        if (entry.ttfb_ms > 2000) return { text: `TTFB de ${entry.ttfb_ms}ms (>2s). Possível cold start ou sobrecarga. Considerar warm-up cron.`, severity: 'warning' };
+        if (entry.ttfb_ms > 1000) return { text: `TTFB de ${entry.ttfb_ms}ms (>1s). Performance abaixo do ideal. Monitorizar tendência.`, severity: 'warning' };
+        return { text: 'Performance degradada. Monitorizar nas próximas horas.', severity: 'warning' };
+    }
+    if (entry.http_code === 400) {
+        return { text: 'HTTP 400 — esperado para edge functions sem payload. Endpoint responde.', severity: 'info' };
+    }
+    if (entry.ttfb_ms > 500) {
+        return { text: `TTFB de ${entry.ttfb_ms}ms. Aceitável mas monitorizar.`, severity: 'info' };
+    }
+    return { text: 'Tudo normal. Sem ação necessária.', severity: 'ok' };
+}
+
 function renderHealthLogs() {
+    if (!allHealthLogs.length) {
+        document.getElementById('healthSummaryTitle').textContent = 'Sem dados de monitorização';
+        document.getElementById('healthSummaryDesc').textContent = 'Nenhum check de saúde registado.';
+        document.getElementById('healthSummaryIcon').textContent = '❓';
+        document.getElementById('healthServiceCards').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;">Sem dados disponíveis</div>';
+        document.getElementById('healthTable').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">Sem logs</td></tr>';
+        return;
+    }
+
+    // Group by run_id, get latest run
+    const byRun = {};
+    allHealthLogs.forEach(h => {
+        if (!byRun[h.run_id]) byRun[h.run_id] = [];
+        byRun[h.run_id].push(h);
+    });
+    const runIds = Object.keys(byRun).sort().reverse();
+    const latestRun = byRun[runIds[0]] || [];
+    const latestDate = latestRun[0]?.checked_at ? new Date(latestRun[0].checked_at).toLocaleString('pt-PT') : '--';
+
+    // Executive Summary
+    const downCount = latestRun.filter(h => h.status === 'down').length;
+    const warnCount = latestRun.filter(h => h.status === 'warning').length;
+    const healthyCount = latestRun.filter(h => h.status === 'healthy').length;
+    const totalServices = latestRun.length;
+
+    const summaryIcon = document.getElementById('healthSummaryIcon');
+    const summaryTitle = document.getElementById('healthSummaryTitle');
+    const summaryDesc = document.getElementById('healthSummaryDesc');
+    const summaryBox = document.getElementById('healthExecutiveSummary');
+
+    if (downCount > 0) {
+        summaryIcon.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:var(--red);"></i>';
+        summaryTitle.innerHTML = `<span style="color:var(--red);">${downCount} serviço${downCount > 1 ? 's' : ''} indisponível${downCount > 1 ? 'is' : ''}</span> &mdash; ação necessária`;
+        summaryBox.style.borderColor = 'var(--red)';
+        summaryBox.style.background = 'rgba(239,68,68,0.05)';
+    } else if (warnCount > 0) {
+        summaryIcon.innerHTML = '<i class="fas fa-exclamation-circle" style="color:var(--orange);"></i>';
+        summaryTitle.innerHTML = `<span style="color:var(--orange);">${warnCount} serviço${warnCount > 1 ? 's' : ''} com alertas</span> &mdash; monitorizar`;
+        summaryBox.style.borderColor = 'var(--orange)';
+        summaryBox.style.background = 'rgba(245,158,11,0.05)';
+    } else {
+        summaryIcon.innerHTML = '<i class="fas fa-check-circle" style="color:var(--green);"></i>';
+        summaryTitle.innerHTML = `<span style="color:var(--green);">Todos os ${totalServices} serviços operacionais</span>`;
+        summaryBox.style.borderColor = 'var(--green)';
+        summaryBox.style.background = 'rgba(16,185,129,0.05)';
+    }
+    summaryDesc.textContent = `Último check: ${latestDate} · ${healthyCount}/${totalServices} saudáveis`;
+
+    // Service Cards
+    const cardsEl = document.getElementById('healthServiceCards');
+    cardsEl.innerHTML = latestRun.map(h => {
+        const color = getStatusColor(h.status);
+        const icon = getServiceIcon(h.endpoint_name);
+        const label = getStatusLabel(h.status);
+        const rec = getRecommendation(h);
+        const ttfb = h.ttfb_ms != null ? `${h.ttfb_ms}ms` : 'N/A';
+        const httpBadge = h.http_code ? (h.http_code >= 200 && h.http_code < 300 ? `<span style="color:var(--green);font-weight:600;">${h.http_code}</span>` : `<span style="color:var(--orange);font-weight:600;">${h.http_code}</span>`) : '<span style="color:var(--red);font-weight:600;">N/A</span>';
+
+        // Calculate uptime from history for this endpoint
+        const endpointHistory = allHealthLogs.filter(l => l.endpoint_name === h.endpoint_name);
+        const totalChecks = endpointHistory.length;
+        const healthyChecks = endpointHistory.filter(l => l.status === 'healthy').length;
+        const uptime = totalChecks > 0 ? Math.round((healthyChecks / totalChecks) * 100) : 0;
+        const uptimeColor = uptime >= 95 ? 'var(--green)' : uptime >= 85 ? 'var(--orange)' : 'var(--red)';
+
+        const recIcon = rec.severity === 'critical' ? '🚨' : rec.severity === 'warning' ? '⚠️' : rec.severity === 'info' ? 'ℹ️' : '✅';
+
+        return `<div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:16px;border-left:4px solid ${color};">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <i class="fas ${icon}" style="color:${color};font-size:16px;"></i>
+                    <span style="font-weight:600;font-size:13px;">${h.endpoint_name}</span>
+                </div>
+                <span style="background:${color};color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;">${label}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+                <div style="text-align:center;">
+                    <div style="font-size:11px;color:var(--text-muted);">TTFB</div>
+                    <div style="font-size:14px;font-weight:600;">${ttfb}</div>
+                </div>
+                <div style="text-align:center;">
+                    <div style="font-size:11px;color:var(--text-muted);">HTTP</div>
+                    <div style="font-size:14px;">${httpBadge}</div>
+                </div>
+                <div style="text-align:center;">
+                    <div style="font-size:11px;color:var(--text-muted);">Uptime</div>
+                    <div style="font-size:14px;font-weight:600;color:${uptimeColor};">${uptime}%</div>
+                </div>
+            </div>
+            <div style="background:var(--bg);border-radius:6px;padding:8px 10px;font-size:12px;color:var(--text-muted);">
+                ${recIcon} ${rec.text}
+            </div>
+            ${h.error_message ? `<div style="margin-top:6px;font-size:11px;color:var(--red);background:rgba(239,68,68,0.08);padding:4px 8px;border-radius:4px;"><i class="fas fa-bug"></i> ${h.error_message}</div>` : ''}
+        </div>`;
+    }).join('');
+
+    // Populate history filter
+    const filterEl = document.getElementById('healthHistoryFilter');
+    if (filterEl) {
+        const names = [...new Set(allHealthLogs.map(h => h.endpoint_name))];
+        const current = filterEl.value;
+        filterEl.innerHTML = '<option value="all">Todos os serviços</option>' + names.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
+        if (current) filterEl.value = current;
+    }
+
+    renderHealthHistory();
+}
+
+function renderHealthHistory() {
     const el = document.getElementById('healthTable');
     if (!el) return;
-    const data = [...allHealthLogs].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 50);
-    if (!data.length) { el.innerHTML = '<p style="color:var(--text-muted);padding:20px;">Sem logs de saúde</p>'; return; }
-    el.innerHTML = `<table class="data-table"><thead><tr><th>Data</th><th>Tipo</th><th>Mensagem</th><th>Estado</th></tr></thead><tbody>
-        ${data.map(h => {
-            const date = new Date(h.created_at).toLocaleString('pt-PT');
-            const typeBadge = h.type === 'error' ? '<span class="badge" style="background:var(--red);color:#fff;">Erro</span>' : h.type === 'warning' ? '<span class="badge" style="background:var(--orange);color:#fff;">Aviso</span>' : '<span class="badge badge-success">OK</span>';
-            return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td>${typeBadge}</td><td style="font-size:12px;">${h.message || '—'}</td><td style="font-size:12px;">${h.status || '—'}</td></tr>`;
-        }).join('')}
-    </tbody></table>`;
+    const filter = document.getElementById('healthHistoryFilter')?.value || 'all';
+    let data = [...allHealthLogs].sort((a, b) => new Date(b.checked_at || b.created_at) - new Date(a.checked_at || a.created_at));
+    if (filter !== 'all') data = data.filter(h => h.endpoint_name === filter);
+    data = data.slice(0, 60);
+    if (!data.length) { el.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">Sem logs</td></tr>'; return; }
+    el.innerHTML = data.map(h => {
+        const date = new Date(h.checked_at || h.created_at).toLocaleString('pt-PT');
+        const statusColor = getStatusColor(h.status);
+        const statusLabel = getStatusLabel(h.status);
+        const ttfb = h.ttfb_ms != null ? `${h.ttfb_ms}ms` : 'N/A';
+        const ttfbColor = h.ttfb_ms > 1000 ? 'var(--red)' : h.ttfb_ms > 500 ? 'var(--orange)' : 'var(--green)';
+        return `<tr>
+            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
+            <td style="font-size:12px;">${h.endpoint_name}</td>
+            <td><span style="display:inline-flex;align-items:center;gap:4px;"><span class="health-dot" style="background:${statusColor};width:8px;height:8px;border-radius:50%;display:inline-block;"></span><span style="font-size:12px;color:${statusColor};font-weight:500;">${statusLabel}</span></span></td>
+            <td style="font-size:12px;font-weight:600;color:${h.ttfb_ms != null ? ttfbColor : 'var(--text-muted)'};">${ttfb}</td>
+            <td style="font-size:12px;">${h.http_code || 'N/A'}</td>
+            <td style="font-size:12px;color:var(--text-muted);">${h.error_message || '—'}</td>
+        </tr>`;
+    }).join('');
+}
+
+async function refreshHealthCheck() {
+    showToast('A verificar serviços... isto pode demorar alguns segundos.', 'info');
+    const endpoints = [
+        { name: 'Frontend CV Analyser PT', url: 'https://www.share2inspire.pt/cv-analyser', category: 'frontend' },
+        { name: 'Frontend CV Analyser EN', url: 'https://www.share2inspire.pt/en/cv-analyser', category: 'frontend' },
+        { name: 'Backend Root', url: 'https://share2inspire-beckend.lm.r.appspot.com/', category: 'backend' },
+        { name: 'Backend API Health', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/health', category: 'backend' },
+        { name: 'Supabase Edge Function', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task', category: 'edge_function' }
+    ];
+    const runId = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 15);
+    const results = [];
+    for (const ep of endpoints) {
+        const start = Date.now();
+        try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 15000);
+            const res = await fetch(ep.url, { method: 'GET', mode: 'no-cors', signal: controller.signal });
+            clearTimeout(timeout);
+            const elapsed = Date.now() - start;
+            const httpCode = res.type === 'opaque' ? 200 : res.status;
+            const status = elapsed > 2000 ? 'warning' : 'healthy';
+            results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: elapsed, http_code: httpCode, status, error_message: null, checked_at: new Date().toISOString() });
+        } catch (err) {
+            const elapsed = Date.now() - start;
+            results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed > 14000 ? null : elapsed, total_ms: elapsed > 14000 ? null : elapsed, http_code: null, status: 'down', error_message: err.message || 'Request failed', checked_at: new Date().toISOString() });
+        }
+    }
+    // Save to Supabase
+    try {
+        await fetch(`${SUPABASE_URL}/rest/v1/backend_health_log`, {
+            method: 'POST',
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+            body: JSON.stringify(results)
+        });
+    } catch (e) { console.error('Erro ao guardar health check:', e); }
+    // Refresh data
+    allHealthLogs = [...results, ...allHealthLogs];
+    renderHealthLogs();
+    const downCount = results.filter(r => r.status === 'down').length;
+    if (downCount > 0) showToast(`Check concluído: ${downCount} serviço(s) com problemas!`, 'danger');
+    else showToast('Check concluído: todos os serviços responderam.', 'success');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1744,15 +1939,15 @@ function renderAffiliates() {
     if (!tbody) return;
     const active = allAffiliates.filter(a => a.active);
     setText('affKpiTotal', allAffiliates.length);
-    setText('affKpiClicks', allAffClicks.length);
-    setText('affKpiSales', allAffConversions.length);
-    const totalRev = allAffConversions.reduce((s, c) => s + (parseFloat(c.amount) || 0), 0);
+    setText('affKpiClicks', allAffClicks.filter(c => !c.affiliate_code?.startsWith('__')).length);
+    setText('affKpiSales', allAffConversions.filter(c => !c.affiliate_code?.startsWith('__')).length);
+    const totalRev = allAffConversions.filter(c => !c.affiliate_code?.startsWith('__')).reduce((s, c) => s + (parseFloat(c.amount) || 0), 0);
     setText('affKpiRevenue', totalRev.toFixed(2) + '€');
 
     if (!allAffiliates.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum afiliado</td></tr>'; return; }
     const productLabels = {'cv-analyser':'CV','career-path':'CP','career-intelligence':'CI','linkedin-roaster':'LR'};
     tbody.innerHTML = allAffiliates.map(a => {
-        const clicks = allAffClicks.filter(c => c.affiliate_code === a.code).length;
+        const clicks = allAffClicks.filter(c => c.affiliate_code === a.code && !c.affiliate_code?.startsWith('__')).length;
         const sales = allAffConversions.filter(c => c.affiliate_code === a.code).length;
         const rev = allAffConversions.filter(c => c.affiliate_code === a.code).reduce((s, c) => s + (parseFloat(c.amount) || 0), 0);
         const products = (a.product || 'cv-analyser').split(',').map(p => productLabels[p] || p).join(', ');
@@ -1774,14 +1969,17 @@ function renderAffiliates() {
 
 function renderAffClicks() {
     const filterCode = document.getElementById('filterAffClickCode')?.value || 'all';
-    let clicks = [...allAffClicks].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    // Filter out probe/test entries (e.g. __shannon_probe__)
+    let clicks = [...allAffClicks]
+        .filter(c => !c.affiliate_code?.startsWith('__') && !c.affiliate_code?.includes('probe'))
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     if (filterCode !== 'all') clicks = clicks.filter(c => c.affiliate_code === filterCode);
     const tbody = document.getElementById('affClicksTable');
     if (!tbody) return;
-    if (!clicks.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">Sem cliques</td></tr>'; return; }
+    if (!clicks.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-muted);">Sem cliques</td></tr>'; return; }
     tbody.innerHTML = clicks.slice(0, 50).map(c => {
         const date = new Date(c.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(c.created_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
-        return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td><code style="font-size:11px;">${c.affiliate_code||'—'}</code></td><td style="font-size:12px;">${c.landing_page||'—'}</td><td style="font-size:12px;">${c.device_type||'—'}</td><td style="font-size:12px;">${c.browser||'—'}</td><td style="font-size:12px;">${c.referrer||'—'}</td></tr>`;
+        return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td><code style="font-size:11px;">${c.affiliate_code||'—'}</code></td><td style="font-size:12px;">${c.landing_page||'—'}</td><td style="font-size:12px;">${c.country||'—'}</td><td style="font-size:12px;">${c.city||'—'}</td><td style="font-size:12px;">${c.device_type||'—'}</td><td style="font-size:12px;">${c.browser||'—'}</td><td style="font-size:12px;">${c.os||'—'}</td><td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.referrer||'—'}</td></tr>`;
     }).join('');
     populateAffClickFilter();
 }
@@ -1789,7 +1987,7 @@ function renderAffClicks() {
 function populateAffClickFilter() {
     const select = document.getElementById('filterAffClickCode');
     if (!select) return;
-    const codes = [...new Set(allAffClicks.map(c => c.affiliate_code))];
+    const codes = [...new Set(allAffClicks.filter(c => !c.affiliate_code?.startsWith('__')).map(c => c.affiliate_code))];
     const current = select.value;
     select.innerHTML = '<option value="all">Todos</option>' + codes.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
     if (current) select.value = current;
@@ -1898,7 +2096,7 @@ function copyAffLink(code, product) {
 
 function exportAffClicksCSV() {
     const rows = [['Data','Afiliado','Página','Dispositivo','Browser','Referrer']];
-    allAffClicks.forEach(c => rows.push([c.created_at, c.affiliate_code||'', c.landing_page||'', c.device_type||'', c.browser||'', c.referrer||'']));
+    allAffClicks.filter(c => !c.affiliate_code?.startsWith('__')).forEach(c => rows.push([c.created_at, c.affiliate_code||'', c.landing_page||'', c.device_type||'', c.browser||'', c.referrer||'']));
     downloadCSV(rows, 'affiliate_clicks.csv');
 }
 
@@ -2199,7 +2397,6 @@ async function refreshAll() {
     renderEmailHistory();
     renderJobSearchTable();
     renderCETable();
-    renderEbookDownloads();
     renderHealthLogs();
     renderAffiliates();
     renderAffClicks();
@@ -2227,7 +2424,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderEmailHistory();
         renderJobSearchTable();
         renderCETable();
-        renderEbookDownloads();
         renderHealthLogs();
         renderAffiliates();
         renderAffClicks();

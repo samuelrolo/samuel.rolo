@@ -1135,59 +1135,39 @@
 <div id="tab-system" style="display:none;">
     <div class="section-header" style="margin-bottom:16px;">
         <h2>Saúde do Sistema</h2>
-        <p>Monitorização do backend, APIs e downloads</p>
+        <p>Monitorização do backend, APIs e serviços</p>
     </div>
 
-    <!-- System Sub-navigation -->
-    <div class="crm-subnav" style="margin-bottom:20px;">
-        <button class="crm-subtab active" onclick="switchSystemSubtab('health',this)"><i class="fas fa-heartbeat"></i> Backend Health</button>
-        <button class="crm-subtab" onclick="switchSystemSubtab('ebook',this)"><i class="fas fa-book"></i> eBook Downloads</button>
-    </div>
 
-    <!-- System Sub: Health -->
-    <div id="system-sub-health">
-        <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px;">
-            <div class="kpi-card"><div class="kpi-label">Último Check</div><div class="kpi-value" style="font-size:14px;" id="healthLastCheck">--</div></div>
-            <div class="kpi-card"><div class="kpi-label">Uptime</div><div class="kpi-value green" style="font-size:22px;" id="healthUptime">--</div></div>
-            <div class="kpi-card"><div class="kpi-label">Erros 24h</div><div class="kpi-value red" style="font-size:22px;" id="healthErrors">--</div></div>
-            <div class="kpi-card"><div class="kpi-label">Tempo Resposta</div><div class="kpi-value blue" style="font-size:22px;" id="healthResponseTime">--</div></div>
+
+    <!-- Executive Summary -->
+    <div id="healthExecutiveSummary" style="margin-bottom:20px;padding:16px 20px;border-radius:10px;border:1px solid var(--border);background:var(--card-bg);display:flex;align-items:center;gap:16px;">
+        <div id="healthSummaryIcon" style="font-size:28px;">⏳</div>
+        <div style="flex:1;">
+            <div id="healthSummaryTitle" style="font-weight:600;font-size:16px;color:var(--text);">A verificar serviços...</div>
+            <div id="healthSummaryDesc" style="font-size:13px;color:var(--text-muted);margin-top:2px;">Último check: --</div>
         </div>
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title"><i class="fas fa-heartbeat"></i> Logs de Saúde</div>
-            </div>
-            <div class="table-wrap">
-                <table>
-                    <thead><tr><th>Data</th><th>Status</th><th>Tempo Resposta</th><th>Detalhes</th></tr></thead>
-                    <tbody id="healthTable"><tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
-                </table>
-            </div>
-        </div>
+        <button class="btn btn-sm" onclick="refreshHealthCheck()" style="background:var(--gold);color:#000;font-weight:600;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;"><i class="fas fa-sync-alt"></i> Verificar Agora</button>
     </div>
 
-    <!-- System Sub: eBook Downloads -->
-    <div id="system-sub-ebook" style="display:none;">
-        <div class="filter-bar">
-            <label>Período</label>
-            <select class="form-select" id="filterEbookPeriod" onchange="renderEbookDownloads()">
-                <option value="all">Todos</option>
-                <option value="7d">7 dias</option>
-                <option value="30d">30 dias</option>
-                <option value="90d">90 dias</option>
+    <!-- Service Cards Grid -->
+    <div id="healthServiceCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:20px;">
+        <div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;">A carregar serviços...</div>
+    </div>
+
+    <!-- Health History -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-history"></i> Histórico de Checks</div>
+            <select class="form-select" id="healthHistoryFilter" onchange="renderHealthHistory()" style="width:auto;">
+                <option value="all">Todos os serviços</option>
             </select>
-            <input class="form-input" type="text" id="filterEbookSearch" placeholder="Pesquisar email..." oninput="renderEbookDownloads()" style="width:200px;">
-            <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-                <span style="font-size:12px;color:var(--text-muted);" id="ebookCount">--</span>
-                <button class="btn btn-outline btn-sm" onclick="exportEbookCSV()"><i class="fas fa-download"></i> CSV</button>
-            </div>
         </div>
-        <div class="card">
-            <div class="table-wrap">
-                <table>
-                    <thead><tr><th>Data</th><th>E-mail</th><th>Nome</th><th>Source</th><th>Estado</th></tr></thead>
-                    <tbody id="ebookTable"><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
-                </table>
-            </div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Data</th><th>Serviço</th><th>Estado</th><th>TTFB</th><th>HTTP</th><th>Detalhes</th></tr></thead>
+                <tbody id="healthTable"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+            </table>
         </div>
     </div>
 </div>
