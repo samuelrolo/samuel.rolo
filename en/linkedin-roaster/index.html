@@ -2143,27 +2143,6 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     }
 
     // Check for return from payment redirect (Stripe/PayPal)
-    // Preview mode for testing
-    (function checkPreviewMode() {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('preview_results') === 'true' && params.get('mock')) {
-            try {
-                analysisData = JSON.parse(decodeURIComponent(params.get('mock')));
-                displayFullResults();
-                document.getElementById('successEmail').textContent = 'test@example.com';
-                const dateEl = document.getElementById('reportDate');
-                if (dateEl) {
-                    const now = new Date();
-                    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-                    dateEl.textContent = months[now.getMonth()] + ' de ' + now.getFullYear();
-                }
-                showSection('successSection');
-                window.history.replaceState({}, '', window.location.pathname + '?preview_results=active');
-                return;
-            } catch(e) { console.error('Preview error:', e); }
-        }
-    })();
-
     (function checkPaymentReturn() {
         const params = new URLSearchParams(window.location.search);
         const payment = params.get('payment');
