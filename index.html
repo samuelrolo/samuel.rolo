@@ -926,9 +926,17 @@
 
         /* --- Mobile fix: carousels (services + testimonials) --- */
         @media (max-width: 768px) {
-            /* Services carousel */
+            /* Services carousel — parent overflow must be visible for scroll */
+            .services-carousel-section {
+                overflow: visible;
+                padding: 48px 0;
+            }
+            .carousel-track-wrapper {
+                overflow: visible;
+            }
             .carousel-track {
                 animation: none !important;
+                width: auto !important;
                 flex-wrap: nowrap;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
@@ -936,11 +944,9 @@
                 padding: 0 1rem 1rem;
                 gap: 1rem;
             }
-            .carousel-track-wrapper {
-                overflow: visible;
-            }
             .service-card {
-                flex: 0 0 260px;
+                flex: 0 0 75vw;
+                max-width: 280px;
                 scroll-snap-align: start;
             }
             /* Hide duplicated set on mobile */
@@ -948,33 +954,32 @@
                 display: none;
             }
 
-            /* Testimonials carousel */
+            /* Testimonials carousel — parent overflow must be visible for scroll */
+            .testimonials-carousel-section {
+                overflow: visible;
+                padding: 48px 0;
+            }
+            .testimonials-track-wrapper {
+                overflow: visible;
+            }
             .testimonials-track {
                 animation: none !important;
+                width: auto !important;
                 flex-wrap: nowrap;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
                 scroll-snap-type: x mandatory;
                 padding: 0 1rem 1rem;
                 gap: 1rem;
-                width: auto;
-            }
-            .testimonials-track-wrapper {
-                overflow: visible;
             }
             .testimonial-card {
-                flex: 0 0 280px;
+                flex: 0 0 75vw;
+                max-width: 300px;
                 scroll-snap-align: start;
             }
             /* Hide duplicated set on mobile */
             .testimonials-track .testimonial-card:nth-child(n+4) {
                 display: none;
-            }
-            .testimonials-carousel-section {
-                padding: 48px 0;
-            }
-            .services-carousel-section {
-                padding: 48px 0;
             }
         }
 
