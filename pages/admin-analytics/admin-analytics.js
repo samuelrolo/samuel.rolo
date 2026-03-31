@@ -1938,15 +1938,17 @@ function renderAffiliates() {
     const tbody = document.getElementById('affTable');
     if (!tbody) return;
     const active = allAffiliates.filter(a => a.active);
-    setText('affKpiTotal', allAffiliates.length);
+    setText('affKpiTotal', allAffiliates.filter(a => !a.code?.startsWith('__')).length);
     setText('affKpiClicks', allAffClicks.filter(c => !c.affiliate_code?.startsWith('__')).length);
     setText('affKpiSales', allAffConversions.filter(c => !c.affiliate_code?.startsWith('__')).length);
     const totalRev = allAffConversions.filter(c => !c.affiliate_code?.startsWith('__')).reduce((s, c) => s + (parseFloat(c.amount) || 0), 0);
     setText('affKpiRevenue', totalRev.toFixed(2) + '€');
 
-    if (!allAffiliates.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum afiliado</td></tr>'; return; }
+    // Filter probe entries from affiliates list
+    const filteredAffiliates = allAffiliates.filter(a => !a.code?.startsWith("__") && !a.name?.includes("probe"));
+    if (!filteredAffiliates.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum afiliado</td></tr>'; return; }
     const productLabels = {'cv-analyser':'CV','career-path':'CP','career-intelligence':'CI','linkedin-roaster':'LR'};
-    tbody.innerHTML = allAffiliates.map(a => {
+    tbody.innerHTML = filteredAffiliates.map(a => {
         const clicks = allAffClicks.filter(c => c.affiliate_code === a.code && !c.affiliate_code?.startsWith('__')).length;
         const sales = allAffConversions.filter(c => c.affiliate_code === a.code).length;
         const rev = allAffConversions.filter(c => c.affiliate_code === a.code).reduce((s, c) => s + (parseFloat(c.amount) || 0), 0);
