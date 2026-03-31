@@ -260,7 +260,7 @@ function switchCrmSubtab(name, btn) {
     if (name === 'automation') renderAutoEmailsMonitoring();
     if (name === 'campaigns') renderNurturingSegments();
     if (name === 'history') renderEmailHistory();
-    if (name === 'messages') renderEmailHistory();
+    if (name === 'messages') renderContactMessages();
 }
 
 function switchMarketSubtab(name, btn) {
@@ -1288,7 +1288,7 @@ function renderVouchers() {
             <td><span class="badge ${isActive ? 'badge-success' : 'badge-secondary'}">${isActive ? 'Ativo' : 'Usado'}</span></td>
             <td style="font-size:12px;color:var(--text-muted);">${v.used_analyses||0}/${v.total_analyses||1}</td>
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td>${v.email ? `<button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${v.email}','')">&lt;i class="fas fa-envelope">&lt;/i></button>` : ''}</td>
+            <td>${v.email ? `<button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${v.email}','')"><i class="fas fa-envelope"></i></button>` : ''}</td>
         </tr>`;
     }).join('');
 }
@@ -1574,25 +1574,46 @@ function renderEmailHistory() {
     let data = [...allEmailHistory].sort((a, b) => new Date(b.sent_at) - new Date(a.sent_at));
     const type = document.getElementById('filterHistoryType')?.value || 'all';
     const search = (document.getElementById('filterHistorySearch')?.value || '').toLowerCase();
-    if (type !== 'all') data = data.filter(e => e.email_type === type);
+    if (type === 'auto') data = data.filter(e => (e.email_type || '').includes('upsell_auto') || (e.campaign_type || '').includes('upsell_auto'));
+    else if (type === 'manual') data = data.filter(e => e.email_type === 'manual');
+    else if (type === 'bulk') data = data.filter(e => e.email_type === 'campaign');
     if (search) data = data.filter(e => (e.recipient_email || '').toLowerCase().includes(search) || (e.subject || '').toLowerCase().includes(search));
-    setText('messagesCount', `${data.length} mensagens`);
+    setText('historyCount', `${data.length} emails`);
     const totalPages = Math.ceil(data.length / PAGE_SIZE);
     historyPage = Math.min(historyPage, totalPages || 1);
     const page = data.slice((historyPage - 1) * PAGE_SIZE, historyPage * PAGE_SIZE);
-    const tbody = document.getElementById('autoEmailsTable');
+    const tbody = document.getElementById('historyTable');
     if (!tbody) return;
-    if (!page.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma mensagem encontrada</td></tr>`; return; }
+    if (!page.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum email encontrado</td></tr>`; return; }
     tbody.innerHTML = page.map(e => {
         const date = new Date(e.sent_at).toLocaleDateString('pt-PT') + ' ' + new Date(e.sent_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
         const typeMap = { manual: 'Manual', campaign: 'Campanha', upsell_auto_2h: 'Auto 2h', upsell_auto_7d: 'Auto 7d', welcome: 'Boas-vindas' };
-        const typeBadge = `<span class="badge badge-${e.email_type === 'campaign' ? 'purple' : e.email_type === 'manual' ? 'teal' : 'secondary'}">${typeMap[e.email_type] || e.email_type}</span>`;
+        const emailType = e.email_type || e.campaign_type || '';
+        const typeBadge = `<span class="badge badge-${emailType === 'campaign' ? 'purple' : emailType === 'manual' ? 'teal' : 'secondary'}">${typeMap[emailType] || emailType}</span>`;
         return `<tr>
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
             <td style="font-size:12px;">${e.recipient_email || '—'}</td>
             <td style="font-size:12px;">${e.subject || '—'}</td>
             <td>${typeBadge}</td>
             <td><span class="badge badge-success">Enviado</span></td>
+        </tr>`;
+    }).join('');
+}
+
+function renderContactMessages() {
+    let data = [...allContacts].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    setText('messagesCount', `${data.length} mensagens`);
+    const tbody = document.getElementById('contactsTable');
+    if (!tbody) return;
+    if (!data.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma mensagem de contacto</td></tr>`; return; }
+    tbody.innerHTML = data.map(m => {
+        const date = new Date(m.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(m.created_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
+        return `<tr>
+            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
+            <td style="font-size:12px;">${m.name || '—'}</td>
+            <td style="font-size:12px;">${m.email || '—'}</td>
+            <td style="font-size:12px;">${m.subject || '—'}</td>
+            <td style="font-size:12px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.message || '—'}</td>
         </tr>`;
     }).join('');
 }
@@ -2523,6 +2544,7 @@ async function refreshAll() {
     renderAnalyses();
     renderVouchers();
     renderEmailHistory();
+    renderContactMessages();
     renderJobSearchTable();
     renderCETable();
     renderHealthLogs();
@@ -2550,6 +2572,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderAnalyses();
         renderVouchers();
         renderEmailHistory();
+        renderContactMessages();
         renderJobSearchTable();
         renderCETable();
         renderHealthLogs();
