@@ -58,8 +58,9 @@ const getEmailHtml = (type, data) => {
                     O seu CV foi recebido em anexo. Qualquer dúvida, responda diretamente a este email.
                 </p>
             </div>
-            <div style="background: #1A1A1A; padding: 20px; text-align: center;">
-                <p style="color: #888; font-size: 12px; margin: 0;">
+            <div style="background: #1A1A1A; padding: 25px 30px; text-align: center;">
+                <p style="color: rgba(255,255,255,0.6); font-size: 13px; font-style: italic; margin: 0 0 10px;">Partilhar conhecimento, Inspirar Carreiras.</p>
+                <p style="color: rgba(255,255,255,0.35); font-size: 11px; margin: 0;">
                     © 2026 Share2Inspire | Samuel Rolo<br>
                     <a href="https://share2inspire.pt" style="color: ${goldAccent};">share2inspire.pt</a>
                 </p>
@@ -102,8 +103,9 @@ const getEmailHtml = (type, data) => {
                     Após agendar e efetuar o pagamento, receberá a confirmação com o link para a videochamada.
                 </p>
             </div>
-            <div style="background: #1A1A1A; padding: 20px; text-align: center;">
-                <p style="color: #888; font-size: 12px; margin: 0;">
+            <div style="background: #1A1A1A; padding: 25px 30px; text-align: center;">
+                <p style="color: rgba(255,255,255,0.6); font-size: 13px; font-style: italic; margin: 0 0 10px;">Partilhar conhecimento, Inspirar Carreiras.</p>
+                <p style="color: rgba(255,255,255,0.35); font-size: 11px; margin: 0;">
                     © 2026 Share2Inspire | Samuel Rolo<br>
                     <a href="https://share2inspire.pt" style="color: ${goldAccent};">share2inspire.pt</a>
                 </p>

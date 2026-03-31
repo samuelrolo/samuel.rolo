@@ -1793,16 +1793,31 @@ export default function HomeEN() {
         </div>
 
         {/* Footer */}
-        <footer className="border-t border-border pt-8 pb-12 text-center space-y-2">
-          <p className="text-sm text-muted-foreground">© 2026 Share2Inspire — All rights reserved</p>
-          <p className="text-xs text-muted-foreground">
-            <a href="https://www.share2inspire.pt/pages/politica-privacidade" className="hover:text-[#C9A961] transition-colors">Privacy Policy</a>
-            {' · '}
-            <a href="https://www.share2inspire.pt/pages/termos-condicoes" className="hover:text-[#C9A961] transition-colors">Terms & Conditions</a>
-            {' · '}
-            <a href="/cv-analyser" className="hover:text-[#C9A961] transition-colors">PT</a>
-          </p>
-        </footer>
+      <footer className="border-t border-foreground/10 py-8 px-6 mt-8" style={{background: '#1A1A1A'}}>
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row items-start justify-between gap-6 mb-6">
+            <div>
+              <img src="/images/logo.webp" alt="Share2Inspire" style={{height: '32px', filter: 'brightness(0) invert(1)', marginBottom: '8px'}} />
+              <p className="text-sm" style={{color: 'rgba(255,255,255,0.6)'}}>Sharing knowledge, Inspiring Careers.</p>
+            </div>
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm" style={{color: 'rgba(255,255,255,0.5)'}}>
+              <a href="/en/pages/home/" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>Home</a>
+              <a href="/en/cv-analyser" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>CV Analyser</a>
+              <a href="/en/linkedin-roaster" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>LinkedIn Roaster</a>
+              <a href="/en/career-path" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>Career Path</a>
+              <a href="/en/career-intelligence" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>Career Intelligence</a>
+            </div>
+          </div>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-4" style={{borderTop: '1px solid rgba(255,255,255,0.08)'}}>
+            <p className="text-xs" style={{color: 'rgba(255,255,255,0.35)'}}>© 2026 Share2Inspire | Samuel Rolo. All rights reserved.</p>
+            <div className="flex gap-4 text-xs" style={{color: 'rgba(255,255,255,0.5)'}}>
+              <a href="/en/pages/privacy-policy/" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>Privacy</a>
+              <a href="/termos-condicoes" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>Terms</a>
+              <a href="mailto:geral@share2inspire.pt" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>geral@share2inspire.pt</a>
+            </div>
+          </div>
+        </div>
+      </footer>
       </main>
     </div>
   );
