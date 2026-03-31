@@ -424,8 +424,8 @@ async function loadUsersData() {
         const [authUsers, profiles, subscriptions, userAnalyses] = await Promise.all([
             supaFetch('admin_auth_users', 'select=id,email,raw_user_meta_data,created_at,last_sign_in_at,email_confirmed_at&order=created_at.desc'),
             supaFetch('user_profiles', 'select=*&order=created_at.desc'),
-            supaFetch('subscriptions', 'select=*&order=created_at.desc'),
-            supaFetch('user_analyses', 'select=id,user_id,analysis_type,created_at&order=created_at.desc&limit=5000')
+            supaFetch('admin_subscriptions', 'select=*&order=created_at.desc'),
+            supaFetch('admin_user_analyses', 'select=id,user_id,analysis_type,created_at&order=created_at.desc&limit=5000')
         ]);
         allAuthUsers    = Array.isArray(authUsers)    ? authUsers    : [];
         allUserProfiles = Array.isArray(profiles)     ? profiles     : [];
@@ -1725,15 +1725,76 @@ function exportEbookCSV() {
 function renderHealthLogs() {
     const el = document.getElementById('healthTable');
     if (!el) return;
-    const data = [...allHealthLogs].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 50);
-    if (!data.length) { el.innerHTML = '<p style="color:var(--text-muted);padding:20px;">Sem logs de saúde</p>'; return; }
-    el.innerHTML = `<table class="data-table"><thead><tr><th>Data</th><th>Tipo</th><th>Mensagem</th><th>Estado</th></tr></thead><tbody>
-        ${data.map(h => {
-            const date = new Date(h.created_at).toLocaleString('pt-PT');
-            const typeBadge = h.type === 'error' ? '<span class="badge" style="background:var(--red);color:#fff;">Erro</span>' : h.type === 'warning' ? '<span class="badge" style="background:var(--orange);color:#fff;">Aviso</span>' : '<span class="badge badge-success">OK</span>';
-            return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td>${typeBadge}</td><td style="font-size:12px;">${h.message || '—'}</td><td style="font-size:12px;">${h.status || '—'}</td></tr>`;
-        }).join('')}
-    </tbody></table>`;
+    const data = [...allHealthLogs].sort((a, b) => new Date(b.checked_at || b.created_at) - new Date(a.checked_at || a.created_at));
+    // KPI calculations
+    const last24h = data.filter(h => new Date(h.checked_at || h.created_at) > new Date(Date.now() - 24*60*60*1000));
+    const healthy24h = last24h.filter(h => h.status === 'healthy');
+    const errors24h = last24h.filter(h => h.status !== 'healthy');
+    const uptimePct = last24h.length > 0 ? Math.round(healthy24h.length / last24h.length * 100) : (data.length > 0 ? Math.round(data.filter(h => h.status === 'healthy').length / data.length * 100) : 100);
+    const avgTTFB = last24h.length > 0 ? Math.round(last24h.reduce((s, h) => s + (h.ttfb_ms || 0), 0) / last24h.length) : (data.length > 0 ? Math.round(data.reduce((s, h) => s + (h.ttfb_ms || 0), 0) / data.length) : 0);
+    const lastCheck = data[0] ? new Date(data[0].checked_at || data[0].created_at).toLocaleString('pt-PT') : '--';
+    setText('healthLastCheck', lastCheck);
+    setText('healthUptime', uptimePct + '%');
+    setText('healthErrors', errors24h.length);
+    setText('healthResponseTime', avgTTFB + 'ms');
+    const uptimeEl = document.getElementById('healthUptime');
+    if (uptimeEl) uptimeEl.className = 'kpi-value ' + (uptimePct >= 99 ? 'green' : uptimePct >= 95 ? 'orange' : 'red');
+    const errEl = document.getElementById('healthErrors');
+    if (errEl) errEl.className = 'kpi-value ' + (errors24h.length === 0 ? 'green' : 'red');
+    const ttfbEl = document.getElementById('healthResponseTime');
+    if (ttfbEl) ttfbEl.className = 'kpi-value ' + (avgTTFB < 1000 ? 'green' : avgTTFB < 3000 ? 'orange' : 'red');
+    // Endpoint summary
+    const endpoints = {};
+    data.forEach(h => {
+        const name = h.endpoint_name || 'Unknown';
+        if (!endpoints[name]) endpoints[name] = { name, checks: 0, healthy: 0, totalTTFB: 0, lastStatus: h.status, lastTTFB: h.ttfb_ms, category: h.category };
+        endpoints[name].checks++;
+        if (h.status === 'healthy') endpoints[name].healthy++;
+        endpoints[name].totalTTFB += (h.ttfb_ms || 0);
+    });
+    const endpointArr = Object.values(endpoints);
+    let summaryContainer = document.getElementById('endpointSummaryGrid');
+    if (!summaryContainer) {
+        summaryContainer = document.createElement('div');
+        summaryContainer.id = 'endpointSummaryGrid';
+        summaryContainer.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px;';
+        const card = el.closest('.card');
+        if (card && card.parentElement) card.parentElement.insertBefore(summaryContainer, card);
+    }
+    if (endpointArr.length > 0) {
+        summaryContainer.innerHTML = endpointArr.map(ep => {
+            const upPct = ep.checks > 0 ? Math.round(ep.healthy / ep.checks * 100) : 0;
+            const avgMs = ep.checks > 0 ? Math.round(ep.totalTTFB / ep.checks) : 0;
+            const statusColor = ep.lastStatus === 'healthy' ? 'var(--green)' : 'var(--red)';
+            const catIcon = ep.category === 'backend' ? 'fa-server' : ep.category === 'edge_function' ? 'fa-bolt' : 'fa-globe';
+            return `<div style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:12px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><i class="fas ${catIcon}" style="color:${statusColor};"></i><span style="font-size:12px;font-weight:600;">${ep.name}</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:11px;"><span>Uptime</span><span style="font-weight:600;color:${upPct >= 99 ? 'var(--green)' : 'var(--red)'};">${upPct}%</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:11px;"><span>TTFB médio</span><span style="font-weight:600;">${avgMs}ms</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:11px;"><span>Último</span><span style="font-weight:600;color:${statusColor};">${ep.lastTTFB || 0}ms</span></div>
+            </div>`;
+        }).join('');
+    }
+    // Table
+    const recent = data.slice(0, 50);
+    if (!recent.length) { el.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-muted);">Sem logs de saúde</td></tr>'; return; }
+    el.innerHTML = recent.map(h => {
+        const date = new Date(h.checked_at || h.created_at).toLocaleString('pt-PT');
+        const statusBadge = h.status === 'healthy'
+            ? '<span class="badge badge-success">Saudável</span>'
+            : h.status === 'warning'
+                ? '<span class="badge" style="background:var(--orange);color:#fff;">Aviso</span>'
+                : '<span class="badge" style="background:var(--red);color:#fff;">Erro</span>';
+        const ttfb = h.ttfb_ms ? h.ttfb_ms + 'ms' : '—';
+        const ttfbColor = (h.ttfb_ms || 0) < 1000 ? 'var(--green)' : (h.ttfb_ms || 0) < 3000 ? 'var(--orange)' : 'var(--red)';
+        const details = [h.endpoint_name, h.http_code ? 'HTTP ' + h.http_code : '', h.error_message].filter(Boolean).join(' · ');
+        return `<tr>
+            <td style="font-size:12px;color:var(--text-muted);">${date}</td>
+            <td>${statusBadge}</td>
+            <td style="font-size:12px;font-weight:600;color:${ttfbColor};">${ttfb}</td>
+            <td style="font-size:12px;">${details || '—'}</td>
+        </tr>`;
+    }).join('');
 }
 
 // ═══════════════════════════════════════════════════════════════
