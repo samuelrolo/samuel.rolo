@@ -298,8 +298,11 @@
             font-weight: 800;
             color: var(--dark);
             margin-bottom: 12px;
+            transition: opacity 0.5s ease;
         }
         .hero h1 span { color: var(--gold); }
+        .hero h1.fade-out { opacity: 0; }
+        .hero h1.fade-in { opacity: 1; }
         .hero p {
             font-size: 0.95rem;
             color: var(--muted);
@@ -954,8 +957,8 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             <a href="/en/pages/home/">Home</a>
             <a href="/en/cv-analyser">CV Analyser</a>
             <a href="/en/career-path">Career Path</a>
-            <a href="/en/linkedin-roaster" class="active">LinkedIn Roaster</a>
             <a href="/en/pages/services">Services</a>
+            <a href="/en/knowledge-hub">Knowledge Hub</a>
             <a href="/en/pages/about">About</a>
             <a href="/en/pages/contacts">Contacts</a>
         </div>
@@ -967,7 +970,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 
     <!-- Hero -->
     <section class="hero">
-        <h1>Audit your <span>LinkedIn</span> profile</h1>
+        <h1 id="heroHeadline">Invisible on LinkedIn? <span>Find out why</span></h1>
         <p>Professional analysis in 30 seconds. Find out if your profile is pushing recruiters away.</p>
         <div class="trust-bar">
             <span class="trust-item"><i class="fas fa-bolt"></i> Instant results</span>
@@ -2197,6 +2200,28 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     </script>
     <!-- S2I Auth + Save to Account -->
     <script src="/js/shared-auth.js"></script>
+    <script>
+    // Rotating headlines
+    (function() {
+        const headlines = [
+            { text: 'Invisible on LinkedIn? ', highlight: 'Find out why' },
+            { text: 'Make your profile show up ', highlight: 'in searches' },
+            { text: "What's wrong with your LinkedIn and ", highlight: 'nobody tells you' }
+        ];
+        let idx = 0;
+        const el = document.getElementById('heroHeadline');
+        if (!el) return;
+        setInterval(() => {
+            el.classList.add('fade-out');
+            setTimeout(() => {
+                idx = (idx + 1) % headlines.length;
+                el.innerHTML = headlines[idx].text + '<span>' + headlines[idx].highlight + '</span>';
+                el.classList.remove('fade-out');
+                el.classList.add('fade-in');
+            }, 500);
+        }, 4000);
+    })();
+    </script>
     <script src="/js/save-to-account.js"></script>
     <script src="/js/inline-auth.js"></script>
 </body>

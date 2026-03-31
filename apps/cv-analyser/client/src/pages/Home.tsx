@@ -1023,8 +1023,9 @@ export default function Home() {
             <a href="/cv-analyser" className="text-[#C9A961]">CV Analyser</a>
             <a href="/career-path" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Path</a>
             <a href="https://www.share2inspire.pt/pages/servicos.html" className="text-slate-500 hover:text-[#C9A961] transition-colors">Serviços</a>
-            <a href="https://www.share2inspire.pt/pages/sobre.html" className="text-slate-500 hover:text-[#C9A961] transition-colors">Sobre</a>
-            <a href="https://www.share2inspire.pt/pages/contactos" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contactos</a>
+            <a href="https://www.share2inspire.pt/conhecimento" className="text-slate-500 hover:text-[#C9A961] transition-colors">Knowledge Hub</a>
+            <a href="https://www.share2inspire.pt/sobre" className="text-slate-500 hover:text-[#C9A961] transition-colors">Sobre</a>
+            <a href="https://www.share2inspire.pt/contactos" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contactos</a>
           </nav>
           <div className="hidden lg:flex items-center gap-3">
             <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Área de Cliente</a>
@@ -1044,8 +1045,9 @@ export default function Home() {
             <a href="/cv-analyser" className="block text-sm text-[#C9A961] font-semibold">CV Analyser</a>
             <a href="/career-path" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Path</a>
             <a href="https://www.share2inspire.pt/pages/servicos.html" className="block text-sm text-slate-600 hover:text-[#C9A961]">Serviços</a>
-            <a href="https://www.share2inspire.pt/pages/sobre.html" className="block text-sm text-slate-600 hover:text-[#C9A961]">Sobre</a>
-            <a href="https://www.share2inspire.pt/pages/contactos" className="block text-sm text-slate-600 hover:text-[#C9A961]">Contactos</a>
+            <a href="https://www.share2inspire.pt/conhecimento" className="block text-sm text-slate-600 hover:text-[#C9A961]">Knowledge Hub</a>
+            <a href="https://www.share2inspire.pt/sobre" className="block text-sm text-slate-600 hover:text-[#C9A961]">Sobre</a>
+            <a href="https://www.share2inspire.pt/contactos" className="block text-sm text-slate-600 hover:text-[#C9A961]">Contactos</a>
             <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
               <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold">Área de Cliente</a>
               <a href="/en/cv-analyser" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 text-xs font-medium text-[#C9A961]"><Globe className="w-3.5 h-3.5" />EN</a>

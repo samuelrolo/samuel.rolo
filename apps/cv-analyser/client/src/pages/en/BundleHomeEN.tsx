@@ -66,8 +66,16 @@ async function extractTextFromDOCX(file: File): Promise<string> {
 
 // transformGeminiResponse imported from @/lib/transformGeminiResponse
 
+const bundleHeadlinesEN = [
+  { text: "From diagnosis to action, everything you need to", highlight: "accelerate your career" },
+  { text: "Understand where you are and define exactly", highlight: "where you're going" },
+  { text: "Analyse your CV, map your path and", highlight: "move forward with confidence" },
+];
+
 export default function BundleHomeEN() {
   useEffect(() => { document.title = "Bundle CV Analyser + Career Path | Share2Inspire"; }, []);
+  const [headlineIndex, setHeadlineIndex] = useState(0);
+  useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % bundleHeadlinesEN.length), 4000); return () => clearInterval(t); }, []);
   const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
   const [, setLocation] = useLocation();
 
@@ -375,6 +383,7 @@ export default function BundleHomeEN() {
             <a href="/en/career-path" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Path</a>
             <a href="/en/bundle" className="text-[#C9A961]">Bundle</a>
             <a href="https://www.share2inspire.pt/en/pages/services" className="text-slate-500 hover:text-[#C9A961] transition-colors">Services</a>
+            <a href="https://www.share2inspire.pt/en/knowledge-hub" className="text-slate-500 hover:text-[#C9A961] transition-colors">Knowledge Hub</a>
             <a href="https://www.share2inspire.pt/en/pages/about" className="text-slate-500 hover:text-[#C9A961] transition-colors">About</a>
             <a href="https://www.share2inspire.pt/en/pages/contacts" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contacts</a>
           </nav>
@@ -395,6 +404,7 @@ export default function BundleHomeEN() {
             <a href="/en/career-path" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Path</a>
             <a href="/en/bundle" className="block text-sm text-[#C9A961] font-semibold">Bundle</a>
             <a href="https://www.share2inspire.pt/en/pages/services" className="block text-sm text-slate-600 hover:text-[#C9A961]">Services</a>
+            <a href="https://www.share2inspire.pt/en/knowledge-hub" className="block text-sm text-slate-600 hover:text-[#C9A961]">Knowledge Hub</a>
             <a href="https://www.share2inspire.pt/en/pages/about" className="block text-sm text-slate-600 hover:text-[#C9A961]">About</a>
             <a href="https://www.share2inspire.pt/en/pages/contacts" className="block text-sm text-slate-600 hover:text-[#C9A961]">Contacts</a>
             <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
@@ -412,11 +422,11 @@ export default function BundleHomeEN() {
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#C9A961]/10 to-[#C9A961]/5 text-[#C9A961] text-xs font-bold px-4 py-2 rounded-full border border-[#C9A961]/20 uppercase tracking-wider">
               <Sparkles className="w-4 h-4" /> Most popular bundle
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight">
-              CV Analyser <span className="text-[#C9A961]">+</span> Career Path
+            <h1 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight" key={headlineIndex} style={{animation: 'fadeInUp 0.6s ease-out'}}>
+              {bundleHeadlinesEN[headlineIndex].text} <span className="text-[#C9A961]">{bundleHeadlinesEN[headlineIndex].highlight}</span>
             </h1>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Complete CV diagnosis and personalised career roadmap. Everything in one step, with a single payment.
+              CV Analyser + Career Path. Complete CV diagnosis and personalised career roadmap. Everything in one step, with a single payment.
             </p>
 
             {/* Price */}

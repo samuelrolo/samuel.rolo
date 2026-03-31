@@ -271,8 +271,11 @@
             font-weight: 800;
             color: var(--dark);
             margin-bottom: 12px;
+            transition: opacity 0.5s ease;
         }
         .hero h1 span { color: var(--gold); }
+        .hero h1.fade-out { opacity: 0; }
+        .hero h1.fade-in { opacity: 1; }
         .hero p {
             font-size: 0.95rem;
             color: var(--muted);
@@ -924,13 +927,13 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             <img loading="lazy" src="../images/logo.webp" alt="Share2Inspire">
         </a>
         <div class="nav-links">
-            <a href="../index.html">Início</a>
+            <a href="/index.html">Início</a>
             <a href="/cv-analyser">CV Analyser</a>
             <a href="/career-path">Career Path</a>
-            <a href="/linkedin-roaster" class="active">LinkedIn Roaster</a>
-            <a href="../pages/servicos.html">Serviços</a>
-            <a href="../pages/sobre.html">Sobre</a>
-            <a href="../pages/contactos">Contactos</a>
+            <a href="/pages/servicos.html">Serviços</a>
+            <a href="/conhecimento">Knowledge Hub</a>
+            <a href="/sobre">Sobre</a>
+            <a href="/contactos">Contactos</a>
         </div>
         <div class="nav-links" style="gap:12px;">
             <a href="/area-cliente/" style="background:var(--gold);color:#0a0a0a;padding:4px 14px;border-radius:4px;font-weight:700;font-size:0.7rem;">Área de Cliente</a>
@@ -940,7 +943,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 
     <!-- Hero -->
     <section class="hero">
-        <h1>Audita o teu perfil <span>LinkedIn</span></h1>
+        <h1 id="heroHeadline">Estás invisível no LinkedIn? <span>Descobre porquê</span></h1>
         <p>Análise profissional em 30 segundos. Descobre se o teu perfil está a afastar recrutadores.</p>
         <div class="trust-bar">
             <span class="trust-item"><i class="fas fa-bolt"></i> Resultado imediato</span>
@@ -2171,6 +2174,28 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     </script>
     <!-- S2I Auth + Save to Account -->
     <script src="/js/shared-auth.js"></script>
+    <script>
+    // Rotating headlines
+    (function() {
+        const headlines = [
+            { text: 'Estás invisível no LinkedIn? ', highlight: 'Descobre porquê' },
+            { text: 'Faz o teu perfil aparecer ', highlight: 'nas pesquisas' },
+            { text: 'O que está errado no teu LinkedIn e ', highlight: 'ninguém te diz' }
+        ];
+        let idx = 0;
+        const el = document.getElementById('heroHeadline');
+        if (!el) return;
+        setInterval(() => {
+            el.classList.add('fade-out');
+            setTimeout(() => {
+                idx = (idx + 1) % headlines.length;
+                el.innerHTML = headlines[idx].text + '<span>' + headlines[idx].highlight + '</span>';
+                el.classList.remove('fade-out');
+                el.classList.add('fade-in');
+            }, 500);
+        }, 4000);
+    })();
+    </script>
     <script src="/js/save-to-account.js"></script>
     <script src="../js/inline-auth.js"></script>
 </body>

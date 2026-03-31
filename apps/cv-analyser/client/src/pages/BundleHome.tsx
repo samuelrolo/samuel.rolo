@@ -65,8 +65,16 @@ async function extractTextFromDOCX(file: File): Promise<string> {
 
 // transformGeminiResponse imported from @/lib/transformGeminiResponse
 
+const bundleHeadlines = [
+  { text: "Do diagnóstico à ação, tudo o que precisas para", highlight: "acelerar a tua carreira" },
+  { text: "Percebe onde estás e define exatamente", highlight: "para onde vais" },
+  { text: "Analisa o teu CV, traça o teu caminho e", highlight: "avança com confiança" },
+];
+
 export default function BundleHome() {
   useEffect(() => { document.title = "Bundle CV Analyser + Career Path | Share2Inspire"; }, []);
+  const [headlineIndex, setHeadlineIndex] = useState(0);
+  useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % bundleHeadlines.length), 4000); return () => clearInterval(t); }, []);
   const [, setLocation] = useLocation();
 
   // Upload state
@@ -563,8 +571,9 @@ export default function BundleHome() {
             <a href="/career-path" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Path</a>
             <a href="/bundle" className="text-[#C9A961]">Bundle</a>
             <a href="https://www.share2inspire.pt/pages/servicos.html" className="text-slate-500 hover:text-[#C9A961] transition-colors">Serviços</a>
-            <a href="https://www.share2inspire.pt/pages/sobre.html" className="text-slate-500 hover:text-[#C9A961] transition-colors">Sobre</a>
-            <a href="https://www.share2inspire.pt/pages/contactos" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contactos</a>
+            <a href="https://www.share2inspire.pt/conhecimento" className="text-slate-500 hover:text-[#C9A961] transition-colors">Knowledge Hub</a>
+            <a href="https://www.share2inspire.pt/sobre" className="text-slate-500 hover:text-[#C9A961] transition-colors">Sobre</a>
+            <a href="https://www.share2inspire.pt/contactos" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contactos</a>
           </nav>
           <div className="hidden lg:flex items-center gap-3">
             <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] hover:bg-[#d4af5a] text-[#0a0a0a] text-xs font-semibold tracking-wide uppercase transition-colors">Área de Cliente</a>
@@ -583,8 +592,9 @@ export default function BundleHome() {
             <a href="/career-path" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Path</a>
             <a href="/bundle" className="block text-sm text-[#C9A961] font-semibold">Bundle</a>
             <a href="https://www.share2inspire.pt/pages/servicos.html" className="block text-sm text-slate-600 hover:text-[#C9A961]">Serviços</a>
-            <a href="https://www.share2inspire.pt/pages/sobre.html" className="block text-sm text-slate-600 hover:text-[#C9A961]">Sobre</a>
-            <a href="https://www.share2inspire.pt/pages/contactos" className="block text-sm text-slate-600 hover:text-[#C9A961]">Contactos</a>
+            <a href="https://www.share2inspire.pt/conhecimento" className="block text-sm text-slate-600 hover:text-[#C9A961]">Knowledge Hub</a>
+            <a href="https://www.share2inspire.pt/sobre" className="block text-sm text-slate-600 hover:text-[#C9A961]">Sobre</a>
+            <a href="https://www.share2inspire.pt/contactos" className="block text-sm text-slate-600 hover:text-[#C9A961]">Contactos</a>
             <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
               <a href="/area-cliente/" className="px-4 py-1.5 rounded bg-[#BF9A33] text-[#0a0a0a] text-xs font-semibold">Área de Cliente</a>
               <a href="/en/bundle" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C9A961]/40 text-xs font-medium text-[#C9A961]"><Globe className="w-3.5 h-3.5" />EN</a>
@@ -602,11 +612,11 @@ export default function BundleHome() {
               <Sparkles className="w-4 h-4" />
               Bundle mais popular
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight">
-              CV Analyser <span className="text-[#C9A961]">+</span> Career Path
+            <h1 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight" key={headlineIndex} style={{animation: 'fadeInUp 0.6s ease-out'}}>
+              {bundleHeadlines[headlineIndex].text} <span className="text-[#C9A961]">{bundleHeadlines[headlineIndex].highlight}</span>
             </h1>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Diagnóstico completo do teu CV e roadmap de carreira personalizado. Tudo num só passo, com um único pagamento.
+              CV Analyser + Career Path. Diagnóstico completo do teu CV e roadmap de carreira personalizado. Tudo num só passo, com um único pagamento.
             </p>
 
             {/* Price */}

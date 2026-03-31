@@ -62,8 +62,16 @@ const testimonials = [
   },
 ];
 
+const careerPathHeadlinesEN = [
+  { text: "Define your next step with a clear plan,", highlight: "not trial and error" },
+  { text: "Break free from stagnation with a structured path", highlight: "for your career" },
+  { text: "Stop guessing your future, build a journey", highlight: "with direction and intention" },
+];
+
 export default function CareerPathHomeEN() {
   useEffect(() => { document.title = "Career Path — AI-Powered Career Roadmap | Share2Inspire"; }, []);
+  const [headlineIndex, setHeadlineIndex] = useState(0);
+  useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % careerPathHeadlinesEN.length), 4000); return () => clearInterval(t); }, []);
 
   const [, setLocation] = useLocation();
   const [file, setFile] = useState<File | null>(null);
@@ -411,6 +419,7 @@ export default function CareerPathHomeEN() {
             <a href="/en/cv-analyser" className="text-slate-500 hover:text-[#C9A961] transition-colors">CV Analyser</a>
             <a href="/en/career-path" className="text-[#C9A961]">Career Path</a>
             <a href="https://www.share2inspire.pt/en/pages/services" className="text-slate-500 hover:text-[#C9A961] transition-colors">Services</a>
+            <a href="https://www.share2inspire.pt/en/knowledge-hub" className="text-slate-500 hover:text-[#C9A961] transition-colors">Knowledge Hub</a>
             <a href="https://www.share2inspire.pt/en/pages/about" className="text-slate-500 hover:text-[#C9A961] transition-colors">About</a>
             <a href="https://www.share2inspire.pt/en/pages/contacts" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contacts</a>
           </nav>
@@ -430,6 +439,7 @@ export default function CareerPathHomeEN() {
             <a href="/en/cv-analyser" className="block text-sm text-slate-600 hover:text-[#C9A961]">CV Analyser</a>
             <a href="/en/career-path" className="block text-sm text-[#C9A961] font-semibold">Career Path</a>
             <a href="https://www.share2inspire.pt/en/pages/services" className="block text-sm text-slate-600 hover:text-[#C9A961]">Services</a>
+            <a href="https://www.share2inspire.pt/en/knowledge-hub" className="block text-sm text-slate-600 hover:text-[#C9A961]">Knowledge Hub</a>
             <a href="https://www.share2inspire.pt/en/pages/about" className="block text-sm text-slate-600 hover:text-[#C9A961]">About</a>
             <a href="https://www.share2inspire.pt/en/pages/contacts" className="block text-sm text-slate-600 hover:text-[#C9A961]">Contacts</a>
             <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
@@ -452,8 +462,8 @@ export default function CareerPathHomeEN() {
                 <Compass className="w-4 h-4" />
                 Powered by Advanced AI
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-                Your career has <span className="text-[#C9A961]">3 possible paths</span>.<br />Find out which ones.
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight" key={headlineIndex} style={{animation: 'fadeInUp 0.6s ease-out'}}>
+                {careerPathHeadlinesEN[headlineIndex].text} <span className="text-[#C9A961]">{careerPathHeadlinesEN[headlineIndex].highlight}</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Upload your CV, get a personalised roadmap with gap analysis, salary estimates, and an action plan — in under 1 minute.

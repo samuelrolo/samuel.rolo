@@ -91,8 +91,16 @@ const PRICE_DISPLAY_MEMBER_PRO = '$9.99';
 const PRICE_MEMBER_PRO = '9.99';
 const PRICE_NUM_MEMBER_PRO = 9.99;
 
+const ciHeadlinesEN = [
+  { text: "Make career decisions with data,", highlight: "not intuition" },
+  { text: "See where the market is heading", highlight: "before everyone else" },
+  { text: "Turn information into a real advantage", highlight: "in your professional growth" },
+];
+
 export default function CareerIntelligenceHomeEN() {
   useEffect(() => { document.title = "Career Intelligence — Strategic Career Decision with AI | Share2Inspire"; }, []);
+  const [headlineIndex, setHeadlineIndex] = useState(0);
+  useEffect(() => { const t = setInterval(() => setHeadlineIndex(i => (i + 1) % ciHeadlinesEN.length), 4000); return () => clearInterval(t); }, []);
   const { symbol: CUR, code: currencyCode, codeUpper: currencyCodeUpper } = useCurrency();
   const PRICE_DISPLAY_BASE = `${CUR}49`;
 
@@ -553,6 +561,7 @@ export default function CareerIntelligenceHomeEN() {
             <a href="/en/career-path" className="text-slate-500 hover:text-[#C9A961] transition-colors">Career Path</a>
             <a href="/en/career-intelligence" className="text-[#C9A961]">Career Intelligence</a>
             <a href="https://www.share2inspire.pt/en/pages/services" className="text-slate-500 hover:text-[#C9A961] transition-colors">Services</a>
+            <a href="https://www.share2inspire.pt/en/knowledge-hub" className="text-slate-500 hover:text-[#C9A961] transition-colors">Knowledge Hub</a>
             <a href="https://www.share2inspire.pt/en/pages/about" className="text-slate-500 hover:text-[#C9A961] transition-colors">About</a>
             <a href="https://www.share2inspire.pt/en/pages/contacts" className="text-slate-500 hover:text-[#C9A961] transition-colors">Contacts</a>
           </nav>
@@ -573,6 +582,7 @@ export default function CareerIntelligenceHomeEN() {
             <a href="/en/career-path" className="block text-sm text-slate-600 hover:text-[#C9A961]">Career Path</a>
             <a href="/en/career-intelligence" className="block text-sm text-[#C9A961] font-semibold">Career Intelligence</a>
             <a href="https://www.share2inspire.pt/en/pages/services" className="block text-sm text-slate-600 hover:text-[#C9A961]">Services</a>
+            <a href="https://www.share2inspire.pt/en/knowledge-hub" className="block text-sm text-slate-600 hover:text-[#C9A961]">Knowledge Hub</a>
             <a href="https://www.share2inspire.pt/en/pages/about" className="block text-sm text-slate-600 hover:text-[#C9A961]">About</a>
             <a href="https://www.share2inspire.pt/en/pages/contacts" className="block text-sm text-slate-600 hover:text-[#C9A961]">Contacts</a>
             <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
@@ -590,8 +600,8 @@ export default function CareerIntelligenceHomeEN() {
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#C9A961]/10 border border-[#C9A961]/20 text-sm font-medium text-[#C9A961]">
                 <Scale className="w-4 h-4" />Powered by Advanced AI
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-                You have <span className="text-[#C9A961]">3 paths</span>.<br />We tell you which one to choose.
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight" key={headlineIndex} style={{animation: 'fadeInUp 0.6s ease-out'}}>
+                {ciHeadlinesEN[headlineIndex].text} <span className="text-[#C9A961]">{ciHeadlinesEN[headlineIndex].highlight}</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Our AI analyses your CV and LinkedIn, compares the 3 career paths with the highest potential, and delivers a final recommendation — with data, not intuition.
