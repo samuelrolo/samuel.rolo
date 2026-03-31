@@ -250,6 +250,10 @@
       "destination": "/career-intelligence/index.html"
     },
     {
+      "source": "/career-intelligence/demo",
+      "destination": "/career-intelligence/demo/index.html"
+    },
+    {
       "source": "/career-intelligence/(.*)",
       "destination": "/career-intelligence/index.html"
     },
@@ -284,6 +288,10 @@
     {
       "source": "/en/career-intelligence",
       "destination": "/en/career-intelligence/index.html"
+    },
+    {
+      "source": "/en/career-intelligence/demo",
+      "destination": "/en/career-intelligence/demo/index.html"
     },
     {
       "source": "/en/career-intelligence/(.*)",
