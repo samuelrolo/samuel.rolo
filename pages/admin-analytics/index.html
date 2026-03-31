@@ -680,7 +680,7 @@
         <div class="card">
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Data</th><th>Email</th><th>Plano</th><th>Código</th><th>Método</th><th>Valor</th><th>Estado</th><th>Usadas</th></tr></thead>
+                    <thead><tr><th>Código</th><th>Email</th><th>Plano</th><th>Método</th><th>Valor</th><th>Estado</th><th>Usadas</th><th>Data</th><th></th></tr></thead>
                     <tbody id="vouchersTable"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
                 </table>
             </div>
@@ -757,41 +757,67 @@
 
     <!-- SUB-TAB: Campanhas / Nurturing -->
     <div id="crm-sub-campaigns" style="display:none;">
+        <!-- Segment Cards -->
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
             <div class="lang-toggle" id="nurturingLangToggle">
                 <button class="active" onclick="setNurturingLang('pt',this)">PT</button>
                 <button onclick="setNurturingLang('en',this)">EN</button>
             </div>
+            <span style="font-size:12px;color:var(--text-muted);margin-left:auto;" id="campaignLastSent"></span>
         </div>
-        <div id="nurturingSegments"><div class="spinner"></div></div>
-        <div id="nurturingDetail" style="display:none;margin-top:20px;">
+        <div id="nurturingSegments" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;"></div>
+
+        <!-- Campaign Composer -->
+        <div id="nurturingDetail" style="margin-top:0;">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title" id="nurturingTitle"><i class="fas fa-bullseye"></i> Segmento</div>
+                    <div class="card-title" id="nurturingTitle"><i class="fas fa-paper-plane"></i> Compor Campanha</div>
                     <div style="display:flex;gap:8px;">
                         <button class="btn btn-outline btn-sm" onclick="selectOnlyUnsent()"><i class="fas fa-filter"></i> Só não enviados</button>
-                        <button class="btn btn-gold btn-sm" onclick="sendBulkEmail()"><i class="fas fa-paper-plane"></i> Enviar</button>
+                        <button class="btn btn-gold btn-sm" onclick="sendBulkEmail()"><i class="fas fa-paper-plane"></i> Enviar Campanha</button>
                     </div>
                 </div>
                 <div class="card-body">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label">Segmento</label>
+                            <select class="form-select" id="campaignSegment" onchange="filterCampaignRecipients()">
+                                <option value="all">Todos</option>
+                                <option value="lead">Leads (sem compra)</option>
+                                <option value="client">Clientes (1 compra)</option>
+                                <option value="recurring">Recorrentes (2+)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Template</label>
+                            <select class="form-select" id="campaignTemplate" onchange="loadCampaignTemplate()">
+                                <option value="">— Personalizado —</option>
+                                <option value="upsell_cv">Upsell — CV Analyser</option>
+                                <option value="upsell_cp">Upsell — Career Path</option>
+                                <option value="upsell_ci">Upsell — Career Intelligence</option>
+                                <option value="followup">Follow-up</option>
+                                <option value="testimonial">Pedir Testemunho</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="form-label">Assunto</label>
                         <input class="form-input" id="nurturingSubject" style="width:100%;">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Corpo (HTML)</label>
-                        <textarea class="form-textarea" id="nurturingBody" style="min-height:120px;"></textarea>
+                        <textarea class="form-textarea" id="nurturingBody" style="min-height:150px;"></textarea>
                     </div>
                     <div class="filter-bar" style="margin-top:12px;">
                         <input class="form-input" type="text" id="recipientSearch" placeholder="Filtrar destinatários..." oninput="filterRecipientList()" style="width:200px;">
                         <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-                            <label class="form-check"><input type="checkbox" id="selectAll" onchange="toggleAllRecipients(this.checked)"> Selecionar todos</label>
-                            <span style="font-size:12px;color:var(--text-muted);" id="recipientCount">0 selecionados</span>
+                            <label class="form-check"><input type="checkbox" id="selectAll" checked onchange="toggleAllRecipients(this.checked)"> Selecionar todos</label>
+                            <span style="font-size:12px;color:var(--text-muted);" id="recipientCount">0 destinatários</span>
                         </div>
                     </div>
                     <div class="table-wrap" style="max-height:300px;overflow-y:auto;">
                         <table>
-                            <thead><tr><th style="width:30px;"></th><th>Email</th><th>Nome</th><th>Último Email</th></tr></thead>
+                            <thead><tr><th style="width:30px;"></th><th>Nome</th><th>Email</th><th>Estágio</th><th>Último Email</th></tr></thead>
                             <tbody id="recipientTable"></tbody>
                         </table>
                     </div>

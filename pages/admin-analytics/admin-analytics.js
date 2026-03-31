@@ -1210,6 +1210,7 @@ function renderAnalyses() {
         else data = data.filter(a => getAnalysisType(a) === type);
     }
     if (email) data = data.filter(a => (a.user_email || '').toLowerCase().includes(email));
+    data = data.filter(a => !(a.user_email || '').startsWith('__') && !(a.user_name || '').startsWith('__'));
     if (period !== 'all') data = filterByPeriod(data, parseInt(period));
     setText('analysesCount', `${data.length} análises`);
     const totalPages = Math.ceil(data.length / PAGE_SIZE);
@@ -1217,7 +1218,7 @@ function renderAnalyses() {
     const page = data.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
     const tbody = document.getElementById('analysesTable');
     if (!tbody) return;
-    if (!page.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma análise encontrada</td></tr>`; return; }
+    if (!page.length) { tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma análise encontrada</td></tr>`; return; }
     tbody.innerHTML = page.map(a => {
         const aType = getAnalysisType(a);
         const dt = new Date(a.created_at);
@@ -1225,14 +1226,18 @@ function renderAnalyses() {
         const rawScore = a.score || a.teaser_score || 0;
         const score = rawScore > 0 ? `<span style="font-weight:600;color:${rawScore >= 70 ? 'var(--green)' : rawScore >= 40 ? 'var(--orange)' : 'var(--red)'};">${rawScore}</span>` : '—';
         const amount = a.payment_amount > 0 ? `<span style="color:var(--gold);font-weight:600;">${a.payment_amount.toFixed(2)}€</span>` : '—';
+        const rating = a.user_rating ? `<span style="color:var(--gold);">${'★'.repeat(a.user_rating)}${'☆'.repeat(5 - a.user_rating)}</span>` : '—';
+        const payType = a.payment_amount > 0 ? '<span class="badge" style="background:var(--green);color:#fff;font-size:10px;">Pago</span>' : '<span class="badge badge-secondary" style="font-size:10px;">Gratuito</span>';
         return `<tr>
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td>${a.user_name || '—'}</td>
-            <td style="font-size:12px;">${isAnonymous(a) ? '<span style="color:var(--text-muted);">anónimo</span>' : a.user_email}</td>
-            <td>${score}</td>
+            <td>${a.user_name || '\u2014'}</td>
+            <td style="font-size:12px;">${isAnonymous(a) ? '<span style="color:var(--text-muted);">an\u00f3nimo</span>' : a.user_email}</td>
             <td>${getTypeBadge(aType)}</td>
+            <td>${score}</td>
             <td>${getProductBadge(a)}</td>
+            <td>${payType}</td>
             <td>${amount}</td>
+            <td>${rating}</td>
             <td><div style="display:flex;gap:4px;">
                 ${!isAnonymous(a) ? `<button class="btn-icon" title="Ver Perfil" onclick="showUserProfile('${a.user_email.toLowerCase()}')"><i class="fas fa-eye"></i></button>` : ''}
             </div></td>
@@ -1270,18 +1275,20 @@ function renderVouchers() {
     setText('vouchersCount', `${data.length} vouchers`);
     const tbody = document.getElementById('vouchersTable');
     if (!tbody) return;
-    if (!data.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum voucher encontrado</td></tr>`; return; }
+    if (!data.length) { tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum voucher encontrado</td></tr>`; return; }
     tbody.innerHTML = data.map(v => {
         const isActive = v.is_active === true || (v.is_active !== false && (v.used_analyses || 0) < (v.total_analyses || 1));
         const date = new Date(v.created_at).toLocaleDateString('pt-PT');
         return `<tr>
             <td><code style="font-size:12px;background:var(--bg);padding:2px 6px;border-radius:4px;">${v.code}</code></td>
-            <td style="font-size:12px;">${v.email || '—'}</td>
-            <td style="font-size:12px;">${v.plan_name || '—'}</td>
-            <td style="font-size:12px;font-weight:600;">${parseFloat(v.amount_paid) > 0 ? parseFloat(v.amount_paid).toFixed(2) + '€' : '—'}</td>
-            <td><span class="badge ${isActive ? 'badge-success' : 'badge-secondary'}">${isActive ? 'Ativo' : 'Usado'}</span> <span style="font-size:10px;color:var(--text-muted);">${v.used_analyses||0}/${v.total_analyses||1}</span></td>
+            <td style="font-size:12px;">${v.email || '\u2014'}</td>
+            <td style="font-size:12px;">${v.plan_name || '\u2014'}</td>
+            <td style="font-size:12px;">${v.payment_method || '\u2014'}</td>
+            <td style="font-size:12px;font-weight:600;">${parseFloat(v.amount_paid) > 0 ? parseFloat(v.amount_paid).toFixed(2) + '\u20ac' : '\u2014'}</td>
+            <td><span class="badge ${isActive ? 'badge-success' : 'badge-secondary'}">${isActive ? 'Ativo' : 'Usado'}</span></td>
+            <td style="font-size:12px;color:var(--text-muted);">${v.used_analyses||0}/${v.total_analyses||1}</td>
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td>${v.email ? `<button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${v.email}','')"><i class="fas fa-envelope"></i></button>` : ''}</td>
+            <td>${v.email ? `<button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${v.email}','')">&lt;i class="fas fa-envelope">&lt;/i></button>` : ''}</td>
         </tr>`;
     }).join('');
 }
@@ -1363,18 +1370,18 @@ function loadEmailTemplate() {
     const to = document.getElementById('modalEmailTo').value;
     const templates = {
         pt: {
-            upsell_cv: { subject: 'O teu CV merece mais — upgrade disponível', body: `Olá,\n\nVimos que fizeste uma análise gratuita do teu CV. Gostarias de desbloquear a versão completa com recomendações detalhadas?\n\nAcede a share2inspire.pt/cv-analyser para fazer upgrade.\n\nEquipa Share2Inspire` },
-            upsell_cp: { subject: 'Descobre o teu Career Path personalizado', body: `Olá,\n\nCom base na tua análise de CV, preparámos um Career Path personalizado para ti.\n\nDescobre as melhores oportunidades em share2inspire.pt/career-path\n\nEquipa Share2Inspire` },
-            upsell_ci: { subject: 'Career Intelligence — análise profunda do teu mercado', body: `Olá,\n\nJá tens o teu Career Path. Agora leva a tua carreira ao próximo nível com o Career Intelligence PRO.\n\nDescobre mais em share2inspire.pt/career-intelligence\n\nEquipa Share2Inspire` },
-            followup: { subject: 'Precisas de ajuda com a tua carreira?', body: `Olá,\n\nVimos que visitaste o Share2Inspire recentemente. Podemos ajudar-te com alguma questão sobre a tua carreira?\n\nResponde a este email e teremos todo o gosto em ajudar.\n\nEquipa Share2Inspire` },
-            testimonial: { subject: 'A tua experiência com o Share2Inspire', body: `Olá,\n\nEsperamos que a tua experiência com o Share2Inspire tenha sido positiva! Gostaríamos muito de ouvir o teu feedback.\n\nPoderias partilhar um breve testemunho sobre como as nossas ferramentas te ajudaram?\n\nEquipa Share2Inspire` }
+            upsell_cv: { subject: 'O teu CV merece mais — upgrade disponível', body: `<p>Olá,</p><p>Vimos que fizeste uma análise gratuita do teu CV. Gostarias de desbloquear a <strong>versão completa</strong> com recomendações detalhadas?</p><p><a href="https://www.share2inspire.pt/cv-analyser" style="color:#C9A961;font-weight:bold;">Acede aqui para fazer upgrade →</a></p><p>Equipa Share2Inspire</p>` },
+            upsell_cp: { subject: 'Descobre o teu Career Path personalizado', body: `<p>Olá,</p><p>Com base na tua análise de CV, preparámos um <strong>Career Path personalizado</strong> para ti.</p><p><a href="https://www.share2inspire.pt/career-path" style="color:#C9A961;font-weight:bold;">Descobre as melhores oportunidades →</a></p><p>Equipa Share2Inspire</p>` },
+            upsell_ci: { subject: 'Career Intelligence — análise profunda do teu mercado', body: `<p>Olá,</p><p>Já tens o teu Career Path. Agora leva a tua carreira ao próximo nível com o <strong>Career Intelligence PRO</strong>.</p><p><a href="https://www.share2inspire.pt/career-intelligence" style="color:#C9A961;font-weight:bold;">Descobre mais →</a></p><p>Equipa Share2Inspire</p>` },
+            followup: { subject: 'Precisas de ajuda com a tua carreira?', body: `<p>Olá,</p><p>Vimos que visitaste o Share2Inspire recentemente. Podemos ajudar-te com alguma questão sobre a tua carreira?</p><p>Responde a este email e teremos todo o gosto em ajudar.</p><p>Equipa Share2Inspire</p>` },
+            testimonial: { subject: 'A tua experiência com o Share2Inspire', body: `<p>Olá,</p><p>Esperamos que a tua experiência com o Share2Inspire tenha sido positiva! Gostaríamos muito de ouvir o teu feedback.</p><p>Poderias partilhar um breve testemunho sobre como as nossas ferramentas te ajudaram?</p><p>Equipa Share2Inspire</p>` }
         },
         en: {
-            upsell_cv: { subject: 'Your CV deserves more — upgrade available', body: `Hi,\n\nWe noticed you did a free CV analysis. Would you like to unlock the full version with detailed recommendations?\n\nVisit share2inspire.pt/en/cv-analyser to upgrade.\n\nShare2Inspire Team` },
-            upsell_cp: { subject: 'Discover your personalized Career Path', body: `Hi,\n\nBased on your CV analysis, we've prepared a personalized Career Path for you.\n\nDiscover the best opportunities at share2inspire.pt/en/career-path\n\nShare2Inspire Team` },
-            upsell_ci: { subject: 'Career Intelligence — deep market analysis', body: `Hi,\n\nYou already have your Career Path. Now take your career to the next level with Career Intelligence PRO.\n\nLearn more at share2inspire.pt/en/career-intelligence\n\nShare2Inspire Team` },
-            followup: { subject: 'Need help with your career?', body: `Hi,\n\nWe noticed you visited Share2Inspire recently. Can we help you with any career-related questions?\n\nReply to this email and we'll be happy to help.\n\nShare2Inspire Team` },
-            testimonial: { subject: 'Your experience with Share2Inspire', body: `Hi,\n\nWe hope your experience with Share2Inspire has been positive! We'd love to hear your feedback.\n\nCould you share a brief testimonial about how our tools helped you?\n\nShare2Inspire Team` }
+            upsell_cv: { subject: 'Your CV deserves more — upgrade available', body: `<p>Hi,</p><p>We noticed you did a free CV analysis. Would you like to unlock the <strong>full version</strong> with detailed recommendations?</p><p><a href="https://www.share2inspire.pt/en/cv-analyser" style="color:#C9A961;font-weight:bold;">Upgrade now →</a></p><p>Share2Inspire Team</p>` },
+            upsell_cp: { subject: 'Discover your personalized Career Path', body: `<p>Hi,</p><p>Based on your CV analysis, we've prepared a <strong>personalized Career Path</strong> for you.</p><p><a href="https://www.share2inspire.pt/en/career-path" style="color:#C9A961;font-weight:bold;">Discover the best opportunities →</a></p><p>Share2Inspire Team</p>` },
+            upsell_ci: { subject: 'Career Intelligence — deep market analysis', body: `<p>Hi,</p><p>You already have your Career Path. Now take your career to the next level with <strong>Career Intelligence PRO</strong>.</p><p><a href="https://www.share2inspire.pt/en/career-intelligence" style="color:#C9A961;font-weight:bold;">Learn more →</a></p><p>Share2Inspire Team</p>` },
+            followup: { subject: 'Need help with your career?', body: `<p>Hi,</p><p>We noticed you visited Share2Inspire recently. Can we help you with any career-related questions?</p><p>Reply to this email and we'll be happy to help.</p><p>Share2Inspire Team</p>` },
+            testimonial: { subject: 'Your experience with Share2Inspire', body: `<p>Hi,</p><p>We hope your experience with Share2Inspire has been positive! We'd love to hear your feedback.</p><p>Could you share a brief testimonial about how our tools helped you?</p><p>Share2Inspire Team</p>` }
         }
     };
     const t = templates[lang]?.[tpl];
@@ -1401,7 +1408,7 @@ async function sendSingleEmail() {
     const subject = document.getElementById('modalEmailSubject').value.trim();
     const body = document.getElementById('modalEmailBody').value.trim();
     if (!to || !subject || !body) { showToast('Preenche todos os campos', 'danger'); return; }
-    const htmlBody = body.replace(/\n/g, '<br>');
+    const htmlBody = body.includes('<p>') || body.includes('<a ') ? body : body.replace(/\n/g, '<br>');
     const ok = await sendBrevoEmail(to, subject, htmlBody);
     if (ok) {
         showToast('Email enviado com sucesso!', 'success');
@@ -1425,14 +1432,81 @@ function renderNurturingSegments() {
     const leads = profiles.filter(p => p.stage === 'lead');
     const clients = profiles.filter(p => p.stage === 'client');
     const recurring = profiles.filter(p => p.stage === 'recurring');
+    const sentEmails = new Set(allEmailHistory.map(e => e.recipient_email?.toLowerCase()));
+    const leadsUnsent = leads.filter(l => !sentEmails.has(l.email.toLowerCase())).length;
+    const clientsUnsent = clients.filter(c => !sentEmails.has(c.email.toLowerCase())).length;
+    const recurringUnsent = recurring.filter(r => !sentEmails.has(r.email.toLowerCase())).length;
     const el = document.getElementById('nurturingSegments');
     if (el) {
         el.innerHTML = `
-            <div class="metric-row"><div class="metric-label">Leads (sem compra)</div><div class="metric-value">${leads.length}</div></div>
-            <div class="metric-row"><div class="metric-label">Clientes (1 compra)</div><div class="metric-value">${clients.length}</div></div>
-            <div class="metric-row"><div class="metric-label">Recorrentes (2+ compras)</div><div class="metric-value">${recurring.length}</div></div>`;
+            <div class="card" style="cursor:pointer;" onclick="document.getElementById('campaignSegment').value='lead';filterCampaignRecipients();">
+                <div class="card-body" style="text-align:center;padding:16px;">
+                    <div style="font-size:28px;font-weight:700;color:var(--blue);">${leads.length}</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Leads (sem compra)</div>
+                    <div style="font-size:11px;color:var(--orange);margin-top:4px;">${leadsUnsent} sem email enviado</div>
+                </div>
+            </div>
+            <div class="card" style="cursor:pointer;" onclick="document.getElementById('campaignSegment').value='client';filterCampaignRecipients();">
+                <div class="card-body" style="text-align:center;padding:16px;">
+                    <div style="font-size:28px;font-weight:700;color:var(--green);">${clients.length}</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Clientes (1 compra)</div>
+                    <div style="font-size:11px;color:var(--orange);margin-top:4px;">${clientsUnsent} sem email enviado</div>
+                </div>
+            </div>
+            <div class="card" style="cursor:pointer;" onclick="document.getElementById('campaignSegment').value='recurring';filterCampaignRecipients();">
+                <div class="card-body" style="text-align:center;padding:16px;">
+                    <div style="font-size:28px;font-weight:700;color:var(--gold);">${recurring.length}</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Recorrentes (2+)</div>
+                    <div style="font-size:11px;color:var(--orange);margin-top:4px;">${recurringUnsent} sem email enviado</div>
+                </div>
+            </div>`;
     }
+    // Show last campaign sent date
+    const lastCampaign = allEmailHistory.find(e => e.email_type === 'campaign');
+    const lastSentEl = document.getElementById('campaignLastSent');
+    if (lastSentEl && lastCampaign) {
+        lastSentEl.innerHTML = `<i class="fas fa-clock"></i> Última campanha: ${new Date(lastCampaign.sent_at).toLocaleString('pt-PT')}`;
+    }
+    filterCampaignRecipients();
+}
+
+function filterCampaignRecipients() {
+    const segment = document.getElementById('campaignSegment')?.value || 'all';
+    const lang = nurturingLang;
+    let profiles = buildCRMProfiles().filter(p => {
+        if (lang === 'pt') return filterByLang(p.analyses, 'pt').length > 0;
+        if (lang === 'en') return filterByLang(p.analyses, 'en').length > 0;
+        return true;
+    });
+    if (segment !== 'all') profiles = profiles.filter(p => p.stage === segment);
     renderRecipientList(profiles);
+}
+
+function loadCampaignTemplate() {
+    const tpl = document.getElementById('campaignTemplate')?.value;
+    const lang = nurturingLang;
+    if (!tpl) return;
+    const templates = {
+        pt: {
+            upsell_cv: { subject: 'O teu CV merece mais \u2014 upgrade dispon\u00edvel', body: '<p>Ol\u00e1,</p><p>Vimos que fizeste uma an\u00e1lise gratuita do teu CV. Gostarias de desbloquear a <strong>vers\u00e3o completa</strong> com recomenda\u00e7\u00f5es detalhadas?</p><p><a href="https://www.share2inspire.pt/cv-analyser" style="color:#C9A961;font-weight:bold;">Acede aqui para fazer upgrade \u2192</a></p><p>Equipa Share2Inspire</p>' },
+            upsell_cp: { subject: 'Descobre o teu Career Path personalizado', body: '<p>Ol\u00e1,</p><p>Com base na tua an\u00e1lise de CV, prepar\u00e1mos um <strong>Career Path personalizado</strong> para ti.</p><p><a href="https://www.share2inspire.pt/career-path" style="color:#C9A961;font-weight:bold;">Descobre as melhores oportunidades \u2192</a></p><p>Equipa Share2Inspire</p>' },
+            upsell_ci: { subject: 'Career Intelligence \u2014 an\u00e1lise profunda do teu mercado', body: '<p>Ol\u00e1,</p><p>J\u00e1 tens o teu Career Path. Agora leva a tua carreira ao pr\u00f3ximo n\u00edvel com o <strong>Career Intelligence PRO</strong>.</p><p><a href="https://www.share2inspire.pt/career-intelligence" style="color:#C9A961;font-weight:bold;">Descobre mais \u2192</a></p><p>Equipa Share2Inspire</p>' },
+            followup: { subject: 'Precisas de ajuda com a tua carreira?', body: '<p>Ol\u00e1,</p><p>Vimos que visitaste o Share2Inspire recentemente. Podemos ajudar-te com alguma quest\u00e3o sobre a tua carreira?</p><p>Responde a este email e teremos todo o gosto em ajudar.</p><p>Equipa Share2Inspire</p>' },
+            testimonial: { subject: 'A tua experi\u00eancia com o Share2Inspire', body: '<p>Ol\u00e1,</p><p>Esperamos que a tua experi\u00eancia com o Share2Inspire tenha sido positiva! Gostar\u00edamos muito de ouvir o teu feedback.</p><p>Poderias partilhar um breve testemunho sobre como as nossas ferramentas te ajudaram?</p><p>Equipa Share2Inspire</p>' }
+        },
+        en: {
+            upsell_cv: { subject: 'Your CV deserves more \u2014 upgrade available', body: '<p>Hi,</p><p>We noticed you did a free CV analysis. Would you like to unlock the <strong>full version</strong> with detailed recommendations?</p><p><a href="https://www.share2inspire.pt/en/cv-analyser" style="color:#C9A961;font-weight:bold;">Upgrade now \u2192</a></p><p>Share2Inspire Team</p>' },
+            upsell_cp: { subject: 'Discover your personalized Career Path', body: '<p>Hi,</p><p>Based on your CV analysis, we\'ve prepared a <strong>personalized Career Path</strong> for you.</p><p><a href="https://www.share2inspire.pt/en/career-path" style="color:#C9A961;font-weight:bold;">Discover the best opportunities \u2192</a></p><p>Share2Inspire Team</p>' },
+            upsell_ci: { subject: 'Career Intelligence \u2014 deep market analysis', body: '<p>Hi,</p><p>You already have your Career Path. Now take your career to the next level with <strong>Career Intelligence PRO</strong>.</p><p><a href="https://www.share2inspire.pt/en/career-intelligence" style="color:#C9A961;font-weight:bold;">Learn more \u2192</a></p><p>Share2Inspire Team</p>' },
+            followup: { subject: 'Need help with your career?', body: '<p>Hi,</p><p>We noticed you visited Share2Inspire recently. Can we help you with any career-related questions?</p><p>Reply to this email and we\'ll be happy to help.</p><p>Share2Inspire Team</p>' },
+            testimonial: { subject: 'Your experience with Share2Inspire', body: '<p>Hi,</p><p>We hope your experience with Share2Inspire has been positive! We\'d love to hear your feedback.</p><p>Could you share a brief testimonial about how our tools helped you?</p><p>Share2Inspire Team</p>' }
+        }
+    };
+    const t = templates[lang]?.[tpl];
+    if (t) {
+        document.getElementById('nurturingSubject').value = t.subject;
+        document.getElementById('nurturingBody').value = t.body;
+    }
 }
 
 function renderRecipientList(profiles) {
@@ -1441,14 +1515,24 @@ function renderRecipientList(profiles) {
     if (!tbody) return;
     const search = (document.getElementById('recipientSearch')?.value || '').toLowerCase();
     let filtered = profiles.filter(p => !search || p.email.includes(search) || (p.name || '').toLowerCase().includes(search));
-    setText('recipientCount', `${filtered.length} destinatários`);
-    tbody.innerHTML = filtered.slice(0, 100).map(p => `
-        <tr>
+    // Find last email sent to each recipient
+    const lastEmailMap = {};
+    allEmailHistory.forEach(e => {
+        const key = (e.recipient_email || '').toLowerCase();
+        if (!lastEmailMap[key] || new Date(e.sent_at) > new Date(lastEmailMap[key])) lastEmailMap[key] = e.sent_at;
+    });
+    setText('recipientCount', `${filtered.length} destinat\u00e1rios`);
+    tbody.innerHTML = filtered.slice(0, 200).map(p => {
+        const lastEmail = lastEmailMap[p.email.toLowerCase()];
+        const lastEmailStr = lastEmail ? new Date(lastEmail).toLocaleDateString('pt-PT') : '<span style="color:var(--orange);">Nunca</span>';
+        return `<tr>
             <td><input type="checkbox" class="recipient-cb" value="${p.email}" checked></td>
-            <td style="font-size:12px;">${p.name || '—'}</td>
+            <td style="font-size:12px;">${p.name || '\u2014'}</td>
             <td style="font-size:12px;">${p.email}</td>
             <td>${getStageBadge(p.stage)}</td>
-        </tr>`).join('');
+            <td style="font-size:11px;color:var(--text-muted);">${lastEmailStr}</td>
+        </tr>`;
+    }).join('');
 }
 
 function filterRecipientList() { renderNurturingSegments(); }
@@ -1664,18 +1748,23 @@ function renderCETable() {
     setText('ceCount', `${data.length} respostas`);
     const tbody = document.getElementById('ceTable');
     if (!tbody) return;
-    if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">Sem dados</td></tr>`; return; }
+    if (!data.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Sem dados</td></tr>`; return; }
     tbody.innerHTML = data.slice(0, 50).map(ce => {
         const date = new Date(ce.created_at).toLocaleDateString('pt-PT');
-        const score = ce.score || ce.energy_score || 0;
+        const score = ce.total_score || ce.score || ce.energy_score || 0;
         const scoreColor = score >= 70 ? 'var(--green)' : score >= 40 ? 'var(--orange)' : 'var(--red)';
+        const happiness = ce.country_happiness_score ? parseFloat(ce.country_happiness_score).toFixed(1) : '—';
+        const diff = ce.country_diff !== null && ce.country_diff !== undefined ? (ce.country_diff >= 0 ? '+' : '') + parseFloat(ce.country_diff).toFixed(1) : '—';
+        const diffColor = parseFloat(ce.country_diff) >= 0 ? 'var(--green)' : 'var(--red)';
         return `<tr>
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td style="font-size:12px;">${ce.current_role || '—'}</td>
-            <td style="font-size:12px;">${ce.country || '—'}</td>
-            <td style="font-size:12px;">${ce.energy_level || '—'}</td>
+            <td style="font-size:12px;">${ce.name || '—'}</td>
+            <td style="font-size:12px;">${ce.role || ce.current_role || '—'}</td>
+            <td style="font-size:12px;">${ce.country_name || ce.country || '—'}</td>
             <td><span style="font-weight:600;color:${scoreColor};">${score}</span></td>
-            <td style="font-size:12px;">${ce.email || '—'}</td>
+            <td style="font-size:12px;">${ce.level_label || ce.energy_level || '—'}</td>
+            <td style="font-size:12px;">${happiness}</td>
+            <td style="font-size:12px;font-weight:600;color:${diffColor};">${diff}</td>
         </tr>`;
     }).join('');
 }
@@ -1893,6 +1982,14 @@ async function refreshHealthCheck() {
     const endpoints = [
         { name: 'Frontend CV Analyser PT', url: 'https://www.share2inspire.pt/cv-analyser', category: 'frontend' },
         { name: 'Frontend CV Analyser EN', url: 'https://www.share2inspire.pt/en/cv-analyser', category: 'frontend' },
+        { name: 'Frontend Career Path PT', url: 'https://www.share2inspire.pt/career-path', category: 'frontend' },
+        { name: 'Frontend Career Path EN', url: 'https://www.share2inspire.pt/en/career-path', category: 'frontend' },
+        { name: 'Frontend Career Intelligence PT', url: 'https://www.share2inspire.pt/career-intelligence', category: 'frontend' },
+        { name: 'Frontend Career Intelligence EN', url: 'https://www.share2inspire.pt/en/career-intelligence', category: 'frontend' },
+        { name: 'Frontend LinkedIn Roaster PT', url: 'https://www.share2inspire.pt/linkedin-roaster', category: 'frontend' },
+        { name: 'Frontend LinkedIn Roaster EN', url: 'https://www.share2inspire.pt/en/linkedin-roaster', category: 'frontend' },
+        { name: 'Frontend Bundle PT', url: 'https://www.share2inspire.pt/bundle', category: 'frontend' },
+        { name: 'Frontend Bundle EN', url: 'https://www.share2inspire.pt/en/bundle', category: 'frontend' },
         { name: 'Backend Root', url: 'https://share2inspire-beckend.lm.r.appspot.com/', category: 'backend' },
         { name: 'Backend API Health', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/health', category: 'backend' },
         { name: 'Supabase Edge Function', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task', category: 'edge_function' }
@@ -1946,20 +2043,28 @@ function renderAffiliates() {
 
     // Filter probe entries from affiliates list
     const filteredAffiliates = allAffiliates.filter(a => !a.code?.startsWith("__") && !a.name?.includes("probe"));
-    if (!filteredAffiliates.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum afiliado</td></tr>'; return; }
+    if (!filteredAffiliates.length) { tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum afiliado</td></tr>'; return; }
     const productLabels = {'cv-analyser':'CV','career-path':'CP','career-intelligence':'CI','linkedin-roaster':'LR'};
     tbody.innerHTML = filteredAffiliates.map(a => {
         const clicks = allAffClicks.filter(c => c.affiliate_code === a.code && !c.affiliate_code?.startsWith('__')).length;
         const sales = allAffConversions.filter(c => c.affiliate_code === a.code).length;
         const rev = allAffConversions.filter(c => c.affiliate_code === a.code).reduce((s, c) => s + (parseFloat(c.amount) || 0), 0);
         const products = (a.product || 'cv-analyser').split(',').map(p => productLabels[p] || p).join(', ');
+        const conversion = clicks > 0 ? ((sales / clicks) * 100).toFixed(1) + '%' : '—';
+        const createdDate = a.created_at ? new Date(a.created_at).toLocaleDateString('pt-PT') : '—';
+        const linkCount = (a.product || 'cv-analyser').split(',').length;
         return `<tr>
             <td style="font-weight:500;">${a.name}</td>
-            <td><code style="font-size:11px;">${a.code}</code></td>
             <td style="font-size:12px;">${products}</td>
+            <td><code style="font-size:11px;">${a.code}</code></td>
+            <td style="font-size:12px;">${linkCount} <i class="fas fa-link" style="font-size:10px;color:var(--text-muted);cursor:pointer;" onclick="copyAffLink('${a.code}','${a.product||'cv-analyser'}')" title="Copiar"></i></td>
             <td style="font-size:12px;">${clicks}</td>
             <td style="font-size:12px;">${sales}</td>
             <td style="font-size:12px;font-weight:600;color:var(--gold);">${rev.toFixed(2)}€</td>
+            <td style="font-size:12px;">${conversion}</td>
+            <td style="font-size:12px;">${a.commission_pct || 0}%</td>
+            <td><span class="badge ${a.active ? 'badge-success' : 'badge-secondary'}">${a.active ? 'Ativo' : 'Inativo'}</span></td>
+            <td style="font-size:11px;color:var(--text-muted);">${createdDate}</td>
             <td><div style="display:flex;gap:4px;">
                 <button class="btn-icon" onclick="editAffiliate('${a.id}')" title="Editar"><i class="fas fa-edit"></i></button>
                 <button class="btn-icon" onclick="toggleAffiliate('${a.id}',${a.active})" title="${a.active?'Desativar':'Ativar'}"><i class="fas fa-${a.active?'pause':'play'}"></i></button>
@@ -1999,10 +2104,10 @@ function renderAffConversions() {
     const tbody = document.getElementById('affConversionsTable');
     if (!tbody) return;
     const data = [...allAffConversions].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    if (!data.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">Sem conversões</td></tr>'; return; }
+    if (!data.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted);">Sem conversões</td></tr>'; return; }
     tbody.innerHTML = data.slice(0, 50).map(c => {
         const date = new Date(c.created_at).toLocaleDateString('pt-PT');
-        return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td><code style="font-size:11px;">${c.affiliate_code||'—'}</code></td><td>${getProductBadge(c)}</td><td style="font-weight:600;color:var(--gold);">${parseFloat(c.amount).toFixed(2)}€</td><td style="font-size:12px;">${c.customer_email||'—'}</td><td style="font-size:12px;">${c.payment_method||'—'}</td></tr>`;
+        return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td><code style="font-size:11px;">${c.affiliate_code||'—'}</code></td><td>${getProductBadge(c)}</td><td style="font-weight:600;color:var(--gold);">${parseFloat(c.amount||0).toFixed(2)}€</td><td style="font-size:12px;">${c.currency||'EUR'}</td><td style="font-size:12px;">${c.payment_method||'—'}</td><td style="font-size:12px;">${c.customer_email||'—'}</td><td style="font-size:12px;"><code style="font-size:10px;">${c.transaction_id||'—'}</code></td></tr>`;
     }).join('');
 }
 
@@ -2151,7 +2256,8 @@ function renderCoupons() {
             <td style="font-size:12px;">${esc(c.partner_name) || '—'}</td>
             <td><span style="font-weight:600;color:var(--green);">${c.discount_percent}%</span></td>
             <td>${products}</td>
-            <td>${uses}/${maxUses}</td>
+            <td>${uses}</td>
+            <td>${maxUses}</td>
             <td>${validUntil}</td>
             <td>${statusBadge}</td>
             <td>${new Date(c.created_at).toLocaleDateString('pt-PT')}</td>
@@ -2286,7 +2392,7 @@ function renderUsers() {
     const page = filtered.slice((usersPage - 1) * PAGE_SIZE, usersPage * PAGE_SIZE);
     const tbody = document.getElementById('usersTable');
     if (!tbody) return;
-    if (!page.length) { tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum utilizador encontrado</td></tr>`; renderPagination('usersPagination', usersPage, totalPages, (p) => { usersPage = p; renderUsers(); }); return; }
+    if (!page.length) { tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum utilizador encontrado</td></tr>`; renderPagination('usersPagination', usersPage, totalPages, (p) => { usersPage = p; renderUsers(); }); return; }
 
     tbody.innerHTML = page.map(u => {
         const name = `${u.first_name} ${u.last_name}`.trim() || '—';
@@ -2296,14 +2402,19 @@ function renderUsers() {
         else if (u.all_subs.length > 0) subBadge = '<span class="badge" style="background:var(--red);color:#fff;">Expirada</span>';
         else subBadge = '<span class="badge badge-secondary">Nenhuma</span>';
         const planBadge = u.active_sub ? `<span class="badge badge-paid">${u.active_sub.plan || '—'}</span>` : (u.all_subs.length > 0 ? `<span class="badge badge-secondary">${u.all_subs[0].plan || '—'}</span>` : '—');
+        const expiresStr = u.active_sub && u.active_sub.expires_at ? new Date(u.active_sub.expires_at).toLocaleDateString('pt-PT') : (u.all_subs.length > 0 && u.all_subs[0].expires_at ? new Date(u.all_subs[0].expires_at).toLocaleDateString('pt-PT') : '—');
         const analysesHtml = u.analyses_count > 0 ? `<span style="font-weight:600;cursor:help;" title="CV:${u.cv_analyser_count} CP:${u.career_path_count} CI:${u.career_intelligence_count} LR:${u.linkedin_roaster_count}">${u.analyses_count}</span>` : '0';
         const regDate = new Date(u.created_at).toLocaleDateString('pt-PT');
         const loginStr = u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString('pt-PT') : 'Nunca';
+        const linkedinLink = u.linkedin_url ? `<a href="${u.linkedin_url}" target="_blank" style="color:#0077B5;"><i class="fab fa-linkedin"></i></a>` : '—';
         return `<tr>
             <td style="font-weight:500;">${name}</td>
             <td style="font-size:12px;">${u.email}${emailBadge}</td>
+            <td style="font-size:12px;">${u.phone || '—'}</td>
+            <td>${linkedinLink}</td>
             <td>${subBadge}</td>
             <td>${planBadge}</td>
+            <td style="font-size:11px;color:var(--text-muted);">${expiresStr}</td>
             <td>${analysesHtml}</td>
             <td style="font-size:12px;">${u.cv_filename ? '<i class="fas fa-file-pdf" style="color:var(--teal);"></i>' : '—'}</td>
             <td style="font-size:11px;color:var(--text-muted);">${regDate}</td>
