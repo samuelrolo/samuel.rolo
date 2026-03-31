@@ -258,7 +258,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                         console.log('Pagamento confirmado! Redirecionando...');
 
                         // Redirecionar para página de sucesso com parâmetros para evento de conversão
-                        window.location.href = `pagamento_sucesso.html?orderId=${orderId}&value=${amount}&currency=EUR`;
+                        window.location.href = `pagamento_sucesso.html?orderId=${orderId}&value=${amount}&currency=EUR&service=${encodeURIComponent(service)}&serviceName=${encodeURIComponent(serviceLabel)}`;
                     }
                 } catch (error) {
                     console.error('Erro ao verificar status:', error);
