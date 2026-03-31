@@ -1266,7 +1266,7 @@ function renderAnalyses() {
     const page = data.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
     const tbody = document.getElementById('analysesTable');
     if (!tbody) return;
-    if (!page.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma análise encontrada</td></tr>`; return; }
+    if (!page.length) { tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma análise encontrada</td></tr>`; return; }
     tbody.innerHTML = page.map(a => {
         const aType = getAnalysisType(a);
         const dt = new Date(a.created_at);
@@ -1274,14 +1274,19 @@ function renderAnalyses() {
         const rawScore = a.score || a.teaser_score || 0;
         const score = rawScore > 0 ? `<span style="font-weight:600;color:${rawScore >= 70 ? 'var(--green)' : rawScore >= 40 ? 'var(--orange)' : 'var(--red)'};">${rawScore}</span>` : '—';
         const amount = a.payment_amount > 0 ? `<span style="color:var(--gold);font-weight:600;">${a.payment_amount.toFixed(2)}€</span>` : '—';
+        const area = a.professional_area || a.area || '—';
+        const paymentMethod = a.payment_method || a.payment_origin || (a.payment_amount > 0 ? 'stripe' : '—');
+        const rating = a.user_rating || a.rating || '—';
         return `<tr>
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td>${a.user_name || '—'}</td>
-            <td style="font-size:12px;">${isAnonymous(a) ? '<span style="color:var(--text-muted);">anónimo</span>' : a.user_email}</td>
-            <td>${score}</td>
+            <td>${esc(a.user_name || '—')}</td>
+            <td style="font-size:12px;">${isAnonymous(a) ? '<span style="color:var(--text-muted);">anónimo</span>' : esc(a.user_email)}</td>
             <td>${getTypeBadge(aType)}</td>
-            <td>${getProductBadge(a)}</td>
+            <td>${score}</td>
+            <td style="font-size:12px;">${esc(area)}</td>
+            <td style="font-size:12px;">${esc(paymentMethod)}</td>
             <td>${amount}</td>
+            <td style="font-size:12px;">${rating !== '—' ? '⭐ ' + rating : '—'}</td>
             <td><div style="display:flex;gap:4px;">
                 ${!isAnonymous(a) ? `<button class="btn-icon" title="Ver Perfil" onclick="showUserProfile('${a.user_email.toLowerCase()}')"><i class="fas fa-eye"></i></button>` : ''}
             </div></td>
@@ -1319,18 +1324,20 @@ function renderVouchers() {
     setText('vouchersCount', `${data.length} vouchers`);
     const tbody = document.getElementById('vouchersTable');
     if (!tbody) return;
-    if (!data.length) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum voucher encontrado</td></tr>`; return; }
+    if (!data.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum voucher encontrado</td></tr>`; return; }
     tbody.innerHTML = data.map(v => {
         const isActive = v.is_active === true || (v.is_active !== false && (v.used_analyses || 0) < (v.total_analyses || 1));
         const date = new Date(v.created_at).toLocaleDateString('pt-PT');
+        const method = v.payment_method || (parseFloat(v.amount_paid) > 0 ? 'stripe' : 'oferta');
         return `<tr>
-            <td><code style="font-size:12px;background:var(--bg);padding:2px 6px;border-radius:4px;">${v.code}</code></td>
-            <td style="font-size:12px;">${v.email || '—'}</td>
-            <td style="font-size:12px;">${v.plan_name || '—'}</td>
-            <td style="font-size:12px;font-weight:600;">${parseFloat(v.amount_paid) > 0 ? parseFloat(v.amount_paid).toFixed(2) + '€' : '—'}</td>
-            <td><span class="badge ${isActive ? 'badge-success' : 'badge-secondary'}">${isActive ? 'Ativo' : 'Usado'}</span> <span style="font-size:10px;color:var(--text-muted);">${v.used_analyses||0}/${v.total_analyses||1}</span></td>
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td>${v.email ? `<button class="btn-icon" title="Enviar Email" onclick="openEmailModal('${v.email}','')"><i class="fas fa-envelope"></i></button>` : ''}</td>
+            <td style="font-size:12px;">${esc(v.email || '—')}</td>
+            <td style="font-size:12px;">${esc(v.plan_name || '—')}</td>
+            <td><code style="font-size:12px;background:var(--bg);padding:2px 6px;border-radius:4px;">${esc(v.code)}</code></td>
+            <td style="font-size:12px;">${esc(method)}</td>
+            <td style="font-size:12px;font-weight:600;">${parseFloat(v.amount_paid) > 0 ? parseFloat(v.amount_paid).toFixed(2) + '€' : '—'}</td>
+            <td><span class="badge ${isActive ? 'badge-success' : 'badge-secondary'}">${isActive ? 'Ativo' : 'Usado'}</span></td>
+            <td style="font-size:12px;text-align:center;">${v.used_analyses||0}/${v.total_analyses||1}</td>
         </tr>`;
     }).join('');
 }
@@ -1857,20 +1864,30 @@ function renderAffiliates() {
     const totalRev = allAffConversions.reduce((s, c) => s + (parseFloat(c.amount) || 0), 0);
     setText('affKpiRevenue', totalRev.toFixed(2) + '€');
 
-    if (!allAffiliates.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum afiliado</td></tr>'; return; }
+    if (!allAffiliates.length) { tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum afiliado</td></tr>'; return; }
     const productLabels = {'cv-analyser':'CV','career-path':'CP','career-intelligence':'CI','career-intelligence-pro':'CI PRO','career-intelligence-full':'CI Full','linkedin-roaster':'LR'};
     tbody.innerHTML = allAffiliates.map(a => {
         const clicks = allAffClicks.filter(c => c.affiliate_code === a.code).length;
         const sales = allAffConversions.filter(c => c.affiliate_code === a.code).length;
         const rev = allAffConversions.filter(c => c.affiliate_code === a.code).reduce((s, c) => s + (parseFloat(c.amount) || 0), 0);
         const products = (a.product || 'cv-analyser').split(',').map(p => productLabels[p] || p).join(', ');
+        const convRate = clicks > 0 ? Math.round(sales / clicks * 100) + '%' : '—';
+        const commission = a.commission_percent ? a.commission_percent + '%' : (a.commission || '—');
+        const link = `share2inspire.pt/${(a.product||'cv-analyser').split(',')[0]}?ref=${a.code}`;
+        const statusBadge = a.active ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge" style="background:var(--red);color:#fff;">Inativo</span>';
+        const createdDate = a.created_at ? new Date(a.created_at).toLocaleDateString('pt-PT') : '—';
         return `<tr>
-            <td style="font-weight:500;">${a.name}</td>
-            <td><code style="font-size:11px;">${a.code}</code></td>
+            <td style="font-weight:500;">${esc(a.name)}</td>
             <td style="font-size:12px;">${products}</td>
-            <td style="font-size:12px;">${clicks}</td>
-            <td style="font-size:12px;">${sales}</td>
+            <td><code style="font-size:11px;">${esc(a.code)}</code></td>
+            <td style="font-size:11px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(link)}">${esc(link)}</td>
+            <td style="font-size:12px;text-align:center;">${clicks}</td>
+            <td style="font-size:12px;text-align:center;">${sales}</td>
             <td style="font-size:12px;font-weight:600;color:var(--gold);">${rev.toFixed(2)}€</td>
+            <td style="font-size:12px;text-align:center;">${convRate}</td>
+            <td style="font-size:12px;text-align:center;">${commission}</td>
+            <td>${statusBadge}</td>
+            <td style="font-size:12px;color:var(--text-muted);">${createdDate}</td>
             <td><div style="display:flex;gap:4px;">
                 <button class="btn-icon" onclick="editAffiliate('${a.id}')" title="Editar"><i class="fas fa-edit"></i></button>
                 <button class="btn-icon" onclick="toggleAffiliate('${a.id}',${a.active})" title="${a.active?'Desativar':'Ativar'}"><i class="fas fa-${a.active?'pause':'play'}"></i></button>
@@ -1907,10 +1924,10 @@ function renderAffConversions() {
     const tbody = document.getElementById('affConversionsTable');
     if (!tbody) return;
     const data = [...allAffConversions].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    if (!data.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">Sem conversões</td></tr>'; return; }
+    if (!data.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted);">Sem conversões</td></tr>'; return; }
     tbody.innerHTML = data.slice(0, 50).map(c => {
         const date = new Date(c.created_at).toLocaleDateString('pt-PT');
-        return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td><code style="font-size:11px;">${c.affiliate_code||'—'}</code></td><td>${getProductBadge(c)}</td><td style="font-weight:600;color:var(--gold);">${parseFloat(c.amount).toFixed(2)}€</td><td style="font-size:12px;">${c.customer_email||'—'}</td><td style="font-size:12px;">${c.payment_method||'—'}</td></tr>`;
+        return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td><code style="font-size:11px;">${c.affiliate_code||'—'}</code></td><td>${getProductBadge(c)}</td><td style="font-weight:600;color:var(--gold);">${parseFloat(c.amount).toFixed(2)}€</td><td style="font-size:12px;">${c.currency || 'EUR'}</td><td style="font-size:12px;">${c.payment_method||'—'}</td><td style="font-size:12px;">${c.customer_email||'—'}</td><td style="font-size:11px;color:var(--text-muted);">${c.transaction_id || c.stripe_payment_id || '—'}</td></tr>`;
     }).join('');
 }
 
@@ -2201,7 +2218,7 @@ function renderUsers() {
     const page = filtered.slice((usersPage - 1) * PAGE_SIZE, usersPage * PAGE_SIZE);
     const tbody = document.getElementById('usersTable');
     if (!tbody) return;
-    if (!page.length) { tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum utilizador encontrado</td></tr>`; renderPagination('usersPagination', usersPage, totalPages, (p) => { usersPage = p; renderUsers(); }); return; }
+    if (!page.length) { tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum utilizador encontrado</td></tr>`; renderPagination('usersPagination', usersPage, totalPages, (p) => { usersPage = p; renderUsers(); }); return; }
 
     tbody.innerHTML = page.map(u => {
         const name = `${u.first_name} ${u.last_name}`.trim() || '—';
@@ -2211,14 +2228,20 @@ function renderUsers() {
         else if (u.all_subs.length > 0) subBadge = '<span class="badge" style="background:var(--red);color:#fff;">Expirada</span>';
         else subBadge = '<span class="badge badge-secondary">Nenhuma</span>';
         const planBadge = u.active_sub ? `<span class="badge badge-paid">${u.active_sub.plan || '—'}</span>` : (u.all_subs.length > 0 ? `<span class="badge badge-secondary">${u.all_subs[0].plan || '—'}</span>` : '—');
+        const expiresStr = u.active_sub && u.active_sub.expires_at ? new Date(u.active_sub.expires_at).toLocaleDateString('pt-PT') : (u.all_subs.length > 0 && u.all_subs[0].expires_at ? new Date(u.all_subs[0].expires_at).toLocaleDateString('pt-PT') : '—');
         const analysesHtml = u.analyses_count > 0 ? `<span style="font-weight:600;cursor:help;" title="CV:${u.cv_analyser_count} CP:${u.career_path_count} CI:${u.career_intelligence_count} LR:${u.linkedin_roaster_count}">${u.analyses_count}</span>` : '0';
         const regDate = new Date(u.created_at).toLocaleDateString('pt-PT');
         const loginStr = u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString('pt-PT') : 'Nunca';
+        const phone = u.phone || '—';
+        const linkedin = u.linkedin_url ? `<a href="${esc(u.linkedin_url)}" target="_blank" style="color:var(--teal);font-size:11px;"><i class="fab fa-linkedin"></i></a>` : '—';
         return `<tr>
-            <td style="font-weight:500;">${name}</td>
-            <td style="font-size:12px;">${u.email}${emailBadge}</td>
+            <td style="font-weight:500;">${esc(name)}</td>
+            <td style="font-size:12px;">${esc(u.email)}${emailBadge}</td>
+            <td style="font-size:12px;">${esc(phone)}</td>
+            <td style="text-align:center;">${linkedin}</td>
             <td>${subBadge}</td>
             <td>${planBadge}</td>
+            <td style="font-size:11px;color:var(--text-muted);">${expiresStr}</td>
             <td>${analysesHtml}</td>
             <td style="font-size:12px;">${u.cv_filename ? '<i class="fas fa-file-pdf" style="color:var(--teal);"></i>' : '—'}</td>
             <td style="font-size:11px;color:var(--text-muted);">${regDate}</td>
