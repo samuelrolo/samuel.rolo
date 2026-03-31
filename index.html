@@ -924,6 +924,60 @@
             color: #999;
         }
 
+        /* --- Mobile fix: carousels (services + testimonials) --- */
+        @media (max-width: 768px) {
+            /* Services carousel */
+            .carousel-track {
+                animation: none !important;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x mandatory;
+                padding: 0 1rem 1rem;
+                gap: 1rem;
+            }
+            .carousel-track-wrapper {
+                overflow: visible;
+            }
+            .service-card {
+                flex: 0 0 260px;
+                scroll-snap-align: start;
+            }
+            /* Hide duplicated set on mobile */
+            .carousel-track .service-card:nth-child(n+6) {
+                display: none;
+            }
+
+            /* Testimonials carousel */
+            .testimonials-track {
+                animation: none !important;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x mandatory;
+                padding: 0 1rem 1rem;
+                gap: 1rem;
+                width: auto;
+            }
+            .testimonials-track-wrapper {
+                overflow: visible;
+            }
+            .testimonial-card {
+                flex: 0 0 280px;
+                scroll-snap-align: start;
+            }
+            /* Hide duplicated set on mobile */
+            .testimonials-track .testimonial-card:nth-child(n+4) {
+                display: none;
+            }
+            .testimonials-carousel-section {
+                padding: 48px 0;
+            }
+            .services-carousel-section {
+                padding: 48px 0;
+            }
+        }
+
         /* --- Career Path CTA (hidden — preserved) --- */
         .career-path-cta {
             background: #fff;
