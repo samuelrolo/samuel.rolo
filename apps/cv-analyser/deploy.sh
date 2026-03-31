@@ -21,7 +21,7 @@ DEPLOY_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 COMMIT_MSG="${1:-deploy: update CV Analyser assets}"
 
 # All 6 SPA directories that share the same build output
-SPA_DIRS=("cv-analyser" "en/cv-analyser" "career-path" "en/career-path" "career-intelligence" "en/career-intelligence")
+SPA_DIRS=("cv-analyser" "en/cv-analyser" "career-path" "en/career-path" "career-intelligence" "en/career-intelligence" "bundle")
 
 # All 12 routes to verify after deploy
 ROUTES=(

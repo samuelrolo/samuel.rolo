@@ -291,7 +291,6 @@ export default function HomeEN() {
     { text: "Is your CV being", highlight: "rejected without you knowing?" },
     { text: "What recruiters see in your CV in", highlight: "30 seconds" },
     { text: "Does your CV pass", highlight: "company filters?" },
-    { text: "Discover your", highlight: "ATS Score" },
   ];
   const [headlineIdx, setHeadlineIdx] = useState(0);
   useEffect(() => {

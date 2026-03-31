@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagamento Seguro - Share2Inspire</title>
     <!-- CSS Moderno -->
@@ -27,99 +27,277 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --gold: #BF9A33;
+            --gold-light: #C9A961;
+            --dark: #1A1A1A;
+            --stripe-purple: #635bff;
+        }
+
         .payment-card {
             background: #fff;
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            max-width: 500px;
+            max-width: 520px;
             margin: 0 auto;
         }
 
         .amount-display {
             font-size: 2.5rem;
             font-weight: 700;
-            color: #BF9A33;
+            color: var(--gold);
+        }
+
+        /* Payment method tabs */
+        .pay-method-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .pay-tab {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: #fff;
+            color: #6b7280;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .pay-tab:hover {
+            border-color: #d1d5db;
+            color: #374151;
+        }
+        .pay-tab.active {
+            border-color: var(--gold);
+            color: var(--dark);
+            background: rgba(191, 154, 51, 0.05);
+        }
+        .pay-tab i {
+            font-size: 1rem;
+        }
+
+        /* Payment panels */
+        .pay-panel {
+            display: none;
+        }
+        .pay-panel.active {
+            display: block;
+        }
+
+        /* Stripe button */
+        .btn-stripe {
+            background: var(--stripe-purple);
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-stripe:hover {
+            background: #4f46e5;
+        }
+        .btn-stripe:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* MB WAY button */
+        .btn-mbway {
+            background: var(--gold);
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-mbway:hover {
+            background: #a8862b;
+        }
+        .btn-mbway:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Secure note */
+        .secure-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 16px;
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+        .secure-note i {
+            color: #22c55e;
+        }
+
+        /* Polling state */
+        .polling-state {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .polling-state .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f4f6;
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
     <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035"
-        crossorigin="anonymous"></script>
-<noscript>
-</noscript>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035" crossorigin="anonymous"></script>
+    <noscript></noscript>
     <link rel="stylesheet" href="/css/side-widgets.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="/css/side-widgets.css"></noscript>
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '3865352233767400');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '3865352233767400');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
 </head>
 
 <body>
 <header class="header">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="/index.html">
-                    <img loading="lazy" src="/images/logo.webp" alt="Share2Inspire Logo" height="40">
-                </a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/index.html">
+                <img loading="lazy" src="/images/logo.webp" alt="Share2Inspire Logo" height="40">
+            </a>
+        </div>
+    </nav>
+</header>
+
+<section class="py-5 mt-5">
+    <div class="container pt-5">
+        <div class="text-center mb-5">
+            <h1 class="fw-bold">Finalizar Pedido</h1>
+            <p class="text-muted">Pagamento seguro</p>
+        </div>
+        <div class="payment-card">
+            <div class="text-center mb-4">
+                <div class="text-uppercase small fw-bold text-muted mb-2" id="serviceName">Serviço</div>
+                <div class="amount-display mb-3" id="amountDisplay">0.00€</div>
             </div>
-        </nav>
-    </header>
-    <section class="py-5 mt-5">
-        <div class="container pt-5">
-            <div class="text-center mb-5">
-                <h1 class="fw-bold">Finalizar Pedido</h1>
-                <p class="text-muted">Pagamento seguro via MB WAY</p>
-            </div>
-            <div class="payment-card">
-                <div class="text-center mb-4">
-                    <div class="text-uppercase small fw-bold text-muted mb-2" id="serviceName">Serviço</div>
-                    <div class="amount-display mb-3" id="amountDisplay">0.00€</div>
-                    <p class="small text-muted">Introduza o seu número de telemóvel associado ao MB WAY para concluir o
-                        pagamento.</p>
+
+            <!-- Payment Form Section -->
+            <div id="paymentFormSection">
+                <!-- Email (shared between methods) -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold" style="font-size:0.85rem;">Email</label>
+                    <input type="email" class="form-control form-control-lg" id="paymentEmail"
+                        placeholder="seu.email@exemplo.com" style="font-size:0.9rem;">
                 </div>
-                <div id="paymentFormSection">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Email</label>
-                        <input type="email" class="form-control form-control-lg" id="mbwayEmail"
-                            placeholder="seu.email@exemplo.com">
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Nº Telemóvel MB WAY</label>
-                        <input type="tel" class="form-control form-control-lg text-center" id="mbwayPhone"
-                            placeholder="9xxxxxxxx" maxlength="9">
-                    </div>
-                    <button class="btn btn-primary w-100 py-3 rounded-3" id="payBtn" onclick="initiatePayment()">
-                        Pagar Agora
+
+                <!-- Payment Method Tabs -->
+                <div class="pay-method-tabs">
+                    <button class="pay-tab active" onclick="switchPayTab('mbway', this)">
+                        <i class="fas fa-mobile-alt"></i>
+                        MB WAY
                     </button>
-                    <div id="paymentFeedback" class="mt-3 text-center"></div>
+                    <button class="pay-tab" onclick="switchPayTab('stripe', this)">
+                        <i class="fas fa-credit-card"></i>
+                        Cartão
+                    </button>
                 </div>
-                <div id="successSection" class="d-none text-center">
-                    <h4 class="fw-bold">Pagamento Enviado!</h4>
-                    <p class="text-muted">Por favor, aceite a notificação na sua app MB WAY.</p>
-                    <p class="small mt-3">Após aprovação, receberá a confirmação por email.</p>
-                    <a href="/index.html" class="btn btn-outline-primary mt-3">Voltar ao Início</a>
+
+                <!-- MB WAY Panel -->
+                <div class="pay-panel active" id="tab-mbway">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold" style="font-size:0.85rem;">N.º Telemóvel MB WAY</label>
+                        <input type="tel" class="form-control form-control-lg text-center" id="mbwayPhone"
+                            placeholder="9xxxxxxxx" maxlength="9" style="font-size:0.9rem;">
+                    </div>
+                    <button class="btn-mbway" id="btnMbway" onclick="payWithMBWay()">
+                        <i class="fas fa-mobile-alt"></i> Pagar com MB WAY
+                    </button>
                 </div>
+
+                <!-- Stripe Panel -->
+                <div class="pay-panel" id="tab-stripe">
+                    <p class="text-muted small mb-3 text-center">Será redirecionado para uma página de pagamento segura.</p>
+                    <button class="btn-stripe" id="btnStripe" onclick="payWithStripe()">
+                        <i class="fas fa-credit-card"></i> Pagar com Cartão
+                    </button>
+                </div>
+
+                <div id="paymentFeedback" class="mt-3 text-center"></div>
+
+                <div class="secure-note">
+                    <i class="fas fa-lock"></i>
+                    <span>Pagamento seguro e encriptado</span>
+                </div>
+            </div>
+
+            <!-- Polling State (MB WAY waiting) -->
+            <div id="pollingSection" class="d-none">
+                <div class="polling-state">
+                    <div class="spinner"></div>
+                    <h5 class="fw-bold mb-2">A aguardar confirmação</h5>
+                    <p class="text-muted" id="pollingText">Confirma o pagamento na tua app MB WAY.</p>
+                    <p class="small text-muted mt-3">Após aprovação, serás redirecionado automaticamente.</p>
+                    <button class="btn btn-outline-secondary btn-sm mt-2" onclick="cancelPolling()">Cancelar</button>
+                </div>
+            </div>
+
+            <!-- Success Section -->
+            <div id="successSection" class="d-none text-center">
+                <div style="width:60px;height:60px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                    <i class="fas fa-check" style="color:#fff;font-size:1.5rem;"></i>
+                </div>
+                <h4 class="fw-bold">Pagamento Confirmado!</h4>
+                <p class="text-muted">O teu pagamento foi processado com sucesso.</p>
+                <p class="small mt-3">Receberás a confirmação por email.</p>
+                <a href="/index.html" class="btn btn-outline-primary mt-3">Voltar ao Início</a>
             </div>
         </div>
-    </section>
-    <footer style="background:#1A1A1A;color:#fff;padding:60px 0 30px;margin-top:0;">
+    </div>
+</section>
+
+<footer style="background:#1A1A1A;color:#fff;padding:60px 0 30px;margin-top:0;">
     <div class="container">
         <div class="row g-4">
             <div class="col-lg-4">
@@ -164,113 +342,228 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         </div>
     </div>
 </footer>
-    </script>
-    <script src="/js/ifthenpay-integration.js"></script>
-    <script>
-        // Parse URL params
-        const urlParams = new URLSearchParams(window.location.search);
-        const service = urlParams.get('service') || 'unknown';
-        const amount = urlParams.get('amount') || '0';
-        const orderId = urlParams.get('orderId') || `PAY-${Date.now()}`;
 
-        // Display Data
-        document.getElementById('amountDisplay').innerText = `${amount}€`;
-        let serviceLabel = 'Serviço Share2Inspire';
-        if (service === 'cv-review') serviceLabel = 'Revisão Profissional de CV';
-        if (service === 'kickstart-pro') serviceLabel = 'Sessão Kickstart Pro';
-        if (service.includes('analyzer')) serviceLabel = 'Análise Completa de CV';
-        document.getElementById('serviceName').innerText = serviceLabel;
+<script src="/js/ifthenpay-integration.js"></script>
+<script>
+    // ===== CONFIG =====
+    const API_BASE = 'https://share2inspire-beckend.lm.r.appspot.com';
 
-        async function initiatePayment() {
-            const phone = document.getElementById('mbwayPhone').value;
-            const emailInput = document.getElementById('mbwayEmail').value;
-            const feedback = document.getElementById('paymentFeedback');
-            const btn = document.getElementById('payBtn');
+    // Parse URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const service = urlParams.get('service') || 'unknown';
+    const amount = urlParams.get('amount') || '0';
+    const orderId = urlParams.get('orderId') || `PAY-${Date.now()}`;
+    const urlEmail = urlParams.get('email') || '';
+    const urlPhone = urlParams.get('phone') || '';
+    const urlName = urlParams.get('name') || 'Cliente';
 
-            if (!phone || phone.length !== 9) {
-                feedback.innerHTML = '<span class="text-danger">Número de telemóvel inválido.</span>';
+    // Display Data
+    document.getElementById('amountDisplay').innerText = `${amount}€`;
+    let serviceLabel = 'Serviço Share2Inspire';
+    if (service === 'cv-review') serviceLabel = 'Revisão Profissional de CV';
+    if (service === 'kickstart-pro') serviceLabel = 'Sessão Kickstart Pro';
+    if (service.includes('analyzer')) serviceLabel = 'Análise Completa de CV';
+    document.getElementById('serviceName').innerText = serviceLabel;
+
+    // Pre-fill from URL params
+    if (urlEmail) document.getElementById('paymentEmail').value = urlEmail;
+    if (urlPhone) document.getElementById('mbwayPhone').value = urlPhone;
+
+    // ===== TAB SWITCHING =====
+    function switchPayTab(tab, btn) {
+        document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.pay-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + tab).classList.add('active');
+    }
+
+    // ===== HELPERS =====
+    function getEmail() {
+        const email = document.getElementById('paymentEmail').value.trim();
+        if (!email || !email.includes('@')) {
+            showFeedback('Por favor, introduz um email válido.', 'danger');
+            return null;
+        }
+        return email;
+    }
+
+    function showFeedback(msg, type) {
+        document.getElementById('paymentFeedback').innerHTML = `<span class="text-${type}">${msg}</span>`;
+    }
+
+    function clearFeedback() {
+        document.getElementById('paymentFeedback').innerHTML = '';
+    }
+
+    function setButtonsDisabled(disabled) {
+        ['btnMbway', 'btnStripe'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.disabled = disabled;
+        });
+    }
+
+    // ===== MB WAY PAYMENT =====
+    async function payWithMBWay() {
+        const email = getEmail();
+        if (!email) return;
+
+        const phone = document.getElementById('mbwayPhone').value.trim();
+        if (!phone || phone.length !== 9) {
+            showFeedback('Número de telemóvel inválido (9 dígitos).', 'danger');
+            return;
+        }
+
+        setButtonsDisabled(true);
+        clearFeedback();
+        document.getElementById('btnMbway').innerHTML = '<i class="fas fa-spinner fa-spin"></i> A processar...';
+
+        try {
+            const result = await window.ifthenpayIntegration.processPayment('mbway', {
+                orderId: orderId,
+                amount: amount,
+                mobileNumber: phone,
+                customerEmail: email,
+                customerName: urlName,
+                description: serviceLabel
+            });
+
+            if (result.success) {
+                // Show polling state
+                document.getElementById('paymentFormSection').classList.add('d-none');
+                document.getElementById('pollingSection').classList.remove('d-none');
+                startPaymentStatusPolling(orderId, amount);
+            } else {
+                showFeedback(`Erro: ${result.message || 'Falha no pagamento'}`, 'danger');
+                resetMBWayButton();
+            }
+        } catch (error) {
+            console.error(error);
+            showFeedback('Erro de comunicação. Tenta novamente.', 'danger');
+            resetMBWayButton();
+        }
+    }
+
+    function resetMBWayButton() {
+        setButtonsDisabled(false);
+        document.getElementById('btnMbway').innerHTML = '<i class="fas fa-mobile-alt"></i> Pagar com MB WAY';
+    }
+
+    // ===== STRIPE PAYMENT =====
+    async function payWithStripe() {
+        const email = getEmail();
+        if (!email) return;
+
+        setButtonsDisabled(true);
+        document.getElementById('btnStripe').innerHTML = '<i class="fas fa-spinner fa-spin"></i> A redirecionar...';
+        clearFeedback();
+
+        try {
+            const res = await fetch(API_BASE + '/api/payment/stripe-checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    amount: parseFloat(amount),
+                    product: service,
+                    productName: serviceLabel,
+                    successUrl: window.location.origin + `/pages/pagamento_sucesso.html?orderId=${orderId}&value=${amount}&currency=EUR&service=${encodeURIComponent(service)}&serviceName=${encodeURIComponent(serviceLabel)}&method=stripe`,
+                    cancelUrl: window.location.href
+                })
+            });
+
+            if (!res.ok) throw new Error('Erro ao criar sessão de pagamento.');
+            const data = await res.json();
+            if (!data.url) throw new Error('Resposta inválida do servidor.');
+
+            // Store session info
+            sessionStorage.setItem('stripeSession', data.sessionId || '');
+            sessionStorage.setItem('stripeEmail', email);
+
+            // Redirect to Stripe Checkout
+            window.location.href = data.url;
+        } catch (err) {
+            console.error(err);
+            showFeedback(err.message || 'Erro ao processar pagamento.', 'danger');
+            setButtonsDisabled(false);
+            document.getElementById('btnStripe').innerHTML = '<i class="fas fa-credit-card"></i> Pagar com Cartão';
+        }
+    }
+
+    // ===== MB WAY POLLING =====
+    let pollingInterval = null;
+    let pollingAttempts = 0;
+    const MAX_POLLING_ATTEMPTS = 60; // 5 minutes (60 x 5s)
+
+    function startPaymentStatusPolling(orderId, amount) {
+        console.log('Iniciando polling de status para:', orderId);
+
+        pollingInterval = setInterval(async () => {
+            pollingAttempts++;
+
+            if (pollingAttempts > MAX_POLLING_ATTEMPTS) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+                console.log('Polling timeout - pagamento não confirmado');
+                cancelPolling();
+                showFeedback('Tempo esgotado. Se já pagaste, contacta geral@share2inspire.pt.', 'warning');
                 return;
             }
-
-            if (emailInput && !emailInput.includes('@')) {
-                feedback.innerHTML = '<span class="text-danger">Email inválido.</span>';
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = 'A processar...';
 
             try {
-                // Use Ifthenpay Integration
-                const result = await window.ifthenpayIntegration.processPayment('mbway', {
-                    orderId: orderId,
-                    amount: amount,
-                    mobileNumber: phone,
-                    customerEmail: emailInput || 'pagamento@checkout.com',
-                    customerName: 'Cliente',
-                    description: serviceLabel
-                });
+                const response = await fetch(`${API_BASE}/api/payment/status/${orderId}`);
+                const data = await response.json();
 
-                if (result.success) {
-                    document.getElementById('paymentFormSection').classList.add('d-none');
-                    document.getElementById('successSection').classList.remove('d-none');
+                console.log(`Polling attempt ${pollingAttempts}:`, data);
 
-                    // Iniciar polling de status do pagamento
-                    startPaymentStatusPolling(orderId, amount);
-                } else {
-                    feedback.innerHTML = `<span class="text-danger">Erro: ${result.message || 'Falha no pagamento'}</span>`;
-                    btn.disabled = false;
-                    btn.innerHTML = 'Pagar Agora';
+                if (data.paid === true || data.status === 'PAID') {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+                    console.log('Pagamento confirmado! Redirecionando...');
+
+                    // Redirect to success page
+                    window.location.href = `pagamento_sucesso.html?orderId=${orderId}&value=${amount}&currency=EUR&service=${encodeURIComponent(service)}&serviceName=${encodeURIComponent(serviceLabel)}&method=mbway`;
+                }
+
+                // Update polling text
+                const elapsed = pollingAttempts * 5;
+                if (elapsed > 60) {
+                    document.getElementById('pollingText').textContent = 'Ainda à espera... Se já pagaste, aguarda.';
+                } else if (elapsed > 30) {
+                    document.getElementById('pollingText').textContent = 'Ainda à espera da confirmação...';
                 }
             } catch (error) {
-                console.error(error);
-                feedback.innerHTML = '<span class="text-danger">Erro de comunicação. Tente novamente.</span>';
-                btn.disabled = false;
-                btn.innerHTML = 'Pagar Agora';
+                console.error('Erro ao verificar status:', error);
             }
+        }, 5000);
+    }
+
+    function cancelPolling() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
         }
+        pollingAttempts = 0;
+        document.getElementById('pollingSection').classList.add('d-none');
+        document.getElementById('paymentFormSection').classList.remove('d-none');
+        resetMBWayButton();
+    }
 
-        // Função de polling para verificar status do pagamento
-        let pollingInterval = null;
-        let pollingAttempts = 0;
-        const MAX_POLLING_ATTEMPTS = 60; // 5 minutos (60 x 5s)
-
-        function startPaymentStatusPolling(orderId, amount) {
-            console.log('Iniciando polling de status para:', orderId);
-
-            pollingInterval = setInterval(async () => {
-                pollingAttempts++;
-
-                if (pollingAttempts > MAX_POLLING_ATTEMPTS) {
-                    clearInterval(pollingInterval);
-                    console.log('Polling timeout - pagamento não confirmado');
-                    return;
-                }
-
-                try {
-                    const response = await fetch(`https://share2inspire-beckend.lm.r.appspot.com/api/payment/status/${orderId}`);
-                    const data = await response.json();
-
-                    console.log(`Polling attempt ${pollingAttempts}:`, data);
-
-                    if (data.paid === true || data.status === 'PAID') {
-                        clearInterval(pollingInterval);
-                        console.log('Pagamento confirmado! Redirecionando...');
-
-                        // Redirecionar para página de sucesso com parâmetros para evento de conversão
-                        window.location.href = `pagamento_sucesso.html?orderId=${orderId}&value=${amount}&currency=EUR&service=${encodeURIComponent(service)}&serviceName=${encodeURIComponent(serviceLabel)}`;
-                    }
-                } catch (error) {
-                    console.error('Erro ao verificar status:', error);
-                }
-            }, 5000); // Verificar a cada 5 segundos
+    // ===== CHECK STRIPE RETURN =====
+    (function checkStripeReturn() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('payment') === 'success' || params.get('session_id')) {
+            // Stripe payment was successful, show success
+            document.getElementById('paymentFormSection').classList.add('d-none');
+            document.getElementById('successSection').classList.remove('d-none');
+            window.history.replaceState({}, document.title, window.location.pathname);
         }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    })();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/hub-widget.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/js/shared-auth.js"></script>
-    <script src="/js/inline-auth.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/js/shared-auth.js"></script>
+<script src="/js/inline-auth.js"></script>
 </body>
 
 </html>

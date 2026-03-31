@@ -738,25 +738,25 @@ export default function CareerPathHome() {
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
                   {/* Opção 1: Upgrade após Career Path */}
-                  <div className="p-4 rounded-xl bg-white border border-border space-y-2">
+                  <div className="p-4 rounded-xl bg-white border border-border flex flex-col h-full">
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded-full tracking-wider">POUPAR</span>
                       <span className="text-sm font-semibold text-foreground">Começa com Career Path</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">Obtém o teu Career Path por {PRICE_DISPLAY} e faz upgrade para Career Intelligence por apenas €29.</p>
-                    <div className="flex items-baseline gap-1.5">
+                    <p className="text-xs text-muted-foreground mt-2 flex-1">Obtém o teu Career Path por {PRICE_DISPLAY} e faz upgrade para Career Intelligence por apenas €29.</p>
+                    <div className="flex items-baseline gap-1.5 mt-2">
                       <span className="text-lg font-bold text-[#C9A961]">{PRICE_DISPLAY}</span>
                       <span className="text-xs text-muted-foreground">depois +€29 upgrade</span>
                     </div>
                   </div>
                   {/* Opção 2: Career Intelligence completo */}
-                  <div className="p-4 rounded-xl bg-white border border-purple-200 space-y-2">
+                  <div className="p-4 rounded-xl bg-white border border-purple-200 flex flex-col h-full">
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full tracking-wider">COMPLETO</span>
                       <span className="text-sm font-semibold text-foreground">Career Intelligence</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">Tudo do Career Path + comparação estratégica, trade-offs e recomendação final.</p>
-                    <div className="flex items-center gap-3">
+                    <p className="text-xs text-muted-foreground mt-2 flex-1">Tudo do Career Path + comparação estratégica, trade-offs e recomendação final.</p>
+                    <div className="flex items-center gap-3 mt-2">
                       <span className="text-lg font-bold text-purple-600">€49</span>
                       <a
                         href="/career-intelligence"

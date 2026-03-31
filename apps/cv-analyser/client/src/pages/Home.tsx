@@ -279,7 +279,6 @@ export default function Home() {
     { text: "Vê se o teu CV passa nos filtros", highlight: "das empresas" },
     { text: "O teu CV está a ser", highlight: "rejeitado sem saberes?" },
     { text: "O que os recrutadores veem no teu CV em", highlight: "30 segundos" },
-    { text: "Descobre o teu", highlight: "Score ATS" },
   ];
   const [headlineIdx, setHeadlineIdx] = useState(0);
   useEffect(() => {
