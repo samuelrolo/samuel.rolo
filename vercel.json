@@ -406,7 +406,35 @@
       "destination": "/area-cliente/index.html"
     },
     {
-      "source": "/area-cliente/:path*",
+      "source": "/area-cliente/auth",
+      "destination": "/area-cliente/index.html"
+    },
+    {
+      "source": "/area-cliente/planos",
+      "destination": "/area-cliente/index.html"
+    },
+    {
+      "source": "/area-cliente/perfil",
+      "destination": "/area-cliente/index.html"
+    },
+    {
+      "source": "/area-cliente/membros",
+      "destination": "/area-cliente/index.html"
+    },
+    {
+      "source": "/area-cliente/vagas",
+      "destination": "/area-cliente/index.html"
+    },
+    {
+      "source": "/area-cliente/dashboard",
+      "destination": "/area-cliente/index.html"
+    },
+    {
+      "source": "/area-cliente/upgrade",
+      "destination": "/area-cliente/index.html"
+    },
+    {
+      "source": "/area-cliente/:match*",
       "destination": "/area-cliente/index.html"
     },
     {
