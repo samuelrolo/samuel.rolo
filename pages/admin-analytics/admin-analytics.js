@@ -279,10 +279,13 @@ function getStageBadge(stage) {
 // ═══════════════════════════════════════════════════════════════
 function showToast(msg, type = 'info') {
     const t = document.getElementById('toast');
+    const bg = document.getElementById('toastBackdrop');
     if (!t) return;
-    t.textContent = msg;
-    t.className = `show ${type}`;
-    setTimeout(() => { t.className = ''; }, 3500);
+    const icon = type === 'success' ? '✓ ' : type === 'danger' ? '✕ ' : 'ℹ ';
+    t.innerHTML = `<div style="font-size:28px;margin-bottom:8px">${icon}</div>${msg}`;
+    t.className = `toast show ${type}`;
+    if (bg) bg.className = 'toast-backdrop show';
+    setTimeout(() => { t.className = 'toast'; if (bg) bg.className = 'toast-backdrop'; }, 3000);
 }
 
 function setText(id, val) {
