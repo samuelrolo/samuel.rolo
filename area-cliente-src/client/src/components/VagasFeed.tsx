@@ -181,7 +181,15 @@ async function getUserKeywords(userId: string): Promise<string[]> {
       }
     }
 
-    return Array.from(keywords).filter(k => k && k.length > 2).slice(0, 6);
+    // Truncate long keywords (e.g. "Head of HR Digital Transformation") to max 3 words
+    // to avoid overly restrictive Adzuna searches
+    return Array.from(keywords)
+      .filter(k => k && k.length > 2)
+      .map(k => {
+        const words = k.trim().split(/\s+/);
+        return words.length > 3 ? words.slice(0, 3).join(' ') : k;
+      })
+      .slice(0, 6);
   } catch {
     return [];
   }
