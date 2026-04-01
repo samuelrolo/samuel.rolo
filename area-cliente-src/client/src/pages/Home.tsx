@@ -29,7 +29,7 @@ const fadeUp = {
 };
 
 export default function Home() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { user, hasActiveSubscription, profile } = useAuth();
 
   return (
@@ -49,10 +49,10 @@ export default function Home() {
                 {t('member.welcome')}
               </motion.p>
               <motion.h1 variants={fadeUp} custom={1} className="text-4xl md:text-5xl font-semibold text-[#1a1a1a] leading-tight">
-                {profile?.first_name ? `Olá, ${profile.first_name}.` : t('member.welcome')}
+                {profile?.first_name ? t('home.heroGreeting').replace('{name}', profile.first_name) : t('member.welcome')}
               </motion.h1>
               <motion.p variants={fadeUp} custom={2} className="text-[#666] font-light text-lg max-w-lg mx-auto">
-                Todas as tuas ferramentas e conteúdos estão prontos.
+                {t('home.heroWelcomeDesc')}
               </motion.p>
               <motion.div variants={fadeUp} custom={3}>
                 <Link
@@ -67,22 +67,21 @@ export default function Home() {
           ) : (
             <motion.div initial="hidden" animate="visible" className="space-y-6">
               <motion.p variants={fadeUp} custom={0} className="text-gold text-sm font-light tracking-[0.2em] uppercase">
-                Área de Cliente
+                {t('home.clientArea')}
               </motion.p>
               <motion.h1 variants={fadeUp} custom={1} className="text-4xl md:text-6xl font-semibold text-[#1a1a1a] leading-tight">
-                Impulsiona a tua<br />
-                <span className="text-gold">carreira</span> com as<br />
-                ferramentas certas.
+                {t('home.heroTitle1')}<br />
+                <span className="text-gold">{t('home.heroTitle2')}</span> {t('home.heroTitle3')}
               </motion.h1>
               <motion.p variants={fadeUp} custom={2} className="text-[#666] font-light text-lg max-w-lg mx-auto">
-                Acesso ilimitado a CV Maker, CV Analyzer, Career Path, LinkedIn Roster, e-books exclusivos e o Career Advisory.
+                {t('home.heroDesc')}
               </motion.p>
               <motion.div variants={fadeUp} custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
                   href="/planos"
                   className="inline-flex items-center gap-2 px-8 py-3.5 bg-gold text-[#1a1a1a] font-medium rounded hover:bg-gold-light transition-all duration-300"
                 >
-                  Ver planos a partir de 9,90 €
+                  {t('home.heroCta')}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 {!user && (
@@ -109,10 +108,10 @@ export default function Home() {
             className="text-center mb-16"
           >
             <motion.p variants={fadeUp} custom={0} className="text-gold text-sm font-light tracking-[0.2em] uppercase mb-4">
-              Ferramentas incluídas
+              {t('home.toolsLabel')}
             </motion.p>
             <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-4xl font-semibold text-[#1a1a1a]">
-              Tudo o que precisas, num só lugar.
+              {t('home.toolsTitle')}
             </motion.h2>
           </motion.div>
 
@@ -217,13 +216,13 @@ export default function Home() {
           <div className="container max-w-2xl mx-auto px-4 text-center">
             <div className="gold-line mb-12" />
             <p className="text-gold text-sm font-light tracking-[0.2em] uppercase mb-4">
-              Começa hoje
+              {t('home.ctaLabel')}
             </p>
             <h2 className="text-2xl md:text-3xl font-semibold text-[#1a1a1a] mb-4">
-              Preços de fundador, por tempo limitado.
+              {t('home.ctaTitle')}
             </h2>
             <p className="text-[#888] font-light mb-8">
-              A partir de 9,90 €/mês. Acesso ilimitado a todas as ferramentas e conteúdos.
+              {t('home.ctaDesc')}
             </p>
             <Link
               href="/planos"
