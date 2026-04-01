@@ -14,8 +14,9 @@ import {
   Clock, Linkedin, User, Mail, Phone, MapPin,
   ExternalLink, Edit3, Save, X, CreditCard, Shield,
   Camera, BarChart3, Sparkles, ChevronDown, ChevronUp,
-  Lock, Trash2, Eye,
+  Lock, Trash2, Eye, Briefcase, Globe,
 } from 'lucide-react';
+import { countries } from '@/lib/countries';
 
 // ─── Avatars ────────────────────────────────────────────────────────────────
 const AVATAR_OPTIONS = [
@@ -62,6 +63,12 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
+  // Job preferences
+  const [jobArea, setJobArea] = useState('');
+  const [jobCountry, setJobCountry] = useState('');
+  const [jobRegion, setJobRegion] = useState('');
+  const [jobWorkMode, setJobWorkMode] = useState('hybrid');
+
   // CV
   const [uploading, setUploading] = useState(false);
   const [cvUploaded, setCvUploaded] = useState(false);
@@ -89,6 +96,10 @@ export default function ProfilePage() {
       setPhone(profile.phone || '');
       setAddress(profile.address || '');
       setLinkedin(profile.linkedin_url || '');
+      setJobArea((profile as any).job_area || '');
+      setJobCountry((profile as any).job_country || '');
+      setJobRegion((profile as any).job_region || '');
+      setJobWorkMode((profile as any).job_work_mode || 'hybrid');
     }
   }, [profile]);
 
@@ -180,7 +191,13 @@ export default function ProfilePage() {
   async function handleSave() {
     setSaving(true);
     setSaved(false);
-    await updateProfile({ first_name: firstName, last_name: lastName, phone, address, linkedin_url: linkedin });
+    const selectedC = countries.find(c => c.country === jobCountry);
+    await updateProfile({
+      first_name: firstName, last_name: lastName, phone, address, linkedin_url: linkedin,
+      job_area: jobArea || null, job_country: jobCountry || null,
+      job_country_code: selectedC?.code || null, job_region: jobRegion || null,
+      job_work_mode: jobWorkMode || 'hybrid',
+    } as any);
     setSaving(false);
     setSaved(true);
     setEditMode(false);
@@ -410,7 +427,7 @@ export default function ProfilePage() {
                       {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
                       {t('profile.save')}
                     </button>
-                    <button onClick={() => { setEditMode(false); if (profile) { setFirstName(profile.first_name || ''); setLastName(profile.last_name || ''); setPhone(profile.phone || ''); setAddress(profile.address || ''); setLinkedin(profile.linkedin_url || ''); } }} className="flex items-center gap-1 text-[11px] text-[#999] hover:text-[#666] transition-colors">
+                    <button onClick={() => { setEditMode(false); if (profile) { setFirstName(profile.first_name || ''); setLastName(profile.last_name || ''); setPhone(profile.phone || ''); setAddress(profile.address || ''); setLinkedin(profile.linkedin_url || ''); setJobArea((profile as any).job_area || ''); setJobCountry((profile as any).job_country || ''); setJobRegion((profile as any).job_region || ''); setJobWorkMode((profile as any).job_work_mode || 'hybrid'); } }} className="flex items-center gap-1 text-[11px] text-[#999] hover:text-[#666] transition-colors">
                       <X className="w-3 h-3" />
                     </button>
                   </div>
@@ -488,6 +505,87 @@ export default function ProfilePage() {
                       ) : (
                         <p className="text-sm font-medium text-[#1a1a1a]">—</p>
                       )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </section>
+
+            {/* ─── Job Preferences Widget ─── */}
+            <section className="border border-[#e5e5e5] rounded-xl p-5 bg-white shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-7 h-7 rounded-lg bg-gold/10 flex items-center justify-center">
+                  <Briefcase className="w-3.5 h-3.5 text-gold" />
+                </div>
+                <h2 className="text-sm font-semibold text-[#1a1a1a]">{t('profile.jobPrefs')}</h2>
+              </div>
+
+              {editMode ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="sm:col-span-2">
+                    <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">{t('profile.jobArea')}</label>
+                    <input value={jobArea} onChange={e => setJobArea(e.target.value)} placeholder={lang === 'pt' ? 'Ex: Recursos Humanos, Marketing' : 'E.g.: Human Resources, Marketing'} className="w-full px-3 py-2 border border-[#e5e5e5] rounded-lg text-sm text-[#1a1a1a] bg-[#fafaf9] focus:border-gold/40 focus:ring-1 focus:ring-gold/20 focus:outline-none transition-all" />
+                    <p className="text-[9px] text-[#bbb] mt-1">{t('profile.jobAreaHint')}</p>
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">{t('profile.jobCountry')}</label>
+                    <select value={jobCountry} onChange={e => { setJobCountry(e.target.value); setJobRegion(''); }} className="w-full px-3 py-2 border border-[#e5e5e5] rounded-lg text-sm text-[#1a1a1a] bg-[#fafaf9] focus:border-gold/40 focus:ring-1 focus:ring-gold/20 focus:outline-none transition-all">
+                      <option value="">{lang === 'pt' ? 'Selecionar país...' : 'Select country...'}</option>
+                      {countries.map(c => <option key={c.code} value={c.country}>{c.country}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">{t('profile.jobRegion')}</label>
+                    <select value={jobRegion} onChange={e => setJobRegion(e.target.value)} className="w-full px-3 py-2 border border-[#e5e5e5] rounded-lg text-sm text-[#1a1a1a] bg-[#fafaf9] focus:border-gold/40 focus:ring-1 focus:ring-gold/20 focus:outline-none transition-all" disabled={!jobCountry}>
+                      <option value="">{lang === 'pt' ? 'Selecionar região...' : 'Select region...'}</option>
+                      {(countries.find(c => c.country === jobCountry)?.regions || []).map(r => <option key={r} value={r}>{r}</option>)}
+                    </select>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">{t('profile.jobWorkMode')}</label>
+                    <div className="flex gap-2">
+                      {[
+                        { value: 'remote', label: lang === 'pt' ? '100% Remoto' : '100% Remote', icon: '🏠' },
+                        { value: 'hybrid', label: lang === 'pt' ? 'Híbrido' : 'Hybrid', icon: '🔄' },
+                        { value: 'onsite', label: lang === 'pt' ? '100% Presencial' : '100% On-site', icon: '🏢' },
+                      ].map(opt => (
+                        <button key={opt.value} type="button" onClick={() => setJobWorkMode(opt.value)}
+                          className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border transition-all ${
+                            jobWorkMode === opt.value
+                              ? 'bg-gold/10 border-gold/30 text-gold'
+                              : 'bg-[#fafaf9] border-[#e5e5e5] text-[#999] hover:border-gold/20 hover:text-[#666]'
+                          }`}>
+                          <span>{opt.icon}</span> {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex items-start gap-2.5">
+                    <Briefcase className="w-3.5 h-3.5 text-[#ccc] mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-[10px] text-[#999] uppercase tracking-wider mb-0.5">{t('profile.jobArea')}</p>
+                      <p className="text-sm font-medium text-[#1a1a1a]">{(profile as any)?.job_area || '—'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2.5">
+                    <Globe className="w-3.5 h-3.5 text-[#ccc] mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-[10px] text-[#999] uppercase tracking-wider mb-0.5">{t('profile.jobCountry')}</p>
+                      <p className="text-sm font-medium text-[#1a1a1a]">{(profile as any)?.job_country ? `${(profile as any).job_country}${(profile as any).job_region ? ` — ${(profile as any).job_region}` : ''}` : '—'}</p>
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2 flex items-start gap-2.5">
+                    <MapPin className="w-3.5 h-3.5 text-[#ccc] mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-[10px] text-[#999] uppercase tracking-wider mb-0.5">{t('profile.jobWorkMode')}</p>
+                      <p className="text-sm font-medium text-[#1a1a1a]">
+                        {(profile as any)?.job_work_mode === 'remote' ? (lang === 'pt' ? '🏠 100% Remoto' : '🏠 100% Remote')
+                          : (profile as any)?.job_work_mode === 'onsite' ? (lang === 'pt' ? '🏢 100% Presencial' : '🏢 100% On-site')
+                          : (lang === 'pt' ? '🔄 Híbrido' : '🔄 Hybrid')}
+                      </p>
                     </div>
                   </div>
                 </div>

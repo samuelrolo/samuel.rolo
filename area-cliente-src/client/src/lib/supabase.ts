@@ -19,6 +19,11 @@ export type UserProfile = {
   cv_filename: string;
   cv_uploaded_at: string;
   cv_file_url?: string;
+  job_area?: string;
+  job_country?: string;
+  job_country_code?: string;
+  job_region?: string;
+  job_work_mode?: 'remote' | 'hybrid' | 'onsite';
   created_at: string;
   updated_at: string;
 };
