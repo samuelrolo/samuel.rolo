@@ -1824,7 +1824,7 @@ export default function MemberArea() {
         {activeTab === 'jobs' && (
           <div className="animate-in fade-in duration-300">
             {planTier !== 'essential' ? (
-              <VagasFeed lang={lang} countryCode={selectedCountryData?.code || (profile as any)?.job_country_code || 'PT'} countryName={cpCountry} region={cpRegion || undefined} jobArea={(profile as any)?.job_area || undefined} workMode={(profile as any)?.job_work_mode || undefined} />
+              <VagasFeed lang={lang} countryCode={(profile as any)?.job_country_code || 'PT'} countryName={(profile as any)?.job_country || 'Portugal'} region={(profile as any)?.job_region || undefined} jobArea={(profile as any)?.job_area || undefined} workMode={(profile as any)?.job_work_mode || undefined} />
             ) : (
               <section className="p-8 border border-dashed border-[#e5e5e5] rounded-xl bg-[#fafaf9] text-center">
                 <Lock className="w-8 h-8 text-[#ccc] mx-auto mb-3" />
