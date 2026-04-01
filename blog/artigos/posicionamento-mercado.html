@@ -143,20 +143,24 @@
         }
     
     </style>
-<!-- Meta Pixel Code -->
+<!-- Meta Pixel Code (Deferred for Performance) -->
 <script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '3865352233767400');
-fbq('track', 'PageView');
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '3865352233767400');
+    fbq('track', 'PageView');
+  }, 3000);
+});
 </script>
-<noscript><img loading="lazy" height="1" width="1" style="display:none"
+<noscript><img height="1" width="1" style="display:none"
 src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
@@ -164,7 +168,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 <body>
     <nav class="nav-bar">
         <div class="nav-inner">
-            <a href="../../index.html" class="nav-logo"><img loading="lazy" src="../../images/logo.webp" alt="Share2Inspire"></a>
+            <a href="../../index.html" class="nav-logo"><img loading="lazy" src="../../images/logo.webp" alt="Share2Inspire" width="70" height="36"></a>
             <button class="nav-toggle"><span></span><span></span><span></span></button>
                         <div class="nav-links">
                 <a href="../../index.html">Inicio</a>
@@ -276,7 +280,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     <div class="container">
         <div class="row g-4">
             <div class="col-lg-4">
-                <img fetchpriority="high" loading="lazy" src="/images/logo.webp" alt="Share2Inspire" style="height:40px;margin-bottom:16px;filter:brightness(0) invert(1);">
+                <img fetchpriority="high" loading="lazy" src="/images/logo.webp" alt="Share2Inspire" style="height:40px;margin-bottom:16px;filter:brightness(0) invert(1);" width="78" height="40">
                 <p style="color:rgba(255,255,255,0.6);font-size:0.85rem;line-height:1.7;margin:0;">Partilhar conhecimento, Inspirar Carreiras.</p>
             </div>
             <div class="col-lg-2 col-md-4">

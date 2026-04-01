@@ -37,7 +37,33 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/images/favicon-512x512.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+      /* Critical CSS - Above the fold */
+      *,::after,::before{box-sizing:border-box}
+      body{margin:0;font-family:'Poppins',system-ui,-apple-system,sans-serif;font-size:1rem;line-height:1.5;color:#212529;background-color:#fff}
+      .container{width:100%;padding-right:var(--bs-gutter-x,.75rem);padding-left:var(--bs-gutter-x,.75rem);margin-right:auto;margin-left:auto}
+      @media (min-width:576px){.container{max-width:540px}}
+      @media (min-width:768px){.container{max-width:720px}}
+      @media (min-width:992px){.container{max-width:960px}}
+      @media (min-width:1200px){.container{max-width:1140px}}
+      .navbar{position:relative;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding-top:.5rem;padding-bottom:.5rem}
+      .navbar-brand{padding-top:.3125rem;padding-bottom:.3125rem;margin-right:1rem;font-size:1.25rem;text-decoration:none;white-space:nowrap}
+      .navbar-dark{color:rgba(255,255,255,.55)}
+      .navbar-dark .navbar-brand{color:#fff}
+      .bg-dark{background-color:#212529!important}
+      img{vertical-align:middle;max-width:100%;height:auto}
+      a{color:#0d6efd;text-decoration:underline}
+      h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}
+      .row{display:flex;flex-wrap:wrap;margin-top:calc(-1*var(--bs-gutter-y,0));margin-right:calc(-.5*var(--bs-gutter-x,1.5rem));margin-left:calc(-.5*var(--bs-gutter-x,1.5rem))}
+      .col,.col-lg-2,.col-lg-3,.col-lg-4,.col-lg-6,.col-lg-8,.col-lg-10,.col-lg-12,.col-md-6,.col-md-12{flex-shrink:0;width:100%;max-width:100%;padding-right:calc(var(--bs-gutter-x,1.5rem)*.5);padding-left:calc(var(--bs-gutter-x,1.5rem)*.5)}
+      .d-none{display:none!important}
+      .text-center{text-align:center!important}
+      .py-4{padding-top:1.5rem!important;padding-bottom:1.5rem!important}
+      .mb-4{margin-bottom:1.5rem!important}
+    </style>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"></noscript>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -123,13 +149,24 @@
         .fade-in{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
         .fade-in.visible{opacity:1;transform:translateY(0)}
     </style>
+
+    <style>
+      lite-youtube{background-color:#000;position:relative;display:block;contain:content;background-position:center center;background-size:cover;cursor:pointer;max-width:720px;margin:0 auto}
+      lite-youtube::before{content:'';display:block;position:absolute;top:0;background:linear-gradient(180deg,rgba(0,0,0,.6) 0,transparent);height:60px;width:100%;z-index:1}
+      lite-youtube::after{content:'';display:block;padding-bottom:56.25%}
+      lite-youtube>iframe{width:100%;height:100%;position:absolute;top:0;left:0;border:0}
+      lite-youtube>.lty-playbtn{display:block;width:68px;height:48px;position:absolute;cursor:pointer;transform:translate3d(-50%,-50%,0);top:50%;left:50%;z-index:1;background-color:transparent;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68 48"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="red"/><path d="M45 24 27 14v20" fill="white"/></svg>');filter:grayscale(100%);transition:filter .1s cubic-bezier(0,0,.2,1);border:0}
+      lite-youtube:hover>.lty-playbtn,lite-youtube .lty-playbtn:focus{filter:none}
+      lite-youtube.lyt-activated{cursor:unset}
+      lite-youtube.lyt-activated::before,lite-youtube.lyt-activated>.lty-playbtn{opacity:0;pointer-events:none}
+    </style>
 </head>
 <body>
 
 <header>
-    <nav class="navbar navbar-expand-lg fixed-top" style="background:rgba(26,26,46,0.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);">
+    <nav aria-label="Navegação principal" class="navbar navbar-expand-lg fixed-top" style="background:rgba(26,26,46,0.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);">
         <div class="container" style="max-width:1100px;">
-            <a class="navbar-brand" href="/"><img fetchpriority="high" src="/images/logo.webp" alt="Share2Inspire Logo" style="height:36px;"></a>
+            <a class="navbar-brand" href="/"><img fetchpriority="high" src="/images/logo.webp" alt="Share2Inspire Logo" width="70" height="36" style="height:36px;"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color:rgba(255,255,255,.2);"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
@@ -183,7 +220,7 @@
     </div>
 </section>
 
-<div class="article-wrap">
+<main role="main"><div class="article-wrap">
 
     <div class="lang-banner fade-in">
         <p>🇬🇧 English version available</p>
@@ -196,7 +233,7 @@
             <span style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#C9A961">Vídeo · Humanos &amp; Máquinas #6 — Samuel Rolo</span>
         </div>
         <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden">
-            <iframe src="https://www.youtube.com/embed/EOeqKFILeTw" allowfullscreen loading="lazy" title="Humanos & Máquinas #6" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none"></iframe>
+            <lite-youtube videoid="EOeqKFILeTw" title="Humanos & Máquinas #6" playlabel="Reproduzir vídeo"></lite-youtube>
         </div>
     </div>
     <p class="fade-in" style="font-size:.8rem;color:#999;text-align:center;margin-top:-.5rem;margin-bottom:2rem;font-style:italic;">Preferes ver a ouvir? Vê o vídeo completo — depois volta aqui para os exemplos e referências detalhadas.</p>
@@ -320,11 +357,12 @@
     </div>
 </div>
 
+</main>
 <footer style="background:#1A1A1A;color:#fff;padding:60px 0 30px;margin-top:0;">
     <div class="container">
         <div class="row g-4">
             <div class="col-lg-4">
-                <img loading="lazy" src="/images/logo.webp" alt="Share2Inspire" style="height:40px;margin-bottom:16px;filter:brightness(0) invert(1);">
+                <img loading="lazy" src="/images/logo.webp" alt="Share2Inspire" width="78" height="40" style="height:40px;margin-bottom:16px;filter:brightness(0) invert(1);">
                 <p style="color:rgba(255,255,255,0.6);font-size:0.85rem;line-height:1.7;margin:0;">Partilhar conhecimento, Inspirar Carreiras.</p>
             </div>
             <div class="col-lg-2 col-md-4">
@@ -373,5 +411,9 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.08 });
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 </script>
+
+    <script>
+      class LiteYTEmbed extends HTMLElement{connectedCallback(){this.videoId=this.getAttribute('videoid');let e=this.getAttribute('playlabel')||'Play';this.style.backgroundImage=`url(https://i.ytimg.com/vi/${this.videoId}/hqdefault.jpg)`;let t=document.createElement('button');t.type='button',t.classList.add('lty-playbtn'),t.setAttribute('aria-label',e),this.append(t),this.addEventListener('pointerover',LiteYTEmbed.warmConnections,{once:!0}),this.addEventListener('click',()=>this.addIframe())}addIframe(){if(this.classList.contains('lyt-activated'))return;let e=new URLSearchParams(this.getAttribute('params')||[]);e.append('autoplay','1');let t=document.createElement('iframe');t.width=560,t.height=315,t.title=this.getAttribute('title')||'YouTube Video',t.allow='accelerometer;autoplay;encrypted-media;gyroscope;picture-in-picture',t.allowFullscreen=!0,t.src=`https://www.youtube.com/embed/${this.videoId}?${e.toString()}`,this.append(t),this.classList.add('lyt-activated')}static warmConnections(){if(LiteYTEmbed.preconnected)return;let e=e=>{let t=document.createElement('link');t.rel='preconnect',t.href=e,document.head.append(t)};e('https://www.youtube-nocookie.com'),e('https://www.google.com'),e('https://googleads.g.doubleclick.net'),e('https://static.doubleclick.net'),LiteYTEmbed.preconnected=!0}}customElements.define('lite-youtube',LiteYTEmbed);
+    </script>
 </body>
 </html>
