@@ -275,7 +275,7 @@ export default function SavedJobsTracker({ lang }: Props) {
                   className="inline-flex items-center gap-1.5 px-4 py-2 text-[11px] font-semibold bg-[#BF9A33] text-[#1a1a1a] rounded-lg hover:bg-[#d4ad3a] transition-all no-underline">
                   <Download className="w-3.5 h-3.5" /> {tt('Descarregar Extensão (.zip)', 'Download Extension (.zip)')}
                 </a>
-                <a href="/assets/downloads/extension/tutorial-extensao.mp4" target="_blank" rel="noopener noreferrer"
+                <a href={tt('/assets/downloads/extension/tutorial-extensao-pt.mp4', '/assets/downloads/extension/tutorial-extensao-en.mp4')} target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 px-4 py-2 text-[11px] font-medium text-[#BF9A33] border border-[#BF9A33]/50 rounded-lg hover:bg-[#BF9A33]/10 transition-all no-underline">
                   <Chrome className="w-3.5 h-3.5" /> {tt('Ver Tutorial de Instalação', 'Watch Installation Tutorial')}
                 </a>
@@ -283,7 +283,7 @@ export default function SavedJobsTracker({ lang }: Props) {
             </div>
             <div className="lg:w-64 shrink-0">
               <video controls className="w-full rounded-lg border border-[#333] shadow-md" preload="metadata">
-                <source src="/assets/downloads/extension/tutorial-extensao.mp4" type="video/mp4" />
+                <source src={tt('/assets/downloads/extension/tutorial-extensao-pt.mp4', '/assets/downloads/extension/tutorial-extensao-en.mp4')} type="video/mp4" />
               </video>
             </div>
           </div>
