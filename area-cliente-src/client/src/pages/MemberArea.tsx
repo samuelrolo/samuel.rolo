@@ -14,6 +14,7 @@ import CareerProgress from '@/components/CareerProgress';
 import UpgradePage from './UpgradePage';
 import ExtraAnalysisPaymentModal, { type ExtraAnalysisProduct } from '@/components/ExtraAnalysisPaymentModal';
 import VagasFeed from '@/components/VagasFeed';
+import SavedJobsTracker from '@/components/SavedJobsTracker';
 import AnalysisResultsFull from '@/components/AnalysisResults';
 import { transformGeminiResponse } from '@/lib/transformGeminiResponse';
 import { countries } from '@/lib/countries';
@@ -1586,8 +1587,8 @@ export default function MemberArea() {
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id;
               const TabIcon = tab.icon;
-              // Lock jobs & content for essential
-              const isLocked = (tab.id === 'jobs' || tab.id === 'content') && planTier === 'essential';
+              // Lock content for essential (jobs tab is now open to all)
+              const isLocked = tab.id === 'content' && planTier === 'essential';
               return (
                 <button
                   key={tab.id}
@@ -1819,6 +1820,10 @@ export default function MemberArea() {
         {/* ═══════════════════ TAB: JOBS ═══════════════════ */}
         {activeTab === 'jobs' && (
           <div className="animate-in fade-in duration-300">
+            {/* Saved Jobs Tracker — disponível para TODOS os utilizadores */}
+            <SavedJobsTracker lang={lang} />
+
+            {/* Feed de Vagas Adzuna — trancado para essential */}
             {planTier !== 'essential' ? (
               <VagasFeed lang={lang} countryCode={selectedCountryData?.code || (profile as any)?.job_country_code || 'PT'} countryName={cpCountry} region={cpRegion || undefined} jobArea={(profile as any)?.job_area || undefined} workMode={(profile as any)?.job_work_mode || undefined} />
             ) : (
