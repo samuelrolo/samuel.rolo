@@ -1600,22 +1600,75 @@ function renderEmailHistory() {
     }).join('');
 }
 
+let currentMsgId = null;
 function renderContactMessages() {
-    let data = [...allContacts].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    // Filter out probe/spam entries
+    let data = [...allContacts]
+        .filter(m => !m.name?.startsWith('__') && !m.email?.includes('probe') && !m.subject?.startsWith('__'))
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     setText('messagesCount', `${data.length} mensagens`);
     const tbody = document.getElementById('contactsTable');
     if (!tbody) return;
     if (!data.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma mensagem de contacto</td></tr>`; return; }
     tbody.innerHTML = data.map(m => {
         const date = new Date(m.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(m.created_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
-        return `<tr>
+        return `<tr style="cursor:pointer;" onclick="openMsgModal(${m.id})" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td style="font-size:12px;">${m.name || '—'}</td>
-            <td style="font-size:12px;">${m.email || '—'}</td>
-            <td style="font-size:12px;">${m.subject || '—'}</td>
-            <td style="font-size:12px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.message || '—'}</td>
+            <td style="font-size:12px;">${esc(m.name) || '—'}</td>
+            <td style="font-size:12px;">${esc(m.email) || '—'}</td>
+            <td style="font-size:12px;">${esc(m.subject) || '—'}</td>
+            <td style="font-size:12px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(m.message) || '—'}</td>
         </tr>`;
     }).join('');
+}
+function openMsgModal(id) {
+    const m = allContacts.find(c => c.id === id);
+    if (!m) return;
+    currentMsgId = id;
+    const date = new Date(m.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(m.created_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
+    document.getElementById('msgDetailName').textContent = m.name || '—';
+    document.getElementById('msgDetailEmail').textContent = m.email || '—';
+    document.getElementById('msgDetailSubject').textContent = m.subject || '—';
+    document.getElementById('msgDetailDate').textContent = date;
+    document.getElementById('msgDetailBody').textContent = m.message || '—';
+    document.getElementById('msgReplySubject').value = 'Re: ' + (m.subject || 'Mensagem de contacto');
+    document.getElementById('msgReplyBody').value = '';
+    document.getElementById('msgModalOverlay').style.display = 'flex';
+}
+function closeMsgModal() {
+    document.getElementById('msgModalOverlay').style.display = 'none';
+    currentMsgId = null;
+}
+async function replyToMessage() {
+    if (!ensureBrevoKey()) return;
+    const m = allContacts.find(c => c.id === currentMsgId);
+    if (!m || !m.email) { showToast('Email do remetente não disponível', 'danger'); return; }
+    const subject = document.getElementById('msgReplySubject').value.trim();
+    const body = document.getElementById('msgReplyBody').value.trim();
+    if (!subject || !body) { showToast('Preenche o assunto e a mensagem', 'danger'); return; }
+    const htmlBody = body.includes('<p>') || body.includes('<a ') ? body : `<p>${body.replace(/\n/g, '</p><p>')}</p>`;
+    const ok = await sendBrevoEmail(m.email, subject, htmlBody);
+    if (ok) {
+        showToast('Resposta enviada com sucesso!', 'success');
+        await supaInsert('email_history', { recipient_email: m.email, subject, body: htmlBody, email_type: 'reply_contact', sent_at: new Date().toISOString(), status: 'sent' });
+        closeMsgModal();
+    } else { showToast('Erro ao enviar resposta', 'danger'); }
+}
+async function deleteMsgFromModal() {
+    if (!currentMsgId) return;
+    if (!confirm('Tens a certeza que queres eliminar esta mensagem?')) return;
+    try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/contact_messages?id=eq.${currentMsgId}`, {
+            method: 'DELETE',
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        if (res.ok) {
+            allContacts = allContacts.filter(c => c.id !== currentMsgId);
+            showToast('Mensagem eliminada', 'success');
+            closeMsgModal();
+            renderContactMessages();
+        } else { showToast('Erro ao eliminar mensagem', 'danger'); }
+    } catch (e) { showToast('Erro ao eliminar mensagem', 'danger'); }
 }
 
 // ═══════════════════════════════════════════════════════════════

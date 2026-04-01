@@ -1444,6 +1444,44 @@
     </div>
 </div>
 
+<!-- Modal: Detalhe da Mensagem de Contacto -->
+<div class="modal-overlay" id="msgModalOverlay" style="display:none;" onclick="if(event.target===this)closeMsgModal()">
+    <div class="modal-box" style="max-width:640px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-envelope-open-text" style="color:var(--gold);margin-right:8px;"></i> Mensagem de Contacto</h3>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <button class="btn btn-outline" style="font-size:11px;padding:4px 10px;" onclick="deleteMsgFromModal()" title="Eliminar mensagem"><i class="fas fa-trash" style="color:#EF4444;"></i></button>
+                <button class="modal-close" onclick="closeMsgModal()"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                <div><label class="form-label" style="font-size:11px;color:var(--text-muted);">Nome</label><div id="msgDetailName" style="font-size:13px;font-weight:500;">—</div></div>
+                <div><label class="form-label" style="font-size:11px;color:var(--text-muted);">Email</label><div id="msgDetailEmail" style="font-size:13px;">—</div></div>
+                <div><label class="form-label" style="font-size:11px;color:var(--text-muted);">Assunto</label><div id="msgDetailSubject" style="font-size:13px;">—</div></div>
+                <div><label class="form-label" style="font-size:11px;color:var(--text-muted);">Data</label><div id="msgDetailDate" style="font-size:13px;">—</div></div>
+            </div>
+            <div style="margin-bottom:16px;">
+                <label class="form-label" style="font-size:11px;color:var(--text-muted);">Mensagem</label>
+                <div id="msgDetailBody" style="font-size:13px;background:var(--bg);padding:14px;border-radius:var(--radius);border:1px solid var(--border);white-space:pre-wrap;max-height:200px;overflow-y:auto;">—</div>
+            </div>
+            <hr style="border:none;border-top:1px solid var(--border);margin:16px 0;">
+            <div style="margin-bottom:12px;font-size:13px;font-weight:600;color:var(--dark);"><i class="fas fa-reply" style="color:var(--gold);margin-right:6px;"></i> Responder</div>
+            <div class="form-group">
+                <label class="form-label">Assunto da resposta</label>
+                <input class="form-input" type="text" id="msgReplySubject" style="width:100%;">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mensagem (HTML)</label>
+                <textarea class="form-textarea" id="msgReplyBody" style="min-height:120px;" placeholder="Escreve a tua resposta aqui..."></textarea>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button class="btn btn-outline" onclick="closeMsgModal()">Fechar</button>
+                <button class="btn btn-gold" onclick="replyToMessage()"><i class="fas fa-paper-plane"></i> Enviar Resposta</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="/admin-analytics/admin-analytics.js"></script>
 </body>
 </html>
