@@ -1495,10 +1495,244 @@ export default function MemberArea() {
     }
   };
 
-  // ─── Routing: sem subscrição → UpgradePage ─────────────────────────────
+  // ─── Routing: sem subscrição → vista limitada com Jobs + Análises ──────
   // MUST be after all hooks to respect React's rules of hooks
   const hasActiveSub = subscription && subscription.status === 'active' && new Date(subscription.expires_at) > new Date();
-  if (!hasActiveSub) return <UpgradePage />;
+
+  // Free users: show simplified view with Jobs + Analyses tabs only
+  if (!hasActiveSub) {
+    type FreeTabId = 'analyses' | 'jobs';
+    const FREE_TABS: { id: FreeTabId; labelPt: string; labelEn: string; icon: typeof Wrench }[] = [
+      { id: 'analyses', labelPt: 'Análises', labelEn: 'Analyses', icon: FileSearch },
+      { id: 'jobs', labelPt: 'Vagas', labelEn: 'Jobs', icon: Briefcase },
+    ];
+    // Use activeTab but constrain to free tabs
+    const freeTab: FreeTabId = (activeTab === 'jobs') ? 'jobs' : 'analyses';
+
+    return (
+      <div className="min-h-screen pt-24 pb-20 bg-[#fafaf9]">
+        <div className="container max-w-5xl mx-auto px-4">
+
+          {/* ─── Welcome Header (simplified for free users) ─── */}
+          <div className="mb-6">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-3">
+              <div>
+                <p className="text-gold text-[11px] font-medium tracking-[0.15em] uppercase mb-1">{t('member.title')}</p>
+                <h1 className="text-2xl md:text-3xl font-semibold text-[#1a1a1a]">
+                  {profile?.first_name ? `${t('member.welcome')}, ${profile.first_name}.` : t('member.welcome')}
+                </h1>
+                <p className="text-xs text-[#888] mt-1">
+                  {lang === 'pt' ? 'Consulta as tuas análises guardadas e as vagas que acompanhas.' : 'View your saved analyses and tracked jobs.'}
+                </p>
+              </div>
+              <span className="px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider bg-[#f5f5f4] text-[#999] border border-[#e5e5e5]">
+                {lang === 'pt' ? 'Conta Grátis' : 'Free Account'}
+              </span>
+            </div>
+
+            {/* Upgrade CTA banner */}
+            <a
+              href="/area-cliente/planos"
+              className="w-full flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-gold/8 via-gold/4 to-transparent border border-gold/15 rounded-xl hover:border-gold/30 hover:shadow-sm transition-all group cursor-pointer text-left"
+            >
+              <div className="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center shrink-0 group-hover:bg-gold/15 transition-colors">
+                <Sparkles className="w-4 h-4 text-gold" />
+              </div>
+              <p className="flex-1 text-xs text-[#555] leading-relaxed">
+                {lang === 'pt'
+                  ? 'Desbloqueia todas as ferramentas — CV Analyser, LinkedIn Roaster, Career Path, Feed de Vagas e muito mais.'
+                  : 'Unlock all tools — CV Analyser, LinkedIn Roaster, Career Path, Job Feed and much more.'}
+              </p>
+              <span className="shrink-0 flex items-center gap-1 text-[10px] font-semibold text-gold uppercase tracking-wider opacity-80 group-hover:opacity-100 transition-opacity">
+                {lang === 'pt' ? 'Ver planos' : 'View plans'}
+                <ArrowRight className="w-3 h-3" />
+              </span>
+            </a>
+          </div>
+
+          {/* ─── Tab Navigation (Jobs + Analyses only) ─── */}
+          <div className="mb-8">
+            <nav className="flex gap-1 bg-[#f5f5f4] p-1 rounded-xl">
+              {FREE_TABS.map((tab) => {
+                const isActive = freeTab === tab.id;
+                const TabIcon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-300 ${
+                      isActive
+                        ? 'bg-white text-[#1a1a1a] shadow-sm'
+                        : 'text-[#888] hover:text-[#555]'
+                    }`}
+                  >
+                    <TabIcon className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">{lang === 'pt' ? tab.labelPt : tab.labelEn}</span>
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* ═══════════════════ FREE TAB: ANALYSES ═══════════════════ */}
+          {freeTab === 'analyses' && (
+            <div className="animate-in fade-in duration-300">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-sm font-semibold text-[#1a1a1a]">{lang === 'pt' ? 'Biblioteca de Análises' : 'Analysis Library'}</h2>
+                  <span className="text-[10px] text-[#999] bg-[#f5f5f4] px-2 py-0.5 rounded-full">{savedAnalyses.length}</span>
+                </div>
+                <button
+                  onClick={() => { setLoadingSaved(true); supabase.from('user_analyses').select('*').eq('user_id', user!.id).order('created_at', { ascending: false }).limit(100).then(({ data }) => { setSavedAnalyses(data as SavedAnalysis[] || []); setLoadingSaved(false); }); }}
+                  className="flex items-center gap-1 text-[10px] text-[#999] hover:text-gold transition-colors"
+                >
+                  <RefreshCw className="w-3 h-3" /> {lang === 'pt' ? 'Atualizar' : 'Refresh'}
+                </button>
+              </div>
+
+              {loadingSaved ? (
+                <div className="py-16 text-center"><Loader2 className="w-5 h-5 animate-spin text-gold mx-auto" /><p className="text-xs text-[#999] mt-2">{t('dash.loadingAnalyses')}</p></div>
+              ) : savedAnalyses.length === 0 ? (
+                <div className="py-16 text-center border border-dashed border-[#e5e5e5] rounded-xl bg-[#fafaf9]">
+                  <FileSearch className="w-10 h-10 text-[#ddd] mx-auto mb-3" />
+                  <p className="text-sm text-[#999] mb-1">{t('dash.noAnalysesYet')}</p>
+                  <p className="text-xs text-[#bbb] mb-4">
+                    {lang === 'pt'
+                      ? 'Usa as ferramentas gratuitas (CV Analyser, LinkedIn Roaster) e guarda os resultados aqui.'
+                      : 'Use the free tools (CV Analyser, LinkedIn Roaster) and save results here.'}
+                  </p>
+                  <a href="/cv-analyser" className="inline-flex items-center gap-1.5 text-xs text-gold hover:underline font-medium">
+                    <ArrowRight className="w-3 h-3" /> {lang === 'pt' ? 'Experimentar CV Analyser' : 'Try CV Analyser'}
+                  </a>
+                </div>
+              ) : (
+                <div className="space-y-8">
+                  {Object.entries(groupedAnalyses).map(([type, items]) => {
+                    const config = TOOL_CONFIG[type] || { label: type, icon: FileText, color: 'text-[#999]', bgColor: 'bg-[#f5f5f4]', borderColor: 'border-[#e5e5e5]' };
+                    const ToolIcon = config.icon;
+                    const isExpanded = expandedAnalysisType === type;
+                    const latest = items[0];
+                    const rest = items.slice(1);
+
+                    return (
+                      <div key={type} className="border border-[#e5e5e5] rounded-xl bg-white shadow-sm overflow-hidden">
+                        <div className="flex items-center gap-3 p-4 border-b border-[#f0f0f0]">
+                          <div className={`w-8 h-8 rounded-lg ${config.bgColor} flex items-center justify-center`}>
+                            <ToolIcon className={`w-4 h-4 ${config.color}`} />
+                          </div>
+                          <span className="text-sm font-semibold text-[#1a1a1a]">{config.label}</span>
+                          <span className="text-[10px] text-[#999] bg-[#f5f5f4] px-2 py-0.5 rounded-full">{items.length}</span>
+                        </div>
+                        <div className="p-4 bg-gradient-to-r from-[#fafaf9] to-white">
+                          <div className="flex items-center gap-1.5 text-[10px] text-gold font-medium uppercase tracking-wider mb-2">
+                            <Sparkles className="w-3 h-3" />
+                            {lang === 'pt' ? 'Última análise' : 'Latest analysis'}
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1 min-w-0">
+                              {getAnalysisSummary(latest) && <p className="text-sm font-medium text-[#1a1a1a] mb-1">{getAnalysisSummary(latest)}</p>}
+                              <div className="flex items-center gap-1.5 text-[10px] text-[#999]"><Clock className="w-3 h-3" />{formatDate(latest.created_at)}</div>
+                            </div>
+                            <div className="flex items-center gap-2 ml-3">
+                              <button onClick={() => setViewingAnalysis(latest)} className="flex items-center gap-1 text-[11px] text-gold hover:text-[#b8960c] font-medium transition-colors">
+                                <ArrowRight className="w-3 h-3" />{lang === 'pt' ? 'Ver resultado' : 'View result'}
+                              </button>
+                              <button onClick={() => handleDeleteAnalysis(latest.id)} disabled={deletingId === latest.id} className="text-[#ddd] hover:text-red-400 transition-colors">
+                                {deletingId === latest.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        {rest.length > 0 && (
+                          <>
+                            <button onClick={() => setExpandedAnalysisType(isExpanded ? null : type)} className="w-full flex items-center justify-between px-4 py-2.5 border-t border-[#f0f0f0] text-[11px] text-[#888] hover:text-gold hover:bg-[#fafaf9] transition-all">
+                              <span>{isExpanded ? (lang === 'pt' ? 'Ocultar anteriores' : 'Hide older') : (lang === 'pt' ? `Ver mais ${rest.length} análise${rest.length > 1 ? 's' : ''}` : `Show ${rest.length} more`)}</span>
+                              {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                            </button>
+                            {isExpanded && (
+                              <div className="border-t border-[#f0f0f0]">
+                                {rest.map((sa) => (
+                                  <div key={sa.id} className="flex items-center justify-between px-4 py-3 border-b border-[#f5f5f4] last:border-b-0 hover:bg-[#fafaf9] transition-colors group">
+                                    <div className="flex-1 min-w-0">
+                                      {getAnalysisSummary(sa) && <p className="text-xs font-medium text-[#1a1a1a] mb-0.5">{getAnalysisSummary(sa)}</p>}
+                                      <div className="flex items-center gap-1.5 text-[10px] text-[#999]"><Clock className="w-3 h-3" />{formatDate(sa.created_at)}</div>
+                                    </div>
+                                    <div className="flex items-center gap-2 ml-3">
+                                      <button onClick={() => setViewingAnalysis(sa)} className="flex items-center gap-1 text-[10px] text-gold hover:text-[#b8960c] font-medium transition-colors opacity-0 group-hover:opacity-100">
+                                        <ArrowRight className="w-3 h-3" />{lang === 'pt' ? 'Ver' : 'View'}
+                                      </button>
+                                      <button onClick={() => handleDeleteAnalysis(sa.id)} disabled={deletingId === sa.id} className="text-[#ddd] hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100">
+                                        {deletingId === sa.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ═══════════════════ FREE TAB: JOBS ═══════════════════ */}
+          {freeTab === 'jobs' && (
+            <div className="animate-in fade-in duration-300">
+              <SavedJobsTracker lang={lang} />
+
+              {/* Locked Adzuna feed CTA */}
+              <section className="mt-6 p-8 border border-dashed border-[#e5e5e5] rounded-xl bg-[#fafaf9] text-center">
+                <Lock className="w-8 h-8 text-[#ccc] mx-auto mb-3" />
+                <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{lang === 'pt' ? 'Feed de Vagas' : 'Job Feed'}</h3>
+                <p className="text-xs text-[#999] font-light mb-4 max-w-sm mx-auto">
+                  {lang === 'pt'
+                    ? 'Subscreve para aceder ao feed inteligente de vagas com match personalizado.'
+                    : 'Subscribe to access the intelligent job feed with personalised matching.'}
+                </p>
+                <a href="/area-cliente/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded-lg hover:bg-gold/20 transition-all">
+                  <Sparkles className="w-3.5 h-3.5" />{lang === 'pt' ? 'Ver planos' : 'View plans'}
+                </a>
+              </section>
+            </div>
+          )}
+
+        </div>
+
+        {/* ═══════════════════ ANALYSIS RESULT VIEWER (shared with subscriber view) ═══════════════════ */}
+        {viewingAnalysis && (
+          <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 backdrop-blur-sm overflow-y-auto pt-8 pb-8" onClick={() => setViewingAnalysis(null)}>
+            <div className="relative w-full max-w-4xl mx-4 bg-white rounded-2xl shadow-2xl border border-[#e5e5e5] animate-in fade-in slide-in-from-bottom-4 duration-300" onClick={e => e.stopPropagation()}>
+              <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-[#f0f0f0] bg-white/95 backdrop-blur-sm rounded-t-2xl">
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-lg ${(TOOL_CONFIG[viewingAnalysis.analysis_type] || { bgColor: 'bg-[#f5f5f4]' }).bgColor} flex items-center justify-center`}>
+                    {(() => { const Icon = (TOOL_CONFIG[viewingAnalysis.analysis_type] || { icon: FileSearch }).icon; return <Icon className={`w-4 h-4 ${(TOOL_CONFIG[viewingAnalysis.analysis_type] || { color: 'text-[#999]' }).color}`} />; })()}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#1a1a1a]">{(TOOL_CONFIG[viewingAnalysis.analysis_type] || { label: viewingAnalysis.analysis_type }).label}</h3>
+                    <p className="text-[10px] text-[#999]">{formatDate(viewingAnalysis.created_at)}</p>
+                  </div>
+                </div>
+                <button onClick={() => setViewingAnalysis(null)} className="px-3 py-1.5 text-xs text-[#999] hover:text-[#1a1a1a] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-all">
+                  {lang === 'pt' ? 'Fechar' : 'Close'}
+                </button>
+              </div>
+              <div className="p-6">
+                {viewingAnalysis.analysis_type === 'cv_analyser' && viewingAnalysis.data?.enriched ? (
+                  <AnalysisResultsFull data={viewingAnalysis.data.enriched} isPaid={true} />
+                ) : (
+                  <AnalysisResult data={viewingAnalysis.data} onClose={() => setViewingAnalysis(null)} lang={lang} />
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-24 pb-20 bg-[#fafaf9]">
