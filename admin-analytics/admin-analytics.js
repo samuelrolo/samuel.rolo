@@ -2023,6 +2023,7 @@ function getServiceIcon(name) {
     if (name.includes('Frontend')) return 'fa-globe';
     if (name.includes('Supabase')) return 'fa-database';
     if (name.includes('Backend')) return 'fa-server';
+    if (name.includes('Payment') || name.includes('Stripe') || name.includes('MBWay')) return 'fa-credit-card';
     return 'fa-circle';
 }
 
@@ -2112,7 +2113,8 @@ function renderHealthLogs() {
     // Group services by category
     const frontendServices = latestRun.filter(h => h.endpoint_name.startsWith('Frontend'));
     const backendServices = latestRun.filter(h => h.endpoint_name.startsWith('Backend'));
-    const edgeServices = latestRun.filter(h => !h.endpoint_name.startsWith('Frontend') && !h.endpoint_name.startsWith('Backend'));
+    const paymentServices = latestRun.filter(h => h.endpoint_name.startsWith('Payment'));
+    const edgeServices = latestRun.filter(h => !h.endpoint_name.startsWith('Frontend') && !h.endpoint_name.startsWith('Backend') && !h.endpoint_name.startsWith('Payment'));
 
     function buildCard(h) {
         const color = getStatusColor(h.status);
@@ -2168,6 +2170,7 @@ function renderHealthLogs() {
     cardsEl.innerHTML =
         buildSection('Frontend', 'fa-globe', frontendServices, 'var(--blue)') +
         buildSection('Backend', 'fa-server', backendServices, 'var(--orange)') +
+        buildSection('Pagamentos', 'fa-credit-card', paymentServices, '#635bff') +
         buildSection('Edge Functions', 'fa-bolt', edgeServices, 'var(--purple)');
 
     // Populate history filter
@@ -2222,7 +2225,10 @@ async function refreshHealthCheck() {
         { name: 'Frontend Bundle EN', url: 'https://www.share2inspire.pt/en/bundle', category: 'frontend' },
         { name: 'Backend Root', url: 'https://share2inspire-beckend.lm.r.appspot.com/', category: 'backend' },
         { name: 'Backend API Health', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/health', category: 'backend' },
-        { name: 'Supabase Edge Function', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task', category: 'edge_function' }
+        { name: 'Supabase Edge Function', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task', category: 'edge_function' },
+        { name: 'Payment Stripe Checkout', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/stripe-checkout', category: 'payment', method: 'POST', body: '{"test":true}' },
+        { name: 'Payment MBWay', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/mbway', category: 'payment', method: 'POST', body: '{"test":true}' },
+        { name: 'Payment Status API', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/status/test', category: 'payment' }
     ];
     const runId = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 15);
     const results = [];
@@ -2231,12 +2237,29 @@ async function refreshHealthCheck() {
         try {
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), 15000);
-            const res = await fetch(ep.url, { method: 'GET', mode: 'no-cors', signal: controller.signal });
+            let fetchOpts = { method: ep.method || 'GET', mode: 'no-cors', signal: controller.signal };
+            if (ep.method === 'POST') { fetchOpts.headers = { 'Content-Type': 'application/json' }; fetchOpts.body = ep.body || '{}'; fetchOpts.mode = 'cors'; }
+            let res;
+            try {
+                res = await fetch(ep.url, fetchOpts);
+            } catch (corsErr) {
+                // CORS error on POST? Retry with no-cors GET to check reachability
+                if (ep.method === 'POST') {
+                    res = await fetch(ep.url, { method: 'GET', mode: 'no-cors', signal: controller.signal });
+                } else { throw corsErr; }
+            }
             clearTimeout(timeout);
             const elapsed = Date.now() - start;
             const httpCode = res.type === 'opaque' ? 200 : res.status;
-            const status = elapsed > 2000 ? 'warning' : 'healthy';
-            results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: elapsed, http_code: httpCode, status, error_message: null, checked_at: new Date().toISOString() });
+            // For payment endpoints: 400/405 means the server is reachable (just rejecting test data)
+            const isPaymentEndpoint = ep.category === 'payment';
+            const isReachable = res.type === 'opaque' || (httpCode >= 200 && httpCode < 500);
+            let status;
+            if (!isReachable) status = 'down';
+            else if (elapsed > 2000) status = 'warning';
+            else status = 'healthy';
+            const errorMsg = (isPaymentEndpoint && httpCode >= 400 && httpCode < 500) ? 'Endpoint acessível (rejeita dados de teste)' : null;
+            results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: elapsed, http_code: httpCode, status, error_message: errorMsg, checked_at: new Date().toISOString() });
         } catch (err) {
             const elapsed = Date.now() - start;
             results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed > 14000 ? null : elapsed, total_ms: elapsed > 14000 ? null : elapsed, http_code: null, status: 'down', error_message: err.message || 'Request failed', checked_at: new Date().toISOString() });
