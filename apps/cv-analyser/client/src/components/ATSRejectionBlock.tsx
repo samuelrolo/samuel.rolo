@@ -232,9 +232,9 @@ const ATSRejectionBlock = ({ rejectionRate, topFactor, isPaid = false, detailedF
             </div>
             <div className="grid grid-cols-2 gap-2">
               {getATSSystems().map((s, i) => (
-                <div key={i} className="p-2.5 rounded-lg bg-muted/20 border border-border flex justify-between items-center">
-                  <span className="text-xs font-medium text-foreground">{s.name}</span>
-                  <span className={`text-xs font-semibold ${s.color}`}>{s.compat}</span>
+                <div key={i} className="p-2.5 rounded-lg bg-muted/20 border border-border flex justify-between items-center min-w-0 gap-2">
+                  <span className="text-xs font-medium text-foreground whitespace-nowrap">{s.name}</span>
+                  <span className={`text-xs font-semibold ${s.color} whitespace-nowrap`}>{s.compat}</span>
                 </div>
               ))}
             </div>
