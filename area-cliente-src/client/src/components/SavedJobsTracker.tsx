@@ -432,9 +432,9 @@ export default function SavedJobsTracker({ lang }: Props) {
           )}
         </div>
       ) : (
-        <div className="border border-[#e5e5e5] rounded-xl overflow-hidden bg-white shadow-sm">
+        <div className="border border-[#e5e5e5] rounded-xl overflow-hidden bg-white shadow-sm overflow-x-auto">
           {/* Table Header */}
-          <div className="hidden lg:grid lg:grid-cols-[1fr_140px_100px_110px_80px_90px_70px] gap-2 px-4 py-2.5 bg-[#f8f8f7] border-b border-[#e5e5e5] text-[10px] font-semibold text-[#999] uppercase tracking-wider">
+          <div className="hidden lg:grid lg:grid-cols-[minmax(180px,1fr)_120px_95px_85px_70px_85px_60px] gap-1 px-3 py-2.5 bg-[#f8f8f7] border-b border-[#e5e5e5] text-[10px] font-semibold text-[#999] uppercase tracking-wider">
             <button onClick={() => toggleSort('title')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
               {tt('Vaga', 'Job')} <ArrowUpDown className="w-2.5 h-2.5" />
             </button>
@@ -464,7 +464,7 @@ export default function SavedJobsTracker({ lang }: Props) {
             return (
               <div key={job.id} className="border-b border-[#f0f0f0] last:border-b-0 hover:bg-[#fdfcfa] transition-colors">
                 {/* Desktop row */}
-                <div className="hidden lg:grid lg:grid-cols-[1fr_140px_100px_110px_80px_90px_70px] gap-2 px-4 py-3 items-center">
+                <div className="hidden lg:grid lg:grid-cols-[minmax(180px,1fr)_120px_95px_85px_70px_85px_60px] gap-1 px-3 py-3 items-center">
                   {/* Title + Source */}
                   <div className="min-w-0">
                     {isEditing ? (
