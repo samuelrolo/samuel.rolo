@@ -2023,7 +2023,7 @@ function getServiceIcon(name) {
     if (name.includes('Frontend')) return 'fa-globe';
     if (name.includes('Supabase')) return 'fa-database';
     if (name.includes('Backend')) return 'fa-server';
-    if (name.includes('Payment') || name.includes('Stripe') || name.includes('MBWay')) return 'fa-credit-card';
+    if (name.includes('Stripe') || name.includes('MBWay') || name.includes('Multibanco') || name.includes('PayPal')) return 'fa-credit-card';
     return 'fa-circle';
 }
 
@@ -2050,8 +2050,8 @@ function getRecommendation(entry) {
         if (entry.ttfb_ms > 1000) return { text: `TTFB de ${entry.ttfb_ms}ms (>1s). Performance abaixo do ideal. Monitorizar tendência.`, severity: 'warning' };
         return { text: 'Performance degradada. Monitorizar nas próximas horas.', severity: 'warning' };
     }
-    if (entry.http_code === 400) {
-        return { text: 'HTTP 400 — esperado para edge functions sem payload. Endpoint responde.', severity: 'info' };
+    if (entry.http_code === 400 || entry.http_code === 405) {
+        return { text: 'HTTP ' + entry.http_code + ' — esperado para endpoints POST sem payload válido. Endpoint acessível.', severity: 'info' };
     }
     if (entry.ttfb_ms > 500) {
         return { text: `TTFB de ${entry.ttfb_ms}ms. Aceitável mas monitorizar.`, severity: 'info' };
@@ -2113,8 +2113,8 @@ function renderHealthLogs() {
     // Group services by category
     const frontendServices = latestRun.filter(h => h.endpoint_name.startsWith('Frontend'));
     const backendServices = latestRun.filter(h => h.endpoint_name.startsWith('Backend'));
-    const paymentServices = latestRun.filter(h => h.endpoint_name.startsWith('Payment'));
-    const edgeServices = latestRun.filter(h => !h.endpoint_name.startsWith('Frontend') && !h.endpoint_name.startsWith('Backend') && !h.endpoint_name.startsWith('Payment'));
+    const paymentServices = latestRun.filter(h => h.endpoint_name.startsWith('Stripe') || h.endpoint_name.startsWith('MBWay') || h.endpoint_name.startsWith('Multibanco') || h.endpoint_name.startsWith('PayPal'));
+    const edgeServices = latestRun.filter(h => !h.endpoint_name.startsWith('Frontend') && !h.endpoint_name.startsWith('Backend') && !h.endpoint_name.startsWith('Stripe') && !h.endpoint_name.startsWith('MBWay') && !h.endpoint_name.startsWith('Multibanco') && !h.endpoint_name.startsWith('PayPal'));
 
     function buildCard(h) {
         const color = getStatusColor(h.status);
@@ -2226,9 +2226,10 @@ async function refreshHealthCheck() {
         { name: 'Backend Root', url: 'https://share2inspire-beckend.lm.r.appspot.com/', category: 'backend' },
         { name: 'Backend API Health', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/health', category: 'backend' },
         { name: 'Supabase Edge Function', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task', category: 'edge_function' },
-        { name: 'Payment Stripe Checkout', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/stripe-checkout', category: 'payment', method: 'POST', body: '{"test":true}' },
-        { name: 'Payment MBWay', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/mbway', category: 'payment', method: 'POST', body: '{"test":true}' },
-        { name: 'Payment Status API', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/status/test', category: 'payment' }
+        { name: 'Stripe Checkout', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/stripe-checkout', category: 'payment', method: 'POST', body: '{"test":true}' },
+        { name: 'MBWay · ifthenpay', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/mbway', category: 'payment', method: 'POST', body: '{"test":true}' },
+        { name: 'Multibanco · ifthenpay', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/multibanco', category: 'payment', method: 'POST', body: '{"test":true}' },
+        { name: 'PayPal Webhook', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/paypal/webhook', category: 'payment', method: 'POST', body: '{"test":true}' }
     ];
     const runId = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 15);
     const results = [];
