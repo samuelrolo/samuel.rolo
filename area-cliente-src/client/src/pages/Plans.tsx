@@ -8,10 +8,11 @@
  *   • CTA diferenciado: "Upgrade para X" vs "Subscrever"
  *   • tabela de comparação de features colapsável
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLocation } from 'wouter';
+import { supabase } from '@/lib/supabase';
 import {
   Check, ChevronDown, ChevronUp, Sparkles, ArrowRight, Lock,
   X, Zap, BarChart3, Info,
@@ -107,14 +108,90 @@ const COMPARISON_KEYS: [string, string, string, string][] = [
   ['cmp.earlyAccess',         '\u2014',           '\u2014',                '\u2713'],
 ];
 
+const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+
 export default function Plans() {
   const { t } = useI18n();
-  const { user, subscription, hasActiveSubscription } = useAuth();
+  const { user, subscription, hasActiveSubscription, refreshProfile } = useAuth();
   const [, navigate] = useLocation();
   const [period, setPeriod] = useState<Period>('monthly');
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showComparison, setShowComparison] = useState(false);
+  const [stripeStatus, setStripeStatus] = useState<'idle' | 'verifying' | 'success' | 'error'>('idle');
+
+  // Handle Stripe Checkout return
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const payment = params.get('payment');
+    const sessionId = params.get('session_id');
+
+    if (payment === 'success' && sessionId && user) {
+      setStripeStatus('verifying');
+      // Verify payment with backend and activate subscription
+      const verifyPayment = async () => {
+        try {
+          const res = await fetch(`${BACKEND_URL}/api/payment/stripe-verify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: sessionId }),
+          });
+          const data = await res.json();
+          if (data.success && data.paid) {
+            // Also create subscription record from frontend as fallback
+            const storedPlan = sessionStorage.getItem('s2iSubPlan') || 'essential_monthly';
+            const planDurations: Record<string, number> = {
+              monthly: 30, semiannual: 180, annual: 365,
+            };
+            const periodKey = storedPlan.includes('annual') ? 'annual' : storedPlan.includes('semiannual') ? 'semiannual' : 'monthly';
+            const now = new Date();
+            const endDate = new Date(now.getTime() + (planDurations[periodKey] || 30) * 24 * 60 * 60 * 1000);
+
+            // Check if subscription already created by webhook
+            const { data: existingSub } = await supabase
+              .from('subscriptions')
+              .select('id')
+              .eq('user_id', user.id)
+              .eq('status', 'active')
+              .limit(1)
+              .single();
+
+            if (!existingSub) {
+              await supabase.from('subscriptions').insert({
+                user_id: user.id,
+                plan: storedPlan,
+                status: 'active',
+                price_eur: data.amount ? data.amount / 100 : 9.90,
+                started_at: now.toISOString(),
+                expires_at: endDate.toISOString(),
+                payment_method: 'stripe',
+                payment_reference: data.order_id || sessionId,
+              });
+            }
+
+            // Refresh auth context to pick up new subscription
+            if (refreshProfile) await refreshProfile();
+            setStripeStatus('success');
+            // Clean URL
+            window.history.replaceState({}, '', window.location.pathname);
+            // Clean session storage
+            sessionStorage.removeItem('s2iSubOrderId');
+            sessionStorage.removeItem('s2iSubPlan');
+            sessionStorage.removeItem('s2iSubEmail');
+            sessionStorage.removeItem('stripeSessionId');
+          } else {
+            setStripeStatus('error');
+          }
+        } catch (err) {
+          console.error('[Plans] Stripe verify error:', err);
+          setStripeStatus('error');
+        }
+      };
+      verifyPayment();
+    } else if (payment === 'cancelled') {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, [user]);
 
   const currentTier = hasActiveSubscription() ? getPlanTier(subscription?.plan) : null;
 

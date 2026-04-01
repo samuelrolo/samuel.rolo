@@ -316,6 +316,73 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 
                         <hr style="border: none; border-top: 1px solid #eee; margin: 50px 0;">
 
+                        <h2 id="job-saver-extension" style="font-size: 1.5rem; font-weight: 600; color: #1A1A1A; margin-bottom: 20px; margin-top: 40px;">
+                            Share2Inspire Job Saver — Chrome Extension</h2>
+
+                        <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Service Description</h3>
+                        <p>The <strong>Share2Inspire Job Saver</strong> is a free Chrome browser extension that allows users to detect and save job postings from supported platforms (LinkedIn, Indeed, Glassdoor, Adzuna) directly into their Share2Inspire member area.</p>
+
+                        <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Data Collected</h3>
+                        <p>When you use the Job Saver extension, the following data is collected from the job listing page you are viewing:</p>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Job Title</strong>: The title of the job posting</li>
+                            <li><strong>Company Name</strong>: The name of the hiring company</li>
+                            <li><strong>Location</strong>: The job location as displayed on the listing</li>
+                            <li><strong>Source URL</strong>: The URL of the job posting page</li>
+                            <li><strong>Platform</strong>: The source platform (LinkedIn, Indeed, Glassdoor, or Adzuna)</li>
+                        </ul>
+                        <p>The extension <strong>does not</strong> collect any personal data, browsing history, cookies, credentials, or any information beyond the job listing details described above.</p>
+
+                        <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Purpose of Processing</h3>
+                        <p>The data is processed exclusively for:</p>
+                        <ul style="margin-left: 20px;">
+                            <li>Displaying detected job details in the extension’s side panel</li>
+                            <li>Saving job postings to the user’s Share2Inspire member area for later reference</li>
+                            <li>Exporting saved jobs to CSV format</li>
+                        </ul>
+
+                        <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Storage and Retention</h3>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Local Storage</strong>: Saved jobs are stored locally in the browser using <code>chrome.storage.local</code>. This data remains on the user’s device and is not transmitted to external servers unless the user is logged in to their Share2Inspire account.</li>
+                            <li><strong>Cloud Storage</strong>: When logged in, saved jobs are synchronised with the user’s Share2Inspire member area via Supabase (secure cloud database). Data is retained as long as the user’s account is active.</li>
+                        </ul>
+
+                        <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Data Sharing</h3>
+                        <p>Job data saved through the extension is <strong>not shared with any third parties</strong>. The data is only transmitted to:</p>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Supabase</strong>: Secure cloud database for storing saved jobs in the user’s member area (only when logged in)</li>
+                        </ul>
+
+                        <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Permissions</h3>
+                        <p>The extension requires the following browser permissions:</p>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>activeTab</strong>: To detect job listing pages when the user clicks the extension icon</li>
+                            <li><strong>storage</strong>: To save job postings locally on the user’s device</li>
+                            <li><strong>scripting</strong>: To extract job details (title, company, location) from supported job platforms</li>
+                            <li><strong>sidePanel</strong>: To display the saved jobs list in a browser side panel</li>
+                            <li><strong>Host permissions</strong>: Limited to linkedin.com, indeed.com, glassdoor.com, and adzuna.com to detect and extract job posting information</li>
+                        </ul>
+
+                        <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Security</h3>
+                        <p>We implement the following measures to protect your data:</p>
+                        <ul style="margin-left: 20px;">
+                            <li>All communications with the cloud database use SSL/TLS encryption</li>
+                            <li>The extension does not execute remote code</li>
+                            <li>No data is collected or transmitted when the extension is not actively being used</li>
+                            <li>The extension only accesses page content on the four supported job platforms</li>
+                        </ul>
+
+                        <p>To exercise your data rights or request deletion of saved jobs, contact: <a href="mailto:geral@share2inspire.pt" style="color: #BF9A33;">geral@share2inspire.pt</a></p>
+
+                        <hr style="border: none; border-top: 1px solid #eee; margin: 50px 0;">
+
                         <h2 style="font-size: 1.8rem; font-weight: 600; color: #1A1A1A; margin-bottom: 30px;">Cookie Policy</h2>
 
                         <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">

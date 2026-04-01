@@ -357,6 +357,73 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 
                         <hr style="border: none; border-top: 1px solid #eee; margin: 50px 0;">
 
+                        <h2 id="job-saver-extensao" style="font-size: 1.5rem; font-weight: 600; color: #1A1A1A; margin-bottom: 20px; margin-top: 40px;">
+                            Share2Inspire Job Saver — Extensão Chrome</h2>
+
+                        <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Descrição do Serviço</h3>
+                        <p>O <strong>Share2Inspire Job Saver</strong> é uma extensão gratuita para o navegador Google Chrome que permite aos utilizadores detetar e guardar ofertas de emprego de plataformas suportadas (LinkedIn, Indeed, Glassdoor, Adzuna) diretamente na sua área de membro Share2Inspire.</p>
+
+                        <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Dados Recolhidos</h3>
+                        <p>Quando utiliza a extensão Job Saver, os seguintes dados são recolhidos da página de oferta de emprego que está a visualizar:</p>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Título da Vaga</strong>: O título da oferta de emprego</li>
+                            <li><strong>Nome da Empresa</strong>: O nome da empresa que está a recrutar</li>
+                            <li><strong>Localização</strong>: A localização da vaga conforme apresentada no anúncio</li>
+                            <li><strong>URL de Origem</strong>: O endereço da página da oferta de emprego</li>
+                            <li><strong>Plataforma</strong>: A plataforma de origem (LinkedIn, Indeed, Glassdoor ou Adzuna)</li>
+                        </ul>
+                        <p>A extensão <strong>não recolhe</strong> quaisquer dados pessoais, histórico de navegação, cookies, credenciais ou qualquer informação para além dos detalhes da oferta de emprego descritos acima.</p>
+
+                        <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Finalidade do Processamento</h3>
+                        <p>Os dados são processados exclusivamente para:</p>
+                        <ul style="margin-left: 20px;">
+                            <li>Apresentar os detalhes da vaga detetada no painel lateral da extensão</li>
+                            <li>Guardar ofertas de emprego na área de membro Share2Inspire do utilizador para consulta posterior</li>
+                            <li>Exportar vagas guardadas em formato CSV</li>
+                        </ul>
+
+                        <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Armazenamento e Retenção</h3>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Armazenamento Local</strong>: As vagas guardadas são armazenadas localmente no navegador através de <code>chrome.storage.local</code>. Estes dados permanecem no dispositivo do utilizador e não são transmitidos para servidores externos, exceto quando o utilizador está autenticado na sua conta Share2Inspire.</li>
+                            <li><strong>Armazenamento na Nuvem</strong>: Quando autenticado, as vagas guardadas são sincronizadas com a área de membro Share2Inspire do utilizador através do Supabase (base de dados segura na nuvem). Os dados são mantidos enquanto a conta do utilizador estiver ativa.</li>
+                        </ul>
+
+                        <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Partilha de Dados</h3>
+                        <p>Os dados das vagas guardadas através da extensão <strong>não são partilhados com terceiros</strong>. Os dados são apenas transmitidos para:</p>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Supabase</strong>: Base de dados segura na nuvem para armazenar as vagas guardadas na área de membro do utilizador (apenas quando autenticado)</li>
+                        </ul>
+
+                        <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Permissões</h3>
+                        <p>A extensão requer as seguintes permissões do navegador:</p>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>activeTab</strong>: Para detetar páginas de ofertas de emprego quando o utilizador clica no ícone da extensão</li>
+                            <li><strong>storage</strong>: Para guardar ofertas de emprego localmente no dispositivo do utilizador</li>
+                            <li><strong>scripting</strong>: Para extrair detalhes da vaga (título, empresa, localização) das plataformas de emprego suportadas</li>
+                            <li><strong>sidePanel</strong>: Para apresentar a lista de vagas guardadas num painel lateral do navegador</li>
+                            <li><strong>Permissões de host</strong>: Limitadas a linkedin.com, indeed.com, glassdoor.com e adzuna.com para detetar e extrair informações de ofertas de emprego</li>
+                        </ul>
+
+                        <h3 style="font-size: 1.2rem; font-weight: 600; color: #1A1A1A; margin-bottom: 15px; margin-top: 30px;">
+                            Segurança</h3>
+                        <p>Implementamos as seguintes medidas para proteger os seus dados:</p>
+                        <ul style="margin-left: 20px;">
+                            <li>Todas as comunicações com a base de dados na nuvem utilizam encriptação SSL/TLS</li>
+                            <li>A extensão não executa código remoto</li>
+                            <li>Nenhum dado é recolhido ou transmitido quando a extensão não está a ser utilizada ativamente</li>
+                            <li>A extensão apenas acede ao conteúdo das páginas nas quatro plataformas de emprego suportadas</li>
+                        </ul>
+
+                        <p>Para exercer os seus direitos sobre os dados ou solicitar a eliminação de vagas guardadas, contacte: <a href="mailto:geral@share2inspire.pt" style="color: #BF9A33;">geral@share2inspire.pt</a></p>
+
+                        <hr style="border: none; border-top: 1px solid #eee; margin: 50px 0;">
+
                         <h2 style="font-size: 1.8rem; font-weight: 600; color: #1A1A1A; margin-bottom: 30px;">Política
                             de Cookies</h2>
 
