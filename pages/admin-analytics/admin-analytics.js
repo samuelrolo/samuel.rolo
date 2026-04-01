@@ -831,14 +831,13 @@ function renderFunnel() {
     setText('funnelFree', freeCount);
     setText('funnelPaid', paidCount);
     setText('funnelCP', cpCount);
-    setText('funnelFreeConv', ceTotal ? `${Math.round(freeCount / ceTotal * 100)}% do CE` : '—');
+    setText('funnelFreeConv', lrTotal ? `${Math.round(freeCount / lrTotal * 100)}% do topo` : '—');
     setText('funnelPaidConv', freeCount ? `${Math.round(paidCount / (freeCount + paidCount) * 100)}% do grátis` : '—');
     setText('funnelCPConv', paidCount ? `${Math.round(cpCount / paidCount * 100)}% dos pagantes` : '—');
 
     // Funil Visual
     const steps = [
         { name: 'LinkedIn Roaster (Topo)', count: lrTotal, color: '#0077B5' },
-        { name: 'Career Energy (Diagnóstico)', count: ceTotal || (freeCount + paidCount + cpCount), color: '#6B7280' },
         { name: 'CV Analyser Grátis', count: freeCount, color: '#C9A961' },
         { name: 'CV Analyser Pago', count: paidCount, color: '#10B981' },
         { name: 'Career Path', count: cpCount, color: '#3B82F6' },
