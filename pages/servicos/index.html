@@ -582,7 +582,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                 </div>
                 <div style="text-align:center;">
                     <div class="card-price" style="margin-bottom:0.8rem;">desde <strong style="font-size:1.3rem;">35€</strong></div>
-                    <button class="btn-gold" onclick="new bootstrap.Modal(document.getElementById('kickstartModal')).show();">Agendar sessão <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></button>
+                    <button type="button" class="btn-gold" onclick="new bootstrap.Modal(document.getElementById('kickstartModal')).show();">Agendar sessão <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></button>
                 </div>
             </div>
         </div>
@@ -871,7 +871,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             document.querySelectorAll('.svc-card').forEach(function(card) {
                 if (!card.querySelector('.card-expandable')) return;
                 card.addEventListener('click', function(e) {
-                    if (e.target.closest('a') || e.target.closest('button')) return;
+                    if (e.target.closest('a') || e.target.closest('button') || e.target.closest('.card-footer')) return;
                     this.classList.toggle('expanded');
                 });
             });
