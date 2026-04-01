@@ -233,7 +233,7 @@
 </header>
 
 <section class="hero">
-    <div class="hero-inner fade-in">
+    <div class="hero-inner">
         <p class="hero-breadcrumb"><a href="/conhecimento">Knowledge Hub</a> &nbsp;/&nbsp; <a href="/conhecimento#artigos">Artigos</a> &nbsp;/&nbsp; Consultoria &amp; Big4</p>
         <span class="hero-tag">Decisão de Carreira · Senior a Manager</span>
         <h1>Senior nas Big4:<br><strong>Ficar ou sair? A decisão que define a próxima década</strong></h1>
@@ -591,7 +591,15 @@
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
 }, { threshold: 0.08 });
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+document.querySelectorAll('.fade-in').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) {
+        el.style.transition = 'none';
+        el.classList.add('visible');
+    } else {
+        observer.observe(el);
+    }
+});
 </script>
 
     <script>

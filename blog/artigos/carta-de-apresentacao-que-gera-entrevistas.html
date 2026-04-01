@@ -301,7 +301,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     <!-- HERO                                           -->
     <!-- ══════════════════════════════════════════════ -->
     <section class="hero">
-        <div class="hero-inner fade-in">
+        <div class="hero-inner">
             <p class="hero-breadcrumb">
                 <a href="../../pages/conhecimento.html">Knowledge Hub</a> &nbsp;/&nbsp;
                 <a href="../../pages/conhecimento.html#artigos">Artigos</a> &nbsp;/&nbsp;
@@ -717,7 +717,15 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             if (entry.isIntersecting) entry.target.classList.add('visible');
         });
     }, { threshold: 0.08 });
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    document.querySelectorAll('.fade-in').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight) {
+            el.style.transition = 'none';
+            el.classList.add('visible');
+        } else {
+            observer.observe(el);
+        }
+    });
     </script>
 
 </body>

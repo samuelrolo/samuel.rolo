@@ -282,7 +282,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 
         <!-- 1 -->
         <span class="anchor-label" id="porque-nao-negocias">01 — O Problema</span>
-        <h1 class="fade-in">Porque é que a maioria não negoceia — e quanto perde</h1>
+        <h1 class="">Porque é que a maioria não negoceia — e quanto perde</h1>
         <div class="anchor-divider"></div>
 
         <p class="fade-in">Existe um padrão claro no mercado de trabalho português: a maioria das pessoas aceita a primeira oferta sem questionar. Não por falta de mérito — mas por desconforto, medo de perder a oportunidade, ou simplesmente por não saber como fazer.</p>
@@ -633,7 +633,15 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
     }, { threshold: 0.08 });
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    document.querySelectorAll('.fade-in').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight) {
+            el.style.transition = 'none';
+            el.classList.add('visible');
+        } else {
+            observer.observe(el);
+        }
+    });
     </script>
 
 </body>

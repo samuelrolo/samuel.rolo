@@ -192,7 +192,7 @@
 </header>
 
 <section class="hero">
-    <div class="hero-inner fade-in">
+    <div class="hero-inner">
         <p class="hero-breadcrumb"><a href="/pages/conhecimento">Knowledge Hub</a> &nbsp;/&nbsp; <a href="/pages/conhecimento#newsletter">Newsletter</a> &nbsp;/&nbsp; Humanos &amp; Máquinas</p>
         <span class="hero-tag">Humanos &amp; Máquinas · #6</span>
         <h1>O Paradoxo da Presença:<br><strong>Porque é que a Automação está a tornar a Liderança Humana mais Crítica do que Nunca</strong></h1>
@@ -409,7 +409,15 @@
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
 }, { threshold: 0.08 });
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+document.querySelectorAll('.fade-in').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) {
+        el.style.transition = 'none';
+        el.classList.add('visible');
+    } else {
+        observer.observe(el);
+    }
+});
 </script>
 
     <script>
