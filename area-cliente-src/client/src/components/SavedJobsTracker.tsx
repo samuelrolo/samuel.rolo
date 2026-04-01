@@ -432,9 +432,9 @@ export default function SavedJobsTracker({ lang }: Props) {
           )}
         </div>
       ) : (
-        <div className="border border-[#e5e5e5] rounded-xl overflow-hidden bg-white shadow-sm overflow-x-auto">
+        <div className="border border-[#e5e5e5] rounded-xl overflow-hidden bg-white shadow-sm">
           {/* Table Header */}
-          <div className="hidden lg:grid lg:grid-cols-[minmax(180px,1fr)_120px_95px_85px_70px_85px_60px] gap-1 px-3 py-2.5 bg-[#f8f8f7] border-b border-[#e5e5e5] text-[10px] font-semibold text-[#999] uppercase tracking-wider">
+          <div className="hidden lg:grid lg:grid-cols-[30%_14%_11%_10%_9%_12%_14%] px-3 py-2.5 bg-[#f8f8f7] border-b border-[#e5e5e5] text-[10px] font-semibold text-[#999] uppercase tracking-wider">
             <button onClick={() => toggleSort('title')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
               {tt('Vaga', 'Job')} <ArrowUpDown className="w-2.5 h-2.5" />
             </button>
@@ -464,7 +464,7 @@ export default function SavedJobsTracker({ lang }: Props) {
             return (
               <div key={job.id} className="border-b border-[#f0f0f0] last:border-b-0 hover:bg-[#fdfcfa] transition-colors">
                 {/* Desktop row */}
-                <div className="hidden lg:grid lg:grid-cols-[minmax(180px,1fr)_120px_95px_85px_70px_85px_60px] gap-1 px-3 py-3 items-center">
+                <div className="hidden lg:grid lg:grid-cols-[30%_14%_11%_10%_9%_12%_14%] px-3 py-3 items-center">
                   {/* Title + Source */}
                   <div className="min-w-0">
                     {isEditing ? (
@@ -475,7 +475,7 @@ export default function SavedJobsTracker({ lang }: Props) {
                         <span className="text-sm" title={job.source || ''}>{sourceIcon}</span>
                         <div className="min-w-0">
                           <a href={job.url} target="_blank" rel="noopener noreferrer"
-                            className="text-[12px] font-semibold text-[#1a1a1a] hover:text-[#BF9A33] transition-colors truncate block no-underline">
+                            className="text-[12px] font-semibold text-[#1a1a1a] hover:text-[#BF9A33] transition-colors block no-underline break-words leading-tight">
                             {job.title}
                           </a>
                           {job.location && <span className="text-[10px] text-[#999]">{job.location}</span>}
@@ -486,7 +486,7 @@ export default function SavedJobsTracker({ lang }: Props) {
                   </div>
 
                   {/* Company */}
-                  <div className="text-[11px] text-[#666] truncate">
+                  <div className="text-[11px] text-[#666] break-words">
                     {isEditing ? (
                       <input value={editData.company || ''} onChange={e => setEditData(p => ({ ...p, company: e.target.value }))}
                         className="w-full px-2 py-1 text-xs border border-[#BF9A33] rounded focus:outline-none" />
