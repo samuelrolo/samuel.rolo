@@ -246,13 +246,14 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
     }
   }, [user?.id]);
 
+  // Build a single-keyword query to avoid overly restrictive Adzuna searches
+  // Adzuna treats space-separated words as AND, so "Head of HR Global HR Process" returns 0 results
   const buildSearchQuery = useCallback((keywords: string[], forceEnglish = false): string => {
     const useEnglish = forceEnglish || isUnsupportedCountry;
     if (keywords.length > 0) {
       const kws = useEnglish ? translateKeywordsToEnglish(keywords) : keywords;
-      // For unsupported countries (GB fallback), use only 1 keyword to avoid overly restrictive queries
-      const limit = isUnsupportedCountry ? 1 : 3;
-      return kws.slice(0, limit).join(' ');
+      // ALWAYS use only the first (most relevant) keyword to avoid AND-chaining
+      return kws[0];
     }
     // Use jobArea from profile if available
     if (jobArea) {
@@ -262,110 +263,88 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
     return (lang === 'pt' && !useEnglish) ? 'recursos humanos gestão' : 'human resources management';
   }, [lang, isUnsupportedCountry, jobArea]);
 
+  // Helper to map Adzuna results to Vaga objects
+  const mapResults = useCallback((results: any[], matchBase: number = 65): Vaga[] => {
+    const currencySymbol = adzunaCountry === 'gb' ? '£' : adzunaCountry === 'us' ? '$' : '€';
+    return results.map((j: any) => {
+      const title = (j.title || '').replace(/<\/?[^>]+(>|$)/g, '');
+      const company = j.company?.display_name || '';
+      const loc = j.location?.display_name || countryName || '';
+      const isRemote = /remot/i.test(title + ' ' + (j.description || '') + ' ' + loc);
+      const tags: string[] = [];
+      if (j.category?.label) tags.push(j.category.label);
+      const titleLower = title.toLowerCase();
+      const matchCount = userKeywords.filter(kw => titleLower.includes(kw.toLowerCase())).length;
+      const baseMatch = matchBase + Math.floor(Math.random() * 15);
+      const keywordBonus = Math.min(matchCount * 10, 25);
+      const match = Math.min(baseMatch + keywordBonus, 99);
+      return {
+        title, company, location: loc,
+        salary: j.salary_min && j.salary_max
+          ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}–${Math.round(j.salary_max / 12).toLocaleString()}`
+          : j.salary_min ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}+` : null,
+        remote: isRemote, tags, match,
+        key: (j.category?.label || '').toLowerCase(),
+        url: j.redirect_url || getAdzunaSearchUrl(adzunaCountry, title, loc),
+      };
+    }).sort((a: Vaga, b: Vaga) => b.match - a.match);
+  }, [adzunaCountry, countryName, userKeywords]);
+
+  // Helper to call the Adzuna proxy
+  const callAdzuna = useCallback(async (what: string, where?: string): Promise<any[]> => {
+    const params = new URLSearchParams({ country: adzunaCountry, what, results_per_page: '10' });
+    if (where) params.set('where', where);
+    const res = await fetch(`${ADZUNA_PROXY_URL}?${params.toString()}`);
+    const data = await res.json();
+    return data.results || [];
+  }, [adzunaCountry]);
+
   const fetchVagas = useCallback(async () => {
     setLoading(true);
     setError(null);
 
-    const query = buildSearchQuery(userKeywords);
-    // When using a fallback country (e.g. PT→ES), don't send the original country as location
+    const primaryQuery = buildSearchQuery(userKeywords);
+    // When using a fallback country (e.g. PT→GB), don't send the original country as location
     const whereParam = isUnsupportedCountry ? '' : (region || countryName || '');
 
+    // Build a progressive retry chain: specific keyword → jobArea → generic
+    const retryChain: { query: string; where: string; matchBase: number }[] = [
+      { query: primaryQuery, where: whereParam, matchBase: 65 },
+    ];
+
+    // If primary query is from analyses (not jobArea), add jobArea as fallback
+    const areaFallback = jobArea
+      ? (PT_TO_EN_KEYWORDS[jobArea.toLowerCase()] || jobArea)
+      : null;
+    if (areaFallback && areaFallback.toLowerCase() !== primaryQuery.toLowerCase()) {
+      retryChain.push({ query: areaFallback, where: whereParam, matchBase: 60 });
+    }
+
+    // Generic fallback without location constraint
+    const genericQuery = areaFallback || 'human resources management';
+    if (genericQuery.toLowerCase() !== primaryQuery.toLowerCase()) {
+      retryChain.push({ query: genericQuery, where: '', matchBase: 55 });
+    }
+
+    // Last resort: very broad keyword
+    retryChain.push({ query: 'management', where: '', matchBase: 50 });
+
     try {
-      // Call Supabase Edge Function proxy (credentials are server-side)
-      const proxyParams = new URLSearchParams({
-        country: adzunaCountry,
-        what: query,
-        results_per_page: '10',
-      });
-      if (whereParam) proxyParams.set('where', whereParam);
-      const url = `${ADZUNA_PROXY_URL}?${proxyParams.toString()}`;
-      const res = await fetch(url);
-      const data = await res.json();
-
-      if (data.results?.length) {
-        const currencySymbol = adzunaCountry === 'gb' ? '£' : adzunaCountry === 'us' ? '$' : '€';
-        const mapped: Vaga[] = data.results.map((j: any) => {
-          const title = (j.title || '').replace(/<\/?[^>]+(>|$)/g, '');
-          const company = j.company?.display_name || '';
-          const loc = j.location?.display_name || countryName || '';
-          const isRemote = /remot/i.test(title + ' ' + (j.description || '') + ' ' + loc);
-          const tags: string[] = [];
-          if (j.category?.label) tags.push(j.category.label);
-
-          // Calculate match score based on keyword overlap
-          const titleLower = title.toLowerCase();
-          const matchCount = userKeywords.filter(kw => titleLower.includes(kw.toLowerCase())).length;
-          const baseMatch = 65 + Math.floor(Math.random() * 15);
-          const keywordBonus = Math.min(matchCount * 10, 25);
-          const match = Math.min(baseMatch + keywordBonus, 99);
-
-          return {
-            title,
-            company,
-            location: loc,
-            salary: j.salary_min && j.salary_max
-              ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}–${Math.round(j.salary_max / 12).toLocaleString()}`
-              : j.salary_min
-                ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}+`
-                : null,
-            remote: isRemote,
-            tags,
-            match,
-            key: (j.category?.label || '').toLowerCase(),
-            url: j.redirect_url || getAdzunaSearchUrl(adzunaCountry, title, loc),
-          };
-        });
-
-        mapped.sort((a, b) => b.match - a.match);
-        setVagas(mapped);
-        setIsApiData(true);
-      } else if (isUnsupportedCountry && query !== 'management') {
-        // Retry with a broader generic keyword for unsupported countries
-        const retryParams = new URLSearchParams({
-          country: adzunaCountry,
-          what: 'management',
-          results_per_page: '10',
-        });
-        const retryUrl = `${ADZUNA_PROXY_URL}?${retryParams.toString()}`;
-        const retryRes = await fetch(retryUrl);
-        const retryData = await retryRes.json();
-        if (retryData.results?.length) {
-          const currencySymbol = adzunaCountry === 'gb' ? '£' : adzunaCountry === 'us' ? '$' : '€';
-          const mapped: Vaga[] = retryData.results.map((j: any) => {
-            const title = (j.title || '').replace(/<\/?[^>]+(>|$)/g, '');
-            const company = j.company?.display_name || '';
-            const loc = j.location?.display_name || countryName || '';
-            const isRemote = /remot/i.test(title + ' ' + (j.description || '') + ' ' + loc);
-            const tags: string[] = [];
-            if (j.category?.label) tags.push(j.category.label);
-            const match = 60 + Math.floor(Math.random() * 15);
-            return {
-              title, company, location: loc,
-              salary: j.salary_min && j.salary_max
-                ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}–${Math.round(j.salary_max / 12).toLocaleString()}`
-                : j.salary_min ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}+` : null,
-              remote: isRemote, tags, match,
-              key: (j.category?.label || '').toLowerCase(),
-              url: j.redirect_url || getAdzunaSearchUrl(adzunaCountry, title, loc),
-            };
-          });
-          mapped.sort((a, b) => b.match - a.match);
-          setVagas(mapped);
+      for (const attempt of retryChain) {
+        const results = await callAdzuna(attempt.query, attempt.where);
+        if (results.length > 0) {
+          setVagas(mapResults(results, attempt.matchBase));
           setIsApiData(true);
-        } else {
-          setVagas([]);
-          setIsApiData(false);
-          setError(lang === 'pt'
-            ? 'Sem vagas encontradas para esta pesquisa. Tenta alterar o país ou região.'
-            : 'No jobs found for this search. Try changing the country or region.');
+          setLoading(false);
+          return;
         }
-      } else {
-        setVagas([]);
-        setIsApiData(false);
-        setError(lang === 'pt'
-          ? 'Sem vagas encontradas para esta pesquisa. Tenta alterar o país ou região.'
-          : 'No jobs found for this search. Try changing the country or region.');
       }
+      // All retries exhausted
+      setVagas([]);
+      setIsApiData(false);
+      setError(lang === 'pt'
+        ? 'Sem vagas encontradas para esta pesquisa. Tenta alterar o país ou região.'
+        : 'No jobs found for this search. Try changing the country or region.');
     } catch (err) {
       console.error('Adzuna fetch error:', err);
       setVagas([]);
@@ -375,7 +354,7 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
         : 'Error loading jobs. Please try again.');
     }
     setLoading(false);
-  }, [adzunaCountry, buildSearchQuery, userKeywords, countryName, region, lang]);
+  }, [adzunaCountry, buildSearchQuery, userKeywords, countryName, region, lang, isUnsupportedCountry, jobArea, callAdzuna, mapResults]);
 
   useEffect(() => { fetchVagas(); }, [fetchVagas]);
 

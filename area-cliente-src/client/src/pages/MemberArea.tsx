@@ -814,6 +814,16 @@ export default function MemberArea() {
   const selectedCountryData = countries.find(c => c.country === cpCountry);
   const availableRegions = selectedCountryData?.regions || [];
 
+  // ─── Sync cpCountry/cpRegion when profile loads asynchronously ──────────
+  useEffect(() => {
+    if (profile?.job_country && profile.job_country !== cpCountry) {
+      setCpCountry(profile.job_country);
+    }
+    if (profile?.job_region !== undefined && profile.job_region !== cpRegion) {
+      setCpRegion(profile.job_region || '');
+    }
+  }, [profile?.job_country, profile?.job_region]);
+
   // ─── Fetch content ──────────────────────────────────────────────────────
   useEffect(() => {
     async function fetchContent() {
