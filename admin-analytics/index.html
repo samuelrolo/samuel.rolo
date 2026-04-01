@@ -1181,6 +1181,24 @@
 
 
 
+    <!-- Configurações -->
+    <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-cog"></i> Configurações</div>
+        </div>
+        <div class="card-body" style="padding:16px 20px;">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">API Key Brevo (Email)</label>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <input class="form-input" type="password" id="brevoKeyInput" placeholder="Insere a API Key do Brevo..." style="flex:1;">
+                    <button class="btn btn-gold btn-sm" onclick="saveBrevoKey()" style="white-space:nowrap;"><i class="fas fa-save"></i> Guardar</button>
+                    <button class="btn btn-outline btn-sm" onclick="clearBrevoKey()" style="white-space:nowrap;"><i class="fas fa-trash"></i></button>
+                </div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;" id="brevoKeyStatus">--</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Executive Summary -->
     <div id="healthExecutiveSummary" style="margin-bottom:20px;padding:16px 20px;border-radius:10px;border:1px solid var(--border);background:var(--card-bg);display:flex;align-items:center;gap:16px;">
         <div id="healthSummaryIcon" style="font-size:28px;">⏳</div>

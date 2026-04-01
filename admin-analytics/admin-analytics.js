@@ -52,10 +52,32 @@ async function adminLogout() {
 function getBrevoKey() { return localStorage.getItem('s2i_brevo_key') || ''; }
 function ensureBrevoKey() {
     if (getBrevoKey()) return true;
-    const key = prompt('Insere a API Key do Brevo para enviar emails:');
-    if (key) { localStorage.setItem('s2i_brevo_key', key); location.reload(); return true; }
-    showToast('API Key do Brevo necessária para enviar emails', 'danger');
+    showToast('API Key do Brevo não configurada. Vai a Sistema > Configurações para a definir.', 'danger');
     return false;
+}
+function saveBrevoKey() {
+    const input = document.getElementById('brevoKeyInput');
+    const key = input?.value?.trim();
+    if (!key) { showToast('Insere uma API Key válida', 'danger'); return; }
+    localStorage.setItem('s2i_brevo_key', key);
+    input.value = '';
+    updateBrevoKeyStatus();
+    showToast('API Key do Brevo guardada com sucesso!', 'success');
+}
+function clearBrevoKey() {
+    localStorage.removeItem('s2i_brevo_key');
+    updateBrevoKeyStatus();
+    showToast('API Key do Brevo removida', 'info');
+}
+function updateBrevoKeyStatus() {
+    const el = document.getElementById('brevoKeyStatus');
+    if (!el) return;
+    const key = getBrevoKey();
+    if (key) {
+        el.innerHTML = '<span style="color:var(--green);"><i class="fas fa-check-circle"></i> API Key configurada (' + key.substring(0, 8) + '...)</span>';
+    } else {
+        el.innerHTML = '<span style="color:var(--orange);"><i class="fas fa-exclamation-triangle"></i> API Key não configurada — emails não serão enviados</span>';
+    }
 }
 
 // ── Estado Global ──────────────────────────────────────────────
@@ -100,9 +122,9 @@ let nurturingRecipients = [];
 // ═══════════════════════════════════════════════════════════════
 //  SUPABASE HELPERS
 // ═══════════════════════════════════════════════════════════════
-async function supaFetch(table, query = '') {
+async function supaFetch(table, query = '', useAnon = false) {
     try {
-        const token = getAuthToken();
+        const token = useAnon ? SUPABASE_KEY : getAuthToken();
         const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
             headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}` }
         });
@@ -303,7 +325,7 @@ function switchTab(name, btn) {
     if (name === 'market') { renderJobSearchTable(); renderCETable(); }
     if (name === 'partnerships') { renderAffiliates(); renderCoupons(); }
     if (name === 'users') renderUsers();
-    if (name === 'system') renderHealthLogs();
+    if (name === 'system') { renderHealthLogs(); updateBrevoKeyStatus(); }
 }
 
 function switchCrmSubtab(name, btn) {
@@ -389,7 +411,7 @@ async function loadAllData() {
         const [analyses, vouchers, contacts, newsletter, jobSearch, careerEnergy, linkedinRoaster] = await Promise.all([
             supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,analysis_type,payment_status,payment_amount,payment_method,transaction_id,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc&limit=5000'),
             supaFetch('vouchers', 'select=*&order=created_at.desc'),
-            supaFetch('contact_messages', 'select=*&order=created_at.desc&limit=500'),
+            supaFetch('contact_messages', 'select=*&order=created_at.desc&limit=500', true),
             supaFetch('newsletter_subscribers', 'select=*&order=created_at.desc&limit=2000'),
             supaFetch('job_search_tracking', 'select=*&order=created_at.desc&limit=2000'),
             supaFetch('career_energy_results', 'select=*&order=created_at.desc&limit=2000'),

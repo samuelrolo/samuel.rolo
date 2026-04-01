@@ -52,10 +52,32 @@ async function adminLogout() {
 function getBrevoKey() { return localStorage.getItem('s2i_brevo_key') || ''; }
 function ensureBrevoKey() {
     if (getBrevoKey()) return true;
-    const key = prompt('Insere a API Key do Brevo para enviar emails:');
-    if (key) { localStorage.setItem('s2i_brevo_key', key); location.reload(); return true; }
-    showToast('API Key do Brevo necessária para enviar emails', 'danger');
+    showToast('API Key do Brevo não configurada. Vai a Sistema > Configurações para a definir.', 'danger');
     return false;
+}
+function saveBrevoKey() {
+    const input = document.getElementById('brevoKeyInput');
+    const key = input?.value?.trim();
+    if (!key) { showToast('Insere uma API Key válida', 'danger'); return; }
+    localStorage.setItem('s2i_brevo_key', key);
+    input.value = '';
+    updateBrevoKeyStatus();
+    showToast('API Key do Brevo guardada com sucesso!', 'success');
+}
+function clearBrevoKey() {
+    localStorage.removeItem('s2i_brevo_key');
+    updateBrevoKeyStatus();
+    showToast('API Key do Brevo removida', 'info');
+}
+function updateBrevoKeyStatus() {
+    const el = document.getElementById('brevoKeyStatus');
+    if (!el) return;
+    const key = getBrevoKey();
+    if (key) {
+        el.innerHTML = '<span style="color:var(--green);"><i class="fas fa-check-circle"></i> API Key configurada (' + key.substring(0, 8) + '...)</span>';
+    } else {
+        el.innerHTML = '<span style="color:var(--orange);"><i class="fas fa-exclamation-triangle"></i> API Key não configurada — emails não serão enviados</span>';
+    }
 }
 
 // ── Estado Global ──────────────────────────────────────────────
@@ -100,9 +122,9 @@ let nurturingRecipients = [];
 // ═══════════════════════════════════════════════════════════════
 //  SUPABASE HELPERS
 // ═══════════════════════════════════════════════════════════════
-async function supaFetch(table, query = '') {
+async function supaFetch(table, query = '', useAnon = false) {
     try {
-        const token = getAuthToken();
+        const token = useAnon ? SUPABASE_KEY : getAuthToken();
         const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
             headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}` }
         });
@@ -139,6 +161,19 @@ async function supaUpdate(table, id, data) {
         body: JSON.stringify(data)
     });
     if (!res.ok) throw new Error(await res.text());
+    return true;
+}
+
+async function supaDelete(table, id) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: {
+            'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Prefer': 'return=minimal'
+        }
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return true;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -290,7 +325,7 @@ function switchTab(name, btn) {
     if (name === 'market') { renderJobSearchTable(); renderCETable(); }
     if (name === 'partnerships') { renderAffiliates(); renderCoupons(); }
     if (name === 'users') renderUsers();
-    if (name === 'system') renderHealthLogs();
+    if (name === 'system') { renderHealthLogs(); updateBrevoKeyStatus(); }
 }
 
 function switchCrmSubtab(name, btn) {
@@ -376,7 +411,7 @@ async function loadAllData() {
         const [analyses, vouchers, contacts, newsletter, jobSearch, careerEnergy, linkedinRoaster] = await Promise.all([
             supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,analysis_type,payment_status,payment_amount,payment_method,transaction_id,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc&limit=5000'),
             supaFetch('vouchers', 'select=*&order=created_at.desc'),
-            supaFetch('contact_messages', 'select=*&order=created_at.desc&limit=500'),
+            supaFetch('contact_messages', 'select=*&order=created_at.desc&limit=500', true),
             supaFetch('newsletter_subscribers', 'select=*&order=created_at.desc&limit=2000'),
             supaFetch('job_search_tracking', 'select=*&order=created_at.desc&limit=2000'),
             supaFetch('career_energy_results', 'select=*&order=created_at.desc&limit=2000'),
@@ -1368,7 +1403,7 @@ async function createVouchers() {
         closeVoucherModal();
         if (sendEmail && ensureBrevoKey()) {
             const codesList = codes.map(c => `<strong>${c.plan}</strong>: <span style="font-size:18px;font-weight:bold;color:#C9A961;">${c.code}</span>`).join('<br>');
-            await sendBrevoEmail(email, 'Os teus vouchers Share2Inspire — Pack Teste', `<p>Olá,</p><p>Seguem os teus vouchers de teste:</p>${codesList}<p style="margin-top:16px;">Acede a <a href="https://www.share2inspire.pt">share2inspire.pt</a> para usar.</p><p>Equipa Share2Inspire</p>`);
+            await sendBrevoEmail(email, 'Os teus vouchers Share2Inspire \u2014 Pack Teste', `<p style="font-size:15px;color:#333;line-height:1.7;">Ol\u00e1,</p><p style="font-size:15px;color:#333;line-height:1.7;">Seguem os teus <strong>vouchers de teste</strong> do Share2Inspire:</p><div style="background:#f8f6f0;border-left:4px solid #C9A961;padding:16px 20px;margin:16px 0;border-radius:4px;">${codesList}</div><p style="font-size:14px;color:#555;line-height:1.7;">Para utilizar, acede a <a href="https://www.share2inspire.pt" style="color:#C9A961;font-weight:600;">share2inspire.pt</a> e introduz o c\u00f3digo na sec\u00e7\u00e3o correspondente.</p><p style="font-size:14px;color:#666;">Qualquer d\u00favida, responde a este email.<br><strong>Equipa Share2Inspire</strong></p>`);
         }
         await loadAllData(); renderVouchers(); return;
     }
@@ -1383,7 +1418,7 @@ async function createVouchers() {
     showToast(`${codes.length} voucher(s) criado(s)!`, 'success');
     closeVoucherModal();
     if (sendEmail && ensureBrevoKey()) {
-        await sendBrevoEmail(email, `O teu voucher Share2Inspire — ${planName}`, `<p>Olá,</p><p>Segue o teu voucher para <strong>${planName}</strong>:</p><p style="font-size:20px;font-weight:bold;color:#C9A961;">${codes.join('<br>')}</p><p>Acede a <a href="https://www.share2inspire.pt">share2inspire.pt</a> para usar.</p>`);
+        await sendBrevoEmail(email, `O teu voucher Share2Inspire \u2014 ${planName}`, `<p style="font-size:15px;color:#333;line-height:1.7;">Ol\u00e1,</p><p style="font-size:15px;color:#333;line-height:1.7;">Segue o teu voucher para <strong style="color:#C9A961;">${planName}</strong>:</p><div style="background:#f8f6f0;border-left:4px solid #C9A961;padding:16px 20px;margin:16px 0;border-radius:4px;font-size:20px;font-weight:bold;color:#C9A961;">${codes.join('<br>')}</div><p style="font-size:14px;color:#555;line-height:1.7;">Para utilizar, acede a <a href="https://www.share2inspire.pt" style="color:#C9A961;font-weight:600;">share2inspire.pt</a> e introduz o c\u00f3digo na sec\u00e7\u00e3o correspondente.</p><p style="font-size:14px;color:#666;">Qualquer d\u00favida, responde a este email.<br><strong>Equipa Share2Inspire</strong></p>`);
     }
     await loadAllData(); renderVouchers();
 }
@@ -1414,18 +1449,18 @@ function loadEmailTemplate() {
     const to = document.getElementById('modalEmailTo').value;
     const templates = {
         pt: {
-            upsell_cv: { subject: 'O teu CV merece mais — upgrade disponível', body: `<p>Olá,</p><p>Vimos que fizeste uma análise gratuita do teu CV. Gostarias de desbloquear a <strong>versão completa</strong> com recomendações detalhadas?</p><p><a href="https://www.share2inspire.pt/cv-analyser" style="color:#C9A961;font-weight:bold;">Acede aqui para fazer upgrade →</a></p><p>Equipa Share2Inspire</p>` },
-            upsell_cp: { subject: 'Descobre o teu Career Path personalizado', body: `<p>Olá,</p><p>Com base na tua análise de CV, preparámos um <strong>Career Path personalizado</strong> para ti.</p><p><a href="https://www.share2inspire.pt/career-path" style="color:#C9A961;font-weight:bold;">Descobre as melhores oportunidades →</a></p><p>Equipa Share2Inspire</p>` },
-            upsell_ci: { subject: 'Career Intelligence — análise profunda do teu mercado', body: `<p>Olá,</p><p>Já tens o teu Career Path. Agora leva a tua carreira ao próximo nível com o <strong>Career Intelligence PRO</strong>.</p><p><a href="https://www.share2inspire.pt/career-intelligence" style="color:#C9A961;font-weight:bold;">Descobre mais →</a></p><p>Equipa Share2Inspire</p>` },
-            followup: { subject: 'Precisas de ajuda com a tua carreira?', body: `<p>Olá,</p><p>Vimos que visitaste o Share2Inspire recentemente. Podemos ajudar-te com alguma questão sobre a tua carreira?</p><p>Responde a este email e teremos todo o gosto em ajudar.</p><p>Equipa Share2Inspire</p>` },
-            testimonial: { subject: 'A tua experiência com o Share2Inspire', body: `<p>Olá,</p><p>Esperamos que a tua experiência com o Share2Inspire tenha sido positiva! Gostaríamos muito de ouvir o teu feedback.</p><p>Poderias partilhar um breve testemunho sobre como as nossas ferramentas te ajudaram?</p><p>Equipa Share2Inspire</p>` }
+            upsell_cv: { subject: 'O teu CV merece mais \u2014 desbloqueia a an\u00e1lise completa', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Ol\u00e1,</p><p style="font-size:15px;color:#333;line-height:1.7;">Vimos que fizeste uma <strong>an\u00e1lise gratuita do teu CV</strong> no Share2Inspire. Os resultados preliminares j\u00e1 te deram uma vis\u00e3o geral \u2014 mas h\u00e1 muito mais para descobrir.</p><p style="font-size:15px;color:#333;line-height:1.7;">Com a <strong style="color:#C9A961;">vers\u00e3o completa</strong>, recebes:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Recomenda\u00e7\u00f5es detalhadas por sec\u00e7\u00e3o do CV</li><li>Sugest\u00f5es de palavras-chave para ATS</li><li>Compara\u00e7\u00e3o com perfis de sucesso na tua \u00e1rea</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/cv-analyser" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Desbloquear An\u00e1lise Completa \u2192</a></p><p style="font-size:14px;color:#666;">Qualquer d\u00favida, responde diretamente a este email.<br><strong>Equipa Share2Inspire</strong></p>` },
+            upsell_cp: { subject: 'O teu Career Path personalizado est\u00e1 \u00e0 espera', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Ol\u00e1,</p><p style="font-size:15px;color:#333;line-height:1.7;">Com base na tua an\u00e1lise de CV, prepar\u00e1mos um <strong style="color:#C9A961;">Career Path personalizado</strong> para ti. Descobre quais as fun\u00e7\u00f5es mais alinhadas com o teu perfil e as compet\u00eancias que podes desenvolver.</p><p style="font-size:15px;color:#333;line-height:1.7;">O teu Career Path inclui:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Mapeamento de oportunidades de carreira</li><li>An\u00e1lise de compet\u00eancias vs. mercado</li><li>Roadmap de desenvolvimento profissional</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/career-path" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Descobrir o meu Career Path \u2192</a></p><p style="font-size:14px;color:#666;">Qualquer d\u00favida, responde diretamente a este email.<br><strong>Equipa Share2Inspire</strong></p>` },
+            upsell_ci: { subject: 'Career Intelligence PRO \u2014 leva a tua carreira ao pr\u00f3ximo n\u00edvel', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Ol\u00e1,</p><p style="font-size:15px;color:#333;line-height:1.7;">J\u00e1 tens o teu Career Path. Agora \u00e9 hora de ir mais fundo com o <strong style="color:#C9A961;">Career Intelligence PRO</strong> \u2014 uma an\u00e1lise profunda do teu mercado profissional.</p><p style="font-size:15px;color:#333;line-height:1.7;">O que vais descobrir:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Tend\u00eancias salariais na tua \u00e1rea</li><li>Empresas que mais contratam o teu perfil</li><li>Compet\u00eancias emergentes no mercado</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/career-intelligence" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Explorar Career Intelligence \u2192</a></p><p style="font-size:14px;color:#666;">Qualquer d\u00favida, responde diretamente a este email.<br><strong>Equipa Share2Inspire</strong></p>` },
+            followup: { subject: 'Podemos ajudar-te com a tua carreira?', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Ol\u00e1,</p><p style="font-size:15px;color:#333;line-height:1.7;">Vimos que visitaste o <strong>Share2Inspire</strong> recentemente. Esperamos que tenhas encontrado informa\u00e7\u00e3o \u00fatil para a tua carreira.</p><p style="font-size:15px;color:#333;line-height:1.7;">Se tiveres alguma quest\u00e3o sobre as nossas ferramentas \u2014 an\u00e1lise de CV, Career Path ou Career Intelligence \u2014 estamos aqui para ajudar.</p><p style="font-size:15px;color:#333;line-height:1.7;">Basta responderes a este email e entraremos em contacto brevemente.</p><p style="font-size:14px;color:#666;">Com os melhores cumprimentos,<br><strong>Equipa Share2Inspire</strong></p>` },
+            testimonial: { subject: 'A tua opini\u00e3o \u00e9 importante para n\u00f3s', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Ol\u00e1,</p><p style="font-size:15px;color:#333;line-height:1.7;">Esperamos que a tua experi\u00eancia com o <strong>Share2Inspire</strong> tenha sido positiva! A tua opini\u00e3o ajuda-nos a melhorar e a ajudar mais profissionais.</p><p style="font-size:15px;color:#333;line-height:1.7;">Gostar\u00edamos muito que partilhasses um breve testemunho sobre como as nossas ferramentas te ajudaram na tua carreira.</p><p style="text-align:center;margin:24px 0;"><a href="https://g.page/r/CZS08nYUvP4qEAE/review" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">\u2b50 Deixar Avalia\u00e7\u00e3o no Google \u2192</a></p><p style="font-size:14px;color:#666;">Obrigado pelo teu tempo!<br><strong>Equipa Share2Inspire</strong></p>` }
         },
         en: {
-            upsell_cv: { subject: 'Your CV deserves more — upgrade available', body: `<p>Hi,</p><p>We noticed you did a free CV analysis. Would you like to unlock the <strong>full version</strong> with detailed recommendations?</p><p><a href="https://www.share2inspire.pt/en/cv-analyser" style="color:#C9A961;font-weight:bold;">Upgrade now →</a></p><p>Share2Inspire Team</p>` },
-            upsell_cp: { subject: 'Discover your personalized Career Path', body: `<p>Hi,</p><p>Based on your CV analysis, we've prepared a <strong>personalized Career Path</strong> for you.</p><p><a href="https://www.share2inspire.pt/en/career-path" style="color:#C9A961;font-weight:bold;">Discover the best opportunities →</a></p><p>Share2Inspire Team</p>` },
-            upsell_ci: { subject: 'Career Intelligence — deep market analysis', body: `<p>Hi,</p><p>You already have your Career Path. Now take your career to the next level with <strong>Career Intelligence PRO</strong>.</p><p><a href="https://www.share2inspire.pt/en/career-intelligence" style="color:#C9A961;font-weight:bold;">Learn more →</a></p><p>Share2Inspire Team</p>` },
-            followup: { subject: 'Need help with your career?', body: `<p>Hi,</p><p>We noticed you visited Share2Inspire recently. Can we help you with any career-related questions?</p><p>Reply to this email and we'll be happy to help.</p><p>Share2Inspire Team</p>` },
-            testimonial: { subject: 'Your experience with Share2Inspire', body: `<p>Hi,</p><p>We hope your experience with Share2Inspire has been positive! We'd love to hear your feedback.</p><p>Could you share a brief testimonial about how our tools helped you?</p><p>Share2Inspire Team</p>` }
+            upsell_cv: { subject: 'Your CV deserves more \u2014 unlock the full analysis', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">We noticed you did a <strong>free CV analysis</strong> on Share2Inspire. The preliminary results gave you an overview \u2014 but there's much more to discover.</p><p style="font-size:15px;color:#333;line-height:1.7;">With the <strong style="color:#C9A961;">full version</strong>, you get:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Detailed recommendations per CV section</li><li>ATS keyword suggestions</li><li>Comparison with successful profiles in your field</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/en/cv-analyser" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Unlock Full Analysis \u2192</a></p><p style="font-size:14px;color:#666;">Any questions? Just reply to this email.<br><strong>Share2Inspire Team</strong></p>` },
+            upsell_cp: { subject: 'Your personalized Career Path is ready', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">Based on your CV analysis, we've prepared a <strong style="color:#C9A961;">personalized Career Path</strong> for you. Discover which roles best match your profile and which skills to develop next.</p><p style="font-size:15px;color:#333;line-height:1.7;">Your Career Path includes:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Career opportunity mapping</li><li>Skills vs. market analysis</li><li>Professional development roadmap</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/en/career-path" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Discover my Career Path \u2192</a></p><p style="font-size:14px;color:#666;">Any questions? Just reply to this email.<br><strong>Share2Inspire Team</strong></p>` },
+            upsell_ci: { subject: 'Career Intelligence PRO \u2014 take your career to the next level', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">You already have your Career Path. Now it's time to go deeper with <strong style="color:#C9A961;">Career Intelligence PRO</strong> \u2014 a deep analysis of your professional market.</p><p style="font-size:15px;color:#333;line-height:1.7;">What you'll discover:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Salary trends in your field</li><li>Top hiring companies for your profile</li><li>Emerging skills in the market</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/en/career-intelligence" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Explore Career Intelligence \u2192</a></p><p style="font-size:14px;color:#666;">Any questions? Just reply to this email.<br><strong>Share2Inspire Team</strong></p>` },
+            followup: { subject: 'Can we help with your career?', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">We noticed you visited <strong>Share2Inspire</strong> recently. We hope you found useful information for your career.</p><p style="font-size:15px;color:#333;line-height:1.7;">If you have any questions about our tools \u2014 CV analysis, Career Path, or Career Intelligence \u2014 we're here to help.</p><p style="font-size:15px;color:#333;line-height:1.7;">Simply reply to this email and we'll get back to you shortly.</p><p style="font-size:14px;color:#666;">Best regards,<br><strong>Share2Inspire Team</strong></p>` },
+            testimonial: { subject: 'Your opinion matters to us', body: `<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">We hope your experience with <strong>Share2Inspire</strong> has been positive! Your feedback helps us improve and support more professionals.</p><p style="font-size:15px;color:#333;line-height:1.7;">We'd love for you to share a brief testimonial about how our tools helped your career.</p><p style="text-align:center;margin:24px 0;"><a href="https://g.page/r/CZS08nYUvP4qEAE/review" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">\u2b50 Leave a Google Review \u2192</a></p><p style="font-size:14px;color:#666;">Thank you for your time!<br><strong>Share2Inspire Team</strong></p>` }
         }
     };
     const t = templates[lang]?.[tpl];
@@ -1435,13 +1470,72 @@ function loadEmailTemplate() {
     }
 }
 
+function wrapEmailTemplate(bodyHtml, lang = 'pt') {
+    const isEn = lang === 'en';
+    const reviewText = isEn ? 'How was your experience? Leave us a review' : 'Como foi a tua experiência? Deixa-nos uma avaliação';
+    const followText = isEn ? 'Follow us' : 'Segue-nos';
+    const unsubText = isEn ? 'You received this email because you interacted with Share2Inspire.' : 'Recebeste este email porque interagiste com o Share2Inspire.';
+    const rightsText = isEn ? 'All rights reserved.' : 'Todos os direitos reservados.';
+    return `<!DOCTYPE html>
+<html lang="${lang}">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f4f4f7;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f7;">
+<tr><td align="center" style="padding:24px 16px;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+<!-- HEADER -->
+<tr><td style="background:linear-gradient(135deg,#0a1628 0%,#162a4a 100%);padding:28px 32px;border-radius:12px 12px 0 0;text-align:center;">
+  <img src="https://www.share2inspire.pt/images/logo.webp" alt="Share2Inspire" height="40" style="height:40px;margin-bottom:8px;">
+  <div style="font-size:10px;color:#C9A961;letter-spacing:3px;text-transform:uppercase;font-weight:600;">Career Intelligence Platform</div>
+</td></tr>
+
+<!-- GOLD ACCENT LINE -->
+<tr><td style="height:3px;background:linear-gradient(90deg,#C9A961,#e8d5a3,#C9A961);"></td></tr>
+
+<!-- BODY -->
+<tr><td style="background:#ffffff;padding:32px 32px 24px 32px;">
+  ${bodyHtml}
+</td></tr>
+
+<!-- DIVIDER -->
+<tr><td style="background:#ffffff;padding:0 32px;"><hr style="border:none;border-top:1px solid #e8e8ed;margin:0;"></td></tr>
+
+<!-- GOOGLE REVIEW CTA -->
+<tr><td style="background:#ffffff;padding:20px 32px;text-align:center;">
+  <p style="font-size:13px;color:#555;margin:0 0 10px 0;">${reviewText}</p>
+  <a href="https://g.page/r/CZS08nYUvP4qEAE/review" style="display:inline-block;background:#C9A961;color:#0a1628;padding:10px 28px;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px;">⭐ Google Review</a>
+</td></tr>
+
+<!-- FOOTER -->
+<tr><td style="background:#0a1628;padding:24px 32px;border-radius:0 0 12px 12px;text-align:center;">
+  <p style="margin:0 0 12px 0;font-size:12px;color:rgba(255,255,255,0.5);">${followText}</p>
+  <p style="margin:0 0 16px 0;">
+    <a href="https://www.linkedin.com/company/107046213" style="color:#C9A961;text-decoration:none;margin:0 8px;font-size:14px;">LinkedIn</a>
+    <span style="color:rgba(255,255,255,0.2);">|</span>
+    <a href="https://www.instagram.com/share2inspire_/" style="color:#C9A961;text-decoration:none;margin:0 8px;font-size:14px;">Instagram</a>
+    <span style="color:rgba(255,255,255,0.2);">|</span>
+    <a href="https://www.share2inspire.pt" style="color:#C9A961;text-decoration:none;margin:0 8px;font-size:14px;">Website</a>
+  </p>
+  <p style="margin:0 0 4px 0;font-size:11px;color:rgba(255,255,255,0.35);">${unsubText}</p>
+  <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.35);">&copy; 2026 Share2Inspire. ${rightsText}</p>
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+</body></html>`;
+}
+
 async function sendBrevoEmail(to, subject, htmlContent) {
     const key = getBrevoKey();
     if (!key) return false;
+    // Wrap content in professional template if not already wrapped
+    const finalHtml = htmlContent.includes('f4f4f7') ? htmlContent : wrapEmailTemplate(htmlContent);
     const res = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: { 'accept': 'application/json', 'content-type': 'application/json', 'api-key': key },
-        body: JSON.stringify({ sender: BREVO_SENDER, to: [{ email: to }], subject, htmlContent })
+        body: JSON.stringify({ sender: BREVO_SENDER, to: [{ email: to }], subject, htmlContent: finalHtml })
     });
     return res.ok;
 }
@@ -1532,18 +1626,18 @@ function loadCampaignTemplate() {
     if (!tpl) return;
     const templates = {
         pt: {
-            upsell_cv: { subject: 'O teu CV merece mais \u2014 upgrade dispon\u00edvel', body: '<p>Ol\u00e1,</p><p>Vimos que fizeste uma an\u00e1lise gratuita do teu CV. Gostarias de desbloquear a <strong>vers\u00e3o completa</strong> com recomenda\u00e7\u00f5es detalhadas?</p><p><a href="https://www.share2inspire.pt/cv-analyser" style="color:#C9A961;font-weight:bold;">Acede aqui para fazer upgrade \u2192</a></p><p>Equipa Share2Inspire</p>' },
-            upsell_cp: { subject: 'Descobre o teu Career Path personalizado', body: '<p>Ol\u00e1,</p><p>Com base na tua an\u00e1lise de CV, prepar\u00e1mos um <strong>Career Path personalizado</strong> para ti.</p><p><a href="https://www.share2inspire.pt/career-path" style="color:#C9A961;font-weight:bold;">Descobre as melhores oportunidades \u2192</a></p><p>Equipa Share2Inspire</p>' },
-            upsell_ci: { subject: 'Career Intelligence \u2014 an\u00e1lise profunda do teu mercado', body: '<p>Ol\u00e1,</p><p>J\u00e1 tens o teu Career Path. Agora leva a tua carreira ao pr\u00f3ximo n\u00edvel com o <strong>Career Intelligence PRO</strong>.</p><p><a href="https://www.share2inspire.pt/career-intelligence" style="color:#C9A961;font-weight:bold;">Descobre mais \u2192</a></p><p>Equipa Share2Inspire</p>' },
-            followup: { subject: 'Precisas de ajuda com a tua carreira?', body: '<p>Ol\u00e1,</p><p>Vimos que visitaste o Share2Inspire recentemente. Podemos ajudar-te com alguma quest\u00e3o sobre a tua carreira?</p><p>Responde a este email e teremos todo o gosto em ajudar.</p><p>Equipa Share2Inspire</p>' },
-            testimonial: { subject: 'A tua experi\u00eancia com o Share2Inspire', body: '<p>Ol\u00e1,</p><p>Esperamos que a tua experi\u00eancia com o Share2Inspire tenha sido positiva! Gostar\u00edamos muito de ouvir o teu feedback.</p><p>Poderias partilhar um breve testemunho sobre como as nossas ferramentas te ajudaram?</p><p>Equipa Share2Inspire</p>' }
+            upsell_cv: { subject: 'O teu CV merece mais \u2014 desbloqueia a an\u00e1lise completa', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Ol\u00e1,</p><p style="font-size:15px;color:#333;line-height:1.7;">Vimos que fizeste uma <strong>an\u00e1lise gratuita do teu CV</strong> no Share2Inspire. Os resultados preliminares j\u00e1 te deram uma vis\u00e3o geral \u2014 mas h\u00e1 muito mais para descobrir.</p><p style="font-size:15px;color:#333;line-height:1.7;">Com a <strong style="color:#C9A961;">vers\u00e3o completa</strong>, recebes:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Recomenda\u00e7\u00f5es detalhadas por sec\u00e7\u00e3o do CV</li><li>Sugest\u00f5es de palavras-chave para ATS</li><li>Compara\u00e7\u00e3o com perfis de sucesso na tua \u00e1rea</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/cv-analyser" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Desbloquear An\u00e1lise Completa \u2192</a></p><p style="font-size:14px;color:#666;">Qualquer d\u00favida, responde diretamente a este email.<br><strong>Equipa Share2Inspire</strong></p>' },
+            upsell_cp: { subject: 'O teu Career Path personalizado est\u00e1 \u00e0 espera', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Ol\u00e1,</p><p style="font-size:15px;color:#333;line-height:1.7;">Com base na tua an\u00e1lise de CV, prepar\u00e1mos um <strong style="color:#C9A961;">Career Path personalizado</strong> para ti. Descobre quais as fun\u00e7\u00f5es mais alinhadas com o teu perfil e as compet\u00eancias que podes desenvolver.</p><p style="font-size:15px;color:#333;line-height:1.7;">O teu Career Path inclui:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Mapeamento de oportunidades de carreira</li><li>An\u00e1lise de compet\u00eancias vs. mercado</li><li>Roadmap de desenvolvimento profissional</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/career-path" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Descobrir o meu Career Path \u2192</a></p><p style="font-size:14px;color:#666;">Qualquer d\u00favida, responde diretamente a este email.<br><strong>Equipa Share2Inspire</strong></p>' },
+            upsell_ci: { subject: 'Career Intelligence PRO \u2014 leva a tua carreira ao pr\u00f3ximo n\u00edvel', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Ol\u00e1,</p><p style="font-size:15px;color:#333;line-height:1.7;">J\u00e1 tens o teu Career Path. Agora \u00e9 hora de ir mais fundo com o <strong style="color:#C9A961;">Career Intelligence PRO</strong> \u2014 uma an\u00e1lise profunda do teu mercado profissional.</p><p style="font-size:15px;color:#333;line-height:1.7;">O que vais descobrir:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Tend\u00eancias salariais na tua \u00e1rea</li><li>Empresas que mais contratam o teu perfil</li><li>Compet\u00eancias emergentes no mercado</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/career-intelligence" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Explorar Career Intelligence \u2192</a></p><p style="font-size:14px;color:#666;">Qualquer d\u00favida, responde diretamente a este email.<br><strong>Equipa Share2Inspire</strong></p>' },
+            followup: { subject: 'Podemos ajudar-te com a tua carreira?', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Ol\u00e1,</p><p style="font-size:15px;color:#333;line-height:1.7;">Vimos que visitaste o <strong>Share2Inspire</strong> recentemente. Esperamos que tenhas encontrado informa\u00e7\u00e3o \u00fatil para a tua carreira.</p><p style="font-size:15px;color:#333;line-height:1.7;">Se tiveres alguma quest\u00e3o sobre as nossas ferramentas \u2014 an\u00e1lise de CV, Career Path ou Career Intelligence \u2014 estamos aqui para ajudar.</p><p style="font-size:15px;color:#333;line-height:1.7;">Basta responderes a este email e entraremos em contacto brevemente.</p><p style="font-size:14px;color:#666;">Com os melhores cumprimentos,<br><strong>Equipa Share2Inspire</strong></p>' },
+            testimonial: { subject: 'A tua opini\u00e3o \u00e9 importante para n\u00f3s', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Ol\u00e1,</p><p style="font-size:15px;color:#333;line-height:1.7;">Esperamos que a tua experi\u00eancia com o <strong>Share2Inspire</strong> tenha sido positiva! A tua opini\u00e3o ajuda-nos a melhorar e a ajudar mais profissionais.</p><p style="font-size:15px;color:#333;line-height:1.7;">Gostar\u00edamos muito que partilhasses um breve testemunho sobre como as nossas ferramentas te ajudaram na tua carreira.</p><p style="text-align:center;margin:24px 0;"><a href="https://g.page/r/CZS08nYUvP4qEAE/review" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">\u2b50 Deixar Avalia\u00e7\u00e3o no Google \u2192</a></p><p style="font-size:14px;color:#666;">Obrigado pelo teu tempo!<br><strong>Equipa Share2Inspire</strong></p>' }
         },
         en: {
-            upsell_cv: { subject: 'Your CV deserves more \u2014 upgrade available', body: '<p>Hi,</p><p>We noticed you did a free CV analysis. Would you like to unlock the <strong>full version</strong> with detailed recommendations?</p><p><a href="https://www.share2inspire.pt/en/cv-analyser" style="color:#C9A961;font-weight:bold;">Upgrade now \u2192</a></p><p>Share2Inspire Team</p>' },
-            upsell_cp: { subject: 'Discover your personalized Career Path', body: '<p>Hi,</p><p>Based on your CV analysis, we\'ve prepared a <strong>personalized Career Path</strong> for you.</p><p><a href="https://www.share2inspire.pt/en/career-path" style="color:#C9A961;font-weight:bold;">Discover the best opportunities \u2192</a></p><p>Share2Inspire Team</p>' },
-            upsell_ci: { subject: 'Career Intelligence \u2014 deep market analysis', body: '<p>Hi,</p><p>You already have your Career Path. Now take your career to the next level with <strong>Career Intelligence PRO</strong>.</p><p><a href="https://www.share2inspire.pt/en/career-intelligence" style="color:#C9A961;font-weight:bold;">Learn more \u2192</a></p><p>Share2Inspire Team</p>' },
-            followup: { subject: 'Need help with your career?', body: '<p>Hi,</p><p>We noticed you visited Share2Inspire recently. Can we help you with any career-related questions?</p><p>Reply to this email and we\'ll be happy to help.</p><p>Share2Inspire Team</p>' },
-            testimonial: { subject: 'Your experience with Share2Inspire', body: '<p>Hi,</p><p>We hope your experience with Share2Inspire has been positive! We\'d love to hear your feedback.</p><p>Could you share a brief testimonial about how our tools helped you?</p><p>Share2Inspire Team</p>' }
+            upsell_cv: { subject: 'Your CV deserves more \u2014 unlock the full analysis', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">We noticed you did a <strong>free CV analysis</strong> on Share2Inspire. The preliminary results gave you an overview \u2014 but there\'s much more to discover.</p><p style="font-size:15px;color:#333;line-height:1.7;">With the <strong style="color:#C9A961;">full version</strong>, you get:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Detailed recommendations per CV section</li><li>ATS keyword suggestions</li><li>Comparison with successful profiles in your field</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/en/cv-analyser" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Unlock Full Analysis \u2192</a></p><p style="font-size:14px;color:#666;">Any questions? Just reply to this email.<br><strong>Share2Inspire Team</strong></p>' },
+            upsell_cp: { subject: 'Your personalized Career Path is ready', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">Based on your CV analysis, we\'ve prepared a <strong style="color:#C9A961;">personalized Career Path</strong> for you. Discover which roles best match your profile and which skills to develop next.</p><p style="font-size:15px;color:#333;line-height:1.7;">Your Career Path includes:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Career opportunity mapping</li><li>Skills vs. market analysis</li><li>Professional development roadmap</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/en/career-path" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Discover my Career Path \u2192</a></p><p style="font-size:14px;color:#666;">Any questions? Just reply to this email.<br><strong>Share2Inspire Team</strong></p>' },
+            upsell_ci: { subject: 'Career Intelligence PRO \u2014 take your career to the next level', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">You already have your Career Path. Now it\'s time to go deeper with <strong style="color:#C9A961;">Career Intelligence PRO</strong> \u2014 a deep analysis of your professional market.</p><p style="font-size:15px;color:#333;line-height:1.7;">What you\'ll discover:</p><ul style="font-size:14px;color:#444;line-height:2;"><li>Salary trends in your field</li><li>Top hiring companies for your profile</li><li>Emerging skills in the market</li></ul><p style="text-align:center;margin:24px 0;"><a href="https://www.share2inspire.pt/en/career-intelligence" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Explore Career Intelligence \u2192</a></p><p style="font-size:14px;color:#666;">Any questions? Just reply to this email.<br><strong>Share2Inspire Team</strong></p>' },
+            followup: { subject: 'Can we help with your career?', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">We noticed you visited <strong>Share2Inspire</strong> recently. We hope you found useful information for your career.</p><p style="font-size:15px;color:#333;line-height:1.7;">If you have any questions about our tools \u2014 CV analysis, Career Path, or Career Intelligence \u2014 we\'re here to help.</p><p style="font-size:15px;color:#333;line-height:1.7;">Simply reply to this email and we\'ll get back to you shortly.</p><p style="font-size:14px;color:#666;">Best regards,<br><strong>Share2Inspire Team</strong></p>' },
+            testimonial: { subject: 'Your opinion matters to us', body: '<p style="font-size:15px;color:#333;line-height:1.7;">Hi,</p><p style="font-size:15px;color:#333;line-height:1.7;">We hope your experience with <strong>Share2Inspire</strong> has been positive! Your feedback helps us improve and support more professionals.</p><p style="font-size:15px;color:#333;line-height:1.7;">We\'d love for you to share a brief testimonial about how our tools helped your career.</p><p style="text-align:center;margin:24px 0;"><a href="https://g.page/r/CZS08nYUvP4qEAE/review" style="display:inline-block;background:#C9A961;color:#0a1628;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">\u2b50 Leave a Google Review \u2192</a></p><p style="font-size:14px;color:#666;">Thank you for your time!<br><strong>Share2Inspire Team</strong></p>' }
         }
     };
     const t = templates[lang]?.[tpl];
@@ -1645,74 +1739,74 @@ function renderEmailHistory() {
 }
 
 let currentMsgId = null;
+
 function renderContactMessages() {
-    // Filter out probe/spam entries
-    let data = [...allContacts]
-        .filter(m => !m.name?.startsWith('__') && !m.email?.includes('probe') && !m.subject?.startsWith('__'))
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    let data = [...allContacts].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     setText('messagesCount', `${data.length} mensagens`);
     const tbody = document.getElementById('contactsTable');
     if (!tbody) return;
     if (!data.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma mensagem de contacto</td></tr>`; return; }
     tbody.innerHTML = data.map(m => {
         const date = new Date(m.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(m.created_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
-        return `<tr style="cursor:pointer;" onclick="openMsgModal(${m.id})" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
+        const hasNotes = m.admin_notes ? ' style="background:rgba(201,169,97,0.08);"' : '';
+        return `<tr${hasNotes} onclick="openMsgModal(${m.id})" style="cursor:pointer;${m.admin_notes ? 'background:rgba(201,169,97,0.08);' : ''}">
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td style="font-size:12px;">${esc(m.name) || '—'}</td>
-            <td style="font-size:12px;">${esc(m.email) || '—'}</td>
-            <td style="font-size:12px;">${esc(m.subject) || '—'}</td>
-            <td style="font-size:12px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(m.message) || '—'}</td>
+            <td style="font-size:12px;">${m.name || '\u2014'}</td>
+            <td style="font-size:12px;">${m.email || '\u2014'}</td>
+            <td style="font-size:12px;">${m.subject || '\u2014'}</td>
+            <td style="font-size:12px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.message || '\u2014'}</td>
         </tr>`;
     }).join('');
 }
+
 function openMsgModal(id) {
     const m = allContacts.find(c => c.id === id);
     if (!m) return;
     currentMsgId = id;
     const date = new Date(m.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(m.created_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
-    document.getElementById('msgDetailName').textContent = m.name || '—';
-    document.getElementById('msgDetailEmail').textContent = m.email || '—';
-    document.getElementById('msgDetailSubject').textContent = m.subject || '—';
+    document.getElementById('msgDetailName').textContent = m.name || '\u2014';
+    document.getElementById('msgDetailEmail').textContent = m.email || '\u2014';
+    document.getElementById('msgDetailSubject').textContent = m.subject || '\u2014';
     document.getElementById('msgDetailDate').textContent = date;
-    document.getElementById('msgDetailBody').textContent = m.message || '—';
-    document.getElementById('msgReplySubject').value = 'Re: ' + (m.subject || 'Mensagem de contacto');
-    document.getElementById('msgReplyBody').value = '';
+    document.getElementById('msgDetailBody').textContent = m.message || '\u2014';
+    document.getElementById('msgDetailNotes').value = m.admin_notes || '';
     document.getElementById('msgModalOverlay').style.display = 'flex';
 }
+
 function closeMsgModal() {
     document.getElementById('msgModalOverlay').style.display = 'none';
     currentMsgId = null;
 }
-async function replyToMessage() {
-    if (!ensureBrevoKey()) return;
-    const m = allContacts.find(c => c.id === currentMsgId);
-    if (!m || !m.email) { showToast('Email do remetente não disponível', 'danger'); return; }
-    const subject = document.getElementById('msgReplySubject').value.trim();
-    const body = document.getElementById('msgReplyBody').value.trim();
-    if (!subject || !body) { showToast('Preenche o assunto e a mensagem', 'danger'); return; }
-    const htmlBody = body.includes('<p>') || body.includes('<a ') ? body : `<p>${body.replace(/\n/g, '</p><p>')}</p>`;
-    const ok = await sendBrevoEmail(m.email, subject, htmlBody);
+
+async function saveMsgNotes() {
+    if (!currentMsgId) return;
+    const notes = document.getElementById('msgDetailNotes').value.trim();
+    const ok = await supaUpdate('contact_messages', currentMsgId, { admin_notes: notes });
     if (ok) {
-        showToast('Resposta enviada com sucesso!', 'success');
-        await supaInsert('email_history', { recipient_email: m.email, subject, body: htmlBody, email_type: 'reply_contact', sent_at: new Date().toISOString(), status: 'sent' });
-        closeMsgModal();
-    } else { showToast('Erro ao enviar resposta', 'danger'); }
+        const m = allContacts.find(c => c.id === currentMsgId);
+        if (m) m.admin_notes = notes;
+        showToast('Notas guardadas', 'success');
+        renderContactMessages();
+    } else { showToast('Erro ao guardar notas', 'danger'); }
 }
+
 async function deleteMsgFromModal() {
     if (!currentMsgId) return;
-    if (!confirm('Tens a certeza que queres eliminar esta mensagem?')) return;
-    try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/contact_messages?id=eq.${currentMsgId}`, {
-            method: 'DELETE',
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${getAuthToken()}` }
-        });
-        if (res.ok) {
-            allContacts = allContacts.filter(c => c.id !== currentMsgId);
-            showToast('Mensagem eliminada', 'success');
-            closeMsgModal();
-            renderContactMessages();
-        } else { showToast('Erro ao eliminar mensagem', 'danger'); }
-    } catch (e) { showToast('Erro ao eliminar mensagem', 'danger'); }
+    if (!confirm('Eliminar esta mensagem permanentemente?')) return;
+    const ok = await supaDelete('contact_messages', currentMsgId);
+    if (ok) {
+        allContacts = allContacts.filter(c => c.id !== currentMsgId);
+        closeMsgModal();
+        renderContactMessages();
+        showToast('Mensagem eliminada', 'success');
+    } else { showToast('Erro ao eliminar', 'danger'); }
+}
+
+function replyToMsg() {
+    const m = allContacts.find(c => c.id === currentMsgId);
+    if (!m) return;
+    closeMsgModal();
+    openEmailModal(m.email, m.name, 'lead');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2149,7 +2243,7 @@ async function refreshHealthCheck() {
     try {
         await fetch(`${SUPABASE_URL}/rest/v1/backend_health_log`, {
             method: 'POST',
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
             body: JSON.stringify(results)
         });
     } catch (e) { console.error('Erro ao guardar health check:', e); }
