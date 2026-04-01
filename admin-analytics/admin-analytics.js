@@ -1,11 +1,53 @@
 // ═══════════════════════════════════════════════════════════════
-//  Share2Inspire · Cockpit de Gestão v3.0
+//  Share2Inspire · Cockpit de Gestão v3.1
 //  Reestruturado: 7 tabs, cruzamento de dados, fontes verificadas
+//  v3.1: Supabase Auth + RLS security
 // ═══════════════════════════════════════════════════════════════
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+const ADMIN_EMAIL = 'samuelrolo@gmail.com';
 const BREVO_SENDER = { name: 'Share2Inspire', email: 'geral@share2inspire.pt' };
+
+// ── Supabase Auth Client ──
+const _supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let _accessToken = null; // filled after login
+
+// Get the current auth token (session token if logged in, fallback to anon key)
+function getAuthToken() {
+    return _accessToken || SUPABASE_KEY;
+}
+
+async function adminLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errDiv = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
+    errDiv.style.display = 'none';
+    if (!email || !password) { errDiv.textContent = 'Preenche email e password.'; errDiv.style.display = 'block'; return; }
+    btn.disabled = true; btn.textContent = 'A verificar...';
+    try {
+        const { data, error } = await _supa.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        if (data.user.email.toLowerCase() !== ADMIN_EMAIL) {
+            await _supa.auth.signOut();
+            throw new Error('Este email não tem permissões de administrador.');
+        }
+        _accessToken = data.session.access_token;
+        document.getElementById('loginOverlay').style.display = 'none';
+        initCockpit();
+    } catch (e) {
+        errDiv.textContent = e.message || 'Erro ao autenticar.';
+        errDiv.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Entrar';
+    }
+}
+
+async function adminLogout() {
+    await _supa.auth.signOut();
+    _accessToken = null;
+    location.reload();
+}
 
 function getBrevoKey() { return localStorage.getItem('s2i_brevo_key') || ''; }
 function ensureBrevoKey() {
@@ -60,8 +102,9 @@ let nurturingRecipients = [];
 // ═══════════════════════════════════════════════════════════════
 async function supaFetch(table, query = '') {
     try {
+        const token = getAuthToken();
         const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}` }
         });
         if (!res.ok) return [];
         return res.json();
@@ -69,10 +112,11 @@ async function supaFetch(table, query = '') {
 }
 
 async function supaInsert(table, data) {
+    const token = getAuthToken();
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
         method: 'POST',
         headers: {
-            'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json', 'Prefer': 'return=representation'
         },
         body: JSON.stringify(data)
@@ -85,10 +129,11 @@ async function supaInsert(table, data) {
 }
 
 async function supaUpdate(table, id, data) {
+    const token = getAuthToken();
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
         method: 'PATCH',
         headers: {
-            'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json', 'Prefer': 'return=minimal'
         },
         body: JSON.stringify(data)
@@ -831,14 +876,13 @@ function renderFunnel() {
     setText('funnelFree', freeCount);
     setText('funnelPaid', paidCount);
     setText('funnelCP', cpCount);
-    setText('funnelFreeConv', ceTotal ? `${Math.round(freeCount / ceTotal * 100)}% do CE` : '—');
+    setText('funnelFreeConv', lrTotal ? `${Math.round(freeCount / lrTotal * 100)}% do topo` : '—');
     setText('funnelPaidConv', freeCount ? `${Math.round(paidCount / (freeCount + paidCount) * 100)}% do grátis` : '—');
     setText('funnelCPConv', paidCount ? `${Math.round(cpCount / paidCount * 100)}% dos pagantes` : '—');
 
     // Funil Visual
     const steps = [
         { name: 'LinkedIn Roaster (Topo)', count: lrTotal, color: '#0077B5' },
-        { name: 'Career Energy (Diagnóstico)', count: ceTotal || (freeCount + paidCount + cpCount), color: '#6B7280' },
         { name: 'CV Analyser Grátis', count: freeCount, color: '#C9A961' },
         { name: 'CV Analyser Pago', count: paidCount, color: '#10B981' },
         { name: 'Career Path', count: cpCount, color: '#3B82F6' },
@@ -1600,22 +1644,75 @@ function renderEmailHistory() {
     }).join('');
 }
 
+let currentMsgId = null;
 function renderContactMessages() {
-    let data = [...allContacts].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    // Filter out probe/spam entries
+    let data = [...allContacts]
+        .filter(m => !m.name?.startsWith('__') && !m.email?.includes('probe') && !m.subject?.startsWith('__'))
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     setText('messagesCount', `${data.length} mensagens`);
     const tbody = document.getElementById('contactsTable');
     if (!tbody) return;
     if (!data.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhuma mensagem de contacto</td></tr>`; return; }
     tbody.innerHTML = data.map(m => {
         const date = new Date(m.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(m.created_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
-        return `<tr>
+        return `<tr style="cursor:pointer;" onclick="openMsgModal(${m.id})" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
             <td style="font-size:12px;color:var(--text-muted);">${date}</td>
-            <td style="font-size:12px;">${m.name || '—'}</td>
-            <td style="font-size:12px;">${m.email || '—'}</td>
-            <td style="font-size:12px;">${m.subject || '—'}</td>
-            <td style="font-size:12px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.message || '—'}</td>
+            <td style="font-size:12px;">${esc(m.name) || '—'}</td>
+            <td style="font-size:12px;">${esc(m.email) || '—'}</td>
+            <td style="font-size:12px;">${esc(m.subject) || '—'}</td>
+            <td style="font-size:12px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(m.message) || '—'}</td>
         </tr>`;
     }).join('');
+}
+function openMsgModal(id) {
+    const m = allContacts.find(c => c.id === id);
+    if (!m) return;
+    currentMsgId = id;
+    const date = new Date(m.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(m.created_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
+    document.getElementById('msgDetailName').textContent = m.name || '—';
+    document.getElementById('msgDetailEmail').textContent = m.email || '—';
+    document.getElementById('msgDetailSubject').textContent = m.subject || '—';
+    document.getElementById('msgDetailDate').textContent = date;
+    document.getElementById('msgDetailBody').textContent = m.message || '—';
+    document.getElementById('msgReplySubject').value = 'Re: ' + (m.subject || 'Mensagem de contacto');
+    document.getElementById('msgReplyBody').value = '';
+    document.getElementById('msgModalOverlay').style.display = 'flex';
+}
+function closeMsgModal() {
+    document.getElementById('msgModalOverlay').style.display = 'none';
+    currentMsgId = null;
+}
+async function replyToMessage() {
+    if (!ensureBrevoKey()) return;
+    const m = allContacts.find(c => c.id === currentMsgId);
+    if (!m || !m.email) { showToast('Email do remetente não disponível', 'danger'); return; }
+    const subject = document.getElementById('msgReplySubject').value.trim();
+    const body = document.getElementById('msgReplyBody').value.trim();
+    if (!subject || !body) { showToast('Preenche o assunto e a mensagem', 'danger'); return; }
+    const htmlBody = body.includes('<p>') || body.includes('<a ') ? body : `<p>${body.replace(/\n/g, '</p><p>')}</p>`;
+    const ok = await sendBrevoEmail(m.email, subject, htmlBody);
+    if (ok) {
+        showToast('Resposta enviada com sucesso!', 'success');
+        await supaInsert('email_history', { recipient_email: m.email, subject, body: htmlBody, email_type: 'reply_contact', sent_at: new Date().toISOString(), status: 'sent' });
+        closeMsgModal();
+    } else { showToast('Erro ao enviar resposta', 'danger'); }
+}
+async function deleteMsgFromModal() {
+    if (!currentMsgId) return;
+    if (!confirm('Tens a certeza que queres eliminar esta mensagem?')) return;
+    try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/contact_messages?id=eq.${currentMsgId}`, {
+            method: 'DELETE',
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${getAuthToken()}` }
+        });
+        if (res.ok) {
+            allContacts = allContacts.filter(c => c.id !== currentMsgId);
+            showToast('Mensagem eliminada', 'success');
+            closeMsgModal();
+            renderContactMessages();
+        } else { showToast('Erro ao eliminar mensagem', 'danger'); }
+    } catch (e) { showToast('Erro ao eliminar mensagem', 'danger'); }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2052,7 +2149,7 @@ async function refreshHealthCheck() {
     try {
         await fetch(`${SUPABASE_URL}/rest/v1/backend_health_log`, {
             method: 'POST',
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
             body: JSON.stringify(results)
         });
     } catch (e) { console.error('Erro ao guardar health check:', e); }
@@ -2557,8 +2654,8 @@ async function refreshAll() {
     showToast('Dados atualizados!', 'success');
 }
 
-// ── Init ──
-document.addEventListener('DOMContentLoaded', async () => {
+// ── Init Cockpit (called after successful auth) ──
+async function initCockpit() {
     showToast('A carregar dados...', 'info');
     try {
         await loadAllData();
@@ -2586,6 +2683,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (e) {
         console.error('Erro ao inicializar:', e);
         showToast('Erro ao carregar dados: ' + e.message, 'danger');
+    }
+}
+
+// ── DOMContentLoaded: check existing session ──
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const { data: { session } } = await _supa.auth.getSession();
+        if (session && session.user && session.user.email.toLowerCase() === ADMIN_EMAIL) {
+            _accessToken = session.access_token;
+            document.getElementById('loginOverlay').style.display = 'none';
+            initCockpit();
+        }
+        // else: login overlay stays visible, user must authenticate
+    } catch (e) {
+        console.error('Session check failed:', e);
     }
 });
 
@@ -2631,7 +2743,7 @@ async function runAutomationNow() {
         const res = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Authorization': `Bearer ${getAuthToken()}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ mode: 'auto_emails' })

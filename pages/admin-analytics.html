@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
         :root {
             --gold: #C9A961; --gold-light: #D4B96E; --gold-bg: #FBF8F1; --gold-border: #E8DFC8;
@@ -207,6 +208,19 @@
 <body>
 <div class="toast" id="toast"></div>
 
+<!-- ── LOGIN OVERLAY ── -->
+<div id="loginOverlay" style="position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;">
+    <div style="background:var(--white);border-radius:var(--radius);padding:40px;box-shadow:var(--shadow-md);max-width:400px;width:90%;text-align:center;">
+        <h1 style="font-size:18px;font-weight:700;color:var(--dark);margin-bottom:4px;">Share2Inspire</h1>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:24px;">Cockpit de Gestão &mdash; Acesso Restrito</p>
+        <div id="loginError" style="display:none;background:var(--red-bg);color:var(--red);padding:10px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:13px;"></div>
+        <input id="loginEmail" type="email" placeholder="Email" style="width:100%;padding:10px 14px;border:1px solid var(--border-hover);border-radius:var(--radius-sm);font-size:14px;margin-bottom:12px;outline:none;font-family:inherit;" />
+        <input id="loginPassword" type="password" placeholder="Password" style="width:100%;padding:10px 14px;border:1px solid var(--border-hover);border-radius:var(--radius-sm);font-size:14px;margin-bottom:20px;outline:none;font-family:inherit;" onkeydown="if(event.key==='Enter')adminLogin()" />
+        <button id="loginBtn" onclick="adminLogin()" style="width:100%;padding:10px;background:var(--gold);color:var(--white);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Entrar</button>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:16px;">Acesso exclusivo para administradores</p>
+    </div>
+</div>
+
 <!-- ── HEADER ── -->
 <header class="header">
     <div class="header-brand">
@@ -227,6 +241,7 @@
         </div>
         <span class="header-status" id="lastUpdate">A carregar...</span>
         <button class="btn-refresh" onclick="refreshAll()"><i class="fas fa-sync-alt"></i> Atualizar</button>
+        <button class="btn-refresh" onclick="adminLogout()" style="border-color:var(--red);color:var(--red);" title="Terminar sessão"><i class="fas fa-sign-out-alt"></i> Sair</button>
     </div>
 </header>
 

@@ -1,11 +1,53 @@
 // ═══════════════════════════════════════════════════════════════
-//  Share2Inspire · Cockpit de Gestão v3.0
+//  Share2Inspire · Cockpit de Gestão v3.1
 //  Reestruturado: 7 tabs, cruzamento de dados, fontes verificadas
+//  v3.1: Supabase Auth + RLS security
 // ═══════════════════════════════════════════════════════════════
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+const ADMIN_EMAIL = 'samuelrolo@gmail.com';
 const BREVO_SENDER = { name: 'Share2Inspire', email: 'geral@share2inspire.pt' };
+
+// ── Supabase Auth Client ──
+const _supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let _accessToken = null; // filled after login
+
+// Get the current auth token (session token if logged in, fallback to anon key)
+function getAuthToken() {
+    return _accessToken || SUPABASE_KEY;
+}
+
+async function adminLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errDiv = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
+    errDiv.style.display = 'none';
+    if (!email || !password) { errDiv.textContent = 'Preenche email e password.'; errDiv.style.display = 'block'; return; }
+    btn.disabled = true; btn.textContent = 'A verificar...';
+    try {
+        const { data, error } = await _supa.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        if (data.user.email.toLowerCase() !== ADMIN_EMAIL) {
+            await _supa.auth.signOut();
+            throw new Error('Este email não tem permissões de administrador.');
+        }
+        _accessToken = data.session.access_token;
+        document.getElementById('loginOverlay').style.display = 'none';
+        initCockpit();
+    } catch (e) {
+        errDiv.textContent = e.message || 'Erro ao autenticar.';
+        errDiv.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Entrar';
+    }
+}
+
+async function adminLogout() {
+    await _supa.auth.signOut();
+    _accessToken = null;
+    location.reload();
+}
 
 function getBrevoKey() { return localStorage.getItem('s2i_brevo_key') || ''; }
 function ensureBrevoKey() {
@@ -60,8 +102,9 @@ let nurturingRecipients = [];
 // ═══════════════════════════════════════════════════════════════
 async function supaFetch(table, query = '') {
     try {
+        const token = getAuthToken();
         const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}` }
         });
         if (!res.ok) return [];
         return res.json();
@@ -69,10 +112,11 @@ async function supaFetch(table, query = '') {
 }
 
 async function supaInsert(table, data) {
+    const token = getAuthToken();
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
         method: 'POST',
         headers: {
-            'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json', 'Prefer': 'return=representation'
         },
         body: JSON.stringify(data)
@@ -85,10 +129,11 @@ async function supaInsert(table, data) {
 }
 
 async function supaUpdate(table, id, data) {
+    const token = getAuthToken();
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
         method: 'PATCH',
         headers: {
-            'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json', 'Prefer': 'return=minimal'
         },
         body: JSON.stringify(data)
@@ -1659,7 +1704,7 @@ async function deleteMsgFromModal() {
     try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/contact_messages?id=eq.${currentMsgId}`, {
             method: 'DELETE',
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${getAuthToken()}` }
         });
         if (res.ok) {
             allContacts = allContacts.filter(c => c.id !== currentMsgId);
@@ -2104,7 +2149,7 @@ async function refreshHealthCheck() {
     try {
         await fetch(`${SUPABASE_URL}/rest/v1/backend_health_log`, {
             method: 'POST',
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${getAuthToken()}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
             body: JSON.stringify(results)
         });
     } catch (e) { console.error('Erro ao guardar health check:', e); }
@@ -2609,8 +2654,8 @@ async function refreshAll() {
     showToast('Dados atualizados!', 'success');
 }
 
-// ── Init ──
-document.addEventListener('DOMContentLoaded', async () => {
+// ── Init Cockpit (called after successful auth) ──
+async function initCockpit() {
     showToast('A carregar dados...', 'info');
     try {
         await loadAllData();
@@ -2638,6 +2683,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (e) {
         console.error('Erro ao inicializar:', e);
         showToast('Erro ao carregar dados: ' + e.message, 'danger');
+    }
+}
+
+// ── DOMContentLoaded: check existing session ──
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const { data: { session } } = await _supa.auth.getSession();
+        if (session && session.user && session.user.email.toLowerCase() === ADMIN_EMAIL) {
+            _accessToken = session.access_token;
+            document.getElementById('loginOverlay').style.display = 'none';
+            initCockpit();
+        }
+        // else: login overlay stays visible, user must authenticate
+    } catch (e) {
+        console.error('Session check failed:', e);
     }
 });
 
@@ -2683,7 +2743,7 @@ async function runAutomationNow() {
         const res = await fetch(`${SUPABASE_URL}/functions/v1/hyper-task`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Authorization': `Bearer ${getAuthToken()}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ mode: 'auto_emails' })
