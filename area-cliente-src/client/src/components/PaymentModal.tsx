@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 
 type PlanKey = 'monthly' | 'semiannual' | 'annual';
+type Tier = 'essential' | 'growth' | 'pro';
 type PayMethod = 'mbway' | 'multibanco' | 'stripe' | 'paypal';
 type Step = 'select' | 'form' | 'processing' | 'polling' | 'mbref' | 'success' | 'error';
 
@@ -29,11 +30,24 @@ const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 
-const planPrices: Record<PlanKey, number> = {
-  monthly: 9.90,
-  semiannual: 49,
-  annual: 89,
+/* Prices per tier × period */
+const tierPrices: Record<Tier, Record<PlanKey, number>> = {
+  essential: { monthly: 9.90, semiannual: 49, annual: 79 },
+  growth:    { monthly: 19.90, semiannual: 99, annual: 159 },
+  pro:       { monthly: 39, semiannual: 199, annual: 299 },
 };
+
+/* Legacy fallback for old-style plan keys (just period) */
+const planPrices: Record<PlanKey, number> = tierPrices.essential;
+
+function parsePlanKey(plan: string): { tier: Tier; period: PlanKey } {
+  const parts = plan.split('_');
+  if (parts.length === 2 && parts[0] in tierPrices) {
+    return { tier: parts[0] as Tier, period: parts[1] as PlanKey };
+  }
+  // Legacy: plan is just the period
+  return { tier: 'essential', period: plan as PlanKey };
+}
 
 const planDurations: Record<PlanKey, number> = {
   monthly: 30,
@@ -123,11 +137,15 @@ async function incrementCouponUsage(code: string) {
 }
 
 type Props = {
-  plan: PlanKey;
+  plan?: string;
+  planKey?: string;
+  price?: number;
+  isOpen?: boolean;
   onClose: () => void;
 };
 
-export default function PaymentModal({ plan, onClose }: Props) {
+export default function PaymentModal({ plan: planProp, planKey, price: priceProp, onClose }: Props) {
+  const rawPlan = planProp || planKey || 'essential_monthly';
   const { t } = useI18n();
   const { user, profile, refreshProfile } = useAuth();
   const [method, setMethod] = useState<PayMethod | null>(null);
@@ -156,7 +174,9 @@ export default function PaymentModal({ plan, onClose }: Props) {
   const [discountValid, setDiscountValid] = useState(false);
   const [discountApplied, setDiscountApplied] = useState(false);
 
-  const basePrice = planPrices[plan];
+  // Parse tier_period format (e.g. 'growth_monthly') or legacy period-only format
+  const { tier, period: plan } = parsePlanKey(rawPlan);
+  const basePrice = priceProp ?? tierPrices[tier]?.[plan] ?? 9.90;
   const finalPrice = discountPercent > 0 ? basePrice * (1 - discountPercent / 100) : basePrice;
 
   // Pre-fill from profile
@@ -215,13 +235,13 @@ export default function PaymentModal({ plan, onClose }: Props) {
     const endDate = new Date(now.getTime() + planDurations[plan] * 24 * 60 * 60 * 1000);
     await supabase.from('subscriptions').insert({
       user_id: user.id,
-      plan: plan,
+      plan: rawPlan,
       status: status,
       price_eur: finalPrice,
       started_at: status === 'active' ? now.toISOString() : null,
       expires_at: status === 'active' ? endDate.toISOString() : null,
     });
-  }, [user, plan, finalPrice, discountPercent, discountApplied, discountCode]);
+  }, [user, rawPlan, plan, finalPrice, discountPercent, discountApplied, discountCode]);
 
   // ── Discount code validation ──────────────────────────────
   const handleDiscountValidate = async () => {
@@ -488,14 +508,14 @@ export default function PaymentModal({ plan, onClose }: Props) {
           language: 'pt',
           currency: 'eur',
           amount: finalPrice,
-          plan: plan,
+          plan: rawPlan,
           description: `Share2Inspire - Subscrição ${planLabels[plan]}`,
         }),
       });
       const data = await res.json();
       if (!data.success || !data.url) throw new Error(data.error || 'Erro ao criar sessão de pagamento');
       sessionStorage.setItem('s2iSubOrderId', oid);
-      sessionStorage.setItem('s2iSubPlan', plan);
+      sessionStorage.setItem('s2iSubPlan', rawPlan);
       sessionStorage.setItem('s2iSubEmail', email);
       sessionStorage.setItem('stripeSessionId', data.sessionId || '');
       window.location.href = data.url;
@@ -563,7 +583,7 @@ export default function PaymentModal({ plan, onClose }: Props) {
         <div className="px-6 py-4 bg-white/[0.02] border-b border-[#e5e5e5]">
           <p className="text-[10px] text-[#999] uppercase tracking-wider mb-1">{t('pay.summary')}</p>
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-[#1a1a1a] font-medium">{planLabels[plan]}</span>
+            <span className="text-sm text-[#1a1a1a] font-medium capitalize">{tier} — {planLabels[plan]}</span>
             <div className="text-right">
               {discountPercent > 0 ? (
                 <div className="flex items-center gap-2">
