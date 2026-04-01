@@ -123,13 +123,15 @@ interface Vaga {
   url: string;
 }
 
-type FilterType = 'all' | 'remote' | 'local' | 'hr' | 'marketing';
+type FilterType = string;
 
 interface VagasFeedProps {
   lang?: string;
   countryCode?: string;
   countryName?: string;
   region?: string;
+  jobArea?: string;
+  workMode?: 'remote' | 'hybrid' | 'onsite';
 }
 
 // ─── Extract user keywords from analyses ────────────────────────────────────
@@ -186,7 +188,7 @@ async function getUserKeywords(userId: string): Promise<string[]> {
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────
-export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryName = 'Portugal', region }: VagasFeedProps) {
+export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryName = 'Portugal', region, jobArea, workMode }: VagasFeedProps) {
   const { t, lang: ctxLang } = useI18n();
   const { user } = useAuth();
   const lang = langProp || ctxLang;
@@ -195,13 +197,32 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
   const locationLabel = region || countryName || 'Portugal';
   const isUnsupportedCountry = !ADZUNA_SUPPORTED[countryCode.toUpperCase()];
 
-  const FILTERS: { key: FilterType; label: string }[] = [
-    { key: 'all',       label: t('vf.all') },
-    { key: 'remote',    label: t('vf.remote') },
-    { key: 'local',     label: locationLabel.split(' / ')[0].split(' (')[0] },
-    { key: 'hr',        label: t('vf.hr') },
-    { key: 'marketing', label: 'Marketing' },
-  ];
+  // Build dynamic filters from profile preferences
+  const FILTERS: { key: FilterType; label: string }[] = (() => {
+    const filters: { key: FilterType; label: string }[] = [
+      { key: 'all', label: t('vf.all') },
+    ];
+    // Work mode filters
+    if (!workMode || workMode === 'remote' || workMode === 'hybrid') {
+      filters.push({ key: 'remote', label: t('vf.remote') });
+    }
+    // Location filter
+    filters.push({ key: 'local', label: locationLabel.split(' / ')[0].split(' (')[0] });
+    // Area-based filter from profile
+    if (jobArea) {
+      // Split by comma in case user entered multiple areas
+      const areas = jobArea.split(',').map(a => a.trim()).filter(Boolean);
+      areas.slice(0, 3).forEach(area => {
+        const key = `area_${area.toLowerCase().replace(/\s+/g, '_')}`;
+        filters.push({ key, label: area });
+      });
+    } else {
+      // Fallback to generic filters if no area set
+      filters.push({ key: 'area_hr', label: t('vf.hr') });
+      filters.push({ key: 'area_marketing', label: 'Marketing' });
+    }
+    return filters;
+  })();
 
   const [vagas, setVagas] = useState<Vaga[]>([]);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
@@ -225,8 +246,13 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
       const limit = isUnsupportedCountry ? 1 : 3;
       return kws.slice(0, limit).join(' ');
     }
+    // Use jobArea from profile if available
+    if (jobArea) {
+      const areaKw = useEnglish ? (PT_TO_EN_KEYWORDS[jobArea.toLowerCase()] || jobArea) : jobArea;
+      return areaKw;
+    }
     return (lang === 'pt' && !useEnglish) ? 'recursos humanos gestão' : 'human resources management';
-  }, [lang, isUnsupportedCountry]);
+  }, [lang, isUnsupportedCountry, jobArea]);
 
   const fetchVagas = useCallback(async () => {
     setLoading(true);
@@ -349,8 +375,15 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
     if (activeFilter === 'all') return true;
     if (activeFilter === 'remote') return v.remote;
     if (activeFilter === 'local') return v.location.toLowerCase().includes(locationLabel.toLowerCase().split(' / ')[0].split(' (')[0].toLowerCase());
-    if (activeFilter === 'hr') return /hr|human|recursos|rh|people|talent/i.test(v.title + ' ' + v.tags.join(' '));
-    if (activeFilter === 'marketing') return /marketing|brand|content|digital|social/i.test(v.title + ' ' + v.tags.join(' '));
+    // Dynamic area filters
+    if (activeFilter.startsWith('area_')) {
+      const areaLabel = activeFilter.replace('area_', '').replace(/_/g, ' ');
+      // Check if area matches in title, tags, or company
+      const searchText = (v.title + ' ' + v.tags.join(' ') + ' ' + v.company).toLowerCase();
+      // Also check English translation
+      const enEquiv = PT_TO_EN_KEYWORDS[areaLabel] || areaLabel;
+      return searchText.includes(areaLabel) || searchText.includes(enEquiv.toLowerCase());
+    }
     return true;
   });
 
