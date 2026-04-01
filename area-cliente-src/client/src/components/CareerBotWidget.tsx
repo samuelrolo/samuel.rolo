@@ -76,8 +76,9 @@ export default function CareerBotWidget() {
     return {
       profile_name: profile ? `${profile.first_name} ${profile.last_name}` : '',
       profile_linkedin: profile?.linkedin_url || '',
+      user_id: user?.id || '',
     };
-  }, [profile]);
+  }, [profile, user]);
 
   // External event listeners
   useEffect(() => {
@@ -295,6 +296,7 @@ Generate ONLY the post.`;
           history: [],
           profile_name: profile ? `${profile.first_name} ${profile.last_name}` : '',
           profile_linkedin: profile?.linkedin_url || '',
+          user_id: user?.id || '',
         }),
       });
 
