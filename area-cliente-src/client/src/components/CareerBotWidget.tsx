@@ -14,7 +14,7 @@ type WidgetView = 'chat' | 'cover_letter' | 'networking_email' | 'linkedin_post'
 
 export default function CareerBotWidget() {
   const { user, profile, subscription, hasActiveSubscription } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
 
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -117,6 +117,7 @@ export default function CareerBotWidget() {
       const body: any = {
         mode: 'career_coach',
         message: msg,
+        language: lang, // Send current page language to the edge function
         history: messages.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content })),
         ...profileCtx,
       };
@@ -148,13 +149,13 @@ export default function CareerBotWidget() {
       } else {
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: 'Desculpa, ocorreu um erro. Tenta novamente.',
+          content: t('bot.errorGeneric'),
         }]);
       }
     } catch {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'Erro de ligação. Verifica a tua internet e tenta novamente.',
+        content: t('bot.errorConnection'),
       }]);
     } finally {
       setLoading(false);
@@ -171,13 +172,24 @@ export default function CareerBotWidget() {
   const handleCoverLetterSubmit = () => {
     if (!company.trim() || !role.trim()) return;
     const profileName = profile ? `${profile.first_name} ${profile.last_name}` : '';
-    const msg = `Carta de apresentação em PT-PT. Candidato: ${profileName}. Empresa: ${company}. Função: ${role}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${profile?.cv_filename ? ` CV: ${profile.cv_filename}.` : ''}${coverLetterNotes ? ` Notas: ${coverLetterNotes}.` : ''}
+    
+    const msg = lang === 'pt'
+      ? `Carta de apresentação em PT-PT. Candidato: ${profileName}. Empresa: ${company}. Função: ${role}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${profile?.cv_filename ? ` CV: ${profile.cv_filename}.` : ''}${coverLetterNotes ? ` Notas: ${coverLetterNotes}.` : ''}
 
 Estrutura: saudação formal personalizada → abertura com conhecimento da empresa → 2-3 realizações quantificáveis alinhadas com a função → fit cultural (porquê esta empresa) → fecho com call-to-action → despedida.
 Tom: profissional com personalidade, confiante, verbos de ação fortes, PT-PT rigoroso.
 Proibido: "Venho por este meio", linguagem genérica, repetir CV. Máx 400 palavras. Incluir dados quantificáveis.
-Gera APENAS a carta.`;
-    const display = `✉️ Gerar carta de apresentação para ${role} na ${company}${coverLetterNotes ? ` (${coverLetterNotes})` : ''}`;
+Gera APENAS a carta.`
+      : `Cover letter in English. Candidate: ${profileName}. Company: ${company}. Role: ${role}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${profile?.cv_filename ? ` CV: ${profile.cv_filename}.` : ''}${coverLetterNotes ? ` Notes: ${coverLetterNotes}.` : ''}
+
+Structure: personalised formal greeting → opening with company knowledge → 2-3 quantifiable achievements aligned with the role → cultural fit (why this company) → closing with call-to-action → sign-off.
+Tone: professional with personality, confident, strong action verbs.
+Forbidden: "I am writing to", generic language, repeating CV. Max 400 words. Include quantifiable data.
+Generate ONLY the letter.`;
+
+    const display = lang === 'pt'
+      ? `✉️ Gerar carta de apresentação para ${role} na ${company}${coverLetterNotes ? ` (${coverLetterNotes})` : ''}`
+      : `✉️ Generate cover letter for ${role} at ${company}${coverLetterNotes ? ` (${coverLetterNotes})` : ''}`;
     setView('chat');
     sendMessage(msg, display);
   };
@@ -185,13 +197,24 @@ Gera APENAS a carta.`;
   const handleNetworkingEmailSubmit = () => {
     if (!netRecipient.trim() || !netPurpose.trim()) return;
     const profileName = profile ? `${profile.first_name} ${profile.last_name}` : '';
-    const msg = `E-mail de networking em PT-PT. De: ${profileName}. Para: ${netRecipient}. Objetivo: ${netPurpose}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${netNotes ? ` Contexto: ${netNotes}.` : ''}
+    
+    const msg = lang === 'pt'
+      ? `E-mail de networking em PT-PT. De: ${profileName}. Para: ${netRecipient}. Objetivo: ${netPurpose}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${netNotes ? ` Contexto: ${netNotes}.` : ''}
 
 Estrutura: assunto curto e específico → saudação → referência concreta ao trabalho do destinatário → motivo do contacto direto → pedido específico (15min conversa, conselho) → facilitar resposta → assinatura.
 Tom: respeitoso sem ser subserviente, direto, valor mútuo, autêntico, PT-PT rigoroso.
 Proibido: "Espero que o encontre bem", ser vago, pedir desculpa por contactar. Máx 200 palavras no corpo. Incluir razão concreta para o contacto.
-Gera APENAS o e-mail com assunto.`;
-    const display = `🤝 Gerar e-mail de networking para ${netRecipient} — ${netPurpose}${netNotes ? ` (${netNotes})` : ''}`;
+Gera APENAS o e-mail com assunto.`
+      : `Networking email in English. From: ${profileName}. To: ${netRecipient}. Purpose: ${netPurpose}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${netNotes ? ` Context: ${netNotes}.` : ''}
+
+Structure: short specific subject line → greeting → concrete reference to recipient's work → reason for direct contact → specific ask (15min chat, advice) → make it easy to reply → signature.
+Tone: respectful without being subservient, direct, mutual value, authentic.
+Forbidden: "I hope this finds you well", being vague, apologising for reaching out. Max 200 words in body. Include concrete reason for contact.
+Generate ONLY the email with subject line.`;
+
+    const display = lang === 'pt'
+      ? `🤝 Gerar e-mail de networking para ${netRecipient} — ${netPurpose}${netNotes ? ` (${netNotes})` : ''}`
+      : `🤝 Generate networking email to ${netRecipient} — ${netPurpose}${netNotes ? ` (${netNotes})` : ''}`;
     setView('chat');
     sendMessage(msg, display);
   };
@@ -199,21 +222,32 @@ Gera APENAS o e-mail com assunto.`;
   const handleLinkedinPostSubmit = () => {
     if (!liNewCompany.trim() || !liNewRole.trim()) return;
     const profileName = profile ? `${profile.first_name} ${profile.last_name}` : '';
-    const toneDescriptions: Record<string, string> = {
-      'profissional': 'Profissional e sóbrio, com confiança discreta',
-      'entusiasmado': 'Entusiasmado e energético, com emoção genuína mas sem exagero',
-      'humilde e grato': 'Humilde e grato, reconhecendo quem ajudou no percurso',
-      'inspirador': 'Inspirador e motivacional, partilhando lições aprendidas',
-      'casual e autêntico': 'Casual e autêntico, como se falasse com um amigo próximo',
+    const toneDescriptions: Record<string, Record<string, string>> = {
+      'profissional': { pt: 'Profissional e sóbrio, com confiança discreta', en: 'Professional and sober, with understated confidence' },
+      'entusiasmado': { pt: 'Entusiasmado e energético, com emoção genuína mas sem exagero', en: 'Enthusiastic and energetic, with genuine emotion but no exaggeration' },
+      'humilde e grato': { pt: 'Humilde e grato, reconhecendo quem ajudou no percurso', en: 'Humble and grateful, acknowledging those who helped along the way' },
+      'inspirador': { pt: 'Inspirador e motivacional, partilhando lições aprendidas', en: 'Inspiring and motivational, sharing lessons learned' },
+      'casual e autêntico': { pt: 'Casual e autêntico, como se falasse com um amigo próximo', en: 'Casual and authentic, as if talking to a close friend' },
     };
-    const toneDesc = toneDescriptions[liTone] || liTone;
-    const msg = `Post LinkedIn em PT-PT a anunciar mudança profissional. Autor: ${profileName}. Nova empresa: ${liNewCompany}. Nova função: ${liNewRole}. Tom: ${toneDesc}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${liNotes ? ` Notas: ${liNotes}.` : ''}
+    const toneDesc = toneDescriptions[liTone]?.[lang] || liTone;
+    
+    const msg = lang === 'pt'
+      ? `Post LinkedIn em PT-PT a anunciar mudança profissional. Autor: ${profileName}. Nova empresa: ${liNewCompany}. Nova função: ${liNewRole}. Tom: ${toneDesc}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${liNotes ? ` Notas: ${liNotes}.` : ''}
 
 Estrutura: gancho forte na 1ª linha (LinkedIn mostra só 2 linhas antes do "ver mais") → percurso anterior → anúncio da nova posição → reflexão genuína sobre transições → agradecimento específico → call-to-action → 3-5 hashtags.
 Tom: ${toneDesc}. Autêntico, parágrafos curtos (1-2 frases), momento de vulnerabilidade, PT-PT rigoroso.
 Proibido: "Tenho o prazer de anunciar", emojis em excesso (máx 3), comunicado de imprensa. 150-250 palavras. Espaçamento entre parágrafos.
-Gera APENAS o post.`;
-    const display = `📢 Gerar post LinkedIn: ${liNewRole} na ${liNewCompany} (tom: ${liTone})${liNotes ? ` — ${liNotes}` : ''}`;
+Gera APENAS o post.`
+      : `LinkedIn post in English announcing a career change. Author: ${profileName}. New company: ${liNewCompany}. New role: ${liNewRole}. Tone: ${toneDesc}.${profile?.linkedin_url ? ` LinkedIn: ${profile.linkedin_url}.` : ''}${liNotes ? ` Notes: ${liNotes}.` : ''}
+
+Structure: strong hook in the 1st line (LinkedIn shows only 2 lines before "see more") → previous journey → new position announcement → genuine reflection on transitions → specific thanks → call-to-action → 3-5 hashtags.
+Tone: ${toneDesc}. Authentic, short paragraphs (1-2 sentences), moment of vulnerability.
+Forbidden: "I am pleased to announce", excessive emojis (max 3), press release style. 150-250 words. Spacing between paragraphs.
+Generate ONLY the post.`;
+
+    const display = lang === 'pt'
+      ? `📢 Gerar post LinkedIn: ${liNewRole} na ${liNewCompany} (tom: ${liTone})${liNotes ? ` — ${liNotes}` : ''}`
+      : `📢 Generate LinkedIn post: ${liNewRole} at ${liNewCompany} (tone: ${liTone})${liNotes ? ` — ${liNotes}` : ''}`;
     setView('chat');
     sendMessage(msg, display);
   };
@@ -230,7 +264,7 @@ Gera APENAS o post.`;
     const toneMap: Record<string, Record<string, string>> = {
       profissional: { pt: 'profissional e confiante', en: 'professional and confident' },
       criativo: { pt: 'criativo e original, com metáforas ou estruturas não convencionais', en: 'creative and original, with unconventional structures' },
-      direto: { pt: 'direto e objetivo, sem floreados', en: 'direct and concise, no fluff' },
+      direto: { pt: 'direto e impactante, sem floreados', en: 'direct and impactful, no fluff' },
       inspirador: { pt: 'inspirador e com impacto emocional', en: 'inspiring and emotionally impactful' },
     };
 
@@ -247,6 +281,7 @@ Gera APENAS o post.`;
         body: JSON.stringify({
           mode: 'career_coach',
           message: prompt,
+          language: lang,
           history: [],
           profile_name: profile ? `${profile.first_name} ${profile.last_name}` : '',
           profile_linkedin: profile?.linkedin_url || '',
@@ -302,14 +337,12 @@ Gera APENAS o post.`;
         }
 
         // Strategy 4: Extract quoted strings from truncated/partial JSON
-        // This handles cases where the API response is cut off mid-JSON
         if (headlines.length === 0) {
           const quotedStrings: string[] = [];
           const quoteRegex = /"([^"]{15,220})"/g;
           let m;
           while ((m = quoteRegex.exec(raw)) !== null) {
             const val = m[1].trim();
-            // Skip JSON keys like "headlines"
             if (val === 'headlines' || val.length < 15) continue;
             quotedStrings.push(val);
           }
@@ -335,13 +368,13 @@ Gera APENAS o post.`;
           }
         }
 
-        // Clean up: remove surrounding quotes, numbering, but preserve | and · separators
+        // Clean up
         headlines = headlines
           .map((h: any) => String(h).replace(/^"|"$/g, '').replace(/^\d+[\.)\-]\s*/, '').replace(/[\[\]{}]/g, '').replace(/^"|"$/g, '').replace(/,\s*$/, '').trim())
           .filter((h: string) => h.length > 10 && h.toLowerCase() !== 'headlines');
         
         console.log('[Headline] Parsed headlines:', headlines);
-        setHlResults(headlines.length > 0 ? headlines : ['Erro ao gerar headlines. Tenta novamente com menos headlines ou um cargo mais curto.']);
+        setHlResults(headlines.length > 0 ? headlines : [t('bot.headlineError')]);
       }
     } catch {
       setHlResults([]);
@@ -368,13 +401,13 @@ Gera APENAS o post.`;
     setHlKeywords(''); setHlTone('profissional'); setHlLang('pt'); setHlNum('5'); setHlResults([]);
   };
 
-  // Tab labels for the view switcher
+  // Tab labels for the view switcher — using i18n
   const tabs: { key: WidgetView; label: string; icon: string }[] = [
-    { key: 'chat', label: 'Chat', icon: '💬' },
-    { key: 'cover_letter', label: 'Carta', icon: '✉️' },
-    { key: 'networking_email', label: 'Networking', icon: '🤝' },
-    { key: 'linkedin_post', label: 'Post LinkedIn', icon: '📢' },
-    { key: 'headline_generator', label: 'Headline', icon: '✦' },
+    { key: 'chat', label: t('bot.tabChat'), icon: '💬' },
+    { key: 'cover_letter', label: t('bot.tabCoverLetter'), icon: '✉️' },
+    { key: 'networking_email', label: t('bot.tabNetworking'), icon: '🤝' },
+    { key: 'linkedin_post', label: t('bot.tabLinkedinPost'), icon: '📢' },
+    { key: 'headline_generator', label: t('bot.tabHeadline'), icon: '✦' },
   ];
 
   return (
@@ -417,13 +450,15 @@ Gera APENAS o post.`;
               </div>
             </div>
             <div className="flex items-center gap-1">
-              <button onClick={resetChat} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors" title="Nova conversa">
+              {/* Language indicator */}
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold text-white/80 bg-white/15 uppercase tracking-wider">{lang}</span>
+              <button onClick={resetChat} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors" title={t('bot.newChat')}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
                   <path d="M3 3v5h5" />
                 </svg>
               </button>
-              <button onClick={() => setIsFullscreen(!isFullscreen)} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors" title={isFullscreen ? 'Reduzir' : 'Ecrã inteiro'}>
+              <button onClick={() => setIsFullscreen(!isFullscreen)} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors" title={isFullscreen ? t('bot.reduce') : t('bot.fullscreen')}>
                 {isFullscreen ? (
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M8 3v3a2 2 0 0 1-2 2H3" /><path d="M21 8h-3a2 2 0 0 1-2-2V3" />
@@ -436,7 +471,7 @@ Gera APENAS o post.`;
                   </svg>
                 )}
               </button>
-              <button onClick={() => { setIsOpen(false); setIsFullscreen(false); }} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors" title="Minimizar">
+              <button onClick={() => { setIsOpen(false); setIsFullscreen(false); }} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors" title={t('bot.minimize')}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M6 9l6 6 6-6" />
                 </svg>
@@ -466,24 +501,24 @@ Gera APENAS o post.`;
             <div className="p-4 flex-1 overflow-y-auto">
               <div className={`space-y-4 ${isFullscreen ? 'max-w-3xl mx-auto' : ''}`}>
                 <p className="text-sm text-gray-600 mb-2">
-                  Gera uma carta de apresentação personalizada com base no teu perfil profissional (CV + LinkedIn).
+                  {t('bot.coverLetterDesc')}
                 </p>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Empresa *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">{t('bot.company')} *</label>
                   <input type="text" value={company} onChange={e => setCompany(e.target.value)}
-                    placeholder="Ex: Google, Deloitte, AstraZeneca..."
+                    placeholder={t('bot.companyPlaceholder')}
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Vaga / Função *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">{t('bot.role')} *</label>
                   <input type="text" value={role} onChange={e => setRole(e.target.value)}
-                    placeholder="Ex: Product Manager, HR Business Partner..."
+                    placeholder={t('bot.rolePlaceholder')}
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Notas adicionais</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">{t('bot.additionalNotes')}</label>
                   <textarea value={coverLetterNotes} onChange={e => setCoverLetterNotes(e.target.value)}
-                    placeholder="Ex: Quero destacar a minha experiência em transformação digital..."
+                    placeholder={t('bot.coverLetterNotesPlaceholder')}
                     rows={3}
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] resize-none" />
                 </div>
@@ -491,13 +526,13 @@ Gera APENAS o post.`;
                   disabled={!company.trim() || !role.trim() || loading}
                   className="w-full py-2.5 rounded-lg text-white text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ background: company.trim() && role.trim() ? 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' : '#ccc' }}>
-                  {loading ? <span className="flex items-center justify-center gap-2"><LoadingSpinner /> A gerar...</span> : '✉️ Gerar Carta de Apresentação'}
+                  {loading ? <span className="flex items-center justify-center gap-2"><LoadingSpinner /> {t('bot.generating')}</span> : `✉️ ${t('bot.generateCoverLetter')}`}
                 </button>
                 {profile && (
                   <p className="text-xs text-gray-400 text-center">
-                    Personalizada com base no perfil de {profile.first_name} {profile.last_name}
-                    {profile.linkedin_url ? ' e LinkedIn' : ''}
-                    {profile.cv_filename ? ` e CV (${profile.cv_filename})` : ''}
+                    {t('bot.personalizedWith')} {profile.first_name} {profile.last_name}
+                    {profile.linkedin_url ? ` ${t('bot.andLinkedin')}` : ''}
+                    {profile.cv_filename ? ` ${t('bot.andCv')} (${profile.cv_filename})` : ''}
                   </p>
                 )}
               </div>
@@ -509,31 +544,31 @@ Gera APENAS o post.`;
             <div className="p-4 flex-1 overflow-y-auto">
               <div className={`space-y-4 ${isFullscreen ? 'max-w-3xl mx-auto' : ''}`}>
                 <p className="text-sm text-gray-600 mb-2">
-                  Cria um e-mail profissional para contactar alguém da tua rede. Ideal para pedir conselhos, marcar cafés virtuais ou explorar oportunidades.
+                  {t('bot.networkingDesc')}
                 </p>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Destinatário *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">{t('bot.recipient')} *</label>
                   <input type="text" value={netRecipient} onChange={e => setNetRecipient(e.target.value)}
-                    placeholder="Ex: João Silva, Diretor de RH na Deloitte"
+                    placeholder={t('bot.recipientPlaceholder')}
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Objetivo *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">{t('bot.purpose')} *</label>
                   <select value={netPurpose} onChange={e => setNetPurpose(e.target.value)}
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] bg-white">
-                    <option value="">Selecionar objetivo...</option>
-                    <option value="pedir conselho sobre carreira">Pedir conselho sobre carreira</option>
-                    <option value="marcar um café virtual">Marcar um café virtual</option>
-                    <option value="explorar oportunidades na empresa">Explorar oportunidades na empresa</option>
-                    <option value="pedir referência ou recomendação">Pedir referência ou recomendação</option>
-                    <option value="reconectar após longo período">Reconectar após longo período</option>
-                    <option value="agradecer por ajuda ou mentoria">Agradecer por ajuda ou mentoria</option>
+                    <option value="">{t('bot.purposeSelect')}</option>
+                    <option value={t('bot.purposeAdvice')}>{t('bot.purposeAdvice')}</option>
+                    <option value={t('bot.purposeCoffee')}>{t('bot.purposeCoffee')}</option>
+                    <option value={t('bot.purposeOpportunities')}>{t('bot.purposeOpportunities')}</option>
+                    <option value={t('bot.purposeReference')}>{t('bot.purposeReference')}</option>
+                    <option value={t('bot.purposeReconnect')}>{t('bot.purposeReconnect')}</option>
+                    <option value={t('bot.purposeThank')}>{t('bot.purposeThank')}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Contexto adicional</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">{t('bot.additionalContext')}</label>
                   <textarea value={netNotes} onChange={e => setNetNotes(e.target.value)}
-                    placeholder="Ex: Conhecemo-nos no evento X, quero mudar para a área de dados..."
+                    placeholder={t('bot.networkingNotesPlaceholder')}
                     rows={3}
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] resize-none" />
                 </div>
@@ -541,12 +576,12 @@ Gera APENAS o post.`;
                   disabled={!netRecipient.trim() || !netPurpose.trim() || loading}
                   className="w-full py-2.5 rounded-lg text-white text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ background: netRecipient.trim() && netPurpose.trim() ? 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' : '#ccc' }}>
-                  {loading ? <span className="flex items-center justify-center gap-2"><LoadingSpinner /> A gerar...</span> : '🤝 Gerar E-mail de Networking'}
+                  {loading ? <span className="flex items-center justify-center gap-2"><LoadingSpinner /> {t('bot.generating')}</span> : `🤝 ${t('bot.generateNetworkingEmail')}`}
                 </button>
                 {profile && (
                   <p className="text-xs text-gray-400 text-center">
-                    Personalizado com base no perfil de {profile.first_name} {profile.last_name}
-                    {profile.linkedin_url ? ' e LinkedIn' : ''}
+                    {t('bot.personalizedWith')} {profile.first_name} {profile.last_name}
+                    {profile.linkedin_url ? ` ${t('bot.andLinkedin')}` : ''}
                   </p>
                 )}
               </div>
@@ -558,35 +593,35 @@ Gera APENAS o post.`;
             <div className="p-4 flex-1 overflow-y-auto">
               <div className={`space-y-4 ${isFullscreen ? 'max-w-3xl mx-auto' : ''}`}>
                 <p className="text-sm text-gray-600 mb-2">
-                  Gera um post para o LinkedIn a anunciar a tua mudança de emprego. Personalizado com o teu tom de voz e contexto profissional.
+                  {t('bot.linkedinPostDesc')}
                 </p>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Nova empresa *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">{t('bot.newCompany')} *</label>
                   <input type="text" value={liNewCompany} onChange={e => setLiNewCompany(e.target.value)}
-                    placeholder="Ex: Microsoft, Farfetch, Siemens..."
+                    placeholder={t('bot.newCompanyPlaceholder')}
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Nova função *</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">{t('bot.newRole')} *</label>
                   <input type="text" value={liNewRole} onChange={e => setLiNewRole(e.target.value)}
-                    placeholder="Ex: Senior Data Engineer, Head of People..."
+                    placeholder={t('bot.newRolePlaceholder')}
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Tom</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">{t('bot.tone')}</label>
                   <select value={liTone} onChange={e => setLiTone(e.target.value)}
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] bg-white">
-                    <option value="profissional">Profissional</option>
-                    <option value="entusiasmado">Entusiasmado</option>
-                    <option value="humilde e grato">Humilde e grato</option>
-                    <option value="inspirador">Inspirador</option>
-                    <option value="casual e autêntico">Casual e autêntico</option>
+                    <option value="profissional">{t('bot.toneProfessional')}</option>
+                    <option value="entusiasmado">{t('bot.toneEnthusiastic')}</option>
+                    <option value="humilde e grato">{t('bot.toneHumble')}</option>
+                    <option value="inspirador">{t('bot.toneInspiring')}</option>
+                    <option value="casual e autêntico">{t('bot.toneCasual')}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Notas adicionais</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">{t('bot.additionalNotes')}</label>
                   <textarea value={liNotes} onChange={e => setLiNotes(e.target.value)}
-                    placeholder="Ex: Quero agradecer à equipa anterior, mencionar o que aprendi..."
+                    placeholder={t('bot.linkedinNotesPlaceholder')}
                     rows={3}
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] resize-none" />
                 </div>
@@ -594,12 +629,12 @@ Gera APENAS o post.`;
                   disabled={!liNewCompany.trim() || !liNewRole.trim() || loading}
                   className="w-full py-2.5 rounded-lg text-white text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ background: liNewCompany.trim() && liNewRole.trim() ? 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' : '#ccc' }}>
-                  {loading ? <span className="flex items-center justify-center gap-2"><LoadingSpinner /> A gerar...</span> : '📢 Gerar Post LinkedIn'}
+                  {loading ? <span className="flex items-center justify-center gap-2"><LoadingSpinner /> {t('bot.generating')}</span> : `📢 ${t('bot.generateLinkedinPost')}`}
                 </button>
                 {profile && (
                   <p className="text-xs text-gray-400 text-center">
-                    Personalizado com base no perfil de {profile.first_name} {profile.last_name}
-                    {profile.linkedin_url ? ' e LinkedIn' : ''}
+                    {t('bot.personalizedWith')} {profile.first_name} {profile.last_name}
+                    {profile.linkedin_url ? ` ${t('bot.andLinkedin')}` : ''}
                   </p>
                 )}
               </div>
@@ -611,90 +646,88 @@ Gera APENAS o post.`;
             <div className="p-4 flex-1 overflow-y-auto">
               <div className={`space-y-3 ${isFullscreen ? 'max-w-3xl mx-auto' : ''}`}>
                 <p className="text-sm text-gray-600 mb-1">
-                  Gera headlines otimizadas para o teu perfil LinkedIn. Copia a que mais gostas.
+                  {t('bot.headlineDesc')}
                 </p>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[10px] font-medium text-gray-700 mb-1">Cargo atual *</label>
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.currentRole')} *</label>
                     <input type="text" value={hlCargo} onChange={e => setHlCargo(e.target.value)}
                       placeholder="Ex: HR Manager, Coach"
                       className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-medium text-gray-700 mb-1">Área / Setor *</label>
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.sector')} *</label>
                     <input type="text" value={hlArea} onChange={e => setHlArea(e.target.value)}
-                      placeholder="Ex: RH, Marketing"
+                      placeholder={lang === 'pt' ? 'Ex: RH, Marketing' : 'E.g.: HR, Marketing'}
                       className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[10px] font-medium text-gray-700 mb-1">Experiência</label>
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.experience')}</label>
                     <select value={hlAnos} onChange={e => setHlAnos(e.target.value)}
                       className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] bg-white">
-                      <option value="">Selecionar</option>
-                      <option value="Menos de 2 anos">&lt; 2 anos</option>
-                      <option value="2-5 anos">2–5 anos</option>
-                      <option value="5-10 anos">5–10 anos</option>
-                      <option value="10-15 anos">10–15 anos</option>
-                      <option value="Mais de 15 anos">&gt; 15 anos</option>
+                      <option value="">{t('bot.selectExperience')}</option>
+                      <option value={lang === 'pt' ? 'Menos de 2 anos' : 'Less than 2 years'}>&lt; 2 {lang === 'pt' ? 'anos' : 'years'}</option>
+                      <option value={lang === 'pt' ? '2-5 anos' : '2-5 years'}>2–5 {lang === 'pt' ? 'anos' : 'years'}</option>
+                      <option value={lang === 'pt' ? '5-10 anos' : '5-10 years'}>5–10 {lang === 'pt' ? 'anos' : 'years'}</option>
+                      <option value={lang === 'pt' ? '10-15 anos' : '10-15 years'}>10–15 {lang === 'pt' ? 'anos' : 'years'}</option>
+                      <option value={lang === 'pt' ? 'Mais de 15 anos' : 'More than 15 years'}>&gt; 15 {lang === 'pt' ? 'anos' : 'years'}</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-medium text-gray-700 mb-1">Público-alvo</label>
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.targetAudience')}</label>
                     <input type="text" value={hlPublico} onChange={e => setHlPublico(e.target.value)}
-                      placeholder="Ex: Recrutadores"
+                      placeholder={lang === 'pt' ? 'Ex: Recrutadores' : 'E.g.: Recruiters'}
                       className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-medium text-gray-700 mb-1">O que fazes / valor que trazes</label>
+                  <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.valueProposition')}</label>
                   <textarea value={hlValor} onChange={e => setHlValor(e.target.value)}
-                    placeholder="Ex: Ajudo profissionais a reposicionar a sua carreira..."
+                    placeholder={lang === 'pt' ? 'Ex: Ajudo profissionais a reposicionar a sua carreira...' : 'E.g.: I help professionals reposition their career...'}
                     rows={2}
                     className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] resize-none" />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-medium text-gray-700 mb-1">Palavras-chave (opcional)</label>
+                  <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.keywords')}</label>
                   <input type="text" value={hlKeywords} onChange={e => setHlKeywords(e.target.value)}
-                    placeholder="Ex: coaching, liderança, recrutamento"
+                    placeholder={lang === 'pt' ? 'Ex: liderança, transformação, RH' : 'E.g.: leadership, transformation, HR'}
                     className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   <div>
-                    <label className="block text-[10px] font-medium text-gray-700 mb-1">Tom</label>
-                    <div className="grid grid-cols-2 gap-1">
-                      {(['profissional', 'criativo', 'direto', 'inspirador'] as const).map(t => (
-                        <button key={t} onClick={() => setHlTone(t)}
-                          className={`px-2 py-1 text-[10px] rounded border transition-all ${
-                            hlTone === t
-                              ? 'border-[#BFA14A] bg-[#BFA14A]/10 text-[#8F7A3A] font-medium'
-                              : 'border-gray-200 text-gray-500 hover:border-[#BFA14A]/30'
-                          }`}>
-                          {t === 'profissional' ? '💼 Prof.' : t === 'criativo' ? '✨ Criativo' : t === 'direto' ? '🎯 Direto' : '🚀 Inspir.'}
-                        </button>
-                      ))}
-                    </div>
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.tone')}</label>
+                    <select value={hlTone} onChange={e => setHlTone(e.target.value)}
+                      className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] bg-white">
+                      <option value="profissional">{t('bot.toneProfessional')}</option>
+                      <option value="criativo">{lang === 'pt' ? 'Criativo' : 'Creative'}</option>
+                      <option value="direto">{lang === 'pt' ? 'Direto' : 'Direct'}</option>
+                      <option value="inspirador">{t('bot.toneInspiring')}</option>
+                    </select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-medium text-gray-700 mb-1">Idioma & Quantidade</label>
-                    <div className="grid grid-cols-2 gap-1">
-                      <button onClick={() => setHlLang(hlLang === 'pt' ? 'en' : 'pt')}
-                        className="px-2 py-1 text-[10px] rounded border border-gray-200 text-gray-600 hover:border-[#BFA14A]/30">
-                        {hlLang === 'pt' ? '🇵🇹 PT' : '🇬🇧 EN'}
-                      </button>
-                      <select value={hlNum} onChange={e => setHlNum(e.target.value)}
-                        className="px-2 py-1 text-[10px] rounded border border-gray-200 text-gray-600 bg-white">
-                        <option value="3">3</option>
-                        <option value="5">5</option>
-                        <option value="7">7</option>
-                      </select>
-                    </div>
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.headlineLanguage')}</label>
+                    <select value={hlLang} onChange={e => setHlLang(e.target.value)}
+                      className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] bg-white">
+                      <option value="pt">PT</option>
+                      <option value="en">EN</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.headlineCount')}</label>
+                    <select value={hlNum} onChange={e => setHlNum(e.target.value)}
+                      className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] bg-white">
+                      <option value="3">3</option>
+                      <option value="5">5</option>
+                      <option value="8">8</option>
+                      <option value="10">10</option>
+                    </select>
                   </div>
                 </div>
 
@@ -702,14 +735,14 @@ Gera APENAS o post.`;
                   disabled={(!hlCargo.trim() && !hlArea.trim() && !hlValor.trim()) || loading}
                   className="w-full py-2 rounded-lg text-white text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ background: (hlCargo.trim() || hlArea.trim() || hlValor.trim()) ? 'linear-gradient(135deg, #0A66C2 0%, #004182 100%)' : '#ccc' }}>
-                  {loading ? <span className="flex items-center justify-center gap-2"><LoadingSpinner /> A gerar...</span> : '✦ Gerar Headlines'}
+                  {loading ? <span className="flex items-center justify-center gap-2"><LoadingSpinner /> {t('bot.generating')}</span> : `✦ ${t('bot.generateHeadlines')}`}
                 </button>
 
                 {/* Results */}
                 {hlResults.length > 0 && (
                   <div className="mt-2 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{hlResults.length} headlines geradas</span>
+                      <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{hlResults.length} {t('bot.headlinesGenerated')}</span>
                     </div>
                     {hlResults.map((hl, i) => {
                       const charCount = hl.length;
@@ -728,7 +761,7 @@ Gera APENAS o post.`;
                                   ? 'border-green-300 text-green-600 bg-green-50'
                                   : 'border-gray-200 text-gray-500 hover:border-[#0A66C2]/30 hover:text-[#0A66C2]'
                               }`}>
-                              {hlCopied === i ? '✓ Copiado!' : 'Copiar'}
+                              {hlCopied === i ? `✓ ${t('bot.copied')}` : t('bot.copy')}
                             </button>
                           </div>
                         </div>
@@ -752,16 +785,16 @@ Gera APENAS o post.`;
                         <circle cx="12" cy="9" r="1.5" />
                       </svg>
                     </div>
-                    <h4 className="font-semibold text-gray-800 text-sm mb-1">Olá, {profile?.first_name || 'Utilizador'}!</h4>
+                    <h4 className="font-semibold text-gray-800 text-sm mb-1">{t('bot.greeting')} {profile?.first_name || t('bot.greetingUser')}!</h4>
                     <p className="text-xs text-gray-500 mb-4">
-                      Sou o teu assistente de carreira. Posso ajudar-te com:
+                      {t('bot.subtitle')}
                     </p>
                     <div className="grid grid-cols-2 gap-2 w-full">
                       {[
-                        { icon: '🎯', label: 'Estratégia de carreira', msg: 'Quero definir a minha estratégia de carreira' },
-                        { icon: '📝', label: 'Preparar entrevista', msg: 'Ajuda-me a preparar para uma entrevista' },
-                        { icon: '💰', label: 'Negociar salário', msg: 'Como negociar o meu salário?' },
-                        { icon: '✉️', label: 'Templates', msg: '__TEMPLATES__' },
+                        { icon: '🎯', label: t('bot.strategy'), msg: t('bot.strategyMsg') },
+                        { icon: '📝', label: t('bot.interview'), msg: t('bot.interviewMsg') },
+                        { icon: '💰', label: t('bot.salary'), msg: t('bot.salaryMsg') },
+                        { icon: '✉️', label: t('bot.templates'), msg: '__TEMPLATES__' },
                       ].map((item) => (
                         <button
                           key={item.label}
@@ -795,10 +828,10 @@ Gera APENAS o post.`;
                             {msg.type === 'cover_letter' ? '✉️' : msg.type === 'networking_email' ? '🤝' : '📢'}
                           </span>
                           <span className="text-xs font-medium opacity-70">
-                            {msg.type === 'cover_letter' ? 'Carta de Apresentação' : msg.type === 'networking_email' ? 'E-mail de Networking' : 'Post LinkedIn'}
+                            {msg.type === 'cover_letter' ? t('bot.coverLetterLabel') : msg.type === 'networking_email' ? t('bot.networkingEmailLabel') : t('bot.linkedinPostLabel')}
                           </span>
                           <button onClick={() => copyToClipboard(msg.content)}
-                            className="ml-auto p-1 rounded hover:bg-black/10 transition-colors" title="Copiar">
+                            className="ml-auto p-1 rounded hover:bg-black/10 transition-colors" title={t('bot.copy')}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
@@ -809,7 +842,7 @@ Gera APENAS o post.`;
                       <div className="whitespace-pre-wrap">{msg.content}</div>
                       {msg.role === 'assistant' && !msg.type && (
                         <button onClick={() => copyToClipboard(msg.content)}
-                          className="mt-1.5 p-1 rounded hover:bg-black/10 transition-colors opacity-40 hover:opacity-70" title="Copiar">
+                          className="mt-1.5 p-1 rounded hover:bg-black/10 transition-colors opacity-40 hover:opacity-70" title={t('bot.copy')}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
@@ -844,7 +877,7 @@ Gera APENAS o post.`;
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Escreve a tua pergunta..."
+                    placeholder={t('bot.inputPlaceholder')}
                     disabled={loading}
                     className="flex-1 px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] disabled:opacity-50"
                   />
