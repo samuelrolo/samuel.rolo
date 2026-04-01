@@ -30,16 +30,13 @@ type SavedJob = {
   source: string | null;
   status: JobStatus;
   notes: string | null;
-  excitement: number | null;
+  priority: number | null;
   follow_up_date: string | null;
-  date_applied: string | null;
-  deadline: string | null;
-  job_posted_at: string | null;
-  saved_at: string;
+  created_at: string;
   updated_at: string;
 };
 
-type SortField = 'saved_at' | 'title' | 'company' | 'status' | 'excitement' | 'follow_up_date' | 'date_applied';
+type SortField = 'created_at' | 'title' | 'company' | 'status' | 'priority' | 'follow_up_date';
 type SortDir = 'asc' | 'desc';
 
 // ─── Status Config ──────────────────────────────────────────────────────────
@@ -71,7 +68,7 @@ export default function SavedJobsTracker({ lang }: Props) {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<JobStatus | 'all'>('all');
-  const [sortField, setSortField] = useState<SortField>('saved_at');
+  const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<SavedJob>>({});
@@ -80,6 +77,7 @@ export default function SavedJobsTracker({ lang }: Props) {
   const [saving, setSaving] = useState(false);
   const [expandedNotes, setExpandedNotes] = useState<string | null>(null);
   const [showArchived, setShowArchived] = useState(false);
+  const [showExtensionBanner, setShowExtensionBanner] = useState(true);
 
   // ─── Fetch jobs ─────────────────────────────────────────────────────────
   const fetchJobs = useCallback(async () => {
@@ -90,7 +88,7 @@ export default function SavedJobsTracker({ lang }: Props) {
         .from('saved_jobs')
         .select('*')
         .eq('user_id', user.id)
-        .order('saved_at', { ascending: false });
+        .order('created_at', { ascending: false });
       if (!error && data) setJobs(data as SavedJob[]);
     } catch (e) {
       console.error('Error fetching saved jobs:', e);
@@ -131,9 +129,9 @@ export default function SavedJobsTracker({ lang }: Props) {
       let vb: any = b[sortField];
       if (va == null) va = '';
       if (vb == null) vb = '';
-      if (sortField === 'excitement') {
-        va = a.excitement || 0;
-        vb = b.excitement || 0;
+      if (sortField === 'priority') {
+        va = a.priority || 0;
+        vb = b.priority || 0;
       }
       if (va < vb) return sortDir === 'asc' ? -1 : 1;
       if (va > vb) return sortDir === 'asc' ? 1 : -1;
@@ -195,11 +193,11 @@ export default function SavedJobsTracker({ lang }: Props) {
 
   // ─── Export CSV ─────────────────────────────────────────────────────────
   const exportCSV = () => {
-    const headers = ['Title', 'Company', 'Location', 'Salary', 'Type', 'Status', 'Source', 'URL', 'Notes', 'Excitement', 'Follow-up Date', 'Date Applied', 'Saved At'];
+    const headers = ['Title', 'Company', 'Location', 'Salary', 'Type', 'Status', 'Source', 'URL', 'Notes', 'Priority', 'Follow-up Date', 'Saved At'];
     const rows = filteredJobs.map(j => [
       j.title, j.company || '', j.location || '', j.salary || '', j.employment_type || '',
-      j.status, j.source || '', j.url, j.notes || '', j.excitement || '',
-      j.follow_up_date || '', j.date_applied || '', j.saved_at,
+      j.status, j.source || '', j.url, j.notes || '', j.priority || '',
+      j.follow_up_date || '', j.created_at,
     ]);
     const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))].join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -220,7 +218,7 @@ export default function SavedJobsTracker({ lang }: Props) {
   // ─── Inline edit ────────────────────────────────────────────────────────
   const startEdit = (job: SavedJob) => {
     setEditingId(job.id);
-    setEditData({ title: job.title, company: job.company, location: job.location, salary: job.salary, notes: job.notes, follow_up_date: job.follow_up_date, date_applied: job.date_applied, deadline: job.deadline });
+    setEditData({ title: job.title, company: job.company, location: job.location, salary: job.salary, notes: job.notes, follow_up_date: job.follow_up_date });
   };
 
   const saveEdit = async () => {
@@ -232,11 +230,11 @@ export default function SavedJobsTracker({ lang }: Props) {
 
   const cancelEdit = () => { setEditingId(null); setEditData({}); };
 
-  // ─── Excitement stars ───────────────────────────────────────────────────
-  const ExcitementStars = ({ value, jobId }: { value: number | null; jobId: string }) => (
+  // ─── Priority stars ───────────────────────────────────────────────────
+  const PriorityStars = ({ value, jobId }: { value: number | null; jobId: string }) => (
     <div className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map(i => (
-        <button key={i} onClick={() => updateJob(jobId, { excitement: value === i ? null : i })}
+        <button key={i} onClick={() => updateJob(jobId, { priority: value === i ? null : i })}
           className="p-0 border-0 bg-transparent cursor-pointer">
           <Star className={`w-3.5 h-3.5 transition-colors ${i <= (value || 0) ? 'fill-[#BF9A33] text-[#BF9A33]' : 'text-[#ddd]'}`} />
         </button>
@@ -251,6 +249,47 @@ export default function SavedJobsTracker({ lang }: Props) {
 
   return (
     <section className="mb-8">
+      {/* ── Extension Download Banner ── */}
+      {showExtensionBanner && (
+        <div className="mb-6 p-4 border border-[#BF9A33]/30 rounded-xl bg-gradient-to-r from-[#1a1a1a] to-[#2a2a2a] shadow-lg relative">
+          <button onClick={() => setShowExtensionBanner(false)} className="absolute top-3 right-3 text-[#999] hover:text-white transition-colors"><X className="w-4 h-4" /></button>
+          <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 bg-[#BF9A33] rounded-lg flex items-center justify-center">
+                  <span className="text-[#1a1a1a] font-bold text-sm">S</span>
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">{tt('Extensão Chrome — Job Saver', 'Chrome Extension — Job Saver')}</h3>
+                  <p className="text-[10px] text-[#BF9A33]">{tt('Guarda vagas com 1 clique', 'Save jobs with 1 click')}</p>
+                </div>
+              </div>
+              <p className="text-[11px] text-gray-400 mb-3 max-w-md">
+                {tt(
+                  'Instala a extensão Share2Inspire no Chrome para guardar vagas automaticamente enquanto navegas no LinkedIn, Indeed ou Glassdoor. Os dados aparecem aqui no teu dashboard.',
+                  'Install the Share2Inspire extension on Chrome to automatically save jobs while browsing LinkedIn, Indeed or Glassdoor. Data appears here in your dashboard.'
+                )}
+              </p>
+              <div className="flex flex-wrap items-center gap-2">
+                <a href="/assets/downloads/extension/share2inspire-job-saver.zip" download
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-[11px] font-semibold bg-[#BF9A33] text-[#1a1a1a] rounded-lg hover:bg-[#d4ad3a] transition-all no-underline">
+                  <Download className="w-3.5 h-3.5" /> {tt('Descarregar Extensão (.zip)', 'Download Extension (.zip)')}
+                </a>
+                <a href="/assets/downloads/extension/tutorial-extensao.mp4" target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-[11px] font-medium text-[#BF9A33] border border-[#BF9A33]/50 rounded-lg hover:bg-[#BF9A33]/10 transition-all no-underline">
+                  <Chrome className="w-3.5 h-3.5" /> {tt('Ver Tutorial de Instalação', 'Watch Installation Tutorial')}
+                </a>
+              </div>
+            </div>
+            <div className="lg:w-64 shrink-0">
+              <video controls className="w-full rounded-lg border border-[#333] shadow-md" preload="metadata">
+                <source src="/assets/downloads/extension/tutorial-extensao.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <div>
@@ -405,10 +444,10 @@ export default function SavedJobsTracker({ lang }: Props) {
             <button onClick={() => toggleSort('status')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
               Status <ArrowUpDown className="w-2.5 h-2.5" />
             </button>
-            <button onClick={() => toggleSort('saved_at')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
+            <button onClick={() => toggleSort('created_at')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
               {tt('Data', 'Date')} <ArrowUpDown className="w-2.5 h-2.5" />
             </button>
-            <button onClick={() => toggleSort('excitement')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
+            <button onClick={() => toggleSort('priority')} className="flex items-center gap-1 text-left hover:text-[#1a1a1a] transition-colors">
               <Star className="w-2.5 h-2.5" /> <ArrowUpDown className="w-2.5 h-2.5" />
             </button>
             <span>{tt('Follow-up', 'Follow-up')}</span>
@@ -464,16 +503,11 @@ export default function SavedJobsTracker({ lang }: Props) {
 
                   {/* Date */}
                   <div className="text-[10px] text-[#999]">
-                    <div>{new Date(job.saved_at).toLocaleDateString(lang === 'pt' ? 'pt-PT' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
-                    {job.date_applied && (
-                      <div className="text-[9px] text-amber-600 mt-0.5">
-                        {tt('Cand.', 'Appl.')} {new Date(job.date_applied).toLocaleDateString(lang === 'pt' ? 'pt-PT' : 'en-GB', { day: '2-digit', month: 'short' })}
-                      </div>
-                    )}
+                    <div>{new Date(job.created_at).toLocaleDateString(lang === 'pt' ? 'pt-PT' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
                   </div>
 
-                  {/* Excitement */}
-                  <ExcitementStars value={job.excitement} jobId={job.id} />
+                  {/* Priority */}
+                  <PriorityStars value={job.priority} jobId={job.id} />
 
                   {/* Follow-up */}
                   <div>
@@ -523,8 +557,8 @@ export default function SavedJobsTracker({ lang }: Props) {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <ExcitementStars value={job.excitement} jobId={job.id} />
-                      <span className="text-[10px] text-[#999]">{new Date(job.saved_at).toLocaleDateString(lang === 'pt' ? 'pt-PT' : 'en-GB', { day: '2-digit', month: 'short' })}</span>
+                      <PriorityStars value={job.priority} jobId={job.id} />
+                      <span className="text-[10px] text-[#999]">{new Date(job.created_at).toLocaleDateString(lang === 'pt' ? 'pt-PT' : 'en-GB', { day: '2-digit', month: 'short' })}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <button onClick={() => setExpandedNotes(isNotesExpanded ? null : job.id)} className="p-1 text-[#999] hover:text-[#BF9A33] rounded"><StickyNote className="w-3.5 h-3.5" /></button>
@@ -549,21 +583,9 @@ export default function SavedJobsTracker({ lang }: Props) {
                         className="w-full text-xs text-[#333] bg-white border border-[#e5e5e5] rounded-lg px-3 py-2 focus:outline-none focus:border-[#BF9A33] resize-none" />
                       <div className="flex gap-2 mt-2">
                         <div className="flex-1">
-                          <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Data candidatura', 'Date applied')}</label>
-                          <input type="date" value={job.date_applied || ''}
-                            onChange={e => updateJob(job.id, { date_applied: e.target.value || null })}
-                            className="w-full text-[10px] border border-[#e5e5e5] rounded px-2 py-1 focus:outline-none focus:border-[#BF9A33]" />
-                        </div>
-                        <div className="flex-1">
                           <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Follow-up', 'Follow-up')}</label>
                           <input type="date" value={job.follow_up_date || ''}
                             onChange={e => updateJob(job.id, { follow_up_date: e.target.value || null })}
-                            className="w-full text-[10px] border border-[#e5e5e5] rounded px-2 py-1 focus:outline-none focus:border-[#BF9A33]" />
-                        </div>
-                        <div className="flex-1">
-                          <label className="text-[9px] font-semibold text-[#999] uppercase mb-0.5 block">{tt('Deadline', 'Deadline')}</label>
-                          <input type="date" value={job.deadline || ''}
-                            onChange={e => updateJob(job.id, { deadline: e.target.value || null })}
                             className="w-full text-[10px] border border-[#e5e5e5] rounded px-2 py-1 focus:outline-none focus:border-[#BF9A33]" />
                         </div>
                       </div>
