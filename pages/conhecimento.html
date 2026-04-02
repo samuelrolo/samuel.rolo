@@ -149,6 +149,23 @@
         .fv-links a:hover { color: #1a1a2e; }
         @media (max-width: 768px) { .fv-grid { grid-template-columns: 1fr; } }
 
+        /* ── Netflix Video Grid ── */
+        .video-grid-netflix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-top: 2rem; }
+        .video-card-netflix { position: relative; border-radius: 8px; overflow: hidden; background: #000; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; text-decoration: none; display: block; }
+        .video-card-netflix:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 32px rgba(0,0,0,0.15); }
+        .video-card-netflix .thumb-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; overflow: hidden; }
+        .video-card-netflix .thumb-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s; }
+        .video-card-netflix .play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 48px; height: 48px; background: rgba(201,169,97,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+        .video-card-netflix:hover .play-icon { opacity: 1; }
+        .video-card-netflix .play-icon::after { content: ''; display: block; width: 0; height: 0; border-style: solid; border-width: 8px 0 8px 14px; border-color: transparent transparent transparent #fff; margin-left: 3px; }
+        .video-card-netflix .card-body { padding: 0.8rem 1rem; background: #1a1a2e; }
+        .video-card-netflix .card-body h4 { font-size: 0.78rem; font-weight: 500; color: #fff; line-height: 1.4; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .video-card-netflix .card-body .card-links { display: flex; gap: 1rem; margin-top: 0.5rem; }
+        .video-card-netflix .card-body .card-links a { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; color: #C9A961; text-decoration: none; transition: color 0.2s; }
+        .video-card-netflix .card-body .card-links a:hover { color: #fff; }
+        @media (max-width: 768px) { .video-grid-netflix { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; } .video-card-netflix .card-body h4 { font-size: 0.72rem; } }
+        @media (max-width: 480px) { .video-grid-netflix { grid-template-columns: 1fr; } }
+
         /* ── Podcast ── */
         .podcast-embed { margin-top: 1.5rem; border-radius: 12px; overflow: hidden; }
 
@@ -634,71 +651,8 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         <h2 class="section-title">Em <strong>destaque</strong></h2>
         <div class="divider"></div>
 
-        <div class="featured-video-section">
-            <p class="fv-label"><i class="fas fa-fire"></i> Novo Vídeo</p>
-            <div class="fv-grid">
-                <div class="video-embed-wrapper">
-                    <iframe src="https://www.youtube.com/embed/LhLmgE1noC8?rel=0&modestbranding=1" title="How to Beat the ATS Filter: The Ultimate Guide" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
-                </div>
-                <div class="fv-info">
-                    <h3>Como Vencer o Filtro ATS: Guia Definitivo</h3>
-                    <p>75% dos currículos são rejeitados automaticamente por software. Descobre o processo passo a passo para otimizar o teu CV, LinkedIn e carta de apresentação para passar nos filtros digitais e conseguir mais entrevistas.</p>
-                    <div class="fv-links">
-                        <a href="../videos/como-vencer-filtro-ats.html">Ver guia completo &rarr;</a>
-                        <a href="https://www.youtube.com/watch?v=LhLmgE1noC8" target="_blank">Ver no YouTube &rarr;</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="featured-video-section" style="margin-top:1.5rem;">
-            <div class="fv-grid">
-                <div class="video-embed-wrapper">
-                    <iframe src="https://www.youtube.com/embed/6coJJF79Cy0?rel=0&modestbranding=1" title="Como Criar um CV Compatível com ATS em 2026" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
-                </div>
-                <div class="fv-info">
-                    <h3>Como Criar um CV Compatível com ATS em 2026</h3>
-                    <p>Candidatas-te a empregos e nunca tens resposta? Aprende a criar um currículo que passa nos filtros automáticos e chega às mãos certas.</p>
-                    <div class="fv-links">
-                        <a href="../videos/como-criar-cv-ats-friendly.html">Como criar CV ATS friendly &rarr;</a>
-                        <a href="https://www.youtube.com/watch?v=6coJJF79Cy0" target="_blank">Ver no YouTube &rarr;</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="featured-video-section" style="margin-top:1.5rem;border:2px solid #C9A961;">
-            <p class="fv-label" style="color:#C9A961;"><i class="fas fa-fire"></i> Novo Vídeo</p>
-            <div class="fv-grid">
-                <div class="video-embed-wrapper">
-                    <iframe src="https://www.youtube.com/embed/yU_tJV1Ap94?rel=0&modestbranding=1" title="O Segredo para Maximizar o ROI Pós-Big4: 5 Anos Podem Mudar a Tua Vida?" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
-                </div>
-                <div class="fv-info">
-                    <h3>O Segredo para Maximizar o ROI Pós-Big4: 5 Anos Podem Mudar a Tua Vida?</h3>
-                    <p>Já te perguntaste se o sacrifício de 5 anos nas Big4 realmente vale a pena? Analisamos o ROI real: progressão salarial, horas intermináveis, rede de contactos e custo de oportunidade. Quando sair e como maximizar o teu valor.</p>
-                    <div class="fv-links">
-                        <a href="../videos/big4-insider-roi-pos-big4.html">Ver guia completo &rarr;</a>
-                        <a href="https://www.youtube.com/watch?v=yU_tJV1Ap94" target="_blank" rel="noopener">Ver no YouTube &rarr;</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="featured-video-section" style="margin-top:1.5rem;">
-            <p class="fv-label"><i class="fas fa-fire"></i> Novo Vídeo</p>
-            <div class="fv-grid">
-                <div class="video-embed-wrapper">
-                    <iframe src="https://www.youtube.com/embed/teIBWJiSEFU?rel=0&modestbranding=1" title="How to Land a Big 4 Job (Deloitte, PwC, EY, KPMG): The Ultimate Guide" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
-                </div>
-                <div class="fv-info">
-                    <h3>Como Entrar nas Big 4 (Deloitte, PwC, EY, KPMG): Guia Definitivo</h3>
-                    <p>A taxa de aceitação nas Big 4 é apenas de 2–6%. Vê o playbook completo de 5 fases — desde o CV ATS até à entrevista com partner — para conseguires emprego na Deloitte, PwC, EY ou KPMG.</p>
-                    <div class="fv-links">
-                        <a href="/en/videos/big4-recruitment-guide.html">Ver guia completo (EN) &rarr;</a>
-                        <a href="https://www.youtube.com/watch?v=teIBWJiSEFU" target="_blank" rel="noopener">Ver no YouTube &rarr;</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="featured-video-section" style="margin-top:1.5rem;border:2px solid #C9A961;">
+        <!-- Featured: Most Recent Video -->
+        <div class="featured-video-section" style="border:2px solid #C9A961;">
             <p class="fv-label" style="color:#C9A961;"><i class="fas fa-fire"></i> Mais Recente</p>
             <div class="fv-grid">
                 <div class="video-embed-wrapper">
@@ -715,17 +669,85 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             </div>
         </div>
 
-        <div class="featured-video-section" style="margin-top:1.5rem;">
-            <div class="fv-grid">
-                <div class="video-embed-wrapper">
-                    <iframe src="https://www.youtube.com/embed/T1AKsHV_Vf0?rel=0&modestbranding=1" title="Porque é que os Melhores Managers Falham na Promoção?" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+        <!-- Netflix-style grid: Remaining Videos -->
+        <div class="video-grid-netflix">
+            <!-- Card 1 -->
+            <div class="video-card-netflix">
+                <a href="https://www.youtube.com/watch?v=T1AKsHV_Vf0" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;">
+                    <div class="thumb-wrapper">
+                        <img src="https://img.youtube.com/vi/T1AKsHV_Vf0/hqdefault.jpg" alt="Managers Falham na Promoção" loading="lazy">
+                        <div class="play-icon"></div>
+                    </div>
+                </a>
+                <div class="card-body">
+                    <h4>Porque é que os Melhores Managers Falham na Promoção?</h4>
+                    <div class="card-links">
+                        <a href="/videos/big4-manager-senior-manager-promocao">Ver guia &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=T1AKsHV_Vf0" target="_blank" rel="noopener">YouTube &rarr;</a>
+                    </div>
                 </div>
-                <div class="fv-info">
-                    <h3>Porque é que os Melhores Managers Falham na Promoção?</h3>
-                    <p>As competências que te levaram a Manager não são as mesmas que te farão ter sucesso como Sénior Manager. Descobre o que muda realmente nesta transição crítica e como navegar a complexidade política e estratégica do próximo nível.</p>
-                    <div class="fv-links">
-                        <a href="/videos/big4-manager-senior-manager-promocao">Ver guia completo &rarr;</a>
-                        <a href="https://www.youtube.com/watch?v=T1AKsHV_Vf0" target="_blank" rel="noopener">Ver no YouTube &rarr;</a>
+            </div>
+            <!-- Card 2 -->
+            <div class="video-card-netflix">
+                <a href="https://www.youtube.com/watch?v=teIBWJiSEFU" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;">
+                    <div class="thumb-wrapper">
+                        <img src="https://img.youtube.com/vi/teIBWJiSEFU/hqdefault.jpg" alt="Como Entrar nas Big 4" loading="lazy">
+                        <div class="play-icon"></div>
+                    </div>
+                </a>
+                <div class="card-body">
+                    <h4>Como Entrar nas Big 4: Guia Definitivo</h4>
+                    <div class="card-links">
+                        <a href="/en/videos/big4-recruitment-guide.html">Ver guia &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=teIBWJiSEFU" target="_blank" rel="noopener">YouTube &rarr;</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 3 -->
+            <div class="video-card-netflix">
+                <a href="https://www.youtube.com/watch?v=yU_tJV1Ap94" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;">
+                    <div class="thumb-wrapper">
+                        <img src="https://img.youtube.com/vi/yU_tJV1Ap94/hqdefault.jpg" alt="ROI Pós-Big4" loading="lazy">
+                        <div class="play-icon"></div>
+                    </div>
+                </a>
+                <div class="card-body">
+                    <h4>O Segredo para Maximizar o ROI Pós-Big4</h4>
+                    <div class="card-links">
+                        <a href="../videos/big4-insider-roi-pos-big4.html">Ver guia &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=yU_tJV1Ap94" target="_blank" rel="noopener">YouTube &rarr;</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 4 -->
+            <div class="video-card-netflix">
+                <a href="https://www.youtube.com/watch?v=6coJJF79Cy0" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;">
+                    <div class="thumb-wrapper">
+                        <img src="https://img.youtube.com/vi/6coJJF79Cy0/hqdefault.jpg" alt="CV Compatível com ATS" loading="lazy">
+                        <div class="play-icon"></div>
+                    </div>
+                </a>
+                <div class="card-body">
+                    <h4>Como Criar um CV Compatível com ATS em 2026</h4>
+                    <div class="card-links">
+                        <a href="../videos/como-criar-cv-ats-friendly.html">Ver guia &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=6coJJF79Cy0" target="_blank" rel="noopener">YouTube &rarr;</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 5 -->
+            <div class="video-card-netflix">
+                <a href="https://www.youtube.com/watch?v=LhLmgE1noC8" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;">
+                    <div class="thumb-wrapper">
+                        <img src="https://img.youtube.com/vi/LhLmgE1noC8/hqdefault.jpg" alt="Vencer o Filtro ATS" loading="lazy">
+                        <div class="play-icon"></div>
+                    </div>
+                </a>
+                <div class="card-body">
+                    <h4>Como Vencer o Filtro ATS: Guia Definitivo</h4>
+                    <div class="card-links">
+                        <a href="../videos/como-vencer-filtro-ats.html">Ver guia &rarr;</a>
+                        <a href="https://www.youtube.com/watch?v=LhLmgE1noC8" target="_blank" rel="noopener">YouTube &rarr;</a>
                     </div>
                 </div>
             </div>
