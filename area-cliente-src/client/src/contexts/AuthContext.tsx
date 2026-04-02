@@ -10,7 +10,6 @@ type AuthContextType = {
   loading: boolean;
   signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signInWithGoogle: () => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: string | null }>;
   updateProfile: (data: Partial<UserProfile>) => Promise<{ error: string | null }>;
@@ -34,7 +33,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .eq('id', userId)
       .single();
     setProfile(data);
-    return data;
   }
 
   async function fetchSubscription(userId: string) {
@@ -65,35 +63,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  /** Ensure a user_profiles row exists for OAuth users (Google, etc.) */
-  async function ensureProfileForOAuth(u: User) {
-    const existing = await fetchProfile(u.id);
-    if (existing) return; // profile already exists
-
-    // Extract name and avatar from Google metadata
-    const meta = u.user_metadata || {};
-    const fullName = (meta.full_name || meta.name || '').trim();
-    const nameParts = fullName.split(' ');
-    const firstName = meta.first_name || nameParts[0] || '';
-    const lastName = meta.last_name || nameParts.slice(1).join(' ') || '';
-    const avatarUrl = meta.avatar_url || meta.picture || '';
-    const email = u.email || meta.email || '';
-
-    await supabase.from('user_profiles').upsert({
-      id: u.id,
-      user_id: u.id,
-      first_name: firstName,
-      last_name: lastName,
-      email: email,
-      avatar_url: avatarUrl,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'id' });
-
-    // Re-fetch to update state
-    await fetchProfile(u.id);
-  }
-
   async function refreshProfile() {
     if (user) {
       await fetchProfile(user.id);
@@ -106,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        ensureProfileForOAuth(session.user);
+        fetchProfile(session.user.id);
         fetchSubscription(session.user.id);
       }
       setLoading(false);
@@ -116,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        ensureProfileForOAuth(session.user);
+        fetchProfile(session.user.id);
         fetchSubscription(session.user.id);
       } else {
         setProfile(null);
@@ -140,16 +109,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signIn(email: string, password: string) {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error?.message ?? null };
-  }
-
-  async function signInWithGoogle() {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/area-cliente/auth`,
-      },
-    });
     return { error: error?.message ?? null };
   }
 
@@ -190,7 +149,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider value={{
       user, session, profile, subscription, loading,
-      signUp, signIn, signInWithGoogle, signOut, resetPassword, updateProfile, refreshProfile,
+      signUp, signIn, signOut, resetPassword, updateProfile, refreshProfile,
       hasActiveSubscription,
     }}>
       {children}
