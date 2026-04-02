@@ -14,7 +14,7 @@ import {
   Clock, Linkedin, User, Mail, Phone, MapPin,
   ExternalLink, Edit3, Save, X, CreditCard, Shield,
   Camera, BarChart3, Sparkles, ChevronDown, ChevronUp,
-  Lock, Trash2, Eye, Briefcase, Globe,
+  Lock, Trash2, Eye, Briefcase, Globe, KeyRound, CheckCircle2, AlertCircle, Send,
 } from 'lucide-react';
 import { countries } from '@/lib/countries';
 
@@ -76,6 +76,17 @@ export default function ProfilePage() {
   // Avatar
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  // Password change
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordMsg, setPasswordMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Email confirmation
+  const [resendingConfirmation, setResendingConfirmation] = useState(false);
+  const [confirmationMsg, setConfirmationMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Analyses data for CV score
   const [cvScore, setCvScore] = useState<number | null>(null);
@@ -255,6 +266,51 @@ export default function ProfilePage() {
     await refreshProfile();
     setShowAvatarPicker(false);
   }
+
+  async function handleChangePassword() {
+    setPasswordMsg(null);
+    if (newPassword.length < 6) {
+      setPasswordMsg({ type: 'error', text: t('profile.passwordMinLength') });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordMsg({ type: 'error', text: t('profile.passwordMismatch') });
+      return;
+    }
+    setPasswordSaving(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      setPasswordMsg({ type: 'success', text: t('profile.passwordChanged') });
+      setNewPassword('');
+      setConfirmPassword('');
+      setShowPasswordForm(false);
+      setTimeout(() => setPasswordMsg(null), 4000);
+    } catch (err: any) {
+      setPasswordMsg({ type: 'error', text: err?.message || t('profile.passwordError') });
+    } finally {
+      setPasswordSaving(false);
+    }
+  }
+
+  async function handleResendConfirmation() {
+    if (!user?.email) return;
+    setResendingConfirmation(true);
+    setConfirmationMsg(null);
+    try {
+      const { error } = await supabase.auth.resend({ type: 'signup', email: user.email });
+      if (error) throw error;
+      setConfirmationMsg({ type: 'success', text: t('profile.confirmationSent') });
+      setTimeout(() => setConfirmationMsg(null), 4000);
+    } catch (err: any) {
+      setConfirmationMsg({ type: 'error', text: err?.message || t('profile.confirmationError') });
+    } finally {
+      setResendingConfirmation(false);
+    }
+  }
+
+  // Email confirmation status
+  const emailConfirmed = !!user?.email_confirmed_at;
 
   function formatDate(dateStr: string) {
     try {
@@ -680,8 +736,130 @@ export default function ProfilePage() {
             </section>
           </div>
 
-          {/* ═══ RIGHT COLUMN: Subscription + Member Link ═══ */}
+          {/* ═══ RIGHT COLUMN: Security + Subscription + Member Link ═══ */}
           <div className="space-y-5">
+
+            {/* ─── Account Security Widget ─── */}
+            <section className="border border-[#e5e5e5] rounded-xl p-5 bg-white shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-7 h-7 rounded-lg bg-gold/10 flex items-center justify-center">
+                  <Shield className="w-3.5 h-3.5 text-gold" />
+                </div>
+                <h2 className="text-sm font-semibold text-[#1a1a1a]">{t('profile.security')}</h2>
+              </div>
+
+              <div className="space-y-4">
+                {/* ── Email Confirmation Status ── */}
+                <div className="p-3 rounded-lg border border-[#f0f0f0] bg-[#fafaf9]">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-3.5 h-3.5 text-[#999]" />
+                      <div>
+                        <p className="text-[10px] text-[#999] uppercase tracking-wider">{t('profile.emailConfirmation')}</p>
+                        <p className="text-xs font-medium text-[#1a1a1a] mt-0.5">{user?.email}</p>
+                      </div>
+                    </div>
+                    {emailConfirmed ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                        <CheckCircle2 className="w-2.5 h-2.5" /> {t('profile.emailConfirmed')}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-medium bg-amber-50 text-amber-700 border border-amber-100">
+                        <AlertCircle className="w-2.5 h-2.5" /> {t('profile.emailNotConfirmed')}
+                      </span>
+                    )}
+                  </div>
+                  {!emailConfirmed && (
+                    <div className="mt-3">
+                      <button
+                        onClick={handleResendConfirmation}
+                        disabled={resendingConfirmation}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-medium text-gold border border-gold/20 rounded-lg hover:bg-gold/5 transition-all disabled:opacity-50"
+                      >
+                        {resendingConfirmation ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                        {t('profile.resendConfirmation')}
+                      </button>
+                    </div>
+                  )}
+                  {confirmationMsg && (
+                    <div className={`flex items-center gap-2 mt-2 px-3 py-1.5 rounded-lg text-[10px] animate-in fade-in duration-300 ${
+                      confirmationMsg.type === 'success' ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'bg-red-50 border border-red-200 text-red-700'
+                    }`}>
+                      {confirmationMsg.type === 'success' ? <Check className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
+                      {confirmationMsg.text}
+                    </div>
+                  )}
+                </div>
+
+                {/* ── Change Password ── */}
+                <div className="p-3 rounded-lg border border-[#f0f0f0] bg-[#fafaf9]">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <KeyRound className="w-3.5 h-3.5 text-[#999]" />
+                      <p className="text-xs font-medium text-[#1a1a1a]">{t('profile.changePassword')}</p>
+                    </div>
+                    {!showPasswordForm && (
+                      <button
+                        onClick={() => { setShowPasswordForm(true); setPasswordMsg(null); }}
+                        className="flex items-center gap-1 text-[10px] text-gold hover:text-gold/80 font-medium transition-colors"
+                      >
+                        <Edit3 className="w-3 h-3" /> {t('profile.edit')}
+                      </button>
+                    )}
+                  </div>
+
+                  {showPasswordForm && (
+                    <div className="mt-3 space-y-2">
+                      <div>
+                        <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">{t('profile.newPassword')}</label>
+                        <input
+                          type="password"
+                          value={newPassword}
+                          onChange={e => setNewPassword(e.target.value)}
+                          placeholder="••••••••"
+                          className="w-full px-3 py-2 border border-[#e5e5e5] rounded-lg text-sm text-[#1a1a1a] bg-white focus:border-gold/40 focus:ring-1 focus:ring-gold/20 focus:outline-none transition-all"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-[#999] uppercase tracking-wider block mb-1">{t('profile.confirmNewPassword')}</label>
+                        <input
+                          type="password"
+                          value={confirmPassword}
+                          onChange={e => setConfirmPassword(e.target.value)}
+                          placeholder="••••••••"
+                          className="w-full px-3 py-2 border border-[#e5e5e5] rounded-lg text-sm text-[#1a1a1a] bg-white focus:border-gold/40 focus:ring-1 focus:ring-gold/20 focus:outline-none transition-all"
+                        />
+                      </div>
+                      <div className="flex items-center gap-2 pt-1">
+                        <button
+                          onClick={handleChangePassword}
+                          disabled={passwordSaving}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-medium text-white bg-gold rounded-lg hover:bg-gold/90 transition-colors disabled:opacity-50"
+                        >
+                          {passwordSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                          {t('profile.save')}
+                        </button>
+                        <button
+                          onClick={() => { setShowPasswordForm(false); setNewPassword(''); setConfirmPassword(''); setPasswordMsg(null); }}
+                          className="flex items-center gap-1 text-[10px] text-[#999] hover:text-[#666] transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {passwordMsg && (
+                    <div className={`flex items-center gap-2 mt-2 px-3 py-1.5 rounded-lg text-[10px] animate-in fade-in duration-300 ${
+                      passwordMsg.type === 'success' ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'bg-red-50 border border-red-200 text-red-700'
+                    }`}>
+                      {passwordMsg.type === 'success' ? <Check className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
+                      {passwordMsg.text}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
 
             {/* ─── Subscription Enriched Widget ─── */}
             <section className="border border-[#e5e5e5] rounded-xl p-5 bg-white shadow-sm">
