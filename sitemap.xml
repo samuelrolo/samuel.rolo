@@ -706,4 +706,23 @@
         <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/blog/artigos/humanos-maquinas-6"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/humanos-maquinas-6"/>
     </url>
+    <!-- Como Conseguir Emprego em 90 Dias -->
+    <url>
+        <loc>https://www.share2inspire.pt/blog/artigos/como-conseguir-emprego-90-dias</loc>
+        <lastmod>2026-04-02</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/blog/artigos/como-conseguir-emprego-90-dias"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/how-to-get-a-job-in-90-days"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/como-conseguir-emprego-90-dias"/>
+    </url>
+    <url>
+        <loc>https://www.share2inspire.pt/en/blog/artigos/how-to-get-a-job-in-90-days</loc>
+        <lastmod>2026-04-02</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/how-to-get-a-job-in-90-days"/>
+        <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/blog/artigos/como-conseguir-emprego-90-dias"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/como-conseguir-emprego-90-dias"/>
+    </url>
 </urlset>
