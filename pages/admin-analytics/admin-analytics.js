@@ -2232,9 +2232,61 @@ async function refreshHealthCheck() {
     ];
     const runId = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 15);
     const results = [];
+
+    // Helper: deep-check frontend pages by verifying JS/CSS assets exist
+    async function deepCheckFrontend(url) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
+        try {
+            const res = await fetch(url, { mode: 'cors', signal: controller.signal });
+            clearTimeout(timeout);
+            if (!res.ok) return { ok: false, httpCode: res.status, error: `HTTP ${res.status}` };
+            const html = await res.text();
+            // Extract JS and CSS asset references from the HTML
+            const jsMatches = html.match(/src="([^"]*\.js)"/g) || [];
+            const cssMatches = html.match(/href="([^"]*\.css)"/g) || [];
+            const assetUrls = [];
+            for (const m of [...jsMatches, ...cssMatches]) {
+                const path = m.match(/(?:src|href)="([^"]+)"/)?.[1];
+                if (path && path.includes('/assets/')) {
+                    const assetUrl = path.startsWith('http') ? path : new URL(path, url).href;
+                    assetUrls.push(assetUrl);
+                }
+            }
+            // Verify each asset exists (HEAD request)
+            const brokenAssets = [];
+            for (const assetUrl of assetUrls) {
+                try {
+                    const assetRes = await fetch(assetUrl, { method: 'HEAD', mode: 'no-cors' });
+                    if (assetRes.type !== 'opaque' && !assetRes.ok) {
+                        brokenAssets.push(assetUrl.split('/').pop());
+                    }
+                } catch { brokenAssets.push(assetUrl.split('/').pop()); }
+            }
+            if (brokenAssets.length > 0) {
+                return { ok: false, httpCode: 200, error: `Assets em falta: ${brokenAssets.join(', ')}` };
+            }
+            return { ok: true, httpCode: 200, error: null };
+        } catch (err) {
+            clearTimeout(timeout);
+            return { ok: false, httpCode: null, error: err.message };
+        }
+    }
+
     for (const ep of endpoints) {
         const start = Date.now();
         try {
+            // For frontend endpoints: deep-check assets
+            if (ep.category === 'frontend') {
+                const check = await deepCheckFrontend(ep.url);
+                const elapsed = Date.now() - start;
+                let status;
+                if (!check.ok) status = 'down';
+                else if (elapsed > 2000) status = 'warning';
+                else status = 'healthy';
+                results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: elapsed, http_code: check.httpCode, status, error_message: check.error, checked_at: new Date().toISOString() });
+                continue;
+            }
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), 15000);
             let fetchOpts = { method: ep.method || 'GET', mode: 'no-cors', signal: controller.signal };
@@ -2243,7 +2295,6 @@ async function refreshHealthCheck() {
             try {
                 res = await fetch(ep.url, fetchOpts);
             } catch (corsErr) {
-                // CORS error on POST? Retry with no-cors GET to check reachability
                 if (ep.method === 'POST') {
                     res = await fetch(ep.url, { method: 'GET', mode: 'no-cors', signal: controller.signal });
                 } else { throw corsErr; }
@@ -2251,7 +2302,6 @@ async function refreshHealthCheck() {
             clearTimeout(timeout);
             const elapsed = Date.now() - start;
             const httpCode = res.type === 'opaque' ? 200 : res.status;
-            // For payment endpoints: 400/405 means the server is reachable (just rejecting test data)
             const isPaymentEndpoint = ep.category === 'payment';
             const isReachable = res.type === 'opaque' || (httpCode >= 200 && httpCode < 500);
             let status;
