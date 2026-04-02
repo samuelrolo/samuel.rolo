@@ -2077,8 +2077,8 @@ export default function Home() {
           <p className="text-xs text-slate-400 mt-3">A partir de 9,99€/mês · Cancela quando quiseres</p>
         </div>
 
-        <S2IFooter />
       </main>
+      <S2IFooter />
     </div>
   );
 }

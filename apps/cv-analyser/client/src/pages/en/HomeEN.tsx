@@ -1830,8 +1830,8 @@ export default function HomeEN() {
           <p className="text-xs text-slate-400 mt-3">From €9.99/month · Cancel anytime</p>
         </div>
 
-        <S2IFooterEN />
       </main>
+      <S2IFooterEN />
     </div>
   );
 }
