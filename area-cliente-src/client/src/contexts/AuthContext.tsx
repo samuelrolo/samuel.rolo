@@ -10,6 +10,7 @@ type AuthContextType = {
   loading: boolean;
   signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  signInWithGoogle: () => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: string | null }>;
   updateProfile: (data: Partial<UserProfile>) => Promise<{ error: string | null }>;
@@ -81,10 +82,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
 
-    const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
+        // Auto-create profile for OAuth users (Google) on first login
+        if (session.user.app_metadata?.provider === 'google' || session.user.identities?.some(i => i.provider === 'google')) {
+          const { data: existingProfile } = await supabase.from('user_profiles').select('id').eq('id', session.user.id).single();
+          if (!existingProfile) {
+            const meta = session.user.user_metadata || {};
+            const fullName = meta.full_name || meta.name || '';
+            const parts = fullName.split(' ');
+            await supabase.from('user_profiles').insert({
+              id: session.user.id,
+              first_name: parts[0] || '',
+              last_name: parts.slice(1).join(' ') || '',
+              email: session.user.email || '',
+              avatar_url: meta.avatar_url || meta.picture || '',
+            });
+          }
+        }
         fetchProfile(session.user.id);
         fetchSubscription(session.user.id);
       } else {
@@ -109,6 +126,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signIn(email: string, password: string) {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error: error?.message ?? null };
+  }
+
+  async function signInWithGoogle() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + '/area-cliente/perfil' },
+    });
     return { error: error?.message ?? null };
   }
 
@@ -149,7 +174,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider value={{
       user, session, profile, subscription, loading,
-      signUp, signIn, signOut, resetPassword, updateProfile, refreshProfile,
+      signUp, signIn, signInWithGoogle, signOut, resetPassword, updateProfile, refreshProfile,
       hasActiveSubscription,
     }}>
       {children}
