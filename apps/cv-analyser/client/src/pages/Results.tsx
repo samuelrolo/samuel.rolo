@@ -8,6 +8,7 @@ import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
 import ATSRejectionBlock from "@/components/ATSRejectionBlock";
 import ATSDeepScanBlock from "@/components/ATSDeepScanBlock";
+import LiveMatchPanel from "@/components/LiveMatchPanel";
 import QuadrantCard from "@/components/QuadrantCard";
 import DimensionBar from "@/components/DimensionBar";
 import ScoreGauge from "@/components/ScoreGauge";
@@ -552,6 +553,8 @@ export default function Results() {
     return sessionStorage.getItem('analysisLang') === 'en' ? 'stripe' : 'mbway';
   });
   const [careerPathPollingMsg, setCareerPathPollingMsg] = useState('');
+  const [cvText, setCvText] = useState('');
+  const [showLiveMatch, setShowLiveMatch] = useState(false);
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
   const loadingMessages = isEN
     ? [
@@ -593,6 +596,10 @@ export default function Results() {
       setLocation('/');
     }
     
+    // Load CV text for Live Match
+    const storedCvText = sessionStorage.getItem('cvText');
+    if (storedCvText) setCvText(storedCvText);
+
     // Check if already paid (from previous session)
     const paidStatus = sessionStorage.getItem('isPaid');
     if (paidStatus === 'true') {
@@ -1613,6 +1620,46 @@ export default function Results() {
           <ATSDeepScanBlock data={analysisData.atsDeepScan} isPaid={isPaid} isEN={isEN} onUnlock={() => openPaymentModal()} />
         )}
 
+        {/* ═══ Live Match ═══ */}
+        {cvText && (
+          <div className="mb-8">
+            {!showLiveMatch ? (
+              <button
+                onClick={() => setShowLiveMatch(true)}
+                className="w-full bg-gradient-to-r from-[#fafaf9] to-[#f5f5f3] border-2 border-dashed border-[#C9A961]/30 rounded-lg p-5 hover:border-[#C9A961]/50 hover:shadow-sm transition-all group"
+              >
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#C9A961] to-[#B8943F] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <Target className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-[#333] flex items-center gap-1.5">
+                      Live Match
+                      <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] border border-[#C9A961]/20">
+                        {isEN ? 'New' : 'Novo'}
+                      </span>
+                    </p>
+                    <p className="text-[11px] text-[#888] font-light">
+                      {isEN ? 'Paste a job description and see ATS keyword matches in real-time' : 'Cole uma vaga e veja as keywords ATS destacadas no seu CV em tempo real'}
+                    </p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-[#ccc] group-hover:text-[#C9A961] transition-colors ml-auto" />
+                </div>
+              </button>
+            ) : (
+              <div className="bg-card border border-[#e8e8e6] rounded-lg p-5">
+                <LiveMatchPanel
+                  cvText={cvText}
+                  lang={isEN ? 'en' : 'pt'}
+                  isPaid={isPaid}
+                  onRequestPayment={() => openPaymentModal()}
+                  initialJD={sessionStorage.getItem('jobDescription') || ''}
+                />
+              </div>
+            )}
+          </div>
+        )}
+
         {/* ═══ Job Match Section (only when user provided a job posting) ═══ */}
         {analysisData.jobMatch && analysisData.jobMatch.atsCompatibilityScore != null && (
           <div className="bg-card border-2 border-[#C9A961]/30 rounded-lg p-6 mb-8">
@@ -1896,6 +1943,7 @@ export default function Results() {
                 {/* Locked items */}
                 <div className="space-y-2">
                   {(isEN ? [
+                    'Live Match (real-time JD keyword matching)',
                     'ATS Deep Scan (keywords + format checklist)',
                     'Detailed analysis by quadrant',
                     'Complete ATS diagnosis',
@@ -1908,6 +1956,7 @@ export default function Results() {
                     'Compatible job opportunities',
                     'Optimised CV (rewrite suggestions)',
                   ] : [
+                    'Live Match (matching de keywords da vaga em tempo real)',
                     'ATS Deep Scan (keywords + checklist de formato)',
                     'Análise detalhada por quadrante',
                     'Diagnóstico ATS completo',

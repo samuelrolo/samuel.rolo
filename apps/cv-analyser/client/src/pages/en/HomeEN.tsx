@@ -457,6 +457,10 @@ export default function HomeEN() {
       sessionStorage.setItem('cvFile', base64Content);
       sessionStorage.setItem('cvFilename', file.name);
       sessionStorage.setItem('analysisLang', 'en');
+      // Store extracted CV text for Live Match feature
+      if (cvText && cvText.length > 0) {
+        sessionStorage.setItem('cvText', cvText.substring(0, 15000));
+      }
       sessionStorage.setItem('analysisCountry', selectedCountry);
       sessionStorage.setItem('analysisRegion', selectedRegion);
 
@@ -689,6 +693,10 @@ export default function HomeEN() {
       sessionStorage.setItem('cvFile', '');
       sessionStorage.setItem('cvFilename', 'linkedin-profile');
       sessionStorage.setItem('analysisLang', 'en');
+      // Store scraped text for Live Match (LinkedIn flow)
+      if (scrapeData?.cv_text) {
+        sessionStorage.setItem('cvText', scrapeData.cv_text.substring(0, 15000));
+      }
       sessionStorage.setItem('linkedinUrl', linkedInUrl);
       // LinkedIn analysis is always paid - keep isPaid flag
       sessionStorage.setItem('isPaid', 'true');

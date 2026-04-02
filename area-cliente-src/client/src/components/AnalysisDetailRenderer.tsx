@@ -3,7 +3,8 @@
  * Replaces raw HTML / truncated JSON with native React components
  * Supports: cv_analyser, linkedin_roaster, career_intelligence, career_path, career_energy
  */
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
+import LiveMatchPanel from './LiveMatchPanel';
 import {
   ChevronDown, ChevronUp, Target, BarChart3, AlertTriangle,
   Eye, Euro, Bot, TrendingUp, Layers, Calendar, Briefcase,
@@ -72,6 +73,18 @@ function CollapsibleSection({ title, children, defaultOpen = false }: { title: s
 
 // ─── CV Analyser Renderer ─────────────────────────────────────────────────────
 
+/** Lightweight wrapper for LiveMatch inside the member area — always full access */
+function LiveMatchPanelInline({ cvText }: { cvText: string }) {
+  return (
+    <LiveMatchPanel
+      cvText={cvText}
+      lang="pt"
+      isPaid={true}
+      isMemberArea={true}
+    />
+  );
+}
+
 function CvAnalyserDetail({ data }: { data: Record<string, any> }) {
   const score = data.overallScore ?? data.score ?? data.analysis?.score ?? 0;
   const quadrants = data.quadrants || data.analysis?.quadrants || [];
@@ -89,6 +102,7 @@ function CvAnalyserDetail({ data }: { data: Record<string, any> }) {
   const priorityMatrix = data.priorityMatrix || data.analysis?.priorityMatrix || [];
   const atsDetailed = data.detailedAtsAnalysis || data.analysis?.detailedAtsAnalysis;
   const atsDeepScan = data.atsDeepScan || data.analysis?.atsDeepScan;
+  const cvText = data.cvText || data.analysis?.cvText || data.cv_text || '';
 
   // If we have results_html and NO structured data, render HTML
   if (data.results_html && !quadrants.length && !score) {
@@ -442,6 +456,13 @@ function CvAnalyserDetail({ data }: { data: Record<string, any> }) {
               </div>
             )}
           </div>
+        </CollapsibleSection>
+      )}
+
+      {/* Live Match */}
+      {cvText && (
+        <CollapsibleSection title="Live Match — ATS Keyword Matching" defaultOpen={false}>
+          <LiveMatchPanelInline cvText={cvText} />
         </CollapsibleSection>
       )}
 

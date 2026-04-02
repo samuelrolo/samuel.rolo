@@ -500,6 +500,10 @@ export default function Home() {
       sessionStorage.setItem('cvFile', base64Content);
       sessionStorage.setItem('cvFilename', file.name);
       sessionStorage.setItem('analysisLang', 'pt');
+      // Store extracted CV text for Live Match feature
+      if (cvText && cvText.length > 0) {
+        sessionStorage.setItem('cvText', cvText.substring(0, 15000));
+      }
       sessionStorage.setItem('analysisCountry', selectedCountry);
       sessionStorage.setItem('analysisRegion', selectedRegion);
       if (jobInput.trim()) {
@@ -741,6 +745,10 @@ export default function Home() {
       sessionStorage.setItem('cvFile', '');
       sessionStorage.setItem('cvFilename', 'linkedin-profile');
       sessionStorage.setItem('analysisLang', 'pt');
+      // Store scraped text for Live Match (LinkedIn flow)
+      if (scrapeData?.cv_text) {
+        sessionStorage.setItem('cvText', scrapeData.cv_text.substring(0, 15000));
+      }
       sessionStorage.setItem('analysisCountry', selectedCountry);
       sessionStorage.setItem('analysisRegion', selectedRegion);
       sessionStorage.setItem('linkedinUrl', linkedInUrl);
