@@ -197,7 +197,7 @@ googleLabel.textContent=E?"Registar com Google":"Continuar com Google";
 function T(){
 var e,l,d=document.querySelector('a[href*="area-cliente"]');
 if(d)e=d.closest("li")||d.parentElement;
-else if(!(l=document.querySelector("#navbarNav .navbar-nav")||document.querySelector(".navbar-nav")))return;
+else if(!(l=document.querySelector("#navbarNav .navbar-nav")||document.querySelector(".navbar-nav")||document.querySelector(".nav-links")))return;
 
 var c=document.createElement("li");
 
