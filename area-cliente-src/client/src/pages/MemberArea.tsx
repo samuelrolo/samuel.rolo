@@ -80,16 +80,16 @@ const contentTypes = ['all', 'ebook', 'article', 'video', 'podcast'] as const;
 
 // ─── Blog RSS Feed ───────────────────────────────────────────────────────────
 const BLOG_ARTICLES = [
-  { title: 'AI Career Path: Como a Inteligência Artificial Está a Transformar Carreiras', url: 'https://www.share2inspire.pt/blog/artigos/ai-career-path', desc: 'A inteligência artificial está a redefinir o mercado de trabalho. Descobre como posicionar a tua carreira na era da IA.' },
+  { title: 'AI Career Path: Como a Inteligência Artificial Está a Transformar Carreiras', url: 'https://www.share2inspire.pt/blog/artigos/ai-career-path-vs-traditional-coaching', desc: 'A inteligência artificial está a redefinir o mercado de trabalho. Descobre como posicionar a tua carreira na era da IA.' },
   { title: 'Entrevista Presencial vs Remota: Guia Completo', url: 'https://www.share2inspire.pt/blog/artigos/entrevista-presencial-vs-remota', desc: 'Dicas práticas para te destacares tanto em entrevistas presenciais como remotas.' },
-  { title: 'Como Vencer o Filtro ATS: Guia Definitivo', url: 'https://www.share2inspire.pt/blog/artigos/como-vencer-filtro-ats', desc: '75% dos currículos são rejeitados automaticamente. Aprende a passar nos filtros ATS.' },
-  { title: '7 Erros Fatais no CV que Estão a Sabotar a Tua Carreira', url: 'https://www.share2inspire.pt/blog/artigos/7-erros-fatais-cv', desc: 'Os erros mais comuns que impedem o teu CV de chegar às mãos certas.' },
-  { title: 'CV vs LinkedIn: Como Alinhar os Dois para Maximizar Oportunidades', url: 'https://www.share2inspire.pt/blog/artigos/cv-vs-linkedin', desc: 'Estratégias para manter consistência entre o teu CV e perfil LinkedIn.' },
-  { title: 'LinkedIn para Recrutadores: O Que Eles Realmente Procuram', url: 'https://www.share2inspire.pt/blog/artigos/linkedin-recrutadores', desc: 'Descobre como os recrutadores usam o LinkedIn e otimiza o teu perfil.' },
-  { title: 'Posicionamento Profissional: Como Destacar-te no Mercado', url: 'https://www.share2inspire.pt/blog/artigos/posicionamento-profissional', desc: 'Técnicas de posicionamento para te diferenciares da concorrência.' },
-  { title: 'Como Negociar Salário: Guia Prático', url: 'https://www.share2inspire.pt/blog/artigos/negociar-salario', desc: 'Estratégias comprovadas para negociar o salário que mereces.' },
-  { title: 'Big 4 Recrutamento: Como Entrar nas Maiores Consultoras', url: 'https://www.share2inspire.pt/blog/artigos/big4-recrutamento', desc: 'O guia completo para entrares nas Big 4: Deloitte, PwC, EY e KPMG.' },
-  { title: 'Big 4 por Dentro: A Realidade de Trabalhar nas Maiores Consultoras', url: 'https://www.share2inspire.pt/blog/artigos/big4-por-dentro', desc: 'Salários, cultura, progressão e a verdade sobre trabalhar nas Big 4.' },
+  { title: 'Como Vencer o Filtro ATS: Guia Definitivo', url: 'https://www.share2inspire.pt/blog/artigos/guia-superar-ats-curriculo', desc: '75% dos currículos são rejeitados automaticamente. Aprende a passar nos filtros ATS.' },
+  { title: '7 Erros Fatais no CV que Estão a Sabotar a Tua Carreira', url: 'https://www.share2inspire.pt/blog/artigos/7-erros-cv-candidatos-rejeitados', desc: 'Os erros mais comuns que impedem o teu CV de chegar às mãos certas.' },
+  { title: 'CV vs LinkedIn: Como Alinhar os Dois para Maximizar Oportunidades', url: 'https://www.share2inspire.pt/blog/artigos/cv-linkedin-importancia', desc: 'Estratégias para manter consistência entre o teu CV e perfil LinkedIn.' },
+  { title: 'LinkedIn para Recrutadores: O Que Eles Realmente Procuram', url: 'https://www.share2inspire.pt/blog/artigos/melhorar-linkedin-pesquisas', desc: 'Descobre como os recrutadores usam o LinkedIn e otimiza o teu perfil.' },
+  { title: 'Posicionamento Profissional: Como Destacar-te no Mercado', url: 'https://www.share2inspire.pt/blog/artigos/posicionamento-mercado', desc: 'Técnicas de posicionamento para te diferenciares da concorrência.' },
+  { title: 'Como Negociar Salário: Guia Prático', url: 'https://www.share2inspire.pt/blog/artigos/como-negociar-salario-portugal', desc: 'Estratégias comprovadas para negociar o salário que mereces.' },
+  { title: 'Big 4 Recrutamento: Como Entrar nas Maiores Consultoras', url: 'https://www.share2inspire.pt/blog/artigos/recrutamento-big4-guia-candidatos', desc: 'O guia completo para entrares nas Big 4: Deloitte, PwC, EY e KPMG.' },
+  { title: 'Big 4 por Dentro: A Realidade de Trabalhar nas Maiores Consultoras', url: 'https://www.share2inspire.pt/blog/artigos/big4-insider-10-anos', desc: 'Salários, cultura, progressão e a verdade sobre trabalhar nas Big 4.' },
 ];
 
 // ─── Analysis Result Display ─────────────────────────────────────────────────
