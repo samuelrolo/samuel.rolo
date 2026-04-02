@@ -13,6 +13,7 @@ import { sendConversion, trackCVUpload, trackAnalysisStart, trackPaymentStart, t
 import { trackAffiliateConversion } from "@/lib/affiliate";
 import { getMemberPlanTier } from "@/lib/memberAuth";
 import { countries } from "./en/countries";
+import S2IFooter from "@/components/S2IFooter";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -1339,32 +1340,7 @@ export default function CareerIntelligenceHome() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="border-t border-foreground/10 py-8 px-6 mt-8" style={{background: '#1A1A1A'}}>
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row items-start justify-between gap-6 mb-6">
-            <div>
-              <img src="/images/logo.webp" alt="Share2Inspire" style={{height: '32px', filter: 'brightness(0) invert(1)', marginBottom: '8px'}} />
-              <p className="text-sm" style={{color: 'rgba(255,255,255,0.6)'}}>Partilhar conhecimento, Inspirar Carreiras.</p>
-            </div>
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm" style={{color: 'rgba(255,255,255,0.5)'}}>
-              <a href="/" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>Início</a>
-              <a href="/cv-analyser" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>CV Analyser</a>
-              <a href="/linkedin-roaster" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>LinkedIn Roaster</a>
-              <a href="/career-path" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>Career Path</a>
-              <a href="/career-intelligence" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>Career Intelligence</a>
-            </div>
-          </div>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-4" style={{borderTop: '1px solid rgba(255,255,255,0.08)'}}>
-            <p className="text-xs" style={{color: 'rgba(255,255,255,0.35)'}}>© 2026 Share2Inspire | Samuel Rolo. Todos os direitos reservados.</p>
-            <div className="flex gap-4 text-xs" style={{color: 'rgba(255,255,255,0.5)'}}>
-              <a href="/politica-privacidade" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>Privacidade</a>
-              <a href="/termos-condicoes" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>Termos</a>
-              <a href="mailto:geral@share2inspire.pt" className="hover:text-[#C9A961] transition-colors" style={{color: 'rgba(255,255,255,0.5)'}}>geral@share2inspire.pt</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <S2IFooter />
     </div>
   );
 }
