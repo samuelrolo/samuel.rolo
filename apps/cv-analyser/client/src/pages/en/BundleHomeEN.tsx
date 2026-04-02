@@ -194,7 +194,7 @@ export default function BundleHomeEN() {
       }
       if (!cvResponseData?.success) throw new Error('Error analysing CV. Please try again.');
       const cvAnalysisSource = cvResponseData.analysis || cvResponseData;
-      const cvAnalysisResult = transformGeminiResponse(cvAnalysisSource);
+      const cvAnalysisResult = transformGeminiResponse(cvAnalysisSource, 'en');
       sessionStorage.setItem('cvAnalysis', JSON.stringify(cvAnalysisResult));
       sessionStorage.setItem('cvFile', base64Content);
       sessionStorage.setItem('cvFilename', file!.name);

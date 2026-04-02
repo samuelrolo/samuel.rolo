@@ -442,7 +442,7 @@ export default function HomeEN() {
       }
 
       const analysisSource = responseData.analysis || responseData;
-      const analysisResult = transformGeminiResponse(analysisSource);
+      const analysisResult = transformGeminiResponse(analysisSource, 'en');
 
       window.currentReportData = analysisSource;
 
@@ -679,7 +679,7 @@ export default function HomeEN() {
       }
 
       const analysisSource = responseData.analysis || responseData;
-      const analysisResult = transformGeminiResponse(analysisSource);
+      const analysisResult = transformGeminiResponse(analysisSource, 'en');
 
       window.currentReportData = analysisSource;
 

@@ -1591,7 +1591,18 @@ export default function Results() {
 
   const avgScore = analysisData.quadrants.reduce((sum, q) => sum + q.score, 0) / analysisData.quadrants.length;
   const percentile = Math.round(Math.min(95, Math.max(5, avgScore * 0.95)));
-  const dimensions = analysisData.quadrants.map(q => ({ label: q.title, score: q.score, benchmark: q.benchmark }));
+  // Translate quadrant titles for EN (handles both new EN titles and legacy PT titles from sessionStorage)
+  const quadrantTitleEN: Record<string, string> = {
+    'Estrutura': 'Structure', 'Structure': 'Structure',
+    'Conteúdo': 'Content', 'Content': 'Content',
+    'Formação': 'Education', 'Education': 'Education',
+    'Experiência': 'Experience', 'Experience': 'Experience',
+  };
+  const dimensions = analysisData.quadrants.map((q: any) => ({
+    label: isEN ? (quadrantTitleEN[q.title] || q.title) : q.title,
+    score: q.score,
+    benchmark: q.benchmark
+  }));
   // Send report by email — sends analysis data to backend for HTML email generation (like Career Path)
   const handleSendReport = async () => {
     const targetEmail = reportEmail || email || sessionStorage.getItem('paymentEmail') || '';
@@ -2163,7 +2174,7 @@ export default function Results() {
             {analysisData.quadrants.map((q, i) => (
               <QuadrantCard
                 key={i}
-                title={q.title}
+                title={isEN ? (quadrantTitleEN[q.title] || q.title) : q.title}
                 score={q.score}
                 benchmark={q.benchmark}
                 insight={q.impactPhrase}
@@ -2193,7 +2204,7 @@ export default function Results() {
           </div>
           <div className="space-y-5">
             {analysisData.quadrants.map((q, i) => (
-              <DimensionBar key={i} label={q.title} score={q.score} benchmark={q.benchmark} insight={q.impactPhrase} />
+              <DimensionBar key={i} label={isEN ? (quadrantTitleEN[q.title] || q.title) : q.title} score={q.score} benchmark={q.benchmark} insight={q.impactPhrase} />
             ))}
           </div>
           <div className="pt-4 border-t border-border">
@@ -2423,7 +2434,7 @@ export default function Results() {
                   return (
                     <div key={q.title} className="p-3 bg-muted/20 rounded-lg space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-foreground">{q.title}</span>
+                        <span className="text-sm font-semibold text-foreground">{isEN ? (quadrantTitleEN[q.title] || q.title) : q.title}</span>
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-bold text-foreground">{q.score}/100</span>
                           <span className={`text-xs font-medium px-2 py-0.5 rounded ${isStrong ? 'text-green-600 bg-green-500/10' : isWeak ? 'text-red-600 bg-red-500/10' : 'text-yellow-600 bg-yellow-500/10'}`}>
@@ -2512,7 +2523,7 @@ export default function Results() {
                           <span className="text-xs font-bold text-[#C9A961] bg-[#C9A961]/10 px-2 py-0.5 rounded">#{i + 1}</span>
                           <span className="text-sm font-semibold text-foreground">{action.action}</span>
                         </div>
-                        <span className="text-xs font-medium text-green-600 bg-green-500/10 px-2 py-0.5 rounded">+{action.impact} {isEN ? 'points' : 'pontos'}</span>
+                        <span className="text-xs font-medium text-green-600 bg-green-500/10 px-2 py-0.5 rounded">+{isEN ? (action.impact === 'Alto' ? 'High' : action.impact === 'Médio' ? 'Medium' : action.impact === 'Baixo' ? 'Low' : action.impact) : action.impact} {isEN ? 'points' : 'pontos'}</span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border">
                         <div className="p-3">
