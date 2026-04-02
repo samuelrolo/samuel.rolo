@@ -459,10 +459,10 @@ export default function ProfilePage() {
         {/* MAIN GRID — Balanced 2-column layout                              */}
         {/* Left: Personal Data + CV  |  Right: Subscription + Member Link    */}
         {/* ═══════════════════════════════════════════════════════════════════ */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6 items-stretch">
 
           {/* ═══ LEFT COLUMN: Personal Data + CV ═══ */}
-          <div className="space-y-5">
+          <div className="flex flex-col gap-5">
 
             {/* ─── Personal Data ─── */}
             <section className="border border-[#e5e5e5] rounded-xl p-5 bg-white shadow-sm">
@@ -649,7 +649,7 @@ export default function ProfilePage() {
             </section>
 
             {/* ─── CV Active Widget ─── */}
-            <section className="border border-[#e5e5e5] rounded-xl p-5 bg-white shadow-sm">
+            <section className="border border-[#e5e5e5] rounded-xl p-5 bg-white shadow-sm flex-1">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-7 h-7 rounded-lg bg-gold/10 flex items-center justify-center">
                   <FileText className="w-3.5 h-3.5 text-gold" />
@@ -737,7 +737,7 @@ export default function ProfilePage() {
           </div>
 
           {/* ═══ RIGHT COLUMN: Security + Subscription + Member Link + Privacy ═══ */}
-          <div className="space-y-5 flex flex-col">
+          <div className="flex flex-col gap-5">
 
             {/* ─── Account Security Widget ─── */}
             <section className="border border-[#e5e5e5] rounded-xl p-5 bg-white shadow-sm">
@@ -862,7 +862,7 @@ export default function ProfilePage() {
             </section>
 
             {/* ─── Subscription Enriched Widget ─── */}
-            <section className="border border-[#e5e5e5] rounded-xl p-5 bg-white shadow-sm">
+            <section className="border border-[#e5e5e5] rounded-xl p-5 bg-white shadow-sm flex-1">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-7 h-7 rounded-lg bg-gold/10 flex items-center justify-center">
                   <CreditCard className="w-3.5 h-3.5 text-gold" />
@@ -967,8 +967,8 @@ export default function ProfilePage() {
               <ArrowRight className="w-4 h-4 text-[#ccc] group-hover:text-gold transition-colors" />
             </Link>
 
-            {/* ─── Privacy & Security (fills remaining space) ─── */}
-            <div className="p-4 bg-[#fafaf9] border border-[#f0f0f0] rounded-xl mt-auto">
+            {/* ─── Privacy & Security ─── */}
+            <div className="p-4 bg-[#fafaf9] border border-[#f0f0f0] rounded-xl">
               <div className="flex items-center gap-2 mb-2">
                 <Shield className="w-3.5 h-3.5 text-[#bbb]" />
                 <span className="text-[10px] text-[#999] font-medium uppercase tracking-wider">{t('profile.privacy.title')}</span>
