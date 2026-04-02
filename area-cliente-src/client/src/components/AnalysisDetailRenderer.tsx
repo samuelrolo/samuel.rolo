@@ -88,6 +88,7 @@ function CvAnalyserDetail({ data }: { data: Record<string, any> }) {
   const recruiterAnalysis = data.recruiterDeepAnalysis || data.analysis?.recruiterDeepAnalysis;
   const priorityMatrix = data.priorityMatrix || data.analysis?.priorityMatrix || [];
   const atsDetailed = data.detailedAtsAnalysis || data.analysis?.detailedAtsAnalysis;
+  const atsDeepScan = data.atsDeepScan || data.analysis?.atsDeepScan;
 
   // If we have results_html and NO structured data, render HTML
   if (data.results_html && !quadrants.length && !score) {
@@ -355,6 +356,91 @@ function CvAnalyserDetail({ data }: { data: Record<string, any> }) {
                 </ul>
               </div>
             ))}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* ATS Deep Scan */}
+      {atsDeepScan && atsDeepScan.keywords?.length > 0 && (
+        <CollapsibleSection title={`ATS Deep Scan — ${atsDeepScan.overallATSScore ?? '?'}/100`} defaultOpen={false}>
+          <div className="space-y-3">
+            {/* Score summary */}
+            <div className="grid grid-cols-3 gap-2">
+              <div className="text-center p-2 bg-[#fafaf9] rounded border border-[#e8e8e6]">
+                <p className="text-[10px] text-[#888]">ATS Global</p>
+                <p className="text-sm font-semibold text-[#333]">{atsDeepScan.overallATSScore}/100</p>
+              </div>
+              <div className="text-center p-2 bg-[#C9A961]/10 rounded border border-[#C9A961]/20">
+                <p className="text-[10px] text-[#888]">Keywords</p>
+                <p className="text-sm font-semibold text-[#C9A961]">{atsDeepScan.keywordScore}/100</p>
+              </div>
+              <div className="text-center p-2 bg-[#fafaf9] rounded border border-[#e8e8e6]">
+                <p className="text-[10px] text-[#888]">Formato</p>
+                <p className="text-sm font-semibold text-[#333]">{atsDeepScan.formatScore}/100</p>
+              </div>
+            </div>
+
+            {/* Keywords table */}
+            <div>
+              <p className="text-[10px] text-[#888] font-light mb-1.5">Keywords analisadas ({atsDeepScan.keywords.length}):</p>
+              <div className="border border-[#e8e8e6] rounded-lg overflow-hidden">
+                {atsDeepScan.keywords.map((kw: any, i: number) => (
+                  <div key={i} className={`flex items-center justify-between px-2.5 py-1.5 ${i % 2 === 0 ? 'bg-white' : 'bg-[#fafaf9]'} ${i < atsDeepScan.keywords.length - 1 ? 'border-b border-[#e8e8e6]' : ''}`}>
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                      {kw.status === 'found' ? <CheckCircle className="w-3 h-3 text-green-500 shrink-0" /> : kw.status === 'partial' ? <AlertTriangle className="w-3 h-3 text-amber-500 shrink-0" /> : <XCircle className="w-3 h-3 text-red-500 shrink-0" />}
+                      <span className="text-[11px] text-[#333] truncate">{kw.keyword}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded border ${
+                        kw.importance === 'high' ? 'bg-red-50 text-red-600 border-red-200' :
+                        kw.importance === 'medium' ? 'bg-amber-50 text-amber-600 border-amber-200' :
+                        'bg-gray-50 text-gray-500 border-gray-200'
+                      }`}>{kw.importance === 'high' ? 'Alta' : kw.importance === 'medium' ? 'Média' : 'Baixa'}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Suggestions for missing/partial keywords */}
+            {atsDeepScan.keywords.filter((k: any) => k.suggestion).length > 0 && (
+              <div>
+                <p className="text-[10px] text-[#888] font-light mb-1.5">Sugestões de reformulação:</p>
+                <div className="space-y-1.5">
+                  {atsDeepScan.keywords.filter((k: any) => k.suggestion).map((kw: any, i: number) => (
+                    <div key={i} className="p-2 bg-[#C9A961]/5 border border-[#C9A961]/15 rounded-lg">
+                      <p className="text-[10px] font-medium text-[#555]">{kw.keyword}</p>
+                      <p className="text-[10px] text-[#666] font-light mt-0.5">{kw.suggestion}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Format checks */}
+            {atsDeepScan.formatChecks?.length > 0 && (
+              <div>
+                <p className="text-[10px] text-[#888] font-light mb-1.5">Checklist de formato ATS:</p>
+                <div className="space-y-1">
+                  {atsDeepScan.formatChecks.map((fc: any, i: number) => (
+                    <div key={i} className={`p-2 rounded-lg border ${
+                      fc.status === 'pass' ? 'border-green-200 bg-green-50' :
+                      fc.status === 'warning' ? 'border-amber-200 bg-amber-50' :
+                      'border-red-200 bg-red-50'
+                    }`}>
+                      <div className="flex items-start gap-1.5">
+                        {fc.status === 'pass' ? <CheckCircle className="w-3 h-3 text-green-500 mt-0.5 shrink-0" /> : fc.status === 'warning' ? <AlertTriangle className="w-3 h-3 text-amber-500 mt-0.5 shrink-0" /> : <XCircle className="w-3 h-3 text-red-500 mt-0.5 shrink-0" />}
+                        <div>
+                          <p className="text-[11px] font-medium text-[#333]">{fc.check}</p>
+                          <p className="text-[10px] text-[#666] font-light">{fc.detail}</p>
+                          {fc.fix && <p className="text-[10px] text-[#C9A961] font-light mt-0.5">→ {fc.fix}</p>}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </CollapsibleSection>
       )}

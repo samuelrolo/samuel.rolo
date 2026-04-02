@@ -7,6 +7,7 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
 import ATSRejectionBlock from "@/components/ATSRejectionBlock";
+import ATSDeepScanBlock from "@/components/ATSDeepScanBlock";
 import QuadrantCard from "@/components/QuadrantCard";
 import DimensionBar from "@/components/DimensionBar";
 import ScoreGauge from "@/components/ScoreGauge";
@@ -1607,6 +1608,11 @@ export default function Results() {
         {/* ═══ ATS Rejection ═══ */}
         <ATSRejectionBlock rejectionRate={analysisData.atsRejectionRate} topFactor={analysisData.atsTopFactor} isPaid={isPaid} detailedFactors={analysisData.detailedAtsAnalysis?.factors} atsSystems={analysisData.detailedAtsAnalysis?.atsSystems} quickFixes={analysisData.detailedAtsAnalysis?.quickFixes} isEN={isEN} />
 
+        {/* ═══ ATS Deep Scan ═══ */}
+        {analysisData.atsDeepScan && (
+          <ATSDeepScanBlock data={analysisData.atsDeepScan} isPaid={isPaid} isEN={isEN} onUnlock={() => openPaymentModal()} />
+        )}
+
         {/* ═══ Job Match Section (only when user provided a job posting) ═══ */}
         {analysisData.jobMatch && analysisData.jobMatch.atsCompatibilityScore != null && (
           <div className="bg-card border-2 border-[#C9A961]/30 rounded-lg p-6 mb-8">
@@ -1890,6 +1896,7 @@ export default function Results() {
                 {/* Locked items */}
                 <div className="space-y-2">
                   {(isEN ? [
+                    'ATS Deep Scan (keywords + format checklist)',
                     'Detailed analysis by quadrant',
                     'Complete ATS diagnosis',
                     'Personalised improvement suggestions',
@@ -1901,6 +1908,7 @@ export default function Results() {
                     'Compatible job opportunities',
                     'Optimised CV (rewrite suggestions)',
                   ] : [
+                    'ATS Deep Scan (keywords + checklist de formato)',
                     'Análise detalhada por quadrante',
                     'Diagnóstico ATS completo',
                     'Sugestões de melhoria personalizadas',

@@ -88,4 +88,24 @@ export interface AnalysisData {
     title: string;
     tasks: string[];
   }[];
+  // ATS Deep Scan
+  atsDeepScan?: {
+    keywordScore: number;
+    formatScore: number;
+    overallATSScore: number;
+    verdict: 'excellent' | 'good' | 'needs_work' | 'critical';
+    keywords: {
+      keyword: string;
+      status: 'found' | 'missing' | 'partial';
+      importance: 'high' | 'medium' | 'low';
+      context?: string;
+      suggestion?: string;
+    }[];
+    formatChecks: {
+      check: string;
+      status: 'pass' | 'warning' | 'fail';
+      detail: string;
+      fix?: string;
+    }[];
+  };
 }

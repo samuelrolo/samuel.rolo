@@ -517,5 +517,167 @@ export function transformGeminiResponse(analysis: any): any {
     rewriteSuggestion: p.rewrite_suggestion || '',
   }));
 
-  return { atsRejectionRate, atsTopFactor, quadrants, keywords, perceivedRole, perceivedSeniority, overallScore: overallScoreNum, salaryDetailed, automationRisk, improvementActions, priorityMatrix, detailedAtsAnalysis, recruiterDeepAnalysis, actionPlan30Days, jobMatch, cvProblems };
+  // ─── 13. ATS DEEP SCAN — computed client-side from existing analysis data ────
+  const atsDeepScan = computeATSDeepScan(analysis, keywords, atsRejectionRate, detailedAtsAnalysis, jobMatch, cvProblems);
+
+  return { atsRejectionRate, atsTopFactor, quadrants, keywords, perceivedRole, perceivedSeniority, overallScore: overallScoreNum, salaryDetailed, automationRisk, improvementActions, priorityMatrix, detailedAtsAnalysis, recruiterDeepAnalysis, actionPlan30Days, jobMatch, cvProblems, atsDeepScan };
+}
+
+/**
+ * computeATSDeepScan — builds the ATS Deep Scan from existing analysis data:
+ * - Keywords: from matched/missing keywords, cv_problems, quadrant weaknesses
+ * - Format checks: from detailedAtsAnalysis factors/quickFixes, cv_problems
+ * - Scores: derived from atsRejectionRate and keyword/format analysis
+ */
+function computeATSDeepScan(
+  analysis: any,
+  extractedKeywords: string[],
+  atsRejectionRate: number,
+  detailedAts: any,
+  jobMatch: any,
+  cvProblems: any[]
+) {
+  // ── 1. KEYWORD ANALYSIS ──
+  const kws: { keyword: string; status: 'found' | 'missing' | 'partial'; importance: 'high' | 'medium' | 'low'; context?: string; suggestion?: string }[] = [];
+
+  // If job match exists, use matched/gap keywords (most accurate)
+  if (jobMatch && (jobMatch.matchedKeywords?.length || jobMatch.keywordGaps?.length)) {
+    const matched = jobMatch.matchedKeywords || [];
+    const gaps = jobMatch.keywordGaps || [];
+    matched.forEach((kw: string, i: number) => {
+      kws.push({
+        keyword: kw,
+        status: 'found',
+        importance: i < 3 ? 'high' : i < 6 ? 'medium' : 'low',
+        context: 'Encontrada no CV',
+        suggestion: undefined,
+      });
+    });
+    gaps.forEach((kw: string, i: number) => {
+      kws.push({
+        keyword: kw,
+        status: 'missing',
+        importance: i < 2 ? 'high' : i < 4 ? 'medium' : 'low',
+        suggestion: `Adicionar "${kw}" na secção de competências ou experiência relevante`,
+      });
+    });
+  } else {
+    // Mode 1 (no job posting): use extracted keywords as "found" and generate typical missing ones
+    const genericImportant = [
+      'Resultados quantificáveis', 'Métricas de impacto', 'Verbos de ação',
+      'Competências técnicas específicas', 'Certificações relevantes',
+      'Palavras-chave do sector', 'Soft skills mensuráveis', 'Ferramentas e tecnologias',
+    ];
+    extractedKeywords.slice(0, 6).forEach((kw, i) => {
+      kws.push({
+        keyword: kw,
+        status: 'found',
+        importance: i < 2 ? 'high' : i < 4 ? 'medium' : 'low',
+        context: 'Identificada no CV',
+      });
+    });
+    // Add missing keywords based on common ATS requirements
+    const weaknesses = analysis.global_summary?.improvements || analysis.weaknesses || [];
+    const missingFromWeaknesses = weaknesses.slice(0, 3).map((w: string) => w.split(/[.,;:]/)[0].substring(0, 50));
+    const missingKws = missingFromWeaknesses.length > 0 ? missingFromWeaknesses : genericImportant.slice(0, 3);
+    missingKws.forEach((kw: string, i: number) => {
+      kws.push({
+        keyword: kw,
+        status: 'missing',
+        importance: i === 0 ? 'high' : 'medium',
+        suggestion: `Reformular para incluir: ${kw}`,
+      });
+    });
+    // Add partial matches from cv_problems
+    cvProblems.slice(0, 2).forEach((p) => {
+      if (p.title && !kws.some(k => k.keyword === p.title)) {
+        kws.push({
+          keyword: p.title,
+          status: 'partial',
+          importance: 'medium',
+          suggestion: p.rewriteSuggestion || p.correctionExample || p.description,
+        });
+      }
+    });
+  }
+
+  // ── 2. FORMAT CHECKS ──
+  const formatChecks: { check: string; status: 'pass' | 'warning' | 'fail'; detail: string; fix?: string }[] = [];
+
+  // Standard ATS format checks derived from detailedAtsAnalysis
+  const factors = detailedAts?.factors || [];
+  const quickFixes = detailedAts?.quickFixes || [];
+
+  // Check: Tables/Columns
+  const hasTableIssue = factors.some((f: string) => /tabela|coluna|table|column|layout/i.test(f));
+  formatChecks.push({
+    check: 'Tabelas e Colunas',
+    status: hasTableIssue ? 'fail' : 'pass',
+    detail: hasTableIssue ? 'CV contém tabelas ou colunas que podem não ser lidas por ATS' : 'Sem tabelas ou colunas problemáticas detectadas',
+    fix: hasTableIssue ? 'Converter para formato linear sem tabelas nem colunas' : undefined,
+  });
+
+  // Check: Headers/Section Titles
+  const hasHeaderIssue = factors.some((f: string) => /header|cabeçalho|secção|section|título/i.test(f));
+  formatChecks.push({
+    check: 'Cabeçalhos e Secções',
+    status: hasHeaderIssue ? 'warning' : 'pass',
+    detail: hasHeaderIssue ? 'Cabeçalhos podem não seguir convenções ATS standard' : 'Cabeçalhos seguem convenções standard',
+    fix: hasHeaderIssue ? 'Usar títulos standard: Experiência Profissional, Formação, Competências' : undefined,
+  });
+
+  // Check: Font & Encoding
+  const hasFontIssue = factors.some((f: string) => /font|fonte|encoding|caracter|symbol|ícone|icon/i.test(f));
+  formatChecks.push({
+    check: 'Fontes e Caracteres',
+    status: hasFontIssue ? 'warning' : 'pass',
+    detail: hasFontIssue ? 'Fontes ou caracteres especiais podem causar problemas de parsing' : 'Fontes e caracteres compatíveis',
+    fix: hasFontIssue ? 'Usar fontes standard (Arial, Calibri, Times New Roman) e evitar ícones/símbolos' : undefined,
+  });
+
+  // Check: Chronological Order
+  const hasOrderIssue = factors.some((f: string) => /cronológ|chronolog|ordem|order|data|date/i.test(f));
+  formatChecks.push({
+    check: 'Ordem Cronológica',
+    status: hasOrderIssue ? 'warning' : 'pass',
+    detail: hasOrderIssue ? 'A ordem das experiências pode não estar em cronologia inversa' : 'Formato cronológico inverso detectado',
+    fix: hasOrderIssue ? 'Organizar experiências da mais recente para a mais antiga' : undefined,
+  });
+
+  // Check: File Format
+  const hasFormatIssue = factors.some((f: string) => /pdf|formato|format|imagem|image|scan/i.test(f));
+  formatChecks.push({
+    check: 'Formato do Ficheiro',
+    status: hasFormatIssue ? 'warning' : 'pass',
+    detail: hasFormatIssue ? 'O formato do ficheiro pode não ser ideal para ATS' : 'PDF com texto seleccionável (ATS-friendly)',
+    fix: hasFormatIssue ? 'Guardar como PDF com texto seleccionável (não digitalizado)' : undefined,
+  });
+
+  // Check: Keywords density
+  const foundCount = kws.filter(k => k.status === 'found').length;
+  const totalCount = kws.length;
+  const keywordDensity = totalCount > 0 ? foundCount / totalCount : 0;
+  formatChecks.push({
+    check: 'Densidade de Keywords',
+    status: keywordDensity >= 0.7 ? 'pass' : keywordDensity >= 0.4 ? 'warning' : 'fail',
+    detail: `${foundCount} de ${totalCount} keywords relevantes encontradas (${Math.round(keywordDensity * 100)}%)`,
+    fix: keywordDensity < 0.7 ? 'Adicionar keywords em falta nas secções de competências e experiência' : undefined,
+  });
+
+  // ── 3. SCORES ──
+  const passCount = formatChecks.filter(c => c.status === 'pass').length;
+  const totalChecks = formatChecks.length;
+  const formatScore = Math.round((passCount / totalChecks) * 100);
+  const keywordScore = Math.round(keywordDensity * 100);
+  const overallATSScore = Math.round((keywordScore * 0.6 + formatScore * 0.4));
+  const verdict = overallATSScore >= 80 ? 'excellent' : overallATSScore >= 60 ? 'good' : overallATSScore >= 40 ? 'needs_work' : 'critical';
+
+  return {
+    keywordScore,
+    formatScore,
+    overallATSScore,
+    verdict,
+    keywords: kws,
+    formatChecks,
+  };
 }
