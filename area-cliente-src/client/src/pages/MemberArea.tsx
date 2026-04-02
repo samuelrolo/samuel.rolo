@@ -15,6 +15,7 @@ import UpgradePage from './UpgradePage';
 import ExtraAnalysisPaymentModal, { type ExtraAnalysisProduct } from '@/components/ExtraAnalysisPaymentModal';
 import VagasFeed from '@/components/VagasFeed';
 import SavedJobsTracker from '@/components/SavedJobsTracker';
+import JobContacts from '@/components/JobContacts';
 import AnalysisResultsFull from '@/components/AnalysisResults';
 import { transformGeminiResponse } from '@/lib/transformGeminiResponse';
 import { countries } from '@/lib/countries';
@@ -1684,6 +1685,9 @@ export default function MemberArea() {
             <div className="animate-in fade-in duration-300">
               <SavedJobsTracker lang={lang} />
 
+              {/* Contactos — recrutadores e hiring managers */}
+              <JobContacts lang={lang} />
+
               {/* Locked Adzuna feed CTA */}
               <section className="mt-6 p-8 border border-dashed border-[#e5e5e5] rounded-xl bg-[#fafaf9] text-center">
                 <Lock className="w-8 h-8 text-[#ccc] mx-auto mb-3" />
@@ -2066,6 +2070,9 @@ export default function MemberArea() {
           <div className="animate-in fade-in duration-300">
             {/* Saved Jobs Tracker — disponível para TODOS os utilizadores */}
             <SavedJobsTracker lang={lang} />
+
+            {/* Contactos — recrutadores e hiring managers associados a vagas */}
+            <JobContacts lang={lang} />
 
             {/* Feed de Vagas Adzuna — trancado para essential */}
             {planTier !== 'essential' ? (
