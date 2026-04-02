@@ -21,8 +21,17 @@ import type { AnalysisData } from "@/types/analysis";
 import { trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 import { getMemberPlanTier } from "@/lib/memberAuth";
+import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
+const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
+
+function isLinkedInJobUrl(text: string): boolean {
+  if (!text) return false;
+  const t = text.trim().toLowerCase();
+  return (t.includes('linkedin.com/jobs') || t.includes('linkedin.com/job')) && t.startsWith('http');
+}
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 
 /**
@@ -555,6 +564,8 @@ export default function Results() {
   const [careerPathPollingMsg, setCareerPathPollingMsg] = useState('');
   const [cvText, setCvText] = useState('');
   const [showLiveMatch, setShowLiveMatch] = useState(false);
+  const [jobScrapeStatus, setJobScrapeStatus] = useState<'idle' | 'scraping' | 'reanalyzing' | 'done' | 'error'>('idle');
+  const [jobScrapeMessage, setJobScrapeMessage] = useState('');
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
   const loadingMessages = isEN
     ? [
@@ -763,6 +774,110 @@ export default function Results() {
   const unlockFullReport = useCallback(() => {
     setIsPaid(true);
     sessionStorage.setItem('isPaid', 'true');
+
+    // ── LinkedIn Job Scraping (post-payment only) ──
+    // If the user pasted a LinkedIn URL, scrape the real JD and re-analyse
+    const savedJobDesc = sessionStorage.getItem('jobDescription') || '';
+    if (isLinkedInJobUrl(savedJobDesc)) {
+      (async () => {
+        try {
+          setJobScrapeStatus('scraping');
+          setJobScrapeMessage(isEN ? 'Extracting real job description from LinkedIn...' : 'A extrair descrição real da vaga do LinkedIn...');
+          console.log('[JOB_SCRAPE] Detected LinkedIn URL, scraping:', savedJobDesc);
+
+          const scrapeRes = await fetch(`${BACKEND_URL}/api/scrape-linkedin-job`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ job_url: savedJobDesc })
+          });
+          const scrapeData = await scrapeRes.json();
+
+          if (scrapeData.success && scrapeData.job_data?.full_text) {
+            const realJobText = scrapeData.job_data.full_text;
+            console.log('[JOB_SCRAPE] Got real JD:', realJobText.substring(0, 200));
+
+            // Store the scraped job text for Live Match
+            sessionStorage.setItem('scrapedJobText', realJobText);
+            sessionStorage.setItem('scrapedJobTitle', scrapeData.job_data.title || '');
+
+            // Re-analyse with the real job description
+            setJobScrapeStatus('reanalyzing');
+            setJobScrapeMessage(isEN ? 'Re-analysing CV with real job requirements...' : 'A re-analisar CV com requisitos reais da vaga...');
+
+            const storedCvText = sessionStorage.getItem('cvText') || '';
+            const storedCvFile = sessionStorage.getItem('cvFile') || '';
+            const country = sessionStorage.getItem('analysisCountry') || 'Portugal';
+            const region = sessionStorage.getItem('analysisRegion') || '';
+
+            const requestBody: any = {
+              mode: 'cv_extraction',
+              country,
+              region: region || undefined,
+              job_description: realJobText.substring(0, 5000)
+            };
+
+            if (storedCvFile) {
+              requestBody.file = storedCvFile;
+              requestBody.filename = sessionStorage.getItem('cvFilename') || 'cv.pdf';
+            } else if (storedCvText) {
+              requestBody.cv_text = storedCvText.substring(0, 8000);
+            }
+
+            const reanalysisRes = await fetch(SUPABASE_EDGE_URL, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(requestBody)
+            });
+
+            if (reanalysisRes.ok) {
+              const reanalysisData = await reanalysisRes.json();
+              if (reanalysisData.success) {
+                const newSource = reanalysisData.analysis || reanalysisData;
+                const newResult = transformGeminiResponse(newSource);
+                console.log('[JOB_SCRAPE] Re-analysis complete. New jobMatch:', newResult.jobMatch?.jobTitle);
+
+                // Update analysis data with the new results
+                setAnalysisData(newResult);
+                sessionStorage.setItem('cvAnalysis', JSON.stringify(newResult));
+
+                setJobScrapeStatus('done');
+                setJobScrapeMessage(isEN
+                  ? `Analysis updated with real data from "${scrapeData.job_data.title}"`
+                  : `Análise atualizada com dados reais de "${scrapeData.job_data.title}"`);
+              } else {
+                console.warn('[JOB_SCRAPE] Re-analysis failed:', reanalysisData.error);
+                setJobScrapeStatus('done');
+                setJobScrapeMessage(isEN
+                  ? `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`
+                  : `Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`);
+              }
+            } else {
+              console.warn('[JOB_SCRAPE] Re-analysis HTTP error:', reanalysisRes.status);
+              setJobScrapeStatus('done');
+              setJobScrapeMessage(isEN
+                ? `Job extracted: "${scrapeData.job_data.title}" — use Live Match for detailed comparison`
+                : `Vaga extraída: "${scrapeData.job_data.title}" — use o Live Match para comparação detalhada`);
+            }
+          } else {
+            console.warn('[JOB_SCRAPE] Scraping failed:', scrapeData.error);
+            setJobScrapeStatus('error');
+            setJobScrapeMessage(isEN
+              ? 'Could not extract job details. Paste the job description text in Live Match for best results.'
+              : 'Não foi possível extrair detalhes da vaga. Cole o texto da descrição no Live Match para melhores resultados.');
+          }
+        } catch (err: any) {
+          console.error('[JOB_SCRAPE] Error:', err);
+          setJobScrapeStatus('error');
+          setJobScrapeMessage(isEN
+            ? 'Error extracting job. Use Live Match with the job description text.'
+            : 'Erro ao extrair vaga. Use o Live Match com o texto da descrição.');
+        }
+      })();
+    }
+
     // Save to user_analyses for area-cliente dashboard
     // IMPORTANT: Delay capture until after React re-renders with isPaid=true
     // so we capture the UNLOCKED content, not the blurred/locked version
@@ -789,7 +904,7 @@ export default function Results() {
         // Don't block the user - they can still manually save later
       }
     }, 1500); // Wait 1.5s for React to re-render unlocked content
-  }, []);
+  }, [isEN]);
 
   const openPaymentModal = (plan?: { name: string; price: string; analyses: number }) => {
     if (plan) {
@@ -1620,6 +1735,36 @@ export default function Results() {
           <ATSDeepScanBlock data={analysisData.atsDeepScan} isPaid={isPaid} isEN={isEN} onUnlock={() => openPaymentModal()} />
         )}
 
+        {/* ═══ LinkedIn Job Scraping Status Banner ═══ */}
+        {jobScrapeStatus !== 'idle' && (
+          <div className={`rounded-lg p-4 mb-6 flex items-center gap-3 border ${
+            jobScrapeStatus === 'scraping' || jobScrapeStatus === 'reanalyzing'
+              ? 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800'
+              : jobScrapeStatus === 'done'
+                ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800'
+                : 'bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800'
+          }`}>
+            {(jobScrapeStatus === 'scraping' || jobScrapeStatus === 'reanalyzing') && (
+              <Loader2 className="w-5 h-5 animate-spin text-blue-600 dark:text-blue-400 flex-shrink-0" />
+            )}
+            {jobScrapeStatus === 'done' && (
+              <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+            )}
+            {jobScrapeStatus === 'error' && (
+              <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+            )}
+            <div>
+              <p className="text-sm font-medium text-foreground">
+                {jobScrapeStatus === 'scraping' && (isEN ? 'LinkedIn Job Extraction' : 'Extração da Vaga LinkedIn')}
+                {jobScrapeStatus === 'reanalyzing' && (isEN ? 'Re-analysing with Real Data' : 'Re-análise com Dados Reais')}
+                {jobScrapeStatus === 'done' && (isEN ? 'Job Data Updated' : 'Dados da Vaga Atualizados')}
+                {jobScrapeStatus === 'error' && (isEN ? 'Extraction Issue' : 'Problema na Extração')}
+              </p>
+              <p className="text-xs text-muted-foreground">{jobScrapeMessage}</p>
+            </div>
+          </div>
+        )}
+
         {/* ═══ Job Match Section (only when user provided a job posting) ═══ */}
         {analysisData.jobMatch && analysisData.jobMatch.atsCompatibilityScore != null && (
           <div className="bg-card border-2 border-[#C9A961]/30 rounded-lg p-6 mb-8">
@@ -1735,6 +1880,7 @@ export default function Results() {
                   lang={isEN ? 'en' : 'pt'}
                   isPaid={isPaid}
                   onRequestPayment={() => openPaymentModal()}
+                  initialJD={sessionStorage.getItem('scrapedJobText') || undefined}
                 />
               </div>
             )}
