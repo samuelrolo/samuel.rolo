@@ -10,6 +10,7 @@ import {
   Eye, Euro, Bot, TrendingUp, Layers, Calendar, Briefcase,
   CheckCircle, XCircle, ArrowRight, Star, Globe, Users, Zap,
   FileText, Linkedin, Compass, Award, Lightbulb, Shield,
+  Search, Trophy, LayoutGrid,
 } from 'lucide-react';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -580,6 +581,120 @@ function LinkedinRoasterDetail({ data }: { data: Record<string, any> }) {
                 )}
               </div>
             ))}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* Section Scores */}
+      {parsed?.scores_seccao && (
+        <CollapsibleSection title="Score por Secção do Perfil" defaultOpen={true}>
+          <div className="grid grid-cols-2 gap-2">
+            {Object.entries({
+              headline: 'Headline', about: 'Secção Sobre', experience: 'Experiência',
+              skills: 'Competências', education: 'Formação', certifications: 'Certificações',
+              recommendations: 'Recomendações', network: 'Rede'
+            } as Record<string, string>).map(([key, label]) => {
+              const sec = (parsed.scores_seccao as Record<string, any>)?.[key];
+              if (!sec) return null;
+              const val = Math.min(10, Math.max(1, parseInt(sec.score) || 5));
+              return (
+                <div key={key} className="p-2.5 bg-white border border-[#e8e8e6] rounded-lg space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-medium text-[#333]">{label}</span>
+                    <span className="text-[10px] font-semibold text-[#C9A961]">{val}/10</span>
+                  </div>
+                  <ProgressBar value={val} max={10} />
+                  {sec.analise && <p className="text-[9px] text-[#666] font-light leading-relaxed">{sec.analise}</p>}
+                </div>
+              );
+            })}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* Benchmarking */}
+      {parsed?.benchmarking && (
+        <CollapsibleSection title="Benchmarking Setorial" defaultOpen={true}>
+          <div className="space-y-2">
+            <div className="flex items-center gap-3 p-3 bg-white border border-[#e8e8e6] rounded-lg">
+              <ScoreCircle score={parseInt(parsed.benchmarking.percentil_estimado) || 50} max={100} size={56} />
+              <div>
+                {parsed.benchmarking.setor && <p className="text-[11px] font-semibold text-[#333]">{parsed.benchmarking.setor}</p>}
+                {parsed.benchmarking.resumo && <p className="text-[10px] text-[#666] font-light leading-relaxed">{parsed.benchmarking.resumo}</p>}
+              </div>
+            </div>
+            {parsed.benchmarking.gaps_vs_top?.length > 0 && (
+              <div className="space-y-1">
+                <p className="text-[9px] text-[#888] font-semibold uppercase tracking-wider">Gaps vs Top Performers</p>
+                {parsed.benchmarking.gaps_vs_top.map((g: any, i: number) => (
+                  <div key={i} className="p-2 bg-white border-l-2 border-red-400 rounded-r-lg border border-[#e8e8e6]">
+                    <p className="text-[10px] font-medium text-[#333]">{g.area}</p>
+                    <p className="text-[9px] text-[#666] font-light">{g.gap}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            {parsed.benchmarking.vantagens_competitivas?.length > 0 && (
+              <div className="space-y-1">
+                <p className="text-[9px] text-[#888] font-semibold uppercase tracking-wider">Vantagens Competitivas</p>
+                {parsed.benchmarking.vantagens_competitivas.map((v: string, i: number) => (
+                  <div key={i} className="flex items-start gap-1.5 py-1">
+                    <Trophy className="w-3 h-3 text-green-500 mt-0.5 shrink-0" />
+                    <p className="text-[10px] text-[#555] font-light leading-relaxed">{v}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </CollapsibleSection>
+      )}
+
+      {/* SEO LinkedIn */}
+      {parsed?.seo_linkedin && (
+        <CollapsibleSection title="Análise SEO LinkedIn" defaultOpen={true}>
+          <div className="space-y-2">
+            {parsed.seo_linkedin.densidade_score !== undefined && (
+              <div className="flex items-center gap-2 p-2 bg-white border border-[#e8e8e6] rounded-lg">
+                <span className="text-[10px] font-medium text-[#333] whitespace-nowrap">Densidade</span>
+                <div className="flex-1"><ProgressBar value={parseInt(parsed.seo_linkedin.densidade_score) || 5} max={10} /></div>
+                <span className="text-[10px] font-semibold text-[#C9A961]">{parsed.seo_linkedin.densidade_score}/10</span>
+              </div>
+            )}
+            {parsed.seo_linkedin.keywords_primarias?.length > 0 && (
+              <div>
+                <p className="text-[9px] text-[#888] font-semibold uppercase tracking-wider mb-1">Keywords Primárias</p>
+                <div className="flex flex-wrap gap-1">
+                  {parsed.seo_linkedin.keywords_primarias.map((kw: string, i: number) => (
+                    <span key={i} className="inline-block px-2 py-0.5 text-[9px] font-semibold text-[#C9A961] bg-[#C9A961]/10 border border-[#C9A961]/30 rounded-full">{kw}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {parsed.seo_linkedin.keywords_secundarias?.length > 0 && (
+              <div>
+                <p className="text-[9px] text-[#888] font-semibold uppercase tracking-wider mb-1">Keywords Secundárias</p>
+                <div className="flex flex-wrap gap-1">
+                  {parsed.seo_linkedin.keywords_secundarias.map((kw: string, i: number) => (
+                    <span key={i} className="inline-block px-2 py-0.5 text-[9px] font-medium text-[#C9A961] bg-[#C9A961]/5 border border-[#C9A961]/15 rounded-full">{kw}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {parsed.seo_linkedin.keywords_em_falta?.length > 0 && (
+              <div>
+                <p className="text-[9px] text-[#888] font-semibold uppercase tracking-wider mb-1">Keywords em Falta</p>
+                <div className="flex flex-wrap gap-1">
+                  {parsed.seo_linkedin.keywords_em_falta.map((kw: string, i: number) => (
+                    <span key={i} className="inline-block px-2 py-0.5 text-[9px] font-semibold text-red-500 bg-red-50 border border-red-200 rounded-full">{kw}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {parsed.seo_linkedin.recomendacoes_seo && (
+              <div className="p-2 bg-[#fafaf9] rounded-lg">
+                <p className="text-[10px] text-[#666] font-light leading-relaxed">{parsed.seo_linkedin.recomendacoes_seo}</p>
+              </div>
+            )}
           </div>
         </CollapsibleSection>
       )}

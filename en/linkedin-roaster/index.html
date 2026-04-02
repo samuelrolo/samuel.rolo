@@ -819,6 +819,226 @@
             font-weight: 500;
         }
 
+        /* Section Scores Radar */
+        .section-scores-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        @media (max-width: 600px) {
+            .section-scores-grid { grid-template-columns: 1fr; }
+        }
+        .section-score-card {
+            padding: 16px;
+            background: var(--light);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .section-score-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .section-score-header .label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .section-score-header .score {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .section-score-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .section-score-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: var(--gold);
+            transition: width 0.8s ease;
+        }
+        .section-score-text {
+            font-size: 0.74rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+        /* Benchmarking */
+        .bench-percentile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 10px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+        }
+        .bench-percentile-ring {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            border: 3px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            flex-direction: column;
+        }
+        .bench-percentile-ring .pct {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gold);
+            line-height: 1;
+        }
+        .bench-percentile-ring .pct-label {
+            font-size: 0.5rem;
+            color: var(--muted);
+            text-align: center;
+        }
+        .bench-percentile-info { flex: 1; }
+        .bench-percentile-info .sector {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+        .bench-percentile-info .summary {
+            font-size: 0.78rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+        .bench-gap-item {
+            padding: 14px 18px;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid #e74c3c;
+        }
+        .bench-gap-item .gap-area {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+        .bench-gap-item .gap-desc {
+            font-size: 0.76rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+        .bench-advantage {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+        }
+        .bench-advantage-icon {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: rgba(46,204,113,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #2ecc71;
+            font-size: 0.6rem;
+            margin-top: 2px;
+        }
+        .bench-advantage p {
+            font-size: 0.8rem;
+            line-height: 1.6;
+            color: var(--text);
+            margin: 0;
+        }
+        /* SEO LinkedIn */
+        .seo-kw-group { margin-bottom: 16px; }
+        .seo-kw-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        .seo-kw-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .seo-tag-primary {
+            display: inline-block;
+            background: rgba(201,169,97,0.15);
+            color: var(--gold);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border: 1px solid rgba(201,169,97,0.35);
+        }
+        .seo-tag-secondary {
+            display: inline-block;
+            background: rgba(201,169,97,0.06);
+            color: var(--gold);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            border: 1px solid rgba(201,169,97,0.15);
+        }
+        .seo-tag-missing {
+            display: inline-block;
+            background: rgba(231,76,60,0.06);
+            color: #e74c3c;
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border: 1px solid rgba(231,76,60,0.2);
+        }
+        .seo-section-kw {
+            padding: 14px 18px;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .seo-section-kw .kw-section-name {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+        .seo-density-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 0;
+            margin-bottom: 12px;
+        }
+        .seo-density-bar .density-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--dark);
+            white-space: nowrap;
+        }
+        .seo-density-bar .density-track {
+            flex: 1;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .seo-density-bar .density-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--gold);
+            transition: width 0.8s ease;
+        }
+        .seo-density-bar .density-val {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
         /* ── How it works ── */
         .how-section { padding: 48px 24px; }
         .how-grid {
@@ -2101,8 +2321,113 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             h += '</div>';
         }
 
-        // ── SEO Keywords ──
-        if (ac.dicas_seo?.length) {
+        // ── Section Scores ──
+        if (ac.scores_seccao) {
+            const ss = ac.scores_seccao;
+            h += '<div class="s2i-section">';
+            h += '<div class="s2i-section-title"><i class="fas fa-th-large"></i> Profile Section Scores</div>';
+            h += '<div class="section-scores-grid">';
+            const secLabels = {
+                headline: 'Headline', about: 'About Section', experience: 'Experience',
+                skills: 'Skills', education: 'Education', certifications: 'Certifications',
+                recommendations: 'Recommendations', network: 'Network'
+            };
+            Object.entries(secLabels).forEach(([key, label]) => {
+                const sec = ss[key];
+                if (sec) {
+                    const val = Math.min(10, Math.max(1, parseInt(sec.score) || 5));
+                    h += '<div class="section-score-card">';
+                    h += '<div class="section-score-header"><span class="label">' + label + '</span><span class="score">' + val + '/10</span></div>';
+                    h += '<div class="section-score-bar"><div class="section-score-bar-fill" style="width:' + (val * 10) + '%;"></div></div>';
+                    if (sec.analise) h += '<div class="section-score-text">' + sec.analise + '</div>';
+                    h += '</div>';
+                }
+            });
+            h += '</div></div>';
+        }
+
+        // ── Industry Benchmarking ──
+        if (ac.benchmarking) {
+            const bm = ac.benchmarking;
+            h += '<div class="s2i-section">';
+            h += '<div class="s2i-section-title"><i class="fas fa-chart-line"></i> Industry Benchmarking</div>';
+            h += '<div class="bench-percentile">';
+            h += '<div class="bench-percentile-ring"><span class="pct">' + (bm.percentil_estimado || '?') + '%</span><span class="pct-label">percentile</span></div>';
+            h += '<div class="bench-percentile-info">';
+            if (bm.setor) h += '<div class="sector">' + bm.setor + '</div>';
+            if (bm.resumo) h += '<div class="summary">' + bm.resumo + '</div>';
+            h += '</div></div>';
+            if (bm.gaps_vs_top?.length) {
+                h += '<p style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:16px 0 10px;">Gaps vs Top Performers</p>';
+                bm.gaps_vs_top.forEach(g => {
+                    h += '<div class="bench-gap-item">';
+                    h += '<div class="gap-area">' + (g.area || '') + '</div>';
+                    h += '<div class="gap-desc">' + (g.gap || '') + '</div>';
+                    h += '</div>';
+                });
+            }
+            if (bm.vantagens_competitivas?.length) {
+                h += '<p style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:16px 0 10px;">Competitive Advantages</p>';
+                bm.vantagens_competitivas.forEach(v => {
+                    h += '<div class="bench-advantage">';
+                    h += '<div class="bench-advantage-icon"><i class="fas fa-trophy"></i></div>';
+                    h += '<p>' + v + '</p></div>';
+                });
+            }
+            h += '</div>';
+        }
+
+        // ── LinkedIn SEO Analysis ──
+        if (ac.seo_linkedin) {
+            const seo = ac.seo_linkedin;
+            h += '<div class="s2i-section">';
+            h += '<div class="s2i-section-title"><i class="fas fa-search"></i> LinkedIn SEO Analysis</div>';
+            if (seo.densidade_score !== undefined) {
+                const ds = Math.min(10, Math.max(1, parseInt(seo.densidade_score) || 5));
+                h += '<div class="seo-density-bar">';
+                h += '<span class="density-label">Keyword Density</span>';
+                h += '<div class="density-track"><div class="density-fill" style="width:' + (ds * 10) + '%;"></div></div>';
+                h += '<span class="density-val">' + ds + '/10</span>';
+                h += '</div>';
+            }
+            if (seo.keywords_primarias?.length) {
+                h += '<div class="seo-kw-group"><div class="seo-kw-label">Primary Keywords</div><div class="seo-kw-tags">';
+                seo.keywords_primarias.forEach(kw => { h += '<span class="seo-tag-primary">' + kw + '</span>'; });
+                h += '</div></div>';
+            }
+            if (seo.keywords_secundarias?.length) {
+                h += '<div class="seo-kw-group"><div class="seo-kw-label">Secondary Keywords</div><div class="seo-kw-tags">';
+                seo.keywords_secundarias.forEach(kw => { h += '<span class="seo-tag-secondary">' + kw + '</span>'; });
+                h += '</div></div>';
+            }
+            if (seo.keywords_em_falta?.length) {
+                h += '<div class="seo-kw-group"><div class="seo-kw-label">Missing Keywords</div><div class="seo-kw-tags">';
+                seo.keywords_em_falta.forEach(kw => { h += '<span class="seo-tag-missing">' + kw + '</span>'; });
+                h += '</div></div>';
+            }
+            if (seo.keywords_por_seccao) {
+                const secNames = { headline: 'Headline', about: 'About Section', experience: 'Experience', skills: 'Skills' };
+                h += '<div class="seo-kw-group"><div class="seo-kw-label">Keywords by Section</div>';
+                Object.entries(seo.keywords_por_seccao).forEach(([key, kws]) => {
+                    if (Array.isArray(kws) && kws.length) {
+                        h += '<div class="seo-section-kw"><div class="kw-section-name">' + (secNames[key] || key) + '</div>';
+                        h += '<div class="seo-kw-tags">';
+                        kws.forEach(kw => { h += '<span class="seo-tag-primary">' + kw + '</span>'; });
+                        h += '</div></div>';
+                    }
+                });
+                h += '</div>';
+            }
+            if (seo.recomendacoes_seo) {
+                h += '<div style="padding:14px 18px;background:var(--light);border-radius:8px;margin-top:12px;">';
+                h += '<p style="font-size:0.78rem;color:var(--muted);line-height:1.7;">' + seo.recomendacoes_seo + '</p>';
+                h += '</div>';
+            }
+            h += '</div>';
+        }
+
+        // ── SEO Keywords (legacy) ──
+        if (ac.dicas_seo?.length && !ac.seo_linkedin) {
             h += '<div class="s2i-section">';
             h += '<div class="s2i-section-title"><i class="fas fa-key"></i> SEO Keywords</div>';
             h += '<div style="display:flex;flex-wrap:wrap;gap:6px;">';
@@ -2110,7 +2435,7 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
             h += '</div></div>';
         }
 
-        // ── Forma\u00e7\u00e3o e Certifica\u00e7\u00f5es ──
+        // ── Education & Certifications ──ica\u00e7\u00f5es ──
         if (ac.analise_formacao) {
             h += '<div class="s2i-section">';
             h += '<div class="s2i-section-title"><i class="fas fa-graduation-cap"></i> Forma\u00e7\u00e3o e Certifica\u00e7\u00f5es</div>';
