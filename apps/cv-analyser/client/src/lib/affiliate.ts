@@ -44,6 +44,22 @@ function generateSessionId(): string {
 }
 
 async function getGeoLocation(): Promise<{ country: string | null; city: string | null }> {
+  // Primary: use our own Vercel edge endpoint (works in all browsers/webviews)
+  try {
+    const res = await fetch('/api/geo', { signal: AbortSignal.timeout(3000) });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.country) {
+        return {
+          country: data.country || null,
+          city: data.city || null,
+        };
+      }
+    }
+  } catch {
+    // Fallback below
+  }
+  // Fallback: ipapi.co (may fail in LinkedIn webview or when rate-limited)
   try {
     const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3000) });
     if (!res.ok) return { country: null, city: null };
