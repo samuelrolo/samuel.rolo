@@ -34,9 +34,6 @@ const translations: Record<Lang, Record<string, string>> = {
     'auth.passwordMismatch': 'As palavras-passe não coincidem.',
     'auth.errorGeneric': 'Ocorreu um erro. Tenta novamente.',
     'auth.checkEmail': 'Verifica o teu e-mail para confirmar a conta.',
-    'auth.continueWithGoogle': 'Continuar com Google',
-    'auth.signUpWithGoogle': 'Registar com Google',
-    'auth.or': 'ou',
     // Dashboard
     'dash.title': 'O meu perfil',
     'dash.personalInfo': 'Dados pessoais',
@@ -613,9 +610,6 @@ const translations: Record<Lang, Record<string, string>> = {
     'auth.passwordMismatch': 'Passwords do not match.',
     'auth.errorGeneric': 'An error occurred. Please try again.',
     'auth.checkEmail': 'Check your email to confirm your account.',
-    'auth.continueWithGoogle': 'Continue with Google',
-    'auth.signUpWithGoogle': 'Sign up with Google',
-    'auth.or': 'or',
     // Dashboard
     'dash.title': 'My profile',
     'dash.personalInfo': 'Personal information',

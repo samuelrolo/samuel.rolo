@@ -736,8 +736,8 @@ export default function ProfilePage() {
             </section>
           </div>
 
-          {/* ═══ RIGHT COLUMN: Security + Subscription + Member Link ═══ */}
-          <div className="space-y-5">
+          {/* ═══ RIGHT COLUMN: Security + Subscription + Member Link + Privacy ═══ */}
+          <div className="space-y-5 flex flex-col">
 
             {/* ─── Account Security Widget ─── */}
             <section className="border border-[#e5e5e5] rounded-xl p-5 bg-white shadow-sm">
@@ -966,29 +966,27 @@ export default function ProfilePage() {
               </div>
               <ArrowRight className="w-4 h-4 text-[#ccc] group-hover:text-gold transition-colors" />
             </Link>
-          </div>
-        </div>
 
-        {/* ═══════════════════════════════════════════════════════════════════ */}
-        {/* PRIVACY & SECURITY                                                 */}
-        {/* ═══════════════════════════════════════════════════════════════════ */}
-        <div className="p-4 bg-[#fafaf9] border border-[#f0f0f0] rounded-xl">
-          <div className="flex items-center gap-2 mb-2">
-            <Shield className="w-3.5 h-3.5 text-[#bbb]" />
-            <span className="text-[10px] text-[#999] font-medium uppercase tracking-wider">{t('profile.privacy.title')}</span>
-          </div>
-          <div className="flex flex-wrap gap-4">
-            <div className="flex items-center gap-1.5 text-[10px] text-[#999]">
-              <Lock className="w-3 h-3 text-emerald-400" />
-              <span>{t('profile.privacy.secure')}</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-[10px] text-[#999]">
-              <Trash2 className="w-3 h-3 text-[#ccc]" />
-              <span>{t('profile.privacy.delete')}</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-[10px] text-[#999]">
-              <Shield className="w-3 h-3 text-[#ccc]" />
-              <span>{t('profile.privacy.noCvShare')}</span>
+            {/* ─── Privacy & Security (fills remaining space) ─── */}
+            <div className="p-4 bg-[#fafaf9] border border-[#f0f0f0] rounded-xl mt-auto">
+              <div className="flex items-center gap-2 mb-2">
+                <Shield className="w-3.5 h-3.5 text-[#bbb]" />
+                <span className="text-[10px] text-[#999] font-medium uppercase tracking-wider">{t('profile.privacy.title')}</span>
+              </div>
+              <div className="flex flex-wrap gap-4">
+                <div className="flex items-center gap-1.5 text-[10px] text-[#999]">
+                  <Lock className="w-3 h-3 text-emerald-400" />
+                  <span>{t('profile.privacy.secure')}</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-[#999]">
+                  <Trash2 className="w-3 h-3 text-[#ccc]" />
+                  <span>{t('profile.privacy.delete')}</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-[#999]">
+                  <Shield className="w-3 h-3 text-[#ccc]" />
+                  <span>{t('profile.privacy.noCvShare')}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
