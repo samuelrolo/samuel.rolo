@@ -136,6 +136,24 @@ const STOP_WORDS = new Set([
   'only', 'own', 'same', 'too', 'very', 'just', 'about', 'above', 'after', 'again',
 ]);
 
+// ─── URL Detection ─────────────────────────────────────────────────────────
+
+/**
+ * Detect if the input text is a URL rather than a real job description.
+ * Returns true if the text looks like a URL or is too short to be a meaningful JD.
+ */
+export function isURL(text: string): boolean {
+  const trimmed = text.trim();
+  // Direct URL patterns
+  if (/^https?:\/\//i.test(trimmed)) return true;
+  if (/^www\./i.test(trimmed)) return true;
+  // LinkedIn job URLs (even without protocol)
+  if (/linkedin\.com\/jobs/i.test(trimmed)) return true;
+  // If text has fewer than 30 chars and contains domain-like patterns
+  if (trimmed.length < 50 && /\.[a-z]{2,}\//i.test(trimmed)) return true;
+  return false;
+}
+
 // ─── Keyword Extraction ─────────────────────────────────────────────────────
 
 /** Importance indicators in JD text */
@@ -192,6 +210,9 @@ function determineImportance(keyword: string, context: string): MatchedKeyword['
 export function extractKeywordsFromJD(jdText: string): { keyword: string; importance: MatchedKeyword['importance']; category: MatchedKeyword['category'] }[] {
   const text = jdText.trim();
   if (!text) return [];
+
+  // Detect if input is a URL (not a real job description)
+  if (isURL(text)) return [];
 
   const lower = text.toLowerCase();
   const keywords: Map<string, { count: number; importance: MatchedKeyword['importance']; category: MatchedKeyword['category'] }> = new Map();

@@ -1620,46 +1620,6 @@ export default function Results() {
           <ATSDeepScanBlock data={analysisData.atsDeepScan} isPaid={isPaid} isEN={isEN} onUnlock={() => openPaymentModal()} />
         )}
 
-        {/* ═══ Live Match ═══ */}
-        {cvText && (
-          <div className="mb-8">
-            {!showLiveMatch ? (
-              <button
-                onClick={() => setShowLiveMatch(true)}
-                className="w-full bg-gradient-to-r from-[#fafaf9] to-[#f5f5f3] border-2 border-dashed border-[#C9A961]/30 rounded-lg p-5 hover:border-[#C9A961]/50 hover:shadow-sm transition-all group"
-              >
-                <div className="flex items-center justify-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#C9A961] to-[#B8943F] flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <Target className="w-4 h-4 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-sm font-semibold text-[#333] flex items-center gap-1.5">
-                      Live Match
-                      <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] border border-[#C9A961]/20">
-                        {isEN ? 'New' : 'Novo'}
-                      </span>
-                    </p>
-                    <p className="text-[11px] text-[#888] font-light">
-                      {isEN ? 'Paste a job description and see ATS keyword matches in real-time' : 'Cole uma vaga e veja as keywords ATS destacadas no seu CV em tempo real'}
-                    </p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-[#ccc] group-hover:text-[#C9A961] transition-colors ml-auto" />
-                </div>
-              </button>
-            ) : (
-              <div className="bg-card border border-[#e8e8e6] rounded-lg p-5">
-                <LiveMatchPanel
-                  cvText={cvText}
-                  lang={isEN ? 'en' : 'pt'}
-                  isPaid={isPaid}
-                  onRequestPayment={() => openPaymentModal()}
-                  initialJD={sessionStorage.getItem('jobDescription') || ''}
-                />
-              </div>
-            )}
-          </div>
-        )}
-
         {/* ═══ Job Match Section (only when user provided a job posting) ═══ */}
         {analysisData.jobMatch && analysisData.jobMatch.atsCompatibilityScore != null && (
           <div className="bg-card border-2 border-[#C9A961]/30 rounded-lg p-6 mb-8">
@@ -1736,6 +1696,47 @@ export default function Results() {
                   <span className="text-xs text-[#C9A961] font-medium">{isEN ? 'See the detail in the full report' : 'V\u00ea o detalhe no relat\u00f3rio completo'}</span>
                 </div>
               </>
+            )}
+          </div>
+        )}
+
+        {/* ═══ Live Match (after Job Match, as optional tool) ═══ */}
+        {cvText && (
+          <div className="mb-8">
+            {!showLiveMatch ? (
+              <button
+                onClick={() => setShowLiveMatch(true)}
+                className="w-full bg-gradient-to-r from-[#fafaf9] to-[#f5f5f3] border-2 border-dashed border-[#C9A961]/30 rounded-lg p-5 hover:border-[#C9A961]/50 hover:shadow-sm transition-all group"
+              >
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#C9A961] to-[#B8943F] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <Target className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-[#333] flex items-center gap-1.5">
+                      Live Match
+                      <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-[#C9A961]/10 text-[#C9A961] border border-[#C9A961]/20">
+                        {isEN ? 'New' : 'Novo'}
+                      </span>
+                    </p>
+                    <p className="text-[11px] text-[#888] font-light">
+                      {analysisData.jobMatch
+                        ? (isEN ? 'Want to compare with a different job? Paste another description here' : 'Quer comparar com outra vaga? Cole outra descrição aqui')
+                        : (isEN ? 'Paste a job description and see ATS keyword matches in real-time' : 'Cole a descrição de uma vaga e veja as keywords ATS destacadas no seu CV em tempo real')}
+                    </p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-[#ccc] group-hover:text-[#C9A961] transition-colors ml-auto" />
+                </div>
+              </button>
+            ) : (
+              <div className="bg-card border border-[#e8e8e6] rounded-lg p-5">
+                <LiveMatchPanel
+                  cvText={cvText}
+                  lang={isEN ? 'en' : 'pt'}
+                  isPaid={isPaid}
+                  onRequestPayment={() => openPaymentModal()}
+                />
+              </div>
             )}
           </div>
         )}

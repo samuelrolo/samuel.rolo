@@ -16,7 +16,7 @@
  * - isMemberArea: if true, always shows full content (no paywall)
  */
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { runLiveMatch, type LiveMatchResult, type MatchedKeyword } from '../lib/liveMatchEngine';
+import { runLiveMatch, isURL, type LiveMatchResult, type MatchedKeyword } from '../lib/liveMatchEngine';
 import LiveMatchEditor from './LiveMatchEditor';
 import {
   Crosshair, Zap, FileSearch, CheckCircle, AlertTriangle, XCircle,
@@ -135,12 +135,22 @@ export default function LiveMatchPanel({
   const isPT = lang === 'pt';
   const hasAccess = isMemberArea || isPaid;
 
+  const [urlWarning, setUrlWarning] = useState(false);
+
   // Auto-analyse with debounce
   const analyse = useCallback((jd: string) => {
     if (!cvText.trim() || !jd.trim()) {
       setResult(null);
+      setUrlWarning(false);
       return;
     }
+    // Detect URLs — don't analyse, show warning instead
+    if (isURL(jd)) {
+      setResult(null);
+      setUrlWarning(true);
+      return;
+    }
+    setUrlWarning(false);
     setIsAnalysing(true);
     // Small delay to show loading state
     setTimeout(() => {
@@ -156,9 +166,9 @@ export default function LiveMatchPanel({
     debounceRef.current = setTimeout(() => analyse(value), 600);
   }, [analyse]);
 
-  // Run initial analysis if JD is provided
+  // Run initial analysis if JD is provided (but NOT if it's a URL)
   useEffect(() => {
-    if (initialJD.trim() && cvText.trim()) {
+    if (initialJD.trim() && cvText.trim() && !isURL(initialJD)) {
       analyse(initialJD);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -222,6 +232,18 @@ export default function LiveMatchPanel({
           </div>
         )}
       </div>
+
+      {/* URL Warning */}
+      {urlWarning && (
+        <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
+          <p className="text-[11px] text-amber-700">
+            {isPT
+              ? 'Detetámos um link em vez de uma descrição de vaga. Para resultados precisos, copie e cole o texto completo da descrição da vaga (não o URL).'
+              : 'We detected a URL instead of a job description. For accurate results, please copy and paste the full job description text (not the URL).'}
+          </p>
+        </div>
+      )}
 
       {/* Loading State */}
       {isAnalysing && (
