@@ -665,11 +665,18 @@ function computeATSDeepScan(
   });
 
   // ── 3. SCORES ──
+  // Use atsRejectionRate from Gemini as the authoritative source for overallATSScore
+  // This ensures consistency between ATSRejectionBlock and ATSDeepScanBlock
+  const overallATSScore = Math.max(0, Math.min(100, 100 - atsRejectionRate));
   const passCount = formatChecks.filter(c => c.status === 'pass').length;
   const totalChecks = formatChecks.length;
   const formatScore = Math.round((passCount / totalChecks) * 100);
   const keywordScore = Math.round(keywordDensity * 100);
-  const overallATSScore = Math.round((keywordScore * 0.6 + formatScore * 0.4));
+  // Aligned with ATSRejectionBlock thresholds:
+  // rejectionRate <= 20 (score >= 80): excellent
+  // rejectionRate <= 40 (score >= 60): good
+  // rejectionRate <= 60 (score >= 40): needs_work
+  // rejectionRate > 60 (score < 40): critical
   const verdict = overallATSScore >= 80 ? 'excellent' : overallATSScore >= 60 ? 'good' : overallATSScore >= 40 ? 'needs_work' : 'critical';
 
   return {

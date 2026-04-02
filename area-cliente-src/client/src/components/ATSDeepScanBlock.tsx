@@ -245,12 +245,14 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
           {/* ── SUMMARY ── */}
           <div className={`p-4 rounded-lg space-y-2 border ${
             data.overallATSScore >= 80 ? 'bg-green-500/5 border-green-500/20' :
-            data.overallATSScore >= 50 ? 'bg-[#C9A961]/5 border-[#C9A961]/20' :
+            data.overallATSScore >= 60 ? 'bg-[#C9A961]/5 border-[#C9A961]/20' :
+            data.overallATSScore >= 40 ? 'bg-yellow-500/5 border-yellow-500/20' :
             'bg-red-500/5 border-red-500/20'
           }`}>
             <p className={`text-xs font-semibold ${
               data.overallATSScore >= 80 ? 'text-green-600' :
-              data.overallATSScore >= 50 ? 'text-[#C9A961]' :
+              data.overallATSScore >= 60 ? 'text-[#C9A961]' :
+              data.overallATSScore >= 40 ? 'text-yellow-600' :
               'text-red-500'
             }`}>{isEN ? 'DEEP SCAN SUMMARY' : 'RESUMO DO DEEP SCAN'}</p>
             <p className="text-sm text-foreground leading-relaxed">
@@ -258,10 +260,14 @@ const ATSDeepScanBlock = ({ data, isPaid = false, isEN = false, onUnlock }: ATSD
                 isEN
                   ? <>Your CV has <strong>excellent ATS compatibility</strong>. Keywords are well-placed and formatting follows best practices. Most ATS systems will parse your CV correctly.</>
                   : <>O teu CV tem <strong>excelente compatibilidade ATS</strong>. As keywords estão bem posicionadas e a formatação segue as melhores práticas. A maioria dos sistemas ATS vai ler o teu CV correctamente.</>
-              ) : data.overallATSScore >= 50 ? (
+              ) : data.overallATSScore >= 60 ? (
                 isEN
                   ? <>Your CV has <strong>good ATS compatibility</strong> but there are {missingCount} missing keyword{missingCount !== 1 ? 's' : ''} and {data.formatChecks.filter(f => f.status !== 'pass').length} formatting issue{data.formatChecks.filter(f => f.status !== 'pass').length !== 1 ? 's' : ''} to address. Fixing these points can significantly improve your approval rate.</>
                   : <>O teu CV tem <strong>boa compatibilidade ATS</strong> mas existem {missingCount} keyword{missingCount !== 1 ? 's' : ''} em falta e {data.formatChecks.filter(f => f.status !== 'pass').length} questões de formatação a resolver. Corrigir estes pontos pode melhorar significativamente a tua taxa de aprovação.</>
+              ) : data.overallATSScore >= 40 ? (
+                isEN
+                  ? <>Your CV has <strong>moderate compatibility</strong> with ATS systems. With a <strong>{100 - data.overallATSScore}% rejection probability</strong>, about half of online applications may be filtered before reaching a recruiter. Addressing the {missingCount} missing keywords and {data.formatChecks.filter(f => f.status !== 'pass').length} formatting issues below can significantly reduce this rate.</>
+                  : <>O teu CV tem uma <strong>compatibilidade moderada</strong> com sistemas ATS. Com <strong>{100 - data.overallATSScore}% de probabilidade de rejeição</strong>, cerca de metade das candidaturas online podem ser filtradas antes de chegar a um recrutador. Corrigir as {missingCount} keywords em falta e {data.formatChecks.filter(f => f.status !== 'pass').length} questões de formatação abaixo pode reduzir esta taxa significativamente.</>
               ) : (
                 isEN
                   ? <>Your CV has <strong>low compatibility with ATS systems</strong>. With a <strong>{100 - data.overallATSScore}% rejection probability</strong>, most online applications will be automatically filtered out. It is urgent to restructure the format and add the missing keywords.</>
