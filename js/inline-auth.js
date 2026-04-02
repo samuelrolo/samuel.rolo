@@ -329,6 +329,30 @@ b.textContent=t;
 
 /* ── Init ── */
 function _(){T()}
-"loading"===document.readyState?document.addEventListener("DOMContentLoaded",_):setTimeout(_,300);
+
+/* Try immediately, then retry for React-rendered navbars */
+function initWithRetry(){
+_();
+/* If no container was created, the link wasn't found yet (React may not have rendered). Retry with observer + polling. */
+if(!document.getElementById("s2i-auth-nav-container")){
+var attempts=0,maxAttempts=20;
+var retryInterval=setInterval(function(){
+attempts++;
+_();
+if(document.getElementById("s2i-auth-nav-container")||attempts>=maxAttempts)clearInterval(retryInterval);
+},500);
+/* Also use MutationObserver for faster detection */
+var obs=new MutationObserver(function(){
+if(document.querySelector('a[href*="area-cliente"]')&&!document.getElementById("s2i-auth-nav-container")){
+_();
+if(document.getElementById("s2i-auth-nav-container")){obs.disconnect();clearInterval(retryInterval);}
+}
+});
+obs.observe(document.body,{childList:true,subtree:true});
+/* Cleanup observer after 15s */
+setTimeout(function(){obs.disconnect()},15000);
+}
+}
+"loading"===document.readyState?document.addEventListener("DOMContentLoaded",initWithRetry):setTimeout(initWithRetry,300);
 
 }();
