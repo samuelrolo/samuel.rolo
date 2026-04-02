@@ -579,5 +579,8 @@ document.querySelectorAll('.fade-in').forEach(el => {
     <script>
       class LiteYTEmbed extends HTMLElement{connectedCallback(){this.videoId=this.getAttribute('videoid');let e=this.getAttribute('playlabel')||'Play';this.style.backgroundImage=`url(https://i.ytimg.com/vi/${this.videoId}/hqdefault.jpg)`;let t=document.createElement('button');t.type='button',t.classList.add('lty-playbtn'),t.setAttribute('aria-label',e),this.append(t),this.addEventListener('pointerover',LiteYTEmbed.warmConnections,{once:!0}),this.addEventListener('click',()=>this.addIframe())}addIframe(){if(this.classList.contains('lyt-activated'))return;let e=new URLSearchParams(this.getAttribute('params')||[]);e.append('autoplay','1');let t=document.createElement('iframe');t.width=560,t.height=315,t.title=this.getAttribute('title')||'YouTube Video',t.allow='accelerometer;autoplay;encrypted-media;gyroscope;picture-in-picture',t.allowFullscreen=!0,t.src=`https://www.youtube.com/embed/${this.videoId}?${e.toString()}`,this.append(t),this.classList.add('lyt-activated')}static warmConnections(){if(LiteYTEmbed.preconnected)return;let e=e=>{let t=document.createElement('link');t.rel='preconnect',t.href=e,document.head.append(t)};e('https://www.youtube-nocookie.com'),e('https://www.google.com'),e('https://googleads.g.doubleclick.net'),e('https://static.doubleclick.net'),LiteYTEmbed.preconnected=!0}}customElements.define('lite-youtube',LiteYTEmbed);
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/shared-auth.js"></script>
+    <script src="/js/inline-auth.js"></script>
 </body>
 </html>
