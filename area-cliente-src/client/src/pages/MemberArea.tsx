@@ -12,13 +12,9 @@ import { supabase, type MemberContent } from '@/lib/supabase';
 import { Link } from 'wouter';
 import CareerProgress from '@/components/CareerProgress';
 import UpgradePage from './UpgradePage';
-import ExtraAnalysisPaymentModal, { type ExtraAnalysisProduct } from '@/components/ExtraAnalysisPaymentModal';
 import VagasFeed from '@/components/VagasFeed';
-import SavedJobsTracker from '@/components/SavedJobsTracker';
-import JobContacts from '@/components/JobContacts';
 import AnalysisResultsFull from '@/components/AnalysisResults';
-import AnalysisDetailRenderer from '@/components/AnalysisDetailRenderer';
-import { transformGeminiResponse } from '@/lib/transformGeminiResponse';
+import { transformGeminiResponse } from '@/lib/analysisTransformer';
 import { countries } from '@/lib/countries';
 import * as pdfjsLib from 'pdfjs-dist';
 import {
@@ -81,16 +77,16 @@ const contentTypes = ['all', 'ebook', 'article', 'video', 'podcast'] as const;
 
 // ─── Blog RSS Feed ───────────────────────────────────────────────────────────
 const BLOG_ARTICLES = [
-  { title: 'AI Career Path: Como a Inteligência Artificial Está a Transformar Carreiras', url: 'https://www.share2inspire.pt/blog/artigos/ai-career-path-vs-traditional-coaching', desc: 'A inteligência artificial está a redefinir o mercado de trabalho. Descobre como posicionar a tua carreira na era da IA.' },
+  { title: 'AI Career Path: Como a Inteligência Artificial Está a Transformar Carreiras', url: 'https://www.share2inspire.pt/blog/artigos/ai-career-path', desc: 'A inteligência artificial está a redefinir o mercado de trabalho. Descobre como posicionar a tua carreira na era da IA.' },
   { title: 'Entrevista Presencial vs Remota: Guia Completo', url: 'https://www.share2inspire.pt/blog/artigos/entrevista-presencial-vs-remota', desc: 'Dicas práticas para te destacares tanto em entrevistas presenciais como remotas.' },
-  { title: 'Como Vencer o Filtro ATS: Guia Definitivo', url: 'https://www.share2inspire.pt/blog/artigos/guia-superar-ats-curriculo', desc: '75% dos currículos são rejeitados automaticamente. Aprende a passar nos filtros ATS.' },
-  { title: '7 Erros Fatais no CV que Estão a Sabotar a Tua Carreira', url: 'https://www.share2inspire.pt/blog/artigos/7-erros-cv-candidatos-rejeitados', desc: 'Os erros mais comuns que impedem o teu CV de chegar às mãos certas.' },
-  { title: 'CV vs LinkedIn: Como Alinhar os Dois para Maximizar Oportunidades', url: 'https://www.share2inspire.pt/blog/artigos/cv-linkedin-importancia', desc: 'Estratégias para manter consistência entre o teu CV e perfil LinkedIn.' },
-  { title: 'LinkedIn para Recrutadores: O Que Eles Realmente Procuram', url: 'https://www.share2inspire.pt/blog/artigos/melhorar-linkedin-pesquisas', desc: 'Descobre como os recrutadores usam o LinkedIn e otimiza o teu perfil.' },
-  { title: 'Posicionamento Profissional: Como Destacar-te no Mercado', url: 'https://www.share2inspire.pt/blog/artigos/posicionamento-mercado', desc: 'Técnicas de posicionamento para te diferenciares da concorrência.' },
-  { title: 'Como Negociar Salário: Guia Prático', url: 'https://www.share2inspire.pt/blog/artigos/como-negociar-salario-portugal', desc: 'Estratégias comprovadas para negociar o salário que mereces.' },
-  { title: 'Big 4 Recrutamento: Como Entrar nas Maiores Consultoras', url: 'https://www.share2inspire.pt/blog/artigos/recrutamento-big4-guia-candidatos', desc: 'O guia completo para entrares nas Big 4: Deloitte, PwC, EY e KPMG.' },
-  { title: 'Big 4 por Dentro: A Realidade de Trabalhar nas Maiores Consultoras', url: 'https://www.share2inspire.pt/blog/artigos/big4-insider-10-anos', desc: 'Salários, cultura, progressão e a verdade sobre trabalhar nas Big 4.' },
+  { title: 'Como Vencer o Filtro ATS: Guia Definitivo', url: 'https://www.share2inspire.pt/blog/artigos/como-vencer-filtro-ats', desc: '75% dos currículos são rejeitados automaticamente. Aprende a passar nos filtros ATS.' },
+  { title: '7 Erros Fatais no CV que Estão a Sabotar a Tua Carreira', url: 'https://www.share2inspire.pt/blog/artigos/7-erros-fatais-cv', desc: 'Os erros mais comuns que impedem o teu CV de chegar às mãos certas.' },
+  { title: 'CV vs LinkedIn: Como Alinhar os Dois para Maximizar Oportunidades', url: 'https://www.share2inspire.pt/blog/artigos/cv-vs-linkedin', desc: 'Estratégias para manter consistência entre o teu CV e perfil LinkedIn.' },
+  { title: 'LinkedIn para Recrutadores: O Que Eles Realmente Procuram', url: 'https://www.share2inspire.pt/blog/artigos/linkedin-recrutadores', desc: 'Descobre como os recrutadores usam o LinkedIn e otimiza o teu perfil.' },
+  { title: 'Posicionamento Profissional: Como Destacar-te no Mercado', url: 'https://www.share2inspire.pt/blog/artigos/posicionamento-profissional', desc: 'Técnicas de posicionamento para te diferenciares da concorrência.' },
+  { title: 'Como Negociar Salário: Guia Prático', url: 'https://www.share2inspire.pt/blog/artigos/negociar-salario', desc: 'Estratégias comprovadas para negociar o salário que mereces.' },
+  { title: 'Big 4 Recrutamento: Como Entrar nas Maiores Consultoras', url: 'https://www.share2inspire.pt/blog/artigos/big4-recrutamento', desc: 'O guia completo para entrares nas Big 4: Deloitte, PwC, EY e KPMG.' },
+  { title: 'Big 4 por Dentro: A Realidade de Trabalhar nas Maiores Consultoras', url: 'https://www.share2inspire.pt/blog/artigos/big4-por-dentro', desc: 'Salários, cultura, progressão e a verdade sobre trabalhar nas Big 4.' },
 ];
 
 // ─── Analysis Result Display ─────────────────────────────────────────────────
@@ -785,8 +781,8 @@ export default function MemberArea() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Career Path states
-  const [cpCountry, setCpCountry] = useState(profile?.job_country || 'Portugal');
-  const [cpRegion, setCpRegion] = useState(profile?.job_region || '');
+  const [cpCountry, setCpCountry] = useState('Portugal');
+  const [cpRegion, setCpRegion] = useState('');
   const [cpLinkedinUrl, setCpLinkedinUrl] = useState('');
   const [monthlyCareerPathUsed, setMonthlyCareerPathUsed] = useState(0);
 
@@ -833,16 +829,6 @@ export default function MemberArea() {
 
   const selectedCountryData = countries.find(c => c.country === cpCountry);
   const availableRegions = selectedCountryData?.regions || [];
-
-  // ─── Sync cpCountry/cpRegion when profile loads asynchronously ──────────
-  useEffect(() => {
-    if (profile?.job_country && profile.job_country !== cpCountry) {
-      setCpCountry(profile.job_country);
-    }
-    if (profile?.job_region !== undefined && profile.job_region !== cpRegion) {
-      setCpRegion(profile.job_region || '');
-    }
-  }, [profile?.job_country, profile?.job_region]);
 
   // ─── Fetch content ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -1117,10 +1103,12 @@ export default function MemberArea() {
     try {
       const cvData = await getCvData();
       if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) { setAnalysisError(lang === 'pt' ? 'Não foi possível ler o CV.' : 'Could not read CV.'); setAnalyzing(false); return; }
-      const cvText = cvData.text.substring(0, 8000);
+      const extractionBody = buildCvRequestBody(cvData, 'cv_extraction');
+      const extractionResult = await fetchWithRetry(extractionBody);
+      const analysisSource = extractionResult.analysis || extractionResult;
+      const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
       const linkedinForCp = cpLinkedinUrl.trim() || profile?.linkedin_url || '';
-      const careerPathBody: any = { mode: 'career_path', cv_text: cvText, linkedin_url: linkedinForCp, country: cpCountry, region: cpRegion, language: lang };
-      if (cvData.base64) { careerPathBody.file = cvData.base64; careerPathBody.filename = 'cv.pdf'; }
+      const careerPathBody: any = { mode: 'career_path', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: linkedinForCp, country: cpCountry, region: cpRegion, language: lang };
       const result = await fetchWithRetry(careerPathBody);
       setAnalysisResult(result);
       const extraPrice = isExtra ? (planTier === 'pro' ? 4.75 : 9.50) : 0;
@@ -1138,10 +1126,12 @@ export default function MemberArea() {
     try {
       const cvData = await getCvData();
       if (!cvData || (cvData.text.trim().length < 50 && !cvData.base64)) { setAnalysisError(lang === 'pt' ? 'Não foi possível ler o CV.' : 'Could not read CV.'); setAnalyzing(false); return; }
-      const cvText = cvData.text.substring(0, 8000);
+      const extractionBody = buildCvRequestBody(cvData, 'cv_extraction');
+      const extractionResult = await fetchWithRetry(extractionBody);
+      const analysisSource = extractionResult.analysis || extractionResult;
+      const cvText = (analysisSource.raw_text || cvData.text).substring(0, 8000);
       const linkedinForCi = cpLinkedinUrl.trim() || profile?.linkedin_url || '';
-      const ciBody: any = { mode: 'career_path', cv_text: cvText, linkedin_url: linkedinForCi, country: cpCountry, region: cpRegion, language: lang };
-      if (cvData.base64) { ciBody.file = cvData.base64; ciBody.filename = 'cv.pdf'; }
+      const ciBody: any = { mode: 'career_path', cv_text: cvText, cv_analysis: JSON.stringify(analysisSource), linkedin_url: linkedinForCi, country: cpCountry, region: cpRegion, language: lang };
       const result = await fetchWithRetry(ciBody);
       setAnalysisResult(result);
       const extraPrice = isExtra ? (planTier === 'pro' ? 9.75 : 19.50) : 0;
@@ -1202,14 +1192,12 @@ export default function MemberArea() {
       if (data.success && data.reply) {
         setCvMakerMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
         if (data.cv_data && typeof data.cv_data === 'object' && Object.keys(data.cv_data).length > 0) {
-          // Check if there's any real data (not just empty strings/arrays)
           const cd = data.cv_data;
           const hasRealPersonalInfo = cd.personal_info && Object.values(cd.personal_info).some((v: any) => typeof v === 'string' && v.trim());
           const hasRealData = hasRealPersonalInfo || cd.target_role?.trim() || cd.summary?.trim() || cd.experiences?.some((e: any) => e.company || e.role) || cd.education?.some((e: any) => e.institution || e.degree) || cd.skills?.some((s: string) => s?.trim());
           if (hasRealData) {
             setCvMakerData(prev => {
               const merged = { ...prev };
-              // Only merge personal_info fields that have actual values
               if (cd.personal_info) {
                 const filteredPI: Record<string, string> = {};
                 for (const [k, v] of Object.entries(cd.personal_info)) { if (typeof v === 'string' && v.trim()) filteredPI[k] = v as string; }
@@ -1677,8 +1665,7 @@ export default function MemberArea() {
   }, [savedAnalyses, t]);
 
   // ─── Send Analysis by Email ──────────────────────────────────────────────
-  const BACKEND_URL = 'https://share2inspire-beckend.lm.r.appspot.com';
-  const SEND_EMAIL_URL = `${BACKEND_URL}/api/email/send`;
+  const SEND_EMAIL_URL = `${SUPABASE_URL}/functions/v1/send-analysis-email`;
 
   const openEmailModal = () => {
     setEmailTo(profile?.email || user?.email || '');
@@ -1702,7 +1689,7 @@ export default function MemberArea() {
       const analysisType = typeMap[toolName] || toolName;
       const resp = await fetch(SEND_EMAIL_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
         body: JSON.stringify({ to_email: emailTo, to_name: profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : '', subject: `Share2Inspire — ${analysisType}`, html_content: htmlContent, analysis_type: analysisType }),
       });
       const data = await resp.json();
@@ -1714,247 +1701,10 @@ export default function MemberArea() {
     }
   };
 
-  // ─── Routing: sem subscrição → vista limitada com Jobs + Análises ──────
+  // ─── Routing: sem subscrição → UpgradePage ─────────────────────────────
   // MUST be after all hooks to respect React's rules of hooks
   const hasActiveSub = subscription && subscription.status === 'active' && new Date(subscription.expires_at) > new Date();
-
-  // Free users: show simplified view with Jobs + Analyses tabs only
-  if (!hasActiveSub) {
-    type FreeTabId = 'analyses' | 'jobs';
-    const FREE_TABS: { id: FreeTabId; labelPt: string; labelEn: string; icon: typeof Wrench }[] = [
-      { id: 'analyses', labelPt: 'Análises', labelEn: 'Analyses', icon: FileSearch },
-      { id: 'jobs', labelPt: 'Vagas', labelEn: 'Jobs', icon: Briefcase },
-    ];
-    // Use activeTab but constrain to free tabs
-    const freeTab: FreeTabId = (activeTab === 'jobs') ? 'jobs' : 'analyses';
-
-    return (
-      <div className="min-h-screen pt-24 pb-20 bg-[#fafaf9]">
-        <div className="container max-w-5xl mx-auto px-4">
-
-          {/* ─── Welcome Header (simplified for free users) ─── */}
-          <div className="mb-6">
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-3">
-              <div>
-                <p className="text-gold text-[11px] font-medium tracking-[0.15em] uppercase mb-1">{t('member.title')}</p>
-                <h1 className="text-2xl md:text-3xl font-semibold text-[#1a1a1a]">
-                  {profile?.first_name ? `${t('member.welcome')}, ${profile.first_name}.` : t('member.welcome')}
-                </h1>
-                <p className="text-xs text-[#888] mt-1">
-                  {lang === 'pt' ? 'Consulta as tuas análises guardadas e as vagas que acompanhas.' : 'View your saved analyses and tracked jobs.'}
-                </p>
-              </div>
-              <span className="px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider bg-[#f5f5f4] text-[#999] border border-[#e5e5e5]">
-                {lang === 'pt' ? 'Conta Grátis' : 'Free Account'}
-              </span>
-            </div>
-
-            {/* Upgrade CTA banner */}
-            <a
-              href="/area-cliente/planos"
-              className="w-full flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-gold/8 via-gold/4 to-transparent border border-gold/15 rounded-xl hover:border-gold/30 hover:shadow-sm transition-all group cursor-pointer text-left"
-            >
-              <div className="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center shrink-0 group-hover:bg-gold/15 transition-colors">
-                <Sparkles className="w-4 h-4 text-gold" />
-              </div>
-              <p className="flex-1 text-xs text-[#555] leading-relaxed">
-                {lang === 'pt'
-                  ? 'Desbloqueia todas as ferramentas — CV Analyser, LinkedIn Roaster, Career Path, Feed de Vagas e muito mais.'
-                  : 'Unlock all tools — CV Analyser, LinkedIn Roaster, Career Path, Job Feed and much more.'}
-              </p>
-              <span className="shrink-0 flex items-center gap-1 text-[10px] font-semibold text-gold uppercase tracking-wider opacity-80 group-hover:opacity-100 transition-opacity">
-                {lang === 'pt' ? 'Ver planos' : 'View plans'}
-                <ArrowRight className="w-3 h-3" />
-              </span>
-            </a>
-          </div>
-
-          {/* ─── Tab Navigation (Jobs + Analyses only) ─── */}
-          <div className="mb-8">
-            <nav className="flex gap-1 bg-[#f5f5f4] p-1 rounded-xl">
-              {FREE_TABS.map((tab) => {
-                const isActive = freeTab === tab.id;
-                const TabIcon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-300 ${
-                      isActive
-                        ? 'bg-white text-[#1a1a1a] shadow-sm'
-                        : 'text-[#888] hover:text-[#555]'
-                    }`}
-                  >
-                    <TabIcon className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">{lang === 'pt' ? tab.labelPt : tab.labelEn}</span>
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-
-          {/* ═══════════════════ FREE TAB: ANALYSES ═══════════════════ */}
-          {freeTab === 'analyses' && (
-            <div className="animate-in fade-in duration-300">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-sm font-semibold text-[#1a1a1a]">{lang === 'pt' ? 'Biblioteca de Análises' : 'Analysis Library'}</h2>
-                  <span className="text-[10px] text-[#999] bg-[#f5f5f4] px-2 py-0.5 rounded-full">{savedAnalyses.length}</span>
-                </div>
-                <button
-                  onClick={() => { setLoadingSaved(true); supabase.from('user_analyses').select('*').eq('user_id', user!.id).order('created_at', { ascending: false }).limit(100).then(({ data }) => { setSavedAnalyses(data as SavedAnalysis[] || []); setLoadingSaved(false); }); }}
-                  className="flex items-center gap-1 text-[10px] text-[#999] hover:text-gold transition-colors"
-                >
-                  <RefreshCw className="w-3 h-3" /> {lang === 'pt' ? 'Atualizar' : 'Refresh'}
-                </button>
-              </div>
-
-              {loadingSaved ? (
-                <div className="py-16 text-center"><Loader2 className="w-5 h-5 animate-spin text-gold mx-auto" /><p className="text-xs text-[#999] mt-2">{t('dash.loadingAnalyses')}</p></div>
-              ) : savedAnalyses.length === 0 ? (
-                <div className="py-16 text-center border border-dashed border-[#e5e5e5] rounded-xl bg-[#fafaf9]">
-                  <FileSearch className="w-10 h-10 text-[#ddd] mx-auto mb-3" />
-                  <p className="text-sm text-[#999] mb-1">{t('dash.noAnalysesYet')}</p>
-                  <p className="text-xs text-[#bbb] mb-4">
-                    {lang === 'pt'
-                      ? 'Usa as ferramentas gratuitas (CV Analyser, LinkedIn Roaster) e guarda os resultados aqui.'
-                      : 'Use the free tools (CV Analyser, LinkedIn Roaster) and save results here.'}
-                  </p>
-                  <a href="/cv-analyser" className="inline-flex items-center gap-1.5 text-xs text-gold hover:underline font-medium">
-                    <ArrowRight className="w-3 h-3" /> {lang === 'pt' ? 'Experimentar CV Analyser' : 'Try CV Analyser'}
-                  </a>
-                </div>
-              ) : (
-                <div className="space-y-8">
-                  {Object.entries(groupedAnalyses).map(([type, items]) => {
-                    const config = TOOL_CONFIG[type] || { label: type, icon: FileText, color: 'text-[#999]', bgColor: 'bg-[#f5f5f4]', borderColor: 'border-[#e5e5e5]' };
-                    const ToolIcon = config.icon;
-                    const isExpanded = expandedAnalysisType === type;
-                    const latest = items[0];
-                    const rest = items.slice(1);
-
-                    return (
-                      <div key={type} className="border border-[#e5e5e5] rounded-xl bg-white shadow-sm overflow-hidden">
-                        <div className="flex items-center gap-3 p-4 border-b border-[#f0f0f0]">
-                          <div className={`w-8 h-8 rounded-lg ${config.bgColor} flex items-center justify-center`}>
-                            <ToolIcon className={`w-4 h-4 ${config.color}`} />
-                          </div>
-                          <span className="text-sm font-semibold text-[#1a1a1a]">{config.label}</span>
-                          <span className="text-[10px] text-[#999] bg-[#f5f5f4] px-2 py-0.5 rounded-full">{items.length}</span>
-                        </div>
-                        <div className="p-4 bg-gradient-to-r from-[#fafaf9] to-white">
-                          <div className="flex items-center gap-1.5 text-[10px] text-gold font-medium uppercase tracking-wider mb-2">
-                            <Sparkles className="w-3 h-3" />
-                            {lang === 'pt' ? 'Última análise' : 'Latest analysis'}
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1 min-w-0">
-                              {getAnalysisSummary(latest) && <p className="text-sm font-medium text-[#1a1a1a] mb-1">{getAnalysisSummary(latest)}</p>}
-                              <div className="flex items-center gap-1.5 text-[10px] text-[#999]"><Clock className="w-3 h-3" />{formatDate(latest.created_at)}</div>
-                            </div>
-                            <div className="flex items-center gap-2 ml-3">
-                              <button onClick={() => setViewingAnalysis(latest)} className="flex items-center gap-1 text-[11px] text-gold hover:text-[#b8960c] font-medium transition-colors">
-                                <ArrowRight className="w-3 h-3" />{lang === 'pt' ? 'Ver resultado' : 'View result'}
-                              </button>
-                              <button onClick={() => handleDeleteAnalysis(latest.id)} disabled={deletingId === latest.id} className="text-[#ddd] hover:text-red-400 transition-colors">
-                                {deletingId === latest.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                        {rest.length > 0 && (
-                          <>
-                            <button onClick={() => setExpandedAnalysisType(isExpanded ? null : type)} className="w-full flex items-center justify-between px-4 py-2.5 border-t border-[#f0f0f0] text-[11px] text-[#888] hover:text-gold hover:bg-[#fafaf9] transition-all">
-                              <span>{isExpanded ? (lang === 'pt' ? 'Ocultar anteriores' : 'Hide older') : (lang === 'pt' ? `Ver mais ${rest.length} análise${rest.length > 1 ? 's' : ''}` : `Show ${rest.length} more`)}</span>
-                              {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                            </button>
-                            {isExpanded && (
-                              <div className="border-t border-[#f0f0f0]">
-                                {rest.map((sa) => (
-                                  <div key={sa.id} className="flex items-center justify-between px-4 py-3 border-b border-[#f5f5f4] last:border-b-0 hover:bg-[#fafaf9] transition-colors group">
-                                    <div className="flex-1 min-w-0">
-                                      {getAnalysisSummary(sa) && <p className="text-xs font-medium text-[#1a1a1a] mb-0.5">{getAnalysisSummary(sa)}</p>}
-                                      <div className="flex items-center gap-1.5 text-[10px] text-[#999]"><Clock className="w-3 h-3" />{formatDate(sa.created_at)}</div>
-                                    </div>
-                                    <div className="flex items-center gap-2 ml-3">
-                                      <button onClick={() => setViewingAnalysis(sa)} className="flex items-center gap-1 text-[10px] text-gold hover:text-[#b8960c] font-medium transition-colors opacity-0 group-hover:opacity-100">
-                                        <ArrowRight className="w-3 h-3" />{lang === 'pt' ? 'Ver' : 'View'}
-                                      </button>
-                                      <button onClick={() => handleDeleteAnalysis(sa.id)} disabled={deletingId === sa.id} className="text-[#ddd] hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100">
-                                        {deletingId === sa.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
-                                      </button>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ═══════════════════ FREE TAB: JOBS ═══════════════════ */}
-          {freeTab === 'jobs' && (
-            <div className="animate-in fade-in duration-300">
-              <SavedJobsTracker lang={lang} />
-
-              {/* Contactos — recrutadores e hiring managers */}
-              <JobContacts lang={lang} />
-
-              {/* Locked Adzuna feed CTA */}
-              <section className="mt-6 p-8 border border-dashed border-[#e5e5e5] rounded-xl bg-[#fafaf9] text-center">
-                <Lock className="w-8 h-8 text-[#ccc] mx-auto mb-3" />
-                <h3 className="text-sm font-medium text-[#1a1a1a] mb-1">{lang === 'pt' ? 'Feed de Vagas' : 'Job Feed'}</h3>
-                <p className="text-xs text-[#999] font-light mb-4 max-w-sm mx-auto">
-                  {lang === 'pt'
-                    ? 'Subscreve para aceder ao feed inteligente de vagas com match personalizado.'
-                    : 'Subscribe to access the intelligent job feed with personalised matching.'}
-                </p>
-                <a href="/area-cliente/planos" className="inline-flex items-center gap-1.5 px-4 py-2 bg-gold/10 border border-gold/20 text-gold text-xs font-medium rounded-lg hover:bg-gold/20 transition-all">
-                  <Sparkles className="w-3.5 h-3.5" />{lang === 'pt' ? 'Ver planos' : 'View plans'}
-                </a>
-              </section>
-            </div>
-          )}
-
-        </div>
-
-        {/* ═══════════════════ ANALYSIS RESULT VIEWER (shared with subscriber view) ═══════════════════ */}
-        {viewingAnalysis && (
-          <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 backdrop-blur-sm overflow-y-auto pt-8 pb-8" onClick={() => setViewingAnalysis(null)}>
-            <div className="relative w-full max-w-4xl mx-4 bg-white rounded-2xl shadow-2xl border border-[#e5e5e5] animate-in fade-in slide-in-from-bottom-4 duration-300" onClick={e => e.stopPropagation()}>
-              <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-[#f0f0f0] bg-white/95 backdrop-blur-sm rounded-t-2xl">
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-lg ${(TOOL_CONFIG[viewingAnalysis.analysis_type] || { bgColor: 'bg-[#f5f5f4]' }).bgColor} flex items-center justify-center`}>
-                    {(() => { const Icon = (TOOL_CONFIG[viewingAnalysis.analysis_type] || { icon: FileSearch }).icon; return <Icon className={`w-4 h-4 ${(TOOL_CONFIG[viewingAnalysis.analysis_type] || { color: 'text-[#999]' }).color}`} />; })()}
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-[#1a1a1a]">{(TOOL_CONFIG[viewingAnalysis.analysis_type] || { label: viewingAnalysis.analysis_type }).label}</h3>
-                    <p className="text-[10px] text-[#999]">{formatDate(viewingAnalysis.created_at)}</p>
-                  </div>
-                </div>
-                <button onClick={() => setViewingAnalysis(null)} className="px-3 py-1.5 text-xs text-[#999] hover:text-[#1a1a1a] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-all">
-                  {lang === 'pt' ? 'Fechar' : 'Close'}
-                </button>
-              </div>
-              <div className="p-6">
-                {viewingAnalysis.analysis_type === 'cv_analyser' && viewingAnalysis.data?.enriched ? (
-                  <AnalysisResultsFull data={viewingAnalysis.data.enriched} isPaid={true} />
-                ) : (
-                  <AnalysisDetailRenderer analysisType={viewingAnalysis.analysis_type} data={viewingAnalysis.data} />
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
+  if (!hasActiveSub) return <UpgradePage />;
 
   return (
     <div className="min-h-screen pt-24 pb-20 bg-[#fafaf9]">
@@ -2053,8 +1803,8 @@ export default function MemberArea() {
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id;
               const TabIcon = tab.icon;
-              // Lock content for essential (jobs tab is now open to all)
-              const isLocked = tab.id === 'content' && planTier === 'essential';
+              // Lock jobs & content for essential
+              const isLocked = (tab.id === 'jobs' || tab.id === 'content') && planTier === 'essential';
               return (
                 <button
                   key={tab.id}
@@ -2139,7 +1889,7 @@ export default function MemberArea() {
                       {expandedTool === tool.key ? <ChevronUp className="w-4 h-4 text-gold shrink-0" /> : <ChevronDown className="w-4 h-4 text-[#ccc] group-hover:text-gold/50 transition-colors shrink-0" />}
                     </button>
                     {expandedTool === tool.key && (
-                      <div className="border-t border-[#e5e5e5] p-3 sm:p-5 bg-[#fafaf9] overflow-x-hidden">
+                      <div className="border-t border-[#e5e5e5] p-5 bg-[#fafaf9]">
                         {renderInlinePanel(tool)}
                         {analysisError && (<div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2 mt-4"><AlertCircle className="w-3.5 h-3.5 shrink-0" /><span>{analysisError}</span></div>)}
                         {analysisResult && (
@@ -2149,10 +1899,10 @@ export default function MemberArea() {
                               <div data-analysis-result="true">
                                 <AnalysisResultsFull data={analysisResult._enriched} isPaid={true} />
                               </div>
-                              <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-4 pt-4 border-t border-gold/10">
-                                <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-700 font-medium"><CheckCircle className="w-3.5 h-3.5 shrink-0" /><span className="hidden sm:inline">{lang === 'pt' ? 'Guardado na biblioteca' : 'Saved to library'}</span><span className="sm:hidden">{lang === 'pt' ? 'Guardado' : 'Saved'}</span></div>
-                                <button onClick={() => { const el = document.querySelector('[data-analysis-result]'); if (el) { const printWin = window.open('', '_blank'); if (printWin) { printWin.document.write('<html><head><title>An\u00e1lise Share2Inspire</title><style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:800px;margin:0 auto;color:#1a1a1a}h1,h2,h3,h4,h5{margin-top:1.5rem}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}</style></head><body>' + el.innerHTML + '</body></html>'); printWin.document.close(); printWin.print(); } } }} className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium hover:bg-gold/20 transition-colors"><Download className="w-3.5 h-3.5 shrink-0" />{lang === 'pt' ? 'Imprimir' : 'Print'}</button>
-                                <button onClick={openEmailModal} className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5 shrink-0" />{lang === 'pt' ? 'Email' : 'Email'}</button>
+                              <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gold/10">
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-700 font-medium"><CheckCircle className="w-3.5 h-3.5" />{lang === 'pt' ? 'Guardado na biblioteca' : 'Saved to library'}</div>
+                                <button onClick={() => { const el = document.querySelector('[data-analysis-result]'); if (el) { const printWin = window.open('', '_blank'); if (printWin) { printWin.document.write('<html><head><title>An\u00e1lise Share2Inspire</title><style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:800px;margin:0 auto;color:#1a1a1a}h1,h2,h3,h4,h5{margin-top:1.5rem}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}</style></head><body>' + el.innerHTML + '</body></html>'); printWin.document.close(); printWin.print(); } } }} className="flex items-center gap-1.5 px-3 py-1.5 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium hover:bg-gold/20 transition-colors"><Download className="w-3.5 h-3.5" />{lang === 'pt' ? 'Imprimir' : 'Print'}</button>
+                                <button onClick={openEmailModal} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5" />{lang === 'pt' ? 'Enviar por e-mail' : 'Send by email'}</button>
                               </div>
                             </div>
                           ) : (
@@ -2160,10 +1910,10 @@ export default function MemberArea() {
                               <div data-analysis-result="true">
                                 <AnalysisResult data={analysisResult} onClose={() => setAnalysisResult(null)} lang={lang} />
                               </div>
-                              <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-3">
-                                <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-700 font-medium"><CheckCircle className="w-3.5 h-3.5 shrink-0" /><span className="hidden sm:inline">{lang === 'pt' ? 'Guardado na biblioteca' : 'Saved to library'}</span><span className="sm:hidden">{lang === 'pt' ? 'Guardado' : 'Saved'}</span></div>
-                                <button onClick={() => { const el = document.querySelector('[data-analysis-result]'); if (el) { const printWin = window.open('', '_blank'); if (printWin) { printWin.document.write('<html><head><title>An\u00e1lise Share2Inspire</title><style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:800px;margin:0 auto;color:#1a1a1a}h1,h2,h3,h4,h5{margin-top:1.5rem}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}</style></head><body>' + el.innerHTML + '</body></html>'); printWin.document.close(); printWin.print(); } } }} className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium hover:bg-gold/20 transition-colors"><Download className="w-3.5 h-3.5 shrink-0" />{lang === 'pt' ? 'Imprimir' : 'Print'}</button>
-                                <button onClick={openEmailModal} className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5 shrink-0" />{lang === 'pt' ? 'Email' : 'Email'}</button>
+                              <div className="flex items-center gap-3 mt-3">
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-700 font-medium"><CheckCircle className="w-3.5 h-3.5" />{lang === 'pt' ? 'Guardado na biblioteca' : 'Saved to library'}</div>
+                                <button onClick={() => { const el = document.querySelector('[data-analysis-result]'); if (el) { const printWin = window.open('', '_blank'); if (printWin) { printWin.document.write('<html><head><title>An\u00e1lise Share2Inspire</title><style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:800px;margin:0 auto;color:#1a1a1a}h1,h2,h3,h4,h5{margin-top:1.5rem}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}</style></head><body>' + el.innerHTML + '</body></html>'); printWin.document.close(); printWin.print(); } } }} className="flex items-center gap-1.5 px-3 py-1.5 bg-gold/10 border border-gold/20 rounded text-xs text-gold font-medium hover:bg-gold/20 transition-colors"><Download className="w-3.5 h-3.5" />{lang === 'pt' ? 'Imprimir' : 'Print'}</button>
+                                <button onClick={openEmailModal} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f5f5f4] border border-[#e5e5e5] rounded text-xs text-[#666] font-medium hover:border-gold/30 hover:text-gold transition-colors"><Send className="w-3.5 h-3.5" />{lang === 'pt' ? 'Enviar por e-mail' : 'Send by email'}</button>
                               </div>
                             </div>
                           )
@@ -2286,15 +2036,8 @@ export default function MemberArea() {
         {/* ═══════════════════ TAB: JOBS ═══════════════════ */}
         {activeTab === 'jobs' && (
           <div className="animate-in fade-in duration-300">
-            {/* Saved Jobs Tracker — disponível para TODOS os utilizadores */}
-            <SavedJobsTracker lang={lang} />
-
-            {/* Contactos — recrutadores e hiring managers associados a vagas */}
-            <JobContacts lang={lang} />
-
-            {/* Feed de Vagas Adzuna — trancado para essential */}
             {planTier !== 'essential' ? (
-              <VagasFeed lang={lang} countryCode={(profile as any)?.job_country_code || 'PT'} countryName={(profile as any)?.job_country || 'Portugal'} region={(profile as any)?.job_region || undefined} jobArea={(profile as any)?.job_area || undefined} workMode={(profile as any)?.job_work_mode || undefined} />
+              <VagasFeed lang={lang} countryCode={selectedCountryData?.code || 'PT'} countryName={cpCountry} region={cpRegion || undefined} />
             ) : (
               <section className="p-8 border border-dashed border-[#e5e5e5] rounded-xl bg-[#fafaf9] text-center">
                 <Lock className="w-8 h-8 text-[#ccc] mx-auto mb-3" />
@@ -2430,7 +2173,7 @@ export default function MemberArea() {
               {viewingAnalysis.analysis_type === 'cv_analyser' && viewingAnalysis.data?.enriched ? (
                 <AnalysisResultsFull data={viewingAnalysis.data.enriched} isPaid={true} />
               ) : (
-                <AnalysisDetailRenderer analysisType={viewingAnalysis.analysis_type} data={viewingAnalysis.data} />
+                <AnalysisResult data={viewingAnalysis.data} onClose={() => setViewingAnalysis(null)} lang={lang} />
               )}
             </div>
           </div>
@@ -2439,30 +2182,42 @@ export default function MemberArea() {
 
       {/* ═══════════════════ EXTRA PAYMENT CONFIRMATION MODAL ═══════════════════ */}
       {pendingExtraRun && (
-        <ExtraAnalysisPaymentModal
-          product={pendingExtraRun === 'career_path' ? {
-            type: 'career_path',
-            label: 'Career Path',
-            price: planTier === 'pro' ? 4.75 : 9.50,
-            originalPrice: 19,
-            discountLabel: planTier === 'pro' ? '-75%' : '-50%',
-            stripeProductType: planTier === 'pro' ? 'career_path_member_pro' : 'career_path_member_growth',
-          } : {
-            type: 'career_intelligence',
-            label: 'Career Intelligence',
-            price: planTier === 'pro' ? 9.75 : 19.50,
-            originalPrice: 39,
-            discountLabel: planTier === 'pro' ? '-75%' : '-50%',
-            stripeProductType: 'career_intelligence_member_pro',
-          }}
-          onClose={() => setPendingExtraRun(null)}
-          onPaymentSuccess={() => {
-            const type = pendingExtraRun;
-            setPendingExtraRun(null);
-            if (type === 'career_path') runCareerPath();
-            else runCareerIntelligence();
-          }}
-        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setPendingExtraRun(null)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6 animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center"><Euro className="w-5 h-5 text-amber-600" /></div>
+              <div>
+                <h3 className="text-sm font-semibold text-[#1a1a1a]">{lang === 'pt' ? 'Confirmar análise extra' : 'Confirm extra analysis'}</h3>
+                <p className="text-[11px] text-[#999]">{lang === 'pt' ? 'Já atingiste o limite mensal do teu plano.' : 'You have reached your monthly plan limit.'}</p>
+              </div>
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-5 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-[#1a1a1a] font-medium">{pendingExtraRun === 'career_path' ? 'Career Path' : 'Career Intelligence'}</span>
+                <span className="text-sm font-bold text-[#1a1a1a]">
+                  {pendingExtraRun === 'career_path' ? (planTier === 'pro' ? '4,75€' : '9,50€') : (planTier === 'pro' ? '9,75€' : '19,50€')}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs text-[#999]">
+                <span>{lang === 'pt' ? 'Preço normal' : 'Normal price'}</span>
+                <span className="line-through">{pendingExtraRun === 'career_path' ? '19€' : '39€'}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs text-emerald-600">
+                <span>{lang === 'pt' ? 'Desconto membro' : 'Member discount'}</span>
+                <span className="font-medium">
+                  {pendingExtraRun === 'career_path' ? (planTier === 'pro' ? '-75%' : '-50%') : (planTier === 'pro' ? '-75%' : '-50%')}
+                </span>
+              </div>
+            </div>
+            <p className="text-xs text-[#999] mb-5">{lang === 'pt' ? 'O valor será adicionado à tua próxima fatura. Podes cancelar a qualquer momento.' : 'The amount will be added to your next invoice. You can cancel at any time.'}</p>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setPendingExtraRun(null)} className="flex-1 px-4 py-2.5 text-xs font-medium text-[#666] border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f4] transition-colors">{lang === 'pt' ? 'Cancelar' : 'Cancel'}</button>
+              <button onClick={() => { const type = pendingExtraRun; setPendingExtraRun(null); if (type === 'career_path') runCareerPath(); else runCareerIntelligence(); }} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-medium text-white bg-gradient-to-r from-[#1a1a1a] to-[#333] rounded-lg hover:from-[#333] hover:to-[#444] transition-all">
+                <Sparkles className="w-3.5 h-3.5" />{lang === 'pt' ? 'Confirmar e gerar' : 'Confirm and generate'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* ═══════════════════ EMAIL MODAL ═══════════════════ */}
