@@ -1073,11 +1073,13 @@ function getCRMPlannedAction(p) {
 function renderAutoEmailsMonitoring() {
     // Check both email_type and campaign_type columns (SQL functions use campaign_type, JS manual uses email_type)
     const isAutoType = (e, type) => e.email_type === type || e.campaign_type === type;
-    const autoEmails = allEmailHistory.filter(e => isAutoType(e, 'upsell_auto_2h') || isAutoType(e, 'upsell_auto_7d'));
+    const autoEmails = allEmailHistory.filter(e => isAutoType(e, 'upsell_auto_2h') || isAutoType(e, 'upsell_auto_7d') || isAutoType(e, 'crosssell_cv_to_cp') || isAutoType(e, 'crosssell_cp_to_pro'));
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const recent = autoEmails.filter(e => new Date(e.sent_at) > thirtyDaysAgo);
     const upsell2h = recent.filter(e => isAutoType(e, 'upsell_auto_2h')).length;
     const upsell7d = recent.filter(e => isAutoType(e, 'upsell_auto_7d')).length;
+    const crossCvCp = recent.filter(e => isAutoType(e, 'crosssell_cv_to_cp')).length;
+    const crossCpPro = recent.filter(e => isAutoType(e, 'crosssell_cp_to_pro')).length;
     const autoRecipients = [...new Set(autoEmails.map(e => e.recipient_email?.toLowerCase()))];
     const conversions = autoRecipients.filter(email => {
         const emailDate = autoEmails.find(e => e.recipient_email?.toLowerCase() === email)?.sent_at;
@@ -1086,16 +1088,22 @@ function renderAutoEmailsMonitoring() {
     const convRate = autoRecipients.length > 0 ? ((conversions / autoRecipients.length) * 100).toFixed(1) + '%' : '0%';
     setText('autoUpsell2h', upsell2h);
     setText('autoUpsell7d', upsell7d);
+    setText('autoCrossCvCp', crossCvCp);
+    setText('autoCrossCpPro', crossCpPro);
     setText('autoConversions', conversions);
     setText('autoConvRate', convRate);
     const tbody = document.getElementById('autoEmailsTable');
     if (!tbody) return;
-    const recentAuto = autoEmails.sort((a, b) => new Date(b.sent_at) - new Date(a.sent_at)).slice(0, 15);
+    const recentAuto = autoEmails.sort((a, b) => new Date(b.sent_at) - new Date(a.sent_at)).slice(0, 20);
     if (!recentAuto.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">Nenhum email automático enviado</td></tr>'; return; }
     tbody.innerHTML = recentAuto.map(e => {
         const date = new Date(e.sent_at).toLocaleDateString('pt-PT') + ' ' + new Date(e.sent_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
         const emailAutoType = e.email_type || e.campaign_type || '';
-        const typeBadge = emailAutoType.includes('2h') ? '<span class="badge badge-teal">Upsell 2h</span>' : '<span class="badge badge-purple">Follow-up 7d</span>';
+        let typeBadge;
+        if (emailAutoType.includes('crosssell_cv_to_cp')) typeBadge = '<span class="badge" style="background:#e67e22;color:#fff">CV→CP</span>';
+        else if (emailAutoType.includes('crosssell_cp_to_pro')) typeBadge = '<span class="badge" style="background:#9b59b6;color:#fff">CP→Pro</span>';
+        else if (emailAutoType.includes('2h')) typeBadge = '<span class="badge badge-teal">Upsell 2h</span>';
+        else typeBadge = '<span class="badge badge-purple">Follow-up 7d</span>';
         const converted = allAnalyses.some(a => a.user_email?.toLowerCase() === e.recipient_email?.toLowerCase() && getAnalysisType(a) === 'paid' && new Date(a.created_at) > new Date(e.sent_at));
         const convBadge = converted ? '<span class="badge badge-paid">Sim</span>' : '<span class="badge badge-secondary">Não</span>';
         return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td style="font-size:12px;">${e.recipient_email || '—'}</td><td>${typeBadge}</td><td style="font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${e.subject || '—'}</td><td><span class="badge badge-success">Enviado</span></td><td>${convBadge}</td></tr>`;
@@ -2845,7 +2853,7 @@ async function runAutomationNow() {
         const data = await res.json();
         if (data.success) {
             localStorage.setItem('s2i_auto_last_run', new Date().toISOString());
-            showToast(`Automação executada! Upsell 2h: ${data.upsell_2h_sent || 0}, Follow-up 7d: ${data.followup_7d_sent || 0}, Erros: ${data.errors || 0}`, 'success');
+            showToast(`Automação executada! Upsell 2h: ${data.upsell_2h_sent || 0}, Follow-up 7d: ${data.followup_7d_sent || 0}, CV→CP: ${data.crosssell_cv_to_cp_sent || 0}, CP→Pro: ${data.crosssell_cp_to_pro_sent || 0}, Erros: ${data.errors || 0}`, 'success');
             // Reload automation data
             const freshEmails = await supaFetch('email_history', 'select=*&order=sent_at.desc&limit=500');
             allEmailHistory = Array.isArray(freshEmails) ? freshEmails : [];

@@ -279,13 +279,10 @@ function getStageBadge(stage) {
 // ═══════════════════════════════════════════════════════════════
 function showToast(msg, type = 'info') {
     const t = document.getElementById('toast');
-    const bg = document.getElementById('toastBackdrop');
     if (!t) return;
-    const icon = type === 'success' ? '✓ ' : type === 'danger' ? '✕ ' : 'ℹ ';
-    t.innerHTML = `<div style="font-size:28px;margin-bottom:8px">${icon}</div>${msg}`;
-    t.className = `toast show ${type}`;
-    if (bg) bg.className = 'toast-backdrop show';
-    setTimeout(() => { t.className = 'toast'; if (bg) bg.className = 'toast-backdrop'; }, 3000);
+    t.textContent = msg;
+    t.className = `show ${type}`;
+    setTimeout(() => { t.className = ''; }, 3500);
 }
 
 function setText(id, val) {
@@ -1076,11 +1073,13 @@ function getCRMPlannedAction(p) {
 function renderAutoEmailsMonitoring() {
     // Check both email_type and campaign_type columns (SQL functions use campaign_type, JS manual uses email_type)
     const isAutoType = (e, type) => e.email_type === type || e.campaign_type === type;
-    const autoEmails = allEmailHistory.filter(e => isAutoType(e, 'upsell_auto_2h') || isAutoType(e, 'upsell_auto_7d'));
+    const autoEmails = allEmailHistory.filter(e => isAutoType(e, 'upsell_auto_2h') || isAutoType(e, 'upsell_auto_7d') || isAutoType(e, 'crosssell_cv_to_cp') || isAutoType(e, 'crosssell_cp_to_pro'));
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const recent = autoEmails.filter(e => new Date(e.sent_at) > thirtyDaysAgo);
     const upsell2h = recent.filter(e => isAutoType(e, 'upsell_auto_2h')).length;
     const upsell7d = recent.filter(e => isAutoType(e, 'upsell_auto_7d')).length;
+    const crossCvCp = recent.filter(e => isAutoType(e, 'crosssell_cv_to_cp')).length;
+    const crossCpPro = recent.filter(e => isAutoType(e, 'crosssell_cp_to_pro')).length;
     const autoRecipients = [...new Set(autoEmails.map(e => e.recipient_email?.toLowerCase()))];
     const conversions = autoRecipients.filter(email => {
         const emailDate = autoEmails.find(e => e.recipient_email?.toLowerCase() === email)?.sent_at;
@@ -1089,16 +1088,22 @@ function renderAutoEmailsMonitoring() {
     const convRate = autoRecipients.length > 0 ? ((conversions / autoRecipients.length) * 100).toFixed(1) + '%' : '0%';
     setText('autoUpsell2h', upsell2h);
     setText('autoUpsell7d', upsell7d);
+    setText('autoCrossCvCp', crossCvCp);
+    setText('autoCrossCpPro', crossCpPro);
     setText('autoConversions', conversions);
     setText('autoConvRate', convRate);
     const tbody = document.getElementById('autoEmailsTable');
     if (!tbody) return;
-    const recentAuto = autoEmails.sort((a, b) => new Date(b.sent_at) - new Date(a.sent_at)).slice(0, 15);
+    const recentAuto = autoEmails.sort((a, b) => new Date(b.sent_at) - new Date(a.sent_at)).slice(0, 20);
     if (!recentAuto.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">Nenhum email automático enviado</td></tr>'; return; }
     tbody.innerHTML = recentAuto.map(e => {
         const date = new Date(e.sent_at).toLocaleDateString('pt-PT') + ' ' + new Date(e.sent_at).toLocaleTimeString('pt-PT', {hour:'2-digit',minute:'2-digit'});
         const emailAutoType = e.email_type || e.campaign_type || '';
-        const typeBadge = emailAutoType.includes('2h') ? '<span class="badge badge-teal">Upsell 2h</span>' : '<span class="badge badge-purple">Follow-up 7d</span>';
+        let typeBadge;
+        if (emailAutoType.includes('crosssell_cv_to_cp')) typeBadge = '<span class="badge" style="background:#e67e22;color:#fff">CV→CP</span>';
+        else if (emailAutoType.includes('crosssell_cp_to_pro')) typeBadge = '<span class="badge" style="background:#9b59b6;color:#fff">CP→Pro</span>';
+        else if (emailAutoType.includes('2h')) typeBadge = '<span class="badge badge-teal">Upsell 2h</span>';
+        else typeBadge = '<span class="badge badge-purple">Follow-up 7d</span>';
         const converted = allAnalyses.some(a => a.user_email?.toLowerCase() === e.recipient_email?.toLowerCase() && getAnalysisType(a) === 'paid' && new Date(a.created_at) > new Date(e.sent_at));
         const convBadge = converted ? '<span class="badge badge-paid">Sim</span>' : '<span class="badge badge-secondary">Não</span>';
         return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td style="font-size:12px;">${e.recipient_email || '—'}</td><td>${typeBadge}</td><td style="font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${e.subject || '—'}</td><td><span class="badge badge-success">Enviado</span></td><td>${convBadge}</td></tr>`;
@@ -2023,7 +2028,6 @@ function getServiceIcon(name) {
     if (name.includes('Frontend')) return 'fa-globe';
     if (name.includes('Supabase')) return 'fa-database';
     if (name.includes('Backend')) return 'fa-server';
-    if (name.includes('Stripe') || name.includes('MBWay') || name.includes('PayPal')) return 'fa-credit-card';
     return 'fa-circle';
 }
 
@@ -2050,8 +2054,8 @@ function getRecommendation(entry) {
         if (entry.ttfb_ms > 1000) return { text: `TTFB de ${entry.ttfb_ms}ms (>1s). Performance abaixo do ideal. Monitorizar tendência.`, severity: 'warning' };
         return { text: 'Performance degradada. Monitorizar nas próximas horas.', severity: 'warning' };
     }
-    if (entry.http_code === 400 || entry.http_code === 405) {
-        return { text: 'HTTP ' + entry.http_code + ' — esperado para endpoints POST sem payload válido. Endpoint acessível.', severity: 'info' };
+    if (entry.http_code === 400) {
+        return { text: 'HTTP 400 — esperado para edge functions sem payload. Endpoint responde.', severity: 'info' };
     }
     if (entry.ttfb_ms > 500) {
         return { text: `TTFB de ${entry.ttfb_ms}ms. Aceitável mas monitorizar.`, severity: 'info' };
@@ -2113,8 +2117,7 @@ function renderHealthLogs() {
     // Group services by category
     const frontendServices = latestRun.filter(h => h.endpoint_name.startsWith('Frontend'));
     const backendServices = latestRun.filter(h => h.endpoint_name.startsWith('Backend'));
-    const paymentServices = latestRun.filter(h => h.endpoint_name.startsWith('Stripe') || h.endpoint_name.startsWith('MBWay') || h.endpoint_name.startsWith('PayPal'));
-    const edgeServices = latestRun.filter(h => !h.endpoint_name.startsWith('Frontend') && !h.endpoint_name.startsWith('Backend') && !h.endpoint_name.startsWith('Stripe') && !h.endpoint_name.startsWith('MBWay') && !h.endpoint_name.startsWith('PayPal'));
+    const edgeServices = latestRun.filter(h => !h.endpoint_name.startsWith('Frontend') && !h.endpoint_name.startsWith('Backend'));
 
     function buildCard(h) {
         const color = getStatusColor(h.status);
@@ -2170,7 +2173,6 @@ function renderHealthLogs() {
     cardsEl.innerHTML =
         buildSection('Frontend', 'fa-globe', frontendServices, 'var(--blue)') +
         buildSection('Backend', 'fa-server', backendServices, 'var(--orange)') +
-        buildSection('Pagamentos', 'fa-credit-card', paymentServices, '#635bff') +
         buildSection('Edge Functions', 'fa-bolt', edgeServices, 'var(--purple)');
 
     // Populate history filter
@@ -2225,91 +2227,21 @@ async function refreshHealthCheck() {
         { name: 'Frontend Bundle EN', url: 'https://www.share2inspire.pt/en/bundle', category: 'frontend' },
         { name: 'Backend Root', url: 'https://share2inspire-beckend.lm.r.appspot.com/', category: 'backend' },
         { name: 'Backend API Health', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/health', category: 'backend' },
-        { name: 'Supabase Edge Function', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task', category: 'edge_function' },
-        { name: 'Stripe Checkout', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/stripe-checkout', category: 'payment', method: 'POST', body: '{"test":true}' },
-        { name: 'MBWay · ifthenpay', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/mbway', category: 'payment', method: 'POST', body: '{"test":true}' },
-        { name: 'PayPal Webhook', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/payment/paypal/webhook', category: 'payment', method: 'POST', body: '{"test":true}' }
+        { name: 'Supabase Edge Function', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task', category: 'edge_function' }
     ];
     const runId = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 15);
     const results = [];
-
-    // Helper: deep-check frontend pages by verifying JS/CSS assets exist
-    async function deepCheckFrontend(url) {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 15000);
-        try {
-            const res = await fetch(url, { mode: 'cors', signal: controller.signal });
-            clearTimeout(timeout);
-            if (!res.ok) return { ok: false, httpCode: res.status, error: `HTTP ${res.status}` };
-            const html = await res.text();
-            // Extract JS and CSS asset references from the HTML
-            const jsMatches = html.match(/src="([^"]*\.js)"/g) || [];
-            const cssMatches = html.match(/href="([^"]*\.css)"/g) || [];
-            const assetUrls = [];
-            for (const m of [...jsMatches, ...cssMatches]) {
-                const path = m.match(/(?:src|href)="([^"]+)"/)?.[1];
-                if (path && path.includes('/assets/')) {
-                    const assetUrl = path.startsWith('http') ? path : new URL(path, url).href;
-                    assetUrls.push(assetUrl);
-                }
-            }
-            // Verify each asset exists (HEAD request)
-            const brokenAssets = [];
-            for (const assetUrl of assetUrls) {
-                try {
-                    const assetRes = await fetch(assetUrl, { method: 'HEAD', mode: 'no-cors' });
-                    if (assetRes.type !== 'opaque' && !assetRes.ok) {
-                        brokenAssets.push(assetUrl.split('/').pop());
-                    }
-                } catch { brokenAssets.push(assetUrl.split('/').pop()); }
-            }
-            if (brokenAssets.length > 0) {
-                return { ok: false, httpCode: 200, error: `Assets em falta: ${brokenAssets.join(', ')}` };
-            }
-            return { ok: true, httpCode: 200, error: null };
-        } catch (err) {
-            clearTimeout(timeout);
-            return { ok: false, httpCode: null, error: err.message };
-        }
-    }
-
     for (const ep of endpoints) {
         const start = Date.now();
         try {
-            // For frontend endpoints: deep-check assets
-            if (ep.category === 'frontend') {
-                const check = await deepCheckFrontend(ep.url);
-                const elapsed = Date.now() - start;
-                let status;
-                if (!check.ok) status = 'down';
-                else if (elapsed > 2000) status = 'warning';
-                else status = 'healthy';
-                results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: elapsed, http_code: check.httpCode, status, error_message: check.error, checked_at: new Date().toISOString() });
-                continue;
-            }
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), 15000);
-            let fetchOpts = { method: ep.method || 'GET', mode: 'no-cors', signal: controller.signal };
-            if (ep.method === 'POST') { fetchOpts.headers = { 'Content-Type': 'application/json' }; fetchOpts.body = ep.body || '{}'; fetchOpts.mode = 'cors'; }
-            let res;
-            try {
-                res = await fetch(ep.url, fetchOpts);
-            } catch (corsErr) {
-                if (ep.method === 'POST') {
-                    res = await fetch(ep.url, { method: 'GET', mode: 'no-cors', signal: controller.signal });
-                } else { throw corsErr; }
-            }
+            const res = await fetch(ep.url, { method: 'GET', mode: 'no-cors', signal: controller.signal });
             clearTimeout(timeout);
             const elapsed = Date.now() - start;
             const httpCode = res.type === 'opaque' ? 200 : res.status;
-            const isPaymentEndpoint = ep.category === 'payment';
-            const isReachable = res.type === 'opaque' || (httpCode >= 200 && httpCode < 500);
-            let status;
-            if (!isReachable) status = 'down';
-            else if (elapsed > 2000) status = 'warning';
-            else status = 'healthy';
-            const errorMsg = (isPaymentEndpoint && httpCode >= 400 && httpCode < 500) ? 'Endpoint acessível (rejeita dados de teste)' : null;
-            results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: elapsed, http_code: httpCode, status, error_message: errorMsg, checked_at: new Date().toISOString() });
+            const status = elapsed > 2000 ? 'warning' : 'healthy';
+            results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: elapsed, http_code: httpCode, status, error_message: null, checked_at: new Date().toISOString() });
         } catch (err) {
             const elapsed = Date.now() - start;
             results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed > 14000 ? null : elapsed, total_ms: elapsed > 14000 ? null : elapsed, http_code: null, status: 'down', error_message: err.message || 'Request failed', checked_at: new Date().toISOString() });
@@ -2921,7 +2853,7 @@ async function runAutomationNow() {
         const data = await res.json();
         if (data.success) {
             localStorage.setItem('s2i_auto_last_run', new Date().toISOString());
-            showToast(`Automação executada! Upsell 2h: ${data.upsell_2h_sent || 0}, Follow-up 7d: ${data.followup_7d_sent || 0}, Erros: ${data.errors || 0}`, 'success');
+            showToast(`Automação executada! Upsell 2h: ${data.upsell_2h_sent || 0}, Follow-up 7d: ${data.followup_7d_sent || 0}, CV→CP: ${data.crosssell_cv_to_cp_sent || 0}, CP→Pro: ${data.crosssell_cp_to_pro_sent || 0}, Erros: ${data.errors || 0}`, 'success');
             // Reload automation data
             const freshEmails = await supaFetch('email_history', 'select=*&order=sent_at.desc&limit=500');
             allEmailHistory = Array.isArray(freshEmails) ? freshEmails : [];
