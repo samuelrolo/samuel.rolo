@@ -55,7 +55,7 @@ const RecruiterPerception = ({ roles, perceivedRole, perceivedSeniority, isPaid 
   const involuntaryMessages = deepAnalysis?.involuntaryMessages?.length ? deepAnalysis.involuntaryMessages : defaultInvoluntaryMessages;
 
   return (
-    <div className="rounded-lg border border-border bg-card p-4 sm:p-6 space-y-4">
+    <div className="rounded-lg border border-border bg-card p-2.5 sm:p-6 space-y-4">
       <div className="flex items-center gap-3 mb-2">
         <div className="w-10 h-10 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center shrink-0">
           <Eye className="w-5 h-5 text-[#C9A961]" />

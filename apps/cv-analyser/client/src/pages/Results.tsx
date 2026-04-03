@@ -267,7 +267,7 @@ function NormalCurveChart({ percentile, isEN = false }: { percentile: number; is
 function SalaryBlock({ blurred, salaryDetailed, perceivedSeniority, isEN = false, CUR = '€' }: { blurred: boolean; salaryDetailed?: any; perceivedSeniority?: string; isEN?: boolean; CUR?: string }) {
   const sd = salaryDetailed || { percentile25: 1400, median: 1800, percentile75: 2400, topMax: 3200, benefits: [], benefitsNote: '', source: '' };
   return (
-    <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+    <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
       <div className="flex items-center gap-3">
         <GoldIcon>
           <Euro className="w-5 h-5 text-[#C9A961]" />
@@ -354,7 +354,7 @@ function AutomationRiskBlock({ blurred, automationRisk, isEN = false }: { blurre
   const barColor = ar.percentage <= 25 ? 'from-green-400 to-green-500' : ar.percentage <= 50 ? 'from-yellow-400 to-orange-400' : 'from-orange-400 to-red-500';
   const levelColor = ar.percentage <= 25 ? 'text-green-600 bg-green-500/10' : ar.percentage <= 50 ? 'text-yellow-600 bg-yellow-500/10' : 'text-red-600 bg-red-500/10';
   return (
-    <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+    <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
       <div className="flex items-center gap-3">
         <GoldIcon>
           <Bot className="w-5 h-5 text-[#C9A961]" />
@@ -1706,7 +1706,7 @@ export default function Results() {
         </div>
       </header>
 
-      <main className="results-container max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-8">
+      <main className="results-container max-w-4xl mx-auto px-2 sm:px-6 py-4 sm:py-10 space-y-4 sm:space-y-8">
         {/* Report Label */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           {isPaid ? (
@@ -2071,7 +2071,7 @@ export default function Results() {
               </div>
 
               {/* ── Report Preview (✓ visible / 🔒 locked) ── */}
-              <div className="bg-card border-2 border-border rounded-2xl p-6 sm:p-8 space-y-5">
+              <div className="bg-card border-2 border-border rounded-2xl p-3 sm:p-8 space-y-5">
                 <div className="flex items-center gap-2">
                   <FileCheck className="w-5 h-5 text-[#C9A961]" />
                   <p className="text-sm font-semibold text-foreground">{isEN ? 'What your full report includes:' : 'O que o teu relatório completo inclui:'}</p>
@@ -2243,7 +2243,7 @@ export default function Results() {
         </div>
 
         {/* ═══ Compatibilidade ATS ═══ */}
-        <div className="bg-card border border-border rounded-lg p-8 space-y-4">
+        <div className="bg-card border border-border rounded-lg p-3 sm:p-8 space-y-4">
           <div className="flex items-center gap-3 mb-2">
             <GoldIcon>
               <AlertTriangle className="w-5 h-5 text-[#C9A961]" />
@@ -2420,7 +2420,7 @@ export default function Results() {
         ) : (
           <div className="space-y-6">
             {/* ═══ Análise Detalhada por Dimensão ═══ */}
-            <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+            <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
               <div className="flex items-center gap-2">
                 <GoldIcon size="w-8 h-8">
                   <BarChart3 className="w-4 h-4 text-[#C9A961]" />
@@ -2477,7 +2477,7 @@ export default function Results() {
             </div>
 
             {/* ═══ Matriz de Prioridades ═══ */}
-            <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+            <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
               <div className="flex items-center gap-2">
                 <GoldIcon size="w-8 h-8">
                   <Target className="w-4 h-4 text-[#C9A961]" />
@@ -2508,7 +2508,7 @@ export default function Results() {
 
             {/* ═══ Acções de Melhoria com Antes/Depois ═══ */}
             {analysisData.improvementActions && analysisData.improvementActions.length > 0 && (
-              <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+              <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8">
                     <Sparkles className="w-4 h-4 text-[#C9A961]" />
@@ -2548,7 +2548,7 @@ export default function Results() {
             )}
 
             {/* ═══ Plano de Acção 30 Dias ═══ */}
-            <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+            <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
               <div className="flex items-center gap-2">
                 <GoldIcon size="w-8 h-8">
                   <Calendar className="w-4 h-4 text-[#C9A961]" />
@@ -2586,7 +2586,7 @@ export default function Results() {
 
         {/* ═══ Career Path Loading (Bundle auto-generation) ═══ */}
         {careerPathPaymentStep === 'generating' && !careerPathData && (
-          <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-8 text-center space-y-4">
+          <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-4 sm:p-8 text-center space-y-4">
             <Loader2 className="w-10 h-10 animate-spin text-[#C9A961] mx-auto" />
             <div>
               <p className="text-lg font-semibold text-foreground">{isEN ? 'Generating your Career Path...' : 'A gerar o teu Career Path...'}</p>
@@ -2602,7 +2602,7 @@ export default function Results() {
 
         {/* ═══ Career Path Cross-sell (produto independente) ═══ */}
         {isPaid && !careerPathData && careerPathPaymentStep !== 'generating' && careerPathPaymentStep !== 'done' && (
-          <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-6 sm:p-8 space-y-5">
+          <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-3 sm:p-8 space-y-5">
             <div className="flex items-center gap-3">
               <GoldIcon>
                 <Compass className="w-5 h-5 text-[#C9A961]" />
@@ -2647,7 +2647,7 @@ export default function Results() {
         {/* ═══ Career Path Results (when purchased) ═══ */}
         {careerPathData && (
           <div className="space-y-4">
-            <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-6 sm:p-8">
+            <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-3 sm:p-8">
               <div className="flex items-center gap-3 mb-4">
                 <GoldIcon><Rocket className="w-5 h-5 text-[#C9A961]" /></GoldIcon>
                 <div>
@@ -2697,7 +2697,7 @@ export default function Results() {
             </div>
 
             {careerPathData.cv_linkedin_cross_analysis?.consistency_score && (
-              <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-3">
+              <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-3">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Linkedin className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">CV vs LINKEDIN</p>
@@ -2710,7 +2710,7 @@ export default function Results() {
             )}
 
             {careerPathData.next_roles?.length > 0 && (
-              <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+              <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Briefcase className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'NEXT RECOMMENDED ROLES' : 'PRÓXIMOS CARGOS RECOMENDADOS'}</p>
@@ -2761,7 +2761,7 @@ export default function Results() {
             )}
 
             {careerPathData.development_plan?.formations && (
-              <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+              <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><GraduationCap className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'RECOMMENDED TRAINING' : 'FORMAÇÕES RECOMENDADAS'}</p>
@@ -2809,7 +2809,7 @@ export default function Results() {
 
             {/* Free Micro-Courses */}
             {careerPathData.development_plan?.free_courses && careerPathData.development_plan.free_courses.length > 0 && (
-              <div className="bg-gradient-to-br from-green-500/5 to-green-500/10 border-2 border-green-500/20 rounded-2xl p-4 sm:p-6 space-y-4">
+              <div className="bg-gradient-to-br from-green-500/5 to-green-500/10 border-2 border-green-500/20 rounded-2xl p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Sparkles className="w-4 h-4 text-green-600" /></GoldIcon>
                   <div>
@@ -2866,7 +2866,7 @@ export default function Results() {
             )}
 
             {careerPathData.development_plan?.certifications && (
-              <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+              <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><FileCheck className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'RECOMMENDED CERTIFICATIONS' : 'CERTIFICAÇÕES RECOMENDADAS'}</p>
@@ -2887,7 +2887,7 @@ export default function Results() {
             )}
 
             {careerPathData.development_plan?.visibility_exercises && (
-              <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+              <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Globe className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'VISIBILITY EXERCISES' : 'EXERCÍCIOS DE VISIBILIDADE'}</p>
@@ -2906,7 +2906,7 @@ export default function Results() {
             )}
 
             {careerPathData.development_plan?.networking_strategy && (
-              <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+              <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Users className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'NETWORKING STRATEGY' : 'ESTRATÉGIA DE NETWORKING'}</p>
@@ -2925,7 +2925,7 @@ export default function Results() {
             )}
 
             {careerPathData.immediate_actions && (
-              <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
+              <div className="bg-card border border-border rounded-lg p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Target className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'IMMEDIATE ACTIONS' : 'ACÇÕES IMEDIATAS'}</p>
@@ -2942,7 +2942,7 @@ export default function Results() {
             )}
 
             {careerPathData.long_term_vision && (
-              <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-6 sm:p-8 space-y-4">
+              <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-3 sm:p-8 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Sparkles className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{isEN ? '5-YEAR VISION' : 'VISÃO A 5 ANOS'}</p>
@@ -3142,7 +3142,7 @@ export default function Results() {
           };
 
           return (
-            <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-6 sm:p-8 space-y-5">
+            <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-3 sm:p-8 space-y-5">
               <div className="flex items-center gap-3">
                 <GoldIcon>
                   <Award className="w-5 h-5 text-[#C9A961]" />
@@ -3189,7 +3189,7 @@ export default function Results() {
 
         {/* ═══ Send Report by Email (only when paid) ═══ */}
         {isPaid && (
-          <div id="report-email-section" className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-8 space-y-5">
+          <div id="report-email-section" className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-3 sm:p-8 space-y-5">
             <div className="flex items-center gap-3">
               <GoldIcon>
                 <Mail className="w-5 h-5 text-[#C9A961]" />
@@ -3243,7 +3243,7 @@ export default function Results() {
 
         {/* ═══ Save to Área de Cliente ═══ */}
         {isPaid && (
-          <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-8 space-y-5">
+          <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-3 sm:p-8 space-y-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-[#C9A961]/10 flex items-center justify-center">
                 <Save className="w-5 h-5 text-[#C9A961]" />
@@ -3288,7 +3288,7 @@ export default function Results() {
           {/* Floating unlock overlay on top of blurred content */}
           {!isPaid && (
             <div className="absolute inset-0 z-10 flex items-start justify-center" style={{ paddingTop: '80px' }}>
-              <div className="bg-card/95 backdrop-blur-sm border-2 border-[#C9A961]/30 rounded-2xl p-6 sm:p-8 text-center space-y-5 shadow-2xl max-w-lg mx-4 sticky top-28">
+              <div className="bg-card/95 backdrop-blur-sm border-2 border-[#C9A961]/30 rounded-2xl p-3 sm:p-8 text-center space-y-5 shadow-2xl max-w-lg mx-4 sticky top-28">
                 <Lock className="w-8 h-8 text-[#C9A961] mx-auto" />
                 <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{isEN ? 'UNLOCK YOUR FULL REPORT' : 'DESBLOQUEIA O TEU RELATÓRIO COMPLETO'}</p>
 

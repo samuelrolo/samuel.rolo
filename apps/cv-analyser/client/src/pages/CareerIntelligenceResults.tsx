@@ -677,13 +677,13 @@ export default function CareerIntelligenceResults() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-8">
+      <main className="max-w-4xl mx-auto px-2 sm:px-6 py-4 sm:py-10 space-y-4 sm:space-y-8">
         {/* Hero Profile Card */}
         <div className="relative overflow-hidden rounded-2xl">
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/[0.03] via-[#C9A961]/[0.08] to-foreground/[0.03]" />
           <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(201,169,97,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(201,169,97,0.05) 0%, transparent 50%)' }} />
           
-          <div className="relative px-6 sm:px-8 py-8 sm:py-10">
+          <div className="relative px-3 sm:px-8 py-5 sm:py-10">
             <div className="flex justify-between items-start mb-6">
               {isPaid ? (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20">
@@ -730,7 +730,7 @@ export default function CareerIntelligenceResults() {
 
         {/* Generating state */}
         {isGenerating && (
-          <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/10 border-2 border-[#C9A961]/20 rounded-2xl p-8 sm:p-10 text-center space-y-6">
+          <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/10 border-2 border-[#C9A961]/20 rounded-2xl p-4 sm:p-10 text-center space-y-4 sm:space-y-6">
             <div className="relative w-16 h-16 mx-auto">
               <div className="absolute inset-0 rounded-full border-4 border-[#C9A961]/20" />
               <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[#C9A961] animate-spin" />
@@ -776,7 +776,7 @@ export default function CareerIntelligenceResults() {
 
             {/* Market Context */}
             {careerData.market_context && (
-              <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
+             <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Globe className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'MARKET CONTEXT' : 'CONTEXTO DE MERCADO'}</p>
@@ -824,7 +824,7 @@ export default function CareerIntelligenceResults() {
 
             {/* Strategic Career Paths */}
             {careerData.strategic_paths && careerData.strategic_paths.length > 0 && (
-              <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
+              <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Compass className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <div>
@@ -868,7 +868,7 @@ export default function CareerIntelligenceResults() {
 
             {/* Action Plan by Path */}
             {careerData.action_plan_by_path && careerData.action_plan_by_path.length > 0 && (
-              <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
+              <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Target className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'ACTION PLAN BY PATH' : 'PLANO DE ACÇÃO POR CAMINHO'}</p>
@@ -908,7 +908,7 @@ export default function CareerIntelligenceResults() {
 
             {/* Strategic Comparison */}
             {careerData.strategic_comparison && careerData.strategic_comparison.length > 0 && (
-              <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
+              <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><BarChart3 className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'STRATEGIC COMPARISON' : 'COMPARAÇÃO ESTRATÉGICA'}</p>
@@ -949,7 +949,7 @@ export default function CareerIntelligenceResults() {
 
             {/* Trade-offs */}
             {careerData.tradeoffs && careerData.tradeoffs.length > 0 && (
-              <div className="bg-card border border-border rounded-xl p-4 sm:p-6 space-y-4">
+              <div className="bg-card border border-border rounded-xl p-2.5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Scale className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'TRADE-OFFS BY PATH' : 'TRADE-OFFS POR CAMINHO'}</p>
@@ -987,7 +987,7 @@ export default function CareerIntelligenceResults() {
 
             {/* Decision Recommendation */}
             {careerData.decision_recommendation && (
-              <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-6 sm:p-8 space-y-4">
+              <div className="bg-gradient-to-br from-[#C9A961]/5 to-[#C9A961]/15 border-2 border-[#C9A961]/30 rounded-2xl p-3 sm:p-8 space-y-4">
                 <div className="flex items-center gap-2">
                   <GoldIcon size="w-8 h-8"><Zap className="w-4 h-4 text-[#C9A961]" /></GoldIcon>
                   <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{isEN ? 'RECOMMENDED DECISION' : 'DECISÃO RECOMENDADA'}</p>
@@ -1032,7 +1032,7 @@ export default function CareerIntelligenceResults() {
             </div>
 
             {/* Send by email */}
-            <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-8 space-y-5">
+            <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-3 sm:p-8 space-y-5">
               <div className="flex items-center gap-3">
                 <GoldIcon>
                   <Mail className="w-5 h-5 text-[#C9A961]" />
@@ -1071,7 +1071,7 @@ export default function CareerIntelligenceResults() {
             </div>
 
             {/* ═══ Save to Área de Cliente ═══ */}
-            <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-8 space-y-5">
+            <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-3 sm:p-8 space-y-5">
               <div className="flex items-center gap-3">
                 <GoldIcon>
                   <Save className="w-5 h-5 text-[#C9A961]" />
@@ -1259,7 +1259,7 @@ export default function CareerIntelligenceResults() {
               };
 
               return (
-                <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-6 sm:p-8 space-y-5">
+                <div className="bg-card border-2 border-[#C9A961]/20 rounded-2xl p-3 sm:p-8 space-y-5">
                   <div className="flex items-center gap-3">
                     <GoldIcon>
                       <Award className="w-5 h-5 text-[#C9A961]" />
@@ -1314,7 +1314,7 @@ export default function CareerIntelligenceResults() {
             </div>
 
             {/* What's included */}
-            <div className="bg-card border-2 border-border rounded-2xl p-6 sm:p-8 space-y-5">
+            <div className="bg-card border-2 border-border rounded-2xl p-3 sm:p-8 space-y-5">
               <div className="flex items-center gap-2">
                 <Scale className="w-5 h-5 text-[#C9A961]" />
                 <p className="text-sm font-semibold text-foreground">{isEN ? 'What Career Intelligence includes:' : 'O que o Career Intelligence inclui:'}</p>

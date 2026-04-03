@@ -59,7 +59,7 @@ const QuadrantCard = ({ title, score, benchmark, insight, strengths, weaknesses,
   const finalText = tooltipText || builtIn?.text || `Avaliação detalhada da dimensão ${title} do teu CV, comparada com o benchmark do mercado.`;
 
   return (
-    <div className="rounded-lg border border-border bg-card p-6 space-y-4">
+    <div className="rounded-lg border border-border bg-card p-2.5 sm:p-6 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-card-foreground">{title}</h3>
         <div className="relative inline-flex">

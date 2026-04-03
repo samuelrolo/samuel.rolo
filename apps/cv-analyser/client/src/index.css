@@ -188,6 +188,74 @@
   @apply text-xs font-semibold tracking-wider uppercase;
 }
 
+/* ═══ Mobile Results: reduce nested padding ═══
+ * On screens < 640px the results pages suffer from
+ * frame-inside-frame padding that eats ~33% of width.
+ * These rules tighten spacing only on mobile.
+ */
+@media (max-width: 639px) {
+  /* 1. Main results container — less horizontal padding */
+  .results-container,
+  .career-path-results,
+  .career-intelligence-results {
+    /* Handled via Tailwind classes, but ensure children breathe */
+  }
+
+  /* 2. Top-level section cards: reduce from p-4/p-6 to p-2.5 */
+  main > div > .bg-card,
+  main > div > div > .bg-card,
+  .career-path-results > .bg-card,
+  .career-path-results > .bg-gradient-to-br,
+  .career-intelligence-results > .bg-card,
+  .career-intelligence-results > .bg-gradient-to-br {
+    padding: 0.625rem !important; /* 10px */
+  }
+
+  /* 3. Nested inner cards (border + rounded inside a card) */
+  .career-path-results .border.rounded-xl,
+  .career-path-results .border.rounded-lg,
+  .career-intelligence-results .border.rounded-xl,
+  .career-intelligence-results .border.rounded-lg,
+  main .bg-card .border.rounded-xl,
+  main .bg-card .border.rounded-lg,
+  main .bg-card .bg-muted\/20.rounded-lg,
+  main .bg-card .bg-muted\/30.rounded-lg {
+    padding: 0.375rem !important; /* 6px */
+  }
+
+  /* 4. Sub-sub cards (deepest level) */
+  main .bg-card .border .p-2,
+  main .bg-card .border .p-3 {
+    padding: 0.375rem !important;
+  }
+
+  /* 5. Hero profile card — tighter horizontal padding */
+  main > .relative.overflow-hidden.rounded-2xl > .relative {
+    padding-left: 0.75rem !important;  /* 12px */
+    padding-right: 0.75rem !important;
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+  }
+
+  /* 6. Payment/CTA cards with p-8 */
+  main .bg-card.border-2.rounded-2xl,
+  main .bg-gradient-to-br.border-2.rounded-2xl {
+    padding: 1rem !important; /* 16px instead of 32px */
+  }
+
+  /* 7. Reduce space-y on mobile for tighter vertical rhythm */
+  .career-path-results,
+  .career-intelligence-results {
+    gap: 1rem;
+  }
+
+  /* 8. Tables inside cards — reduce cell padding */
+  main .bg-card table th,
+  main .bg-card table td {
+    padding: 0.25rem 0.375rem !important;
+  }
+}
+
 /* Rotating headline animation */
 @keyframes fadeInUp {
   from {
