@@ -183,6 +183,59 @@ const AnalysisResults = ({ data, isPaid = false }: { data: AnalysisData; isPaid?
           </p>
         </div>
 
+        {/* ═══ Job Match (when user provided a job posting) ═══ */}
+        {data.jobMatch && data.jobMatch.atsCompatibilityScore != null && (
+          <div className="bg-card border-2 border-[#C9A961]/30 rounded-lg p-4 sm:p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <GoldIcon>
+                <Briefcase className="w-5 h-5 text-[#C9A961]" />
+              </GoldIcon>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-xs font-semibold tracking-wider text-[#C9A961]">ANÁLISE DE COMPATIBILIDADE COM A VAGA</p>
+                  <Tooltip
+                    label="O que é a Análise de Compatibilidade?"
+                    text="Quando forneces uma vaga de emprego junto com o teu CV, o sistema analisa a correspondência entre as tuas competências e os requisitos da vaga, incluindo palavras-chave em falta e encontradas."
+                  />
+                </div>
+                {data.jobMatch.jobTitle && <p className="text-sm text-muted-foreground">{data.jobMatch.jobTitle}</p>}
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <ScoreGauge score={data.jobMatch.atsCompatibilityScore} size={140} strokeWidth={8} />
+              {data.jobMatch.overallFit && <p className="text-sm text-muted-foreground text-center max-w-md leading-relaxed">{data.jobMatch.overallFit}</p>}
+            </div>
+            {data.jobMatch.keywordGaps && data.jobMatch.keywordGaps.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold text-red-500 mb-2">Palavras-chave em falta:</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {data.jobMatch.keywordGaps.map((gap: string, i: number) => (
+                    <span key={i} className="px-2 py-1 rounded-full text-xs bg-red-500/10 text-red-500 border border-red-500/20">{gap}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {data.jobMatch.matchedKeywords && data.jobMatch.matchedKeywords.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold text-green-600 mb-2">Palavras-chave encontradas:</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {data.jobMatch.matchedKeywords.map((kw: string, i: number) => (
+                    <span key={i} className="px-2 py-1 rounded-full text-xs bg-green-500/10 text-green-600 border border-green-500/20">{kw}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {data.jobMatch.keywordGaps && data.jobMatch.matchedKeywords && (
+              <div className="pt-3 border-t border-border">
+                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500"></span> {data.jobMatch.keywordGaps.length} em falta</span>
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500"></span> {data.jobMatch.matchedKeywords.length} encontradas</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* ═══ 4 Quadrantes com tooltips ═══ */}
         <div>
           <div className="flex items-center gap-2 mb-4">

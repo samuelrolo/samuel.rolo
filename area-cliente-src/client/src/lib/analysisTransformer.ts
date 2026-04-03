@@ -40,6 +40,13 @@ export interface TransformedAnalysis {
     correctionExample?: string;
     rewriteSuggestion?: string;
   }>;
+  jobMatch?: {
+    atsCompatibilityScore: number | null;
+    keywordGaps: string[];
+    matchedKeywords: string[];
+    jobTitle: string | null;
+    overallFit: string | null;
+  };
   raw?: Record<string, any>;
 }
 
@@ -143,6 +150,16 @@ export function transformGeminiResponse(raw: any): TransformedAnalysis {
   const sr = analysis?.salaryRange || analysis?.salary_range || analysis?.salary;
   const salaryRange = sr ? { min: sr.min || 1200, mid: sr.mid || sr.median || 1650, max: sr.max || 2100 } : undefined;
 
+  // Extract job match data (when user provided a job posting)
+  const jm = analysis?.job_match || analysis?.jobMatch;
+  const jobMatch = jm ? {
+    atsCompatibilityScore: jm.ats_compatibility_score ?? jm.atsCompatibilityScore ?? null,
+    keywordGaps: jm.keyword_gaps || jm.keywordGaps || [],
+    matchedKeywords: jm.matched_keywords || jm.matchedKeywords || [],
+    jobTitle: jm.job_title || jm.jobTitle || null,
+    overallFit: jm.overall_fit || jm.overallFit || null,
+  } : undefined;
+
   // Extract CV problems
   const cvProblems: TransformedAnalysis['cvProblems'] = [];
   const probs = analysis?.cvProblems || analysis?.cv_problems || analysis?.problems;
@@ -175,6 +192,7 @@ export function transformGeminiResponse(raw: any): TransformedAnalysis {
     quadrants: quadrants.length > 0 ? quadrants : undefined,
     sections: sections.length > 0 ? sections : undefined,
     cvProblems: cvProblems.length > 0 ? cvProblems : undefined,
+    jobMatch,
     raw: analysis,
   };
 }

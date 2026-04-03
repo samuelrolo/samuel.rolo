@@ -18,22 +18,27 @@ type WidgetView = 'chat' | 'cover_letter' | 'networking_email' | 'linkedin_post'
 interface CvData {
   personal_info?: {
     full_name?: string;
+    name?: string;
     email?: string;
     phone?: string;
     location?: string;
+    linkedin?: string;
     target_role?: string;
   };
+  target_role?: string;
   summary?: string;
   experiences?: Array<{
     company?: string;
     role?: string;
     date_period?: string;
+    period?: string;
     bullet_points?: string[];
   }>;
   education?: Array<{
     institution?: string;
     degree?: string;
     year?: string;
+    period?: string;
   }>;
   skills?: string[];
 }
@@ -276,27 +281,37 @@ export default function CareerBotWidget() {
           content: data.reply,
           type: 'cv_builder_chat',
         }]);
-        // Update CV data if the Function Calling returned cv_data
+        // Update CV data from the JSON response
         if (data.cv_data && typeof data.cv_data === 'object' && Object.keys(data.cv_data).length > 0) {
           setCvData(prev => {
             const merged = { ...prev };
+            const cd = data.cv_data;
             // Deep merge: personal_info
-            if (data.cv_data.personal_info) {
-              merged.personal_info = { ...(prev.personal_info || {}), ...data.cv_data.personal_info };
+            if (cd.personal_info) {
+              merged.personal_info = { ...(prev.personal_info || {}), ...cd.personal_info };
+            }
+            // target_role can be at root level (new format) or inside personal_info (old format)
+            if (cd.target_role) {
+              merged.target_role = cd.target_role;
+              if (!merged.personal_info) merged.personal_info = {};
+              merged.personal_info.target_role = cd.target_role;
             }
             // summary
-            if (data.cv_data.summary) merged.summary = data.cv_data.summary;
-            // experiences — replace if provided
-            if (data.cv_data.experiences && data.cv_data.experiences.length > 0) {
-              merged.experiences = data.cv_data.experiences;
+            if (cd.summary) merged.summary = cd.summary;
+            // experiences — replace if provided (filter out empty entries)
+            if (cd.experiences && cd.experiences.length > 0) {
+              const validExps = cd.experiences.filter((e: any) => e.company || e.role);
+              if (validExps.length > 0) merged.experiences = validExps;
             }
-            // education — replace if provided
-            if (data.cv_data.education && data.cv_data.education.length > 0) {
-              merged.education = data.cv_data.education;
+            // education — replace if provided (filter out empty entries)
+            if (cd.education && cd.education.length > 0) {
+              const validEdu = cd.education.filter((e: any) => e.institution || e.degree);
+              if (validEdu.length > 0) merged.education = validEdu;
             }
-            // skills — replace if provided
-            if (data.cv_data.skills && data.cv_data.skills.length > 0) {
-              merged.skills = data.cv_data.skills;
+            // skills — replace if provided (filter out empty strings)
+            if (cd.skills && cd.skills.length > 0) {
+              const validSkills = cd.skills.filter((s: string) => s && s.trim() !== '');
+              if (validSkills.length > 0) merged.skills = validSkills;
             }
             return merged;
           });
@@ -1144,8 +1159,8 @@ Generate ONLY the post.`;
                     </div>
                     {cvData.personal_info && (
                       <div className="mb-2.5 pb-2 border-b border-[#BFA14A]/15">
-                        <p className="text-sm font-semibold text-gray-800">{cvData.personal_info.full_name || '—'}</p>
-                        {cvData.personal_info.target_role && <p className="text-[11px] text-[#BFA14A] font-medium">{cvData.personal_info.target_role}</p>}
+                        <p className="text-sm font-semibold text-gray-800">{cvData.personal_info.full_name || cvData.personal_info.name || '—'}</p>
+                        {(cvData.personal_info.target_role || cvData.target_role) && <p className="text-[11px] text-[#BFA14A] font-medium">{cvData.personal_info.target_role || cvData.target_role}</p>}
                         <div className="flex flex-wrap gap-2 mt-1">
                           {cvData.personal_info.email && <span className="text-[10px] text-gray-500">{cvData.personal_info.email}</span>}
                           {cvData.personal_info.phone && <span className="text-[10px] text-gray-500">| {cvData.personal_info.phone}</span>}
@@ -1165,7 +1180,7 @@ Generate ONLY the post.`;
                         {cvData.experiences.map((exp, i) => (
                           <div key={i} className="mb-2 pl-2 border-l-2 border-[#BFA14A]/30">
                             <p className="text-[11px] font-semibold text-gray-800">{exp.role}{exp.company ? ` — ${exp.company}` : ''}</p>
-                            {exp.date_period && <p className="text-[10px] text-gray-400">{exp.date_period}</p>}
+                            {(exp.date_period || exp.period) && <p className="text-[10px] text-gray-400">{exp.date_period || exp.period}</p>}
                             {exp.bullet_points && exp.bullet_points.map((bp, j) => (
                               <p key={j} className="text-[10px] text-gray-600 ml-1">• {bp}</p>
                             ))}
@@ -1177,7 +1192,7 @@ Generate ONLY the post.`;
                       <div className="mb-2.5 pb-2 border-b border-[#BFA14A]/15">
                         <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">{lang === 'pt' ? 'Formação Académica' : 'Education'}</p>
                         {cvData.education.map((edu, i) => (
-                          <p key={i} className="text-[11px] text-gray-700">{edu.degree}{edu.institution ? ` — ${edu.institution}` : ''}{edu.year ? ` (${edu.year})` : ''}</p>
+                          <p key={i} className="text-[11px] text-gray-700">{edu.degree}{edu.institution ? ` — ${edu.institution}` : ''}{(edu.year || edu.period) ? ` (${edu.year || edu.period})` : ''}</p>
                         ))}
                       </div>
                     )}
