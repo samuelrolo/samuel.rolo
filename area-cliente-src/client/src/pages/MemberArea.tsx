@@ -1448,7 +1448,7 @@ export default function MemberArea() {
           </div>
 
           {/* CV Preview Panel */}
-          {showCvMakerPreview && Object.keys(cvMakerData).length > 0 && (
+          {showCvMakerPreview && (() => { const pi = cvMakerData.personal_info; return !!(pi && (pi.name || pi.full_name || pi.email || pi.phone || pi.location || pi.linkedin)) || !!cvMakerData.summary?.trim() || !!(cvMakerData.experiences?.some((e: any) => e.company || e.role)) || !!(cvMakerData.education?.some((e: any) => e.institution || e.degree)) || !!(cvMakerData.skills?.some((s: string) => s?.trim())); })() && (
             <div className="mb-3 border border-gold/30 rounded-xl bg-gold/5 p-3 max-h-[250px] overflow-y-auto">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-bold text-gold uppercase tracking-wider">CV Preview</span>
@@ -1511,7 +1511,7 @@ export default function MemberArea() {
 
           {/* Input area */}
           <div className="flex items-center gap-2">
-            {Object.keys(cvMakerData).length > 0 && (
+            {(() => { const pi = cvMakerData.personal_info; return !!(pi && (pi.name || pi.full_name || pi.email || pi.phone || pi.location || pi.linkedin)) || !!cvMakerData.summary?.trim() || !!(cvMakerData.experiences?.some((e: any) => e.company || e.role)) || !!(cvMakerData.education?.some((e: any) => e.institution || e.degree)) || !!(cvMakerData.skills?.some((s: string) => s?.trim())); })() && (
               <button onClick={() => setShowCvMakerPreview(!showCvMakerPreview)} className={`p-2 rounded-lg transition-colors ${showCvMakerPreview ? 'bg-gold/10 text-gold' : 'hover:bg-[#f5f5f4] text-[#ccc]'}`} title="CV Preview">
                 <FileText className="w-4 h-4" />
               </button>
