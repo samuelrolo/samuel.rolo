@@ -337,8 +337,23 @@ export default function CareerBotWidget() {
 
   const startRecording = async () => {
     try {
+      // Check if mediaDevices API is available (requires HTTPS)
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert(t('bot.mockNoMic'));
+        return;
+      }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      // Try supported mimeTypes in order of preference
+      const mimeTypes = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4', ''];
+      let selectedMime = '';
+      for (const mime of mimeTypes) {
+        if (mime === '' || MediaRecorder.isTypeSupported(mime)) {
+          selectedMime = mime;
+          break;
+        }
+      }
+      const options: MediaRecorderOptions = selectedMime ? { mimeType: selectedMime } : {};
+      const mediaRecorder = new MediaRecorder(stream, options);
       audioChunksRef.current = [];
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -348,7 +363,8 @@ export default function CareerBotWidget() {
       mediaRecorder.start();
       mediaRecorderRef.current = mediaRecorder;
       setMockRecording(true);
-    } catch {
+    } catch (err) {
+      console.error('Microphone error:', err);
       alert(t('bot.mockNoMic'));
     }
   };
@@ -363,7 +379,8 @@ export default function CareerBotWidget() {
     mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
 
     mediaRecorderRef.current.onstop = async () => {
-      const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+      const actualMime = mediaRecorderRef.current?.mimeType || 'audio/webm';
+      const audioBlob = new Blob(audioChunksRef.current, { type: actualMime });
       // Convert to Base64
       const reader = new FileReader();
       reader.readAsDataURL(audioBlob);
@@ -401,7 +418,7 @@ export default function CareerBotWidget() {
             body: JSON.stringify({
               mode: 'mock_interview',
               audio_base64: base64Audio,
-              mime_type: 'audio/webm',
+              mime_type: actualMime,
               current_question: mockCurrentQuestion,
               cv_text: cvText,
               target_role: mockTargetRole,
