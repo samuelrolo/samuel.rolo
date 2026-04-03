@@ -319,7 +319,7 @@ export default function SavedJobsTracker({ lang }: Props) {
       </div>
 
       {/* ── Status Funnel ── */}
-      <div className="flex gap-1.5 mb-4 overflow-x-auto pb-1">
+      <div className="flex gap-1.5 mb-4 overflow-x-auto pb-2" style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <button onClick={() => { setFilterStatus('all'); setShowArchived(false); }}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-semibold rounded-full border transition-all whitespace-nowrap ${
             filterStatus === 'all' ? 'bg-[#1a1a1a] text-[#BF9A33] border-[#BF9A33]' : 'bg-white text-[#666] border-[#e5e5e5] hover:border-[#BF9A33]'
