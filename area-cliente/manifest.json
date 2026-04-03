@@ -1,0 +1,80 @@
+{
+  "name": "Share2Inspire — Área de Cliente",
+  "short_name": "S2I Cliente",
+  "description": "A tua área de cliente Share2Inspire: análises de CV, career path, vagas e muito mais.",
+  "start_url": "/area-cliente/",
+  "scope": "/area-cliente/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FAFAF9",
+  "theme_color": "#D4A853",
+  "lang": "pt-PT",
+  "dir": "ltr",
+  "categories": ["business", "productivity", "education"],
+  "icons": [
+    {
+      "src": "/images/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/images/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "O Meu Perfil",
+      "short_name": "Perfil",
+      "url": "/area-cliente/perfil",
+      "icons": [
+        {
+          "src": "/images/favicon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Área de Membros",
+      "short_name": "Membros",
+      "url": "/area-cliente/membros",
+      "icons": [
+        {
+          "src": "/images/favicon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Planos",
+      "short_name": "Planos",
+      "url": "/area-cliente/planos",
+      "icons": [
+        {
+          "src": "/images/favicon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
+}
