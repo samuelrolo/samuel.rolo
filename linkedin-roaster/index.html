@@ -257,6 +257,8 @@
             transition: color 0.2s;
         }
         .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+        .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; z-index: 110; }
+        .nav-toggle span { display: block; width: 22px; height: 2px; background: var(--dark); margin: 5px 0; transition: 0.3s; }
 
         /* ── Container ── */
         .container { max-width: 640px; margin: 0 auto; padding: 0 24px; }
@@ -1096,9 +1098,11 @@
 
         /* ── Responsive ── */
         @media (max-width: 768px) {
-            .nav { padding: 12px 16px; }
-            .nav-links { gap: 12px; }
-            .nav-links a { font-size: 0.7rem; }
+            .nav { padding: 12px 16px; flex-wrap: wrap; }
+            .nav-toggle { display: block; }
+            .nav-links { display: none; position: absolute; top: 56px; left: 0; right: 0; background: var(--white); flex-direction: column; padding: 1.5rem; gap: 1.2rem; border-bottom: 1px solid var(--border); width: 100%; box-sizing: border-box; z-index: 105; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+            .nav-links.open { display: flex; }
+            .nav-links a { font-size: 0.85rem; }
             .hero { padding: 40px 16px 24px; }
             .hero h1 { font-size: 1.5rem; }
             .hero p { font-size: 0.85rem; }
@@ -1132,7 +1136,6 @@
         }
         @media (max-width: 380px) {
             .hero h1 { font-size: 1.3rem; }
-            .nav-links a { font-size: 0.62rem; letter-spacing: 0; }
             .paywall .price { font-size: 1.4rem; }
         }
     </style>
@@ -1175,6 +1178,9 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
         <a href="../index.html" class="nav-logo">
             <img loading="lazy" src="../images/logo.webp" alt="Share2Inspire">
         </a>
+        <button class="nav-toggle" onclick="document.querySelectorAll('.nav-links').forEach(el => el.classList.toggle('open'))" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
         <div class="nav-links">
             <a href="/index.html">Início</a>
             <a href="/cv-analyser">CV Analyser</a>
