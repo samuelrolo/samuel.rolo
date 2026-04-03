@@ -9,10 +9,44 @@ const HYPER_TASK_URL = `${SUPABASE_URL}/functions/v1/hyper-task`;
 type Message = {
   role: 'user' | 'assistant';
   content: string;
-  type?: 'chat' | 'cover_letter' | 'networking_email' | 'linkedin_post';
+  type?: 'chat' | 'cover_letter' | 'networking_email' | 'linkedin_post' | 'cv_builder_chat';
 };
 
-type WidgetView = 'chat' | 'cover_letter' | 'networking_email' | 'linkedin_post' | 'headline_generator';
+type WidgetView = 'chat' | 'cover_letter' | 'networking_email' | 'linkedin_post' | 'headline_generator' | 'cv_builder_chat' | 'mock_interview';
+
+// CV Builder types
+interface CvData {
+  personal_info?: {
+    full_name?: string;
+    email?: string;
+    phone?: string;
+    location?: string;
+    target_role?: string;
+  };
+  summary?: string;
+  experiences?: Array<{
+    company?: string;
+    role?: string;
+    date_period?: string;
+    bullet_points?: string[];
+  }>;
+  education?: Array<{
+    institution?: string;
+    degree?: string;
+    year?: string;
+  }>;
+  skills?: string[];
+}
+
+// Mock Interview feedback type
+interface InterviewFeedback {
+  transcription_summary?: string;
+  duration_feedback?: string;
+  delivery_and_tone?: string;
+  content_critique?: string;
+  improved_answer?: string;
+  next_question?: string;
+}
 
 export default function CareerBotWidget() {
   const { user, profile, subscription, hasActiveSubscription } = useAuth();
@@ -54,11 +88,34 @@ export default function CareerBotWidget() {
   const [hlResults, setHlResults] = useState<string[]>([]);
   const [hlCopied, setHlCopied] = useState<number | null>(null);
 
+  // ─── CV Builder Chat state ───
+  const [cvMessages, setCvMessages] = useState<Message[]>([]);
+  const [cvInput, setCvInput] = useState('');
+  const [cvData, setCvData] = useState<CvData>({});
+  const [cvLoading, setCvLoading] = useState(false);
+  const [showCvPreview, setShowCvPreview] = useState(false);
+
+  // ─── Mock Interview state ───
+  const [mockTargetRole, setMockTargetRole] = useState('');
+  const [mockStarted, setMockStarted] = useState(false);
+  const [mockCurrentQuestion, setMockCurrentQuestion] = useState('');
+  const [mockRecording, setMockRecording] = useState(false);
+  const [mockAnalyzing, setMockAnalyzing] = useState(false);
+  const [mockFeedback, setMockFeedback] = useState<InterviewFeedback | null>(null);
+  const [mockHistory, setMockHistory] = useState<Array<{ question: string; feedback: InterviewFeedback }>>([]);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const cvMessagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const cvInputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+  const scrollCvToBottom = () => {
+    cvMessagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -66,7 +123,13 @@ export default function CareerBotWidget() {
   }, [messages]);
 
   useEffect(() => {
-    if (isOpen && inputRef.current) {
+    scrollCvToBottom();
+  }, [cvMessages]);
+
+  useEffect(() => {
+    if (isOpen && view === 'cv_builder_chat' && cvInputRef.current) {
+      cvInputRef.current.focus();
+    } else if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isOpen, view]);
@@ -87,12 +150,16 @@ export default function CareerBotWidget() {
     const openNetworkingEmail = () => { setIsOpen(true); setView('networking_email'); };
     const openLinkedinPost = () => { setIsOpen(true); setView('linkedin_post'); };
     const openHeadlineGenerator = () => { setIsOpen(true); setView('headline_generator'); };
+    const openCvBuilder = () => { setIsOpen(true); setView('cv_builder_chat'); };
+    const openMockInterview = () => { setIsOpen(true); setView('mock_interview'); };
 
     window.addEventListener('open-career-bot', openChat);
     window.addEventListener('open-career-bot-cover-letter', openCoverLetter);
     window.addEventListener('open-career-bot-networking-email', openNetworkingEmail);
     window.addEventListener('open-career-bot-linkedin-post', openLinkedinPost);
     window.addEventListener('open-headline-generator', openHeadlineGenerator);
+    window.addEventListener('open-cv-builder', openCvBuilder);
+    window.addEventListener('open-mock-interview', openMockInterview);
 
     return () => {
       window.removeEventListener('open-career-bot', openChat);
@@ -100,12 +167,15 @@ export default function CareerBotWidget() {
       window.removeEventListener('open-career-bot-networking-email', openNetworkingEmail);
       window.removeEventListener('open-career-bot-linkedin-post', openLinkedinPost);
       window.removeEventListener('open-headline-generator', openHeadlineGenerator);
+      window.removeEventListener('open-cv-builder', openCvBuilder);
+      window.removeEventListener('open-mock-interview', openMockInterview);
     };
   }, []);
 
   // Don't render if no active subscription — MUST be after all hooks
   if (!user || !hasActiveSubscription()) return null;
 
+  // ─── CHAT: sendMessage (existing career_coach mode) ───
   const sendMessage = async (overrideMessage?: string, displayMessage?: string) => {
     const msg = overrideMessage || input.trim();
     if (!msg && view === 'chat') return;
@@ -120,20 +190,16 @@ export default function CareerBotWidget() {
       const body: any = {
         mode: 'career_coach',
         message: msg,
-        language: lang, // Send current page language to the edge function
+        language: lang,
         history: messages.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content })),
         ...profileCtx,
       };
 
-      // Cover letter mode
       if (view === 'cover_letter' && company && role && !overrideMessage?.startsWith('__SKIP__')) {
         body.cover_letter = true;
         body.target_company = company;
         body.target_role = role;
       }
-
-      // Note: networking_email and linkedin_post are handled via the message content
-      // The full prompt is already in the message field, so the career_coach mode processes it correctly
 
       const response = await fetch(HYPER_TASK_URL, {
         method: 'POST',
@@ -176,6 +242,198 @@ export default function CareerBotWidget() {
     }
   };
 
+  // ─── CV BUILDER CHAT: sendCvMessage ───
+  const sendCvMessage = async (overrideMsg?: string) => {
+    const msg = overrideMsg || cvInput.trim();
+    if (!msg) return;
+    const userMessage: Message = { role: 'user', content: msg };
+    setCvMessages(prev => [...prev, userMessage]);
+    setCvInput('');
+    setCvLoading(true);
+    try {
+      const body = {
+        mode: 'cv_builder_chat',
+        message: msg,
+        language: lang,
+        history: cvMessages.map(m => ({ role: m.role, content: m.content })),
+        current_cv: Object.keys(cvData).length > 0 ? cvData : undefined,
+        profile_name: profile ? `${profile.first_name} ${profile.last_name}` : '',
+        user_id: user?.id || '',
+      };
+      const response = await fetch(HYPER_TASK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify(body),
+      });
+      const data = await response.json();
+      if (data.success && data.reply) {
+        setCvMessages(prev => [...prev, {
+          role: 'assistant',
+          content: data.reply,
+          type: 'cv_builder_chat',
+        }]);
+        // Update CV data if the Function Calling returned cv_data
+        if (data.cv_data && typeof data.cv_data === 'object' && Object.keys(data.cv_data).length > 0) {
+          setCvData(prev => {
+            const merged = { ...prev };
+            // Deep merge: personal_info
+            if (data.cv_data.personal_info) {
+              merged.personal_info = { ...(prev.personal_info || {}), ...data.cv_data.personal_info };
+            }
+            // summary
+            if (data.cv_data.summary) merged.summary = data.cv_data.summary;
+            // experiences — replace if provided
+            if (data.cv_data.experiences && data.cv_data.experiences.length > 0) {
+              merged.experiences = data.cv_data.experiences;
+            }
+            // education — replace if provided
+            if (data.cv_data.education && data.cv_data.education.length > 0) {
+              merged.education = data.cv_data.education;
+            }
+            // skills — replace if provided
+            if (data.cv_data.skills && data.cv_data.skills.length > 0) {
+              merged.skills = data.cv_data.skills;
+            }
+            return merged;
+          });
+          setShowCvPreview(true);
+        }
+      } else {
+        setCvMessages(prev => [...prev, {
+          role: 'assistant',
+          content: t('bot.errorGeneric'),
+        }]);
+      }
+    } catch {
+      setCvMessages(prev => [...prev, {
+        role: 'assistant',
+        content: t('bot.errorConnection'),
+      }]);
+    } finally {
+      setCvLoading(false);
+    }
+  };
+
+  const handleCvKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendCvMessage();
+    }
+  };
+
+  // ─── MOCK INTERVIEW: Audio recording & analysis ───
+  const startMockInterview = () => {
+    if (!mockTargetRole.trim()) return;
+    setMockStarted(true);
+    setMockFeedback(null);
+    setMockHistory([]);
+    const defaultQ = t('bot.mockDefaultQuestion');
+    setMockCurrentQuestion(defaultQ);
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      audioChunksRef.current = [];
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+      mediaRecorder.start();
+      mediaRecorderRef.current = mediaRecorder;
+      setMockRecording(true);
+    } catch {
+      alert(t('bot.mockNoMic'));
+    }
+  };
+
+  const stopAndSend = async () => {
+    if (!mediaRecorderRef.current) return;
+    setMockRecording(false);
+    setMockAnalyzing(true);
+
+    mediaRecorderRef.current.stop();
+    // Stop all tracks to release the microphone
+    mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+
+    mediaRecorderRef.current.onstop = async () => {
+      const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+      // Convert to Base64
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      reader.onloadend = async () => {
+        const base64Audio = (reader.result as string).split(',')[1];
+
+        // Fetch cv_text from Supabase (same pattern as existing code)
+        let cvText = '';
+        if (user?.id || user?.email) {
+          try {
+            const cvUrl = `${SUPABASE_URL}/rest/v1/cv_analysis?select=cv_text&order=created_at.desc&limit=1`;
+            const userIdFilter = user.id ? `&user_id=eq.${user.id}` : '';
+            const emailFilter = !user.id && user.email ? `&user_email=eq.${encodeURIComponent(user.email)}` : '';
+            const cvRes = await fetch(`${cvUrl}${userIdFilter || emailFilter}`, {
+              headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+              },
+            });
+            const cvRows = await cvRes.json();
+            if (cvRows?.[0]?.cv_text) {
+              cvText = cvRows[0].cv_text;
+            }
+          } catch { /* silently continue without CV */ }
+        }
+
+        try {
+          const response = await fetch(HYPER_TASK_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({
+              mode: 'mock_interview',
+              audio_base64: base64Audio,
+              mime_type: 'audio/webm',
+              current_question: mockCurrentQuestion,
+              cv_text: cvText,
+              target_role: mockTargetRole,
+              language: lang,
+            }),
+          });
+          const data = await response.json();
+          if (data.success && data.feedback) {
+            const fb = data.feedback as InterviewFeedback;
+            setMockFeedback(fb);
+            setMockHistory(prev => [...prev, { question: mockCurrentQuestion, feedback: fb }]);
+            if (fb.next_question) {
+              setMockCurrentQuestion(fb.next_question);
+            }
+          } else {
+            setMockFeedback({
+              transcription_summary: t('bot.errorGeneric'),
+              content_critique: data.error || '',
+            } as InterviewFeedback);
+          }
+        } catch {
+          setMockFeedback({
+            transcription_summary: t('bot.errorConnection'),
+          } as InterviewFeedback);
+        } finally {
+          setMockAnalyzing(false);
+        }
+      };
+    };
+  };
+
+  // ─── COVER LETTER ───
   const handleCoverLetterSubmit = () => {
     if (!company.trim() || !role.trim()) return;
     const profileName = profile ? `${profile.first_name} ${profile.last_name}` : '';
@@ -201,6 +459,7 @@ Generate ONLY the letter.`;
     sendMessage(msg, display);
   };
 
+  // ─── NETWORKING EMAIL ───
   const handleNetworkingEmailSubmit = () => {
     if (!netRecipient.trim() || !netPurpose.trim()) return;
     const profileName = profile ? `${profile.first_name} ${profile.last_name}` : '';
@@ -226,6 +485,7 @@ Generate ONLY the email with subject line.`;
     sendMessage(msg, display);
   };
 
+  // ─── LINKEDIN POST ───
   const handleLinkedinPostSubmit = () => {
     if (!liNewCompany.trim() || !liNewRole.trim()) return;
     const profileName = profile ? `${profile.first_name} ${profile.last_name}` : '';
@@ -263,6 +523,7 @@ Generate ONLY the post.`;
     navigator.clipboard.writeText(text);
   };
 
+  // ─── HEADLINE GENERATOR ───
   const handleHeadlineGenerate = async () => {
     if (!hlCargo.trim() && !hlArea.trim() && !hlValor.trim()) return;
     setLoading(true);
@@ -304,19 +565,13 @@ Generate ONLY the post.`;
       console.log('[Headline] Raw reply:', data.reply);
       if (data.success && data.reply) {
         let headlines: string[] = [];
-        // Handle reply that might be string or object
         let replyStr = typeof data.reply === 'object' ? JSON.stringify(data.reply) : String(data.reply);
-        
-        // Clean markdown code blocks and extra whitespace
         let raw = replyStr
           .replace(/```json\s*/gi, '')
           .replace(/```\s*/g, '')
           .replace(/^\s*\n/gm, '')
           .trim();
-        
-        console.log('[Headline] Cleaned raw:', raw);
 
-        // Try multiple JSON extraction strategies
         const tryParse = (str: string): string[] | null => {
           try {
             const parsed = JSON.parse(str);
@@ -329,26 +584,15 @@ Generate ONLY the post.`;
           return null;
         };
 
-        // Strategy 1: Direct parse of cleaned text
         headlines = tryParse(raw) || [];
-
-        // Strategy 2: Find JSON object with array in text
         if (headlines.length === 0) {
           const jsonObjMatch = raw.match(/\{[\s\S]*\[[\s\S]*\][\s\S]*\}/);
-          if (jsonObjMatch) {
-            headlines = tryParse(jsonObjMatch[0]) || [];
-          }
+          if (jsonObjMatch) headlines = tryParse(jsonObjMatch[0]) || [];
         }
-
-        // Strategy 3: Find JSON array directly
         if (headlines.length === 0) {
           const arrMatch = raw.match(/\[[\s\S]*\]/);
-          if (arrMatch) {
-            headlines = tryParse(arrMatch[0]) || [];
-          }
+          if (arrMatch) headlines = tryParse(arrMatch[0]) || [];
         }
-
-        // Strategy 4: Extract quoted strings from truncated/partial JSON
         if (headlines.length === 0) {
           const quotedStrings: string[] = [];
           const quoteRegex = /"([^"]{15,220})"/g;
@@ -358,29 +602,19 @@ Generate ONLY the post.`;
             if (val === 'headlines' || val.length < 15) continue;
             quotedStrings.push(val);
           }
-          if (quotedStrings.length > 0) {
-            headlines = quotedStrings.slice(0, parseInt(hlNum));
-          }
+          if (quotedStrings.length > 0) headlines = quotedStrings.slice(0, parseInt(hlNum));
         }
-
-        // Strategy 5: Split by numbered lines or newlines
         if (headlines.length === 0) {
           const lines = raw.split(/\n/)
             .map((l: string) => l.replace(/^\d+[\.)\-:\s]+/, '').replace(/^"|"$/g, '').replace(/^[\-\*]\s*/, '').trim())
             .filter((l: string) => l.length > 15 && l.length <= 250 && !l.startsWith('{') && !l.startsWith('['));
           headlines = lines.slice(0, parseInt(hlNum));
         }
-
-        // Strategy 6: Split by comma for flat comma-separated headlines
         if (headlines.length === 0) {
           const cleaned = raw.replace(/[{}\[\]"]/g, '').replace(/^headlines\s*:?\s*/i, '').trim();
           const parts = cleaned.split(/,\s*/).filter((p: string) => p.trim().length > 15);
-          if (parts.length >= 2) {
-            headlines = parts.slice(0, parseInt(hlNum));
-          }
+          if (parts.length >= 2) headlines = parts.slice(0, parseInt(hlNum));
         }
-
-        // Clean up
         headlines = headlines
           .map((h: any) => String(h).replace(/^"|"$/g, '').replace(/^\d+[\.)\-]\s*/, '').replace(/[\[\]{}]/g, '').replace(/^"|"$/g, '').replace(/,\s*$/, '').trim())
           .filter((h: string) => h.length > 10 && h.toLowerCase() !== 'headlines');
@@ -411,6 +645,9 @@ Generate ONLY the post.`;
     setLiNewCompany(''); setLiNewRole(''); setLiTone('profissional'); setLiNotes('');
     setHlCargo(''); setHlArea(''); setHlAnos(''); setHlValor(''); setHlPublico('');
     setHlKeywords(''); setHlTone('profissional'); setHlLang('pt'); setHlNum('5'); setHlResults([]);
+    setCvMessages([]); setCvInput(''); setCvData({}); setShowCvPreview(false);
+    setMockTargetRole(''); setMockStarted(false); setMockCurrentQuestion('');
+    setMockRecording(false); setMockAnalyzing(false); setMockFeedback(null); setMockHistory([]);
   };
 
   // Tab labels for the view switcher — using i18n
@@ -420,6 +657,8 @@ Generate ONLY the post.`;
     { key: 'networking_email', label: t('bot.tabNetworking'), icon: '🤝' },
     { key: 'linkedin_post', label: t('bot.tabLinkedinPost'), icon: '📢' },
     { key: 'headline_generator', label: t('bot.tabHeadline'), icon: '✦' },
+    { key: 'cv_builder_chat', label: t('bot.tabCvMaker'), icon: '📄' },
+    { key: 'mock_interview', label: t('bot.tabMockInterview'), icon: '🎙️' },
   ];
 
   return (
@@ -457,50 +696,39 @@ Generate ONLY the post.`;
                 </svg>
               </div>
               <div>
-                <h3 className="text-white font-semibold text-sm leading-tight">Career Advisory</h3>
-                <p className="text-white/70 text-xs">Share2Inspire AI</p>
+                <h3 className="text-white text-sm font-semibold leading-tight">Career Advisory</h3>
+                <p className="text-white/60 text-[10px]">Share2Inspire AI</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
-              {/* Language indicator */}
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold text-white/80 bg-white/15 uppercase tracking-wider">{lang}</span>
-              <button onClick={resetChat} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors" title={t('bot.newChat')}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                  <path d="M3 3v5h5" />
+              <button onClick={resetChat} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors text-white/70 hover:text-white" title={t('bot.newChat')}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="1 4 1 10 7 10" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
                 </svg>
               </button>
-              <button onClick={() => setIsFullscreen(!isFullscreen)} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors" title={isFullscreen ? t('bot.reduce') : t('bot.fullscreen')}>
-                {isFullscreen ? (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M8 3v3a2 2 0 0 1-2 2H3" /><path d="M21 8h-3a2 2 0 0 1-2-2V3" />
-                    <path d="M3 16h3a2 2 0 0 1 2 2v3" /><path d="M16 21v-3a2 2 0 0 1 2-2h3" />
-                  </svg>
-                ) : (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M8 3H5a2 2 0 0 0-2 2v3" /><path d="M21 8V5a2 2 0 0 0-2-2h-3" />
-                    <path d="M3 16v3a2 2 0 0 0 2 2h3" /><path d="M16 21h3a2 2 0 0 0 2-2v-3" />
-                  </svg>
-                )}
+              <button onClick={() => setIsFullscreen(!isFullscreen)} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors text-white/70 hover:text-white">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  {isFullscreen ? <><polyline points="4 14 10 14 10 20" /><polyline points="20 10 14 10 14 4" /><line x1="14" y1="10" x2="21" y2="3" /><line x1="3" y1="21" x2="10" y2="14" /></> : <><polyline points="15 3 21 3 21 9" /><polyline points="9 21 3 21 3 15" /><line x1="21" y1="3" x2="14" y2="10" /><line x1="3" y1="21" x2="10" y2="14" /></>}
+                </svg>
               </button>
-              <button onClick={() => { setIsOpen(false); setIsFullscreen(false); }} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors" title={t('bot.minimize')}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 9l6 6 6-6" />
+              <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg hover:bg-white/20 transition-colors text-white/70 hover:text-white">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
                 </svg>
               </button>
             </div>
           </div>
 
-          {/* Tab Switcher */}
-          <div className="flex border-b border-gray-100 shrink-0 overflow-x-auto">
+          {/* Tabs */}
+          <div className="flex overflow-x-auto border-b border-gray-100 shrink-0 scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
             {tabs.map(tab => (
               <button
                 key={tab.key}
                 onClick={() => setView(tab.key)}
-                className={`flex-1 py-2 text-[10px] font-medium transition-colors whitespace-nowrap px-1 ${
+                className={`flex items-center gap-1 px-3 py-2 text-[11px] font-medium whitespace-nowrap transition-all border-b-2 ${
                   view === tab.key
-                    ? 'text-[#BFA14A] border-b-2 border-[#BFA14A]'
-                    : 'text-gray-400 hover:text-gray-600'
+                    ? 'text-[#BFA14A] border-[#BFA14A]'
+                    : 'border-transparent text-gray-400 hover:text-gray-600'
                 }`}
               >
                 {tab.icon} {tab.label}
@@ -508,7 +736,9 @@ Generate ONLY the post.`;
             ))}
           </div>
 
-          {/* Cover Letter Form */}
+          {/* ═══════════════════════════════════════════════════════════ */}
+          {/* VIEW: Cover Letter Form */}
+          {/* ═══════════════════════════════════════════════════════════ */}
           {view === 'cover_letter' && (
             <div className="p-4 flex-1 overflow-y-auto">
               <div className={`space-y-4 ${isFullscreen ? 'max-w-3xl mx-auto' : ''}`}>
@@ -551,7 +781,9 @@ Generate ONLY the post.`;
             </div>
           )}
 
-          {/* Networking Email Form */}
+          {/* ═══════════════════════════════════════════════════════════ */}
+          {/* VIEW: Networking Email Form */}
+          {/* ═══════════════════════════════════════════════════════════ */}
           {view === 'networking_email' && (
             <div className="p-4 flex-1 overflow-y-auto">
               <div className={`space-y-4 ${isFullscreen ? 'max-w-3xl mx-auto' : ''}`}>
@@ -600,7 +832,9 @@ Generate ONLY the post.`;
             </div>
           )}
 
-          {/* LinkedIn Post Form */}
+          {/* ═══════════════════════════════════════════════════════════ */}
+          {/* VIEW: LinkedIn Post Form */}
+          {/* ═══════════════════════════════════════════════════════════ */}
           {view === 'linkedin_post' && (
             <div className="p-4 flex-1 overflow-y-auto">
               <div className={`space-y-4 ${isFullscreen ? 'max-w-3xl mx-auto' : ''}`}>
@@ -653,7 +887,9 @@ Generate ONLY the post.`;
             </div>
           )}
 
-          {/* Headline Generator Form */}
+          {/* ═══════════════════════════════════════════════════════════ */}
+          {/* VIEW: Headline Generator Form */}
+          {/* ═══════════════════════════════════════════════════════════ */}
           {view === 'headline_generator' && (
             <div className="p-4 flex-1 overflow-y-auto">
               <div className={`space-y-3 ${isFullscreen ? 'max-w-3xl mx-auto' : ''}`}>
@@ -671,7 +907,7 @@ Generate ONLY the post.`;
                   <div>
                     <label className="block text-[10px] font-medium text-gray-700 mb-1">{t('bot.sector')} *</label>
                     <input type="text" value={hlArea} onChange={e => setHlArea(e.target.value)}
-                      placeholder={lang === 'pt' ? 'Ex: RH, Marketing' : 'E.g.: HR, Marketing'}
+                      placeholder={lang === 'pt' ? 'Ex: Tecnologia, Saúde' : 'E.g.: Technology, Health'}
                       className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]" />
                   </div>
                 </div>
@@ -785,7 +1021,299 @@ Generate ONLY the post.`;
             </div>
           )}
 
-          {/* Chat Messages */}
+          {/* ═══════════════════════════════════════════════════════════ */}
+          {/* VIEW: CV Builder Chat (NEW) */}
+          {/* ═══════════════════════════════════════════════════════════ */}
+          {view === 'cv_builder_chat' && (
+            <>
+              <div className={`flex-1 overflow-y-auto p-4 space-y-3 ${isFullscreen ? 'max-w-4xl mx-auto w-full' : ''}`}>
+                {/* Welcome screen */}
+                {cvMessages.length === 0 && (
+                  <div className="flex flex-col items-center justify-center h-full text-center px-4">
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3" style={{ background: 'linear-gradient(135deg, #BFA14A20 0%, #8F7A3A20 100%)' }}>
+                      <span className="text-2xl">📄</span>
+                    </div>
+                    <h4 className="font-semibold text-gray-800 text-sm mb-1">{t('bot.tabCvMaker')}</h4>
+                    <p className="text-xs text-gray-500 mb-4 px-2">{t('bot.cvMakerDesc')}</p>
+                    <button
+                      onClick={() => sendCvMessage(t('bot.cvMakerStartMsg'))}
+                      className="px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-all hover:opacity-90"
+                      style={{ background: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' }}
+                    >
+                      {t('bot.cvMakerStartBtn')}
+                    </button>
+                  </div>
+                )}
+
+                {/* CV Chat Messages */}
+                {cvMessages.map((msg, i) => (
+                  <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+                      msg.role === 'user'
+                        ? 'bg-[#BFA14A] text-white rounded-br-md'
+                        : 'bg-gray-100 text-gray-800 rounded-bl-md'
+                    }`}>
+                      <div className="whitespace-pre-wrap">{msg.content}</div>
+                      {msg.role === 'assistant' && (
+                        <button onClick={() => copyToClipboard(msg.content)}
+                          className="mt-1.5 p-1 rounded hover:bg-black/10 transition-colors opacity-40 hover:opacity-70" title={t('bot.copy')}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                {cvLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-gray-100 rounded-2xl rounded-bl-md px-4 py-3">
+                      <div className="flex gap-1.5">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div ref={cvMessagesEndRef} />
+
+                {/* CV Preview Panel (inline, collapsible) */}
+                {showCvPreview && Object.keys(cvData).length > 0 && (
+                  <div className="mt-3 border border-[#BFA14A]/30 rounded-xl bg-[#BFA14A]/5 p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] font-bold text-[#BFA14A] uppercase tracking-wider">{t('bot.cvPreviewTitle')}</span>
+                      <div className="flex items-center gap-1.5">
+                        <button onClick={() => {
+                          navigator.clipboard.writeText(JSON.stringify(cvData, null, 2));
+                        }} className="text-[10px] px-2 py-0.5 rounded border border-[#BFA14A]/30 text-[#BFA14A] hover:bg-[#BFA14A]/10 transition-all">
+                          {t('bot.copy')} JSON
+                        </button>
+                        <button onClick={() => setShowCvPreview(false)} className="text-[10px] px-2 py-0.5 rounded border border-gray-200 text-gray-400 hover:text-gray-600 transition-all">
+                          {lang === 'pt' ? 'Fechar' : 'Close'}
+                        </button>
+                      </div>
+                    </div>
+                    {cvData.personal_info && (
+                      <div className="mb-2.5 pb-2 border-b border-[#BFA14A]/15">
+                        <p className="text-sm font-semibold text-gray-800">{cvData.personal_info.full_name || '—'}</p>
+                        {cvData.personal_info.target_role && <p className="text-[11px] text-[#BFA14A] font-medium">{cvData.personal_info.target_role}</p>}
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {cvData.personal_info.email && <span className="text-[10px] text-gray-500">{cvData.personal_info.email}</span>}
+                          {cvData.personal_info.phone && <span className="text-[10px] text-gray-500">| {cvData.personal_info.phone}</span>}
+                          {cvData.personal_info.location && <span className="text-[10px] text-gray-500">| {cvData.personal_info.location}</span>}
+                        </div>
+                      </div>
+                    )}
+                    {cvData.summary && (
+                      <div className="mb-2.5 pb-2 border-b border-[#BFA14A]/15">
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">{lang === 'pt' ? 'Resumo Profissional' : 'Professional Summary'}</p>
+                        <p className="text-[11px] text-gray-700 leading-relaxed">{cvData.summary}</p>
+                      </div>
+                    )}
+                    {cvData.experiences && cvData.experiences.length > 0 && (
+                      <div className="mb-2.5 pb-2 border-b border-[#BFA14A]/15">
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">{lang === 'pt' ? 'Experiência Profissional' : 'Work Experience'}</p>
+                        {cvData.experiences.map((exp, i) => (
+                          <div key={i} className="mb-2 pl-2 border-l-2 border-[#BFA14A]/30">
+                            <p className="text-[11px] font-semibold text-gray-800">{exp.role}{exp.company ? ` — ${exp.company}` : ''}</p>
+                            {exp.date_period && <p className="text-[10px] text-gray-400">{exp.date_period}</p>}
+                            {exp.bullet_points && exp.bullet_points.map((bp, j) => (
+                              <p key={j} className="text-[10px] text-gray-600 ml-1">• {bp}</p>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {cvData.education && cvData.education.length > 0 && (
+                      <div className="mb-2.5 pb-2 border-b border-[#BFA14A]/15">
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">{lang === 'pt' ? 'Formação Académica' : 'Education'}</p>
+                        {cvData.education.map((edu, i) => (
+                          <p key={i} className="text-[11px] text-gray-700">{edu.degree}{edu.institution ? ` — ${edu.institution}` : ''}{edu.year ? ` (${edu.year})` : ''}</p>
+                        ))}
+                      </div>
+                    )}
+                    {cvData.skills && cvData.skills.length > 0 && (
+                      <div>
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">{lang === 'pt' ? 'Competências' : 'Skills'}</p>
+                        <div className="flex flex-wrap gap-1">
+                          {cvData.skills.map((skill, i) => (
+                            <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-[#BFA14A]/10 text-[#BFA14A] font-medium">{skill}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* CV Builder Input */}
+              <div className="p-3 border-t border-gray-100 shrink-0">
+                <div className={`flex items-center gap-2 ${isFullscreen ? 'max-w-4xl mx-auto w-full' : ''}`}>
+                  {Object.keys(cvData).length > 0 && (
+                    <button onClick={() => setShowCvPreview(!showCvPreview)} className={`p-2 rounded-lg transition-colors ${showCvPreview ? 'bg-[#BFA14A]/10 text-[#BFA14A]' : 'hover:bg-gray-100 text-gray-400'}`} title={t('bot.cvPreviewTitle')}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" />
+                      </svg>
+                    </button>
+                  )}
+                  <input
+                    ref={cvInputRef}
+                    type="text"
+                    value={cvInput}
+                    onChange={e => setCvInput(e.target.value)}
+                    onKeyDown={handleCvKeyDown}
+                    placeholder={t('bot.cvMakerInputPlaceholder')}
+                    disabled={cvLoading}
+                    className="flex-1 px-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] disabled:opacity-50"
+                  />
+                  <button
+                    onClick={() => sendCvMessage()}
+                    disabled={!cvInput.trim() || cvLoading}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center transition-all disabled:opacity-30"
+                    style={{ background: cvInput.trim() ? 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' : '#e5e7eb' }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="22" y1="2" x2="11" y2="13" />
+                      <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════ */}
+          {/* VIEW: Mock Interview (NEW) */}
+          {/* ═══════════════════════════════════════════════════════════ */}
+          {view === 'mock_interview' && (
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {/* Setup Phase */}
+              {!mockStarted && (
+                <div className="flex flex-col items-center justify-center h-full text-center px-4">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3" style={{ background: 'linear-gradient(135deg, #BFA14A20 0%, #8F7A3A20 100%)' }}>
+                    <span className="text-2xl">🎙️</span>
+                  </div>
+                  <h4 className="font-semibold text-gray-800 text-sm mb-1">{t('bot.tabMockInterview')}</h4>
+                  <p className="text-xs text-gray-500 mb-4 px-2">{t('bot.mockInterviewDesc')}</p>
+                  <div className="w-full max-w-[280px] mb-3">
+                    <label className="block text-[10px] font-medium text-gray-700 mb-1 text-left">{t('bot.mockTargetRole')}</label>
+                    <input
+                      value={mockTargetRole}
+                      onChange={e => setMockTargetRole(e.target.value)}
+                      placeholder={t('bot.mockTargetRolePlaceholder')}
+                      className="w-full px-2.5 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A]"
+                    />
+                  </div>
+                  <button
+                    onClick={startMockInterview}
+                    disabled={!mockTargetRole.trim()}
+                    className="px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-all hover:opacity-90 disabled:opacity-50"
+                    style={{ background: mockTargetRole.trim() ? 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' : '#ccc' }}
+                  >
+                    {t('bot.mockStartInterview')}
+                  </button>
+                </div>
+              )}
+
+              {/* Interview Active Phase */}
+              {mockStarted && (
+                <>
+                  {/* Current Question */}
+                  <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[9px] font-bold text-[#BFA14A] uppercase tracking-wider">{t('bot.mockCurrentQuestion')}</span>
+                      <div className="flex items-center gap-2">
+                        {mockHistory.length > 0 && (
+                          <span className="text-[9px] text-gray-400">{mockHistory.length} {lang === 'pt' ? 'respondida(s)' : 'answered'}</span>
+                        )}
+                        <button onClick={() => { setMockStarted(false); setMockFeedback(null); setMockHistory([]); }} className="text-[9px] text-gray-400 hover:text-gray-600 transition-colors">
+                          {t('bot.mockNewSession')}
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-800 leading-relaxed italic">"{mockCurrentQuestion}"</p>
+                  </div>
+
+                  {/* Recording Controls */}
+                  <div className="flex justify-center gap-3 py-2">
+                    {!mockRecording && !mockAnalyzing && (
+                      <button
+                        onClick={startRecording}
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-all hover:opacity-90"
+                        style={{ background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' }}
+                      >
+                        <span className="w-3 h-3 rounded-full bg-white/80" />
+                        {t('bot.mockRecord')}
+                      </button>
+                    )}
+                    {mockRecording && (
+                      <button
+                        onClick={stopAndSend}
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-all"
+                        style={{ background: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' }}
+                      >
+                        <span className="w-3 h-3 rounded-sm bg-white animate-pulse" />
+                        {t('bot.mockStopAndSend')}
+                      </button>
+                    )}
+                    {mockAnalyzing && (
+                      <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gray-100 text-gray-600 text-sm">
+                        <LoadingSpinner />
+                        {t('bot.mockAnalyzing')}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Feedback Display */}
+                  {mockFeedback && (
+                    <div className="space-y-2 mt-1">
+                      {mockFeedback.transcription_summary && (
+                        <FeedbackCard icon="📝" title={t('bot.mockTranscription')} content={mockFeedback.transcription_summary} />
+                      )}
+                      {mockFeedback.duration_feedback && (
+                        <FeedbackCard icon="⏱️" title={t('bot.mockDuration')} content={mockFeedback.duration_feedback} />
+                      )}
+                      {mockFeedback.delivery_and_tone && (
+                        <FeedbackCard icon="🎯" title={t('bot.mockDelivery')} content={mockFeedback.delivery_and_tone} />
+                      )}
+                      {mockFeedback.content_critique && (
+                        <FeedbackCard icon="📊" title={t('bot.mockContent')} content={mockFeedback.content_critique} />
+                      )}
+                      {mockFeedback.improved_answer && (
+                        <FeedbackCard icon="✨" title={t('bot.mockImproved')} content={mockFeedback.improved_answer} accent />
+                      )}
+                      {mockFeedback.next_question && (
+                        <div className="bg-[#BFA14A]/5 border border-[#BFA14A]/20 rounded-xl p-3">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <span className="text-xs">➡️</span>
+                            <span className="text-[10px] font-bold text-[#BFA14A] uppercase tracking-wider">{t('bot.mockNextQuestion')}</span>
+                          </div>
+                          <p className="text-xs text-gray-800 italic mb-2">"{mockFeedback.next_question}"</p>
+                          <button
+                            onClick={() => {
+                              setMockFeedback(null);
+                            }}
+                            className="text-[11px] px-3 py-1 rounded-lg text-white font-medium transition-all hover:opacity-90"
+                            style={{ background: 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' }}
+                          >
+                            {t('bot.mockAskNext')}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════ */}
+          {/* VIEW: Chat Messages (existing) */}
+          {/* ═══════════════════════════════════════════════════════════ */}
           {view === 'chat' && (
             <>
               <div className={`flex-1 overflow-y-auto p-4 space-y-3 ${isFullscreen ? 'max-w-4xl mx-auto w-full' : ''}`}>
@@ -914,11 +1442,24 @@ Generate ONLY the post.`;
   );
 }
 
+// ─── Helper Components ───
 function LoadingSpinner() {
   return (
     <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
     </svg>
+  );
+}
+
+function FeedbackCard({ icon, title, content, accent }: { icon: string; title: string; content: string; accent?: boolean }) {
+  return (
+    <div className={`rounded-xl p-3 border ${accent ? 'bg-green-50/50 border-green-200/50' : 'bg-white border-gray-100'}`}>
+      <div className="flex items-center gap-1.5 mb-1">
+        <span className="text-xs">{icon}</span>
+        <span className={`text-[10px] font-bold uppercase tracking-wider ${accent ? 'text-green-700' : 'text-gray-500'}`}>{title}</span>
+      </div>
+      <p className="text-[11px] text-gray-700 leading-relaxed whitespace-pre-wrap">{content}</p>
+    </div>
   );
 }
