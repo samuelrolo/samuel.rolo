@@ -1,7 +1,7 @@
 /**
  * Share2Inspire — PWA Install Banner (Área de Membros)
  * 
- * Injeta um banner de anúncio da PWA no topo da dashboard.
+ * Injeta um banner de anúncio da PWA no topo da página.
  * NÃO altera nenhum componente React.
  * O banner pode ser dispensado e não volta a aparecer durante 30 dias.
  */
@@ -25,10 +25,12 @@
     return;
   }
 
-  // Detetar idioma (verificar se a página tem textos em EN)
+  // Detetar idioma
   function detectLang() {
-    var body = document.body ? document.body.textContent : '';
-    if (body.indexOf('Member Area') !== -1 || body.indexOf('My profile') !== -1) return 'en';
+    var html = document.documentElement.lang || '';
+    if (html.startsWith('en')) return 'en';
+    var path = window.location.pathname;
+    if (path.indexOf('/en/') !== -1) return 'en';
     return 'pt';
   }
 
@@ -51,54 +53,41 @@
 
     var banner = document.createElement('div');
     banner.id = 's2i-pwa-install-banner';
-    banner.style.cssText = 'position:relative;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);border-radius:12px;padding:14px 20px;gap:16px;cursor:pointer;overflow:hidden;margin-bottom:16px;font-family:Poppins,sans-serif;transition:all 0.3s ease;';
+    banner.style.cssText = 'position:relative;display:flex;align-items:center;background:#1a1a1a;padding:12px 48px 12px 16px;gap:12px;cursor:pointer;font-family:Poppins,system-ui,sans-serif;border-bottom:2px solid #C9A961;z-index:9999;transition:opacity 0.3s ease;';
 
-    // Borda dourada à esquerda
-    var borderLeft = document.createElement('div');
-    borderLeft.style.cssText = 'position:absolute;left:0;top:0;bottom:0;width:3px;background:#D4A853;';
-    banner.appendChild(borderLeft);
-
-    // Lado esquerdo (ícone + texto)
-    var left = document.createElement('div');
-    left.style.cssText = 'display:flex;align-items:center;gap:12px;';
-
-    var icon = document.createElement('div');
-    icon.style.cssText = 'width:36px;height:36px;background:rgba(212,168,83,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;';
+    // Ícone telemóvel
+    var icon = document.createElement('span');
+    icon.style.cssText = 'font-size:20px;flex-shrink:0;';
     icon.textContent = '\ud83d\udcf1';
 
-    var textWrap = document.createElement('div');
-    textWrap.style.cssText = 'display:flex;flex-direction:column;gap:2px;';
+    // Texto
+    var textWrap = document.createElement('span');
+    textWrap.style.cssText = 'flex:1;color:#fff;font-size:13px;font-weight:300;line-height:1.4;';
 
     var label = document.createElement('span');
-    label.style.cssText = 'font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#D4A853;';
+    label.style.cssText = 'background:#C9A961;color:#1a1a1a;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;margin-right:8px;letter-spacing:0.5px;text-transform:uppercase;vertical-align:middle;';
     label.textContent = t.label;
 
     var msg = document.createElement('span');
-    msg.style.cssText = 'font-size:13px;font-weight:400;color:#fff;line-height:1.4;';
     msg.innerHTML = t.msg;
 
     textWrap.appendChild(label);
     textWrap.appendChild(msg);
-    left.appendChild(icon);
-    left.appendChild(textWrap);
 
     // CTA
-    var cta = document.createElement('div');
-    cta.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#D4A853;white-space:nowrap;flex-shrink:0;font-family:Poppins,sans-serif;';
-    cta.innerHTML = t.cta + ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+    var cta = document.createElement('span');
+    cta.style.cssText = 'color:#C9A961;font-size:12px;font-weight:500;white-space:nowrap;flex-shrink:0;';
+    cta.innerHTML = t.cta + ' \u2192';
 
     // Botão fechar
     var close = document.createElement('button');
-    close.style.cssText = 'position:absolute;top:8px;right:10px;background:none;border:none;color:#666;font-size:14px;cursor:pointer;line-height:1;padding:2px;z-index:2;';
+    close.style.cssText = 'position:absolute;top:50%;right:12px;transform:translateY(-50%);background:none;border:none;color:#666;font-size:18px;cursor:pointer;line-height:1;padding:4px;z-index:2;';
     close.textContent = '\u00d7';
     close.title = lang === 'pt' ? 'Fechar' : 'Close';
     close.addEventListener('click', function (e) {
       e.stopPropagation();
       banner.style.opacity = '0';
-      banner.style.transform = 'translateY(-10px)';
-      setTimeout(function () {
-        banner.remove();
-      }, 300);
+      setTimeout(function () { banner.remove(); }, 300);
       localStorage.setItem(STORAGE_KEY, new Date().toISOString());
     });
 
@@ -107,24 +96,17 @@
       showInstallInstructions(lang);
     });
 
-    // Hover
-    banner.addEventListener('mouseenter', function () {
-      banner.style.transform = 'translateY(-1px)';
-      banner.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)';
-    });
-    banner.addEventListener('mouseleave', function () {
-      banner.style.transform = 'translateY(0)';
-      banner.style.boxShadow = 'none';
-    });
-
-    banner.appendChild(close);
-    banner.appendChild(left);
+    banner.appendChild(icon);
+    banner.appendChild(textWrap);
     banner.appendChild(cta);
-
+    banner.appendChild(close);
     return banner;
   }
 
   function showInstallInstructions(lang) {
+    var existing = document.getElementById('s2i-pwa-modal');
+    if (existing) existing.remove();
+
     var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     var isAndroid = /Android/.test(navigator.userAgent);
 
@@ -146,8 +128,8 @@
     var t = instructions[lang] || instructions['pt'];
     var steps = isIOS ? t.ios : (isAndroid ? t.android : t.desktop);
 
-    // Overlay
     var overlay = document.createElement('div');
+    overlay.id = 's2i-pwa-modal';
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;';
 
     var modal = document.createElement('div');
@@ -160,7 +142,7 @@
     overlay.addEventListener('click', function (e) { if (e.target === overlay) overlay.remove(); });
 
     var title = document.createElement('h3');
-    title.style.cssText = 'font-size:18px;font-weight:600;color:#1a1a1a;margin-bottom:16px;';
+    title.style.cssText = 'font-size:18px;font-weight:600;color:#1a1a1a;margin:0 0 16px 0;';
     title.textContent = t.title;
 
     var stepsEl = document.createElement('pre');
@@ -174,26 +156,11 @@
     document.body.appendChild(overlay);
   }
 
-  // Esperar pelo React render e inserir o banner
+  // Inserir o banner diretamente no topo do body
   function insertBanner() {
-    var root = document.getElementById('root');
-    if (!root) return;
-
-    var observer = new MutationObserver(function () {
-      var mainContent = root.querySelector('[class*="container"], [class*="dashboard"], [class*="member"], main, [class*="max-w"]');
-      if (mainContent && !document.getElementById('s2i-pwa-install-banner')) {
-        var firstChild = mainContent.firstChild;
-        if (firstChild) {
-          var banner = createBanner();
-          banner.style.marginTop = '8px';
-          mainContent.insertBefore(banner, firstChild);
-          observer.disconnect();
-        }
-      }
-    });
-
-    observer.observe(root, { childList: true, subtree: true });
-    setTimeout(function () { observer.disconnect(); }, 15000);
+    if (document.getElementById('s2i-pwa-install-banner')) return;
+    var banner = createBanner();
+    document.body.insertBefore(banner, document.body.firstChild);
   }
 
   if (document.readyState === 'loading') {
