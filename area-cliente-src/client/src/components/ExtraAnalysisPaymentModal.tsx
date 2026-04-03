@@ -271,7 +271,15 @@ export default function ExtraAnalysisPaymentModal({ product, onClose, onPaymentS
       if (!data.success || !data.url) throw new Error(data.error || 'Erro ao criar sessão de pagamento');
       sessionStorage.setItem('s2iExtraOrderId', oid);
       sessionStorage.setItem('s2iExtraType', product.type);
-      window.location.href = data.url;
+      // In PWA standalone mode, open Stripe in the native browser to avoid
+      // payment issues (MB WAY expiring, redirect failures in WebView)
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone;
+      if (isStandalone) {
+        window.open(data.url, '_blank');
+        setStep('select');
+      } else {
+        window.location.href = data.url;
+      }
     } catch (err: any) {
       setError(err.message || (lang === 'pt' ? 'Erro ao processar pagamento' : 'Payment processing error'));
       setStep('error');

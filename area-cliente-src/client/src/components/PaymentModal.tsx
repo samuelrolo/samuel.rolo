@@ -292,7 +292,15 @@ export default function PaymentModal({ onClose, plan, planKey, price }: Props) {
       sessionStorage.setItem('s2iSubPlan', planStr);
       sessionStorage.setItem('s2iSubEmail', email);
       sessionStorage.setItem('stripeSessionId', data.sessionId || '');
-      window.location.href = data.url;
+      // In PWA standalone mode, open Stripe in the native browser to avoid
+      // payment issues (MB WAY expiring, redirect failures in WebView)
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone;
+      if (isStandalone) {
+        window.open(data.url, '_blank');
+        setStep('select');
+      } else {
+        window.location.href = data.url;
+      }
     } catch (err: any) {
       setError(err.message || t('pay.errorGeneric'));
       setStep('error');
