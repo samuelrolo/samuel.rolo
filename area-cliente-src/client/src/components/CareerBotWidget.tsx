@@ -712,7 +712,6 @@ Generate ONLY the post.`;
     { key: 'networking_email', label: t('bot.tabNetworking'), icon: '🤝' },
     { key: 'linkedin_post', label: t('bot.tabLinkedinPost'), icon: '📢' },
     { key: 'headline_generator', label: t('bot.tabHeadline'), icon: '✦' },
-    { key: 'cv_builder_chat', label: t('bot.tabCvMaker'), icon: '📄' },
     { key: 'mock_interview', label: t('bot.tabMockInterview'), icon: '🎙️' },
   ];
 

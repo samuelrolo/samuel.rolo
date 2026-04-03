@@ -793,6 +793,24 @@ export default function MemberArea() {
   // Career Intelligence states
   const [monthlyCareerIntelUsed, setMonthlyCareerIntelUsed] = useState(0);
 
+  // CV Maker states
+  interface CvMakerMessage { role: 'user' | 'assistant'; content: string; }
+  interface CvMakerData {
+    personal_info?: { full_name?: string; name?: string; email?: string; phone?: string; location?: string; linkedin?: string; target_role?: string; };
+    target_role?: string;
+    summary?: string;
+    experiences?: Array<{ company?: string; role?: string; date_period?: string; period?: string; bullet_points?: string[]; }>;
+    education?: Array<{ institution?: string; degree?: string; year?: string; period?: string; }>;
+    skills?: string[];
+  }
+  const [cvMakerMessages, setCvMakerMessages] = useState<CvMakerMessage[]>([]);
+  const [cvMakerInput, setCvMakerInput] = useState('');
+  const [cvMakerLoading, setCvMakerLoading] = useState(false);
+  const [cvMakerData, setCvMakerData] = useState<CvMakerData>({});
+  const [showCvMakerPreview, setShowCvMakerPreview] = useState(false);
+  const cvMakerEndRef = useRef<HTMLDivElement>(null);
+  const cvMakerInputRef = useRef<HTMLInputElement>(null);
+
   // Tab navigation
   const [activeTab, setActiveTab] = useState<TabId>('tools');
 
@@ -1143,7 +1161,7 @@ export default function MemberArea() {
   type ToolDef = { key: string; icon: any; color: string; type: 'external' | 'inline' | 'locked' | 'discount' | 'widget'; action?: string; url?: string; discount?: string | null; discountOriginal?: string | null; label: string; desc: string; badge?: number };
 
   const tools: ToolDef[] = [
-    { key: 'cvMaker', icon: FileText, color: 'from-gold/20 to-gold/5', type: 'external', url: 'https://share2inspire.pt/cv-builder/', label: 'CV Maker', desc: lang === 'pt' ? 'Cria CVs profissionais com templates otimizados' : 'Create professional CVs with optimized templates' },
+    { key: 'cvMaker', icon: FileText, color: 'from-gold/20 to-gold/5', type: 'inline', action: 'cvMaker', label: 'CV Maker', desc: lang === 'pt' ? 'Cria CVs profissionais com templates otimizados' : 'Create professional CVs with optimized templates' },
     { key: 'cvAnalyzer', icon: BarChart3, color: 'from-blue-500/15 to-blue-500/5', type: 'inline', action: 'cv', label: 'CV Analyser', desc: lang === 'pt' ? 'Análise completa e detalhada do teu CV com IA' : 'Complete AI-powered analysis of your CV', badge: savedAnalyses.filter(a => a.analysis_type === 'cv_analyser').length || undefined },
     { key: 'linkedinRoster', icon: Linkedin, color: 'from-sky-500/15 to-sky-500/5', type: 'inline', action: 'linkedin', label: 'LinkedIn Roaster', desc: lang === 'pt' ? 'Otimiza o teu perfil LinkedIn com feedback IA' : 'Optimize your LinkedIn profile with AI feedback', badge: savedAnalyses.filter(a => a.analysis_type === 'linkedin_roaster').length || undefined },
     { key: 'careerBot', icon: Bot, color: 'from-purple-500/15 to-purple-500/5', type: 'widget', action: 'openCareerBot', label: 'Career Advisory', desc: lang === 'pt' ? 'Assistente pessoal de carreira com IA' : 'Personal AI career assistant' },
@@ -1152,6 +1170,60 @@ export default function MemberArea() {
   ];
 
   const remainingAnalyses = Math.max(0, weeklyLimit - weeklyUsage);
+
+  // ─── CV Maker: auto-scroll ──────────────────────────────────────────────
+  useEffect(() => {
+    cvMakerEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [cvMakerMessages]);
+
+  // ─── CV Maker: sendCvMakerMessage ──────────────────────────────────────
+  const sendCvMakerMessage = async (overrideMsg?: string) => {
+    const msg = overrideMsg || cvMakerInput.trim();
+    if (!msg) return;
+    setCvMakerMessages(prev => [...prev, { role: 'user', content: msg }]);
+    setCvMakerInput('');
+    setCvMakerLoading(true);
+    try {
+      const body = {
+        mode: 'cv_builder_chat',
+        message: msg,
+        language: lang,
+        history: cvMakerMessages.map(m => ({ role: m.role, content: m.content })),
+        current_cv: Object.keys(cvMakerData).length > 0 ? cvMakerData : undefined,
+        profile_name: profile ? `${profile.first_name} ${profile.last_name}` : '',
+        user_id: user?.id || '',
+      };
+      const response = await fetch(HYPER_TASK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+        body: JSON.stringify(body),
+      });
+      const data = await response.json();
+      if (data.success && data.reply) {
+        setCvMakerMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
+        if (data.cv_data && typeof data.cv_data === 'object' && Object.keys(data.cv_data).length > 0) {
+          setCvMakerData(prev => {
+            const merged = { ...prev };
+            const cd = data.cv_data;
+            if (cd.personal_info) merged.personal_info = { ...(prev.personal_info || {}), ...cd.personal_info };
+            if (cd.target_role) { merged.target_role = cd.target_role; if (!merged.personal_info) merged.personal_info = {}; merged.personal_info.target_role = cd.target_role; }
+            if (cd.summary) merged.summary = cd.summary;
+            if (cd.experiences?.length > 0) { const valid = cd.experiences.filter((e: any) => e.company || e.role); if (valid.length > 0) merged.experiences = valid; }
+            if (cd.education?.length > 0) { const valid = cd.education.filter((e: any) => e.institution || e.degree); if (valid.length > 0) merged.education = valid; }
+            if (cd.skills?.length > 0) { const valid = cd.skills.filter((s: string) => s?.trim()); if (valid.length > 0) merged.skills = valid; }
+            return merged;
+          });
+          setShowCvMakerPreview(true);
+        }
+      } else {
+        setCvMakerMessages(prev => [...prev, { role: 'assistant', content: lang === 'pt' ? 'Desculpa, ocorreu um erro. Tenta novamente.' : 'Sorry, an error occurred. Please try again.' }]);
+      }
+    } catch {
+      setCvMakerMessages(prev => [...prev, { role: 'assistant', content: lang === 'pt' ? 'Erro de ligação. Verifica a tua internet e tenta novamente.' : 'Connection error. Check your internet and try again.' }]);
+    } finally {
+      setCvMakerLoading(false);
+    }
+  };
 
   // ─── Render inline panel content ────────────────────────────────────────
   const renderInlinePanel = (tool: ToolDef) => {
@@ -1318,6 +1390,141 @@ export default function MemberArea() {
           <button onClick={() => { if (!ciAvailable) { setPendingExtraRun('career_intelligence'); } else { runCareerIntelligence(); } }} disabled={analyzing || (!profile?.cv_url && !cvFile)} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#333] text-white text-sm font-medium rounded-lg hover:from-[#333] hover:to-[#444] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
             {analyzing ? (<><Loader2 className="w-4 h-4 animate-spin" />{lang === 'pt' ? 'A gerar análise...' : 'Generating analysis...'}</>) : (<><Sparkles className="w-4 h-4" />{ciAvailable ? (lang === 'pt' ? 'Gerar Career Intelligence' : 'Generate Career Intelligence') : (lang === 'pt' ? `Gerar Career Intelligence — ${ciExtraPrice}` : `Generate Career Intelligence — ${ciExtraPrice}`)}</>)}
           </button>
+        </div>
+      );
+    }
+    if (tool.action === 'cvMaker') {
+      return (
+        <div className="flex flex-col" style={{ minHeight: '400px', maxHeight: '600px' }}>
+          {/* Chat area */}
+          <div className="flex-1 overflow-y-auto space-y-3 mb-3" style={{ maxHeight: '400px' }}>
+            {/* Welcome screen */}
+            {cvMakerMessages.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-8 text-center px-4">
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3 bg-gradient-to-br from-gold/20 to-gold/5">
+                  <FileText className="w-6 h-6 text-gold" />
+                </div>
+                <h4 className="font-semibold text-[#1a1a1a] text-sm mb-1">{lang === 'pt' ? 'CV Maker' : 'CV Maker'}</h4>
+                <p className="text-xs text-[#999] mb-4 px-2 max-w-md">{lang === 'pt' ? 'Constrói o teu CV passo a passo com ajuda da IA. Cola o teu link do LinkedIn para importar automaticamente ou começa do zero.' : 'Build your CV step by step with AI help. Paste your LinkedIn link to auto-import or start from scratch.'}</p>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <button onClick={() => sendCvMakerMessage(lang === 'pt' ? 'Olá, quero começar a construir o meu CV.' : 'Hi, I want to start building my CV.')} className="px-5 py-2.5 rounded-xl text-white text-sm font-medium transition-all hover:opacity-90 bg-gradient-to-r from-[#BFA14A] to-[#8F7A3A]">
+                    {lang === 'pt' ? 'Começar a construir CV' : 'Start building CV'}
+                  </button>
+                </div>
+              </div>
+            )}
+            {/* Messages */}
+            {cvMakerMessages.map((msg, i) => (
+              <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+                  msg.role === 'user' ? 'bg-[#BFA14A] text-white rounded-br-md' : 'bg-[#f5f5f4] text-[#1a1a1a] rounded-bl-md border border-[#e5e5e5]'
+                }`}>
+                  <div className="whitespace-pre-wrap">{msg.content}</div>
+                </div>
+              </div>
+            ))}
+            {cvMakerLoading && (
+              <div className="flex justify-start">
+                <div className="bg-[#f5f5f4] border border-[#e5e5e5] rounded-2xl rounded-bl-md px-4 py-3">
+                  <div className="flex gap-1.5">
+                    <div className="w-2 h-2 bg-[#ccc] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <div className="w-2 h-2 bg-[#ccc] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <div className="w-2 h-2 bg-[#ccc] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={cvMakerEndRef} />
+          </div>
+
+          {/* CV Preview Panel */}
+          {showCvMakerPreview && Object.keys(cvMakerData).length > 0 && (
+            <div className="mb-3 border border-gold/30 rounded-xl bg-gold/5 p-3 max-h-[250px] overflow-y-auto">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-bold text-gold uppercase tracking-wider">CV Preview</span>
+                <div className="flex items-center gap-1.5">
+                  <button onClick={() => navigator.clipboard.writeText(JSON.stringify(cvMakerData, null, 2))} className="text-[10px] px-2 py-0.5 rounded border border-gold/30 text-gold hover:bg-gold/10 transition-all">{lang === 'pt' ? 'Copiar' : 'Copy'} JSON</button>
+                  <button onClick={() => setShowCvMakerPreview(false)} className="text-[10px] px-2 py-0.5 rounded border border-[#e5e5e5] text-[#999] hover:text-[#1a1a1a] transition-all">{lang === 'pt' ? 'Fechar' : 'Close'}</button>
+                </div>
+              </div>
+              {cvMakerData.personal_info && (
+                <div className="mb-2.5 pb-2 border-b border-gold/15">
+                  <p className="text-sm font-semibold text-[#1a1a1a]">{cvMakerData.personal_info.full_name || cvMakerData.personal_info.name || '—'}</p>
+                  {(cvMakerData.personal_info.target_role || cvMakerData.target_role) && <p className="text-[11px] text-gold font-medium">{cvMakerData.personal_info.target_role || cvMakerData.target_role}</p>}
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {cvMakerData.personal_info.email && <span className="text-[10px] text-[#999]">{cvMakerData.personal_info.email}</span>}
+                    {cvMakerData.personal_info.phone && <span className="text-[10px] text-[#999]">| {cvMakerData.personal_info.phone}</span>}
+                    {cvMakerData.personal_info.location && <span className="text-[10px] text-[#999]">| {cvMakerData.personal_info.location}</span>}
+                  </div>
+                </div>
+              )}
+              {cvMakerData.summary && (
+                <div className="mb-2.5 pb-2 border-b border-gold/15">
+                  <p className="text-[10px] font-bold text-[#999] uppercase tracking-wider mb-0.5">{lang === 'pt' ? 'Resumo Profissional' : 'Professional Summary'}</p>
+                  <p className="text-[11px] text-[#555] leading-relaxed">{cvMakerData.summary}</p>
+                </div>
+              )}
+              {cvMakerData.experiences && cvMakerData.experiences.length > 0 && (
+                <div className="mb-2.5 pb-2 border-b border-gold/15">
+                  <p className="text-[10px] font-bold text-[#999] uppercase tracking-wider mb-1">{lang === 'pt' ? 'Experiência Profissional' : 'Work Experience'}</p>
+                  {cvMakerData.experiences.map((exp, i) => (
+                    <div key={i} className="mb-2 pl-2 border-l-2 border-gold/30">
+                      <p className="text-[11px] font-semibold text-[#1a1a1a]">{exp.role}{exp.company ? ` — ${exp.company}` : ''}</p>
+                      {(exp.date_period || exp.period) && <p className="text-[10px] text-[#bbb]">{exp.date_period || exp.period}</p>}
+                      {exp.bullet_points?.map((bp, j) => (
+                        <p key={j} className="text-[10px] text-[#666] ml-1">• {bp}</p>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {cvMakerData.education && cvMakerData.education.length > 0 && (
+                <div className="mb-2.5 pb-2 border-b border-gold/15">
+                  <p className="text-[10px] font-bold text-[#999] uppercase tracking-wider mb-0.5">{lang === 'pt' ? 'Formação Académica' : 'Education'}</p>
+                  {cvMakerData.education.map((edu, i) => (
+                    <p key={i} className="text-[11px] text-[#555]">{edu.degree}{edu.institution ? ` — ${edu.institution}` : ''}{(edu.year || edu.period) ? ` (${edu.year || edu.period})` : ''}</p>
+                  ))}
+                </div>
+              )}
+              {cvMakerData.skills && cvMakerData.skills.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-bold text-[#999] uppercase tracking-wider mb-1">{lang === 'pt' ? 'Competências' : 'Skills'}</p>
+                  <div className="flex flex-wrap gap-1">
+                    {cvMakerData.skills.map((skill, i) => (
+                      <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-gold/10 text-gold font-medium">{skill}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Input area */}
+          <div className="flex items-center gap-2">
+            {Object.keys(cvMakerData).length > 0 && (
+              <button onClick={() => setShowCvMakerPreview(!showCvMakerPreview)} className={`p-2 rounded-lg transition-colors ${showCvMakerPreview ? 'bg-gold/10 text-gold' : 'hover:bg-[#f5f5f4] text-[#ccc]'}`} title="CV Preview">
+                <FileText className="w-4 h-4" />
+              </button>
+            )}
+            <input
+              ref={cvMakerInputRef}
+              type="text"
+              value={cvMakerInput}
+              onChange={e => setCvMakerInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendCvMakerMessage(); } }}
+              placeholder={lang === 'pt' ? 'Descreve a tua experiência, formação ou cola o teu LinkedIn...' : 'Describe your experience, education or paste your LinkedIn...'}
+              disabled={cvMakerLoading}
+              className="flex-1 px-3 py-2.5 text-sm border border-[#e5e5e5] rounded-xl focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold disabled:opacity-50"
+            />
+            <button
+              onClick={() => sendCvMakerMessage()}
+              disabled={!cvMakerInput.trim() || cvMakerLoading}
+              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all disabled:opacity-30"
+              style={{ background: cvMakerInput.trim() ? 'linear-gradient(135deg, #BFA14A 0%, #8F7A3A 100%)' : '#e5e7eb' }}
+            >
+              <Send className="w-4 h-4 text-white" />
+            </button>
+          </div>
         </div>
       );
     }
