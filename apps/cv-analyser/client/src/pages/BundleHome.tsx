@@ -13,6 +13,7 @@ import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate"
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { countries } from "./en/countries";
 import S2IFooter from "@/components/S2IFooter";
+import { redirectToCheckout } from '../lib/webviewPayment';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -390,7 +391,7 @@ export default function BundleHome() {
       if (data.url) {
         sessionStorage.setItem('bundlePendingOrderId', orderId);
         sessionStorage.setItem('bundleEmail', email);
-        window.location.href = data.url;
+        redirectToCheckout(data.url);
       } else {
         throw new Error(data.error || 'Erro ao criar sessão de pagamento');
       }

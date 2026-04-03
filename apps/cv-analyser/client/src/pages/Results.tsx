@@ -22,6 +22,7 @@ import { trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
 import { getMemberPlanTier } from "@/lib/memberAuth";
 import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
+import { redirectToCheckout } from '../lib/webviewPayment';
 
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_EDGE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task';
@@ -965,7 +966,7 @@ export default function Results() {
       // Save selectedPlan and coupon before redirect so it survives page reload
       sessionStorage.setItem('selectedPlanBeforeStripe', JSON.stringify(selectedPlan));
       if (appliedCoupon) sessionStorage.setItem('appliedCouponBeforeStripe', JSON.stringify(appliedCoupon));
-      window.location.href = data.url;
+      redirectToCheckout(data.url);
     } catch (err) {
       setPaymentError(err instanceof Error ? err.message : 'Error processing payment');
     } finally {

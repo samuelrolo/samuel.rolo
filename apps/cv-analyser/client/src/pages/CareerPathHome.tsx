@@ -14,6 +14,7 @@ import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate"
 import { getMemberPlanTier } from "@/lib/memberAuth";
 import { countries } from "./en/countries";
 import S2IFooter from "@/components/S2IFooter";
+import { redirectToCheckout } from '../lib/webviewPayment';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -468,7 +469,7 @@ export default function CareerPathHome() {
       sessionStorage.setItem('cpOrderId', orderId);
       sessionStorage.setItem('cpPaymentEmail', email);
       sessionStorage.setItem('stripeSessionId', data.sessionId);
-      window.location.href = data.url;
+      redirectToCheckout(data.url);
     } catch (err: any) {
       setPaymentError(err.message || 'Erro ao processar pagamento');
     } finally {

@@ -18,6 +18,7 @@ import { transformGeminiResponse } from "@/lib/transformGeminiResponse";
 import { countries } from "./countries";
 import { useCurrency } from "@/hooks/useCurrency";
 import S2IFooterEN from "@/components/S2IFooterEN";
+import { redirectToCheckout } from '../../lib/webviewPayment';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -755,7 +756,7 @@ export default function HomeEN() {
         sessionStorage.setItem('paymentEmail', liPaywallEmail.trim().toLowerCase());
         sessionStorage.setItem('liPaywallPlan', String(liPaywallPlan));
         sessionStorage.setItem('liPaywallLinkedInUrl', linkedInUrl);
-        window.location.href = data.url;
+        redirectToCheckout(data.url);
       } else {
         throw new Error(data.error || 'Error creating checkout session');
       }
@@ -796,7 +797,7 @@ export default function HomeEN() {
         sessionStorage.setItem('voucherPurchaseEmail', voucherEmail);
         sessionStorage.setItem('paymentEmail', voucherEmail.trim().toLowerCase());
         sessionStorage.setItem('voucherPurchasePlan', String(voucherSelectedPlan));
-        window.location.href = data.url;
+        redirectToCheckout(data.url);
       } else {
         throw new Error(data.error || 'Error creating checkout session');
       }

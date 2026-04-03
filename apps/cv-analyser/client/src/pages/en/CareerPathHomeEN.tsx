@@ -15,6 +15,7 @@ import { trackAffiliateConversion } from "@/lib/affiliate";
 import { getMemberPlanTier } from "@/lib/memberAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import S2IFooterEN from "@/components/S2IFooterEN";
+import { redirectToCheckout } from '../../lib/webviewPayment';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
@@ -381,7 +382,7 @@ export default function CareerPathHomeEN() {
       sessionStorage.setItem('cpOrderId', orderId);
       sessionStorage.setItem('cpPaymentEmail', email);
       sessionStorage.setItem('stripeSessionId', data.sessionId);
-      window.location.href = data.url;
+      redirectToCheckout(data.url);
     } catch (err: any) {
       setPaymentError(err.message || 'Error processing payment');
     } finally {
