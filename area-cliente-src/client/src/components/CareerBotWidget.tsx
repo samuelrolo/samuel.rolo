@@ -737,26 +737,49 @@ Generate ONLY the post.`;
           </div>
 
           {/* Tabs */}
-          <div className="flex overflow-x-auto border-b border-gray-100 shrink-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
-            <style>{`.career-tabs-scroll::-webkit-scrollbar { display: none; }`}</style>
-            <div className="career-tabs-scroll flex min-w-0" style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
+          <div className="relative border-b border-gray-100 shrink-0">
+            <style>{`.career-tabs-row::-webkit-scrollbar { display: none; }`}</style>
+            <button
+              aria-label="Scroll left"
+              className="absolute left-0 top-0 bottom-0 z-10 w-6 flex items-center justify-center bg-gradient-to-r from-white via-white/90 to-transparent text-gray-400 hover:text-gray-600"
+              onClick={() => {
+                const el = document.getElementById('career-tab-row');
+                if (el) el.scrollBy({ left: -120, behavior: 'smooth' });
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6" /></svg>
+            </button>
+            <div
+              id="career-tab-row"
+              className="career-tabs-row flex overflow-x-auto px-7"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+            >
               {tabs.map(tab => (
                 <button
                   key={tab.key}
                   onClick={() => setView(tab.key)}
-                  className={`flex items-center gap-1.5 px-2.5 py-2 text-[11px] font-medium whitespace-nowrap transition-all border-b-2 shrink-0 ${
+                  className={`flex items-center gap-1 px-2 py-2 text-[10px] font-medium whitespace-nowrap transition-all border-b-2 shrink-0 ${
                     view === tab.key
                       ? 'text-[#BFA14A] border-[#BFA14A]'
                       : 'border-transparent text-gray-400 hover:text-gray-600'
                   }`}
                   title={tab.label}
                 >
-                  <span className="text-sm leading-none">{tab.icon}</span>
-                  <span className="hidden sm:inline">{tab.label}</span>
-                  <span className="sm:hidden">{tab.label.length > 6 ? tab.label.slice(0, 6) + '…' : tab.label}</span>
+                  <span className="text-xs leading-none">{tab.icon}</span>
+                  <span>{tab.label}</span>
                 </button>
               ))}
             </div>
+            <button
+              aria-label="Scroll right"
+              className="absolute right-0 top-0 bottom-0 z-10 w-6 flex items-center justify-center bg-gradient-to-l from-white via-white/90 to-transparent text-gray-400 hover:text-gray-600"
+              onClick={() => {
+                const el = document.getElementById('career-tab-row');
+                if (el) el.scrollBy({ left: 120, behavior: 'smooth' });
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6" /></svg>
+            </button>
           </div>
 
           {/* ═══════════════════════════════════════════════════════════ */}
