@@ -339,10 +339,31 @@ export default function CareerBotWidget() {
     try {
       // Check if mediaDevices API is available (requires HTTPS)
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert(t('bot.mockNoMic'));
+        alert(lang === 'pt'
+          ? 'O teu browser não suporta gravação de áudio. Tenta usar o Chrome ou Edge numa versão recente.'
+          : 'Your browser does not support audio recording. Try using Chrome or Edge.');
         return;
       }
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (permErr: any) {
+        console.error('Microphone permission error:', permErr);
+        if (permErr.name === 'NotAllowedError' || permErr.name === 'PermissionDeniedError') {
+          alert(lang === 'pt'
+            ? 'Permissão do microfone negada. Clica no ícone do cadeado na barra de endereço e permite o acesso ao microfone.'
+            : 'Microphone permission denied. Click the lock icon in the address bar and allow microphone access.');
+        } else if (permErr.name === 'NotFoundError') {
+          alert(lang === 'pt'
+            ? 'Nenhum microfone encontrado. Verifica se tens um microfone ligado ao dispositivo.'
+            : 'No microphone found. Check that a microphone is connected to your device.');
+        } else {
+          alert(lang === 'pt'
+            ? `Erro ao aceder ao microfone: ${permErr.message || permErr.name}. Verifica as permissões do browser.`
+            : `Error accessing microphone: ${permErr.message || permErr.name}. Check browser permissions.`);
+        }
+        return;
+      }
       // Try supported mimeTypes in order of preference
       const mimeTypes = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4', ''];
       let selectedMime = '';
@@ -363,9 +384,11 @@ export default function CareerBotWidget() {
       mediaRecorder.start();
       mediaRecorderRef.current = mediaRecorder;
       setMockRecording(true);
-    } catch (err) {
-      console.error('Microphone error:', err);
-      alert(t('bot.mockNoMic'));
+    } catch (err: any) {
+      console.error('Microphone/MediaRecorder error:', err);
+      alert(lang === 'pt'
+        ? `Erro ao iniciar a gravação: ${err.message || 'erro desconhecido'}. Tenta usar o Chrome.`
+        : `Error starting recording: ${err.message || 'unknown error'}. Try using Chrome.`);
     }
   };
 
@@ -736,50 +759,26 @@ Generate ONLY the post.`;
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="relative border-b border-gray-100 shrink-0">
-            <style>{`.career-tabs-row::-webkit-scrollbar { display: none; }`}</style>
-            <button
-              aria-label="Scroll left"
-              className="absolute left-0 top-0 bottom-0 z-10 w-6 flex items-center justify-center bg-gradient-to-r from-white via-white/90 to-transparent text-gray-400 hover:text-gray-600"
-              onClick={() => {
-                const el = document.getElementById('career-tab-row');
-                if (el) el.scrollBy({ left: -120, behavior: 'smooth' });
-              }}
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6" /></svg>
-            </button>
-            <div
-              id="career-tab-row"
-              className="career-tabs-row flex overflow-x-auto px-7"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
-            >
-              {tabs.map(tab => (
-                <button
-                  key={tab.key}
-                  onClick={() => setView(tab.key)}
-                  className={`flex items-center gap-1 px-2 py-2 text-[10px] font-medium whitespace-nowrap transition-all border-b-2 shrink-0 ${
-                    view === tab.key
-                      ? 'text-[#BFA14A] border-[#BFA14A]'
-                      : 'border-transparent text-gray-400 hover:text-gray-600'
-                  }`}
-                  title={tab.label}
-                >
-                  <span className="text-xs leading-none">{tab.icon}</span>
-                  <span>{tab.label}</span>
-                </button>
-              ))}
+          {/* Tool Selector Dropdown */}
+          <div className="border-b border-gray-100 shrink-0 px-3 py-2">
+            <div className="relative">
+              <select
+                value={view}
+                onChange={(e) => setView(e.target.value as WidgetView)}
+                className="w-full appearance-none bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 pr-8 text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#BFA14A]/30 focus:border-[#BFA14A] cursor-pointer hover:bg-gray-100 transition-colors"
+              >
+                {tabs.map(tab => (
+                  <option key={tab.key} value={tab.key}>
+                    {tab.icon}  {tab.label}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
             </div>
-            <button
-              aria-label="Scroll right"
-              className="absolute right-0 top-0 bottom-0 z-10 w-6 flex items-center justify-center bg-gradient-to-l from-white via-white/90 to-transparent text-gray-400 hover:text-gray-600"
-              onClick={() => {
-                const el = document.getElementById('career-tab-row');
-                if (el) el.scrollBy({ left: 120, behavior: 'smooth' });
-              }}
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6" /></svg>
-            </button>
           </div>
 
           {/* ═══════════════════════════════════════════════════════════ */}
