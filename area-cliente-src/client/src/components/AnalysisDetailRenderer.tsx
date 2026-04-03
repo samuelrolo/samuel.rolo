@@ -880,7 +880,7 @@ function CareerEnergyDetail({ data }: { data: Record<string, any> }) {
           {Object.entries(dimensions as Record<string, number | null>).map(([dim, val]) => (
             val !== null && (
               <div key={dim} className="flex items-center gap-2">
-                <span className="text-[10px] text-[#888] font-light capitalize w-24">{dim}</span>
+                <span className="text-[10px] text-[#888] font-light capitalize w-20 sm:w-24 shrink-0">{dim}</span>
                 <div className="flex-1">
                   <ProgressBar value={val as number} />
                 </div>
@@ -901,8 +901,8 @@ function CareerEnergyDetail({ data }: { data: Record<string, any> }) {
 function HtmlRenderer({ html }: { html: string }) {
   const clean = sanitizeHtml(html);
   return (
-    <div className="s2i-results-render rounded-lg overflow-hidden bg-[#F0F0EE] border border-[#e5e5e5] p-4"
-      style={{ maxHeight: 600, overflowY: 'auto' }}
+    <div className="s2i-results-render rounded-lg overflow-hidden bg-[#F0F0EE] border border-[#e5e5e5] p-2 sm:p-4"
+      style={{ maxHeight: 600, overflowY: 'auto', overflowX: 'hidden', wordBreak: 'break-word' }}
       dangerouslySetInnerHTML={{ __html: clean }}
     />
   );

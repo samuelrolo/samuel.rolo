@@ -84,13 +84,13 @@ function AutomationRiskGauge({ score }: { score: number }) {
     : "A tua função tem baixa probabilidade de automação. As competências que demonstras são difíceis de replicar por IA.";
 
   return (
-    <div className="bg-card border border-border rounded-lg p-6 space-y-4">
+    <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
       <div className="flex items-center gap-3">
         <GoldIcon>
           <Bot className="w-5 h-5 text-[#C9A961]" />
         </GoldIcon>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
             <p className="text-xs font-semibold tracking-wider text-muted-foreground">POTENCIAL DE AUTOMAÇÃO</p>
             <Tooltip
               label="O que é o Potencial de Automação?"
@@ -137,9 +137,9 @@ const AnalysisResults = ({ data, isPaid = false }: { data: AnalysisData; isPaid?
   const automationRisk = Math.round(Math.max(15, Math.min(85, 100 - avgScore + (Math.random() * 10 - 5))));
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       {/* Header */}
-      <header className="border-b border-foreground/10 px-6 py-4 sticky top-0 bg-background/90 backdrop-blur-lg z-50">
+      <header className="border-b border-foreground/10 px-3 sm:px-6 py-4 sticky top-0 bg-background/90 backdrop-blur-lg z-50">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <GoldIcon size="w-8 h-8">
@@ -150,15 +150,15 @@ const AnalysisResults = ({ data, isPaid = false }: { data: AnalysisData; isPaid?
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-10 space-y-8">
+      <main className="max-w-4xl mx-auto px-3 sm:px-6 py-6 sm:py-10 space-y-6 sm:space-y-8">
         {/* ═══ Score Global com interpretação ═══ */}
-        <div className="bg-card border border-border rounded-lg p-8 space-y-4">
+        <div className="bg-card border border-border rounded-lg p-4 sm:p-8 space-y-4">
           <div className="flex items-center gap-3 mb-2">
             <GoldIcon>
               <Target className="w-5 h-5 text-[#C9A961]" />
             </GoldIcon>
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
                 <p className="text-xs font-semibold tracking-wider text-muted-foreground">SCORE GLOBAL DO CV</p>
                 <Tooltip
                   label="O que é o Score Global?"
@@ -213,13 +213,13 @@ const AnalysisResults = ({ data, isPaid = false }: { data: AnalysisData; isPaid?
         </div>
 
         {/* ═══ Factores de Avaliação com benchmarks explicados ═══ */}
-        <div className="bg-card border border-border rounded-lg p-6 space-y-5">
+        <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-5">
           <div className="flex items-center gap-3">
             <GoldIcon>
               <BarChart3 className="w-5 h-5 text-[#C9A961]" />
             </GoldIcon>
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
                 <p className="text-xs font-semibold tracking-wider text-muted-foreground">FACTORES DE AVALIAÇÃO</p>
                 <Tooltip
                   label="O que são os Factores de Avaliação?"
@@ -242,13 +242,13 @@ const AnalysisResults = ({ data, isPaid = false }: { data: AnalysisData; isPaid?
         </div>
 
         {/* ═══ Compatibilidade ATS com interpretação ═══ */}
-        <div className="bg-card border border-border rounded-lg p-8 space-y-4">
+        <div className="bg-card border border-border rounded-lg p-4 sm:p-8 space-y-4">
           <div className="flex items-center gap-3 mb-2">
             <GoldIcon>
               <AlertTriangle className="w-5 h-5 text-[#C9A961]" />
             </GoldIcon>
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
                 <p className="text-xs font-semibold tracking-wider text-muted-foreground">COMPATIBILIDADE ATS</p>
                 <Tooltip
                   label="O que é a Compatibilidade ATS?"
@@ -284,13 +284,13 @@ const AnalysisResults = ({ data, isPaid = false }: { data: AnalysisData; isPaid?
         </div>
 
         {/* ═══ Estimativa Salarial ═══ */}
-        <div className="bg-card border border-border rounded-lg p-6 space-y-4">
+        <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
           <div className="flex items-center gap-3">
             <GoldIcon>
               <Euro className="w-5 h-5 text-[#C9A961]" />
             </GoldIcon>
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
                 <p className="text-xs font-semibold tracking-wider text-muted-foreground">ESTIMATIVA SALARIAL</p>
                 <Tooltip
                   label="Como é calculada a estimativa?"
@@ -326,13 +326,13 @@ const AnalysisResults = ({ data, isPaid = false }: { data: AnalysisData; isPaid?
         <AutomationRiskGauge score={automationRisk} />
 
         {/* ═══ Posicionamento no Mercado - Curva Normal ═══ */}
-        <div className="bg-card border border-border rounded-lg p-6 space-y-4">
+        <div className="bg-card border border-border rounded-lg p-4 sm:p-6 space-y-4">
           <div className="flex items-center gap-3 mb-2">
             <GoldIcon>
               <TrendingUp className="w-5 h-5 text-[#C9A961]" />
             </GoldIcon>
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
                 <p className="text-xs font-semibold tracking-wider text-muted-foreground">POSICIONAMENTO NO MERCADO</p>
                 <Tooltip
                   label="O que é a Curva Normal?"

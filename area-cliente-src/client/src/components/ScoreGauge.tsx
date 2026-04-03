@@ -10,8 +10,8 @@ const ScoreGauge = ({ score, size = 120, strokeWidth = 8 }: ScoreGaugeProps) => 
   const progress = (score / 100) * circumference;
 
   return (
-    <div className="relative inline-flex items-center justify-center">
-      <svg width={size} height={size} className="transform -rotate-90">
+    <div className="relative inline-flex items-center justify-center" style={{ maxWidth: '100%' }}>
+      <svg width={size} height={size} className="transform -rotate-90" style={{ maxWidth: '100%', height: 'auto' }}>
         {/* Background circle */}
         <circle
           cx={size / 2}

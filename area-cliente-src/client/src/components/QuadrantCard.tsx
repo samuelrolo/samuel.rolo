@@ -16,7 +16,7 @@ const QuadrantCard = ({ title, score, benchmark, insight }: QuadrantCardProps) =
   const diffColor = diff > 0 ? "text-green-500" : diff < 0 ? "text-red-500" : "text-muted-foreground";
 
   return (
-    <div className="rounded-lg border border-border bg-card p-6 space-y-4">
+    <div className="rounded-lg border border-border bg-card p-4 sm:p-6 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-card-foreground">{title}</h3>
         <Info className="w-4 h-4 text-muted-foreground" />
