@@ -17,6 +17,7 @@ import VagasFeed from '@/components/VagasFeed';
 import SavedJobsTracker from '@/components/SavedJobsTracker';
 import JobContacts from '@/components/JobContacts';
 import AnalysisResultsFull from '@/components/AnalysisResults';
+import AnalysisDetailRenderer from '@/components/AnalysisDetailRenderer';
 import { transformGeminiResponse } from '@/lib/transformGeminiResponse';
 import { countries } from '@/lib/countries';
 import * as pdfjsLib from 'pdfjs-dist';
@@ -1728,7 +1729,7 @@ export default function MemberArea() {
                 {viewingAnalysis.analysis_type === 'cv_analyser' && viewingAnalysis.data?.enriched ? (
                   <AnalysisResultsFull data={viewingAnalysis.data.enriched} isPaid={true} />
                 ) : (
-                  <AnalysisResult data={viewingAnalysis.data} onClose={() => setViewingAnalysis(null)} lang={lang} />
+                  <AnalysisDetailRenderer analysisType={viewingAnalysis.analysis_type} data={viewingAnalysis.data} />
                 )}
               </div>
             </div>
@@ -2212,7 +2213,7 @@ export default function MemberArea() {
               {viewingAnalysis.analysis_type === 'cv_analyser' && viewingAnalysis.data?.enriched ? (
                 <AnalysisResultsFull data={viewingAnalysis.data.enriched} isPaid={true} />
               ) : (
-                <AnalysisResult data={viewingAnalysis.data} onClose={() => setViewingAnalysis(null)} lang={lang} />
+                <AnalysisDetailRenderer analysisType={viewingAnalysis.analysis_type} data={viewingAnalysis.data} />
               )}
             </div>
           </div>
