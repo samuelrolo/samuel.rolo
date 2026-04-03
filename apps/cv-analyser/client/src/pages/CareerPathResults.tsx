@@ -165,7 +165,7 @@ function getPlans(en: boolean, cur = en ? '$' : '€', p = en ? { cv: '9.99', cp
 }
 
 export default function CareerPathResults() {
-  useEffect(() => { document.title = "Career Path — Resultados | Share2Inspire"; }, []);
+  useEffect(() => { document.title = window.location.pathname.startsWith('/en/') ? "Career Path — Results | Share2Inspire" : "Career Path — Resultados | Share2Inspire"; }, []);
 
   const [, setLocation] = useLocation();
 
@@ -777,8 +777,8 @@ export default function CareerPathResults() {
     );
   }
 
-  const profileName = cvAnalysis.name || cvAnalysis.candidate_name || 'o teu perfil';
-  const currentRole = cvAnalysis.current_role || cvAnalysis.perceivedRole || 'Profissional';
+  const profileName = cvAnalysis.name || cvAnalysis.candidate_name || (isEN ? 'your profile' : 'o teu perfil');
+  const currentRole = cvAnalysis.current_role || cvAnalysis.perceivedRole || (isEN ? 'Professional' : 'Profissional');
   const seniority = cvAnalysis.perceivedSeniority || cvAnalysis.seniority || '';
 
   return (

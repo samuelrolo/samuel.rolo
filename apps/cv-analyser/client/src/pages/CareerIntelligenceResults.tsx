@@ -71,7 +71,7 @@ function GoldIcon({ children, size = "w-10 h-10" }: { children: React.ReactNode;
 }
 
 export default function CareerIntelligenceResults() {
-  useEffect(() => { document.title = "Career Intelligence — Resultados | Share2Inspire"; }, []);
+  useEffect(() => { document.title = window.location.pathname.startsWith('/en/') ? "Career Intelligence — Results | Share2Inspire" : "Career Intelligence — Resultados | Share2Inspire"; }, []);
 
   const [, setLocation] = useLocation();
 
@@ -614,8 +614,8 @@ export default function CareerIntelligenceResults() {
     );
   }
 
-  const profileName = cvAnalysis.name || cvAnalysis.candidate_name || 'o teu perfil';
-  const currentRole = cvAnalysis.current_role || cvAnalysis.perceivedRole || 'Profissional';
+  const profileName = cvAnalysis.name || cvAnalysis.candidate_name || (isEN ? 'your profile' : 'o teu perfil');
+  const currentRole = cvAnalysis.current_role || cvAnalysis.perceivedRole || (isEN ? 'Professional' : 'Profissional');
   const seniority = cvAnalysis.perceivedSeniority || cvAnalysis.seniority || '';
 
   return (
