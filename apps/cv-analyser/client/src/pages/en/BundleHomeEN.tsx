@@ -465,9 +465,10 @@ export default function BundleHomeEN() {
               </div>
               <ul className="space-y-2 text-sm text-slate-600">
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Full ATS analysis</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> ATS Deep Scan + Keyword Analysis</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Live Match — compare CV vs job</li>
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Positioning score</li>
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Detailed salary estimate</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Improvement suggestions</li>
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> LinkedIn certification</li>
               </ul>
             </div>

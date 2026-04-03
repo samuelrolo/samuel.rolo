@@ -9,7 +9,7 @@ declare global {
 }
 
 import { useState, useEffect } from "react";
-import { Upload, FileText, Loader2, Home as HomeIcon, FileCheck, BarChart3, Grid2x2, TrendingUp, Eye, ChevronDown, ChevronUp, Star, Users, Award, Zap, Shield, Target, Clock, CheckCircle2, XCircle, Globe, Compass, Briefcase, Link, Check, Menu, X } from "lucide-react";
+import { Upload, FileText, Loader2, Home as HomeIcon, FileCheck, BarChart3, Grid2x2, TrendingUp, Eye, ChevronDown, ChevronUp, Star, Users, Award, Zap, Shield, Target, Clock, CheckCircle2, XCircle, Globe, Compass, Briefcase, Link, Check, Menu, X, Search, FileSearch, Crosshair } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import * as pdfjsLib from "pdfjs-dist";
@@ -121,7 +121,7 @@ const pricingPlans = [
     perUnit: "9.99",
     popular: false,
     badge: null,
-    features: ["Full analysis unlocked", "Normal curve positioning", "Detailed salary estimate", "LinkedIn Certification — share your result", "PDF report via email"],
+    features: ["Full analysis unlocked", "ATS Deep Scan + Keyword Analysis", "Live Match — compare CV vs job", "Normal curve positioning", "Detailed salary estimate", "LinkedIn Certification"],
   },
 
   {
@@ -131,7 +131,7 @@ const pricingPlans = [
     perUnit: "5.33",
     popular: false,
     badge: null,
-    features: ["3 full analyses", "Reusable code for future analyses", "LinkedIn Certification — share your result", "Ideal for testing CV versions", "Priority email support"],
+    features: ["3 full analyses", "ATS Deep Scan + Keyword Analysis", "Live Match — compare CV vs job", "Reusable code for future analyses", "LinkedIn Certification", "Priority email support"],
   },
   {
     name: "Premium",
@@ -140,7 +140,7 @@ const pricingPlans = [
     perUnit: "4.10",
     popular: false,
     badge: null,
-    features: ["5 full analyses", "Reusable code for future analyses", "LinkedIn Certification — share your result", "Best price per analysis", "Share with friends/colleagues"],
+    features: ["5 full analyses", "ATS Deep Scan + Keyword Analysis", "Live Match — compare CV vs job", "Reusable code for future analyses", "LinkedIn Certification", "Share with friends/colleagues"],
   },
 ];
 
@@ -149,6 +149,10 @@ const comparisonFeatures = [
   { feature: "Advanced AI analysis", us: true, competitor1: true, competitor2: false },
   { feature: "Report in your language", us: true, competitor1: false, competitor2: true },
   { feature: "Real ATS score", us: true, competitor1: true, competitor2: false },
+  { feature: "ATS Deep Scan (3 scores)", us: true, competitor1: false, competitor2: false },
+  { feature: "Keyword Analysis", us: true, competitor1: true, competitor2: false },
+  { feature: "Live Match (CV vs Job)", us: true, competitor1: false, competitor2: false },
+  { feature: "ATS Format Checklist", us: true, competitor1: false, competitor2: false },
   { feature: "Normal curve positioning", us: true, competitor1: false, competitor2: false },
   { feature: "Salary estimate", us: true, competitor1: false, competitor2: false },
   { feature: "Free analysis included", us: true, competitor1: false, competitor2: true },
@@ -156,7 +160,6 @@ const comparisonFeatures = [
   { feature: "Career Path (career roadmap)", us: true, competitor1: false, competitor2: false },
   { feature: "Shareable LinkedIn Certification", us: true, competitor1: false, competitor2: false },
   { feature: "CV vs LinkedIn cross-analysis", us: true, competitor1: false, competitor2: false },
-
   { feature: "Price", usText: "From 9.99", comp1Text: "19.99/mo", comp2Text: "9.99" },
 ];
 
@@ -1108,7 +1111,8 @@ export default function HomeEN() {
             <div className="space-y-2 text-sm text-muted-foreground mb-6">
               <p className="font-semibold text-foreground text-base">After the analysis you will see:</p>
               <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> ATS compatibility score</div>
-              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> Missing keywords</div>
+              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> ATS Deep Scan + Keyword Analysis</div>
+              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> Live Match — compare CV vs job</div>
               <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> Critical issues blocking interviews</div>
             </div>
             {/* Upload Area */}
@@ -1664,11 +1668,26 @@ export default function HomeEN() {
         {/* What's Included */}
         <div className="mt-20 space-y-8">
           <h2 className="text-2xl font-bold text-center text-foreground">What does the free analysis include?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center"><BarChart3 className="w-6 h-6 text-[#C9A961]" /></div>
               <h3 className="text-lg font-semibold text-foreground">ATS Score</h3>
               <p className="text-sm text-muted-foreground">Probability of automatic rejection by recruitment systems</p>
+            </div>
+            <div className="bg-card border border-border rounded-xl p-6 space-y-3">
+              <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center"><FileSearch className="w-6 h-6 text-[#C9A961]" /></div>
+              <h3 className="text-lg font-semibold text-foreground">ATS Deep Scan</h3>
+              <p className="text-sm text-muted-foreground">In-depth analysis with 3 scores: Overall ATS, Keywords and Format</p>
+            </div>
+            <div className="bg-card border border-border rounded-xl p-6 space-y-3">
+              <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center"><Search className="w-6 h-6 text-[#C9A961]" /></div>
+              <h3 className="text-lg font-semibold text-foreground">Keyword Analysis</h3>
+              <p className="text-sm text-muted-foreground">Detailed table of keywords found, partial matches and missing from your CV</p>
+            </div>
+            <div className="bg-card border border-border rounded-xl p-6 space-y-3">
+              <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center"><Crosshair className="w-6 h-6 text-[#C9A961]" /></div>
+              <h3 className="text-lg font-semibold text-foreground">Live Match</h3>
+              <p className="text-sm text-muted-foreground">Paste a job description and see your compatibility score in real time</p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center"><Grid2x2 className="w-6 h-6 text-[#C9A961]" /></div>
@@ -1676,14 +1695,9 @@ export default function HomeEN() {
               <p className="text-sm text-muted-foreground">Analysis of structure, content, education and experience</p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
-              <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center"><TrendingUp className="w-6 h-6 text-[#C9A961]" /></div>
-              <h3 className="text-lg font-semibold text-foreground">Benchmarks</h3>
-              <p className="text-sm text-muted-foreground">Comparison with market averages for your country</p>
-            </div>
-            <div className="bg-card border border-border rounded-xl p-6 space-y-3">
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center"><Eye className="w-6 h-6 text-[#C9A961]" /></div>
-              <h3 className="text-lg font-semibold text-foreground">Perception</h3>
-              <p className="text-sm text-muted-foreground">How recruiters perceive your profile in the first 5 seconds</p>
+              <h3 className="text-lg font-semibold text-foreground">Perception + Benchmarks</h3>
+              <p className="text-sm text-muted-foreground">How recruiters see your profile and comparison with market averages</p>
             </div>
           </div>
         </div>

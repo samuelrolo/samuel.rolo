@@ -657,9 +657,10 @@ export default function BundleHome() {
               </div>
               <ul className="space-y-2 text-sm text-slate-600">
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Análise ATS completa</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> ATS Deep Scan + Análise de Keywords</li>
+                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Live Match — compara CV vs vaga</li>
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Score de posicionamento</li>
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Estimativa salarial detalhada</li>
-                <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Sugestões de melhoria</li>
                 <li className="flex items-start gap-2"><Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" /> Certificação LinkedIn</li>
               </ul>
             </div>

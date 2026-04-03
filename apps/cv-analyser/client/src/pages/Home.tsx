@@ -9,7 +9,7 @@ declare global {
 }
 
 import { useState, useEffect } from "react";
-import { Upload, FileText, Loader2, Home as HomeIcon, FileCheck, BarChart3, Grid2x2, TrendingUp, Eye, ChevronDown, ChevronUp, Star, Users, Award, Zap, Shield, Target, Clock, CheckCircle2, XCircle, Minus, Compass, Briefcase, Link, Globe, Check, Menu, X } from "lucide-react";
+import { Upload, FileText, Loader2, Home as HomeIcon, FileCheck, BarChart3, Grid2x2, TrendingUp, Eye, ChevronDown, ChevronUp, Star, Users, Award, Zap, Shield, Target, Clock, CheckCircle2, XCircle, Minus, Compass, Briefcase, Link, Globe, Check, Menu, X, Search, FileSearch, Crosshair } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import * as pdfjsLib from "pdfjs-dist";
@@ -134,7 +134,7 @@ const pricingPlans = [
     perUnit: "9,99",
     popular: false,
     badge: null,
-    features: ["Análise completa desbloqueada", "Curva normal de posicionamento", "Estimativa salarial detalhada", "Certificação LinkedIn — partilha o teu resultado", "Opção de enviar PDF por email"],
+    features: ["Análise completa desbloqueada", "ATS Deep Scan + Análise de Keywords", "Live Match — compara CV vs vaga", "Curva normal de posicionamento", "Estimativa salarial detalhada", "Certificação LinkedIn"],
   },
 
   {
@@ -144,7 +144,7 @@ const pricingPlans = [
     perUnit: "5,33",
     popular: false,
     badge: null,
-    features: ["3 análises completas", "Código reutilizável para futuras análises", "Certificação LinkedIn — partilha o teu resultado", "Ideal para testar versões do CV", "Suporte prioritário por email"],
+    features: ["3 análises completas", "ATS Deep Scan + Análise de Keywords", "Live Match — compara CV vs vaga", "Código reutilizável para futuras análises", "Certificação LinkedIn", "Suporte prioritário por email"],
   },
   {
     name: "Premium",
@@ -153,7 +153,7 @@ const pricingPlans = [
     perUnit: "4,10",
     popular: false,
     badge: null,
-    features: ["5 análises completas", "Código reutilizável para futuras análises", "Certificação LinkedIn — partilha o teu resultado", "Melhor preço por análise", "Partilha com amigos/colegas"],
+    features: ["5 análises completas", "ATS Deep Scan + Análise de Keywords", "Live Match — compara CV vs vaga", "Código reutilizável para futuras análises", "Certificação LinkedIn", "Partilha com amigos/colegas"],
   },
 ];
 
@@ -162,6 +162,10 @@ const comparisonFeatures = [
   { feature: "Análise por IA avançada", us: true, competitor1: true, competitor2: false },
   { feature: "Relatório em Português", us: true, competitor1: false, competitor2: true },
   { feature: "Score ATS real", us: true, competitor1: true, competitor2: false },
+  { feature: "ATS Deep Scan (3 scores)", us: true, competitor1: false, competitor2: false },
+  { feature: "Análise de Keywords", us: true, competitor1: true, competitor2: false },
+  { feature: "Live Match (CV vs Vaga)", us: true, competitor1: false, competitor2: false },
+  { feature: "Checklist de Formato ATS", us: true, competitor1: false, competitor2: false },
   { feature: "Curva normal de posicionamento", us: true, competitor1: false, competitor2: false },
   { feature: "Estimativa salarial", us: true, competitor1: false, competitor2: false },
   { feature: "Análise gratuita incluída", us: true, competitor1: false, competitor2: true },
@@ -169,7 +173,6 @@ const comparisonFeatures = [
   { feature: "Career Path (roadmap de carreira)", us: true, competitor1: false, competitor2: false },
   { feature: "Certificação LinkedIn partilhável", us: true, competitor1: false, competitor2: false },
   { feature: "Cruzamento CV vs LinkedIn", us: true, competitor1: false, competitor2: false },
-
   { feature: "Preço", usText: "Desde €9,99", comp1Text: "€19,99/mês", comp2Text: "€9,99" },
 ];
 
@@ -1162,7 +1165,8 @@ export default function Home() {
             <div className="space-y-2 text-sm text-muted-foreground mb-6">
               <p className="font-semibold text-foreground text-base">Depois da análise vais ver:</p>
               <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> Score de compatibilidade ATS</div>
-              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> Palavras-chave em falta</div>
+              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> ATS Deep Scan + Análise de Keywords</div>
+              <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> Live Match — compara CV vs vaga</div>
               <div className="flex items-center gap-2"><Check className="w-4 h-4 text-[#C9A961] shrink-0" /> Problemas críticos que bloqueiam entrevistas</div>
             </div>
             {/* Upload Area */}
@@ -1829,7 +1833,7 @@ export default function Home() {
           <h2 className="text-2xl font-bold text-center text-foreground">
             O que inclui a análise gratuita?
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
                 <BarChart3 className="w-6 h-6 text-[#C9A961]" />
@@ -1837,6 +1841,33 @@ export default function Home() {
               <h3 className="text-lg font-semibold text-foreground">Score ATS</h3>
               <p className="text-sm text-muted-foreground">
                 Probabilidade de rejeição automática por sistemas de recrutamento
+              </p>
+            </div>
+            <div className="bg-card border border-border rounded-xl p-6 space-y-3">
+              <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
+                <FileSearch className="w-6 h-6 text-[#C9A961]" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground">ATS Deep Scan</h3>
+              <p className="text-sm text-muted-foreground">
+                Análise profunda com 3 scores: ATS Global, Keywords e Formato
+              </p>
+            </div>
+            <div className="bg-card border border-border rounded-xl p-6 space-y-3">
+              <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
+                <Search className="w-6 h-6 text-[#C9A961]" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground">Análise de Keywords</h3>
+              <p className="text-sm text-muted-foreground">
+                Tabela detalhada de keywords encontradas, parciais e em falta no teu CV
+              </p>
+            </div>
+            <div className="bg-card border border-border rounded-xl p-6 space-y-3">
+              <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
+                <Crosshair className="w-6 h-6 text-[#C9A961]" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground">Live Match</h3>
+              <p className="text-sm text-muted-foreground">
+                Cola a descrição da vaga e vê a compatibilidade em tempo real
               </p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
@@ -1850,20 +1881,11 @@ export default function Home() {
             </div>
             <div className="bg-card border border-border rounded-xl p-6 space-y-3">
               <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-[#C9A961]" />
-              </div>
-              <h3 className="text-lg font-semibold text-foreground">Benchmarks</h3>
-              <p className="text-sm text-muted-foreground">
-                Comparação com médias do mercado (com transparência de 50%)
-              </p>
-            </div>
-            <div className="bg-card border border-border rounded-xl p-6 space-y-3">
-              <div className="w-12 h-12 rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center">
                 <Eye className="w-6 h-6 text-[#C9A961]" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground">Percepção</h3>
+              <h3 className="text-lg font-semibold text-foreground">Percepção + Benchmarks</h3>
               <p className="text-sm text-muted-foreground">
-                Como os recrutadores percecionam o teu perfil nos primeiros 5 segundos
+                Como os recrutadores vêem o teu perfil e comparação com médias do mercado
               </p>
             </div>
           </div>
