@@ -720,20 +720,26 @@ Generate ONLY the post.`;
           </div>
 
           {/* Tabs */}
-          <div className="flex overflow-x-auto border-b border-gray-100 shrink-0 scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
-            {tabs.map(tab => (
-              <button
-                key={tab.key}
-                onClick={() => setView(tab.key)}
-                className={`flex items-center gap-1 px-3 py-2 text-[11px] font-medium whitespace-nowrap transition-all border-b-2 ${
-                  view === tab.key
-                    ? 'text-[#BFA14A] border-[#BFA14A]'
-                    : 'border-transparent text-gray-400 hover:text-gray-600'
-                }`}
-              >
-                {tab.icon} {tab.label}
-              </button>
-            ))}
+          <div className="flex overflow-x-auto border-b border-gray-100 shrink-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
+            <style>{`.career-tabs-scroll::-webkit-scrollbar { display: none; }`}</style>
+            <div className="career-tabs-scroll flex min-w-0" style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
+              {tabs.map(tab => (
+                <button
+                  key={tab.key}
+                  onClick={() => setView(tab.key)}
+                  className={`flex items-center gap-1.5 px-2.5 py-2 text-[11px] font-medium whitespace-nowrap transition-all border-b-2 shrink-0 ${
+                    view === tab.key
+                      ? 'text-[#BFA14A] border-[#BFA14A]'
+                      : 'border-transparent text-gray-400 hover:text-gray-600'
+                  }`}
+                  title={tab.label}
+                >
+                  <span className="text-sm leading-none">{tab.icon}</span>
+                  <span className="hidden sm:inline">{tab.label}</span>
+                  <span className="sm:hidden">{tab.label.length > 6 ? tab.label.slice(0, 6) + '…' : tab.label}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* ═══════════════════════════════════════════════════════════ */}
