@@ -1202,18 +1202,28 @@ export default function MemberArea() {
       if (data.success && data.reply) {
         setCvMakerMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
         if (data.cv_data && typeof data.cv_data === 'object' && Object.keys(data.cv_data).length > 0) {
-          setCvMakerData(prev => {
-            const merged = { ...prev };
-            const cd = data.cv_data;
-            if (cd.personal_info) merged.personal_info = { ...(prev.personal_info || {}), ...cd.personal_info };
-            if (cd.target_role) { merged.target_role = cd.target_role; if (!merged.personal_info) merged.personal_info = {}; merged.personal_info.target_role = cd.target_role; }
-            if (cd.summary) merged.summary = cd.summary;
-            if (cd.experiences?.length > 0) { const valid = cd.experiences.filter((e: any) => e.company || e.role); if (valid.length > 0) merged.experiences = valid; }
-            if (cd.education?.length > 0) { const valid = cd.education.filter((e: any) => e.institution || e.degree); if (valid.length > 0) merged.education = valid; }
-            if (cd.skills?.length > 0) { const valid = cd.skills.filter((s: string) => s?.trim()); if (valid.length > 0) merged.skills = valid; }
-            return merged;
-          });
-          setShowCvMakerPreview(true);
+          // Check if there's any real data (not just empty strings/arrays)
+          const cd = data.cv_data;
+          const hasRealPersonalInfo = cd.personal_info && Object.values(cd.personal_info).some((v: any) => typeof v === 'string' && v.trim());
+          const hasRealData = hasRealPersonalInfo || cd.target_role?.trim() || cd.summary?.trim() || cd.experiences?.some((e: any) => e.company || e.role) || cd.education?.some((e: any) => e.institution || e.degree) || cd.skills?.some((s: string) => s?.trim());
+          if (hasRealData) {
+            setCvMakerData(prev => {
+              const merged = { ...prev };
+              // Only merge personal_info fields that have actual values
+              if (cd.personal_info) {
+                const filteredPI: Record<string, string> = {};
+                for (const [k, v] of Object.entries(cd.personal_info)) { if (typeof v === 'string' && v.trim()) filteredPI[k] = v as string; }
+                if (Object.keys(filteredPI).length > 0) merged.personal_info = { ...(prev.personal_info || {}), ...filteredPI };
+              }
+              if (cd.target_role?.trim()) { merged.target_role = cd.target_role; if (!merged.personal_info) merged.personal_info = {}; merged.personal_info.target_role = cd.target_role; }
+              if (cd.summary?.trim()) merged.summary = cd.summary;
+              if (cd.experiences?.length > 0) { const valid = cd.experiences.filter((e: any) => e.company || e.role); if (valid.length > 0) merged.experiences = valid; }
+              if (cd.education?.length > 0) { const valid = cd.education.filter((e: any) => e.institution || e.degree); if (valid.length > 0) merged.education = valid; }
+              if (cd.skills?.length > 0) { const valid = cd.skills.filter((s: string) => s?.trim()); if (valid.length > 0) merged.skills = valid; }
+              return merged;
+            });
+            setShowCvMakerPreview(true);
+          }
         }
       } else {
         setCvMakerMessages(prev => [...prev, { role: 'assistant', content: lang === 'pt' ? 'Desculpa, ocorreu um erro. Tenta novamente.' : 'Sorry, an error occurred. Please try again.' }]);
