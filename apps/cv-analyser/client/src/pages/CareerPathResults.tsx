@@ -1022,7 +1022,7 @@ export default function CareerPathResults() {
                       <DollarSign className="w-4 h-4 text-[#C9A961]" />
                       <p className="text-xs font-semibold tracking-wider text-[#C9A961]">{isEN ? 'ESTIMATED SALARY PROGRESSION' : 'PROGRESSÃO SALARIAL ESTIMADA'}</p>
                     </div>
-                    <div className="grid grid-cols-3 gap-3 text-center">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
                       <div className="p-3 bg-muted/30 rounded-xl border border-border">
                         <p className="text-[10px] font-semibold text-muted-foreground mb-1">{isEN ? 'CURRENT' : 'ACTUAL'}</p>
                         <p className="text-lg font-bold text-foreground">{isEN ? '$38k' : '32.000€'}</p>

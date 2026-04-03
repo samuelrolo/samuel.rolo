@@ -298,7 +298,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
               <p className="text-xs text-muted-foreground">Com base no perfil e mercado português</p>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div className="text-center p-4 bg-muted/30 rounded-lg">
               <p className="text-xs text-muted-foreground mb-1">Mínimo</p>
               <p className="text-2xl font-bold text-foreground">€{data.salaryRange?.min || 1200}</p>
@@ -342,7 +342,7 @@ const AnalysisResults = ({ data }: { data: AnalysisData }) => {
           </div>
 
           {/* Values */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div className="text-center p-3 bg-muted/30 rounded-lg">
               <p className="text-xs text-muted-foreground">Percentil</p>
               <p className="text-xl font-bold text-foreground">{percentile}%</p>

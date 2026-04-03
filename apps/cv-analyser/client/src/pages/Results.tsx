@@ -2306,7 +2306,7 @@ export default function Results() {
           </div>
 
           {/* Values VISIBLE */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div className="text-center p-3 bg-muted/30 rounded-lg">
               <p className="text-xs text-muted-foreground">{isEN ? 'Percentile' : 'Percentil'}</p>
               <p className="text-xl font-bold text-foreground">{percentile}%</p>
