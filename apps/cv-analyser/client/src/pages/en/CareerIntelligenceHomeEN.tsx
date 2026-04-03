@@ -109,7 +109,6 @@ export default function CareerIntelligenceHomeEN() {
   const isUpgrade = (() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('upgrade') === 'careerpath') return true;
-    if (sessionStorage.getItem('careerPathPaid') === 'true') return true;
     return false;
   })();
 
