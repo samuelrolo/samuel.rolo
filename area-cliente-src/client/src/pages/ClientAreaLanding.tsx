@@ -390,25 +390,7 @@ export default function ClientAreaLanding() {
   const ctaHref = `${basePath}/auth`;
 
   return (
-    <div className="min-h-screen bg-[#FAFAF9] text-[#1a1a1a] font-[Poppins,sans-serif] overflow-x-hidden">
-      {/* ─── Sticky Nav ─── */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#e5e5e0]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <a href="https://share2inspire.pt" className="flex items-center gap-2">
-            <img src="https://share2inspire.pt/images/logo.png" alt="S2I" className="h-8 w-8" />
-            <span className="font-semibold text-sm tracking-tight hidden sm:inline">SHARE2INSPIRE</span>
-          </a>
-          <div className="flex items-center gap-3">
-            <button onClick={toggleLang} className="flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium border border-[#e5e5e0] hover:bg-[#f5f5f0] transition-colors min-w-[44px] min-h-[44px] justify-center">
-              <Globe className="w-4 h-4" />
-              {t.langSwitch}
-            </button>
-            <a href={ctaHref} className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white hover:shadow-lg hover:shadow-[#C9A961]/20 transition-all min-h-[44px] flex items-center gap-1.5">
-              {t.heroCta} <ArrowRight className="w-3.5 h-3.5" />
-            </a>
-          </div>
-        </div>
-      </nav>
+    <div className="bg-[#FAFAF9] text-[#1a1a1a] font-[Poppins,sans-serif] overflow-x-hidden">
 
       {/* ─── Hero ─── */}
       <section className="relative py-16 sm:py-24 lg:py-32">
@@ -779,20 +761,7 @@ export default function ClientAreaLanding() {
         </div>
       </section>
 
-      {/* ─── Footer ─── */}
-      <footer className="py-8 bg-[#1a1a1a] border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-white/40 text-xs">
-            <img src="https://share2inspire.pt/images/logo.png" alt="S2I" className="h-5 w-5 opacity-40" />
-            Share2Inspire &copy; {new Date().getFullYear()}
-          </div>
-          <div className="flex gap-6 text-white/40 text-xs">
-            <a href="https://share2inspire.pt/privacidade" className="hover:text-white/60 transition-colors min-h-[44px] flex items-center">{lang === 'pt' ? 'Privacidade' : 'Privacy'}</a>
-            <a href="https://share2inspire.pt/termos" className="hover:text-white/60 transition-colors min-h-[44px] flex items-center">{lang === 'pt' ? 'Termos' : 'Terms'}</a>
-            <a href="https://share2inspire.pt" className="hover:text-white/60 transition-colors min-h-[44px] flex items-center">{lang === 'pt' ? 'Site principal' : 'Main site'}</a>
-          </div>
-        </div>
-      </footer>
+
     </div>
   );
 }
