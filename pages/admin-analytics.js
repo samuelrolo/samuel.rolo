@@ -341,6 +341,7 @@ function switchCrmSubtab(name, btn) {
     if (name === 'campaigns') renderNurturingSegments();
     if (name === 'history') renderEmailHistory();
     if (name === 'messages') renderContactMessages();
+    if (name === 'welcome-emails') loadWelcomeEmailsDashboard();
 }
 
 function switchMarketSubtab(name, btn) {
@@ -2948,4 +2949,209 @@ function renderPendingLeads() {
         const typeBadge = p.type === 'Upsell 2h' ? '<span class="badge badge-teal">Upsell 2h</span>' : '<span class="badge badge-purple">Follow-up 7d</span>';
         return `<tr><td style="font-size:12px;">${p.email}</td><td style="font-size:12px;">${p.name}</td><td>${typeBadge}</td><td style="font-size:12px;color:var(--text-muted);">${date}</td><td style="font-size:12px;">${p.elapsed}</td></tr>`;
     }).join('');
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   WELCOME EMAILS DASHBOARD
+   ═══════════════════════════════════════════════════════════════ */
+
+let allWelcomeEmails = [];
+let welcomeEmailChartInstance = null;
+let welcomeEmailPieTypeInstance = null;
+let welcomeEmailPieLangInstance = null;
+
+async function loadWelcomeEmailsDashboard() {
+    try {
+        const res = await supaFetch('welcome_emails_log?select=*&order=created_at.desc&limit=5000');
+        if (!res.ok) { console.error('Failed to load welcome emails:', res.status); return; }
+        allWelcomeEmails = await res.json();
+    } catch (e) {
+        console.error('Error loading welcome emails:', e);
+        allWelcomeEmails = [];
+    }
+    updateWelcomeEmailKpis();
+    renderWelcomeEmailCharts();
+    renderWelcomeEmails();
+}
+
+function updateWelcomeEmailKpis() {
+    const data = allWelcomeEmails;
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const total = data.length;
+    const cvAnalysis = data.filter(e => e.type === 'cv_analysis').length;
+    const memberSignup = data.filter(e => e.type === 'member_signup').length;
+    const today = data.filter(e => e.created_at && e.created_at.slice(0, 10) === todayStr).length;
+    const week = data.filter(e => e.created_at && new Date(e.created_at) >= weekAgo).length;
+    const failed = data.filter(e => e.status === 'failed').length;
+
+    document.getElementById('weTotal').textContent = total;
+    document.getElementById('weCvAnalysis').textContent = cvAnalysis;
+    document.getElementById('weMemberSignup').textContent = memberSignup;
+    document.getElementById('weToday').textContent = today;
+    document.getElementById('weWeek').textContent = week;
+    document.getElementById('weFailed').textContent = failed;
+}
+
+function renderWelcomeEmailCharts() {
+    const data = allWelcomeEmails;
+
+    // ── Bar Chart: Envios por dia (últimos 30 dias) ──
+    const now = new Date();
+    const days = [];
+    const cvCounts = [];
+    const memberCounts = [];
+    for (let i = 29; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+        const dateStr = d.toISOString().slice(0, 10);
+        days.push(d.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit' }));
+        cvCounts.push(data.filter(e => e.created_at && e.created_at.slice(0, 10) === dateStr && e.type === 'cv_analysis').length);
+        memberCounts.push(data.filter(e => e.created_at && e.created_at.slice(0, 10) === dateStr && e.type === 'member_signup').length);
+    }
+
+    if (welcomeEmailChartInstance) welcomeEmailChartInstance.destroy();
+    const ctx = document.getElementById('welcomeEmailChart');
+    if (ctx) {
+        welcomeEmailChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: days,
+                datasets: [
+                    { label: 'Análise CV', data: cvCounts, backgroundColor: 'rgba(124,58,237,0.7)', borderRadius: 4 },
+                    { label: 'Registo Membro', data: memberCounts, backgroundColor: 'rgba(59,130,246,0.7)', borderRadius: 4 }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 45 } },
+                    y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 10 } }, grid: { color: '#f0f0f0' } }
+                }
+            }
+        });
+    }
+
+    // ── Pie Chart: Tipo ──
+    const cvTotal = data.filter(e => e.type === 'cv_analysis').length;
+    const memberTotal = data.filter(e => e.type === 'member_signup').length;
+
+    if (welcomeEmailPieTypeInstance) welcomeEmailPieTypeInstance.destroy();
+    const ctxType = document.getElementById('welcomeEmailPieType');
+    if (ctxType) {
+        welcomeEmailPieTypeInstance = new Chart(ctxType, {
+            type: 'doughnut',
+            data: {
+                labels: ['Análise CV', 'Registo Membro'],
+                datasets: [{ data: [cvTotal, memberTotal], backgroundColor: ['#7C3AED', '#3B82F6'], borderWidth: 0 }]
+            },
+            options: {
+                responsive: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { size: 10 }, padding: 8 } },
+                    title: { display: true, text: 'Por Tipo', font: { size: 11, weight: '600' }, color: '#374151' }
+                }
+            }
+        });
+    }
+
+    // ── Pie Chart: Idioma ──
+    const ptTotal = data.filter(e => e.lang === 'pt').length;
+    const enTotal = data.filter(e => e.lang === 'en').length;
+
+    if (welcomeEmailPieLangInstance) welcomeEmailPieLangInstance.destroy();
+    const ctxLang = document.getElementById('welcomeEmailPieLang');
+    if (ctxLang) {
+        welcomeEmailPieLangInstance = new Chart(ctxLang, {
+            type: 'doughnut',
+            data: {
+                labels: ['Português', 'English'],
+                datasets: [{ data: [ptTotal, enTotal], backgroundColor: ['#10B981', '#3B82F6'], borderWidth: 0 }]
+            },
+            options: {
+                responsive: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { size: 10 }, padding: 8 } },
+                    title: { display: true, text: 'Por Idioma', font: { size: 11, weight: '600' }, color: '#374151' }
+                }
+            }
+        });
+    }
+}
+
+function renderWelcomeEmails() {
+    const filterType = document.getElementById('weFilterType')?.value || 'all';
+    const filterLang = document.getElementById('weFilterLang')?.value || 'all';
+    const filterStatus = document.getElementById('weFilterStatus')?.value || 'all';
+    const search = (document.getElementById('weFilterSearch')?.value || '').toLowerCase();
+
+    let filtered = allWelcomeEmails;
+    if (filterType !== 'all') filtered = filtered.filter(e => e.type === filterType);
+    if (filterLang !== 'all') filtered = filtered.filter(e => e.lang === filterLang);
+    if (filterStatus !== 'all') filtered = filtered.filter(e => e.status === filterStatus);
+    if (search) filtered = filtered.filter(e => (e.email || '').toLowerCase().includes(search) || (e.name || '').toLowerCase().includes(search));
+
+    document.getElementById('weCount').textContent = filtered.length + ' registos';
+
+    const tbody = document.getElementById('welcomeEmailsTable');
+    if (!tbody) return;
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum email de boas-vindas encontrado</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.slice(0, 200).map(e => {
+        const date = e.created_at ? new Date(e.created_at).toLocaleDateString('pt-PT') + ' ' + new Date(e.created_at).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) : '--';
+        const typeBadge = e.type === 'cv_analysis'
+            ? '<span class="badge badge-purple">Análise CV</span>'
+            : '<span class="badge badge-career">Registo Membro</span>';
+        const langBadge = e.lang === 'en'
+            ? '<span class="badge badge-en">EN</span>'
+            : '<span class="badge badge-pt">PT</span>';
+        const statusBadge = e.status === 'sent'
+            ? '<span class="badge badge-success">Enviado</span>'
+            : '<span class="badge badge-danger">Falhado</span>';
+        const brevoId = e.brevo_message_id ? '<span style="font-size:10px;color:var(--text-muted);">' + e.brevo_message_id + '</span>' : '--';
+
+        return `<tr>
+            <td style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${date}</td>
+            <td style="font-size:12px;">${e.email || '--'}</td>
+            <td style="font-size:12px;">${e.name || '--'}</td>
+            <td>${typeBadge}</td>
+            <td>${langBadge}</td>
+            <td>${statusBadge}</td>
+            <td>${brevoId}</td>
+        </tr>`;
+    }).join('');
+}
+
+function exportWelcomeEmailsCSV() {
+    const filterType = document.getElementById('weFilterType')?.value || 'all';
+    const filterLang = document.getElementById('weFilterLang')?.value || 'all';
+    const filterStatus = document.getElementById('weFilterStatus')?.value || 'all';
+    const search = (document.getElementById('weFilterSearch')?.value || '').toLowerCase();
+
+    let filtered = allWelcomeEmails;
+    if (filterType !== 'all') filtered = filtered.filter(e => e.type === filterType);
+    if (filterLang !== 'all') filtered = filtered.filter(e => e.lang === filterLang);
+    if (filterStatus !== 'all') filtered = filtered.filter(e => e.status === filterStatus);
+    if (search) filtered = filtered.filter(e => (e.email || '').toLowerCase().includes(search) || (e.name || '').toLowerCase().includes(search));
+
+    let csv = 'Data,Email,Nome,Tipo,Idioma,Estado,Brevo ID\n';
+    filtered.forEach(e => {
+        const date = e.created_at ? new Date(e.created_at).toISOString() : '';
+        csv += `"${date}","${e.email || ''}","${e.name || ''}","${e.type || ''}","${e.lang || ''}","${e.status || ''}","${e.brevo_message_id || ''}"\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'welcome_emails_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
 }

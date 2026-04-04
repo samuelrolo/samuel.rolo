@@ -353,17 +353,38 @@ Deno.serve(async (req: Request) => {
     const brevoData = await brevoRes.json();
     console.log(`Welcome email (${type}) sent to ${email}:`, brevoData);
 
-    // Log to email_history (fire-and-forget)
+    // Log to welcome_emails_log + email_history (fire-and-forget)
     try {
       const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
       const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
       if (supabaseUrl && supabaseKey) {
+        // Log to welcome_emails_log (dashboard monitoring)
+        await fetch(`${supabaseUrl}/rest/v1/welcome_emails_log`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": supabaseKey,
+            "Authorization": `Bearer ${supabaseKey}`,
+            "Prefer": "return=minimal",
+          },
+          body: JSON.stringify({
+            email,
+            name: name || null,
+            type,
+            lang: language,
+            status: "sent",
+            brevo_message_id: brevoData.messageId || null,
+          }),
+        });
+
+        // Log to email_history (general history)
         await fetch(`${supabaseUrl}/rest/v1/email_history`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "apikey": supabaseKey,
             "Authorization": `Bearer ${supabaseKey}`,
+            "Prefer": "return=minimal",
           },
           body: JSON.stringify({
             recipient_email: email,
@@ -376,7 +397,7 @@ Deno.serve(async (req: Request) => {
         });
       }
     } catch (logErr) {
-      console.warn("Failed to log email to history:", logErr);
+      console.warn("Failed to log email:", logErr);
     }
 
     return new Response(

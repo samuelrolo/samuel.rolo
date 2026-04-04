@@ -584,6 +584,7 @@
         <button class="crm-subtab" onclick="switchCrmSubtab('campaigns',this)"><i class="fas fa-paper-plane"></i> Campanhas</button>
         <button class="crm-subtab" onclick="switchCrmSubtab('history',this)"><i class="fas fa-history"></i> Histórico Email</button>
         <button class="crm-subtab" onclick="switchCrmSubtab('messages',this)"><i class="fas fa-inbox"></i> Mensagens</button>
+        <button class="crm-subtab" onclick="switchCrmSubtab('welcome-emails',this)"><i class="fas fa-envelope-open-text"></i> Welcome Emails</button>
     </div>
 
     <!-- SUB-TAB: Contactos (CRM main view) -->
@@ -874,6 +875,108 @@
                 <table>
                     <thead><tr><th>Data</th><th>Para</th><th>Assunto</th><th>Tipo</th><th>Estado</th></tr></thead>
                     <tbody id="historyTable"><tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUB-TAB: Welcome Emails Dashboard -->
+    <div id="crm-sub-welcome-emails" style="display:none;">
+        <!-- KPI Row -->
+        <div class="kpi-row" id="welcomeEmailKpis">
+            <div class="kpi-card">
+                <div class="kpi-accent" style="background:var(--gold);"></div>
+                <div class="kpi-label">Total Enviados</div>
+                <div class="kpi-value gold" id="weTotal">--</div>
+                <div class="kpi-sub">emails de boas-vindas</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-accent" style="background:var(--purple);"></div>
+                <div class="kpi-label">Análise CV</div>
+                <div class="kpi-value purple" id="weCvAnalysis">--</div>
+                <div class="kpi-sub">após análise de CV</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-accent" style="background:var(--blue);"></div>
+                <div class="kpi-label">Registo Membro</div>
+                <div class="kpi-value blue" id="weMemberSignup">--</div>
+                <div class="kpi-sub">após criar conta</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-accent" style="background:var(--green);"></div>
+                <div class="kpi-label">Hoje</div>
+                <div class="kpi-value green" id="weToday">--</div>
+                <div class="kpi-sub">enviados hoje</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-accent" style="background:var(--teal);"></div>
+                <div class="kpi-label">Esta Semana</div>
+                <div class="kpi-value teal" id="weWeek">--</div>
+                <div class="kpi-sub">últimos 7 dias</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-accent" style="background:var(--red);"></div>
+                <div class="kpi-label">Falhados</div>
+                <div class="kpi-value red" id="weFailed">--</div>
+                <div class="kpi-sub">erros de envio</div>
+            </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="grid-2" style="margin-bottom:20px;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title"><i class="fas fa-chart-bar"></i> Envios por Dia (últimos 30 dias)</div>
+                </div>
+                <div class="card-body">
+                    <canvas id="welcomeEmailChart" height="200"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title"><i class="fas fa-chart-pie"></i> Distribuição por Tipo e Idioma</div>
+                </div>
+                <div class="card-body" style="display:flex;gap:20px;justify-content:center;align-items:center;">
+                    <canvas id="welcomeEmailPieType" height="180" width="180"></canvas>
+                    <canvas id="welcomeEmailPieLang" height="180" width="180"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter + Table -->
+        <div class="filter-bar">
+            <label>Tipo</label>
+            <select class="form-select" id="weFilterType" onchange="renderWelcomeEmails()">
+                <option value="all">Todos</option>
+                <option value="cv_analysis">Análise CV</option>
+                <option value="member_signup">Registo Membro</option>
+            </select>
+            <div class="filter-divider"></div>
+            <label>Idioma</label>
+            <select class="form-select" id="weFilterLang" onchange="renderWelcomeEmails()">
+                <option value="all">Todos</option>
+                <option value="pt">PT</option>
+                <option value="en">EN</option>
+            </select>
+            <div class="filter-divider"></div>
+            <label>Estado</label>
+            <select class="form-select" id="weFilterStatus" onchange="renderWelcomeEmails()">
+                <option value="all">Todos</option>
+                <option value="sent">Enviado</option>
+                <option value="failed">Falhado</option>
+            </select>
+            <div class="filter-divider"></div>
+            <input class="form-input" type="text" id="weFilterSearch" placeholder="Pesquisar email..." oninput="renderWelcomeEmails()" style="width:200px;">
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+                <span style="font-size:12px;color:var(--text-muted);" id="weCount">--</span>
+                <button class="btn btn-outline btn-sm" onclick="exportWelcomeEmailsCSV()"><i class="fas fa-download"></i> CSV</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Data</th><th>Email</th><th>Nome</th><th>Tipo</th><th>Idioma</th><th>Estado</th><th>Brevo ID</th></tr></thead>
+                    <tbody id="welcomeEmailsTable"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">A carregar...</td></tr></tbody>
                 </table>
             </div>
         </div>
