@@ -767,7 +767,7 @@ function getYouTubeId(url: string): string | null {
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function MemberArea() {
-  const { t, lang } = useI18n();
+  const { t, lang, setLang } = useI18n();
   const { profile, subscription, user } = useAuth();
   const [content, setContent] = useState<MemberContent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1320,6 +1320,7 @@ export default function MemberArea() {
       return (
         <CvMaker
           lang={lang}
+          onLangChange={(newLang) => setLang(newLang as 'pt' | 'en')}
           supabaseUrl={SUPABASE_URL}
           supabaseAnonKey={SUPABASE_ANON_KEY}
           hyperTaskUrl={HYPER_TASK_URL}

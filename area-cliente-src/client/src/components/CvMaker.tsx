@@ -67,6 +67,7 @@ type CvTab = 'chat' | 'form' | 'preview';
 
 interface CvMakerProps {
   lang: string;
+  onLangChange?: (lang: string) => void;
   supabaseUrl: string;
   supabaseAnonKey: string;
   hyperTaskUrl: string;
@@ -111,7 +112,7 @@ function SectionHeader({ icon: Icon, title, isOpen, onToggle, count }: { icon: a
 }
 
 // ─── Main Component ─────────────────────────────────────────────────────────
-export default function CvMaker({ lang, supabaseUrl, supabaseAnonKey, hyperTaskUrl, profileName, userId }: CvMakerProps) {
+export default function CvMaker({ lang, onLangChange, supabaseUrl, supabaseAnonKey, hyperTaskUrl, profileName, userId }: CvMakerProps) {
   const pt = lang === 'pt';
 
   // Data
@@ -534,6 +535,16 @@ export default function CvMaker({ lang, supabaseUrl, supabaseAnonKey, hyperTaskU
         </button>
       ))}
       <div className="ml-auto flex items-center gap-1.5 pr-1">
+        {onLangChange && (
+          <button
+            onClick={() => onLangChange(lang === 'pt' ? 'en' : 'pt')}
+            className="flex items-center gap-1 px-2 py-1 text-[10px] font-bold tracking-wider rounded-lg border border-[#BFA14A]/30 text-[#BFA14A] hover:bg-[#BFA14A]/10 transition-all"
+            title={lang === 'pt' ? 'Switch to English' : 'Mudar para Português'}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            {lang === 'pt' ? 'PT' : 'EN'}
+          </button>
+        )}
         {hasCvData && (
           <button
             onClick={generatePdf}
