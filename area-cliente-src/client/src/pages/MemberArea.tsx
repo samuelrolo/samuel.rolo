@@ -17,12 +17,13 @@ import AnalysisResultsFull from '@/components/AnalysisResults';
 import { transformGeminiResponse } from '@/lib/analysisTransformer';
 import { countries } from '@/lib/countries';
 import * as pdfjsLib from 'pdfjs-dist';
+import { jsPDF } from 'jspdf';
 import {
   Loader2, Upload, FileText, BarChart3, Linkedin, Bot,
   Sparkles, Route, Lock, ExternalLink, AlertCircle, CheckCircle,
   ChevronDown, ChevronUp, Tag, ArrowRight, Globe, MapPin,
   Search, BookOpen, Play, Headphones, Mail, Megaphone, Briefcase,
-  Clock, Trash2, RefreshCw, Compass, FileSearch, Wrench, Download, Send,
+  Clock, Trash2, RefreshCw, Compass, FileSearch, Wrench, Download, Send, Share2,
   Target, Layers, TrendingUp, Euro,
 } from 'lucide-react';
 
@@ -804,6 +805,7 @@ export default function MemberArea() {
   const [cvMakerLoading, setCvMakerLoading] = useState(false);
   const [cvMakerData, setCvMakerData] = useState<CvMakerData>({});
   const [showCvMakerPreview, setShowCvMakerPreview] = useState(false);
+  const [cvPdfGenerating, setCvPdfGenerating] = useState(false);
   const cvMakerEndRef = useRef<HTMLDivElement>(null);
   const cvMakerInputRef = useRef<HTMLInputElement>(null);
 
@@ -1223,6 +1225,197 @@ export default function MemberArea() {
     }
   };
 
+  // ─── CV Maker: generate PDF ──────────────────────────────────────────
+  const generateCvPdf = async () => {
+    if (!cvMakerData || cvPdfGenerating) return;
+    setCvPdfGenerating(true);
+    try {
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const marginL = 20;
+      const marginR = 20;
+      const contentW = pageW - marginL - marginR;
+      let y = 20;
+      const gold = [191, 161, 74] as [number, number, number];
+      const dark = [26, 26, 26] as [number, number, number];
+      const mid = [100, 100, 100] as [number, number, number];
+      const light = [150, 150, 150] as [number, number, number];
+
+      const checkPage = (needed: number) => {
+        if (y + needed > pageH - 15) { doc.addPage(); y = 20; }
+      };
+
+      const drawSectionTitle = (title: string) => {
+        checkPage(12);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        doc.setTextColor(...gold);
+        doc.text(title.toUpperCase(), marginL, y);
+        y += 1.5;
+        doc.setDrawColor(...gold);
+        doc.setLineWidth(0.4);
+        doc.line(marginL, y, marginL + contentW, y);
+        y += 5;
+      };
+
+      // ─── Header: Name + Target Role ───
+      const pi = cvMakerData.personal_info;
+      const fullName = pi?.full_name || pi?.name || '';
+      if (fullName) {
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(22);
+        doc.setTextColor(...dark);
+        doc.text(fullName, marginL, y);
+        y += 8;
+      }
+      const targetRole = pi?.target_role || cvMakerData.target_role || '';
+      if (targetRole) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(11);
+        doc.setTextColor(...gold);
+        doc.text(targetRole, marginL, y);
+        y += 6;
+      }
+
+      // ─── Contact line ───
+      const contactParts: string[] = [];
+      if (pi?.email) contactParts.push(pi.email);
+      if (pi?.phone) contactParts.push(pi.phone);
+      if (pi?.location) contactParts.push(pi.location);
+      if (pi?.linkedin) contactParts.push(pi.linkedin);
+      if (contactParts.length > 0) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(...mid);
+        const contactLine = contactParts.join('  |  ');
+        const lines = doc.splitTextToSize(contactLine, contentW);
+        doc.text(lines, marginL, y);
+        y += lines.length * 3.5 + 2;
+      }
+
+      // Separator
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.2);
+      doc.line(marginL, y, marginL + contentW, y);
+      y += 6;
+
+      // ─── Summary ───
+      if (cvMakerData.summary?.trim()) {
+        drawSectionTitle(lang === 'pt' ? 'Resumo Profissional' : 'Professional Summary');
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(...mid);
+        const summaryLines = doc.splitTextToSize(cvMakerData.summary, contentW);
+        for (const line of summaryLines) {
+          checkPage(5);
+          doc.text(line, marginL, y);
+          y += 4;
+        }
+        y += 4;
+      }
+
+      // ─── Experience ───
+      if (cvMakerData.experiences && cvMakerData.experiences.length > 0) {
+        drawSectionTitle(lang === 'pt' ? 'Experiência Profissional' : 'Work Experience');
+        for (const exp of cvMakerData.experiences) {
+          checkPage(14);
+          // Role + Company
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(10);
+          doc.setTextColor(...dark);
+          const roleText = exp.role ? (exp.company ? `${exp.role}  —  ${exp.company}` : exp.role) : (exp.company || '');
+          if (roleText) { doc.text(roleText, marginL, y); y += 4.5; }
+          // Period
+          const period = exp.date_period || exp.period || '';
+          if (period) {
+            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(8);
+            doc.setTextColor(...light);
+            doc.text(period, marginL, y);
+            y += 4;
+          }
+          // Bullet points
+          if (exp.bullet_points && exp.bullet_points.length > 0) {
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8.5);
+            doc.setTextColor(...mid);
+            for (const bp of exp.bullet_points) {
+              checkPage(5);
+              const bpLines = doc.splitTextToSize(`•  ${bp}`, contentW - 4);
+              for (const bpLine of bpLines) {
+                doc.text(bpLine, marginL + 2, y);
+                y += 3.8;
+              }
+            }
+          }
+          y += 3;
+        }
+        y += 2;
+      }
+
+      // ─── Education ───
+      if (cvMakerData.education && cvMakerData.education.length > 0) {
+        drawSectionTitle(lang === 'pt' ? 'Formação Académica' : 'Education');
+        for (const edu of cvMakerData.education) {
+          checkPage(10);
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(9.5);
+          doc.setTextColor(...dark);
+          const eduText = edu.degree ? (edu.institution ? `${edu.degree}  —  ${edu.institution}` : edu.degree) : (edu.institution || '');
+          if (eduText) { doc.text(eduText, marginL, y); y += 4.5; }
+          const eduPeriod = edu.year || edu.period || '';
+          if (eduPeriod) {
+            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(8);
+            doc.setTextColor(...light);
+            doc.text(eduPeriod, marginL, y);
+            y += 4;
+          }
+          y += 2;
+        }
+        y += 2;
+      }
+
+      // ─── Skills ───
+      if (cvMakerData.skills && cvMakerData.skills.length > 0) {
+        drawSectionTitle(lang === 'pt' ? 'Competências' : 'Skills');
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(...mid);
+        const skillsText = cvMakerData.skills.join('  ·  ');
+        const skillLines = doc.splitTextToSize(skillsText, contentW);
+        for (const sl of skillLines) {
+          checkPage(5);
+          doc.text(sl, marginL, y);
+          y += 4;
+        }
+        y += 4;
+      }
+
+      // ─── Footer ───
+      const totalPages = doc.getNumberOfPages();
+      for (let p = 1; p <= totalPages; p++) {
+        doc.setPage(p);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7);
+        doc.setTextColor(180, 180, 180);
+        doc.text(`${lang === 'pt' ? 'Gerado com' : 'Generated with'} Share2Inspire CV Maker`, marginL, pageH - 8);
+        if (totalPages > 1) {
+          doc.text(`${p}/${totalPages}`, pageW - marginR, pageH - 8, { align: 'right' });
+        }
+      }
+
+      // Download
+      const fileName = fullName ? `CV_${fullName.replace(/\s+/g, '_')}.pdf` : 'CV_Share2Inspire.pdf';
+      doc.save(fileName);
+    } catch (err) {
+      console.error('Error generating CV PDF:', err);
+    } finally {
+      setCvPdfGenerating(false);
+    }
+  };
+
   // ─── Render inline panel content ────────────────────────────────────────
   const renderInlinePanel = (tool: ToolDef) => {
     if (tool.action === 'cv') {
@@ -1441,7 +1634,7 @@ export default function MemberArea() {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-bold text-gold uppercase tracking-wider">CV Preview</span>
                 <div className="flex items-center gap-1.5">
-                  <button onClick={() => navigator.clipboard.writeText(JSON.stringify(cvMakerData, null, 2))} className="text-[10px] px-2 py-0.5 rounded border border-gold/30 text-gold hover:bg-gold/10 transition-all">{lang === 'pt' ? 'Copiar' : 'Copy'} JSON</button>
+                  <button onClick={generateCvPdf} disabled={cvPdfGenerating} className="text-[10px] px-2 py-0.5 rounded border border-gold/30 text-gold hover:bg-gold/10 transition-all flex items-center gap-1 disabled:opacity-50">{cvPdfGenerating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />}{lang === 'pt' ? 'Guardar PDF' : 'Save PDF'}</button>
                   <button onClick={() => setShowCvMakerPreview(false)} className="text-[10px] px-2 py-0.5 rounded border border-[#e5e5e5] text-[#999] hover:text-[#1a1a1a] transition-all">{lang === 'pt' ? 'Fechar' : 'Close'}</button>
                 </div>
               </div>
@@ -1500,9 +1693,14 @@ export default function MemberArea() {
           {/* Input area */}
           <div className="flex items-center gap-2">
             {(() => { const pi = cvMakerData.personal_info; return !!(pi && (pi.name || pi.full_name || pi.email || pi.phone || pi.location || pi.linkedin)) || !!cvMakerData.summary?.trim() || !!(cvMakerData.experiences?.some((e: any) => e.company || e.role)) || !!(cvMakerData.education?.some((e: any) => e.institution || e.degree)) || !!(cvMakerData.skills?.some((s: string) => s?.trim())); })() && (
-              <button onClick={() => setShowCvMakerPreview(!showCvMakerPreview)} className={`p-2 rounded-lg transition-colors ${showCvMakerPreview ? 'bg-gold/10 text-gold' : 'hover:bg-[#f5f5f4] text-[#ccc]'}`} title="CV Preview">
-                <FileText className="w-4 h-4" />
-              </button>
+              <>
+                <button onClick={() => setShowCvMakerPreview(!showCvMakerPreview)} className={`p-2 rounded-lg transition-colors ${showCvMakerPreview ? 'bg-gold/10 text-gold' : 'hover:bg-[#f5f5f4] text-[#ccc]'}`} title="CV Preview">
+                  <FileText className="w-4 h-4" />
+                </button>
+                <button onClick={generateCvPdf} disabled={cvPdfGenerating} className="p-2 rounded-lg transition-colors hover:bg-gold/10 text-gold disabled:opacity-40" title={lang === 'pt' ? 'Guardar PDF' : 'Save PDF'}>
+                  {cvPdfGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                </button>
+              </>
             )}
             <input
               ref={cvMakerInputRef}
