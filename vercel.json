@@ -306,6 +306,14 @@
       "destination": "/linkedin-roaster/index.html"
     },
     {
+      "source": "/en/linkedin-roaster",
+      "destination": "/en/linkedin-roaster/index.html"
+    },
+    {
+      "source": "/en/linkedin-roaster/:path*",
+      "destination": "/en/linkedin-roaster/index.html"
+    },
+    {
       "source": "/estudos",
       "destination": "/estudos/index.html"
     },
