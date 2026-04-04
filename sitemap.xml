@@ -777,4 +777,23 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- Big4 Escola de Aprendizagem / Best Career School -->
+  <url>
+      <loc>https://www.share2inspire.pt/blog/artigos/big4-escola-aprendizagem-carreira</loc>
+      <lastmod>2026-04-04</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.9</priority>
+      <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/blog/artigos/big4-escola-aprendizagem-carreira"/>
+      <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/big4-best-career-school"/>
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/big4-escola-aprendizagem-carreira"/>
+  </url>
+  <url>
+      <loc>https://www.share2inspire.pt/en/blog/artigos/big4-best-career-school</loc>
+      <lastmod>2026-04-04</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.9</priority>
+      <xhtml:link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/blog/artigos/big4-best-career-school"/>
+      <xhtml:link rel="alternate" hreflang="pt" href="https://www.share2inspire.pt/blog/artigos/big4-escola-aprendizagem-carreira"/>
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/blog/artigos/big4-escola-aprendizagem-carreira"/>
+  </url>
 </urlset>

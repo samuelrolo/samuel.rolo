@@ -456,6 +456,14 @@
     {
       "source": "/en/blog/artigos/big4-insider-10-years",
       "destination": "/en/blog/artigos/big4-insider-10-years.html"
+    },
+    {
+      "source": "/blog/artigos/big4-escola-aprendizagem-carreira",
+      "destination": "/blog/artigos/big4-escola-aprendizagem-carreira.html"
+    },
+    {
+      "source": "/en/blog/artigos/big4-best-career-school",
+      "destination": "/en/blog/artigos/big4-best-career-school.html"
     }
   ]
 }
