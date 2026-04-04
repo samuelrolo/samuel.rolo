@@ -5,6 +5,7 @@ import { Route, Switch, Router as WouterRouter, useLocation, Redirect } from "wo
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { LoginModalProvider } from "./contexts/LoginModalContext";
 import { I18nProvider } from "./contexts/I18nContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -73,12 +74,14 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <I18nProvider>
           <AuthProvider>
-            <TooltipProvider>
-              <WouterRouter base={basePath}>
-                <Toaster />
-                <Layout />
-              </WouterRouter>
-            </TooltipProvider>
+            <LoginModalProvider>
+              <TooltipProvider>
+                <WouterRouter base={basePath}>
+                  <Toaster />
+                  <Layout />
+                </WouterRouter>
+              </TooltipProvider>
+            </LoginModalProvider>
           </AuthProvider>
         </I18nProvider>
       </ThemeProvider>
