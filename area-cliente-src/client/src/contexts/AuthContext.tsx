@@ -2,6 +2,37 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { supabase, type UserProfile, type Subscription } from '@/lib/supabase';
 import type { User, Session } from '@supabase/supabase-js';
 
+const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
+
+/**
+ * Fire-and-forget: send welcome email after member signup.
+ * Never blocks the user flow. Errors are silently caught.
+ */
+function sendMemberWelcomeEmail(email: string, name: string) {
+  try {
+    // Avoid sending duplicate emails
+    const sentKey = `member_welcome_sent_${email}`;
+    if (localStorage.getItem(sentKey)) return;
+    localStorage.setItem(sentKey, 'true');
+    const lang = window.location.pathname.includes('/en/') ? 'en' : 'pt';
+    fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ type: 'member_signup', email, name, lang }),
+    }).then(res => {
+      console.log('[WELCOME] Member welcome email sent, status:', res.status);
+    }).catch(err => {
+      console.warn('[WELCOME] Failed to send member welcome email (non-critical):', err.message);
+    });
+  } catch (e) {
+    // Never throw - this is purely engagement
+  }
+}
+
 type AuthContextType = {
   user: User | null;
   session: Session | null;
@@ -100,6 +131,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               email: session.user.email || '',
               avatar_url: meta.avatar_url || meta.picture || '',
             });
+            // Send welcome email for new Google OAuth users
+            sendMemberWelcomeEmail(session.user.email || '', fullName);
           }
         }
         fetchProfile(session.user.id);
@@ -121,6 +154,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data: { first_name: firstName, last_name: lastName },
       },
     });
+    // Send welcome email on successful signup
+    if (!error) {
+      sendMemberWelcomeEmail(email, `${firstName} ${lastName}`.trim());
+    }
     return { error: error?.message ?? null };
   }
 

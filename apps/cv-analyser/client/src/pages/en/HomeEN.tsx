@@ -477,6 +477,12 @@ export default function HomeEN() {
 
       logAnalysisToSupabase(analysisResult, analysisSource, cvText);
 
+      // Fire-and-forget: send welcome email
+      const welcomeEmail = sessionStorage.getItem('paymentEmail') || analysisEmail;
+      const cpWelcome = analysisSource?.candidate_profile || analysisSource?.analysis?.candidate_profile || {};
+      const welcomeName = cpWelcome.detected_name || '';
+      if (welcomeEmail) sendWelcomeEmail(welcomeEmail, welcomeName, 'en');
+
       // Persist CV to Supabase Storage for future sessions
       persistCvToStorage(base64Content, file.name);
 
@@ -712,6 +718,11 @@ export default function HomeEN() {
       }
 
       logAnalysisToSupabase(analysisResult, analysisSource, `LinkedIn: ${linkedInUrl}`);
+
+      // Fire-and-forget: send welcome email (LinkedIn flow)
+      const liEmail = sessionStorage.getItem('paymentEmail') || '';
+      if (liEmail) sendWelcomeEmail(liEmail, '', 'en');
+
       setLocation('/results');
 
     } catch (err: any) {

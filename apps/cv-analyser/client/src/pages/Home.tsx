@@ -27,6 +27,33 @@ const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzNjQyNzMsImV4cCI6MjA4Mzk0MDI3M30.DAowq1KK84KDJEvHL-0ztb-zN6jyeC1qVLLDMpTaRLM';
 
 /**
+ * Fire-and-forget: send welcome email after CV analysis.
+ * Never blocks the user flow. Errors are silently caught.
+ */
+function sendWelcomeEmail(email: string, name: string, lang: string = 'pt') {
+  try {
+    // Avoid sending duplicate emails in the same session
+    const sentKey = `welcome_email_sent_${email}`;
+    if (sessionStorage.getItem(sentKey)) return;
+    sessionStorage.setItem(sentKey, 'true');
+    fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ type: 'cv_analysis', email, name, lang }),
+    }).then(res => {
+      console.log('[WELCOME] Email sent, status:', res.status);
+    }).catch(err => {
+      console.warn('[WELCOME] Failed to send welcome email (non-critical):', err.message);
+    });
+  } catch (e) {
+    // Never throw - this is purely engagement
+  }
+}
+
+/**
  * Fire-and-forget: log analysis to cv_analysis table for dashboard.
  * Never blocks the user flow. Errors are silently caught.
  */
@@ -521,6 +548,12 @@ export default function Home() {
       // Fire-and-forget: log to cv_analysis for dashboard
       logAnalysisToSupabase(analysisResult, analysisSource, cvText);
 
+      // Fire-and-forget: send welcome email
+      const welcomeEmail = sessionStorage.getItem('paymentEmail') || analysisEmail;
+      const cpWelcome = analysisSource?.candidate_profile || analysisSource?.analysis?.candidate_profile || {};
+      const welcomeName = cpWelcome.detected_name || '';
+      if (welcomeEmail) sendWelcomeEmail(welcomeEmail, welcomeName, 'pt');
+
       // Persist CV to Supabase Storage for future sessions
       persistCvToStorage(base64Content, file.name);
 
@@ -765,6 +798,11 @@ export default function Home() {
       }
 
       logAnalysisToSupabase(analysisResult, analysisSource, `LinkedIn: ${linkedInUrl}`);
+
+      // Fire-and-forget: send welcome email (LinkedIn flow)
+      const liEmail = sessionStorage.getItem('paymentEmail') || '';
+      if (liEmail) sendWelcomeEmail(liEmail, '', 'pt');
+
       setLocation('/results');
 
     } catch (err: any) {
