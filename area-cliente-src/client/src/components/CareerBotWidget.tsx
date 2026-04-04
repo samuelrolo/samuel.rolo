@@ -783,25 +783,18 @@ Generate ONLY the post.`;
             </div>
           </div>
 
-          {/* Tool Selector Tabs */}
-          <div className="border-b border-gray-100 shrink-0">
-            <div className="flex overflow-x-auto scrollbar-hide">
-              {tabs.map(tab => (
-                <button
-                  key={tab.key}
-                  onClick={() => setView(tab.key)}
-                  className={`flex-1 min-w-0 flex flex-col items-center gap-0.5 px-2 py-2 text-[10px] font-medium transition-all whitespace-nowrap border-b-2 ${
-                    view === tab.key
-                      ? 'border-[#BFA14A] text-[#BFA14A] bg-[#BFA14A]/5'
-                      : 'border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-                  }`}
-                >
-                  <span className="text-sm leading-none">{tab.icon}</span>
-                  <span className="truncate max-w-full">{tab.label}</span>
-                </button>
-              ))}
+          {/* Back to tools button — only visible when in a tool view */}
+          {view !== 'chat' && (
+            <div className="border-b border-gray-100 shrink-0 px-3 py-1.5">
+              <button
+                onClick={() => setView('chat')}
+                className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-[#BFA14A] transition-colors"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+                {lang === 'pt' ? 'Voltar às ferramentas' : 'Back to tools'}
+              </button>
             </div>
-          </div>
+          )}
 
           {/* ═══════════════════════════════════════════════════════════ */}
           {/* VIEW: Cover Letter Form */}
@@ -1395,32 +1388,51 @@ Generate ONLY the post.`;
               <div className={`flex-1 overflow-y-auto p-4 space-y-3 ${isFullscreen ? 'max-w-4xl mx-auto w-full' : ''}`}>
                 {messages.length === 0 && (
                   <div className="flex flex-col items-center justify-center h-full text-center px-4">
-                    <div className="w-14 h-14 rounded-full flex items-center justify-center mb-3" style={{ background: 'linear-gradient(135deg, #BFA14A20 0%, #8F7A3A20 100%)' }}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#BFA14A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center mb-2" style={{ background: 'linear-gradient(135deg, #BFA14A20 0%, #8F7A3A20 100%)' }}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#BFA14A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M12 2a7 7 0 0 1 7 7c0 3-2 5.5-4 7l-3 3.5L9 16c-2-1.5-4-4-4-7a7 7 0 0 1 7-7z" />
                         <circle cx="12" cy="9" r="1.5" />
                       </svg>
                     </div>
-                    <h4 className="font-semibold text-gray-800 text-sm mb-1">{t('bot.greeting')} {profile?.first_name || t('bot.greetingUser')}!</h4>
-                    <p className="text-xs text-gray-500 mb-4">
+                    <h4 className="font-semibold text-gray-800 text-sm mb-0.5">{t('bot.greeting')} {profile?.first_name || t('bot.greetingUser')}!</h4>
+                    <p className="text-[11px] text-gray-400 mb-4">
                       {t('bot.subtitle')}
                     </p>
-                    <div className="grid grid-cols-2 gap-2 w-full">
+
+                    {/* ── Quick chat prompts ── */}
+                    <div className="flex flex-wrap justify-center gap-1.5 mb-4 w-full">
                       {[
                         { icon: '🎯', label: t('bot.strategy'), msg: t('bot.strategyMsg') },
                         { icon: '💰', label: t('bot.salary'), msg: t('bot.salaryMsg') },
                       ].map((item) => (
                         <button
                           key={item.label}
-                          onClick={() => {
-                            sendMessage(item.msg);
-                          }}
-                          className="flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 hover:border-[#BFA14A]/30 hover:bg-[#BFA14A]/5 transition-all text-left"
+                          onClick={() => sendMessage(item.msg)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-100 hover:border-[#BFA14A]/30 hover:bg-[#BFA14A]/5 transition-all text-left text-[11px] text-gray-500"
                         >
-                          <span className="text-base">{item.icon}</span>
-                          <span className="text-xs text-gray-600">{item.label}</span>
+                          <span>{item.icon}</span>
+                          <span>{item.label}</span>
                         </button>
                       ))}
+                    </div>
+
+                    {/* ── Tool chips (centred) ── */}
+                    <div className="w-full">
+                      <p className="text-[10px] uppercase tracking-wider text-gray-300 font-medium mb-2">
+                        {lang === 'pt' ? 'Ferramentas' : 'Tools'}
+                      </p>
+                      <div className="flex flex-wrap justify-center gap-1.5">
+                        {tabs.filter(t => t.key !== 'chat').map(tab => (
+                          <button
+                            key={tab.key}
+                            onClick={() => setView(tab.key)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-100 hover:border-[#BFA14A]/40 hover:bg-[#BFA14A]/5 transition-all text-[11px] text-gray-500 hover:text-gray-700"
+                          >
+                            <span>{tab.icon}</span>
+                            <span>{tab.label}</span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
