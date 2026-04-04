@@ -460,11 +460,12 @@
         <div style="max-width:520px;margin:0 auto;">
             <h2 style="font-size:1.5rem;font-weight:300;color:#fff;margin-bottom:.5rem;">The Mindset <strong style="font-weight:600;color:#C9A961;">Maverick</strong></h2>
             <p style="font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:2rem;line-height:1.7;">Reflections on career, technology and professional strategy. Practical insights for those who want to grow.</p>
-            <div style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;">
-                <input type="text" placeholder="Name" style="padding:12px 16px;border:1px solid rgba(255,255,255,.12);border-radius:6px;font-size:.85rem;background:rgba(255,255,255,.06);color:#fff;outline:none;font-family:'Poppins',sans-serif;min-width:130px;">
-                <input type="email" placeholder="E-mail" style="padding:12px 16px;border:1px solid rgba(255,255,255,.12);border-radius:6px;font-size:.85rem;background:rgba(255,255,255,.06);color:#fff;outline:none;font-family:'Poppins',sans-serif;min-width:160px;">
-                <button style="padding:12px 24px;background:#C9A961;color:#1a1a2e;border:none;border-radius:6px;font-size:.75rem;font-weight:600;font-family:'Poppins',sans-serif;text-transform:uppercase;letter-spacing:1px;cursor:pointer;">Subscribe</button>
-            </div>
+            <form id="newsletterSubscriptionForm" class="newsletter-form" style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;">
+                <input type="text" id="subscriberName" placeholder="Name" style="padding:12px 16px;border:1px solid rgba(255,255,255,.12);border-radius:6px;font-size:.85rem;background:rgba(255,255,255,.06);color:#fff;outline:none;font-family:'Poppins',sans-serif;min-width:130px;" required>
+                <input type="email" id="subscriberEmail" placeholder="E-mail" style="padding:12px 16px;border:1px solid rgba(255,255,255,.12);border-radius:6px;font-size:.85rem;background:rgba(255,255,255,.06);color:#fff;outline:none;font-family:'Poppins',sans-serif;min-width:160px;" required>
+                <button type="submit" style="padding:12px 24px;background:#C9A961;color:#1a1a2e;border:none;border-radius:6px;font-size:.75rem;font-weight:600;font-family:'Poppins',sans-serif;text-transform:uppercase;letter-spacing:1px;cursor:pointer;">Subscribe</button>
+            </form>
+            <div id="subscriptionMessage" style="display:none;"></div>
             <p style="font-size:.65rem;color:rgba(255,255,255,.3);margin-top:1rem;">Your data is protected. You can unsubscribe at any time.</p>
         </div>
     </div>
@@ -525,5 +526,6 @@ document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 </script>
     <script src="/js/shared-auth.js"></script>
     <script src="/js/inline-auth.js"></script>
+<script defer src="/js/newsletter-supabase.js"></script>
 </body>
 </html>

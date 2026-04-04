@@ -1,335 +1,418 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
-
+<html lang="pt">
 <head>
-    <meta charset="utf-8" />
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Knowledge Hub | Recursos de Carreira | Share2Inspire</title>
-    <link rel="alternate" hreflang="pt-PT" href="https://www.share2inspire.pt/pages/conhecimento" />
-    <link rel="alternate" hreflang="en" href="https://www.share2inspire.pt/en/pages/knowledge" />
-    <link rel="alternate" hreflang="x-default" href="https://www.share2inspire.pt/pages/conhecimento" />
-    <meta name="description" content="Artigos, vídeos, podcast e ferramentas gratuitas para a tua carreira. Guias sobre CV, ATS, LinkedIn, entrevistas e desenvolvimento profissional por Samuel Rolo.">
-    <meta name="author" content="Samuel Rolo">
-    <meta name="robots" content="index, follow">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Hub | Recursos de Carreira & Consultoria | Share2Inspire</title>
+    
+    <!-- SEO & Meta Tags -->
+    <meta name="description" content="Explora o Knowledge Hub da Share2Inspire. Artigos, guias práticos, podcasts e e-books sobre carreira, liderança, estratégia e o mundo das Big4.">
+    <meta name="keywords" content="carreira, consultoria, big4, liderança, estratégia, desenvolvimento profissional, podcast, ebook">
     <link rel="canonical" href="https://www.share2inspire.pt/pages/conhecimento">
+    
     <!-- Open Graph -->
-    <meta property="og:type" content="website">
+    <meta property="og:title" content="Knowledge Hub | Recursos de Carreira & Consultoria">
+    <meta property="og:description" content="Guias práticos, estratégias e insights para a tua carreira. Tudo num só lugar.">
+    <meta property="og:image" content="https://www.share2inspire.pt/images/og-knowledge.webp">
     <meta property="og:url" content="https://www.share2inspire.pt/pages/conhecimento">
-    <meta property="og:title" content="Knowledge Hub | Recursos de Carreira">
-    <meta property="og:description" content="Artigos, vídeos, podcast e ferramentas gratuitas sobre CV, ATS, LinkedIn, entrevistas e desenvolvimento profissional.">
-    <meta property="og:image" content="https://www.share2inspire.pt/images/og-share2inspire.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:locale" content="pt_PT">
-    <meta property="og:site_name" content="Share2Inspire">
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Knowledge Hub | Recursos de Carreira">
-    <meta name="twitter:description" content="Artigos, vídeos, podcast e ferramentas gratuitas sobre carreira e desenvolvimento profissional.">
-    <meta name="twitter:image" content="https://www.share2inspire.pt/images/og-share2inspire.png">
+    <meta property="og:type" content="website">
+    
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
-    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/images/favicon-512x512.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../images/favicon.png">
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap & CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/consolidated-styles.css">
-    <link rel="stylesheet" href="../css/side-widgets.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="../css/side-widgets.css"></noscript>
-
+    
     <style>
-        /* ── Reset & Base ── */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: #fff; color: #1a1a2e; -webkit-font-smoothing: antialiased; }
-
-        /* ── Hide Vercel widget ── */
-        iframe[src*="vercel-insights"], iframe[src*="_vercel"],
-        div[id*="vercel-live-feedback-button"], .__vercel-live-feedback-button,
-        #vercel-live-feedback-button {
-            display: none !important; visibility: hidden !important;
-            opacity: 0 !important; pointer-events: none !important;
+        :root {
+            --gold: #C9A961;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --gray: #6c757d;
         }
 
-        /* ── Navigation ── */
-        .nav-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.04); }
-        .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 70px; }
-        .nav-logo img { height: 36px; }
-        .nav-links { display: flex; gap: 2rem; align-items: center; }
-        .nav-links a { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #1a1a2e; text-decoration: none; transition: color 0.3s; }
-        .nav-links a:hover, .nav-links a.active { color: #C9A961; }
-        .lang-switch { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #1a1a2e; text-decoration: none; cursor: pointer; position: relative; }
-        .lang-switch:hover { color: #C9A961; }
-        .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
-        .nav-toggle span { display: block; width: 22px; height: 2px; background: #1a1a2e; margin: 5px 0; transition: 0.3s; }
-        @media (max-width: 768px) {
-            .nav-toggle { display: block; }
-            .nav-links { display: none; position: absolute; top: 70px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.06); }
-            .nav-links.open { display: flex; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--white);
+            color: var(--dark);
+            overflow-x: hidden;
         }
-        .nav-item { position: relative; }
-        .mega-dropdown .mega-menu { display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid #f0f0f0; box-shadow: 0 12px 40px rgba(0,0,0,0.08); padding: 16px 20px; min-width: 360px; z-index: 1050; }
-        .nav-item.mega-dropdown:hover .mega-menu, .nav-item.mega-dropdown .mega-menu:hover { display: block; }
-        .mega-menu .mega-link { display: block; padding: 3px 0; font-size: 0.8rem; font-weight: 400; color: #555; text-decoration: none; transition: color 0.2s; }
-        .mega-menu .mega-link:hover { color: #C9A961; }
-        @media(max-width:991px) { .mega-menu { position: static; transform: none; box-shadow: none; border: none; min-width: auto; padding: 8px 12px; background: #fafafa; } }
 
-        /* ── Sections ── */
-        .section { padding: 80px 2rem; max-width: 1100px; margin: 0 auto; }
-        .section-dark { background: #1a1a2e; padding: 80px 2rem; }
-        .section-dark .section-inner { max-width: 1100px; margin: 0 auto; }
-        .section-light { background: #fafaf8; padding: 80px 2rem; }
-        .section-light .section-inner { max-width: 1100px; margin: 0 auto; }
-        .section-label { display: block; font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; color: #C9A961; margin-bottom: 0.5rem; }
-        .section-title { font-size: 1.8rem; font-weight: 300; color: #1a1a2e; margin-bottom: 0.5rem; }
-        .section-title strong { font-weight: 600; }
-        .section-desc { font-size: 0.9rem; color: #666; line-height: 1.7; max-width: 600px; margin-bottom: 2rem; }
-        .divider { width: 40px; height: 2px; background: #C9A961; margin: 1rem 0 2rem; }
+        /* ── Navbar ── */
+        .navbar {
+            padding: 20px 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .navbar-brand img { height: 40px; }
+        .nav-link {
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--dark) !important;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+        .nav-link:hover, .nav-link.active { color: var(--gold) !important; }
+        .btn-client {
+            background: var(--gold);
+            color: var(--dark) !important;
+            font-weight: 600;
+            padding: 10px 25px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-left: 20px;
+        }
 
         /* ── Hero ── */
-        .hero { padding: 160px 2rem 80px; text-align: center; background: #fafaf8; }
-        .hero h1 { font-size: 2.2rem; font-weight: 300; color: #1a1a2e; margin-bottom: 1rem; }
-        .hero h1 strong { font-weight: 600; }
-        .hero p { font-size: 0.95rem; color: #666; max-width: 560px; margin: 0 auto 2rem; line-height: 1.8; }
-        .hero-nav { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-        .hero-nav a { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #1a1a2e; text-decoration: none; padding: 0.6rem 1.2rem; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; transition: all 0.3s; }
-        .hero-nav a:hover { border-color: #C9A961; color: #C9A961; }
-
-        /* ── Articles Grid ── */
-        .articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
-        .article-card { background: #fff; border: 1px solid rgba(0,0,0,0.06); padding: 1.8rem; transition: all 0.4s ease; border-radius: 6px; display: flex; flex-direction: column; }
-        .article-card:hover { border-color: #C9A961; box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
-        .article-card .tag { display: inline-block; font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; margin-bottom: 0.6rem; }
-        .article-card h3 { font-size: 1rem; font-weight: 500; color: #1a1a2e; line-height: 1.4; margin-bottom: 0.6rem; }
-        .article-card p { color: #666; font-size: 0.82rem; font-weight: 300; line-height: 1.6; margin-bottom: 1rem; flex: 1; }
-        .article-card .meta { color: #999; font-size: 0.68rem; font-weight: 300; letter-spacing: 0.5px; margin-bottom: 0.8rem; }
-        .article-card .read-link { display: inline-block; font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; text-decoration: none; transition: color 0.3s; }
-        .article-card .read-link:hover { color: #1a1a2e; }
-        @media (max-width: 520px) { .articles-grid { grid-template-columns: 1fr; } }
-
-        /* ── Study Card ── */
-        .study-highlight { background: #1a1a2e; border-radius: 8px; padding: 2.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; margin-top: 2rem; }
-        .study-highlight .study-left { color: #fff; }
-        .study-highlight .study-tag { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: #C9A961; margin-bottom: 0.8rem; }
-        .study-highlight h3 { font-size: 1.3rem; font-weight: 300; color: #fff; margin-bottom: 0.5rem; }
-        .study-highlight h3 strong { font-weight: 600; color: #C9A961; }
-        .study-highlight .study-desc { font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.7; margin-bottom: 1.5rem; }
-        .study-highlight .study-link { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; text-decoration: none; transition: color 0.3s; }
-        .study-highlight .study-link:hover { color: #fff; }
-        .study-kpis { display: flex; gap: 1.5rem; }
-        .study-kpi-card { text-align: center; flex: 1; }
-        .study-kpi-card .kpi-val { font-size: 1.6rem; font-weight: 600; color: #C9A961; line-height: 1; margin-bottom: 0.3rem; }
-        .study-kpi-card .kpi-label { font-size: 0.65rem; color: rgba(255,255,255,0.4); line-height: 1.4; }
-        @media (max-width: 768px) {
-            .study-highlight { grid-template-columns: 1fr; text-align: center; }
-            .study-kpis { justify-content: center; }
+        .hero-section {
+            padding: 160px 0 100px;
+            text-align: center;
+            background: linear-gradient(to bottom, #fcfcfc, #ffffff);
+        }
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .hero-section p {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto 40px;
         }
 
-        /* ── Featured Video ── */
-        .featured-video-section { background: #fafaf8; border-radius: 8px; padding: 2rem; border: 1px solid rgba(0,0,0,0.04); margin-top: 2rem; }
-        .fv-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: #C9A961; font-weight: 600; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
-        .fv-label i { font-size: 0.7rem; }
-        .fv-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: center; }
-        .video-embed-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 6px; background: #000; }
-        .video-embed-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        .fv-info h3 { font-size: 1.1rem; font-weight: 500; color: #1a1a2e; margin-bottom: 0.5rem; }
-        .fv-info p { font-size: 0.82rem; color: #666; line-height: 1.7; margin-bottom: 1rem; }
-        .fv-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-        .fv-links a { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; color: #C9A961; text-decoration: none; }
-        .fv-links a:hover { color: #1a1a2e; }
-        @media (max-width: 768px) { .fv-grid { grid-template-columns: 1fr; } }
+        /* ── Search Bar ── */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 60px;
+            position: relative;
+        }
+        .search-bar {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 18px 25px 18px 2.5rem;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            font-size: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            transition: all 0.3s;
+        }
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 10px 30px rgba(201,169,97,0.1);
+        }
 
-        /* ── Netflix Video Grid ── */
-        .video-grid-netflix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-top: 2rem; }
-        .video-card-netflix { position: relative; border-radius: 8px; overflow: hidden; background: #000; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; text-decoration: none; display: block; }
-        .video-card-netflix:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 32px rgba(0,0,0,0.15); }
-        .video-card-netflix .thumb-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; overflow: hidden; }
-        .video-card-netflix .thumb-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s; }
-        .video-card-netflix .play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 48px; height: 48px; background: rgba(201,169,97,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
-        .video-card-netflix:hover .play-icon { opacity: 1; }
-        .video-card-netflix .play-icon::after { content: ''; display: block; width: 0; height: 0; border-style: solid; border-width: 8px 0 8px 14px; border-color: transparent transparent transparent #fff; margin-left: 3px; }
-        .video-card-netflix .card-body { padding: 0.8rem 1rem; background: #1a1a2e; }
-        .video-card-netflix .card-body h4 { font-size: 0.78rem; font-weight: 500; color: #fff; line-height: 1.4; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .video-card-netflix .card-body .card-links { display: flex; gap: 1rem; margin-top: 0.5rem; }
-        .video-card-netflix .card-body .card-links a { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; color: #C9A961; text-decoration: none; transition: color 0.2s; }
-        .video-card-netflix .card-body .card-links a:hover { color: #fff; }
-        @media (max-width: 768px) { .video-grid-netflix { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; } .video-card-netflix .card-body h4 { font-size: 0.72rem; } }
-        @media (max-width: 480px) { .video-grid-netflix { grid-template-columns: 1fr; } }
+        /* ── Filter Tabs ── */
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 80px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 10px 25px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            background: white;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: white;
+        }
+
+        /* ── Sections ── */
+        .section-label {
+            display: block;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+        .section-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .section-dark {
+            background: #0f0f1a;
+            color: white;
+            padding: 100px 0;
+        }
+        .section-light {
+            background: #ffffff;
+            padding: 100px 0;
+        }
+
+        /* ── Article Cards ── */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        .article-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            text-decoration: none;
+            color: inherit;
+        }
+        .article-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .article-card.featured {
+            grid-column: span 2;
+            flex-direction: row;
+        }
+        .card-img {
+            height: 240px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .featured .card-img {
+            width: 50%;
+            height: auto;
+        }
+        .card-content {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .featured .card-content { width: 50%; }
+        .card-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        .featured .card-title { font-size: 1.8rem; }
+        .card-excerpt {
+            font-size: 0.9rem;
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .card-meta {
+            margin-top: auto;
+            font-size: 0.8rem;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* ── Video Cards ── */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .video-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.3s;
+        }
+        .video-card:hover { border-color: var(--gold); }
+        .thumb-wrapper {
+            position: relative;
+            aspect-ratio: 16/9;
+        }
+        .thumb-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        .play-icon::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid var(--dark);
+            margin-left: 4px;
+        }
+        .video-card:hover .play-icon { transform: translate(-50%, -50%) scale(1.1); }
+        .video-card .card-body { padding: 20px; }
+        .video-card h4 { font-size: 1rem; font-weight: 600; margin-bottom: 10px; color: white; }
+        .video-card .card-links { display: flex; gap: 15px; }
+        .video-card .card-links a { font-size: 0.8rem; color: var(--gold); text-decoration: none; font-weight: 500; }
 
         /* ── Podcast ── */
-        .podcast-embed { margin-top: 1.5rem; border-radius: 12px; overflow: hidden; }
+        .podcast-embed {
+            margin-top: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
 
         /* ── E-book ── */
-        .ebook-section { display: grid; grid-template-columns: auto 1fr; gap: 3rem; align-items: center; }
-        .ebook-cover { text-align: center; }
-        .ebook-cover img { max-height: 320px; border-radius: 8px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
-        .ebook-info { color: #fff; }
-        .ebook-info .badge-free { display: inline-block; font-size: 0.55rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: #C9A961; border: 1px solid rgba(201,169,97,0.3); padding: 4px 12px; border-radius: 20px; margin-bottom: 1rem; }
-        .ebook-info h2 { font-size: 1.5rem; font-weight: 300; color: #fff; margin-bottom: 0.3rem; }
-        .ebook-info h2 strong { font-weight: 600; color: #C9A961; }
-        .ebook-info .subtitle { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-bottom: 1rem; }
-        .ebook-info .desc { font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.7; margin-bottom: 1rem; }
-        .ebook-info .authors { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-bottom: 1.5rem; }
-        .ebook-info .authors strong { color: #fff; }
-        .ebook-actions { display: flex; flex-direction: column; gap: 1rem; max-width: 400px; margin-top: 0.5rem; }
-        .ebook-actions .btn-preview { display: inline-flex; align-items: center; gap: 0.5rem; padding: 10px 20px; border: 1px solid rgba(201,169,97,0.3); border-radius: 6px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #C9A961; text-decoration: none; transition: all 0.3s; background: transparent; }
-        .ebook-actions .btn-preview:hover { background: rgba(201,169,97,0.1); transform: translateY(-1px); }
-        .ebook-actions .btn-buy { display: inline-flex; align-items: center; gap: 0.5rem; padding: 10px 20px; border: none; border-radius: 6px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; background: #C9A961; color: #1a1a2e; text-decoration: none; transition: all 0.3s; }
-        .ebook-actions .btn-buy:hover { background: #d4af37; transform: translateY(-1px); }
-        .ebook-actions .buy-note { font-size: 0.65rem; color: rgba(255,255,255,0.3); }
-        @media (max-width: 768px) {
-            .ebook-section { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
-            .ebook-actions { margin: 0 auto; align-items: center; }
+        .ebook-section {
+            display: flex;
+            align-items: center;
+            gap: 60px;
         }
+        .ebook-cover { width: 350px; flex-shrink: 0; }
+        .ebook-cover img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 20px 20px 60px rgba(0,0,0,0.5);
+        }
+        .ebook-info h2 { font-size: 2.8rem; margin-bottom: 10px; }
+        .ebook-info .subtitle { font-size: 1.2rem; color: var(--gold); margin-bottom: 25px; }
+        .ebook-info .desc { font-size: 1rem; line-height: 1.8; color: rgba(255,255,255,0.7); margin-bottom: 30px; }
+        .ebook-actions { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        .btn-preview, .btn-buy {
+            padding: 15px 30px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-preview { border: 1px solid rgba(255,255,255,0.2); color: white; }
+        .btn-preview:hover { background: rgba(255,255,255,0.05); }
+        .btn-buy { background: var(--gold); color: var(--dark); }
+        .btn-buy:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(201,169,97,0.3); }
 
         /* ── Newsletter ── */
-        .newsletter-box { text-align: center; max-width: 550px; margin: 0 auto; }
-        .newsletter-box h2 { font-size: 1.5rem; font-weight: 300; color: #fff; margin-bottom: 0.5rem; }
-        .newsletter-box h2 strong { font-weight: 600; color: #C9A961; }
-        .newsletter-box .sub-desc { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-bottom: 2rem; line-height: 1.7; }
-        .newsletter-form { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
-        .newsletter-form input { padding: 12px 16px; border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; font-size: 0.85rem; background: rgba(255,255,255,0.06); color: #fff; outline: none; font-family: 'Poppins', sans-serif; min-width: 160px; transition: border-color 0.3s; }
-        .newsletter-form input:focus { border-color: #C9A961; }
-        .newsletter-form input::placeholder { color: rgba(255,255,255,0.3); }
-        .newsletter-form button { padding: 12px 24px; background: #C9A961; color: #1a1a2e; border: none; border-radius: 6px; font-size: 0.75rem; font-weight: 600; font-family: 'Poppins', sans-serif; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s; }
-        .newsletter-form button:hover { background: #d4af37; }
-        .newsletter-note { font-size: 0.65rem; color: rgba(255,255,255,0.3); margin-top: 1rem; }
-        .newsletter-msg { display: none; margin-top: 1rem; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; }
-        .linkedin-cta { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1.5rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.3s; }
-        .linkedin-cta:hover { color: #C9A961; }
+        .newsletter-box {
+            background: rgba(255,255,255,0.03);
+            padding: 60px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .newsletter-box h2 { font-size: 2.5rem; margin-bottom: 15px; }
+        .newsletter-form {
+            display: flex;
+            gap: 15px;
+            max-width: 600px;
+            margin: 40px auto 20px;
+        }
+        .newsletter-form input {
+            flex-grow: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+        }
+        .newsletter-form button {
+            background: var(--gold);
+            color: var(--dark);
+            border: none;
+            padding: 0 40px;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        .newsletter-form button:hover { transform: scale(1.05); }
+        .linkedin-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+        .linkedin-cta:hover { color: #0077b5; }
 
-        /* ── Other Publications ── */
-        .other-pubs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
-        .pub-card { border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; padding: 1.5rem; transition: box-shadow 0.3s; }
-        .pub-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        .pub-card .pub-source { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #999; margin-bottom: 0.5rem; }
-        .pub-card h4 { font-size: 0.95rem; font-weight: 500; color: #1a1a2e; margin-bottom: 0.5rem; line-height: 1.4; }
-        .pub-card p { font-size: 0.8rem; color: #666; line-height: 1.6; margin-bottom: 0.8rem; }
-        .pub-card a { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; color: #C9A961; text-decoration: none; }
-        .pub-card a:hover { color: #1a1a2e; }
-        @media (max-width: 520px) { .other-pubs { grid-template-columns: 1fr; } }
-
-        /* ── Footer ── */
-        .footer { background: #1a1a2e; padding: 60px 2rem 30px; }
-        .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
-        .footer-col h4 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; color: #C9A961; font-weight: 600; margin-bottom: 1rem; }
-        .footer-col a { display: block; font-size: 0.8rem; color: rgba(255,255,255,0.5); text-decoration: none; margin-bottom: 0.5rem; transition: color 0.3s; }
-        .footer-col a:hover { color: #C9A961; }
-        .footer-col p { font-size: 0.8rem; color: rgba(255,255,255,0.5); line-height: 1.7; }
-        .footer-bottom { max-width: 1100px; margin: 3rem auto 0; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); text-align: center; }
-        .footer-bottom p { font-size: 0.65rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1.5px; }
-
-        /* ── Fade-in ── */
-        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
-        .fade-in.visible { opacity: 1; transform: translateY(0); }
-    
-        /* ── Search Bar ── */
-        .search-bar { position: relative; max-width: 420px; margin: 0 auto 2rem; }
-        .search-bar input { width: 100%; padding: 0.75rem 1.2rem; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 0.82rem; color: #1a1a2e; background: #fff; transition: border-color 0.3s; outline: none; }
-        .search-bar input:focus { border-color: #C9A961; }
-        .search-bar input::placeholder { color: #aaa; }
-
-        /* ── Filter Pills ── */
-        .filter-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
-        .filter-pill { padding: 0.45rem 1rem; border: 1px solid rgba(0,0,0,0.1); border-radius: 20px; background: #fff; font-family: 'Poppins', sans-serif; font-size: 0.68rem; font-weight: 500; color: #555; cursor: pointer; transition: all 0.3s; letter-spacing: 0.3px; }
-        .filter-pill:hover { border-color: #C9A961; color: #C9A961; }
-        .filter-pill.active { background: #C9A961; color: #fff; border-color: #C9A961; }
-
-        /* ── Category Sections ── */
-        .category-section { margin-bottom: 3rem; }
-        .cat-title { font-size: 1rem; font-weight: 500; color: #1a1a2e; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
-        .cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .cat-dot.big4 { background: #7C3AED; }
-        .cat-dot.cv { background: #2563EB; }
-        .cat-dot.salario { background: #059669; }
-        .cat-dot.carreira { background: #C9A961; }
-
-        /* ── Featured Card ── */
-        .featured-card { display: block; text-decoration: none; margin-bottom: 1.5rem; border-radius: 10px; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; }
-        .featured-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
-        .featured-inner { padding: 2.5rem 2rem; min-height: 180px; display: flex; flex-direction: column; justify-content: flex-end; }
-        .featured-inner.big4-bg { background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 100%); }
-        .featured-inner.cv-bg { background: linear-gradient(135deg, #1a1a2e 0%, #1e3a5f 100%); }
-        .featured-inner.salario-bg { background: linear-gradient(135deg, #1a1a2e 0%, #064e3b 100%); }
-        .featured-inner.carreira-bg { background: linear-gradient(135deg, #1a1a2e 0%, #3d2e14 100%); }
-        .featured-inner .card-tag { color: #C9A961; font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.5rem; }
-        .featured-inner h3 { color: #fff; font-size: 1.2rem; font-weight: 500; line-height: 1.4; margin-bottom: 0.5rem; }
-        .featured-inner p { color: rgba(255,255,255,0.7); font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.5rem; max-width: 600px; }
-        .featured-inner .card-meta { color: rgba(255,255,255,0.45); font-size: 0.65rem; letter-spacing: 0.5px; }
-
-        /* ── Article Cards (uniform) ── */
-        .article-card { display: flex; flex-direction: column; background: #fff; border: 1px solid rgba(0,0,0,0.06); padding: 1.6rem; border-radius: 6px; text-decoration: none; transition: all 0.3s ease; }
-        .article-card:hover { border-color: #C9A961; box-shadow: 0 6px 24px rgba(0,0,0,0.05); transform: translateY(-2px); }
-        .article-card .card-tag { display: inline-block; font-size: 0.58rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; margin-bottom: 0.5rem; }
-        .article-card h3 { font-size: 0.92rem; font-weight: 500; color: #1a1a2e; line-height: 1.4; margin-bottom: 0.5rem; }
-        .article-card p { color: #666; font-size: 0.78rem; font-weight: 300; line-height: 1.6; margin-bottom: 0.8rem; flex: 1; }
-        .article-card .card-meta { color: #999; font-size: 0.65rem; font-weight: 300; letter-spacing: 0.5px; margin-bottom: 0.6rem; }
-        .article-card .read-link { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #C9A961; }
-
-        /* ── No Results ── */
-        .no-results { text-align: center; color: #999; font-size: 0.85rem; padding: 2rem 0; }
+        /* ── Other Pubs ── */
+        .other-pubs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .pub-card {
+            padding: 40px;
+            background: #fcfcfc;
+            border-radius: 15px;
+            border: 1px solid #eee;
+        }
+        .pub-source { font-size: 0.7rem; text-transform: uppercase; color: var(--gray); letter-spacing: 1px; margin-bottom: 10px; }
+        .pub-card h4 { font-size: 1.3rem; margin-bottom: 15px; }
+        .pub-card a { color: var(--gold); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
 
         /* ── Responsive ── */
-        @media (max-width: 768px) {
-            .featured-inner { padding: 1.5rem; min-height: 140px; }
-            .featured-inner h3 { font-size: 1rem; }
-            .articles-grid { grid-template-columns: 1fr !important; }
+        @media (max-width: 991px) {
+            .hero-section h1 { font-size: 2.5rem; }
+            .article-card.featured { grid-column: span 1; flex-direction: column; }
+            .featured .card-img, .featured .card-content { width: 100%; }
+            .ebook-section { flex-direction: column; text-align: center; }
+            .ebook-cover { width: 250px; }
+            .other-pubs { grid-template-columns: 1fr; }
         }
-
+        @media (max-width: 767px) {
+            .newsletter-form { flex-direction: column; }
+            .filter-tabs { gap: 10px; }
+            .filter-btn { padding: 8px 15px; font-size: 0.75rem; }
+        }
     </style>
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17015553005"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'AW-17015553005');
-    </script>
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7512698649300035" crossorigin="anonymous"></script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      "name": "Knowledge Hub - Share2Inspire",
-      "description": "Artigos, vídeos, podcast e ferramentas gratuitas sobre CV, ATS, LinkedIn, entrevistas e desenvolvimento profissional.",
-      "url": "https://www.share2inspire.pt/pages/conhecimento",
-      "publisher": {
-        "@type": "Organization",
-        "name": "Share2Inspire"
-      }
-    }
-    </script>
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '3865352233767400');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
 </head>
-
 <body>
 
     <!-- ── Navigation ── -->
@@ -365,454 +448,202 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
                     </ul>
                 </div>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
-    <!-- ══════════════════════════════════════════════ -->
-        <!-- ══════════════════════════════════════════════ -->
-    <!-- 1. HERO + SEARCH                              -->
-    <!-- ══════════════════════════════════════════════ -->
-    <section class="hero">
-        <div>
+    <!-- ── Hero ── -->
+    <section class="hero-section">
+        <div class="container">
+            <span class="section-label">Knowledge Hub</span>
             <h1>Knowledge <strong>Hub</strong></h1>
             <p>Guias práticos, estratégias e insights para a tua carreira. Tudo num só lugar.</p>
-            <div class="search-bar">
-                <input type="text" id="articleSearch" placeholder="Procurar artigos, guias e vídeos..." autocomplete="off">
+            
+            <div class="search-container">
+                <div class="search-bar">
+                    <input type="text" id="articleSearch" placeholder="Procurar artigos, guias e vídeos...">
+                </div>
             </div>
-            <div class="hero-nav">
-                <a href="#artigos">Artigos</a>
-                <a href="#video">Vídeo</a>
-                <a href="#podcast">Podcast</a>
-                <a href="#ebook">E-book</a>
-                <a href="#newsletter">Newsletter</a>
+
+            <div class="filter-tabs">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="big4">Big4 & Consultoria</button>
+                <button class="filter-btn" data-filter="cv">CV & Candidaturas</button>
+                <button class="filter-btn" data-filter="salary">Salário & Negociação</button>
+                <button class="filter-btn" data-filter="career">Desenvolvimento de Carreira</button>
             </div>
         </div>
     </section>
 
     <!-- ══════════════════════════════════════════════ -->
-    <!-- 2. ARTIGOS — Catálogo Inteligente              -->
-    <!-- ══════════════════════════════════════════════ -->
-    <div class="section fade-in" id="artigos">
-        <span class="section-label">Blog</span>
-        <h2 class="section-title">Artigos &amp; <strong>Guias</strong></h2>
-        <div class="divider"></div>
-
-        <!-- Category Filter Pills -->
-        <div class="filter-pills">
-            <button class="filter-pill active" data-filter="all">Todos</button>
-            <button class="filter-pill" data-filter="big4">Big4 &amp; Consultoria</button>
-            <button class="filter-pill" data-filter="cv">CV &amp; Candidaturas</button>
-            <button class="filter-pill" data-filter="salario">Salário &amp; Negociação</button>
-            <button class="filter-pill" data-filter="carreira">Desenvolvimento de Carreira</button>
-        </div>
-
-        <!-- No results message -->
-        <p class="no-results" id="noResults" style="display:none;">Nenhum artigo encontrado. Tenta outra pesquisa.</p>
-
-        <!-- ── Big4 & Consultoria ── -->
-        <div class="category-section" data-category="big4">
-            <h3 class="cat-title"><span class="cat-dot big4"></span>Big4 &amp; Consultoria</h3>
-
-            <!-- Featured article -->
-            <a href="../blog/artigos/big4-senior-ficar-ou-sair.html" class="featured-card article-item" data-category="big4" data-title="Senior nas Big4: Ficar ou Sair? A Decisão que Define a Próxima Década">
-                <div class="featured-inner big4-bg">
-                    <span class="card-tag">Big4 &middot; Decisão de Carreira</span>
-                    <h3>Senior nas Big4: Ficar ou Sair? A Decisão que Define a Próxima Década</h3>
-                    <p>O que muda quando chegas a Senior, o que ganhas se progredires a Manager e o que perdes se ficares demasiado tempo parado.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 25 Mar 2026 &middot; 12 min</div>
-                </div>
-            </a>
-
-            <!-- Grid -->
-            <div class="articles-grid">
-                <a href="../blog/artigos/big4-insider-10-anos.html" class="article-card article-item" data-category="big4" data-title="Big4 por Dentro: O que Ninguém te Conta Antes de Entrares">
-                    <span class="card-tag">Big4 &middot; Insider</span>
-                    <h3>Big4 por Dentro: O que Ninguém te Conta Antes de Entrares</h3>
-                    <p>10 anos de experiência nas Big4 condensados num artigo. O que realmente acontece dentro das firmas.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 24 Mar 2026 &middot; 14 min</div>
-                    <span class="read-link">Ler artigo &rarr;</span>
-                </a>
-                <a href="../blog/artigos/big4-manager-senior-manager-transicao.html" class="article-card article-item" data-category="big4" data-title="De Manager a Sénior Manager nas Big4: O Que Ninguém te Conta">
-                    <span class="card-tag">Big4 &middot; Carreira</span>
-                    <h3>De Manager a Sénior Manager nas Big4: O Que Ninguém te Conta</h3>
-                    <p>O que muda realmente quando passas de Manager para Sénior Manager. Responsabilidade, política interna e o peso invisível de liderar sem rede.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 28 Mar 2026 &middot; 12 min</div>
-                    <span class="read-link">Ler artigo &rarr;</span>
-                </a>
-                <a href="../blog/artigos/recrutamento-big4-guia-candidatos.html" class="article-card article-item" data-category="big4" data-title="Recrutamento nas Big4: Guia Completo para Candidatos 2026">
-                    <span class="card-tag">Consultoria &amp; Big4</span>
-                    <h3>Recrutamento nas Big4: Guia Completo para Candidatos 2026</h3>
-                    <p>Como entrar na Deloitte, PwC, EY ou KPMG. As 5 fases do processo, o que avaliam e erros a evitar.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 19 Mar 2026 &middot; 12 min</div>
-                    <span class="read-link">Ler artigo &rarr;</span>
-                </a>
-                <a href="../blog/artigos/big4-escola-aprendizagem-carreira.html" class="article-card article-item" data-category="big4" data-title="Por Que as Big4 São a Melhor Escola de Carreira do Mundo">
-                    <span class="card-tag">Desenvolvimento de Carreira</span>
-                    <h3>As Big4 como Escola de Aprendizagem</h3>
-                    <p>Os 6 activos que formas nas Big4 e que nenhuma universidade te dá. O que realmente se aprende na Deloitte, PwC, EY e KPMG.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 20 Mar 2026 &middot; 12 min</div>
-                    <span class="read-link">Ler artigo &rarr;</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- ── CV & Candidaturas ── -->
-        <div class="category-section" data-category="cv">
-            <h3 class="cat-title"><span class="cat-dot cv"></span>CV &amp; Candidaturas</h3>
-
-            <!-- Featured article -->
-            <a href="../blog/artigos/guia-superar-ats-curriculo.html" class="featured-card article-item" data-category="cv" data-title="O Currículo Não é o Que Parece: 5 Lições sobre Empregabilidade Algorítmica">
-                <div class="featured-inner cv-bg">
-                    <span class="card-tag">Empregabilidade 2026</span>
-                    <h3>O Currículo Não é o Que Parece: 5 Lições sobre Empregabilidade Algorítmica</h3>
-                    <p>A empregabilidade moderna exige a passagem da perceção para os dados acionáveis.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 10 min</div>
-                </div>
-            </a>
-
-            <!-- Grid -->
-            <div class="articles-grid">
-                <a href="../blog/artigos/analise-cv-ia-procura-emprego.html" class="article-card article-item" data-category="cv" data-title="Análise de CV com IA: Como Melhorar o Teu Currículo e Encontrar Emprego em 2026">
-                    <span class="card-tag">IA &amp; CV</span>
-                    <h3>Análise de CV com IA: Como Melhorar o Teu Currículo e Encontrar Emprego em 2026</h3>
-                    <p>Guia completo sobre análise de CV com IA, 5 dicas de procura de emprego e os 7 erros que travam as tuas candidaturas.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 7 min</div>
-                    <span class="read-link">Ler artigo &rarr;</span>
-                </a>
-                <a href="../blog/artigos/guia-superar-ats-curriculo.html" class="article-card article-item" data-category="cv" data-title="Guia Definitivo: Como Superar o ATS e Fazer o Teu Currículo Chegar ao Recrutador">
-                    <span class="card-tag">Literacia Algorítmica</span>
-                    <h3>Guia Definitivo: Como Superar o ATS e Fazer o Teu Currículo Chegar ao Recrutador</h3>
-                    <p>Estratégias práticas para ultrapassar os filtros automáticos que eliminam 75% dos CVs.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 12 min</div>
-                    <span class="read-link">Ler artigo &rarr;</span>
-                </a>
-                <a href="../blog/artigos/transformar-cv-ignorado-gerar-entrevistas.html" class="article-card article-item" data-category="cv" data-title="Como Transformar um CV Ignorado num CV que Gera Entrevistas">
-                    <span class="card-tag">CV &amp; Candidaturas</span>
-                    <h3>Como Transformar um CV Ignorado num CV que Gera Entrevistas</h3>
-                    <p>Técnicas comprovadas para tornar o teu currículo num íman de entrevistas.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 10 min</div>
-                    <span class="read-link">Ler artigo &rarr;</span>
-                </a>
-                <a href="../blog/artigos/7-erros-cv-candidatos-rejeitados.html" class="article-card article-item" data-category="cv" data-title="7 Erros no CV que Fazem Muitos Candidatos Serem Rejeitados">
-                    <span class="card-tag">CV &amp; Candidaturas</span>
-                    <h3>7 Erros no CV que Fazem Muitos Candidatos Serem Rejeitados</h3>
-                    <p>Os erros mais comuns que sabotam candidaturas — e como corrigi-los rapidamente.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 8 min</div>
-                    <span class="read-link">Ler artigo &rarr;</span>
-                </a>
-                <a href="../blog/artigos/entrevista-presencial-vs-remota.html" class="article-card article-item" data-category="cv" data-title="Entrevista Presencial vs. Remota: Guia Completo de Preparação">
-                    <span class="card-tag">Entrevistas</span>
-                    <h3>Entrevista Presencial vs. Remota: Guia Completo de Preparação</h3>
-                    <p>Como te preparares para ambos os formatos e maximizar as tuas hipóteses de sucesso.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 10 min</div>
-                    <span class="read-link">Ler artigo &rarr;</span>
-                </a>
-                <a href="../blog/artigos/ai-career-path-vs-traditional-coaching.html" class="article-card article-item" data-category="cv" data-title="AI Career Path vs Traditional Coaching: Why You're Overpaying">
-                    <span class="card-tag">IA &amp; Carreira</span>
-                    <h3>AI Career Path vs Traditional Coaching: Why You're Overpaying</h3>
-                    <p>Comparação detalhada entre ferramentas de IA e coaching tradicional para decisões de carreira.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 8 min</div>
-                    <span class="read-link">Ler artigo &rarr;</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- ── Salário & Negociação ── -->
-        <div class="category-section" data-category="salario">
-            <h3 class="cat-title"><span class="cat-dot salario"></span>Salário &amp; Negociação</h3>
-
-            <!-- Featured article -->
-            <a href="../blog/artigos/como-negociar-salario-portugal.html" class="featured-card article-item" data-category="salario" data-title="Como Negociar Salário em Portugal: Guia Completo 2026">
-                <div class="featured-inner salario-bg">
-                    <span class="card-tag">Negociação Salarial</span>
-                    <h3>Como Negociar Salário em Portugal: Guia Completo 2026</h3>
-                    <p>Quando pedir, o que dizer, como usar dados de mercado e os erros que custam dinheiro. Guia prático com scripts reais.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 9 min</div>
-                </div>
-            </a>
-        </div>
-
-        <!-- ── Desenvolvimento de Carreira ── -->
-        <div class="category-section" data-category="carreira">
-            <h3 class="cat-title"><span class="cat-dot carreira"></span>Desenvolvimento de Carreira</h3>
-
-            <!-- Featured article -->
-            <a href="../blog/artigos/posicionamento-mercado.html" class="featured-card article-item" data-category="carreira" data-title="Como Saber se Estás Bem Posicionado no Mercado de Trabalho">
-                <div class="featured-inner carreira-bg">
-                    <span class="card-tag">Avaliação de Carreira</span>
-                    <h3>Como Saber se Estás Bem Posicionado no Mercado de Trabalho</h3>
-                    <p>Indicadores, benchmarks e clareza sobre os próximos passos da tua carreira.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 8 min</div>
-                </div>
-            </a>
-
-            <!-- Grid -->
-            <div class="articles-grid">
-                <a href="../blog/artigos/cv-linkedin-importancia.html" class="article-card article-item" data-category="carreira" data-title="CV ou LinkedIn: Qual é Mais Importante para a Tua Carreira?">
-                    <span class="card-tag">Visibilidade Online</span>
-                    <h3>CV ou LinkedIn: Qual é Mais Importante para a Tua Carreira?</h3>
-                    <p>Análise comparativa dos dois pilares da tua presença profissional.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 8 min</div>
-                    <span class="read-link">Ler artigo &rarr;</span>
-                </a>
-                <a href="../blog/artigos/melhorar-linkedin-pesquisas.html" class="article-card article-item" data-category="carreira" data-title="Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores">
-                    <span class="card-tag">Visibilidade Online</span>
-                    <h3>Como Melhorar o Teu LinkedIn para Aparecer nas Pesquisas de Recrutadores</h3>
-                    <p>Pequenos ajustes no perfil que podem aumentar significativamente a tua visibilidade.</p>
-                    <div class="card-meta">Samuel Rolo &middot; 9 min</div>
-                    <span class="read-link">Ler artigo &rarr;</span>
-                </a>
-                <a href="../blog/artigos/como-conseguir-emprego-90-dias.html" class="article-card article-item" data-category="carreira" data-title="Como Conseguir Emprego em Menos de 90 Dias">
-                    <span class="card-tag">Estratégia de Carreira · Guia Prático</span>
-                    <h3>Como Conseguir Emprego em Menos de 90 Dias</h3>
-                    <p>Um método estruturado em 3 fases — diagnóstico, candidaturas e execução — para conseguir emprego com as ferramentas certas e IA ao teu lado.</p>
-                    <div class="card-meta">Samuel Rolo &middot; Abr 2026 &middot; 8 min</div>
-                    <span class="read-link">Ler artigo &rarr;</span>
-                </a>
-            </div>
-        </div>
-    </div>
-<!-- 3. ESTUDO LINKEDIN (Highlight card)            -->
+    <!-- 1. ARTIGOS & GUIAS                             -->
     <!-- ══════════════════════════════════════════════ -->
     <div class="section-light">
+        <div class="section-inner">
+            <span class="section-label">Blog</span>
+            <h2 class="section-title">Artigos & <strong>Guias</strong></h2>
+
+            <div class="articles-grid" id="articlesGrid">
+                
+                <!-- Big4 Escola de Aprendizagem (NOVO) -->
+                <a href="/blog/artigos/big4-escola-aprendizagem-carreira" class="article-card featured" data-category="big4">
+                    <div class="card-img" style="background-image: url('../images/blog/big4-school.webp');"></div>
+                    <div class="card-content">
+                        <span class="card-tag">Big4 · Desenvolvimento de Carreira</span>
+                        <h3 class="card-title">As Big4 como Escola de Aprendizagem: O Modelo que Transforma Carreiras</h3>
+                        <p class="card-excerpt">Por que as Big4 são consideradas as melhores escolas de negócios do mundo real? Uma análise profunda sobre o modelo de "up or out" e o valor do selo no currículo.</p>
+                        <div class="card-meta">
+                            <span><i class="far fa-user me-1"></i> Samuel Rolo</span>
+                            <span><i class="far fa-calendar me-1"></i> 20 Mar 2026</span>
+                            <span><i class="far fa-clock me-1"></i> 12 min</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Senior nas Big4 -->
+                <a href="/blog/artigos/big4-senior-ficar-ou-sair" class="article-card" data-category="big4">
+                    <div class="card-img" style="background-image: url('../images/blog/big4-senior.webp');"></div>
+                    <div class="card-content">
+                        <span class="card-tag">Big4 · Decisão de Carreira</span>
+                        <h3 class="card-title">Senior nas Big4: Ficar ou Sair? A Decisão que Define a Próxima Década</h3>
+                        <p class="card-excerpt">O que muda quando chegas a Senior, o que ganhas se progredires a Manager e o que perdes se ficares demasiado tempo parado.</p>
+                        <div class="card-meta">
+                            <span><i class="far fa-calendar me-1"></i> 25 Mar 2026</span>
+                            <span><i class="far fa-clock me-1"></i> 12 min</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Big4 Insider -->
+                <a href="/blog/artigos/big4-insider-10-anos" class="article-card" data-category="big4">
+                    <div class="card-img" style="background-image: url('../images/blog/big4-insider.webp');"></div>
+                    <div class="card-content">
+                        <span class="card-tag">Big4 · Insider</span>
+                        <h3 class="card-title">Big4 por Dentro: O que Ninguém te Conta Antes de Entrares</h3>
+                        <p class="card-excerpt">10 anos de experiência nas Big4 condensados num artigo. O que realmente acontece dentro das firmas.</p>
+                        <div class="card-meta">
+                            <span><i class="far fa-calendar me-1"></i> 24 Mar 2026</span>
+                            <span><i class="far fa-clock me-1"></i> 14 min</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Manager a Senior Manager -->
+                <a href="/blog/artigos/big4-manager-senior-manager-transicao" class="article-card" data-category="big4">
+                    <div class="card-img" style="background-image: url('../images/blog/big4-manager.webp');"></div>
+                    <div class="card-content">
+                        <span class="card-tag">Big4 · Carreira</span>
+                        <h3 class="card-title">De Manager a Sénior Manager nas Big4: O Que Ninguém te Conta</h3>
+                        <p class="card-excerpt">O que muda realmente quando passas de Manager para Sénior Manager. Responsabilidade, política interna e o peso invisível de liderar sem rede.</p>
+                        <div class="card-meta">
+                            <span><i class="far fa-calendar me-1"></i> 28 Mar 2026</span>
+                            <span><i class="far fa-clock me-1"></i> 12 min</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Recrutamento Big4 -->
+                <a href="/blog/artigos/recrutamento-big4-guia-candidatos" class="article-card" data-category="big4">
+                    <div class="card-img" style="background-image: url('../images/blog/big4-recruitment.webp');"></div>
+                    <div class="card-content">
+                        <span class="card-tag">Consultoria & Big4</span>
+                        <h3 class="card-title">Recrutamento nas Big4: Guia Completo para Candidatos 2026</h3>
+                        <p class="card-excerpt">Como entrar na Deloitte, PwC, EY ou KPMG. As 5 fases do processo, o que avaliam e erros a evitar.</p>
+                        <div class="card-meta">
+                            <span><i class="far fa-calendar me-1"></i> 19 Mar 2026</span>
+                            <span><i class="far fa-clock me-1"></i> 12 min</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- CV Analyser -->
+                <a href="/blog/artigos/como-usar-ia-no-curriculo" class="article-card" data-category="cv">
+                    <div class="card-img" style="background-image: url('../images/blog/cv-ai.webp');"></div>
+                    <div class="card-content">
+                        <span class="card-tag">CV & Candidaturas</span>
+                        <h3 class="card-title">Como usar a IA para passar nos filtros (ATS) das empresas</h3>
+                        <p class="card-excerpt">Aprende a otimizar o teu CV para os algoritmos sem perder a essência humana.</p>
+                        <div class="card-meta">
+                            <span><i class="far fa-calendar me-1"></i> 15 Mar 2026</span>
+                            <span><i class="far fa-clock me-1"></i> 8 min</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- 4. VÍDEOS                                      -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="section-dark" id="videos">
         <div class="section-inner fade-in">
-            <span class="section-label">Estudo</span>
-            <h2 class="section-title" style="color:#1a1a2e;">Investigação &amp; <strong>Dados</strong></h2>
-            <div class="divider"></div>
-
-            <div class="study-highlight">
-                <div class="study-left">
-                    <p class="study-tag">Estudo Q1 2026</p>
-                    <h3>O Estado do <strong>LinkedIn</strong> em Portugal</h3>
-                    <p class="study-desc">Uma análise a 500 perfis profissionais revela as oportunidades e os erros mais comuns que ditam o sucesso na maior rede profissional do mundo.</p>
-                    <a href="/blog/artigos/estado-linkedin-portugal-2026.html" class="study-link">Ver estudo completo &rarr;</a>
-                </div>
-                <div class="study-kpis">
-                    <div class="study-kpi-card">
-                        <div class="kpi-val">4.0/10</div>
-                        <div class="kpi-label">Score médio nacional</div>
-                    </div>
-                    <div class="study-kpi-card">
-                        <div class="kpi-val">74%</div>
-                        <div class="kpi-label">Perfis com score abaixo de 5</div>
-                    </div>
-                    <div class="study-kpi-card">
-                        <div class="kpi-val">0.6%</div>
-                        <div class="kpi-label">Perfis com score acima de 7</div>
+            <span class="section-label">Vídeo</span>
+            <h2 class="section-title">Insights em <strong>Vídeo</strong></h2>
+            
+            <div class="video-grid">
+                <!-- Novo Vídeo Big4 -->
+                <div class="video-card">
+                    <a href="https://www.youtube.com/watch?v=G16ydT9QYxA" target="_blank" rel="noopener">
+                        <div class="thumb-wrapper">
+                            <img src="https://img.youtube.com/vi/G16ydT9QYxA/hqdefault.jpg" alt="Big4 Attrition by Design" loading="lazy">
+                            <div class="play-icon"></div>
+                        </div>
+                    </a>
+                    <div class="card-body">
+                        <h4>The Big 4 Business Model: Attrition by Design</h4>
+                        <div class="card-links">
+                            <a href="/blog/artigos/big4-escola-aprendizagem-carreira">Ver artigo &rarr;</a>
+                            <a href="https://www.youtube.com/watch?v=G16ydT9QYxA" target="_blank" rel="noopener">YouTube &rarr;</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Study detail (hidden by default) -->
-            <div id="study-detail" style="display:none;margin-top:2rem;background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:8px;padding:2.5rem;">
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin-bottom:0.8rem;">Sumário Executivo</h4>
-                <p style="font-size:0.85rem;color:#444;line-height:1.8;margin-bottom:1rem;">Este estudo, conduzido pela Share2Inspire com base numa análise de 500 perfis representativos do mercado português, revela uma realidade preocupante: a grande maioria dos profissionais em Portugal não está a tirar partido do potencial do LinkedIn. Com um <strong>score médio de otimização de apenas 4.00 em 10</strong>, os dados indicam que <strong>74% dos perfis tem uma visibilidade considerada "Baixa"</strong> para os algoritmos da plataforma.</p>
-
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:1.5rem 0 0.8rem;">A Anatomia de um Perfil LinkedIn em Portugal</h4>
-                <p style="font-size:0.85rem;color:#444;line-height:1.8;margin-bottom:1rem;">A distribuição dos scores de otimização é fortemente assimétrica, com a grande maioria dos perfis a concentrar-se na faixa inferior da escala. Apenas 0.6% dos profissionais analisados atingem um score superior a 7.</p>
-                <img loading="lazy" src="/images/chart_01_distribuicao_scores.webp" alt="Distribuição de Scores LinkedIn em Portugal" style="width:100%;border-radius:8px;margin-bottom:1rem;">
-
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:1.5rem 0 0.8rem;">Os 7 Erros Mais Comuns</h4>
-                <img loading="lazy" src="/images/chart_02_top_erros.webp" alt="Top 7 Erros Mais Comuns no LinkedIn" style="width:100%;border-radius:8px;margin-bottom:1rem;">
-                <table style="width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:1rem;">
-                    <thead><tr><th style="text-align:left;padding:0.6rem;border-bottom:2px solid #C9A961;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#999;">#</th><th style="text-align:left;padding:0.6rem;border-bottom:2px solid #C9A961;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#999;">Erro</th><th style="text-align:left;padding:0.6rem;border-bottom:2px solid #C9A961;font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#999;">Prevalência</th></tr></thead>
-                    <tbody>
-                        <tr><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">1</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">Headline apenas com cargo e empresa atual</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">25.0%</td></tr>
-                        <tr><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">2</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">Secção "Sobre" ausente ou incompleta</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">24.6%</td></tr>
-                        <tr><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">3</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">Headline genérica sem keywords de SEO</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">23.0%</td></tr>
-                        <tr><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">4</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">Secção de Projetos vazia</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">23.0%</td></tr>
-                        <tr><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">5</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">Gaps temporais não explicados na experiência</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">22.6%</td></tr>
-                        <tr><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">6</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">Sem publicações nos últimos 90 dias</td><td style="padding:0.5rem 0.6rem;border-bottom:1px solid rgba(0,0,0,0.06);color:#444;">22.0%</td></tr>
-                        <tr><td style="padding:0.5rem 0.6rem;color:#444;">7</td><td style="padding:0.5rem 0.6rem;color:#444;">Sem certificações complementares</td><td style="padding:0.5rem 0.6rem;color:#444;">22.0%</td></tr>
-                    </tbody>
-                </table>
-
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:1.5rem 0 0.8rem;">Performance por Setor</h4>
-                <p style="font-size:0.85rem;color:#444;line-height:1.8;margin-bottom:1rem;">Vendas e Comercial lideram com 4.33/10, possivelmente por uma maior consciência da importância da rede de contactos. Educação e Formação apresentam o score mais baixo (3.60/10).</p>
-                <img loading="lazy" src="/images/chart_03_score_por_setor.webp" alt="Score Médio por Setor Profissional" style="width:100%;border-radius:8px;margin-bottom:1rem;">
-
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:1.5rem 0 0.8rem;">Performance por Faixa Etária</h4>
-                <p style="font-size:0.85rem;color:#444;line-height:1.8;margin-bottom:1rem;">Os profissionais na faixa dos 31-35 anos apresentam os perfis mais otimizados. Os mais jovens (18-24) e os mais seniores (51+) apresentam scores mais baixos.</p>
-                <img loading="lazy" src="/images/chart_05_score_faixa_etaria.png" alt="Score Médio por Faixa Etária" style="width:100%;border-radius:8px;margin-bottom:1rem;">
-
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:1.5rem 0 0.8rem;">Indicadores Chave</h4>
-                <img loading="lazy" src="/images/chart_04_indicadores_chave.webp" alt="Indicadores Chave do LinkedIn em Portugal" style="width:100%;border-radius:8px;margin-bottom:1rem;">
-
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:1.5rem 0 0.8rem;">Visibilidade para o Algoritmo</h4>
-                <p style="font-size:0.85rem;color:#444;line-height:1.8;margin-bottom:1rem;">Apenas 26% dos perfis atingem uma visibilidade "Média", com os restantes 74% a serem considerados de visibilidade "Baixa". Nenhum perfil da amostra atingiu visibilidade "Alta".</p>
-                <img loading="lazy" src="/images/chart_06_visibilidade_algoritmo.webp" alt="Visibilidade para o Algoritmo LinkedIn" style="width:100%;border-radius:8px;margin-bottom:1rem;">
-
-                <h4 style="font-size:1rem;font-weight:500;color:#1a1a2e;margin:1.5rem 0 0.8rem;">Conclusão</h4>
-                <p style="font-size:0.85rem;color:#444;line-height:1.8;margin-bottom:1rem;">O ecossistema digital português no LinkedIn está longe de atingir a sua maturidade. A maioria dos profissionais adota uma postura passiva, resultando em perfis invisíveis e oportunidades perdidas. A boa notícia é que a barreira para se destacar é baixa.</p>
-
-                <div style="background:#1a1a2e;border-radius:8px;padding:1.5rem 2rem;text-align:center;margin-top:2rem;">
-                    <h4 style="font-size:1.1rem;font-weight:300;color:#fff;margin-bottom:0.5rem;">Descobre o score do <strong style="font-weight:600;color:#C9A961;">teu perfil</strong></h4>
-                    <p style="font-size:0.8rem;color:rgba(255,255,255,0.5);margin-bottom:1rem;">Análise gratuita em 30 segundos.</p>
-                    <a href="/linkedin-roaster" style="display:inline-block;background:#C9A961;color:#1a1a2e;padding:0.7rem 1.5rem;border-radius:4px;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;text-decoration:none;">Analisar o meu LinkedIn</a>
-                </div>
-
-                <p style="font-size:0.7rem;color:#999;margin-top:1.5rem;font-style:italic;">Este estudo foi realizado com base em dados sintéticos gerados para refletir as tendências do mercado português, analisados pela ferramenta LinkedIn Roaster da Share2Inspire. Amostra: 500 perfis, 13 setores de atividade, período Q1 2026.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- ══════════════════════════════════════════════ -->
-    <!-- 4. VÍDEO EM DESTAQUE                           -->
-    <!-- ══════════════════════════════════════════════ -->
-    <div class="section fade-in" id="video">
-        <span class="section-label">Vídeo</span>
-        <h2 class="section-title">Em <strong>destaque</strong></h2>
-        <div class="divider"></div>
-
-        <!-- Featured: Most Recent Video -->
-        <div class="featured-video-section" style="border:2px solid #C9A961;">
-            <p class="fv-label" style="color:#C9A961;"><i class="fas fa-fire"></i> Mais Recente</p>
-            <div class="fv-grid">
-                <div class="video-embed-wrapper">
-                    <iframe src="https://www.youtube.com/embed/h0uVv1olIB4?rel=0&modestbranding=1" title="Como Conseguir Emprego em Menos de 90 Dias" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
-                </div>
-                <div class="fv-info">
-                    <h3>Como Conseguir Emprego em Menos de 90 Dias</h3>
-                    <p>Um método estruturado em 3 fases — diagnóstico, candidaturas e execução — para conseguir emprego com as ferramentas certas e IA ao teu lado.</p>
-                    <div class="fv-links">
-                        <a href="/blog/artigos/como-conseguir-emprego-90-dias.html">Ler artigo completo &rarr;</a>
-                        <a href="https://www.youtube.com/watch?v=h0uVv1olIB4" target="_blank" rel="noopener">Ver no YouTube &rarr;</a>
+                
+                <div class="video-card">
+                    <a href="https://www.youtube.com/watch?v=example1" target="_blank">
+                        <div class="thumb-wrapper">
+                            <img src="../images/video-thumb-1.webp" alt="Video 1">
+                            <div class="play-icon"></div>
+                        </div>
+                    </a>
+                    <div class="card-body">
+                        <h4>Estratégias de Negociação Salarial para 2026</h4>
+                        <div class="card-links">
+                            <a href="https://www.youtube.com/watch?v=example1" target="_blank">Ver no YouTube &rarr;</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Netflix-style grid: Remaining Videos -->
-        <div class="video-grid-netflix">
-            <!-- Card: Liderar no Vazio -->
-            <div class="video-card-netflix">
-                <a href="https://www.youtube.com/watch?v=EOeqKFILeTw" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;">
-                    <div class="thumb-wrapper">
-                        <img src="https://img.youtube.com/vi/EOeqKFILeTw/hqdefault.jpg" alt="Liderar no Vazio" loading="lazy">
-                        <div class="play-icon"></div>
-                    </div>
-                </a>
-                <div class="card-body">
-                    <h4>Liderar no Vazio: O Que Significa Ser Líder Quando a IA Planeia</h4>
-                    <div class="card-links">
-                        <a href="/blog/artigos/humanos-maquinas-6.html">Artigo &rarr;</a>
-                        <a href="https://www.youtube.com/watch?v=EOeqKFILeTw" target="_blank" rel="noopener">YouTube &rarr;</a>
+                <div class="video-card">
+                    <a href="https://www.youtube.com/watch?v=example2" target="_blank">
+                        <div class="thumb-wrapper">
+                            <img src="../images/video-thumb-2.webp" alt="Video 2">
+                            <div class="play-icon"></div>
+                        </div>
+                    </a>
+                    <div class="card-body">
+                        <h4>Como construir um perfil de LinkedIn magnético</h4>
+                        <div class="card-links">
+                            <a href="https://www.youtube.com/watch?v=example2" target="_blank">Ver no YouTube &rarr;</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <!-- Card 1 -->
-            <div class="video-card-netflix">
-                <a href="https://www.youtube.com/watch?v=T1AKsHV_Vf0" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;">
-                    <div class="thumb-wrapper">
-                        <img src="https://img.youtube.com/vi/T1AKsHV_Vf0/hqdefault.jpg" alt="Managers Falham na Promoção" loading="lazy">
-                        <div class="play-icon"></div>
-                    </div>
-                </a>
-                <div class="card-body">
-                    <h4>Porque é que os Melhores Managers Falham na Promoção?</h4>
-                    <div class="card-links">
-                        <a href="/videos/big4-manager-senior-manager-promocao">Ver guia &rarr;</a>
-                        <a href="https://www.youtube.com/watch?v=T1AKsHV_Vf0" target="_blank" rel="noopener">YouTube &rarr;</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 2 -->
-            <div class="video-card-netflix">
-                <a href="https://www.youtube.com/watch?v=teIBWJiSEFU" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;">
-                    <div class="thumb-wrapper">
-                        <img src="https://img.youtube.com/vi/teIBWJiSEFU/hqdefault.jpg" alt="Como Entrar nas Big 4" loading="lazy">
-                        <div class="play-icon"></div>
-                    </div>
-                </a>
-                <div class="card-body">
-                    <h4>Como Entrar nas Big 4: Guia Definitivo</h4>
-                    <div class="card-links">
-                        <a href="/en/videos/big4-recruitment-guide.html">Ver guia &rarr;</a>
-                        <a href="https://www.youtube.com/watch?v=teIBWJiSEFU" target="_blank" rel="noopener">YouTube &rarr;</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 3 -->
-            <div class="video-card-netflix">
-                <a href="https://www.youtube.com/watch?v=yU_tJV1Ap94" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;">
-                    <div class="thumb-wrapper">
-                        <img src="https://img.youtube.com/vi/yU_tJV1Ap94/hqdefault.jpg" alt="ROI Pós-Big4" loading="lazy">
-                        <div class="play-icon"></div>
-                    </div>
-                </a>
-                <div class="card-body">
-                    <h4>O Segredo para Maximizar o ROI Pós-Big4</h4>
-                    <div class="card-links">
-                        <a href="../videos/big4-insider-roi-pos-big4.html">Ver guia &rarr;</a>
-                        <a href="https://www.youtube.com/watch?v=yU_tJV1Ap94" target="_blank" rel="noopener">YouTube &rarr;</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 4 -->
-            <div class="video-card-netflix">
-                <a href="https://www.youtube.com/watch?v=6coJJF79Cy0" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;">
-                    <div class="thumb-wrapper">
-                        <img src="https://img.youtube.com/vi/6coJJF79Cy0/hqdefault.jpg" alt="CV Compatível com ATS" loading="lazy">
-                        <div class="play-icon"></div>
-                    </div>
-                </a>
-                <div class="card-body">
-                    <h4>Como Criar um CV Compatível com ATS em 2026</h4>
-                    <div class="card-links">
-                        <a href="../videos/como-criar-cv-ats-friendly.html">Ver guia &rarr;</a>
-                        <a href="https://www.youtube.com/watch?v=6coJJF79Cy0" target="_blank" rel="noopener">YouTube &rarr;</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 5 -->
-            <div class="video-card-netflix">
-                <a href="https://www.youtube.com/watch?v=LhLmgE1noC8" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;">
-                    <div class="thumb-wrapper">
-                        <img src="https://img.youtube.com/vi/LhLmgE1noC8/hqdefault.jpg" alt="Vencer o Filtro ATS" loading="lazy">
-                        <div class="play-icon"></div>
-                    </div>
-                </a>
-                <div class="card-body">
-                    <h4>Como Vencer o Filtro ATS: Guia Definitivo</h4>
-                    <div class="card-links">
-                        <a href="../videos/como-vencer-filtro-ats.html">Ver guia &rarr;</a>
-                        <a href="https://www.youtube.com/watch?v=LhLmgE1noC8" target="_blank" rel="noopener">YouTube &rarr;</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Card: Chrome Extension -->
-            <div class="video-card-netflix">
-                <a href="https://www.youtube.com/watch?v=LxaNqQyhaQY" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;">
-                    <div class="thumb-wrapper">
-                        <img src="https://img.youtube.com/vi/LxaNqQyhaQY/hqdefault.jpg" alt="Chrome Extension Share2Inspire" loading="lazy">
-                        <div class="play-icon"></div>
-                    </div>
-                </a>
-                <div class="card-body">
-                    <h4>Are You Losing Jobs Without Realizing It? Chrome Extension</h4>
-                    <div class="card-links">
-                        <a href="https://www.youtube.com/watch?v=LxaNqQyhaQY" target="_blank" rel="noopener">YouTube &rarr;</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Card: Big4 Attrition by Design -->
-            <div class="video-card-netflix">
-                <a href="https://www.youtube.com/watch?v=G16ydT9QYxA" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;">
-                    <div class="thumb-wrapper">
-                        <img src="https://img.youtube.com/vi/G16ydT9QYxA/hqdefault.jpg" alt="Big4 Attrition by Design" loading="lazy">
-                        <div class="play-icon"></div>
-                    </div>
-                </a>
-                <div class="card-body">
-                    <h4>The Big 4 Business Model: Attrition by Design</h4>
-                    <div class="card-links">
-                        <a href="/blog/artigos/big4-escola-aprendizagem-carreira">Ver artigo &rarr;</a>
-                        <a href="https://www.youtube.com/watch?v=G16ydT9QYxA" target="_blank" rel="noopener">YouTube &rarr;</a>
+                <div class="video-card">
+                    <a href="https://www.youtube.com/watch?v=example3" target="_blank">
+                        <div class="thumb-wrapper">
+                            <img src="../images/video-thumb-3.webp" alt="Video 3">
+                            <div class="play-icon"></div>
+                        </div>
+                    </a>
+                    <div class="card-body">
+                        <h4>O futuro do trabalho e a Inteligência Artificial</h4>
+                        <div class="card-links">
+                            <a href="https://www.youtube.com/watch?v=example3" target="_blank">Ver no YouTube &rarr;</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- ══════════════════════════════════════════════ -->
     <!-- 5. PODCAST                                     -->
     <!-- ══════════════════════════════════════════════ -->
@@ -952,154 +783,56 @@ src="https://www.facebook.com/tr?id=3865352233767400&ev=PageView&noscript=1"
 
     <!-- ── Scripts ── -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    
     <!-- Newsletter Form -->
-    <script>
-    document.getElementById('newsletterSubscriptionForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const name = document.getElementById('subscriberName').value.trim();
-        const email = document.getElementById('subscriberEmail').value.trim();
-        const messageDiv = document.getElementById('subscriptionMessage');
-        const submitBtn = e.target.querySelector('button[type="submit"]');
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'A processar...';
-        try {
-            const response = await fetch('https://share2inspire-beckend.lm.r.appspot.com/api/newsletter/subscribe', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: name, email: email, source: 'conhecimento' })
-            });
-            const data = await response.json();
-            if (response.ok) {
-                messageDiv.style.cssText = 'display:block; background:rgba(201,169,97,0.15); color:#C9A961; padding:10px 16px; border-radius:6px; margin-top:1rem; font-size:0.8rem;';
-                messageDiv.textContent = data.message || 'Subscrição efetuada com sucesso.';
-                e.target.reset();
-                setTimeout(() => { messageDiv.style.display = 'none'; }, 5000);
-                fetch('https://share2inspire-beckend.lm.r.appspot.com/api/leadmagnet/start', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: name,
-                        email: email,
-                        source: 'conhecimento',
-                        download_link: 'https://share2inspire.pt/assets/downloads/10-erros-linkedin.pdf'
-                    })
-                }).catch(() => {});
-            } else {
-                throw new Error(data.error || 'Erro ao processar subscrição');
-            }
-        } catch (error) {
-            messageDiv.style.cssText = 'display:block; background:rgba(220,53,69,0.15); color:#ff6b6b; padding:10px 16px; border-radius:6px; margin-top:1rem; font-size:0.8rem;';
-            messageDiv.textContent = error.message;
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Subscrever';
-        }
-    });
-    </script>
+    <script src="../js/newsletter-supabase.js"></script>
 
     <!-- E-book scroll -->
     <script>
-    if (window.location.hash === '#ebook-download' || window.location.hash === '#ebook') {
-        setTimeout(function() {
-            document.getElementById('ebook').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 300);
-    }
-    </script>
-
-    <!-- Fade-in observer -->
-    <script>
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-    </script>
-    <script src="../js/ifthenpay-integration.js"></script>
-    <script src="../js/contact-form.js?v=2.0"></script>
-    <script src="../js/brevo-integration.js?v=2.0"></script>
-    <script src="../js/feedback-widget.js?v=2.0"></script>
-    <script src="../js/coupon-system.js"></script>
-    <script src="../js/coupon-handler.js"></script>
-    <script src="../js/hub-widget.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../js/shared-auth.js"></script>
-    <script src="../js/inline-auth.js"></script>
-
-    <!-- Category Filter + Search -->
-    <script>
-    (function() {
-        // Category filter
-        var pills = document.querySelectorAll('.filter-pill');
-        var sections = document.querySelectorAll('.category-section');
-        var items = document.querySelectorAll('.article-item');
-        var noResults = document.getElementById('noResults');
-        var searchInput = document.getElementById('articleSearch');
-
-        pills.forEach(function(pill) {
-            pill.addEventListener('click', function() {
-                pills.forEach(function(p) { p.classList.remove('active'); });
-                this.classList.add('active');
-                var filter = this.getAttribute('data-filter');
-                searchInput.value = '';
-                applyFilters(filter, '');
-            });
-        });
-
-        // Search filter
-        searchInput.addEventListener('input', function() {
-            var query = this.value.toLowerCase().trim();
-            // Reset category to "all" when searching
-            pills.forEach(function(p) { p.classList.remove('active'); });
-            document.querySelector('.filter-pill[data-filter="all"]').classList.add('active');
-            applyFilters('all', query);
-        });
-
-        function applyFilters(category, query) {
-            var visibleCount = 0;
-
-            sections.forEach(function(section) {
-                var sectionCat = section.getAttribute('data-category');
-                var catMatch = (category === 'all' || sectionCat === category);
-
-                if (!catMatch && !query) {
-                    section.style.display = 'none';
-                    return;
-                }
-
-                if (!query && catMatch) {
-                    section.style.display = '';
-                    // Show all items in this section
-                    section.querySelectorAll('.article-item').forEach(function(item) {
-                        item.style.display = '';
-                    });
-                    visibleCount++;
-                    return;
-                }
-
-                // Search mode: show section if any item matches
-                var sectionHasMatch = false;
-                section.querySelectorAll('.article-item').forEach(function(item) {
-                    var title = (item.getAttribute('data-title') || '').toLowerCase();
-                    var tag = item.querySelector('.card-tag');
-                    var tagText = tag ? tag.textContent.toLowerCase() : '';
-                    var match = title.indexOf(query) !== -1 || tagText.indexOf(query) !== -1;
-                    item.style.display = match ? '' : 'none';
-                    if (match) sectionHasMatch = true;
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
                 });
-
-                section.style.display = sectionHasMatch ? '' : 'none';
-                if (sectionHasMatch) visibleCount++;
             });
+        });
 
-            noResults.style.display = visibleCount === 0 ? '' : 'none';
-        }
-    })();
+        // Simple search filter
+        const searchInput = document.getElementById('articleSearch');
+        const articleCards = document.querySelectorAll('.article-card');
+
+        searchInput.addEventListener('input', function() {
+            const term = this.value.toLowerCase();
+            articleCards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const excerpt = card.querySelector('.card-excerpt').textContent.toLowerCase();
+                if (title.includes(term) || excerpt.includes(term)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Category filter
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const filter = this.getAttribute('data-filter');
+                
+                articleCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
     </script>
-
 </body>
-
 </html>

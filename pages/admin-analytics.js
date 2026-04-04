@@ -412,7 +412,7 @@ async function loadAllData() {
             supaFetch('cv_analysis', 'select=id,user_email,user_name,score,professional_area,analysis_type,payment_status,payment_amount,payment_method,transaction_id,career_path_purchased,user_rating,rating_comment,created_at&order=created_at.desc&limit=5000'),
             supaFetch('vouchers', 'select=*&order=created_at.desc'),
             supaFetch('contact_messages', 'select=*&order=created_at.desc&limit=500', true),
-            supaFetch('newsletter_subscribers', 'select=*&order=created_at.desc&limit=2000'),
+            supaFetch('newsletter_subscribers', 'select=*&order=subscribed_at.desc&limit=2000'),
             supaFetch('job_search_tracking', 'select=*&order=created_at.desc&limit=2000'),
             supaFetch('career_energy_results', 'select=*&order=created_at.desc&limit=2000'),
             supaFetch('linkedin_roaster_analyses', 'select=*&order=created_at.desc&limit=5000')
@@ -1558,7 +1558,7 @@ async function sendSingleEmail() {
     const ok = await sendBrevoEmail(to, subject, htmlBody);
     if (ok) {
         showToast('Email enviado com sucesso!', 'success');
-        await supaInsert('email_history', { recipient_email: to, subject, body: htmlBody, email_type: 'manual', sent_at: new Date().toISOString(), status: 'sent' });
+        try { await supaInsert('email_history', { recipient_email: to, subject, body: htmlBody, email_type: 'manual', sent_at: new Date().toISOString(), status: 'sent' }); } catch(e) { console.warn('Email sent but failed to log in history:', e); }
         closeEmailModal();
         await loadEmailHistory();
         renderEmailHistory();
@@ -1703,7 +1703,7 @@ async function sendBulkEmail() {
             const ok = await sendBrevoEmail(email, subject, htmlBody);
             if (ok) {
                 sent++;
-                await supaInsert('email_history', { recipient_email: email, subject, body: htmlBody, email_type: 'campaign', sent_at: new Date().toISOString(), status: 'sent' });
+                try { await supaInsert('email_history', { recipient_email: email, subject, body: htmlBody, email_type: 'campaign', sent_at: new Date().toISOString(), status: 'sent' }); } catch(e) { console.warn('Campaign email sent but failed to log:', e); }
             } else { failed++; }
         } catch (e) { failed++; }
         if (sent % 5 === 0) showToast(`Enviados: ${sent}/${recipients.length}`, 'info');
@@ -1999,7 +1999,7 @@ function exportCECSV() {
 //  SYSTEM: EBOOK DOWNLOADS
 // ═══════════════════════════════════════════════════════════════
 function renderEbookDownloads() {
-    let data = [...allEbookDownloads].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    let data = [...allEbookDownloads].sort((a, b) => new Date(b.subscribed_at || b.created_at) - new Date(a.subscribed_at || a.created_at));
     const period = document.getElementById('filterEbookPeriod')?.value || 'all';
     const search = (document.getElementById('filterEbookSearch')?.value || '').toLowerCase();
     if (period !== 'all') data = filterByPeriod(data, parseInt(period));
@@ -2009,14 +2009,14 @@ function renderEbookDownloads() {
     if (!tbody) return;
     if (!data.length) { tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-muted);">Sem downloads</td></tr>`; return; }
     tbody.innerHTML = data.slice(0, 50).map(e => {
-        const date = new Date(e.created_at).toLocaleDateString('pt-PT');
+        const date = new Date(e.subscribed_at || e.created_at).toLocaleDateString('pt-PT');
         return `<tr><td style="font-size:12px;color:var(--text-muted);">${date}</td><td style="font-size:12px;">${e.name || '—'}</td><td style="font-size:12px;">${e.email || '—'}</td><td style="font-size:12px;">${e.source || '—'}</td></tr>`;
     }).join('');
 }
 
 function exportEbookCSV() {
     const rows = [['Data','Nome','Email','Fonte']];
-    allEbookDownloads.forEach(e => rows.push([e.created_at?.slice(0,10), e.name||'', e.email||'', e.source||'']));
+    allEbookDownloads.forEach(e => rows.push([(e.subscribed_at || e.created_at)?.slice(0,10), e.name||'', e.email||'', e.source||'']));
     downloadCSV(rows, 'ebook_downloads.csv');
 }
 
@@ -2227,7 +2227,7 @@ async function refreshHealthCheck() {
         { name: 'Frontend Bundle EN', url: 'https://www.share2inspire.pt/en/bundle', category: 'frontend' },
         { name: 'Backend Root', url: 'https://share2inspire-beckend.lm.r.appspot.com/', category: 'backend' },
         { name: 'Backend API Health', url: 'https://share2inspire-beckend.lm.r.appspot.com/api/health', category: 'backend' },
-        { name: 'Supabase Edge Function', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/functions/v1/hyper-task', category: 'edge_function' }
+        { name: 'Supabase Edge Function', url: 'https://cvlumvgrbuolrnwrtrgz.supabase.co/rest/v1/', category: 'edge_function' }
     ];
     const runId = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 15);
     const results = [];
