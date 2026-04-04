@@ -1391,18 +1391,12 @@ Generate ONLY the post.`;
                     <div className="grid grid-cols-2 gap-2 w-full">
                       {[
                         { icon: '🎯', label: t('bot.strategy'), msg: t('bot.strategyMsg') },
-                        { icon: '📝', label: t('bot.interview'), msg: t('bot.interviewMsg') },
                         { icon: '💰', label: t('bot.salary'), msg: t('bot.salaryMsg') },
-                        { icon: '✉️', label: t('bot.templates'), msg: '__TEMPLATES__' },
                       ].map((item) => (
                         <button
                           key={item.label}
                           onClick={() => {
-                            if (item.msg === '__TEMPLATES__') {
-                              setView('cover_letter');
-                            } else {
-                              sendMessage(item.msg);
-                            }
+                            sendMessage(item.msg);
                           }}
                           className="flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 hover:border-[#BFA14A]/30 hover:bg-[#BFA14A]/5 transition-all text-left"
                         >
