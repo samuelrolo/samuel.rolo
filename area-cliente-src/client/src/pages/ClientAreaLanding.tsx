@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useLoginModal } from '@/contexts/LoginModalContext';
 import { Check, X, ArrowRight, Star, ChevronDown, Sparkles, BarChart3, FileText, Briefcase, Target, Brain, Globe, Shield, Zap, Users, TrendingUp, Lock, Award, Chrome, BookOpen, Video, Newspaper, MapPin, Search, Bell, Bookmark } from 'lucide-react';
 
 /* ──────────────────────────────────────────────────────────
@@ -389,26 +390,10 @@ export default function ClientAreaLanding() {
   };
 
   const basePath = window.location.pathname.startsWith('/area-cliente') ? '/area-cliente' : '';
+  const { openLoginModal } = useLoginModal();
 
   return (
-    <div className="min-h-screen bg-[#FAFAF9] text-[#1a1a1a] font-[Poppins,sans-serif] overflow-x-hidden">
-      {/* ─── Sticky Nav ─── */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#e5e5e0]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <a href="https://share2inspire.pt" className="flex items-center">
-            <img src={CDN.logo} alt="Share2Inspire" className="h-9 w-auto object-contain" />
-          </a>
-          <div className="flex items-center gap-3">
-            <button onClick={toggleLang} className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium border border-[#e5e5e0] hover:bg-[#f5f5f0] transition-colors">
-              <Globe className="w-3.5 h-3.5" />
-              {t.langSwitch}
-            </button>
-            <a href={`${basePath}/`} className="px-4 py-2 text-sm font-medium rounded-lg bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white hover:shadow-lg hover:shadow-[#C9A961]/20 transition-all">
-              {t.heroCta} <ArrowRight className="w-3.5 h-3.5 inline ml-1" />
-            </a>
-          </div>
-        </div>
-      </nav>
+    <div className="bg-[#FAFAF9] text-[#1a1a1a] font-[Poppins,sans-serif] overflow-x-hidden">
 
       {/* ─── Hero ─── */}
       <section className="relative py-20 sm:py-28 lg:py-36">
@@ -428,9 +413,9 @@ export default function ClientAreaLanding() {
                 {t.heroSubtitle}
               </p>
               <div className="flex flex-wrap gap-3 mb-12">
-                <a href={`${basePath}/`} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white font-semibold text-sm shadow-lg shadow-[#C9A961]/20 hover:shadow-xl hover:shadow-[#C9A961]/30 transition-all hover:-translate-y-0.5">
+                <button onClick={openLoginModal} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white font-semibold text-sm shadow-lg shadow-[#C9A961]/20 hover:shadow-xl hover:shadow-[#C9A961]/30 transition-all hover:-translate-y-0.5 cursor-pointer">
                   {t.heroCta} <ArrowRight className="w-4 h-4" />
-                </a>
+                </button>
                 <a href="#plans" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-[#e5e5e0] text-[#555] font-semibold text-sm hover:bg-[#f5f5f0] transition-all">
                   {t.heroCtaSecondary} <ChevronDown className="w-4 h-4" />
                 </a>
@@ -779,9 +764,9 @@ export default function ClientAreaLanding() {
           <FadeIn>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">{t.ctaTitle}</h2>
             <p className="text-white/60 text-lg mb-8">{t.ctaSubtitle}</p>
-            <a href={`${basePath}/`} className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white font-semibold shadow-lg shadow-[#C9A961]/30 hover:shadow-xl hover:shadow-[#C9A961]/40 transition-all hover:-translate-y-0.5">
+            <button onClick={openLoginModal} className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[#C9A961] to-[#D4B96E] text-white font-semibold shadow-lg shadow-[#C9A961]/30 hover:shadow-xl hover:shadow-[#C9A961]/40 transition-all hover:-translate-y-0.5 cursor-pointer">
               {t.ctaButton} <ArrowRight className="w-4 h-4" />
-            </a>
+            </button>
             <p className="text-white/40 text-xs mt-4">{t.ctaNote}</p>
           </FadeIn>
         </div>

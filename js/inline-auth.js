@@ -227,7 +227,7 @@ c.innerHTML="";
 var e=document.createElement("a");
 e.href="#";e.className="nav-link";
 e.style.cssText="background:#BF9A33;color:#0a0a0a !important;padding:0.4rem 1rem;border-radius:4px;font-weight:600;transition:all 0.3s;cursor:pointer;";
-e.textContent="Área de Cliente";
+e.textContent="Login";
 e.addEventListener("mouseenter",function(){this.style.background="#d4af5a"});
 e.addEventListener("mouseleave",function(){this.style.background="#BF9A33"});
 e.addEventListener("click",function(e){
