@@ -12,7 +12,7 @@ import {
   Ticket, Unlock, Target, Sparkles, Calendar, Rocket, GraduationCap,
   Briefcase, Globe, Users, MapPin, ExternalLink, Linkedin, FileCheck,
   Mail, Send, TrendingUp, Award, Info, CreditCard, AlertCircle,
-  Zap, DollarSign, BarChart3, Star, ChevronRight, Download, Copy, Check, Save
+  Zap, DollarSign, BarChart3, Star, ChevronRight, ChevronDown, ChevronUp, Download, Copy, Check, Save, Building2
 } from "lucide-react";
 import { trackPurchase } from "@/lib/gtag";
 import { trackAffiliateConversion, incrementCouponUsage } from "@/lib/affiliate";
@@ -109,6 +109,64 @@ function GoldIcon({ children, size = "w-10 h-10" }: { children: React.ReactNode;
   return (
     <div className={`${size} rounded-full border border-[#C9A961]/30 bg-[#C9A961]/5 flex items-center justify-center shrink-0`}>
       {children}
+    </div>
+  );
+}
+
+/* ─── Networking Entity Expandable Card ─── */
+function NetworkingEntityCard({ entity, isEN }: { entity: any; isEN: boolean }) {
+  const [expanded, setExpanded] = useState(false);
+  const typeLabels: Record<string, { en: string; pt: string; icon: string }> = {
+    community: { en: 'Community', pt: 'Comunidade', icon: '👥' },
+    event: { en: 'Event', pt: 'Evento', icon: '📅' },
+    association: { en: 'Association', pt: 'Associação', icon: '🏛️' },
+    conference: { en: 'Conference', pt: 'Conferência', icon: '🎤' },
+  };
+  const typeInfo = typeLabels[entity.type] || typeLabels.community;
+  return (
+    <div className="border border-[#C9A961]/20 rounded-lg overflow-hidden bg-[#C9A961]/5 transition-all">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between p-2.5 text-left hover:bg-[#C9A961]/10 transition-colors"
+      >
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-sm shrink-0">{typeInfo.icon}</span>
+          <span className="text-xs font-semibold text-foreground truncate">{entity.name}</span>
+          <span className="text-[9px] bg-[#C9A961]/15 text-[#C9A961] px-1.5 py-0.5 rounded shrink-0 font-medium">
+            {isEN ? typeInfo.en : typeInfo.pt}
+          </span>
+        </div>
+        {expanded ? <ChevronUp className="w-3.5 h-3.5 text-[#C9A961] shrink-0" /> : <ChevronDown className="w-3.5 h-3.5 text-[#C9A961] shrink-0" />}
+      </button>
+      {expanded && (
+        <div className="px-2.5 pb-2.5 space-y-1.5 border-t border-[#C9A961]/10 pt-2">
+          {entity.description && (
+            <p className="text-xs text-muted-foreground leading-relaxed">{entity.description}</p>
+          )}
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
+            {entity.location && (
+              <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                <MapPin className="w-3 h-3 text-[#C9A961]" />{entity.location}
+              </span>
+            )}
+            {entity.frequency && (
+              <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                <Calendar className="w-3 h-3 text-[#C9A961]" />{entity.frequency}
+              </span>
+            )}
+          </div>
+          {entity.website && entity.website !== 'null' && (
+            <a
+              href={entity.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[10px] text-[#C9A961] hover:underline font-medium mt-1"
+            >
+              <ExternalLink className="w-3 h-3" />{isEN ? 'Visit website' : 'Visitar website'}
+            </a>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -1520,23 +1578,35 @@ export default function CareerPathResults() {
                   <p className="text-xs font-semibold tracking-wider text-muted-foreground">{isEN ? 'NETWORKING STRATEGY' : 'ESTRATÉGIA DE NETWORKING'}</p>
                 </div>
                 <div className="space-y-3">
-                  {careerPathData.development_plan.networking_strategy.map((n: any, i: number) => (
-                    <div key={i} className="p-3 border border-border rounded-lg">
+                  {careerPathData.development_plan.networking_strategy.slice(0, 3).map((n: any, i: number) => (
+                    <div key={i} className="p-3 border border-border rounded-lg space-y-2">
                       <p className="text-sm font-semibold text-foreground">{n.action}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{isEN ? 'Target' : 'Alvo'}: {n.target}</p>
-                      {n.communities && (
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {n.communities.map((c: string, j: number) => (
-                            <span key={j} className="text-[10px] bg-[#C9A961]/10 text-[#C9A961] px-2 py-0.5 rounded">{c}</span>
+                      <p className="text-xs text-muted-foreground">{isEN ? 'Target' : 'Alvo'}: {n.target}</p>
+                      {/* New expandable entities */}
+                      {n.entities && n.entities.length > 0 ? (
+                        <div className="space-y-2 mt-2">
+                          {n.entities.slice(0, 3).map((entity: any, j: number) => (
+                            <NetworkingEntityCard key={j} entity={entity} isEN={isEN} />
                           ))}
                         </div>
-                      )}
-                      {n.events && (
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {n.events.map((e: string, j: number) => (
-                            <span key={j} className="text-[10px] bg-muted px-2 py-0.5 rounded text-muted-foreground">{e}</span>
-                          ))}
-                        </div>
+                      ) : (
+                        /* Backward compatibility: old format with communities/events */
+                        <>
+                          {n.communities && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {n.communities.map((c: string, j: number) => (
+                                <span key={j} className="text-[10px] bg-[#C9A961]/10 text-[#C9A961] px-2 py-0.5 rounded">{c}</span>
+                              ))}
+                            </div>
+                          )}
+                          {n.events && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {n.events.map((e: string, j: number) => (
+                                <span key={j} className="text-[10px] bg-muted px-2 py-0.5 rounded text-muted-foreground">{e}</span>
+                              ))}
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   ))}
