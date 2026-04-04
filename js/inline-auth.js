@@ -199,26 +199,13 @@ var e,l,d=document.querySelector('a[href*="area-cliente"]');
 if(d)e=d.closest("li")||d.parentElement;
 else if(!(l=document.querySelector("#navbarNav .navbar-nav")||document.querySelector(".navbar-nav")||document.querySelector(".nav-links")))return;
 
-/* ── Preserve language selector if present in the same container ── */
+/* ── Preserve language selector ONLY if inside the element being replaced ── */
 var langEl=null;
 if(e){
-/* Look for language links/buttons inside the parent or siblings */
 var langLink=e.querySelector('a[href*="/en/"]')||e.querySelector('a[href*="/pt/"]');
-if(langLink){
-langEl=langLink.closest('div')||langLink.closest('a');
-if(langEl===e)langEl=langLink;/* Don't clone the whole container */
-langEl=langEl.cloneNode(true);
-}
-/* Also check siblings of the parent for Globe/language selectors */
-if(!langEl&&e.parentElement){
-var siblings=e.parentElement.children;
-for(var si=0;si<siblings.length;si++){
-var sib=siblings[si];
-if(sib!==e&&(sib.querySelector('a[href*="/en/"]')||sib.querySelector('a[href*="/pt/"]')||sib.textContent.match(/^\s*(EN|PT)\s*$/))){
-langEl=sib.cloneNode(true);
-break;
-}
-}
+if(langLink&&langLink!==d){
+/* Clone just the <a> link — keeps original classes/styles from React */
+langEl=langLink.cloneNode(true);
 }
 }
 
@@ -297,22 +284,23 @@ t&&t.auth.signOut().then(function(){m()});
 
 c.className="nav-item ms-2";
 c.id="s2i-auth-nav-container";
-c.style.cssText="display:flex;align-items:center;gap:8px;list-style:none;";
 if(e){
-/* Insert a wrapper that holds both the auth container and the language selector */
-var wrapper=document.createElement("li");
+if(langEl){
+/* Language link was inside the replaced element — wrap auth + lang together */
+var wrapper=document.createElement(e.tagName||"div");
 wrapper.id="s2i-auth-nav-container";
-wrapper.style.cssText="display:flex;align-items:center;gap:4px;list-style:none;";
+/* Copy the original element's className to preserve React/Tailwind styles */
+if(e.className)wrapper.className=e.className;
+else wrapper.style.cssText="display:flex;align-items:center;gap:8px;list-style:none;";
 c.id="";
 wrapper.appendChild(c);
-if(langEl){
-langEl.style.cssText="display:flex;align-items:center;gap:4px;cursor:pointer;padding:0.35rem 0.5rem;border-radius:6px;transition:background 0.2s;font-family:'Poppins',sans-serif;font-size:0.85rem;color:#555;font-weight:500;";
 wrapper.appendChild(langEl);
-}
 e.replaceWith(wrapper);
-}else if(l){l.appendChild(c);if(langEl){langEl.style.cssText="display:flex;align-items:center;gap:4px;cursor:pointer;padding:0.35rem 0.5rem;";l.appendChild(langEl);}}
-/* Keep reference for retry logic */
-wrapper&&(wrapper.id="s2i-auth-nav-container");
+}else{
+/* Language selector is a sibling — safe to just replace the auth element */
+e.replaceWith(c);
+}
+}else if(l)l.appendChild(c);
 
 if(window.S2I_AUTH&&window.S2I_AUTH.ready&&window.S2I_AUTH.currentUser)p(window.S2I_AUTH.currentUser);
 else m();
