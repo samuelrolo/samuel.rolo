@@ -2046,6 +2046,7 @@ function getStatusLabel(status) {
 
 function getRecommendation(entry) {
     if (entry.status === 'down') {
+        if (entry.error_message?.includes('Bundle JS em falta')) return { text: 'PÁGINA EM BRANCO: O bundle JavaScript não existe no servidor (404). A app não renderiza. Verificar se os assets foram incluídos no último deploy.', severity: 'critical' };
         if (entry.error_message?.includes('timed out')) return { text: 'Timeout detetado. Verificar se o serviço está a correr e se não há cold starts excessivos.', severity: 'critical' };
         return { text: 'Serviço indisponível. Verificar logs do servidor e reiniciar se necessário.', severity: 'critical' };
     }
@@ -2236,12 +2237,38 @@ async function refreshHealthCheck() {
         try {
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), 15000);
-            const res = await fetch(ep.url, { method: 'GET', mode: 'no-cors', signal: controller.signal });
+            const res = await fetch(ep.url, { method: 'GET', mode: ep.category === 'frontend' ? 'cors' : 'no-cors', signal: controller.signal });
             clearTimeout(timeout);
             const elapsed = Date.now() - start;
             const httpCode = res.type === 'opaque' ? 200 : res.status;
-            const status = elapsed > 2000 ? 'warning' : 'healthy';
-            results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: elapsed, http_code: httpCode, status, error_message: null, checked_at: new Date().toISOString() });
+            let status = elapsed > 2000 ? 'warning' : 'healthy';
+            let errorMsg = null;
+
+            // Deep check for frontend React apps: verify JS bundle exists
+            if (ep.category === 'frontend' && res.type !== 'opaque') {
+                try {
+                    const html = await res.text();
+                    const scriptMatch = html.match(/src="([^"]*assets\/index-[^"]+\.js)"/);
+                    if (scriptMatch) {
+                        const bundlePath = scriptMatch[1];
+                        const bundleUrl = bundlePath.startsWith('http') ? bundlePath : new URL(bundlePath, ep.url).href;
+                        const bundleRes = await fetch(bundleUrl, { method: 'HEAD' });
+                        if (bundleRes.status === 404) {
+                            status = 'down';
+                            errorMsg = `Bundle JS em falta (404): ${bundlePath}`;
+                        }
+                    }
+                    // Also check if root div has content (basic render check)
+                    if (!errorMsg && html.includes('id="root"') && !html.includes('<div id="root">')) {
+                        // HTML loads but root is empty - this is expected for SPA, bundle check is more reliable
+                    }
+                } catch (deepErr) {
+                    // Deep check failed, keep original status
+                    console.warn('Deep check failed for', ep.name, deepErr.message);
+                }
+            }
+
+            results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed, total_ms: Date.now() - start, http_code: httpCode, status, error_message: errorMsg, checked_at: new Date().toISOString() });
         } catch (err) {
             const elapsed = Date.now() - start;
             results.push({ run_id: runId, endpoint_name: ep.name, endpoint_url: ep.url, category: ep.category, ttfb_ms: elapsed > 14000 ? null : elapsed, total_ms: elapsed > 14000 ? null : elapsed, http_code: null, status: 'down', error_message: err.message || 'Request failed', checked_at: new Date().toISOString() });
