@@ -1,21 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
-import { Check, X, ArrowRight, Star, ChevronDown, Sparkles, BarChart3, FileText, Briefcase, Target, Brain, Globe, Shield, Zap, Users, TrendingUp, Lock, Award } from 'lucide-react';
+import { Check, X, ArrowRight, Star, ChevronDown, Sparkles, BarChart3, FileText, Briefcase, Target, Brain, Globe, Shield, Zap, Users, TrendingUp, Lock, Award, Chrome, BookOpen, Video, Newspaper, MapPin, Search, Bell, Bookmark } from 'lucide-react';
 
 /* ──────────────────────────────────────────────────────────
    Design: Gold-themed, Poppins font, light background
    Focus: Área de Membro — what members get access to
+   NO Career Advisor — removed per user request
+   NO screenshots/prints — removed per user request
+   +100 membros (not +500)
+   Multi-market: UK, PT, ES, BR, US, NL, DE
    ────────────────────────────────────────────────────────── */
 
 const CDN = {
   logo: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/logo-white_baacc2e7.png',
-  dashboard: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/dashboard-overview_ddd78f1d.webp',
-  tools: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/tools-list_c1740de9.webp',
-  vagas: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/vagas-tab_e62775c8.webp',
-  cvMaker: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/cv-maker_ed8d1f33.webp',
-  planos: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/planos_7fc998af.webp',
-  careerPath1: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/pasted_file_fkPdKc_image_891227bf.png',
-  careerPath2: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/pasted_file_g7QX6F_image_1a6b08e0.png',
-  careerPath3: 'https://d2xsxph8kpxj0f.cloudfront.net/105354394/92yTmUfG3DeUMDKSZxzXKb/pasted_file_aeAPCW_image_6065c4b5.png',
 };
 
 const i18n = {
@@ -25,12 +21,20 @@ const i18n = {
     heroSubtitle: 'Acede a ferramentas de IA, análises personalizadas e planeamento estratégico — tudo pensado para te posicionar melhor no mercado.',
     heroCta: 'Entrar na Área de Membro',
     heroCtaSecondary: 'Ver planos',
-    heroStat1: '+500',
+    heroStat1: '+100',
     heroStat1Label: 'Membros ativos',
     heroStat2: '+23 pts',
     heroStat2Label: 'Melhoria média ATS',
     heroStat3: '5',
     heroStat3Label: 'Ferramentas IA',
+    benefitsTag: 'Benefícios',
+    benefitsTitle: 'Porquê ser membro?',
+    benefits: [
+      { icon: 'Lock', title: 'Acesso exclusivo', desc: 'Ferramentas de IA que não estão disponíveis no site público.' },
+      { icon: 'Award', title: 'Análises personalizadas', desc: 'Relatórios detalhados sobre o teu CV, perfil LinkedIn e posicionamento.' },
+      { icon: 'TrendingUp', title: 'Evolução contínua', desc: 'Acompanha o teu progresso e melhora o teu score ATS semana a semana.' },
+      { icon: 'Zap', title: 'Inteligência de mercado', desc: 'Dados de vagas, salários e tendências atualizados para múltiplos mercados.' },
+    ],
     featuresTag: 'O que inclui a tua subscrição',
     featuresTitle: 'Ferramentas exclusivas para membros',
     featuresSubtitle: 'Cinco ferramentas de inteligência artificial integradas, disponíveis na tua área de membro.',
@@ -38,46 +42,80 @@ const i18n = {
       {
         icon: 'FileText',
         name: 'CV Maker',
-        desc: 'Constrói CVs profissionais com templates otimizados para ATS. Importa dados do LinkedIn ou começa do zero com assistência de IA.',
-        img: CDN.cvMaker,
-        badge: 'Incluído em todos os planos',
+        desc: 'Constrói CVs profissionais com templates otimizados para ATS.',
+        details: [
+          'Importa dados do LinkedIn automaticamente ou começa do zero',
+          'Templates profissionais otimizados para sistemas ATS',
+          'Assistência de IA para melhorar descrições de experiência',
+          'Exporta em PDF com formatação perfeita',
+          'Sugestões de palavras-chave por setor e cargo',
+        ],
       },
       {
         icon: 'BarChart3',
         name: 'CV Analyser',
-        desc: 'Análise completa e detalhada do teu CV com IA. Score ATS, feedback dimensional, sugestões de melhoria e comparação com o mercado.',
-        img: CDN.dashboard,
-        badge: 'Até ilimitado',
+        desc: 'Análise completa e detalhada do teu CV com IA.',
+        details: [
+          'Score ATS detalhado com breakdown por dimensão',
+          'Feedback dimensional: conteúdo, formatação, impacto, keywords',
+          'Comparação com benchmarks do mercado',
+          'Sugestões de melhoria priorizadas por impacto',
+          'Análise de compatibilidade com vagas específicas',
+        ],
       },
       {
         icon: 'Target',
         name: 'Career Path',
-        desc: 'Planeamento estratégico da tua carreira. Próximos cargos recomendados, exercícios de visibilidade, networking e ações imediatas.',
-        img: CDN.careerPath1,
-        badge: 'Com NinjaPear',
+        desc: 'Planeamento estratégico da tua carreira com dados reais.',
+        details: [
+          'Próximos cargos recomendados com base no teu perfil',
+          'Exercícios de visibilidade e networking personalizados',
+          'Ações imediatas para acelerar a progressão',
+          'Análise de gaps de competências por cargo-alvo',
+          'Powered by NinjaPear — dados de mercado em tempo real',
+        ],
       },
       {
         icon: 'Brain',
         name: 'Career Intelligence',
-        desc: 'Análise avançada de mercado e posicionamento. Tendências salariais, competências em alta e oportunidades por setor.',
-        img: CDN.careerPath2,
-        badge: 'Premium',
+        desc: 'Análise avançada de mercado e posicionamento competitivo.',
+        details: [
+          'Tendências salariais por cargo, setor e região',
+          'Competências mais procuradas no teu setor',
+          'Dados de empresas enriquecidos (NinjaPear)',
+          'Oportunidades emergentes por mercado',
+          'Benchmarking do teu perfil vs. mercado',
+        ],
       },
       {
         icon: 'Briefcase',
-        name: 'Feed de Vagas',
-        desc: 'Vagas curadas com match inteligente, estimativa salarial e dados de empresa enriquecidos. Extensão Chrome para guardar vagas.',
-        img: CDN.vagas,
-        badge: 'Extensão Chrome',
+        name: 'Feed de Vagas + Job Tracker',
+        desc: 'Vagas curadas com match inteligente e acompanhamento completo.',
+        details: [
+          'Feed personalizado com match % por vaga',
+          'Estimativa salarial e dados de empresa enriquecidos',
+          'Extensão Chrome para guardar vagas de qualquer site',
+          'Job Tracker: acompanha candidaturas (aplicado, entrevista, oferta)',
+          'Alertas de novas vagas compatíveis com o teu perfil',
+        ],
       },
     ],
-    benefitsTag: 'Benefícios',
-    benefitsTitle: 'Porquê ser membro?',
-    benefits: [
-      { icon: 'Lock', title: 'Acesso exclusivo', desc: 'Ferramentas de IA que não estão disponíveis no site público.' },
-      { icon: 'Award', title: 'Análises personalizadas', desc: 'Relatórios detalhados sobre o teu CV, perfil LinkedIn e posicionamento.' },
-      { icon: 'TrendingUp', title: 'Evolução contínua', desc: 'Acompanha o teu progresso e melhora o teu score ATS semana a semana.' },
-      { icon: 'Zap', title: 'Inteligência de mercado', desc: 'Dados de vagas, salários e tendências atualizados para o mercado português.' },
+    extensionTag: 'Extensão Chrome',
+    extensionTitle: 'Acompanhamento de emprego integrado',
+    extensionSubtitle: 'A extensão Chrome da Share2Inspire permite-te guardar vagas de qualquer site e acompanhar todo o processo de candidatura.',
+    extensionSpecs: [
+      { icon: 'Chrome', title: 'Extensão Chrome', desc: 'Guarda vagas do LinkedIn, Indeed, Glassdoor e qualquer outro site com um clique.' },
+      { icon: 'Bookmark', title: 'Job Tracker', desc: 'Acompanha o estado de cada candidatura: guardada, aplicada, entrevista, oferta, rejeitada.' },
+      { icon: 'Bell', title: 'Alertas inteligentes', desc: 'Recebe notificações quando surgem vagas compatíveis com o teu perfil e preferências.' },
+      { icon: 'Search', title: 'Match inteligente', desc: 'Cada vaga tem um score de compatibilidade baseado no teu CV e experiência.' },
+    ],
+    resourcesTag: 'Recursos',
+    resourcesTitle: 'Conteúdo exclusivo para membros',
+    resourcesSubtitle: 'Além das ferramentas, tens acesso a uma biblioteca de recursos para acelerar a tua evolução profissional.',
+    resources: [
+      { icon: 'BookOpen', title: 'E-books', desc: 'Guias práticos sobre otimização de CV, entrevistas, negociação salarial e transição de carreira. Atualizados regularmente.', count: '6+' },
+      { icon: 'Video', title: 'Vídeos', desc: 'Tutoriais e masterclasses sobre as ferramentas da plataforma, estratégias de carreira e tendências do mercado.', count: '12+' },
+      { icon: 'Newspaper', title: 'Artigos', desc: 'Análises aprofundadas sobre o mercado de trabalho, dicas de recrutadores e cases de sucesso de membros.', count: '30+' },
     ],
     comparisonTag: 'Comparação',
     comparisonTitle: 'Porquê a Share2Inspire?',
@@ -91,7 +129,7 @@ const i18n = {
       ['Career Intelligence', true, false, false, false, false],
       ['Job Tracker + Extensão', true, true, false, false, false],
       ['Feed de Vagas com Match', true, 'Básico', false, false, false],
-      ['Foco no mercado PT', true, false, false, false, false],
+      ['Multi-mercado (PT, UK, ES, BR, US, NL, DE)', true, false, false, false, false],
       ['Bilingue PT + EN', true, false, false, false, false],
       ['Company Enrichment', true, false, false, false, false],
     ],
@@ -140,7 +178,7 @@ const i18n = {
       { name: 'Mariana C.', role: 'Product Manager', text: 'Finalmente uma ferramenta que me diz exatamente o que os recrutadores querem ver. O CV Analyser é um game-changer.', stars: 5 },
     ],
     ctaTitle: 'Pronto para dar o próximo passo?',
-    ctaSubtitle: 'Junta-te a mais de 500 membros que já estão a usar as ferramentas da Share2Inspire.',
+    ctaSubtitle: 'Junta-te a mais de 100 membros que já estão a usar as ferramentas da Share2Inspire.',
     ctaButton: 'Criar conta gratuita',
     ctaNote: 'Sem cartão de crédito · Cancela quando quiseres',
     langSwitch: 'EN',
@@ -151,12 +189,20 @@ const i18n = {
     heroSubtitle: 'Access AI tools, personalized analyses and strategic planning — all designed to position you better in the market.',
     heroCta: 'Enter Member Area',
     heroCtaSecondary: 'View plans',
-    heroStat1: '500+',
+    heroStat1: '100+',
     heroStat1Label: 'Active members',
     heroStat2: '+23 pts',
     heroStat2Label: 'Average ATS improvement',
     heroStat3: '5',
     heroStat3Label: 'AI tools',
+    benefitsTag: 'Benefits',
+    benefitsTitle: 'Why become a member?',
+    benefits: [
+      { icon: 'Lock', title: 'Exclusive access', desc: 'AI tools not available on the public site.' },
+      { icon: 'Award', title: 'Personalized analyses', desc: 'Detailed reports on your CV, LinkedIn profile and positioning.' },
+      { icon: 'TrendingUp', title: 'Continuous evolution', desc: 'Track your progress and improve your ATS score week by week.' },
+      { icon: 'Zap', title: 'Market intelligence', desc: 'Job data, salaries and trends updated across multiple markets.' },
+    ],
     featuresTag: 'What your subscription includes',
     featuresTitle: 'Exclusive tools for members',
     featuresSubtitle: 'Five integrated AI tools, available in your member area.',
@@ -164,46 +210,80 @@ const i18n = {
       {
         icon: 'FileText',
         name: 'CV Maker',
-        desc: 'Build professional CVs with ATS-optimized templates. Import data from LinkedIn or start from scratch with AI assistance.',
-        img: CDN.cvMaker,
-        badge: 'Included in all plans',
+        desc: 'Build professional CVs with ATS-optimized templates.',
+        details: [
+          'Import data from LinkedIn automatically or start from scratch',
+          'Professional templates optimized for ATS systems',
+          'AI assistance to improve experience descriptions',
+          'Export to PDF with perfect formatting',
+          'Keyword suggestions by sector and role',
+        ],
       },
       {
         icon: 'BarChart3',
         name: 'CV Analyser',
-        desc: 'Complete and detailed CV analysis with AI. ATS score, dimensional feedback, improvement suggestions and market comparison.',
-        img: CDN.dashboard,
-        badge: 'Up to unlimited',
+        desc: 'Complete and detailed CV analysis with AI.',
+        details: [
+          'Detailed ATS score with dimensional breakdown',
+          'Dimensional feedback: content, formatting, impact, keywords',
+          'Comparison with market benchmarks',
+          'Improvement suggestions prioritized by impact',
+          'Compatibility analysis with specific job listings',
+        ],
       },
       {
         icon: 'Target',
         name: 'Career Path',
-        desc: 'Strategic career planning. Recommended next roles, visibility exercises, networking strategies and immediate actions.',
-        img: CDN.careerPath1,
-        badge: 'With NinjaPear',
+        desc: 'Strategic career planning with real market data.',
+        details: [
+          'Recommended next roles based on your profile',
+          'Personalized visibility and networking exercises',
+          'Immediate actions to accelerate progression',
+          'Skills gap analysis per target role',
+          'Powered by NinjaPear — real-time market data',
+        ],
       },
       {
         icon: 'Brain',
         name: 'Career Intelligence',
-        desc: 'Advanced market analysis and positioning. Salary trends, in-demand skills and opportunities by sector.',
-        img: CDN.careerPath2,
-        badge: 'Premium',
+        desc: 'Advanced market analysis and competitive positioning.',
+        details: [
+          'Salary trends by role, sector and region',
+          'Most in-demand skills in your sector',
+          'Enriched company data (NinjaPear)',
+          'Emerging opportunities by market',
+          'Profile benchmarking vs. market',
+        ],
       },
       {
         icon: 'Briefcase',
-        name: 'Job Feed',
-        desc: 'Curated jobs with smart matching, salary estimates and enriched company data. Chrome extension to save jobs.',
-        img: CDN.vagas,
-        badge: 'Chrome Extension',
+        name: 'Job Feed + Job Tracker',
+        desc: 'Curated jobs with smart matching and full tracking.',
+        details: [
+          'Personalized feed with match % per job',
+          'Salary estimates and enriched company data',
+          'Chrome extension to save jobs from any site',
+          'Job Tracker: track applications (applied, interview, offer)',
+          'Alerts for new jobs matching your profile',
+        ],
       },
     ],
-    benefitsTag: 'Benefits',
-    benefitsTitle: 'Why become a member?',
-    benefits: [
-      { icon: 'Lock', title: 'Exclusive access', desc: 'AI tools not available on the public site.' },
-      { icon: 'Award', title: 'Personalized analyses', desc: 'Detailed reports on your CV, LinkedIn profile and positioning.' },
-      { icon: 'TrendingUp', title: 'Continuous evolution', desc: 'Track your progress and improve your ATS score week by week.' },
-      { icon: 'Zap', title: 'Market intelligence', desc: 'Job data, salaries and trends updated for the Portuguese market.' },
+    extensionTag: 'Chrome Extension',
+    extensionTitle: 'Integrated job tracking',
+    extensionSubtitle: 'The Share2Inspire Chrome extension lets you save jobs from any site and track your entire application process.',
+    extensionSpecs: [
+      { icon: 'Chrome', title: 'Chrome Extension', desc: 'Save jobs from LinkedIn, Indeed, Glassdoor and any other site with one click.' },
+      { icon: 'Bookmark', title: 'Job Tracker', desc: 'Track the status of each application: saved, applied, interview, offer, rejected.' },
+      { icon: 'Bell', title: 'Smart alerts', desc: 'Get notifications when new jobs matching your profile and preferences appear.' },
+      { icon: 'Search', title: 'Smart matching', desc: 'Each job has a compatibility score based on your CV and experience.' },
+    ],
+    resourcesTag: 'Resources',
+    resourcesTitle: 'Exclusive content for members',
+    resourcesSubtitle: 'Beyond the tools, you get access to a library of resources to accelerate your professional growth.',
+    resources: [
+      { icon: 'BookOpen', title: 'E-books', desc: 'Practical guides on CV optimization, interviews, salary negotiation and career transition. Regularly updated.', count: '6+' },
+      { icon: 'Video', title: 'Videos', desc: 'Tutorials and masterclasses on platform tools, career strategies and market trends.', count: '12+' },
+      { icon: 'Newspaper', title: 'Articles', desc: 'In-depth analyses of the job market, recruiter tips and member success stories.', count: '30+' },
     ],
     comparisonTag: 'Comparison',
     comparisonTitle: 'Why Share2Inspire?',
@@ -217,7 +297,7 @@ const i18n = {
       ['Career Intelligence', true, false, false, false, false],
       ['Job Tracker + Extension', true, true, false, false, false],
       ['Job Feed with Matching', true, 'Basic', false, false, false],
-      ['Portuguese Market Focus', true, false, false, false, false],
+      ['Multi-market (PT, UK, ES, BR, US, NL, DE)', true, false, false, false, false],
       ['Bilingual PT + EN', true, false, false, false, false],
       ['Company Enrichment', true, false, false, false, false],
     ],
@@ -266,7 +346,7 @@ const i18n = {
       { name: 'Mariana C.', role: 'Product Manager', text: 'Finally a tool that tells me exactly what recruiters want to see. The CV Analyser is a game-changer.', stars: 5 },
     ],
     ctaTitle: 'Ready to take the next step?',
-    ctaSubtitle: 'Join over 500 members already using Share2Inspire tools.',
+    ctaSubtitle: 'Join over 100 members already using Share2Inspire tools.',
     ctaButton: 'Create free account',
     ctaNote: 'No credit card · Cancel anytime',
     langSwitch: 'PT',
@@ -274,7 +354,7 @@ const i18n = {
 };
 
 const iconMap: Record<string, React.ElementType> = {
-  FileText, BarChart3, Target, Brain, Briefcase, Lock, Award, TrendingUp, Zap,
+  FileText, BarChart3, Target, Brain, Briefcase, Lock, Award, TrendingUp, Zap, Chrome, BookOpen, Video, Newspaper, MapPin, Search, Bell, Bookmark,
 };
 
 function FadeIn({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -299,7 +379,7 @@ export default function ClientAreaLanding() {
     const stored = localStorage.getItem('s2i-lang');
     return stored === 'en' ? 'en' : 'pt';
   });
-  const [activeFeat, setActiveFeat] = useState(0);
+  const [expandedFeat, setExpandedFeat] = useState<number | null>(null);
   const t = i18n[lang];
 
   const toggleLang = () => {
@@ -407,7 +487,7 @@ export default function ClientAreaLanding() {
         </div>
       </section>
 
-      {/* ─── Features Showcase ─── */}
+      {/* ─── Features — Expandable Cards (NO screenshots) ─── */}
       <section id="features" className="py-20 sm:py-28 bg-[#FAFAF9]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
@@ -420,60 +500,109 @@ export default function ClientAreaLanding() {
             </div>
           </FadeIn>
 
-          <div className="grid lg:grid-cols-12 gap-8">
-            {/* Feature tabs */}
-            <div className="lg:col-span-4 space-y-2">
-              {t.features.map((f, i) => {
-                const Icon = iconMap[f.icon] || FileText;
-                return (
-                  <FadeIn key={i} delay={i * 80}>
+          <div className="max-w-4xl mx-auto space-y-4">
+            {t.features.map((f, i) => {
+              const Icon = iconMap[f.icon] || FileText;
+              const isOpen = expandedFeat === i;
+              return (
+                <FadeIn key={i} delay={i * 80}>
+                  <div className={`rounded-2xl border transition-all duration-300 ${isOpen ? 'bg-white border-[#C9A961]/30 shadow-lg' : 'bg-white border-[#e5e5e0] hover:shadow-md'}`}>
                     <button
-                      onClick={() => setActiveFeat(i)}
-                      className={`w-full text-left p-4 rounded-xl transition-all duration-300 ${
-                        activeFeat === i
-                          ? 'bg-gradient-to-r from-[#C9A961]/10 to-[#C9A961]/5 border border-[#C9A961]/30 shadow-sm'
-                          : 'hover:bg-white border border-transparent'
-                      }`}
+                      onClick={() => setExpandedFeat(isOpen ? null : i)}
+                      className="w-full text-left p-6 flex items-start gap-4"
                     >
-                      <div className="flex items-start gap-3">
-                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                          activeFeat === i ? 'bg-[#C9A961] text-white' : 'bg-white text-[#999]'
-                        }`}>
-                          <Icon className="w-4.5 h-4.5" />
+                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors ${isOpen ? 'bg-[#C9A961] text-white' : 'bg-[#C9A961]/10 text-[#C9A961]'}`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-bold text-base text-[#1a1a1a]">{f.name}</h3>
+                          <ChevronDown className={`w-5 h-5 text-[#999] shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                         </div>
-                        <div>
-                          <div className="font-semibold text-sm text-[#1a1a1a]">{f.name}</div>
-                          <div className="text-xs text-[#999] mt-0.5 line-clamp-2">{f.desc}</div>
-                        </div>
+                        <p className="text-sm text-[#666] mt-1">{f.desc}</p>
                       </div>
                     </button>
-                  </FadeIn>
-                );
-              })}
-            </div>
+                    {isOpen && (
+                      <div className="px-6 pb-6 pt-0">
+                        <div className="ml-15 pl-4 border-l-2 border-[#C9A961]/20">
+                          <ul className="space-y-3">
+                            {f.details.map((d, di) => (
+                              <li key={di} className="flex items-start gap-2.5 text-sm text-[#555]">
+                                <Check className="w-4 h-4 text-[#C9A961] shrink-0 mt-0.5" />
+                                {d}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </FadeIn>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
-            {/* Feature screenshot */}
-            <div className="lg:col-span-8">
-              <FadeIn>
-                <div className="relative rounded-2xl overflow-hidden border border-[#e5e5e0] shadow-xl bg-white">
-                  <div className="absolute top-4 right-4 z-10">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#C9A961]/90 text-white text-[10px] font-semibold">
-                      <Sparkles className="w-3 h-3" /> {t.features[activeFeat].badge}
-                    </span>
-                  </div>
-                  <img
-                    src={t.features[activeFeat].img}
-                    alt={t.features[activeFeat].name}
-                    className="w-full h-auto transition-opacity duration-500"
-                    loading="lazy"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
-                    <h3 className="text-white font-bold text-lg">{t.features[activeFeat].name}</h3>
-                    <p className="text-white/80 text-sm mt-1">{t.features[activeFeat].desc}</p>
-                  </div>
-                </div>
-              </FadeIn>
+      {/* ─── Chrome Extension & Job Tracking ─── */}
+      <section className="py-16 sm:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn>
+            <div className="text-center mb-12">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
+                {t.extensionTag}
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mb-4">{t.extensionTitle}</h2>
+              <p className="text-[#666] text-lg max-w-2xl mx-auto">{t.extensionSubtitle}</p>
             </div>
+          </FadeIn>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {t.extensionSpecs.map((spec, i) => {
+              const Icon = iconMap[spec.icon] || Chrome;
+              return (
+                <FadeIn key={i} delay={i * 100}>
+                  <div className="bg-[#FAFAF9] rounded-2xl p-6 border border-[#e5e5e0] hover:shadow-md hover:border-[#C9A961]/20 transition-all">
+                    <div className="w-12 h-12 rounded-xl bg-[#C9A961]/10 flex items-center justify-center mb-4">
+                      <Icon className="w-6 h-6 text-[#C9A961]" />
+                    </div>
+                    <h3 className="font-semibold text-sm text-[#1a1a1a] mb-2">{spec.title}</h3>
+                    <p className="text-xs text-[#666] leading-relaxed">{spec.desc}</p>
+                  </div>
+                </FadeIn>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Resources (E-books, Videos, Articles) ─── */}
+      <section className="py-16 sm:py-20 bg-[#FAFAF9]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn>
+            <div className="text-center mb-12">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A961]/10 text-[#C9A961] text-xs font-semibold tracking-wide uppercase mb-4">
+                {t.resourcesTag}
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[#1a1a1a] mb-4">{t.resourcesTitle}</h2>
+              <p className="text-[#666] text-lg max-w-2xl mx-auto">{t.resourcesSubtitle}</p>
+            </div>
+          </FadeIn>
+          <div className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {t.resources.map((res, i) => {
+              const Icon = iconMap[res.icon] || BookOpen;
+              return (
+                <FadeIn key={i} delay={i * 120}>
+                  <div className="bg-white rounded-2xl p-8 border border-[#e5e5e0] hover:shadow-lg hover:border-[#C9A961]/20 transition-all text-center group">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#C9A961]/15 to-[#C9A961]/5 flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
+                      <Icon className="w-7 h-7 text-[#C9A961]" />
+                    </div>
+                    <div className="text-2xl font-bold text-[#C9A961] mb-1">{res.count}</div>
+                    <h3 className="font-bold text-base text-[#1a1a1a] mb-3">{res.title}</h3>
+                    <p className="text-xs text-[#666] leading-relaxed">{res.desc}</p>
+                  </div>
+                </FadeIn>
+              );
+            })}
           </div>
         </div>
       </section>
