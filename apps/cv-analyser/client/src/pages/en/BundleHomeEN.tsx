@@ -440,9 +440,9 @@ export default function BundleHomeEN() {
                 </>
               ) : (
                 <>
-                  <span className="text-lg line-through text-slate-400">{CUR}39.98</span>
+                  <span className="text-lg line-through text-slate-400">{CUR}38</span>
                   <span className="text-4xl font-bold text-slate-900">{CUR}{PRICE}</span>
-                  <span className="text-sm font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">Save {CUR}10</span>
+                  <span className="text-sm font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">Save {CUR}9</span>
                 </>
               )}
             </div>
@@ -513,7 +513,7 @@ export default function BundleHomeEN() {
             <h2 className="text-xl font-bold text-center text-slate-900 mb-8">Why the Bundle?</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
-                { icon: <Shield className="w-5 h-5 text-[#C9A961]" />, title: `Save ${CUR}10`, desc: `Separately they cost ${CUR}39.98. As a bundle, you pay only ${CUR}29.` },
+                { icon: <Shield className="w-5 h-5 text-[#C9A961]" />, title: `Save ${CUR}9`, desc: `Separately they cost ${CUR}38. As a bundle, you pay only ${CUR}29.` },
                 { icon: <Zap className="w-5 h-5 text-[#C9A961]" />, title: "Single upload", desc: "Upload your CV once and both engines run in parallel." },
                 { icon: <Target className="w-5 h-5 text-[#C9A961]" />, title: "Complete picture", desc: "Know where you stand (CV Analyser) and where to go (Career Path)." },
                 { icon: <TrendingUp className="w-5 h-5 text-[#C9A961]" />, title: "Data-driven decisions", desc: "Integrated report with score, salaries and roadmap in one place." },

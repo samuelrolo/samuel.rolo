@@ -630,9 +630,9 @@ export default function BundleHome() {
                 </>
               ) : (
                 <>
-                  <span className="text-lg line-through text-slate-400">39,98€</span>
+                  <span className="text-lg line-through text-slate-400">38€</span>
                   <span className="text-4xl font-bold text-slate-900">{PRICE}€</span>
-                  <span className="text-sm font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">Poupas 10€</span>
+                  <span className="text-sm font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">Poupas 9€</span>
                 </>
               )}
             </div>
@@ -707,7 +707,7 @@ export default function BundleHome() {
             <h2 className="text-xl font-bold text-center text-slate-900 mb-8">Porquê o Bundle?</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
-                { icon: <Shield className="w-5 h-5 text-[#C9A961]" />, title: "Poupas 10€", desc: "Separadamente custariam 39,98€. Em bundle, pagas apenas 29€." },
+                { icon: <Shield className="w-5 h-5 text-[#C9A961]" />, title: "Poupas 9€", desc: "Separadamente custariam 38€. Em bundle, pagas apenas 29€." },
                 { icon: <Zap className="w-5 h-5 text-[#C9A961]" />, title: "Upload único", desc: "Carregas o CV uma vez e os dois motores correm em paralelo." },
                 { icon: <Target className="w-5 h-5 text-[#C9A961]" />, title: "Visão completa", desc: "Sabes onde estás (CV Analyser) e para onde ir (Career Path)." },
                 { icon: <TrendingUp className="w-5 h-5 text-[#C9A961]" />, title: "Decisões com dados", desc: "Relatório integrado com score, salários e roadmap num só lugar." },
