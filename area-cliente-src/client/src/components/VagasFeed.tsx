@@ -3,18 +3,19 @@
  * Uses real Adzuna API for ALL countries (fallback to nearest supported)
  * Keywords extracted from user's Career Path / CV Analyser analyses
  * For Portugal: uses Adzuna ES (Spain) as nearest fallback + LinkedIn Jobs link
+ * Company enrichment via NinjaPear (Nubela) API
  */
-import { useState, useEffect, useCallback } from 'react';
-import { Briefcase, RefreshCw, ExternalLink, Search, AlertCircle, Linkedin } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Briefcase, RefreshCw, ExternalLink, Search, AlertCircle, Linkedin, Building2, Users, MapPin, ChevronDown, ChevronUp, X, Loader2 } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 
 // ─── Adzuna proxy via Supabase Edge Function ──────────────────────────────
-// Credentials are stored in Supabase secrets (S2I_APP_ID, S2I_APP_KEY)
-// Frontend calls the Edge Function which proxies to Adzuna API
 const SUPABASE_URL = 'https://cvlumvgrbuolrnwrtrgz.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bHVtdmdyYnVvbHJud3J0cmd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc1NjcyMjQsImV4cCI6MjA1MzE0MzIyNH0.WXJOFGSNqlaOBRBUKMOGRqPB7-Qs1KHaVjDiSMkNfNg';
 const ADZUNA_PROXY_URL = `${SUPABASE_URL}/functions/v1/adzuna-proxy`;
+const HYPER_TASK_URL = `${SUPABASE_URL}/functions/v1/hyper-task`;
 
 // ─── Adzuna supported countries ────────────────────────────────────────────
 const ADZUNA_SUPPORTED: Record<string, string> = {
@@ -29,7 +30,6 @@ const ADZUNA_FALLBACK: Record<string, string> = {
   AR: 'br', CL: 'br', CO: 'br', PE: 'br',
 };
 
-// Map of common PT keywords to EN equivalents for international search
 const PT_TO_EN_KEYWORDS: Record<string, string> = {
   'recursos humanos': 'human resources',
   'gestão': 'management',
@@ -72,13 +72,10 @@ const PT_TO_EN_KEYWORDS: Record<string, string> = {
 function translateKeywordsToEnglish(keywords: string[]): string[] {
   return keywords.map(kw => {
     const lower = kw.toLowerCase().trim();
-    // Direct match
     if (PT_TO_EN_KEYWORDS[lower]) return PT_TO_EN_KEYWORDS[lower];
-    // Partial match — check if any PT key is contained in the keyword
     for (const [pt, en] of Object.entries(PT_TO_EN_KEYWORDS)) {
       if (lower.includes(pt)) return kw.toLowerCase().replace(pt, en);
     }
-    // Return original if no translation found (might already be English)
     return kw;
   });
 }
@@ -123,15 +120,62 @@ interface Vaga {
   url: string;
 }
 
-type FilterType = string;
+interface CompanyInfo {
+  name: string;
+  description: string;
+  industry: string;
+  employee_count: number | null;
+  specialties: string[];
+  hq: string;
+  founded_year: number | null;
+  tagline: string;
+  competitors: string[];
+}
+
+type FilterType = 'all' | 'remote' | 'local' | 'hr' | 'marketing';
 
 interface VagasFeedProps {
   lang?: string;
   countryCode?: string;
   countryName?: string;
   region?: string;
-  jobArea?: string;
-  workMode?: 'remote' | 'hybrid' | 'onsite';
+}
+
+// ─── NinjaPear company cache ───────────────────────────────────────────────
+const companyCache = new Map<string, CompanyInfo | null>();
+
+async function fetchCompanyInfo(companyName: string): Promise<CompanyInfo | null> {
+  if (!companyName || companyName.length < 2) return null;
+  const cacheKey = companyName.toLowerCase().trim();
+  if (companyCache.has(cacheKey)) return companyCache.get(cacheKey) || null;
+
+  try {
+    const res = await fetch(HYPER_TASK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        mode: 'company_enrichment',
+        company_name: companyName,
+      }),
+    });
+    if (!res.ok) {
+      companyCache.set(cacheKey, null);
+      return null;
+    }
+    const data = await res.json();
+    if (data.success && data.company) {
+      companyCache.set(cacheKey, data.company);
+      return data.company;
+    }
+    companyCache.set(cacheKey, null);
+    return null;
+  } catch {
+    companyCache.set(cacheKey, null);
+    return null;
+  }
 }
 
 // ─── Extract user keywords from analyses ────────────────────────────────────
@@ -153,14 +197,12 @@ async function getUserKeywords(userId: string): Promise<string[]> {
       const d = a.data;
       if (!d) continue;
 
-      // CV Analyser keywords
       if (a.analysis_type === 'cv_analyser') {
         const kws = d.keywords || d.analysis?.keywords || [];
         if (Array.isArray(kws)) kws.forEach((k: string) => keywords.add(k));
         if (d.perceivedRole) keywords.add(d.perceivedRole);
       }
 
-      // Career Intelligence — associated roles from strategic paths
       if (a.analysis_type === 'career_intelligence') {
         const paths = d.strategic_paths || [];
         for (const p of paths) {
@@ -174,29 +216,171 @@ async function getUserKeywords(userId: string): Promise<string[]> {
         }
       }
 
-      // Career Path — career path title
       if (a.analysis_type === 'career_path') {
         const cpJson = d.career_path_json || d.career_path || {};
         if (cpJson.title) keywords.add(cpJson.title);
       }
     }
 
-    // Truncate long keywords (e.g. "Head of HR Digital Transformation") to max 3 words
-    // to avoid overly restrictive Adzuna searches
-    return Array.from(keywords)
-      .filter(k => k && k.length > 2)
-      .map(k => {
-        const words = k.trim().split(/\s+/);
-        return words.length > 3 ? words.slice(0, 3).join(' ') : k;
-      })
-      .slice(0, 6);
+    return Array.from(keywords).filter(k => k && k.length > 2).slice(0, 6);
   } catch {
     return [];
   }
 }
 
+// ─── Company Detail Card (mobile-responsive) ──────────────────────────────
+function CompanyDetailCard({ companyName, lang, onClose }: { companyName: string; lang: string; onClose: () => void }) {
+  const [info, setInfo] = useState<CompanyInfo | null>(null);
+  const [loading, setLoading] = useState(true);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isPT = lang === 'pt';
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetchCompanyInfo(companyName).then(data => {
+      if (!cancelled) {
+        setInfo(data);
+        setLoading(false);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [companyName]);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
+        onClose();
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [onClose]);
+
+  if (loading) {
+    return (
+      <div ref={cardRef} className="mt-2 mx-2 sm:mx-0 p-4 bg-gradient-to-br from-[#fdf8ed] to-white border border-[#BF9A33]/25 rounded-lg shadow-md animate-in fade-in duration-200">
+        <div className="flex items-center gap-2 text-[#a57b0a] text-xs">
+          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          {isPT ? 'A carregar dados da empresa...' : 'Loading company data...'}
+        </div>
+      </div>
+    );
+  }
+
+  if (!info) {
+    return (
+      <div ref={cardRef} className="mt-2 mx-2 sm:mx-0 p-3 bg-[#f8f9fa] border border-[#e9ecef] rounded-lg text-xs text-[#6c757d]">
+        {isPT ? 'Dados da empresa não disponíveis.' : 'Company data not available.'}
+        <button onClick={onClose} className="ml-2 text-[#a57b0a] font-medium hover:underline">{isPT ? 'Fechar' : 'Close'}</button>
+      </div>
+    );
+  }
+
+  const formatEmployees = (count: number) => {
+    if (count >= 1000000) return `${(count / 1000000).toFixed(0)}M+`;
+    if (count >= 1000) return `${(count / 1000).toFixed(0)}K+`;
+    return count.toLocaleString();
+  };
+
+  return (
+    <div ref={cardRef} className="mt-2 mx-2 sm:mx-0 bg-gradient-to-br from-[#fdf8ed] to-white border border-[#BF9A33]/25 rounded-lg shadow-md overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
+      {/* Header */}
+      <div className="px-3 sm:px-4 py-2.5 border-b border-[#BF9A33]/15 flex items-center gap-2">
+        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#BF9A33]/10 flex items-center justify-center flex-shrink-0">
+          <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#BF9A33]" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h4 className="text-xs sm:text-sm font-semibold text-[#2c3e50] truncate">{info.name}</h4>
+          {info.tagline && <p className="text-[10px] text-[#6c757d] truncate">{info.tagline}</p>}
+        </div>
+        <button onClick={onClose} className="p-1 rounded-full hover:bg-[#BF9A33]/10 transition-colors flex-shrink-0">
+          <X className="w-3.5 h-3.5 text-[#6c757d]" />
+        </button>
+      </div>
+
+      {/* Body */}
+      <div className="px-3 sm:px-4 py-3 space-y-2.5">
+        {/* Description */}
+        {info.description && (
+          <p className="text-[11px] sm:text-xs text-[#495057] leading-relaxed line-clamp-3">
+            {info.description.length > 250 ? info.description.substring(0, 250) + '...' : info.description}
+          </p>
+        )}
+
+        {/* Key metrics — responsive grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {info.industry && (
+            <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-[#495057]">
+              <Briefcase className="w-3 h-3 text-[#BF9A33] flex-shrink-0" />
+              <span className="truncate">{info.industry}</span>
+            </div>
+          )}
+          {info.employee_count && (
+            <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-[#495057]">
+              <Users className="w-3 h-3 text-[#BF9A33] flex-shrink-0" />
+              <span>{formatEmployees(info.employee_count)} {isPT ? 'funcionários' : 'employees'}</span>
+            </div>
+          )}
+          {info.hq && (
+            <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-[#495057]">
+              <MapPin className="w-3 h-3 text-[#BF9A33] flex-shrink-0" />
+              <span className="truncate">{info.hq}</span>
+            </div>
+          )}
+          {info.founded_year && (
+            <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-[#495057]">
+              <span className="w-3 h-3 text-[#BF9A33] flex-shrink-0 text-center font-bold text-[9px]">Est</span>
+              <span>{info.founded_year}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Specialties */}
+        {info.specialties.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {info.specialties.slice(0, 5).map((s, i) => (
+              <span key={i} className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-[#BF9A33]/8 border border-[#BF9A33]/15 text-[#856404] font-medium">
+                {s}
+              </span>
+            ))}
+            {info.specialties.length > 5 && (
+              <span className="text-[9px] sm:text-[10px] px-1.5 py-0.5 text-[#999]">
+                +{info.specialties.length - 5}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Competitors */}
+        {info.competitors.length > 0 && (
+          <div className="pt-1 border-t border-[#e9ecef]">
+            <p className="text-[10px] font-medium text-[#6c757d] mb-1">
+              {isPT ? 'Empresas similares:' : 'Similar companies:'}
+            </p>
+            <div className="flex flex-wrap gap-1">
+              {info.competitors.slice(0, 4).map((c, i) => (
+                <span key={i} className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-[#f0f4ff] border border-[#c7d2fe] text-[#4338ca] font-medium">
+                  {c}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Footer — powered by */}
+      <div className="px-3 sm:px-4 py-1.5 border-t border-[#e9ecef] bg-[#f8f9fa]/50">
+        <p className="text-[9px] text-[#adb5bd] text-center">
+          Powered by NinjaPear
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Component ──────────────────────────────────────────────────────────────
-export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryName = 'Portugal', region, jobArea, workMode }: VagasFeedProps) {
+export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryName = 'Portugal', region }: VagasFeedProps) {
   const { t, lang: ctxLang } = useI18n();
   const { user } = useAuth();
   const lang = langProp || ctxLang;
@@ -205,32 +389,13 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
   const locationLabel = region || countryName || 'Portugal';
   const isUnsupportedCountry = !ADZUNA_SUPPORTED[countryCode.toUpperCase()];
 
-  // Build dynamic filters from profile preferences
-  const FILTERS: { key: FilterType; label: string }[] = (() => {
-    const filters: { key: FilterType; label: string }[] = [
-      { key: 'all', label: t('vf.all') },
-    ];
-    // Work mode filters
-    if (!workMode || workMode === 'remote' || workMode === 'hybrid') {
-      filters.push({ key: 'remote', label: t('vf.remote') });
-    }
-    // Location filter
-    filters.push({ key: 'local', label: locationLabel.split(' / ')[0].split(' (')[0] });
-    // Area-based filter from profile
-    if (jobArea) {
-      // Split by comma in case user entered multiple areas
-      const areas = jobArea.split(',').map(a => a.trim()).filter(Boolean);
-      areas.slice(0, 3).forEach(area => {
-        const key = `area_${area.toLowerCase().replace(/\s+/g, '_')}`;
-        filters.push({ key, label: area });
-      });
-    } else {
-      // Fallback to generic filters if no area set
-      filters.push({ key: 'area_hr', label: t('vf.hr') });
-      filters.push({ key: 'area_marketing', label: 'Marketing' });
-    }
-    return filters;
-  })();
+  const FILTERS: { key: FilterType; label: string }[] = [
+    { key: 'all',       label: t('vf.all') },
+    { key: 'remote',    label: t('vf.remote') },
+    { key: 'local',     label: locationLabel.split(' / ')[0].split(' (')[0] },
+    { key: 'hr',        label: t('vf.hr') },
+    { key: 'marketing', label: 'Marketing' },
+  ];
 
   const [vagas, setVagas] = useState<Vaga[]>([]);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
@@ -238,113 +403,125 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
   const [isApiData, setIsApiData] = useState(false);
   const [userKeywords, setUserKeywords] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [expandedCompany, setExpandedCompany] = useState<string | null>(null);
 
-  // Load user keywords from analyses
   useEffect(() => {
     if (user?.id) {
       getUserKeywords(user.id).then(kws => setUserKeywords(kws));
     }
   }, [user?.id]);
 
-  // Build a single-keyword query to avoid overly restrictive Adzuna searches
-  // Adzuna treats space-separated words as AND, so "Head of HR Global HR Process" returns 0 results
   const buildSearchQuery = useCallback((keywords: string[], forceEnglish = false): string => {
     const useEnglish = forceEnglish || isUnsupportedCountry;
     if (keywords.length > 0) {
       const kws = useEnglish ? translateKeywordsToEnglish(keywords) : keywords;
-      // ALWAYS use only the first (most relevant) keyword to avoid AND-chaining
-      return kws[0];
-    }
-    // Use jobArea from profile if available
-    if (jobArea) {
-      const areaKw = useEnglish ? (PT_TO_EN_KEYWORDS[jobArea.toLowerCase()] || jobArea) : jobArea;
-      return areaKw;
+      const limit = isUnsupportedCountry ? 1 : 3;
+      return kws.slice(0, limit).join(' ');
     }
     return (lang === 'pt' && !useEnglish) ? 'recursos humanos gestão' : 'human resources management';
-  }, [lang, isUnsupportedCountry, jobArea]);
-
-  // Helper to map Adzuna results to Vaga objects
-  const mapResults = useCallback((results: any[], matchBase: number = 65): Vaga[] => {
-    const currencySymbol = adzunaCountry === 'gb' ? '£' : adzunaCountry === 'us' ? '$' : '€';
-    return results.map((j: any) => {
-      const title = (j.title || '').replace(/<\/?[^>]+(>|$)/g, '');
-      const company = j.company?.display_name || '';
-      const loc = j.location?.display_name || countryName || '';
-      const isRemote = /remot/i.test(title + ' ' + (j.description || '') + ' ' + loc);
-      const tags: string[] = [];
-      if (j.category?.label) tags.push(j.category.label);
-      const titleLower = title.toLowerCase();
-      const matchCount = userKeywords.filter(kw => titleLower.includes(kw.toLowerCase())).length;
-      const baseMatch = matchBase + Math.floor(Math.random() * 15);
-      const keywordBonus = Math.min(matchCount * 10, 25);
-      const match = Math.min(baseMatch + keywordBonus, 99);
-      return {
-        title, company, location: loc,
-        salary: j.salary_min && j.salary_max
-          ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}–${Math.round(j.salary_max / 12).toLocaleString()}`
-          : j.salary_min ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}+` : null,
-        remote: isRemote, tags, match,
-        key: (j.category?.label || '').toLowerCase(),
-        url: j.redirect_url || getAdzunaSearchUrl(adzunaCountry, title, loc),
-      };
-    }).sort((a: Vaga, b: Vaga) => b.match - a.match);
-  }, [adzunaCountry, countryName, userKeywords]);
-
-  // Helper to call the Adzuna proxy
-  const callAdzuna = useCallback(async (what: string, where?: string): Promise<any[]> => {
-    const params = new URLSearchParams({ country: adzunaCountry, what, results_per_page: '10' });
-    if (where) params.set('where', where);
-    const res = await fetch(`${ADZUNA_PROXY_URL}?${params.toString()}`);
-    const data = await res.json();
-    return data.results || [];
-  }, [adzunaCountry]);
+  }, [lang, isUnsupportedCountry]);
 
   const fetchVagas = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setExpandedCompany(null);
 
-    const primaryQuery = buildSearchQuery(userKeywords);
-    // When using a fallback country (e.g. PT→GB), don't send the original country as location
+    const query = buildSearchQuery(userKeywords);
     const whereParam = isUnsupportedCountry ? '' : (region || countryName || '');
 
-    // Build a progressive retry chain: specific keyword → jobArea → generic
-    const retryChain: { query: string; where: string; matchBase: number }[] = [
-      { query: primaryQuery, where: whereParam, matchBase: 65 },
-    ];
-
-    // If primary query is from analyses (not jobArea), add jobArea as fallback
-    const areaFallback = jobArea
-      ? (PT_TO_EN_KEYWORDS[jobArea.toLowerCase()] || jobArea)
-      : null;
-    if (areaFallback && areaFallback.toLowerCase() !== primaryQuery.toLowerCase()) {
-      retryChain.push({ query: areaFallback, where: whereParam, matchBase: 60 });
-    }
-
-    // Generic fallback without location constraint
-    const genericQuery = areaFallback || 'human resources management';
-    if (genericQuery.toLowerCase() !== primaryQuery.toLowerCase()) {
-      retryChain.push({ query: genericQuery, where: '', matchBase: 55 });
-    }
-
-    // Last resort: very broad keyword
-    retryChain.push({ query: 'management', where: '', matchBase: 50 });
-
     try {
-      for (const attempt of retryChain) {
-        const results = await callAdzuna(attempt.query, attempt.where);
-        if (results.length > 0) {
-          setVagas(mapResults(results, attempt.matchBase));
+      const proxyParams = new URLSearchParams({
+        country: adzunaCountry,
+        what: query,
+        results_per_page: '10',
+      });
+      if (whereParam) proxyParams.set('where', whereParam);
+      const url = `${ADZUNA_PROXY_URL}?${proxyParams.toString()}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.results?.length) {
+        const currencySymbol = adzunaCountry === 'gb' ? '£' : adzunaCountry === 'us' ? '$' : '€';
+        const mapped: Vaga[] = data.results.map((j: any) => {
+          const title = (j.title || '').replace(/<\/?[^>]+(>|$)/g, '');
+          const company = j.company?.display_name || '';
+          const loc = j.location?.display_name || countryName || '';
+          const isRemote = /remot/i.test(title + ' ' + (j.description || '') + ' ' + loc);
+          const tags: string[] = [];
+          if (j.category?.label) tags.push(j.category.label);
+
+          const titleLower = title.toLowerCase();
+          const matchCount = userKeywords.filter(kw => titleLower.includes(kw.toLowerCase())).length;
+          const baseMatch = 65 + Math.floor(Math.random() * 15);
+          const keywordBonus = Math.min(matchCount * 10, 25);
+          const match = Math.min(baseMatch + keywordBonus, 99);
+
+          return {
+            title,
+            company,
+            location: loc,
+            salary: j.salary_min && j.salary_max
+              ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}–${Math.round(j.salary_max / 12).toLocaleString()}`
+              : j.salary_min
+                ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}+`
+                : null,
+            remote: isRemote,
+            tags,
+            match,
+            key: (j.category?.label || '').toLowerCase(),
+            url: j.redirect_url || getAdzunaSearchUrl(adzunaCountry, title, loc),
+          };
+        });
+
+        mapped.sort((a, b) => b.match - a.match);
+        setVagas(mapped);
+        setIsApiData(true);
+      } else if (isUnsupportedCountry && query !== 'management') {
+        const retryParams = new URLSearchParams({
+          country: adzunaCountry,
+          what: 'management',
+          results_per_page: '10',
+        });
+        const retryUrl = `${ADZUNA_PROXY_URL}?${retryParams.toString()}`;
+        const retryRes = await fetch(retryUrl);
+        const retryData = await retryRes.json();
+        if (retryData.results?.length) {
+          const currencySymbol = adzunaCountry === 'gb' ? '£' : adzunaCountry === 'us' ? '$' : '€';
+          const mapped: Vaga[] = retryData.results.map((j: any) => {
+            const title = (j.title || '').replace(/<\/?[^>]+(>|$)/g, '');
+            const company = j.company?.display_name || '';
+            const loc = j.location?.display_name || countryName || '';
+            const isRemote = /remot/i.test(title + ' ' + (j.description || '') + ' ' + loc);
+            const tags: string[] = [];
+            if (j.category?.label) tags.push(j.category.label);
+            const match = 60 + Math.floor(Math.random() * 15);
+            return {
+              title, company, location: loc,
+              salary: j.salary_min && j.salary_max
+                ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}–${Math.round(j.salary_max / 12).toLocaleString()}`
+                : j.salary_min ? `${currencySymbol}${Math.round(j.salary_min / 12).toLocaleString()}+` : null,
+              remote: isRemote, tags, match,
+              key: (j.category?.label || '').toLowerCase(),
+              url: j.redirect_url || getAdzunaSearchUrl(adzunaCountry, title, loc),
+            };
+          });
+          mapped.sort((a, b) => b.match - a.match);
+          setVagas(mapped);
           setIsApiData(true);
-          setLoading(false);
-          return;
+        } else {
+          setVagas([]);
+          setIsApiData(false);
+          setError(lang === 'pt'
+            ? 'Sem vagas encontradas para esta pesquisa. Tenta alterar o país ou região.'
+            : 'No jobs found for this search. Try changing the country or region.');
         }
+      } else {
+        setVagas([]);
+        setIsApiData(false);
+        setError(lang === 'pt'
+          ? 'Sem vagas encontradas para esta pesquisa. Tenta alterar o país ou região.'
+          : 'No jobs found for this search. Try changing the country or region.');
       }
-      // All retries exhausted
-      setVagas([]);
-      setIsApiData(false);
-      setError(lang === 'pt'
-        ? 'Sem vagas encontradas para esta pesquisa. Tenta alterar o país ou região.'
-        : 'No jobs found for this search. Try changing the country or region.');
     } catch (err) {
       console.error('Adzuna fetch error:', err);
       setVagas([]);
@@ -354,7 +531,7 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
         : 'Error loading jobs. Please try again.');
     }
     setLoading(false);
-  }, [adzunaCountry, buildSearchQuery, userKeywords, countryName, region, lang, isUnsupportedCountry, jobArea, callAdzuna, mapResults]);
+  }, [adzunaCountry, buildSearchQuery, userKeywords, countryName, region, lang]);
 
   useEffect(() => { fetchVagas(); }, [fetchVagas]);
 
@@ -362,15 +539,8 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
     if (activeFilter === 'all') return true;
     if (activeFilter === 'remote') return v.remote;
     if (activeFilter === 'local') return v.location.toLowerCase().includes(locationLabel.toLowerCase().split(' / ')[0].split(' (')[0].toLowerCase());
-    // Dynamic area filters
-    if (activeFilter.startsWith('area_')) {
-      const areaLabel = activeFilter.replace('area_', '').replace(/_/g, ' ');
-      // Check if area matches in title, tags, or company
-      const searchText = (v.title + ' ' + v.tags.join(' ') + ' ' + v.company).toLowerCase();
-      // Also check English translation
-      const enEquiv = PT_TO_EN_KEYWORDS[areaLabel] || areaLabel;
-      return searchText.includes(areaLabel) || searchText.includes(enEquiv.toLowerCase());
-    }
+    if (activeFilter === 'hr') return /hr|human|recursos|rh|people|talent/i.test(v.title + ' ' + v.tags.join(' '));
+    if (activeFilter === 'marketing') return /marketing|brand|content|digital|social/i.test(v.title + ' ' + v.tags.join(' '));
     return true;
   });
 
@@ -388,6 +558,16 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
     region || countryName || ''
   );
 
+  const handleCompanyClick = (e: React.MouseEvent, companyName: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (expandedCompany === companyName) {
+      setExpandedCompany(null);
+    } else {
+      setExpandedCompany(companyName);
+    }
+  };
+
   return (
     <section className="mb-12">
       {/* Section header */}
@@ -395,13 +575,13 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#BF9A33]/20 to-[#BF9A33]/5 flex items-center justify-center">
           <Briefcase className="w-4 h-4 text-[#BF9A33]" />
         </div>
-        <div>
+        <div className="min-w-0 flex-1">
           <h2 className="text-sm font-medium text-[#1a1a1a]">{t('vf.title')}</h2>
-          <p className="text-[11px] text-[#999] font-light">
+          <p className="text-[11px] text-[#999] font-light truncate">
             {t('vf.subtitle')} · {countryName}{region ? ` — ${region}` : ''}
           </p>
         </div>
-        <div className="ml-auto">
+        <div className="flex-shrink-0">
           <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#BF9A33]/10 text-[#a57b0a] border border-[#BF9A33]/20">
             {loading ? '...' : `${filtered.length} ${t('vf.jobs')}`}
           </span>
@@ -412,8 +592,10 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
       {userKeywords.length > 0 && (
         <div className="mt-2 mb-1 px-3 py-1.5 bg-[#C9A961]/5 border border-[#C9A961]/15 rounded text-[10px] text-[#a57b0a] flex items-center gap-1.5">
           <Search className="w-3 h-3 shrink-0" />
-          {lang === 'pt' ? 'Pesquisa baseada no teu perfil:' : 'Search based on your profile:'}{' '}
-          <span className="font-medium">{userKeywords.slice(0, 3).join(', ')}</span>
+          <span className="truncate">
+            {lang === 'pt' ? 'Pesquisa baseada no teu perfil:' : 'Search based on your profile:'}{' '}
+            <span className="font-medium">{userKeywords.slice(0, 3).join(', ')}</span>
+          </span>
         </div>
       )}
 
@@ -421,20 +603,20 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
       {isUnsupportedCountry && vagas.length > 0 && (
         <div className="mt-2 mb-1 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded text-[10px] text-amber-700 flex items-center gap-1.5">
           <AlertCircle className="w-3 h-3 shrink-0" />
-          {sourceLabel}
+          <span className="line-clamp-2">{sourceLabel}</span>
         </div>
       )}
 
       {/* Widget container */}
       <div className="mt-4 border border-[#BF9A33]/25 rounded-lg overflow-hidden bg-white shadow-sm">
 
-        {/* Filters bar */}
-        <div className="px-4 py-2.5 border-b border-[#e9ecef] bg-[#f8f9fa] flex items-center gap-1.5 flex-wrap">
+        {/* Filters bar — horizontal scroll on mobile */}
+        <div className="px-3 sm:px-4 py-2.5 border-b border-[#e9ecef] bg-[#f8f9fa] flex items-center gap-1.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
           {FILTERS.map(f => (
             <button
               key={f.key}
               onClick={() => setActiveFilter(f.key)}
-              className={`px-3 py-1 rounded-full text-[11px] font-medium border transition-all duration-200 ${
+              className={`px-3 py-1 rounded-full text-[11px] font-medium border transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
                 activeFilter === f.key
                   ? 'bg-[#BF9A33] text-[#1a1a1a] border-[#BF9A33] font-semibold'
                   : 'bg-white text-[#6c757d] border-[#dee2e6] hover:border-[#BF9A33]/40 hover:text-[#1a1a1a]'
@@ -443,10 +625,10 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
               {f.label}
             </button>
           ))}
-          <div className="flex-1" />
+          <div className="flex-1 min-w-[8px]" />
           <button
             onClick={fetchVagas}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium text-[#6c757d] border border-[#dee2e6] hover:border-[#BF9A33]/40 hover:text-[#1a1a1a] transition-all"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium text-[#6c757d] border border-[#dee2e6] hover:border-[#BF9A33]/40 hover:text-[#1a1a1a] transition-all whitespace-nowrap flex-shrink-0"
           >
             <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
             {t('vf.refresh')}
@@ -483,72 +665,96 @@ export default function VagasFeed({ lang: langProp, countryCode = 'PT', countryN
             filtered.map((v, idx) => {
               const initials = v.company ? v.company.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?';
               const matchClass = v.match >= 85 ? 'bg-[#d1f5e0] text-[#0a5c2e]' : v.match >= 70 ? 'bg-[#fff3cd] text-[#856404]' : 'bg-[#f8f9fa] text-[#6c757d]';
+              const isExpanded = expandedCompany === v.company;
 
               return (
-                <a key={idx} href={v.url} target="_blank" rel="noopener noreferrer"
-                  className="block px-4 py-3.5 border-b border-[#e9ecef] last:border-b-0 transition-colors duration-150 cursor-pointer hover:bg-[#fdf8ed] no-underline">
-                  <div className="flex items-start gap-2.5 mb-2">
-                    <div className="w-9 h-9 rounded-lg bg-[#f8f9fa] border border-[#e9ecef] flex items-center justify-center text-[11px] font-bold text-[#6c757d] flex-shrink-0 uppercase">
-                      {initials}
+                <div key={idx} className="border-b border-[#e9ecef] last:border-b-0">
+                  <div className="px-3 sm:px-4 py-3 sm:py-3.5 transition-colors duration-150 hover:bg-[#fdf8ed]">
+                    {/* Job header row */}
+                    <div className="flex items-start gap-2 sm:gap-2.5 mb-2">
+                      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#f8f9fa] border border-[#e9ecef] flex items-center justify-center text-[10px] sm:text-[11px] font-bold text-[#6c757d] flex-shrink-0 uppercase">
+                        {initials}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[12px] sm:text-[13px] font-semibold text-[#2c3e50] leading-tight">{v.title}</div>
+                        {/* Company name — clickable to expand details */}
+                        <button
+                          onClick={(e) => handleCompanyClick(e, v.company)}
+                          className="text-[11px] text-[#a57b0a] mt-0.5 hover:underline flex items-center gap-0.5 font-medium"
+                        >
+                          <Building2 className="w-2.5 h-2.5" />
+                          {v.company}
+                          {isExpanded ? <ChevronUp className="w-2.5 h-2.5" /> : <ChevronDown className="w-2.5 h-2.5" />}
+                        </button>
+                      </div>
+                      {/* Match + View job — stack on mobile */}
+                      <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 sm:gap-2 flex-shrink-0">
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${matchClass}`}>
+                          {v.match}%
+                        </span>
+                        <a href={v.url} target="_blank" rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold text-[#a57b0a] bg-[#BF9A33]/10 border border-[#BF9A33]/20 hover:bg-[#BF9A33]/20 transition-colors no-underline whitespace-nowrap">
+                          {lang === 'pt' ? 'Ver' : 'View'}
+                          <ExternalLink className="w-2.5 h-2.5" />
+                        </a>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[13px] font-semibold text-[#2c3e50] leading-tight">{v.title}</div>
-                      <div className="text-[11px] text-[#6c757d] mt-0.5">{v.company}</div>
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${matchClass}`}>
-                        {v.match}% match
+
+                    {/* Tags row — wrap on mobile */}
+                    <div className="flex gap-1 sm:gap-1.5 flex-wrap ml-10 sm:ml-[46px]">
+                      <span className="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded bg-[#f8f9fa] border border-[#e9ecef] text-[#6c757d] font-medium">
+                        📍 {v.location}
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold text-[#a57b0a] bg-[#BF9A33]/10 border border-[#BF9A33]/20 hover:bg-[#BF9A33]/20 transition-colors">
-                        {lang === 'pt' ? 'Ver vaga' : 'View job'}
-                        <ExternalLink className="w-2.5 h-2.5" />
-                      </span>
+                      {v.salary && (
+                        <span className="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded bg-[#d1f5e0] border border-[#a8e6c3] text-[#0a5c2e] font-medium">
+                          💶 {v.salary}
+                        </span>
+                      )}
+                      {v.remote && (
+                        <span className="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded bg-[#dbeafe] border border-[#93c5fd] text-[#003d8f] font-medium">
+                          🏠 {remoteLabel}
+                        </span>
+                      )}
+                      {v.tags.map((tag, ti) => (
+                        <span key={ti} className="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded bg-[#f8f9fa] border border-[#e9ecef] text-[#6c757d] font-medium">
+                          {tag}
+                        </span>
+                      ))}
                     </div>
                   </div>
-                  <div className="flex gap-1.5 flex-wrap">
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-[#f8f9fa] border border-[#e9ecef] text-[#6c757d] font-medium">
-                      📍 {v.location}
-                    </span>
-                    {v.salary && (
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-[#d1f5e0] border border-[#a8e6c3] text-[#0a5c2e] font-medium">
-                        💶 {v.salary}
-                      </span>
-                    )}
-                    {v.remote && (
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-[#dbeafe] border border-[#93c5fd] text-[#003d8f] font-medium">
-                        🏠 {remoteLabel}
-                      </span>
-                    )}
-                    {v.tags.map((tag, ti) => (
-                      <span key={ti} className="text-[10px] px-2 py-0.5 rounded bg-[#f8f9fa] border border-[#e9ecef] text-[#6c757d] font-medium">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </a>
+
+                  {/* Expanded company detail card */}
+                  {isExpanded && v.company && (
+                    <CompanyDetailCard
+                      companyName={v.company}
+                      lang={lang}
+                      onClose={() => setExpandedCompany(null)}
+                    />
+                  )}
+                </div>
               );
             })
           )}
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-3 border-t border-[#e9ecef] bg-[#f8f9fa]">
-          <div className="flex items-center justify-center gap-4">
+        <div className="px-3 sm:px-4 py-3 border-t border-[#e9ecef] bg-[#f8f9fa]">
+          <div className="flex items-center justify-center gap-3 sm:gap-4">
             <a href={getAdzunaSearchUrl(adzunaCountry, buildSearchQuery(userKeywords), region || countryName)}
               target="_blank" rel="noopener noreferrer"
-              className="text-[12px] text-[#a57b0a] font-semibold hover:text-[#BF9A33] inline-flex items-center gap-1">
+              className="text-[11px] sm:text-[12px] text-[#a57b0a] font-semibold hover:text-[#BF9A33] inline-flex items-center gap-1">
               {t('vf.viewAllAdzuna')}
               <ExternalLink className="w-3 h-3" />
             </a>
             <span className="text-[#ddd]">|</span>
             <a href={linkedInSearchUrl} target="_blank" rel="noopener noreferrer"
-              className="text-[12px] text-[#0077b5] font-semibold hover:text-[#005582] inline-flex items-center gap-1">
+              className="text-[11px] sm:text-[12px] text-[#0077b5] font-semibold hover:text-[#005582] inline-flex items-center gap-1">
               <Linkedin className="w-3 h-3" />
               LinkedIn Jobs
             </a>
           </div>
-          <div className="text-[10px] text-[#999] mt-1 text-center">
-            Powered by Adzuna API
+          <div className="text-[9px] sm:text-[10px] text-[#999] mt-1 text-center">
+            Powered by Adzuna API · NinjaPear
             {isUnsupportedCountry && ` · ${lang === 'pt' ? 'Vagas Internacionais' : 'International Jobs'}`}
             {userKeywords.length > 0 && ` · ${lang === 'pt' ? 'Personalizado ao teu perfil' : 'Personalized to your profile'}`}
           </div>
